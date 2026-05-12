@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Astral Veil is a cinematic tarot experience for reflection, atmosphere, and symbolic storytelling."
+    />
+    <title>Astral Veil</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/reading.css" />
+  </head>
+  <body class="sun-mode">
+    <header class="site-header">
+      <nav class="navbar" aria-label="Primary navigation">
+        <a class="navbar__brand" href="index.html" aria-label="Astral Veil home">
+          <span class="logo-eye" aria-hidden="true">
+            <svg class="logo-eye__svg" viewBox="0 0 96 64" focusable="false">
+              <path class="logo-eye__card" d="M48 3l38 29-38 29L10 32z" />
+              <path class="logo-eye__card logo-eye__card--inner" d="M48 9l29 23-29 23-29-23z" />
+              <path class="logo-eye__outer" d="M8 32c11-16 25-23 40-23s29 7 40 23c-11 16-25 23-40 23S19 48 8 32z" />
+              <path class="logo-eye__lid" d="M18 31c8-9 18-14 30-14s22 5 30 14" />
+              <path class="logo-eye__lid" d="M18 34c8 9 18 13 30 13s22-4 30-13" />
+              <circle class="logo-eye__iris" cx="48" cy="32" r="13" />
+              <circle class="logo-eye__pupil" cx="48" cy="32" r="4" />
+              <path class="logo-eye__ray" d="M48 5v8M48 51v8M25 12l5 7M71 12l-5 7M25 52l5-7M71 52l-5-7" />
+              <path class="logo-eye__ornament" d="M36 32h24M48 20v24" />
+              <path class="logo-eye__star" d="M64 24l1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5z" />
+              <path class="logo-eye__star" d="M34 27l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" />
+              <path class="logo-eye__star" d="M51 39l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" />
+              <path class="logo-eye__crescent" d="M76 25c-4 2-6 5-6 9s2 7 6 9c-6 0-11-4-11-9s5-9 11-9z" />
+              <path class="logo-eye__arcana" d="M43 7c2 3 8 3 10 0M43 57c2-3 8-3 10 0" />
+              <path class="logo-eye__arcana" d="M13 28c3 2 3 6 0 8M83 28c-3 2-3 6 0 8" />
+            </svg>
+          </span>
+          <span class="navbar__brand-text">Astral Veil</span>
+        </a>
+
+        <ul class="navbar__links">
+          <li><a class="navbar__link" href="index.html">Readings</a></li>
+          <li><a class="navbar__link" href="readers.html">Veilwalkers</a></li>
+          <li><a class="navbar__link" href="deck.html">Deck</a></li>
+          <li><a class="navbar__link" href="about.html">About</a></li>
+        </ul>
+
+        <label class="theme-toggle" aria-label="Switch between sun and moon mode">
+          <input class="theme-toggle__input" type="checkbox" />
+          <span class="theme-toggle__track" aria-hidden="true">
+            <span class="theme-toggle__icon theme-toggle__icon--sun">
+              <svg class="celestial-icon" viewBox="0 0 64 64" focusable="false">
+                <circle class="celestial-icon__core" cx="32" cy="32" r="10" />
+                <circle cx="32" cy="32" r="17" />
+                <path d="M32 6v10M32 48v10M6 32h10M48 32h10" />
+                <path d="M14 14l7 7M43 43l7 7M50 14l-7 7M21 43l-7 7" />
+                <path d="M32 2l3 8h-6zM32 62l-3-8h6zM2 32l8-3v6zM62 32l-8 3v-6z" />
+                <path d="M22 10c3 4 17 4 20 0M22 54c3-4 17-4 20 0" />
+                <path d="M10 22c4 3 4 17 0 20M54 22c-4 3-4 17 0 20" />
+                <path d="M26 32h12M32 26v12" />
+              </svg>
+            </span>
+            <span class="theme-toggle__divider"></span>
+            <span class="theme-toggle__icon theme-toggle__icon--moon">
+              <svg class="celestial-icon" viewBox="0 0 64 64" focusable="false">
+                <path class="celestial-icon__core" d="M43 8c-11 4-18 14-18 26 0 10 6 18 15 22-15 0-28-11-28-26C12 16 25 6 43 8z" />
+                <path d="M43 8c-6 7-9 15-8 24 1 8 5 16 13 22" />
+                <path d="M20 11c5 2 11 2 16-1M18 51c5-2 11-1 17 2" />
+                <path d="M47 17l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" />
+                <path d="M53 39l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" />
+                <path d="M21 23l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" />
+                <path d="M28 5c3 4 12 5 17 2M28 59c4-3 12-2 17 0" />
+              </svg>
+            </span>
+          </span>
+        </label>
+
+        <button
+          class="navbar__menu-toggle"
+          type="button"
+          aria-label="Open navigation menu"
+          aria-controls="mobile-navigation"
+          aria-expanded="false"
+        >
+          <span class="navbar__menu-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="navbar__mobile-menu" id="mobile-navigation" aria-hidden="true">
+          <a class="navbar__mobile-link" href="index.html">Readings</a>
+          <a class="navbar__mobile-link" href="readers.html">Veilwalkers</a>
+          <a class="navbar__mobile-link" href="deck.html">Deck</a>
+          <a class="navbar__mobile-link" href="about.html">About</a>
+        </div>
+      </nav>
+    </header>
+
+    <div class="tarot-background" aria-hidden="true">
+      <div class="celestial-wash"></div>
+      <div class="botanical-veil"></div>
+      <div class="starfield"></div>
+      <div class="mystic-mist"></div>
+      <div class="lunar-orb"></div>
+      <div class="moon-particles"></div>
+    </div>
+
+    <div class="scorpio-constellation" aria-hidden="true">
+      <svg viewBox="0 0 320 220" focusable="false">
+        <polyline points="40,80 78,62 118,76 150,105 185,112 222,90 260,118 285,155" />
+        <circle cx="40" cy="80" r="3" />
+        <circle cx="78" cy="62" r="3" />
+        <circle cx="118" cy="76" r="3" />
+        <circle cx="150" cy="105" r="3" />
+        <circle cx="185" cy="112" r="3" />
+        <circle cx="222" cy="90" r="3" />
+        <circle cx="260" cy="118" r="3" />
+        <circle cx="285" cy="155" r="3" />
+      </svg>
+    </div>
+
+    <main class="tarot-stage" id="app">
+      <section class="reading-section" id="readings" aria-labelledby="reading-title">
+        <div class="reading-section__intro">
+          <p class="reading-section__eyebrow">Choose your guide</p>
+          <h1 id="reading-title">Begin Your Astral Reading</h1>
+          <p>
+            Select a reader, choose a spread, then reveal each card when you are ready.
+          </p>
+        </div>
+
+        <section id="reader-selection" class="reader-selection reader-panel">
+          <div class="section-heading">
+            <h2>Your Astral Guide</h2>
+            <p>Pick the energy you want to sit with for this reading.</p>
+          </div>
+
+          <div class="reader-grid" data-reader-list></div>
+        </section>
+
+        <section id="reading-stage" class="reading-stage hidden" data-reading-stage>
+          <div class="reader-portrait-frame">
+            <img id="active-reader-image" class="reader-portrait" alt="" data-active-reader-image />
+          </div>
+          <div class="reader-portrait-caption">
+            <p class="reading-section__eyebrow">Your Astral Guide</p>
+            <h2 data-active-reader-name></h2>
+            <p data-active-reader-energy></p>
+          </div>
+
+          <div class="reading-actions">
+            <button class="reader-nav-button" type="button" data-reader-nav="prev">
+              &larr; Previous Guide
+            </button>
+            <button class="reader-nav-button" type="button" data-reader-nav="next">
+              Next Guide &rarr;
+            </button>
+          </div>
+
+          <div id="reading-status" class="reading-results reading-results--prompt" data-reading-status>
+            Choose a spread to shuffle your cards.
+          </div>
+
+          <div class="reader-introduction" data-reader-introduction></div>
+
+          <div class="reading-controls" role="group" aria-label="Choose a tarot spread">
+            <button class="spread-option" type="button" data-spread="3">
+              <span>3</span>
+              Card Reading
+            </button>
+            <button class="spread-option" type="button" data-spread="5">
+              <span>5</span>
+              Card Reading
+            </button>
+            <button class="spread-option" type="button" data-spread="7">
+              <span>7</span>
+              Card Reading
+            </button>
+          </div>
+
+          <div class="reading-actions reading-actions--after-spread">
+            <button class="reader-nav-button" type="button" data-new-reading>
+              New Reading
+            </button>
+          </div>
+
+        </section>
+
+        <section id="reading-section" class="reading-results-section hidden" data-reading-results-section>
+          <div class="reading-results-header">
+            <h2>Your Reading</h2>
+            <p>Reflect on each card and the message it brings.</p>
+          </div>
+
+          <div id="deck-area" class="deck-area card-grid" data-card-list aria-live="polite"></div>
+
+          <div id="reading-results" class="reading-results" data-reading-reveals></div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div class="site-footer__brand">
+          <h2>Astral Veil</h2>
+          <p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p>
+          <p class="site-footer__poem">✦ Between fate and imagination ✦</p>
+        </div>
+
+        <nav class="site-footer__nav" aria-label="Footer navigation">
+          <p class="site-footer__label">Explore</p>
+          <a href="index.html">Home</a>
+          <a href="readers.html">Veilwalkers</a>
+          <a href="deck.html">Deck</a>
+          <a href="about.html">About</a>
+        </nav>
+
+        <div class="site-footer__creator">
+          <p class="site-footer__label">Creator</p>
+          <p>Crafted by João Monteiro</p>
+          <p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p>
+          <p>Designer • Developer • Worldbuilder</p>
+          <p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="data/readers.js"></script>
+    <script src="data/cards.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/reading.js"></script>
+  </body>
+</html>

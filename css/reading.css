@@ -1,0 +1,4 @@
+/* Reading page styles live mostly in global style.css because they share card UI with the deck. */
+.reading-section {
+  animation: fadeSlideIn 500ms ease both;
+}

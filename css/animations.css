@@ -1,0 +1,53 @@
+@keyframes starDrift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(-24px, 18px, 0);
+  }
+}
+
+@keyframes mistDrift {
+  0%,
+  100% {
+    transform: translate3d(-1.5%, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(1.5%, -1%, 0) scale(1.04);
+  }
+}
+
+@keyframes glowBreath {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.92;
+    transform: scale(1.025);
+  }
+}
+
+.starfield {
+  animation: starDrift 42s linear infinite alternate;
+}
+
+.mystic-mist {
+  animation: mistDrift 24s ease-in-out infinite;
+}
+
+.celestial-wash {
+  animation: glowBreath 18s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .starfield,
+  .mystic-mist,
+  .celestial-wash {
+    animation: none;
+  }
+}

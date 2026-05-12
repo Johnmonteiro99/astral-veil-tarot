@@ -1,0 +1,199 @@
+.deck-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(18px, 2.5vw, 32px);
+  width: min(100%, 1200px);
+  margin: 0 auto;
+}
+
+.deck-card {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--navbar-border);
+  border-radius: 22px;
+  padding: 14px;
+  color: var(--navbar-text);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
+    rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  text-align: left;
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.32),
+    0 0 28px var(--navbar-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  transition:
+    border-color 250ms ease,
+    box-shadow 250ms ease,
+    transform 250ms ease;
+}
+
+.deck-card:hover {
+  border-color: var(--navbar-border);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.38),
+    0 0 36px var(--navbar-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  transform: translateY(-8px);
+}
+
+.deck-card:focus-visible {
+  outline: 2px solid var(--navbar-hover-text);
+  outline-offset: 4px;
+}
+
+.deck-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border: 1px solid rgba(231, 195, 106, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+}
+
+.deck-card__content {
+  padding: 16px 4px 2px;
+}
+
+.deck-card h2 {
+  margin: 0;
+  font-family: var(--logo-font);
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  letter-spacing: 0.02em;
+}
+
+.deck-card p {
+  margin: 8px 0 0;
+  color: var(--navbar-muted);
+  font-family: var(--body-font);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  opacity: 0.86;
+}
+
+body.is-lightbox-open {
+  overflow: hidden;
+}
+
+.deck-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: clamp(18px, 4vw, 42px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms ease;
+}
+
+.deck-lightbox.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.deck-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background:
+    radial-gradient(circle at 50% 24%, var(--navbar-hover-bg), transparent 42%),
+    rgba(0, 0, 0, 0.78);
+  cursor: pointer;
+}
+
+.deck-lightbox__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(92vw, 560px);
+  max-height: 92vh;
+  overflow: hidden;
+  border: 1px solid var(--navbar-border);
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 48%),
+    var(--navbar-bg);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.5),
+    0 0 44px var(--navbar-glow);
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+  transform: translateY(14px) scale(0.98);
+  transition: transform 250ms ease;
+}
+
+.deck-lightbox.is-open .deck-lightbox__dialog {
+  transform: translateY(0) scale(1);
+}
+
+.deck-lightbox__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--navbar-border);
+  border-radius: 50%;
+  color: var(--navbar-text);
+  background: rgba(0, 0, 0, 0.48);
+  cursor: pointer;
+  font-size: 1.6rem;
+  line-height: 1;
+  transition:
+    box-shadow 250ms ease,
+    transform 250ms ease;
+}
+
+.deck-lightbox__close:hover,
+.deck-lightbox__close:focus-visible {
+  box-shadow: 0 0 22px var(--navbar-glow);
+  transform: translateY(-1px);
+}
+
+.deck-lightbox__image {
+  display: block;
+  width: 100%;
+  max-height: 72vh;
+  object-fit: contain;
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.deck-lightbox__content {
+  padding: 18px 22px 22px;
+  text-align: center;
+}
+
+.deck-lightbox__content h2 {
+  margin: 0;
+  font-family: var(--logo-font);
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.deck-lightbox__content p {
+  margin: 8px auto 0;
+  max-width: 460px;
+  color: var(--navbar-muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 1100px) {
+  .deck-gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .deck-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 460px) {
+  .deck-gallery {
+    grid-template-columns: 1fr;
+  }
+}
