@@ -1764,9 +1764,11 @@ body.moon-mode .theme-toggle__icon--moon {
   height: 100%;
   min-height: 0;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   transition:
     box-shadow 250ms ease,
     transform 650ms ease;
+  will-change: transform;
 }
 
 .tarot-card.is-revealed .tarot-card__inner {
@@ -1793,6 +1795,7 @@ body.moon-mode .theme-toggle__icon--moon {
     0 0 30px color-mix(in srgb, var(--glow-ambient) 60%, transparent),
     inset 0 0 0 1px color-mix(in srgb, var(--glow-border) 42%, transparent);
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   transition:
     border-color 250ms ease,
     box-shadow 250ms ease;
@@ -1819,6 +1822,8 @@ body.moon-mode .theme-toggle__icon--moon {
 
 .tarot-card__back {
   justify-content: center;
+  z-index: 2;
+  transform: rotateY(0deg) translateZ(1px);
   background:
     radial-gradient(circle at 50% 35%, var(--navbar-hover-bg), transparent 44%),
     rgba(7, 5, 12, 0.78);
@@ -1872,7 +1877,16 @@ body.moon-mode .theme-toggle__icon--moon {
 }
 
 .tarot-card__front {
-  transform: rotateY(180deg);
+  z-index: 1;
+  transform: rotateY(180deg) translateZ(1px);
+}
+
+.tarot-card.is-revealed .tarot-card__back {
+  z-index: 1;
+}
+
+.tarot-card.is-revealed .tarot-card__front {
+  z-index: 2;
 }
 
 .tarot-card-info {
@@ -2731,7 +2745,29 @@ body.blood-moon-mode .lunar-orb {
   }
 
   .reading-viewer__controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    grid-template-areas:
+      "counter counter"
+      "prev next";
     justify-content: center;
+    justify-items: center;
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 10px;
+    width: 100%;
+  }
+
+  .reading-viewer__controls [data-reading-viewer-nav="prev"] {
+    grid-area: prev;
+  }
+
+  .reading-viewer__controls [data-reading-viewer-nav="next"] {
+    grid-area: next;
+  }
+
+  .reading-viewer__controls .reading-viewer__counter {
+    grid-area: counter;
   }
 
   .reader-portrait {
