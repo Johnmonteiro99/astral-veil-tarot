@@ -2424,7 +2424,8 @@ body.blood-moon-mode .lunar-orb {
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(120px, 0.7fr) minmax(220px, 1fr);
-  gap: clamp(3rem, 7vw, 5.5rem);
+  column-gap: clamp(3rem, 7vw, 5.5rem);
+  row-gap: clamp(1rem, 2vw, 1.45rem);
   align-items: start;
   padding: clamp(24px, 4vw, 34px);
   border: 1px solid var(--navbar-border);
@@ -2504,6 +2505,20 @@ body.blood-moon-mode .lunar-orb {
 .site-footer__disclaimer {
   font-size: 0.76rem;
   opacity: 0.66;
+}
+
+.site-footer__copyright {
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin-top: clamp(0.35rem, 1.5vw, 0.85rem);
+  color: var(--navbar-muted);
+  font-family: var(--body-font);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-align: center;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--navbar-glow) 70%, transparent);
+  opacity: 0.58;
 }
 
 .site-footer__label {
