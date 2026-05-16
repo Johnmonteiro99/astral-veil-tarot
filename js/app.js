@@ -1,10 +1,71 @@
 const themeToggleInput = document.querySelector(".theme-toggle__input");
 const savedTheme = localStorage.getItem("dailyTarotTheme");
+const bloodMoonEventStorageKey = "astralVeilBloodMoonActive";
 const navbar = document.querySelector(".navbar");
 const menuToggle = document.querySelector(".navbar__menu-toggle");
 const mobileMenu = document.querySelector(".navbar__mobile-menu");
 const navLinks = document.querySelectorAll(".navbar__link, .navbar__mobile-link");
 const mobileMenuLinks = document.querySelectorAll(".navbar__mobile-link");
+
+function getStoredBloodMoonEventState() {
+  try {
+    return localStorage.getItem(bloodMoonEventStorageKey);
+  } catch (error) {
+    return "false";
+  }
+}
+
+function setStoredBloodMoonEventState(isActive) {
+  try {
+    localStorage.setItem(bloodMoonEventStorageKey, isActive ? "true" : "false");
+  } catch (error) {
+    return;
+  }
+}
+
+function isBloodMoonActive() {
+  return getStoredBloodMoonEventState() === "true";
+}
+
+function applyBloodMoonState() {
+  const isActive = isBloodMoonActive();
+
+  document.body.classList.toggle("blood-moon-mode", isActive);
+
+  if (themeToggleInput) {
+    themeToggleInput.disabled = isActive;
+    themeToggleInput.checked = isActive ? true : themeToggleInput.checked;
+    themeToggleInput.setAttribute(
+      "aria-label",
+      isActive ? "Blood Moon mode is active" : "Switch between sun and moon mode"
+    );
+  }
+
+  if (isActive) {
+    document.body.classList.remove("sun-mode", "moon-mode");
+  }
+
+  return isActive;
+}
+
+// Blood Moon is an event state, not a theme. It persists across pages until New Reading clears it.
+function activateBloodMoonEvent() {
+  setStoredBloodMoonEventState(true);
+  applyBloodMoonState();
+}
+
+function deactivateBloodMoonEvent() {
+  setStoredBloodMoonEventState(false);
+  document.body.classList.remove("blood-moon-mode");
+  setTheme(localStorage.getItem("dailyTarotTheme") === "moon" ? "moon" : "sun");
+}
+
+window.AstralVeilBloodMoon = {
+  activateBloodMoonEvent,
+  deactivateBloodMoonEvent,
+  isBloodMoonActive,
+  applyBloodMoonState
+};
 
 function getNormalizedNavPath(url) {
   const path = new URL(url, window.location.href).pathname;
@@ -44,8 +105,14 @@ function setTheme(mode) {
     return;
   }
 
+  if (isBloodMoonActive()) {
+    applyBloodMoonState();
+    return;
+  }
+
   const isSunMode = mode === "sun";
 
+  themeToggleInput.disabled = false;
   document.body.classList.toggle("sun-mode", isSunMode);
   document.body.classList.toggle("moon-mode", !isSunMode);
 
@@ -59,13 +126,24 @@ function setTheme(mode) {
 }
 
 if (themeToggleInput) {
-  setTheme(savedTheme === "moon" ? "moon" : "sun");
+  if (applyBloodMoonState()) {
+    themeToggleInput.checked = true;
+  } else {
+    setTheme(savedTheme === "moon" ? "moon" : "sun");
+  }
 
   themeToggleInput.addEventListener("change", () => {
+    if (isBloodMoonActive()) {
+      applyBloodMoonState();
+      return;
+    }
+
     const nextMode = themeToggleInput.checked ? "moon" : "sun";
 
     setTheme(nextMode);
   });
+} else {
+  applyBloodMoonState();
 }
 
 function setMobileMenu(isOpen) {

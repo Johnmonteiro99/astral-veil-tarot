@@ -1,3 +1,217 @@
+.deck-view {
+  width: 100%;
+}
+
+.deck-collection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 520px));
+  justify-content: center;
+  width: min(100%, 1200px);
+  gap: clamp(18px, 3vw, 28px);
+  margin: 0 auto;
+}
+
+.deck-collection-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(150px, 0.82fr) minmax(0, 1fr);
+  gap: clamp(18px, 3vw, 28px);
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--navbar-border) 72%, rgba(168, 85, 247, 0.58));
+  border-radius: 24px;
+  padding: clamp(18px, 3vw, 24px);
+  color: var(--navbar-text);
+  background:
+    radial-gradient(circle at 18% 14%, rgba(168, 85, 247, 0.14), transparent 42%),
+    radial-gradient(circle at 92% 88%, rgba(231, 195, 106, 0.1), transparent 46%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.025) 48%, transparent),
+    var(--navbar-bg);
+  box-shadow:
+    0 24px 72px rgba(0, 0, 0, 0.36),
+    0 0 34px rgba(168, 85, 247, 0.2),
+    0 0 18px color-mix(in srgb, var(--navbar-glow) 58%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+  cursor: pointer;
+  transition:
+    border-color 250ms ease,
+    box-shadow 250ms ease,
+    transform 250ms ease;
+}
+
+.deck-collection-card__preview {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.deck-collection-card__preview img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 18px;
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.38),
+    0 0 18px rgba(168, 85, 247, 0.14);
+  transition:
+    box-shadow 250ms ease,
+    transform 250ms ease;
+}
+
+.deck-collection-card:hover,
+.deck-collection-card:focus-within {
+  border-color: color-mix(in srgb, var(--navbar-border) 64%, rgba(196, 154, 255, 0.74));
+  box-shadow:
+    0 28px 84px rgba(0, 0, 0, 0.42),
+    0 0 44px rgba(168, 85, 247, 0.28),
+    0 0 20px color-mix(in srgb, var(--navbar-glow) 64%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  transform: translateY(-4px);
+}
+
+.deck-collection-card:hover .deck-collection-card__preview img,
+.deck-collection-card:focus-within .deck-collection-card__preview img {
+  box-shadow:
+    0 24px 58px rgba(0, 0, 0, 0.44),
+    0 0 24px rgba(168, 85, 247, 0.2);
+  transform: translateY(-2px);
+}
+
+.deck-collection-card.is-locked {
+  border-color: color-mix(in srgb, var(--navbar-border) 42%, rgba(168, 85, 247, 0.36));
+  opacity: 0.76;
+}
+
+.deck-collection-card.is-locked .deck-collection-card__preview img {
+  filter: saturate(0.62) brightness(0.68) contrast(1.08);
+}
+
+.deck-collection-card.is-locked .deck-collection-card__badge {
+  color: rgba(229, 212, 255, 0.86);
+  background: rgba(168, 85, 247, 0.1);
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.12);
+}
+
+.deck-collection-card.is-locked .deck-collection-card__action {
+  color: rgba(229, 212, 255, 0.76);
+  background: rgba(255, 255, 255, 0.045);
+  box-shadow: none;
+}
+
+.deck-collection-card__action:focus-visible,
+.deck-back-button:focus-visible {
+  outline: 2px solid var(--navbar-hover-text);
+  outline-offset: 4px;
+}
+
+.deck-collection-card__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100%;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(4px, 1.4vw, 10px) 0;
+}
+
+.deck-collection-card__header {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.deck-collection-card__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-height: 32px;
+  border-radius: 999px;
+  padding: 0 12px;
+  color: var(--navbar-hover-text);
+  background: color-mix(in srgb, var(--navbar-hover-bg) 76%, rgba(168, 85, 247, 0.12));
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.16);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.deck-collection-card h2 {
+  margin: 0;
+  font-family: var(--heading-font);
+  font-size: clamp(1.65rem, 3.2vw, 2.35rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.deck-collection-card p {
+  margin: 0;
+  color: var(--navbar-muted);
+  font-size: 0.96rem;
+  line-height: 1.6;
+}
+
+.deck-collection-card__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: clamp(24px, 5vw, 56px);
+}
+
+.deck-collection-card__action,
+.deck-back-button {
+  min-height: 44px;
+  border: 1px solid var(--navbar-border);
+  border-radius: 999px;
+  padding: 0 18px;
+  color: var(--navbar-text);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
+    var(--navbar-hover-bg);
+  box-shadow: 0 0 18px var(--navbar-glow);
+  cursor: pointer;
+  font-family: var(--body-font);
+  font-weight: 700;
+  transition:
+    box-shadow 250ms ease,
+    transform 250ms ease;
+}
+
+.deck-collection-card__action:hover,
+.deck-back-button:hover {
+  box-shadow: 0 0 26px var(--navbar-glow);
+  transform: translateY(-1px);
+}
+
+.deck-collection-message {
+  min-height: 1.6em;
+  margin: 18px auto 0;
+  color: var(--navbar-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-align: center;
+  opacity: 0;
+  text-shadow: 0 0 14px rgba(168, 85, 247, 0.2);
+  transition: opacity 220ms ease;
+}
+
+.deck-collection-message.is-visible {
+  opacity: 1;
+}
+
+.deck-view__toolbar {
+  display: flex;
+  justify-content: center;
+  width: min(100%, 1200px);
+  margin: 0 auto clamp(18px, 3vw, 28px);
+}
+
 .deck-gallery {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -187,6 +401,30 @@ body.is-lightbox-open {
 }
 
 @media (max-width: 760px) {
+  .deck-collection-card {
+    grid-template-columns: 1fr;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  .deck-collection-card__preview {
+    width: min(100%, 230px);
+    margin: 0 auto;
+  }
+
+  .deck-collection-card__content {
+    text-align: center;
+  }
+
+  .deck-collection-card__badge {
+    justify-self: center;
+  }
+
+  .deck-collection-card__actions {
+    grid-template-columns: 1fr;
+    margin-top: 22px;
+  }
+
   .deck-gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

@@ -1,4 +1,5 @@
-const CARD_BACK_IMAGE = "assets/images/cards/card-back.jpg";
+const CARD_BACK_IMAGE = "assets/images/cards/original/card-back.jpg";
+const BLOOD_MOON_CARD_BACK_IMAGE = "assets/images/cards/blood-moon/bloodmoon-card-back.png";
 
 const readerList = document.querySelector("[data-reader-list]");
 const readerSelection = document.querySelector("#reader-selection");
@@ -26,7 +27,7 @@ const cardEnergyTypes = [
 const readingSectionScrollDelay = 450;
 
 // TEMPORARY TESTING MODE: set to false to restore normal Mystery Reader odds.
-const FORCE_ZEPHYRA_TEST = false;
+const FORCE_ZEPHYRA_TEST = true;
 
 let selectedReader = null;
 let selectedReaderIndex = -1;
@@ -37,6 +38,81 @@ let activeRevealedCardIndex = -1;
 let readingSectionScrollTimeout = null;
 let isRenderingReading = false;
 let bloodMoonTimeout = null;
+
+function activateBloodMoonEvent() {
+  if (window.AstralVeilBloodMoon) {
+    window.AstralVeilBloodMoon.activateBloodMoonEvent();
+  } else {
+    document.body.classList.add("blood-moon-mode");
+  }
+}
+
+function deactivateBloodMoonEvent() {
+  if (window.AstralVeilBloodMoon) {
+    window.AstralVeilBloodMoon.deactivateBloodMoonEvent();
+  } else {
+    document.body.classList.remove("blood-moon-mode");
+  }
+}
+
+function isBloodMoonActive() {
+  if (window.AstralVeilBloodMoon) {
+    return window.AstralVeilBloodMoon.isBloodMoonActive();
+  }
+
+  return document.body.classList.contains("blood-moon-mode");
+}
+
+function applyBloodMoonState() {
+  if (window.AstralVeilBloodMoon) {
+    window.AstralVeilBloodMoon.applyBloodMoonState();
+  }
+}
+
+function isBloodMoonReadingActive() {
+  return Boolean(selectedReader && selectedReader.isBloodMoon) || isBloodMoonActive();
+}
+
+function getActiveDeck() {
+  if (isBloodMoonReadingActive() && typeof bloodMoonDeck !== "undefined") {
+    return bloodMoonDeck.cards;
+  }
+
+  return tarotDeck;
+}
+
+function getActiveCardBackImage() {
+  return isBloodMoonReadingActive() ? BLOOD_MOON_CARD_BACK_IMAGE : CARD_BACK_IMAGE;
+}
+
+function getCardMeaning(card) {
+  if (card.bloodMoon && card.bloodMoon.upright) {
+    const orientation = card.orientation === "reversed" ? "reversed" : "upright";
+
+    return card.bloodMoon[orientation];
+  }
+
+  return card.meaning;
+}
+
+function prepareReadingCard(card) {
+  if (!card.bloodMoon) {
+    return card;
+  }
+
+  return {
+    ...card,
+    orientation: Math.random() < 0.5 ? "upright" : "reversed"
+  };
+}
+
+function getCardOrientationLabel(card) {
+  if (!card.bloodMoon) {
+    return "";
+  }
+
+  return card.orientation === "reversed" ? " • Reversed" : " • Upright";
+}
 
 function renderReaders() {
   if (!readerList || typeof tarotReaders === "undefined") {
@@ -70,6 +146,8 @@ function renderReaders() {
       .join("") + mysteryReaderCard;
 }
 
+applyBloodMoonState();
+
 function selectReader(readerId) {
   const visibleGuidePool = getVisibleGuidePool();
 
@@ -89,11 +167,9 @@ function selectReader(readerId) {
 
   if (selectedReader.isBloodMoon) {
     bloodMoonTimeout = window.setTimeout(() => {
-      document.body.classList.add("blood-moon-mode");
+      activateBloodMoonEvent();
       console.log("Blood Moon mode activated");
     }, 520);
-  } else {
-    removeBloodMoonMode();
   }
 
   updateActiveReader();
@@ -143,13 +219,6 @@ function chooseMysteryReader() {
   return mysteryPool[mysteryPool.length - 1];
 }
 
-function removeBloodMoonMode() {
-  if (document.body.classList.contains("blood-moon-mode")) {
-    document.body.classList.remove("blood-moon-mode");
-    console.log("Blood Moon mode removed");
-  }
-}
-
 function updateActiveReader() {
   document.querySelectorAll(".reader-card").forEach((card) => {
     const isMysterySelection = selectedReader.isMystery && card.dataset.readerId === "mystery";
@@ -186,7 +255,6 @@ function moveReader(direction) {
       (selectedReaderIndex + offset + visibleGuidePool.length) % visibleGuidePool.length;
     selectedReader = visibleGuidePool[selectedReaderIndex];
     window.clearTimeout(bloodMoonTimeout);
-    removeBloodMoonMode();
 
     updateActiveReader();
 
@@ -231,7 +299,7 @@ function selectSpread(cardCount) {
 }
 
 function getRandomCards(cardCount) {
-  const shuffledDeck = [...tarotDeck];
+  const shuffledDeck = [...getActiveDeck()];
 
   // Fisher-Yates shuffle keeps the reading random without duplicating cards.
   for (let index = shuffledDeck.length - 1; index > 0; index -= 1) {
@@ -242,12 +310,13 @@ function getRandomCards(cardCount) {
     shuffledDeck[randomIndex] = currentCard;
   }
 
-  return shuffledDeck.slice(0, cardCount);
+  return shuffledDeck.slice(0, cardCount).map(prepareReadingCard);
 }
 
 function renderReadingCards(cards) {
   cardList.classList.remove("hidden");
   cardList.innerHTML = "";
+  const cardBackImage = getActiveCardBackImage();
 
   cardList.innerHTML = cards
     .map((card, index) => {
@@ -257,10 +326,10 @@ function renderReadingCards(cards) {
         <button class="tarot-card energy-${energy} fade-slide-in" type="button" data-card-index="${index}" aria-label="Reveal ${card.name}">
           <span class="tarot-card__inner">
             <span class="tarot-card__face tarot-card__back">
-              <img src="${CARD_BACK_IMAGE}" alt="" loading="lazy" decoding="async" />
+              <img src="${cardBackImage}" alt="" loading="lazy" decoding="async" />
             </span>
             <span class="tarot-card__face tarot-card__front">
-              <img src="${card.image}" alt="${card.name}" loading="lazy" decoding="async" onerror="this.src='${CARD_BACK_IMAGE}'" />
+              <img src="${card.image}" alt="${card.name}" loading="lazy" decoding="async" onerror="this.src='${cardBackImage}'" />
             </span>
           </span>
         </button>
@@ -314,13 +383,13 @@ function renderReadingResults() {
   readingReveals.innerHTML = `
     <article class="reading-viewer energy-${activeEnergy}" aria-live="polite">
       <div class="reading-viewer__image-frame">
-        <img class="reading-viewer__image" src="${activeCard.image}" alt="${activeCard.name}" onerror="this.src='${CARD_BACK_IMAGE}'" />
+        <img class="reading-viewer__image" src="${activeCard.image}" alt="${activeCard.name}" onerror="this.src='${getActiveCardBackImage()}'" />
       </div>
 
       <div class="reading-viewer__content">
-        <p class="reading-viewer__eyebrow">Card ${activeCard.position} of ${currentReadingCards.length}</p>
+        <p class="reading-viewer__eyebrow">Card ${activeCard.position} of ${currentReadingCards.length}${getCardOrientationLabel(activeCard)}</p>
         <h3>${activeCard.name}</h3>
-        <p class="reading-viewer__meaning">${activeCard.meaning}</p>
+        <p class="reading-viewer__meaning">${getCardMeaning(activeCard)}</p>
 
         ${
           showViewerControls
@@ -423,7 +492,7 @@ function startNewReading() {
 
 function resetToGuideSelection() {
   clearCurrentReading();
-  removeBloodMoonMode();
+  deactivateBloodMoonEvent();
   selectedReader = null;
   selectedReaderIndex = -1;
   activeReaderImage.src = "";

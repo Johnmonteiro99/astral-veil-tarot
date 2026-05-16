@@ -185,8 +185,8 @@ body.blood-moon-mode .site-footer__inner {
 }
 
 .navbar__brand {
-  flex: 1 1 0;
-  min-width: 0;
+  flex: 0 0 auto;
+  min-width: max-content;
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -328,9 +328,10 @@ body.moon-mode .logo-eye {
 }
 
 .navbar__links {
-  flex: 0 1 auto;
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   gap: clamp(14px, 2.4vw, 28px);
   margin: 0;
@@ -579,13 +580,12 @@ body.moon-mode .logo-eye {
 .theme-toggle {
   position: relative;
   right: auto;
-  flex: 1 1 0;
-  flex-shrink: 0;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
   align-self: center;
-  min-width: 132px;
+  min-width: 112px;
   max-width: 100%;
   margin-left: auto;
   cursor: pointer;
@@ -2532,7 +2532,7 @@ body.blood-moon-mode .lunar-orb {
   opacity: 0.92;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .site-header {
     top: 12px;
     padding: 0 12px;
