@@ -1,36 +1,123 @@
 const themeToggleInput = document.querySelector(".theme-toggle__input");
 const savedTheme = localStorage.getItem("dailyTarotTheme");
-const bloodMoonEventStorageKey = "astralVeilBloodMoonActive";
+const bloodMoonEventId = "bloodMoon";
+const bloodMoonEventStorageKey =
+  window.AstralVeilEvents?.getEventStorageKey(bloodMoonEventId) || "astralVeilBloodMoonActive";
+
+try {
+  localStorage.removeItem(bloodMoonEventStorageKey);
+} catch (error) {
+  // Ignore storage access errors; the event helper still starts inactive.
+}
 const navbar = document.querySelector(".navbar");
 const menuToggle = document.querySelector(".navbar__menu-toggle");
 const mobileMenu = document.querySelector(".navbar__mobile-menu");
-const navLinks = document.querySelectorAll(".navbar__link, .navbar__mobile-link");
-const mobileMenuLinks = document.querySelectorAll(".navbar__mobile-link");
+let navLinks = document.querySelectorAll(".navbar__link, .navbar__mobile-link");
+let mobileMenuLinks = document.querySelectorAll(".navbar__mobile-link");
 
-function getStoredBloodMoonEventState() {
-  try {
-    return localStorage.getItem(bloodMoonEventStorageKey);
-  } catch (error) {
-    return "false";
-  }
+function refreshNavCollections() {
+  navLinks = document.querySelectorAll(".navbar__link, .navbar__mobile-link");
+  mobileMenuLinks = document.querySelectorAll(".navbar__mobile-link");
 }
 
-function setStoredBloodMoonEventState(isActive) {
-  try {
-    localStorage.setItem(bloodMoonEventStorageKey, isActive ? "true" : "false");
-  } catch (error) {
+// Event-only navigation lives here so future event archive/lore pages can be added without editing every HTML file.
+function updateBloodMoonNav(isActive) {
+  const desktopLinks = document.querySelector(".navbar__links");
+  const existingDesktopLink = document.querySelector("[data-blood-moon-nav-link]");
+  const existingMobileLink = document.querySelector("[data-blood-moon-mobile-nav-link]");
+  const archiveNavItem = window.AstralVeilEvents
+    ?.getEventConfig(bloodMoonEventId)
+    ?.navItems?.[0] || { label: "Noctis Archive", href: "archive.html" };
+
+  if (!isActive) {
+    existingDesktopLink?.closest("li")?.remove();
+    existingMobileLink?.remove();
+    refreshNavCollections();
     return;
   }
+
+  if (desktopLinks && !existingDesktopLink) {
+    const archiveItem = document.createElement("li");
+
+    archiveItem.innerHTML = `
+      <a class="navbar__link navbar__link--blood-moon" href="${archiveNavItem.href}" data-blood-moon-nav-link>
+        ${archiveNavItem.label}
+      </a>
+    `;
+    desktopLinks.appendChild(archiveItem);
+  }
+
+  if (mobileMenu && !existingMobileLink) {
+    const archiveLink = document.createElement("a");
+
+    archiveLink.className = "navbar__mobile-link navbar__mobile-link--blood-moon";
+    archiveLink.href = archiveNavItem.href;
+    archiveLink.textContent = archiveNavItem.label;
+    archiveLink.dataset.bloodMoonMobileNavLink = "";
+    mobileMenu.appendChild(archiveLink);
+  }
+
+  refreshNavCollections();
+  setActiveNavLink(window.location.href);
+}
+
+function updateBloodMoonControl(isActive) {
+  const existingControl = document.querySelector("[data-end-blood-moon-control]");
+
+  if (!isActive) {
+    existingControl?.remove();
+    return;
+  }
+
+  if (existingControl) {
+    return;
+  }
+
+  const control = document.createElement("div");
+
+  control.className = "blood-moon-event-control";
+  control.dataset.endBloodMoonControl = "";
+  control.innerHTML = `
+    <button class="blood-moon-event-control__button" type="button" data-end-blood-moon>
+      Seal the Veil
+    </button>
+    <span class="blood-moon-event-control__hint">End the Blood Moon event and return to the ordinary veil.</span>
+  `;
+
+  document.body.appendChild(control);
+}
+
+function notifyBloodMoonStateChange(isActive) {
+  if (window.AstralVeilEvents) {
+    window.AstralVeilEvents.notifyEventStateChange(bloodMoonEventId, isActive);
+    return;
+  }
+
+  window.dispatchEvent(
+    new CustomEvent("astralVeilBloodMoonChange", {
+      detail: { isActive }
+    })
+  );
 }
 
 function isBloodMoonActive() {
-  return getStoredBloodMoonEventState() === "true";
+  if (window.AstralVeilEvents) {
+    return window.AstralVeilEvents.isEventActive(bloodMoonEventId);
+  }
+
+  try {
+    return localStorage.getItem(bloodMoonEventStorageKey) === "true";
+  } catch (error) {
+    return false;
+  }
 }
 
 function applyBloodMoonState() {
   const isActive = isBloodMoonActive();
 
   document.body.classList.toggle("blood-moon-mode", isActive);
+  updateBloodMoonNav(isActive);
+  updateBloodMoonControl(isActive);
 
   if (themeToggleInput) {
     themeToggleInput.disabled = isActive;
@@ -50,21 +137,44 @@ function applyBloodMoonState() {
 
 // Blood Moon is an event state, not a theme. It persists across pages until New Reading clears it.
 function activateBloodMoonEvent() {
-  setStoredBloodMoonEventState(true);
+  if (window.AstralVeilEvents) {
+    window.AstralVeilEvents.setStoredEventState(bloodMoonEventId, true);
+  } else {
+    try {
+      localStorage.setItem(bloodMoonEventStorageKey, "true");
+    } catch (error) {
+      return;
+    }
+  }
+
   applyBloodMoonState();
+  notifyBloodMoonStateChange(true);
 }
 
 function deactivateBloodMoonEvent() {
-  setStoredBloodMoonEventState(false);
-  document.body.classList.remove("blood-moon-mode");
+  if (window.AstralVeilEvents) {
+    window.AstralVeilEvents.clearStoredEventState(bloodMoonEventId);
+  } else {
+    try {
+      localStorage.removeItem(bloodMoonEventStorageKey);
+    } catch (error) {
+      return;
+    }
+  }
+
+  applyBloodMoonState();
   setTheme(localStorage.getItem("dailyTarotTheme") === "moon" ? "moon" : "sun");
+  notifyBloodMoonStateChange(false);
 }
 
 window.AstralVeilBloodMoon = {
   activateBloodMoonEvent,
   deactivateBloodMoonEvent,
   isBloodMoonActive,
-  applyBloodMoonState
+  isEventActive: (eventId) => window.AstralVeilEvents?.isEventActive(eventId) || false,
+  applyBloodMoonState,
+  updateBloodMoonNav,
+  getActiveDeck: () => window.AstralVeilEvents?.getActiveDeck() || []
 };
 
 function getNormalizedNavPath(url) {
@@ -91,6 +201,7 @@ function setActiveNavLink(activeHref) {
 }
 
 if (navLinks.length) {
+  updateBloodMoonNav(isBloodMoonActive());
   setActiveNavLink(window.location.href);
 
   navLinks.forEach((link) => {
@@ -146,6 +257,19 @@ if (themeToggleInput) {
   applyBloodMoonState();
 }
 
+document.addEventListener("click", (event) => {
+  if (event.target.closest("[data-end-blood-moon]")) {
+    deactivateBloodMoonEvent();
+  }
+});
+
+window.addEventListener("storage", (event) => {
+  if (event.key === bloodMoonEventStorageKey) {
+    const isActive = applyBloodMoonState();
+    notifyBloodMoonStateChange(isActive);
+  }
+});
+
 function setMobileMenu(isOpen) {
   if (!menuToggle || !mobileMenu) {
     return;
@@ -166,10 +290,10 @@ if (menuToggle && mobileMenu) {
     setMobileMenu(!mobileMenu.classList.contains("is-open"));
   });
 
-  mobileMenuLinks.forEach((link) => {
-    link.addEventListener("click", () => {
+  mobileMenu.addEventListener("click", (event) => {
+    if (event.target.closest(".navbar__mobile-link")) {
       setMobileMenu(false);
-    });
+    }
   });
 
   document.addEventListener("click", (event) => {

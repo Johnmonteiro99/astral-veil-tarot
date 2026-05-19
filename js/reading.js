@@ -3,6 +3,7 @@ const BLOOD_MOON_CARD_BACK_IMAGE = "assets/images/cards/blood-moon/bloodmoon-car
 
 const readerList = document.querySelector("[data-reader-list]");
 const readerSelection = document.querySelector("#reader-selection");
+const readerSelectionConfirmation = document.querySelector("[data-reader-selection-confirmation]");
 const readingStage = document.querySelector("[data-reading-stage]");
 const activeReaderImage = document.querySelector("[data-active-reader-image]");
 const activeReaderName = document.querySelector("[data-active-reader-name]");
@@ -25,9 +26,6 @@ const cardEnergyTypes = [
   "neutral",
 ];
 const readingSectionScrollDelay = 450;
-
-// TEMPORARY TESTING MODE: set to false to restore normal Mystery Reader odds.
-const FORCE_ZEPHYRA_TEST = true;
 
 let selectedReader = null;
 let selectedReaderIndex = -1;
@@ -70,12 +68,14 @@ function applyBloodMoonState() {
 }
 
 function isBloodMoonReadingActive() {
-  return Boolean(selectedReader && selectedReader.isBloodMoon) || isBloodMoonActive();
+  return isBloodMoonActive();
 }
 
 function getActiveDeck() {
-  if (isBloodMoonReadingActive() && typeof bloodMoonDeck !== "undefined") {
-    return bloodMoonDeck.cards;
+  if (window.AstralVeilBloodMoon?.getActiveDeck) {
+    const activeDeck = window.AstralVeilBloodMoon.getActiveDeck();
+
+    return activeDeck.length ? activeDeck : tarotDeck;
   }
 
   return tarotDeck;
@@ -85,18 +85,25 @@ function getActiveCardBackImage() {
   return isBloodMoonReadingActive() ? BLOOD_MOON_CARD_BACK_IMAGE : CARD_BACK_IMAGE;
 }
 
-function getCardMeaning(card) {
-  if (card.bloodMoon && card.bloodMoon.upright) {
-    const orientation = card.orientation === "reversed" ? "reversed" : "upright";
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
-    return card.bloodMoon[orientation];
-  }
+function isBloodMoonCard(card) {
+  return Boolean(card?.isBloodMoonCard || card?.originalCardId);
+}
 
-  return card.meaning;
+function getCardDisplayName(card) {
+  return escapeHtml(card.name);
 }
 
 function prepareReadingCard(card) {
-  if (!card.bloodMoon) {
+  if (!isBloodMoonCard(card)) {
     return card;
   }
 
@@ -107,11 +114,137 @@ function prepareReadingCard(card) {
 }
 
 function getCardOrientationLabel(card) {
-  if (!card.bloodMoon) {
+  if (!isBloodMoonCard(card)) {
     return "";
   }
 
   return card.orientation === "reversed" ? " • Reversed" : " • Upright";
+}
+
+function getActiveSpread() {
+  return typeof getSpreadByCount === "function" ? getSpreadByCount(selectedCardCount) : null;
+}
+
+function getCardPositionLabel(card, index) {
+  const spread = getActiveSpread();
+
+  return spread?.positions?.[card.position - 1] || spread?.positions?.[index] || `Card ${card.position}`;
+}
+
+function renderKeywordBadges(keywords) {
+  if (!Array.isArray(keywords) || !keywords.length) {
+    return "";
+  }
+
+  return `
+    <ul class="reading-viewer__keywords" aria-label="Card keywords">
+      ${keywords.map((keyword) => `<li>${escapeHtml(keyword)}</li>`).join("")}
+    </ul>
+  `;
+}
+
+function renderOriginalCardMeaning(card) {
+  return `
+    ${renderKeywordBadges(card.keywords)}
+    <p class="reading-viewer__meaning reading-viewer__meaning--short">${escapeHtml(card.shortMeaning)}</p>
+    <p class="reading-viewer__summary">${escapeHtml(card.summary)}</p>
+    <div class="reading-viewer__insight-grid">
+      <section>
+        <h4>Upright</h4>
+        <p>${escapeHtml(card.uprightMeaning)}</p>
+      </section>
+      <section>
+        <h4>Shadow</h4>
+        <p>${escapeHtml(card.shadowMeaning)}</p>
+      </section>
+    </div>
+    <p class="reading-viewer__reflection">
+      <span>Reflection</span>
+      ${escapeHtml(card.reflectionQuestion)}
+    </p>
+  `;
+}
+
+function renderBloodMoonCardMeaning(card) {
+  const bloodMoon = card.bloodMoon || {};
+
+  return `
+    ${renderKeywordBadges(card.keywords)}
+    <p class="reading-viewer__meaning reading-viewer__meaning--short">${escapeHtml(bloodMoon.shortMeaning || card.shortMeaning)}</p>
+    <p class="reading-viewer__summary">${escapeHtml(bloodMoon.summary || card.summary)}</p>
+    <div class="reading-viewer__insight-grid reading-viewer__insight-grid--blood-moon">
+      <section>
+        <h4>Shadow Message</h4>
+        <p>${escapeHtml(bloodMoon.shadowMessage || card.shadowMeaning)}</p>
+      </section>
+      ${
+        bloodMoon.veilHint
+          ? `
+            <section>
+              <h4>Veil Hint</h4>
+              <p>${escapeHtml(bloodMoon.veilHint)}</p>
+            </section>
+          `
+          : ""
+      }
+    </div>
+  `;
+}
+
+function renderCardMeaningDetails(card) {
+  return isBloodMoonCard(card)
+    ? renderBloodMoonCardMeaning(card)
+    : renderOriginalCardMeaning(card);
+}
+
+function renderCombinedReading() {
+  if (typeof generateCombinedReading !== "function" || !revealedCards.length) {
+    return "";
+  }
+
+  const combinedReading = generateCombinedReading(revealedCards, {
+    isBloodMoon: isBloodMoonReadingActive(),
+    spread: getActiveSpread()
+  });
+
+  if (!combinedReading) {
+    return "";
+  }
+
+  const extraMessages = Array.isArray(combinedReading.extraMessages)
+    ? combinedReading.extraMessages
+    : [];
+
+  return `
+    <article class="combined-reading${isBloodMoonReadingActive() ? " combined-reading--blood-moon" : ""}">
+      <p class="reading-viewer__eyebrow">${escapeHtml(getActiveSpread()?.combinedLabel || "Combined Message")}</p>
+      <h3>${escapeHtml(combinedReading.title)}</h3>
+      <p>${escapeHtml(combinedReading.summary)}</p>
+      <p class="combined-reading__advice">${escapeHtml(combinedReading.advice)}</p>
+      ${
+        extraMessages.length
+          ? `
+            <div class="combined-reading__extras">
+              ${extraMessages.map((message) => `<p>${escapeHtml(message)}</p>`).join("")}
+            </div>
+          `
+          : ""
+      }
+    </article>
+  `;
+}
+
+function getReaderPresentation(reader) {
+  if (!reader?.isBloodMoon || !isBloodMoonReadingActive()) {
+    return reader;
+  }
+
+  return {
+    ...reader,
+    image: reader.bloodMoonImage || reader.image,
+    energy: reader.bloodMoonProfile?.energy || reader.energy,
+    intro: reader.bloodMoonProfile?.intro || reader.intro
+  };
 }
 
 function renderReaders() {
@@ -121,28 +254,47 @@ function renderReaders() {
 
   const visibleGuidePool = getVisibleGuidePool();
   const mysteryReaderCard = `
-    <button class="reader-card reader-card--mystery" type="button" data-reader-id="mystery">
+    <button class="reader-card reader-card--mystery reader-card--veil" type="button" data-reader-id="mystery" aria-disabled="false">
       <span class="reader-card__mystery-orb" aria-hidden="true">?</span>
-      <span>
+      <span class="reader-card__content">
+        <span class="reader-card__meta">
+          <span class="reader-card__badge">Unknown</span>
+          <span class="reader-card__badge">The Veil</span>
+        </span>
         <span class="reader-card__name">Mystery Reader</span>
-        <span class="reader-card__energy">Let the veil choose from beyond the known path.</span>
+        <span class="reader-card__focus">Let the Veil choose the current hidden beneath your question.</span>
+        <span class="reader-card__selected-label">Guiding this reading</span>
       </span>
     </button>
   `;
 
   readerList.innerHTML =
     visibleGuidePool
-    .map(
-      (reader) => `
-        <button class="reader-card" type="button" data-reader-id="${reader.id}">
-          <img class="reader-card__image" src="${reader.image}" alt="${reader.name}" loading="lazy" decoding="async" />
-          <span>
-            <span class="reader-card__name">${reader.name}</span>
-            <span class="reader-card__energy">${reader.energy}</span>
+    .map((reader) => {
+      const isSelectable = isReaderSelectable(reader);
+      const lockedBadge = reader.requiresBloodMoon
+        ? `<span class="reader-card__badge reader-card__badge--locked">Blood Moon Bound</span>`
+        : "";
+      const focusMarkup = shouldShowReaderFocus(reader)
+        ? `<span class="reader-card__focus">${escapeHtml(getReaderFocus(reader))}</span>`
+        : "";
+
+      return `
+        <button class="reader-card ${getReaderAccentClass(reader)}${isSelectable ? "" : " is-unavailable"}" type="button" data-reader-id="${escapeHtml(reader.id)}" aria-disabled="${isSelectable ? "false" : "true"}">
+          <img class="reader-card__image" src="${escapeHtml(getReaderSelectionImage(reader))}" alt="${escapeHtml(reader.name)}" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+          <span class="reader-card__content">
+            <span class="reader-card__meta">
+              <span class="reader-card__badge">${escapeHtml(reader.sign || reader.zodiac || "Zodiac")}</span>
+              <span class="reader-card__badge">${escapeHtml(reader.element || "Veil")}</span>
+              ${lockedBadge}
+            </span>
+            <span class="reader-card__name">${escapeHtml(reader.name)}</span>
+            ${focusMarkup}
+            <span class="reader-card__selected-label">Guiding this reading</span>
           </span>
         </button>
-      `
-    )
+      `;
+    })
       .join("") + mysteryReaderCard;
 }
 
@@ -150,26 +302,32 @@ applyBloodMoonState();
 
 function selectReader(readerId) {
   const visibleGuidePool = getVisibleGuidePool();
+  let nextReader = null;
+  let nextReaderIndex = -1;
 
   if (readerId === "mystery") {
-    selectedReader = chooseMysteryReader();
-    selectedReaderIndex = -1;
+    nextReader = chooseMysteryReader();
   } else {
-    selectedReaderIndex = visibleGuidePool.findIndex((reader) => reader.id === readerId);
-    selectedReader = visibleGuidePool[selectedReaderIndex];
+    nextReaderIndex = visibleGuidePool.findIndex((reader) => reader.id === readerId);
+    nextReader = visibleGuidePool[nextReaderIndex];
   }
 
-  if (!selectedReader) {
+  if (!nextReader) {
     return;
   }
+
+  if (readerId !== "mystery" && !isReaderSelectable(nextReader)) {
+    showUnavailableReaderMessage(nextReader);
+    return;
+  }
+
+  selectedReader = nextReader;
+  selectedReaderIndex = readerId === "mystery" ? -1 : nextReaderIndex;
 
   window.clearTimeout(bloodMoonTimeout);
 
   if (selectedReader.isBloodMoon) {
-    bloodMoonTimeout = window.setTimeout(() => {
-      activateBloodMoonEvent();
-      console.log("Blood Moon mode activated");
-    }, 520);
+    activateBloodMoonEvent();
   }
 
   updateActiveReader();
@@ -187,54 +345,139 @@ function selectReader(readerId) {
   readingStage.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+function getSelectableGuidePool() {
+  return getVisibleGuidePool().filter(isReaderSelectable);
+}
+
 function getVisibleGuidePool() {
-  return tarotReaders.filter((reader) => !reader.isMysteryOnly);
+  const publicReaders = tarotReaders.filter((reader) => !reader.isMysteryOnly);
+  const scorpioReader = typeof mysteryReaders === "undefined"
+    ? null
+    : mysteryReaders.find((reader) => reader.id === "zephyra-noctis");
+
+  const zodiacOrder = [
+    "Aries",
+    "Taurus",
+    "Gemini",
+    "Cancer",
+    "Leo",
+    "Virgo",
+    "Libra",
+    "Scorpio",
+    "Sagittarius",
+    "Capricorn",
+    "Aquarius",
+    "Pisces",
+  ];
+  const guidePool = scorpioReader ? [...publicReaders, scorpioReader] : publicReaders;
+
+  return guidePool.sort(
+    (firstReader, secondReader) =>
+      zodiacOrder.indexOf(firstReader.sign || firstReader.zodiac) -
+      zodiacOrder.indexOf(secondReader.sign || secondReader.zodiac)
+  );
+}
+
+function getReaderAccentClass(reader) {
+  if (reader?.isBloodMoon || reader?.accentClass === "bloodmoon") {
+    return "reader-card--bloodmoon";
+  }
+
+  return "reader-card--event";
+}
+
+function isReaderSelectable(reader) {
+  return !reader?.requiresBloodMoon || isBloodMoonActive();
+}
+
+function getReaderSelectionImage(reader) {
+  if (reader?.id === "zephyra-noctis") {
+    return reader.phase2Image || reader.bloodMoonImage || reader.phase1Image || reader.image || "";
+  }
+
+  return reader?.phase1Image || reader?.image || "";
+}
+
+function getReaderFocus(reader) {
+  return reader?.focus || reader?.readingStyle || reader?.energy || "";
+}
+
+function shouldShowReaderFocus(reader) {
+  return !reader?.requiresBloodMoon;
+}
+
+function updateReaderSelectionConfirmation(readerId) {
+  if (!readerSelectionConfirmation || !selectedReader) {
+    return;
+  }
+
+  readerSelectionConfirmation.textContent = readerId === "mystery"
+    ? "The Veil will choose your guide when the reading begins."
+    : `${selectedReader.name} will guide this reading through ${selectedReader.element || "the Veil"}.`;
+}
+
+function showUnavailableReaderMessage(reader) {
+  const message = getUnavailableReaderMessage(reader);
+
+  if (readerSelectionConfirmation) {
+    readerSelectionConfirmation.textContent = message;
+  }
+
+  if (readingStatus) {
+    readingStatus.textContent = message;
+  }
+}
+
+function getUnavailableReaderMessage(reader) {
+  const zephyraMessages = [
+    "She lingers where dust guards forgotten names and silent pages keep their watch. When the moon remembers its crimson face, her voice may return to the circle.",
+    "The scorpion is absent from the circle. She studies where candlelight clings to sealed pages. When the sky bruises red, the Veil may loosen her path.",
+    "Not all readers answer beneath an ordinary moon. One remains among sleeping ink and unwoken shelves. Call again when the heavens turn crimson.",
+    "Her place is kept, but not for this hour. She waits where old words breathe beneath candle smoke. Only the Blood Moon knows the way back.",
+  ];
+
+  if (reader?.id === "zephyra-noctis") {
+    return zephyraMessages[Math.floor(Math.random() * zephyraMessages.length)];
+  }
+
+  return `${reader.name} is not available beneath this moon.`;
 }
 
 function chooseMysteryReader() {
   const allReaders = typeof mysteryReaders === "undefined"
     ? tarotReaders
     : [...tarotReaders, ...mysteryReaders];
-  const mysteryPool = allReaders.map((reader) => ({
-    ...reader,
-    chance: reader.chance || 0,
-  }));
 
-  // TEMPORARY TESTING MODE: bypass weighted odds for Blood Moon QA.
-  if (FORCE_ZEPHYRA_TEST) {
-    return mysteryPool.find((reader) => reader.id === "zephyra-noctis");
+  if (!allReaders.length) {
+    return null;
   }
 
-  const totalWeight = mysteryPool.reduce((sum, reader) => sum + reader.chance, 0);
-  let roll = Math.random() * totalWeight;
-
-  for (const reader of mysteryPool) {
-    roll -= reader.chance;
-
-    if (roll <= 0) {
-      return reader;
-    }
-  }
-
-  return mysteryPool[mysteryPool.length - 1];
+  return allReaders[Math.floor(Math.random() * allReaders.length)];
 }
 
 function updateActiveReader() {
+  const readerPresentation = getReaderPresentation(selectedReader);
+
   document.querySelectorAll(".reader-card").forEach((card) => {
-    const isMysterySelection = selectedReader.isMystery && card.dataset.readerId === "mystery";
+    const isMysterySelection =
+      selectedReader.isMystery && selectedReaderIndex === -1 && card.dataset.readerId === "mystery";
+    const isDirectReaderSelection =
+      selectedReaderIndex !== -1 && card.dataset.readerId === selectedReader.id;
     card.classList.toggle(
       "is-active",
-      card.dataset.readerId === selectedReader.id || isMysterySelection
+      isDirectReaderSelection || isMysterySelection
     );
   });
 
-  activeReaderImage.src = selectedReader.image;
-  activeReaderImage.alt = selectedReader.name;
-  activeReaderName.textContent = selectedReader.name;
-  activeReaderEnergy.textContent = selectedReader.energy;
+  updateReaderSelectionConfirmation(selectedReaderIndex === -1 ? "mystery" : selectedReader.id);
+
+  activeReaderImage.src = readerPresentation.image;
+  activeReaderImage.alt = readerPresentation.name;
+  activeReaderName.textContent = readerPresentation.name;
+  activeReaderEnergy.textContent = readerPresentation.energy;
   readerIntroduction.innerHTML = `
     <p class="reading-section__eyebrow">Before we begin</p>
-    <p>${selectedReader.intro}</p>
+    <p>${readerPresentation.intro}</p>
   `;
 }
 
@@ -244,7 +487,13 @@ function moveReader(direction) {
   }
 
   const visibleGuidePool = getVisibleGuidePool();
+  const selectableGuidePool = getSelectableGuidePool();
+  const currentSelectableIndex = selectableGuidePool.findIndex((reader) => reader.id === selectedReader.id);
   const slideClass = direction === "next" ? "is-sliding-right" : "is-sliding-left";
+
+  if (!selectableGuidePool.length || currentSelectableIndex === -1) {
+    return;
+  }
 
   readerPortraitFrame.classList.add(slideClass);
 
@@ -252,8 +501,9 @@ function moveReader(direction) {
     const offset = direction === "next" ? 1 : -1;
 
     selectedReaderIndex =
-      (selectedReaderIndex + offset + visibleGuidePool.length) % visibleGuidePool.length;
-    selectedReader = visibleGuidePool[selectedReaderIndex];
+      (currentSelectableIndex + offset + selectableGuidePool.length) % selectableGuidePool.length;
+    selectedReader = selectableGuidePool[selectedReaderIndex];
+    selectedReaderIndex = visibleGuidePool.findIndex((reader) => reader.id === selectedReader.id);
     window.clearTimeout(bloodMoonTimeout);
 
     updateActiveReader();
@@ -321,15 +571,16 @@ function renderReadingCards(cards) {
   cardList.innerHTML = cards
     .map((card, index) => {
       const energy = cardEnergyTypes.includes(card.energy) ? card.energy : "neutral";
+      const cardName = getCardDisplayName(card);
 
       return `
-        <button class="tarot-card energy-${energy} fade-slide-in" type="button" data-card-index="${index}" aria-label="Reveal ${card.name}">
+        <button class="tarot-card energy-${energy} fade-slide-in" type="button" data-card-index="${index}" aria-label="Reveal ${cardName}">
           <span class="tarot-card__inner">
             <span class="tarot-card__face tarot-card__back">
               <img src="${cardBackImage}" alt="" loading="lazy" decoding="async" />
             </span>
             <span class="tarot-card__face tarot-card__front">
-              <img src="${card.image}" alt="${card.name}" loading="lazy" decoding="async" onerror="this.src='${cardBackImage}'" />
+              <img src="${escapeHtml(card.image)}" alt="${cardName}" loading="lazy" decoding="async" onerror="this.src='${cardBackImage}'" />
             </span>
           </span>
         </button>
@@ -377,19 +628,21 @@ function renderReadingResults() {
     revealedCards.length === currentReadingCards.length
       ? "Your full spread has been revealed."
       : `${revealedCards.length} of ${currentReadingCards.length} cards revealed.`;
+  const activePositionLabel = getCardPositionLabel(activeCard, activeRevealedCardIndex);
+  const cardName = getCardDisplayName(activeCard);
 
   readingStatus.textContent = progressText;
   readingResultsSection.classList.remove("hidden");
   readingReveals.innerHTML = `
     <article class="reading-viewer energy-${activeEnergy}" aria-live="polite">
       <div class="reading-viewer__image-frame">
-        <img class="reading-viewer__image" src="${activeCard.image}" alt="${activeCard.name}" onerror="this.src='${getActiveCardBackImage()}'" />
+        <img class="reading-viewer__image" src="${escapeHtml(activeCard.image)}" alt="${cardName}" onerror="this.src='${getActiveCardBackImage()}'" />
       </div>
 
       <div class="reading-viewer__content">
-        <p class="reading-viewer__eyebrow">Card ${activeCard.position} of ${currentReadingCards.length}${getCardOrientationLabel(activeCard)}</p>
-        <h3>${activeCard.name}</h3>
-        <p class="reading-viewer__meaning">${getCardMeaning(activeCard)}</p>
+        <p class="reading-viewer__eyebrow">${escapeHtml(activePositionLabel)} • Card ${activeCard.position} of ${currentReadingCards.length}${getCardOrientationLabel(activeCard)}</p>
+        <h3>${cardName}</h3>
+        ${renderCardMeaningDetails(activeCard)}
 
         ${
           showViewerControls
@@ -420,6 +673,7 @@ function renderReadingResults() {
         }
       </div>
     </article>
+    ${renderCombinedReading()}
   `;
 }
 
@@ -500,6 +754,9 @@ function resetToGuideSelection() {
   activeReaderName.textContent = "";
   activeReaderEnergy.textContent = "";
   readerIntroduction.innerHTML = "";
+  if (readerSelectionConfirmation) {
+    readerSelectionConfirmation.textContent = "";
+  }
   readingStage.classList.add("hidden");
   readerSelection.classList.remove("is-minimized");
 
@@ -511,6 +768,14 @@ function resetToGuideSelection() {
 }
 
 renderReaders();
+
+window.addEventListener("astralVeilBloodMoonChange", () => {
+  renderReaders();
+
+  if (selectedReader) {
+    updateActiveReader();
+  }
+});
 
 if (readerList) {
   readerList.addEventListener("click", (event) => {

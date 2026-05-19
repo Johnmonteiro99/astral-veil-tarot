@@ -49,7 +49,6 @@
           <li><a class="navbar__link" href="index.html">Readings</a></li>
           <li><a class="navbar__link" href="readers.html">Veilwalkers</a></li>
           <li><a class="navbar__link" href="deck.html">Deck</a></li>
-          <li><a class="navbar__link" href="about.html">About</a></li>
         </ul>
 
         <label class="theme-toggle" aria-label="Switch between sun and moon mode">
@@ -100,7 +99,6 @@
           <a class="navbar__mobile-link" href="index.html">Readings</a>
           <a class="navbar__mobile-link" href="readers.html">Veilwalkers</a>
           <a class="navbar__mobile-link" href="deck.html">Deck</a>
-          <a class="navbar__mobile-link" href="about.html">About</a>
         </div>
       </nav>
     </header>
@@ -140,11 +138,13 @@
 
         <section id="reader-selection" class="reader-selection reader-panel">
           <div class="section-heading">
-            <h2>Your Astral Guide</h2>
-            <p>Pick the energy you want to sit with for this reading.</p>
+            <h2>Choose Your Veilwalker</h2>
+            <p>Each Veilwalker reads through a different zodiac current. Choose the energy closest to your question, or let the Veil decide.</p>
           </div>
 
+          <p class="reader-selection__prompt">Select the zodiac current you want to guide this reading.</p>
           <div class="reader-grid" data-reader-list></div>
+          <p class="reader-selection__confirmation" data-reader-selection-confirmation aria-live="polite"></p>
         </section>
 
         <section id="reading-stage" class="reading-stage hidden" data-reading-stage>
@@ -237,7 +237,12 @@
     </footer>
 
     <script src="data/readers.js"></script>
+    <script src="data/events.js"></script>
     <script src="data/cards.js"></script>
+    <script src="data/cardCombinations.js"></script>
+    <script src="data/spreads.js"></script>
+    <script src="data/decks.js"></script>
+    <script src="js/events.js"></script>
     <script src="js/app.js"></script>
     <script src="js/reading.js"></script>
   </body>

@@ -8,3 +8,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Dependencies and generated builds
+node_modules/
+dist/
+build/

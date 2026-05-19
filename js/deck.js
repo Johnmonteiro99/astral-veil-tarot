@@ -8,52 +8,31 @@ const lightboxCardName = document.querySelector("[data-lightbox-card-name]");
 const lightboxCardMeaning = document.querySelector("[data-lightbox-card-meaning]");
 const closeDeckLightboxButtons = document.querySelectorAll("[data-close-deck-lightbox]");
 
-// Add future premium or event deck collections here.
-const deckCollections = [
-  {
-    id: "original",
-    title: "Original Deck",
-    subtitle: "The first Astral Veil Major Arcana collection.",
-    status: "Available",
-    actionLabel: "View Deck",
-    eyebrow: "Major Arcana",
-    viewTitle: "The Astral Deck",
-    viewDescription:
-      "Browse the cards used in Astral Veil readings. Each meaning is intentionally brief for now, ready to grow as the deck expands.",
-    coverImage: "assets/images/cards/original/card-back.jpg",
-    cards: () => tarotDeck
-  },
-  {
-    id: "bloodMoon",
-    title: "Blood Moon Deck",
-    subtitle: "Revealed only beneath a crimson eclipse.",
-    lockedStatus: "Locked",
-    unlockedStatus: "Event Unlocked",
-    lockedActionLabel: "Locked",
-    actionLabel: "View Deck",
-    lockedMessage: "This deck sleeps beneath the Blood Moon.",
-    eyebrow: "Blood Moon Arcana",
-    viewTitle: "Blood Moon Deck",
-    viewDescription: "A crimson Major Arcana collection revealed only while the Blood Moon event is active.",
-    coverImage: "assets/images/cards/blood-moon/bloodmoon-card-back.png",
-    eventActive: isBloodMoonEventActive,
-    cards: () => bloodMoonDeck.cards
-  }
-];
-
 let activeCollectionId = "original";
 let deckMessageTimeout = null;
 
-function isBloodMoonEventActive() {
-  if (window.AstralVeilBloodMoon) {
-    return window.AstralVeilBloodMoon.isBloodMoonActive();
+function isDeckEventActive(eventId) {
+  if (!eventId) {
+    return false;
   }
 
-  return document.body.classList.contains("blood-moon-mode");
+  return Boolean(window.AstralVeilEvents?.isEventActive(eventId));
 }
 
 function isCollectionLocked(collection) {
-  return typeof collection.eventActive === "function" && !collection.eventActive();
+  if (!collection) {
+    return true;
+  }
+
+  if (collection.accessType === "event") {
+    return !isDeckEventActive(collection.requiredEvent);
+  }
+
+  if (collection.accessType === "premium" || collection.accessType === "purchased") {
+    return !collection.isPurchased;
+  }
+
+  return collection.accessType === "comingSoon";
 }
 
 function updateDeckHero({ eyebrow, title, description }) {
@@ -79,6 +58,10 @@ function getCollectionCards(collection) {
 }
 
 function getCollectionById(collectionId) {
+  if (typeof deckCollections === "undefined") {
+    return null;
+  }
+
   return deckCollections.find((item) => item.id === collectionId);
 }
 
@@ -111,7 +94,7 @@ function showDeckMessage(message) {
 }
 
 function renderDeckCollection() {
-  if (!deckView) {
+  if (!deckView || typeof deckCollections === "undefined") {
     return;
   }
 
@@ -152,7 +135,7 @@ function renderDeckCollection() {
 }
 
 function renderDeckGallery(collectionId) {
-  if (!deckView || typeof tarotDeck === "undefined") {
+  if (!deckView || typeof tarotDeck === "undefined" || typeof deckCollections === "undefined") {
     return;
   }
 
@@ -197,6 +180,10 @@ function renderDeckGallery(collectionId) {
 }
 
 function openDeckLightbox(cardId) {
+  if (typeof deckCollections === "undefined") {
+    return;
+  }
+
   const activeCollection = getCollectionById(activeCollectionId) || deckCollections[0];
   const card = getCollectionCards(activeCollection).find((item) => item.id === cardId);
 
@@ -264,4 +251,15 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeDeckLightbox();
   }
+});
+
+window.addEventListener("astralVeilBloodMoonChange", (event) => {
+  if (event.detail.isActive) {
+    renderDeckCollection();
+    return;
+  }
+
+  closeDeckLightbox();
+  activeCollectionId = "original";
+  renderDeckCollection();
 });

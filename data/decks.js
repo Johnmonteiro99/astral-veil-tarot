@@ -1,0 +1,43 @@
+// Deck collection metadata. Add future free, event, premium, purchased, or comingSoon decks here.
+// A future shop/admin layer can hydrate price, isPurchased, and unlockCondition without changing deck rendering.
+const deckCollections = [
+  {
+    id: "original",
+    title: "Original Deck",
+    name: "Original Deck",
+    subtitle: "The first Astral Veil Major Arcana collection.",
+    accessType: "free",
+    status: "Available",
+    actionLabel: "View Deck",
+    eyebrow: "Major Arcana",
+    viewTitle: "The Astral Deck",
+    viewDescription:
+      "Browse the Major Arcana used in Astral Veil readings, now expanded with reflective meanings, shadows, and questions.",
+    coverImage: "assets/images/cards/original/card-back.jpg",
+    imagePath: "assets/images/cards/original/",
+    cards: () => tarotDeck
+  },
+  {
+    id: "bloodMoon",
+    title: "Blood Moon Deck",
+    name: "Blood Moon Deck",
+    subtitle: "Revealed only beneath a crimson eclipse.",
+    accessType: "event",
+    requiredEvent: "bloodMoon",
+    status: "locked",
+    lockedStatus: "Locked",
+    unlockedStatus: "Event Unlocked",
+    lockedActionLabel: "Locked",
+    actionLabel: "View Deck",
+    lockedMessage: "This deck sleeps beneath the Blood Moon.",
+    eyebrow: "Blood Moon Arcana",
+    viewTitle: "Blood Moon Deck",
+    viewDescription: "A crimson Major Arcana collection revealed only while the Blood Moon event is active.",
+    coverImage: "assets/images/cards/blood-moon/bloodmoon-card-back.png",
+    imagePath: "assets/images/cards/blood-moon/",
+    unlockCondition: "Blood Moon event active",
+    price: null,
+    isPurchased: false,
+    cards: () => bloodMoonDeck.cards
+  }
+];
