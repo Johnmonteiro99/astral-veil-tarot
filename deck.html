@@ -39,6 +39,7 @@
           <li><a class="navbar__link" href="index.html">Readings</a></li>
           <li><a class="navbar__link" href="readers.html">Veilwalkers</a></li>
           <li><a class="navbar__link" href="deck.html">Deck</a></li>
+          <li><a class="navbar__link" href="about.html">About</a></li>
         </ul>
 
         <label class="theme-toggle" aria-label="Switch between sun and moon mode">
@@ -79,6 +80,7 @@
           <a class="navbar__mobile-link" href="index.html">Readings</a>
           <a class="navbar__mobile-link" href="readers.html">Veilwalkers</a>
           <a class="navbar__mobile-link" href="deck.html">Deck</a>
+          <a class="navbar__mobile-link" href="about.html">About</a>
         </div>
       </nav>
     </header>
@@ -152,7 +154,7 @@
         <button class="deck-lightbox__close" type="button" data-close-deck-lightbox aria-label="Close card image">
           &times;
         </button>
-        <img class="deck-lightbox__image" alt="" data-lightbox-card-image />
+        <img class="deck-lightbox__image" alt="" data-lightbox-card-image data-expandable-image role="button" tabindex="0" aria-label="Expand card image" />
         <div class="deck-lightbox__content">
           <h2 id="deck-lightbox-title" data-lightbox-card-name></h2>
           <p data-lightbox-card-meaning></p>

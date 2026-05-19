@@ -223,6 +223,10 @@ function renderOpenReader(reader) {
   };
   lightboxImage.src = activeImage;
   lightboxImage.alt = presentation.name;
+  lightboxImage.dataset.imagePreviewTitle = presentation.name;
+  lightboxImage.dataset.imagePreviewCaption = activeForm
+    ? `${activeForm.label}: ${activeForm.title}`
+    : title || "";
   readerLightbox.querySelector(".reader-lightbox__dialog").className =
     `reader-lightbox__dialog${detailAccentClass}`;
   readerLightbox.querySelector(".reader-lightbox__content").innerHTML = `

@@ -49,6 +49,7 @@
           <li><a class="navbar__link" href="index.html">Readings</a></li>
           <li><a class="navbar__link" href="readers.html">Veilwalkers</a></li>
           <li><a class="navbar__link" href="deck.html">Deck</a></li>
+          <li><a class="navbar__link" href="about.html">About</a></li>
         </ul>
 
         <label class="theme-toggle" aria-label="Switch between sun and moon mode">
@@ -99,6 +100,7 @@
           <a class="navbar__mobile-link" href="index.html">Readings</a>
           <a class="navbar__mobile-link" href="readers.html">Veilwalkers</a>
           <a class="navbar__mobile-link" href="deck.html">Deck</a>
+          <a class="navbar__mobile-link" href="about.html">About</a>
         </div>
       </nav>
     </header>
@@ -137,19 +139,19 @@
         </div>
 
         <section id="reader-selection" class="reader-selection reader-panel">
-          <div class="section-heading">
+          <div class="section-heading section-heading--reader-selection">
             <h2>Choose Your Veilwalker</h2>
             <p>Each Veilwalker reads through a different zodiac current. Choose the energy closest to your question, or let the Veil decide.</p>
+            <p class="reader-selection__prompt">Select the zodiac current you want to guide this reading.</p>
           </div>
 
-          <p class="reader-selection__prompt">Select the zodiac current you want to guide this reading.</p>
           <div class="reader-grid" data-reader-list></div>
           <p class="reader-selection__confirmation" data-reader-selection-confirmation aria-live="polite"></p>
         </section>
 
         <section id="reading-stage" class="reading-stage hidden" data-reading-stage>
           <div class="reader-portrait-frame">
-            <img id="active-reader-image" class="reader-portrait" alt="" data-active-reader-image />
+            <img id="active-reader-image" class="reader-portrait" alt="" data-active-reader-image data-expandable-image role="button" tabindex="0" aria-label="Expand reader image" />
           </div>
           <div class="reader-portrait-caption">
             <p class="reading-section__eyebrow">Your Astral Guide</p>

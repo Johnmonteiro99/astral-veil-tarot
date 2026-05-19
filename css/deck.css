@@ -2,17 +2,46 @@
   width: 100%;
 }
 
-.deck-collection {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 520px));
-  justify-content: center;
+.deck-collection-shell {
   width: min(100%, 1200px);
-  gap: clamp(18px, 3vw, 28px);
   margin: 0 auto;
+  overflow: hidden;
+}
+
+.deck-collection {
+  display: flex;
+  gap: clamp(18px, 3vw, 28px);
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 2px 18px;
+  scroll-padding-inline: 2px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.deck-collection::-webkit-scrollbar {
+  height: 9px;
+}
+
+.deck-collection::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(14, 7, 28, 0.68);
+}
+
+.deck-collection::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(14, 7, 28, 0.68);
+  border-radius: 999px;
+  background: rgba(168, 85, 247, 0.48);
+}
+
+.deck-collection::-webkit-scrollbar-thumb:hover {
+  background: rgba(196, 154, 255, 0.66);
 }
 
 .deck-collection-card {
   position: relative;
+  flex: 0 0 min(520px, calc((100% - clamp(18px, 3vw, 28px)) / 2));
   display: grid;
   grid-template-columns: minmax(150px, 0.82fr) minmax(0, 1fr);
   gap: clamp(18px, 3vw, 28px);
@@ -35,6 +64,7 @@
   backdrop-filter: blur(18px) saturate(145%);
   -webkit-backdrop-filter: blur(18px) saturate(145%);
   cursor: pointer;
+  scroll-snap-align: start;
   transition:
     border-color 250ms ease,
     box-shadow 250ms ease,
@@ -395,6 +425,10 @@ body.is-lightbox-open {
 }
 
 @media (max-width: 1100px) {
+  .deck-collection-card {
+    flex-basis: min(520px, 72vw);
+  }
+
   .deck-gallery {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -402,9 +436,9 @@ body.is-lightbox-open {
 
 @media (max-width: 760px) {
   .deck-collection-card {
+    flex-basis: 86%;
     grid-template-columns: 1fr;
-    max-width: 380px;
-    margin: 0 auto;
+    min-width: min(86%, 380px);
   }
 
   .deck-collection-card__preview {
@@ -431,6 +465,15 @@ body.is-lightbox-open {
 }
 
 @media (max-width: 460px) {
+  .deck-collection {
+    padding-bottom: 16px;
+  }
+
+  .deck-collection-card {
+    flex-basis: 88%;
+    min-width: 88%;
+  }
+
   .deck-gallery {
     grid-template-columns: 1fr;
   }

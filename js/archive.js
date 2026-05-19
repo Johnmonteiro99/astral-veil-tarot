@@ -220,6 +220,8 @@ function openVisualRecord(recordId) {
 
   visualRecordModalImage.src = record.image;
   visualRecordModalImage.alt = record.title;
+  visualRecordModalImage.dataset.imagePreviewTitle = record.title;
+  visualRecordModalImage.dataset.imagePreviewCaption = record.caption || "";
   visualRecordModalStatus.textContent = record.status || "Recovered";
   visualRecordModalTitle.textContent = record.title;
   visualRecordModalCaption.textContent = record.caption || "";
@@ -240,6 +242,8 @@ function closeVisualRecord() {
   if (visualRecordModalImage) {
     visualRecordModalImage.removeAttribute("src");
     visualRecordModalImage.alt = "";
+    delete visualRecordModalImage.dataset.imagePreviewTitle;
+    delete visualRecordModalImage.dataset.imagePreviewCaption;
   }
 }
 

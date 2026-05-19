@@ -26,6 +26,7 @@ const cardEnergyTypes = [
   "neutral",
 ];
 const readingSectionScrollDelay = 450;
+const FORCE_MYSTERY_SCORPIO_TEST = false;
 
 let selectedReader = null;
 let selectedReaderIndex = -1;
@@ -262,7 +263,6 @@ function renderReaders() {
           <span class="reader-card__badge">The Veil</span>
         </span>
         <span class="reader-card__name">Mystery Reader</span>
-        <span class="reader-card__focus">Let the Veil choose the current hidden beneath your question.</span>
         <span class="reader-card__selected-label">Guiding this reading</span>
       </span>
     </button>
@@ -275,8 +275,8 @@ function renderReaders() {
       const lockedBadge = reader.requiresBloodMoon
         ? `<span class="reader-card__badge reader-card__badge--locked">Blood Moon Bound</span>`
         : "";
-      const focusMarkup = shouldShowReaderFocus(reader)
-        ? `<span class="reader-card__focus">${escapeHtml(getReaderFocus(reader))}</span>`
+      const lockedMessage = !isSelectable && reader.requiresBloodMoon
+        ? `<span class="reader-card__locked-message" data-reader-lock-message="${escapeHtml(reader.id)}" aria-live="polite"></span>`
         : "";
 
       return `
@@ -289,8 +289,8 @@ function renderReaders() {
               ${lockedBadge}
             </span>
             <span class="reader-card__name">${escapeHtml(reader.name)}</span>
-            ${focusMarkup}
             <span class="reader-card__selected-label">Guiding this reading</span>
+            ${lockedMessage}
           </span>
         </button>
       `;
@@ -402,25 +402,45 @@ function getReaderFocus(reader) {
   return reader?.focus || reader?.readingStyle || reader?.energy || "";
 }
 
-function shouldShowReaderFocus(reader) {
-  return !reader?.requiresBloodMoon;
-}
-
 function updateReaderSelectionConfirmation(readerId) {
   if (!readerSelectionConfirmation || !selectedReader) {
     return;
   }
 
-  readerSelectionConfirmation.textContent = readerId === "mystery"
-    ? "The Veil will choose your guide when the reading begins."
-    : `${selectedReader.name} will guide this reading through ${selectedReader.element || "the Veil"}.`;
+  readerSelectionConfirmation.innerHTML = readerId === "mystery"
+    ? `
+        <span class="reader-selection__confirmation-title">Mystery Reader</span>
+        <span>Let the Veil choose the current hidden beneath your question.</span>
+      `
+    : `
+        <span class="reader-selection__confirmation-title">${escapeHtml(selectedReader.name)}</span>
+        <span>${escapeHtml(selectedReader.sign || selectedReader.zodiac || "Unknown")} • ${escapeHtml(selectedReader.element || "The Veil")}</span>
+        <span>${escapeHtml(getReaderFocus(selectedReader))}</span>
+      `;
 }
 
 function showUnavailableReaderMessage(reader) {
   const message = getUnavailableReaderMessage(reader);
+  const selectedReaderInfo = readerSelectionConfirmation?.innerHTML || "";
+  const lockMessage = document.querySelector(`[data-reader-lock-message="${reader.id}"]`);
+
+  document.querySelectorAll("[data-reader-lock-message]").forEach((element) => {
+    if (element !== lockMessage) {
+      element.textContent = "";
+    }
+  });
+
+  document.querySelectorAll(".reader-card.is-lock-pulsing").forEach((card) => {
+    card.classList.remove("is-lock-pulsing");
+  });
+
+  if (lockMessage) {
+    lockMessage.textContent = message;
+    lockMessage.closest(".reader-card")?.classList.add("is-lock-pulsing");
+  }
 
   if (readerSelectionConfirmation) {
-    readerSelectionConfirmation.textContent = message;
+    readerSelectionConfirmation.innerHTML = selectedReader ? selectedReaderInfo : "";
   }
 
   if (readingStatus) {
@@ -452,6 +472,14 @@ function chooseMysteryReader() {
     return null;
   }
 
+  if (FORCE_MYSTERY_SCORPIO_TEST) {
+    const scorpioReader = allReaders.find((reader) => reader.id === "zephyra-noctis");
+
+    if (scorpioReader) {
+      return scorpioReader;
+    }
+  }
+
   return allReaders[Math.floor(Math.random() * allReaders.length)];
 }
 
@@ -473,6 +501,8 @@ function updateActiveReader() {
 
   activeReaderImage.src = readerPresentation.image;
   activeReaderImage.alt = readerPresentation.name;
+  activeReaderImage.dataset.imagePreviewTitle = readerPresentation.name;
+  activeReaderImage.dataset.imagePreviewCaption = readerPresentation.energy || "";
   activeReaderName.textContent = readerPresentation.name;
   activeReaderEnergy.textContent = readerPresentation.energy;
   readerIntroduction.innerHTML = `
@@ -636,7 +666,18 @@ function renderReadingResults() {
   readingReveals.innerHTML = `
     <article class="reading-viewer energy-${activeEnergy}" aria-live="polite">
       <div class="reading-viewer__image-frame">
-        <img class="reading-viewer__image" src="${escapeHtml(activeCard.image)}" alt="${cardName}" onerror="this.src='${getActiveCardBackImage()}'" />
+        <img
+          class="reading-viewer__image"
+          src="${escapeHtml(activeCard.image)}"
+          alt="${escapeHtml(cardName)}"
+          data-expandable-image
+          data-image-preview-title="${escapeHtml(cardName)}"
+          data-image-preview-caption="${escapeHtml(activePositionLabel)}"
+          role="button"
+          tabindex="0"
+          aria-label="Expand ${escapeHtml(cardName)} image"
+          onerror="this.src='${getActiveCardBackImage()}'"
+        />
       </div>
 
       <div class="reading-viewer__content">
@@ -751,17 +792,23 @@ function resetToGuideSelection() {
   selectedReaderIndex = -1;
   activeReaderImage.src = "";
   activeReaderImage.alt = "";
+  delete activeReaderImage.dataset.imagePreviewTitle;
+  delete activeReaderImage.dataset.imagePreviewCaption;
   activeReaderName.textContent = "";
   activeReaderEnergy.textContent = "";
   readerIntroduction.innerHTML = "";
   if (readerSelectionConfirmation) {
-    readerSelectionConfirmation.textContent = "";
+    readerSelectionConfirmation.innerHTML = "";
   }
   readingStage.classList.add("hidden");
   readerSelection.classList.remove("is-minimized");
 
   document.querySelectorAll(".reader-card").forEach((card) => {
     card.classList.remove("is-active");
+  });
+
+  document.querySelectorAll("[data-reader-lock-message]").forEach((element) => {
+    element.textContent = "";
   });
 
   readerSelection.scrollIntoView({ behavior: "smooth", block: "start" });

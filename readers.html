@@ -45,6 +45,7 @@
           <li><a class="navbar__link" href="index.html">Readings</a></li>
           <li><a class="navbar__link" href="readers.html">Veilwalkers</a></li>
           <li><a class="navbar__link" href="deck.html">Deck</a></li>
+          <li><a class="navbar__link" href="about.html">About</a></li>
         </ul>
 
         <label class="theme-toggle" aria-label="Switch between sun and moon mode">
@@ -88,6 +89,7 @@
           <a class="navbar__mobile-link" href="index.html">Readings</a>
           <a class="navbar__mobile-link" href="readers.html">Veilwalkers</a>
           <a class="navbar__mobile-link" href="deck.html">Deck</a>
+          <a class="navbar__mobile-link" href="about.html">About</a>
         </div>
       </nav>
     </header>
@@ -164,7 +166,7 @@
         <button class="reader-lightbox__close" type="button" data-close-lightbox aria-label="Close reader image">
           &times;
         </button>
-        <img class="reader-lightbox__image" alt="" data-lightbox-image />
+        <img class="reader-lightbox__image" alt="" data-lightbox-image data-expandable-image role="button" tabindex="0" aria-label="Expand reader image" />
         <div class="reader-lightbox__content">
           <h2 id="reader-lightbox-title" data-lightbox-name></h2>
           <p data-lightbox-energy></p>

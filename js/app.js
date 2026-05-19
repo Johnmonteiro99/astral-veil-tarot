@@ -14,11 +14,104 @@ const menuToggle = document.querySelector(".navbar__menu-toggle");
 const mobileMenu = document.querySelector(".navbar__mobile-menu");
 let navLinks = document.querySelectorAll(".navbar__link, .navbar__mobile-link");
 let mobileMenuLinks = document.querySelectorAll(".navbar__mobile-link");
+let expandedImagePreview = null;
+let expandedImagePreviewImage = null;
+let expandedImagePreviewTitle = null;
+let expandedImagePreviewCaption = null;
 
 function refreshNavCollections() {
   navLinks = document.querySelectorAll(".navbar__link, .navbar__mobile-link");
   mobileMenuLinks = document.querySelectorAll(".navbar__mobile-link");
 }
+
+function createExpandedImagePreview() {
+  if (expandedImagePreview) {
+    return expandedImagePreview;
+  }
+
+  expandedImagePreview = document.createElement("div");
+  expandedImagePreview.className = "image-preview";
+  expandedImagePreview.setAttribute("aria-hidden", "true");
+  expandedImagePreview.innerHTML = `
+    <button class="image-preview__backdrop" type="button" data-close-image-preview aria-label="Close expanded image"></button>
+    <figure class="image-preview__dialog" role="dialog" aria-modal="true" aria-labelledby="image-preview-title">
+      <button class="image-preview__close" type="button" data-close-image-preview aria-label="Close expanded image">
+        &times;
+      </button>
+      <img class="image-preview__image" alt="" data-image-preview-image />
+      <figcaption class="image-preview__caption">
+        <strong id="image-preview-title" data-image-preview-title></strong>
+        <span data-image-preview-caption></span>
+      </figcaption>
+    </figure>
+  `;
+
+  document.body.appendChild(expandedImagePreview);
+  expandedImagePreviewImage = expandedImagePreview.querySelector("[data-image-preview-image]");
+  expandedImagePreviewTitle = expandedImagePreview.querySelector("[data-image-preview-title]");
+  expandedImagePreviewCaption = expandedImagePreview.querySelector("[data-image-preview-caption]");
+
+  expandedImagePreview.addEventListener("click", (event) => {
+    if (event.target.closest("[data-close-image-preview]")) {
+      closeExpandedImagePreview();
+    }
+  });
+
+  return expandedImagePreview;
+}
+
+function getExpandableImageData(trigger) {
+  const image = trigger.matches("img") ? trigger : trigger.querySelector("img");
+
+  const rawSource = image?.getAttribute("src") || "";
+
+  if (!image || image.hidden || (!rawSource && !image.currentSrc)) {
+    return null;
+  }
+
+  return {
+    src: image.currentSrc || rawSource,
+    alt: image.alt || trigger.dataset.imagePreviewTitle || "Expanded image",
+    title: trigger.dataset.imagePreviewTitle || image.dataset.imagePreviewTitle || image.alt || "Expanded image",
+    caption: trigger.dataset.imagePreviewCaption || image.dataset.imagePreviewCaption || ""
+  };
+}
+
+function openExpandedImagePreview(imageData) {
+  if (!imageData?.src) {
+    return;
+  }
+
+  createExpandedImagePreview();
+  expandedImagePreviewImage.src = imageData.src;
+  expandedImagePreviewImage.alt = imageData.alt;
+  expandedImagePreviewTitle.textContent = imageData.title;
+  expandedImagePreviewCaption.textContent = imageData.caption;
+  expandedImagePreviewCaption.hidden = !imageData.caption;
+  expandedImagePreview.classList.add("is-open");
+  expandedImagePreview.setAttribute("aria-hidden", "false");
+  document.body.classList.add("is-image-preview-open");
+}
+
+function closeExpandedImagePreview() {
+  if (!expandedImagePreview) {
+    return;
+  }
+
+  expandedImagePreview.classList.remove("is-open");
+  expandedImagePreview.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("is-image-preview-open");
+
+  if (expandedImagePreviewImage) {
+    expandedImagePreviewImage.removeAttribute("src");
+    expandedImagePreviewImage.alt = "";
+  }
+}
+
+window.AstralVeilImagePreview = {
+  open: openExpandedImagePreview,
+  close: closeExpandedImagePreview
+};
 
 // Event-only navigation lives here so future event archive/lore pages can be added without editing every HTML file.
 function updateBloodMoonNav(isActive) {
@@ -262,6 +355,51 @@ document.addEventListener("click", (event) => {
     deactivateBloodMoonEvent();
   }
 });
+
+document.addEventListener("click", (event) => {
+  const previewTrigger = event.target.closest("[data-expandable-image]");
+
+  if (!previewTrigger) {
+    return;
+  }
+
+  const imageData = getExpandableImageData(previewTrigger);
+
+  if (!imageData) {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+  openExpandedImagePreview(imageData);
+});
+
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (event.key === "Escape" && expandedImagePreview?.classList.contains("is-open")) {
+      closeExpandedImagePreview();
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
+
+    if (
+      (event.key === "Enter" || event.key === " ") &&
+      event.target instanceof Element &&
+      event.target.matches("[data-expandable-image]")
+    ) {
+      const imageData = getExpandableImageData(event.target);
+
+      if (imageData) {
+        openExpandedImagePreview(imageData);
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }
+  },
+  true
+);
 
 window.addEventListener("storage", (event) => {
   if (event.key === bloodMoonEventStorageKey) {

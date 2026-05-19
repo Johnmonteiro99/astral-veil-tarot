@@ -105,30 +105,32 @@ function renderDeckCollection() {
   });
 
   deckView.innerHTML = `
-    <div class="deck-collection" aria-label="Available tarot decks">
-      ${deckCollections
-        .map(
-          (collection) => `
-            <article class="deck-collection-card${isCollectionLocked(collection) ? " is-locked" : ""}" data-view-deck="${collection.id}" aria-disabled="${isCollectionLocked(collection)}">
-              <div class="deck-collection-card__preview" aria-hidden="true">
-                <img src="${collection.coverImage}" alt="" loading="lazy" decoding="async" />
-              </div>
-              <div class="deck-collection-card__content">
-                <div class="deck-collection-card__header">
-                  <span class="deck-collection-card__badge">${getCollectionStatus(collection)}</span>
-                  <h2>${collection.title}</h2>
-                  <p>${collection.subtitle}</p>
+    <div class="deck-collection-shell">
+      <div class="deck-collection" aria-label="Available tarot decks">
+        ${deckCollections
+          .map(
+            (collection) => `
+              <article class="deck-collection-card${isCollectionLocked(collection) ? " is-locked" : ""}" data-view-deck="${collection.id}" aria-disabled="${isCollectionLocked(collection)}">
+                <div class="deck-collection-card__preview" aria-hidden="true">
+                  <img src="${collection.coverImage}" alt="" loading="lazy" decoding="async" />
                 </div>
-                <div class="deck-collection-card__actions">
-                  <button class="deck-collection-card__action" type="button" data-view-deck="${collection.id}">
-                    ${getCollectionActionLabel(collection)}
-                  </button>
+                <div class="deck-collection-card__content">
+                  <div class="deck-collection-card__header">
+                    <span class="deck-collection-card__badge">${getCollectionStatus(collection)}</span>
+                    <h2>${collection.title}</h2>
+                    <p>${collection.subtitle}</p>
+                  </div>
+                  <div class="deck-collection-card__actions">
+                    <button class="deck-collection-card__action" type="button" data-view-deck="${collection.id}">
+                      ${getCollectionActionLabel(collection)}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </article>
-          `
-        )
-        .join("")}
+              </article>
+            `
+          )
+          .join("")}
+      </div>
     </div>
     <p class="deck-collection-message" data-deck-message aria-live="polite"></p>
   `;
@@ -193,6 +195,8 @@ function openDeckLightbox(cardId) {
 
   lightboxCardImage.src = card.image;
   lightboxCardImage.alt = card.name;
+  lightboxCardImage.dataset.imagePreviewTitle = card.name;
+  lightboxCardImage.dataset.imagePreviewCaption = card.meaning;
   lightboxCardName.textContent = card.name;
   lightboxCardMeaning.textContent = card.meaning;
   deckLightbox.classList.add("is-open");
