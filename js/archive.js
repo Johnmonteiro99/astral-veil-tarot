@@ -175,7 +175,6 @@ function renderVisualRecords() {
             <figcaption>
               <span>${escapeHtml(record.status || "Recovered")}</span>
               <strong>${escapeHtml(record.title)}</strong>
-              <em>${escapeHtml(record.caption || "")}</em>
             </figcaption>
           </figure>
         `;
@@ -187,7 +186,6 @@ function renderVisualRecords() {
           <figcaption>
             <span>${escapeHtml(record.status || "Pending")}</span>
             <strong>${escapeHtml(record.title)}</strong>
-            <em>${escapeHtml(record.caption || "Image pending recovery.")}</em>
           </figcaption>
         </figure>
       `;
@@ -401,6 +399,25 @@ function renderArchiveAccessState() {
   }
 }
 
+function returnToReaderSelection() {
+  window.location.replace("index.html#reader-selection");
+}
+
+function handleArchiveBloodMoonChange(event) {
+  const isBloodMoonActive = typeof event.detail?.isActive === "boolean"
+    ? event.detail.isActive
+    : isArchiveUnlocked();
+
+  renderArchiveAccessState();
+
+  if (!isBloodMoonActive) {
+    returnToReaderSelection();
+    return;
+  }
+
+  requestActiveArchiveUpdate();
+}
+
 // Future archive entries, concept art, comic panels, and hidden lore can hook into this access gate.
 renderArchiveSections();
 renderArchiveAccessState();
@@ -416,8 +433,7 @@ document.querySelectorAll("[data-archive-tab]").forEach((tab) => {
   });
 });
 
-window.addEventListener("astralVeilBloodMoonChange", renderArchiveAccessState);
-window.addEventListener("astralVeilBloodMoonChange", requestActiveArchiveUpdate);
+window.addEventListener("astralVeilBloodMoonChange", handleArchiveBloodMoonChange);
 window.addEventListener("scroll", requestActiveArchiveUpdate, { passive: true });
 window.addEventListener("resize", requestActiveArchiveUpdate);
 

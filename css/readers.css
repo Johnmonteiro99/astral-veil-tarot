@@ -9,10 +9,14 @@
   --reader-accent-glow: var(--navbar-glow);
   --reader-accent-hover-glow: var(--navbar-glow);
   --reader-accent-inner-glow: rgba(255, 255, 255, 0.04);
-  --reader-accent-wash: rgba(255, 255, 255, 0.1);
+  --reader-accent-wash: rgba(255, 255, 255, 0.06);
   --reader-badge-color: var(--navbar-hover-text);
   --reader-badge-bg: rgba(231, 195, 106, 0.07);
   --reader-badge-border: rgba(231, 195, 106, 0.18);
+  --reader-card-bg:
+    radial-gradient(circle at 50% 15%, var(--reader-accent-wash), transparent 40%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 48%),
+    var(--navbar-bg);
   --reader-panel-bg:
     linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 58%),
     rgba(255, 255, 255, 0.018);
@@ -24,10 +28,7 @@
   border: 1px solid var(--reader-accent-border);
   border-radius: 22px;
   color: var(--navbar-text);
-  background:
-    radial-gradient(circle at 50% 15%, var(--reader-accent-wash), transparent 40%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 48%),
-    var(--navbar-bg);
+  background: var(--reader-card-bg);
   cursor: pointer;
   padding: 0;
   text-align: left;
@@ -43,6 +44,36 @@
     transform 250ms ease;
 }
 
+body.sun-mode .reader-profile-card:not(.reader-profile-card--blood):not(.reader-profile-card--blood-fragment) {
+  --reader-card-bg:
+    radial-gradient(circle at 50% 15%, var(--reader-accent-wash), transparent 38%),
+    linear-gradient(135deg, rgba(255, 247, 223, 0.11), transparent 50%),
+    rgba(45, 27, 12, 0.46);
+  --reader-panel-bg:
+    linear-gradient(135deg, rgba(255, 247, 223, 0.12), transparent 54%),
+    rgba(45, 27, 12, 0.5);
+}
+
+body.moon-mode .reader-profile-card:not(.reader-profile-card--blood):not(.reader-profile-card--blood-fragment) {
+  --reader-card-bg:
+    radial-gradient(circle at 50% 15%, var(--reader-accent-wash), transparent 38%),
+    linear-gradient(135deg, rgba(244, 236, 255, 0.08), transparent 50%),
+    rgba(25, 16, 51, 0.5);
+  --reader-panel-bg:
+    linear-gradient(135deg, rgba(244, 236, 255, 0.08), transparent 54%),
+    rgba(25, 16, 51, 0.58);
+}
+
+body.blood-moon-mode .reader-profile-card:not(.reader-profile-card--blood):not(.reader-profile-card--blood-fragment) {
+  --reader-card-bg:
+    radial-gradient(circle at 50% 15%, var(--reader-accent-wash), transparent 38%),
+    linear-gradient(135deg, rgba(255, 240, 241, 0.06), transparent 50%),
+    rgba(32, 3, 7, 0.62);
+  --reader-panel-bg:
+    linear-gradient(135deg, rgba(255, 240, 241, 0.055), transparent 54%),
+    rgba(32, 3, 7, 0.68);
+}
+
 .reader-profile-card:hover {
   border-color: color-mix(in srgb, var(--reader-accent-border) 76%, rgba(255, 255, 255, 0.22));
   box-shadow:
@@ -53,59 +84,47 @@
 }
 
 .reader-profile-card--fire {
-  --reader-accent-border: rgba(255, 150, 60, 0.45);
-  --reader-accent-glow: rgba(255, 95, 45, 0.22);
-  --reader-accent-hover-glow: rgba(255, 116, 52, 0.32);
-  --reader-accent-inner-glow: rgba(255, 180, 70, 0.08);
-  --reader-accent-wash: rgba(180, 48, 34, 0.12);
+  --reader-accent-border: rgba(255, 150, 60, 0.32);
+  --reader-accent-glow: rgba(255, 95, 45, 0.12);
+  --reader-accent-hover-glow: rgba(255, 116, 52, 0.24);
+  --reader-accent-inner-glow: rgba(255, 180, 70, 0.045);
+  --reader-accent-wash: rgba(180, 48, 34, 0.07);
   --reader-badge-color: #ffd8a6;
-  --reader-badge-bg: rgba(175, 72, 35, 0.12);
-  --reader-badge-border: rgba(255, 171, 83, 0.24);
-  --reader-panel-bg:
-    radial-gradient(circle at 14% 0%, rgba(128, 35, 28, 0.22), transparent 42%),
-    linear-gradient(135deg, rgba(150, 60, 34, 0.14), rgba(80, 28, 20, 0.06));
+  --reader-badge-bg: rgba(175, 72, 35, 0.09);
+  --reader-badge-border: rgba(255, 171, 83, 0.2);
 }
 
 .reader-profile-card--earth {
-  --reader-accent-border: rgba(150, 120, 65, 0.5);
-  --reader-accent-glow: rgba(88, 130, 75, 0.2);
-  --reader-accent-hover-glow: rgba(108, 150, 82, 0.3);
-  --reader-accent-inner-glow: rgba(190, 150, 80, 0.08);
-  --reader-accent-wash: rgba(78, 114, 68, 0.12);
+  --reader-accent-border: rgba(150, 120, 65, 0.34);
+  --reader-accent-glow: rgba(88, 130, 75, 0.12);
+  --reader-accent-hover-glow: rgba(108, 150, 82, 0.22);
+  --reader-accent-inner-glow: rgba(190, 150, 80, 0.045);
+  --reader-accent-wash: rgba(78, 114, 68, 0.07);
   --reader-badge-color: #d9c78b;
-  --reader-badge-bg: rgba(95, 112, 62, 0.12);
-  --reader-badge-border: rgba(184, 152, 84, 0.25);
-  --reader-panel-bg:
-    radial-gradient(circle at 14% 0%, rgba(64, 110, 72, 0.2), transparent 42%),
-    linear-gradient(135deg, rgba(95, 86, 48, 0.14), rgba(42, 70, 52, 0.06));
+  --reader-badge-bg: rgba(95, 112, 62, 0.09);
+  --reader-badge-border: rgba(184, 152, 84, 0.2);
 }
 
 .reader-profile-card--air {
-  --reader-accent-border: rgba(180, 155, 255, 0.45);
-  --reader-accent-glow: rgba(150, 130, 255, 0.2);
-  --reader-accent-hover-glow: rgba(174, 155, 255, 0.3);
-  --reader-accent-inner-glow: rgba(220, 230, 255, 0.08);
-  --reader-accent-wash: rgba(150, 130, 255, 0.12);
+  --reader-accent-border: rgba(180, 155, 255, 0.32);
+  --reader-accent-glow: rgba(150, 130, 255, 0.12);
+  --reader-accent-hover-glow: rgba(174, 155, 255, 0.22);
+  --reader-accent-inner-glow: rgba(220, 230, 255, 0.045);
+  --reader-accent-wash: rgba(150, 130, 255, 0.07);
   --reader-badge-color: #e6e5ff;
-  --reader-badge-bg: rgba(150, 130, 255, 0.1);
-  --reader-badge-border: rgba(200, 205, 255, 0.24);
-  --reader-panel-bg:
-    radial-gradient(circle at 14% 0%, rgba(142, 124, 220, 0.2), transparent 42%),
-    linear-gradient(135deg, rgba(142, 124, 220, 0.12), rgba(170, 210, 235, 0.05));
+  --reader-badge-bg: rgba(150, 130, 255, 0.085);
+  --reader-badge-border: rgba(200, 205, 255, 0.2);
 }
 
 .reader-profile-card--water {
-  --reader-accent-border: rgba(95, 190, 230, 0.45);
-  --reader-accent-glow: rgba(60, 150, 220, 0.22);
-  --reader-accent-hover-glow: rgba(70, 170, 230, 0.32);
-  --reader-accent-inner-glow: rgba(80, 220, 255, 0.08);
-  --reader-accent-wash: rgba(52, 128, 178, 0.12);
+  --reader-accent-border: rgba(95, 190, 230, 0.32);
+  --reader-accent-glow: rgba(60, 150, 220, 0.12);
+  --reader-accent-hover-glow: rgba(70, 170, 230, 0.24);
+  --reader-accent-inner-glow: rgba(80, 220, 255, 0.045);
+  --reader-accent-wash: rgba(52, 128, 178, 0.07);
   --reader-badge-color: #c9f4ff;
-  --reader-badge-bg: rgba(50, 140, 180, 0.11);
-  --reader-badge-border: rgba(110, 205, 232, 0.24);
-  --reader-panel-bg:
-    radial-gradient(circle at 14% 0%, rgba(42, 128, 168, 0.2), transparent 42%),
-    linear-gradient(135deg, rgba(36, 104, 150, 0.13), rgba(40, 62, 130, 0.06));
+  --reader-badge-bg: rgba(50, 140, 180, 0.085);
+  --reader-badge-border: rgba(110, 205, 232, 0.2);
 }
 
 .reader-profile-card--ivory {
@@ -431,24 +450,48 @@ body.is-lightbox-open {
   top: 12px;
   right: 12px;
   z-index: 2;
+  display: inline-flex;
   width: 42px;
   height: 42px;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--navbar-border);
   border-radius: 50%;
   color: var(--navbar-text);
-  background: rgba(0, 0, 0, 0.44);
+  background:
+    radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--navbar-glow) 32%, transparent), transparent 64%),
+    rgba(0, 0, 0, 0.52);
+  box-shadow:
+    0 0 16px color-mix(in srgb, var(--navbar-glow) 38%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   cursor: pointer;
-  font-size: 1.6rem;
+  font-family: var(--body-font);
+  font-size: 1.15rem;
+  font-weight: 800;
   line-height: 1;
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   transition:
+    border-color 250ms ease,
     box-shadow 250ms ease,
+    color 250ms ease,
     transform 250ms ease;
+}
+
+.reader-lightbox__close span {
+  display: block;
+  line-height: 1;
+  transform: translateY(-0.5px);
 }
 
 .reader-lightbox__close:hover,
 .reader-lightbox__close:focus-visible {
-  box-shadow: 0 0 22px var(--navbar-glow);
-  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--navbar-border) 82%, rgba(255, 255, 255, 0.28));
+  color: var(--navbar-hover-text);
+  box-shadow:
+    0 0 24px color-mix(in srgb, var(--navbar-glow) 82%, transparent),
+    inset 0 0 14px rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px) scale(1.04);
 }
 
 .reader-lightbox__image {
@@ -577,12 +620,13 @@ body.is-lightbox-open {
 }
 
 .reader-detail__form-button {
-  display: inline-grid;
-  gap: 3px;
-  min-height: 42px;
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
   border: 1px solid color-mix(in srgb, var(--reader-detail-border) 70%, transparent);
   border-radius: 999px;
-  padding: 7px 12px;
+  padding: 0 14px;
   color: var(--navbar-muted);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 52%),
@@ -598,10 +642,13 @@ body.is-lightbox-open {
 }
 
 .reader-detail__form-button span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--navbar-text);
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.11em;
   line-height: 1;
   text-transform: uppercase;
 }
@@ -638,11 +685,12 @@ body.is-lightbox-open {
 }
 
 .reader-detail__nav-button {
-  display: inline-grid;
+  display: inline-flex;
   width: 44px;
   height: 44px;
   min-height: 44px;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   border: 1px solid color-mix(in srgb, var(--reader-detail-border) 74%, transparent);
   border-radius: 50%;
   padding: 0;
@@ -651,26 +699,35 @@ body.is-lightbox-open {
     radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--reader-detail-glow) 38%, transparent), transparent 66%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
     rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--reader-detail-glow) 42%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   cursor: pointer;
   font-family: var(--body-font);
-  font-size: 1.35rem;
+  font-size: 2rem;
   font-weight: 900;
   line-height: 1;
   transition:
     border-color 220ms ease,
     box-shadow 220ms ease,
+    color 220ms ease,
     transform 220ms ease;
 }
 
 .reader-detail__nav-button span {
+  display: block;
+  line-height: 0.74;
   transform: translateY(-1px);
 }
 
 .reader-detail__nav-button:hover,
 .reader-detail__nav-button:focus-visible {
   border-color: color-mix(in srgb, var(--reader-detail-border) 84%, rgba(255, 255, 255, 0.24));
-  box-shadow: 0 0 18px color-mix(in srgb, var(--reader-detail-glow) 70%, transparent);
-  transform: translateY(-1px);
+  color: var(--navbar-hover-text);
+  box-shadow:
+    0 0 22px color-mix(in srgb, var(--reader-detail-glow) 76%, transparent),
+    inset 0 0 14px color-mix(in srgb, var(--reader-detail-glow) 18%, transparent);
+  transform: translateY(-1px) scale(1.04);
 }
 
 @media (max-width: 900px) {

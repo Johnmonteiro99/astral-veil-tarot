@@ -36,20 +36,32 @@ function escapeHtml(value) {
 }
 
 function getReaderPresentation(reader) {
-  if (!reader || !reader.isBloodMoon || !isBloodMoonActive()) {
+  if (!reader) {
+    return reader;
+  }
+
+  const bloodMoonActive = isBloodMoonActive();
+  const image = bloodMoonActive && reader.bloodMoonImage
+    ? reader.bloodMoonImage
+    : reader.gridImage || reader.phase1Image || reader.image;
+
+  if (!bloodMoonActive) {
     return {
       ...reader,
-      image: reader.gridImage || reader.phase1Image || reader.image
+      image
     };
   }
 
   return {
     ...reader,
-    image: reader.bloodMoonImage || reader.image,
-    energy: reader.bloodMoonProfile?.energy || reader.energy,
-    readingStyle: reader.bloodMoonProfile?.readingStyle || reader.readingStyle,
-    description: reader.bloodMoonProfile?.description || reader.description,
-    backstory: reader.bloodMoonProfile?.backstory || reader.backstory,
+    image,
+    title: reader.bloodMoonTitle || reader.bloodMoonProfile?.readingStyle || reader.title,
+    tagline: reader.bloodMoonTitle || reader.tagline,
+    energy: reader.bloodMoonTitle || reader.bloodMoonProfile?.energy || reader.energy,
+    readingStyle: reader.bloodMoonTitle || reader.bloodMoonProfile?.readingStyle || reader.readingStyle,
+    description: reader.bloodMoonDescription || reader.bloodMoonProfile?.description || reader.description,
+    lore: reader.bloodMoonDescription || reader.bloodMoonProfile?.backstory || reader.lore,
+    themes: reader.bloodMoonTraits || reader.themes,
     rarityLabel: reader.bloodMoonProfile?.rarityLabel || reader.rarityLabel,
     fragmentLabel: reader.bloodMoonProfile?.fragmentLabel
   };
@@ -111,6 +123,20 @@ function renderReaderThemes(reader) {
 }
 
 function getAvailableReaderForms(reader) {
+  if (isBloodMoonActive() && reader?.bloodMoonImage) {
+    const label = reader.bloodMoonRevelation || "Blood Moon Rising";
+
+    return [
+      {
+        id: "bloodMoonShadow",
+        label,
+        title: label,
+        image: reader.bloodMoonImage,
+        description: ""
+      }
+    ];
+  }
+
   return Array.isArray(reader.forms)
     ? reader.forms.filter((form) => form?.id && form?.image)
     : [];
@@ -126,16 +152,32 @@ function getActiveReaderForm(reader) {
   return forms.find((form) => form.id === activeReaderFormId) || forms[0];
 }
 
+function getReaderImagePreviewCaption(activeForm, fallbackTitle = "") {
+  if (isBloodMoonActive()) {
+    return "Revelations: Blood Moon Rising";
+  }
+
+  if (!activeForm) {
+    return fallbackTitle || "";
+  }
+
+  return activeForm.label === activeForm.title
+    ? activeForm.label
+    : `${activeForm.label}: ${activeForm.title}`;
+}
+
 function renderReaderFormSelector(reader, activeForm) {
   const forms = getAvailableReaderForms(reader);
 
-  if (forms.length <= 1) {
+  if (forms.length <= 1 && !isBloodMoonActive()) {
     return "";
   }
 
+  const sectionTitle = isBloodMoonActive() ? "REVELATION" : "REVELATIONS";
+
   return `
     <section class="reader-detail__section reader-detail__section--forms">
-      <h3>Forms</h3>
+      <h3>${sectionTitle}</h3>
       <div class="reader-detail__forms" aria-label="Available character forms">
         ${forms
           .map((form) => `
@@ -146,7 +188,6 @@ function renderReaderFormSelector(reader, activeForm) {
               aria-pressed="${activeForm?.id === form.id ? "true" : "false"}"
             >
               <span>${escapeHtml(form.label)}</span>
-              <small>${escapeHtml(form.title)}</small>
             </button>
           `)
           .join("")}
@@ -224,9 +265,7 @@ function renderOpenReader(reader) {
   lightboxImage.src = activeImage;
   lightboxImage.alt = presentation.name;
   lightboxImage.dataset.imagePreviewTitle = presentation.name;
-  lightboxImage.dataset.imagePreviewCaption = activeForm
-    ? `${activeForm.label}: ${activeForm.title}`
-    : title || "";
+  lightboxImage.dataset.imagePreviewCaption = getReaderImagePreviewCaption(activeForm, title);
   readerLightbox.querySelector(".reader-lightbox__dialog").className =
     `reader-lightbox__dialog${detailAccentClass}`;
   readerLightbox.querySelector(".reader-lightbox__content").innerHTML = `
@@ -238,26 +277,16 @@ function renderOpenReader(reader) {
       </div>
       <h2 id="reader-lightbox-title" data-lightbox-name>${escapeHtml(presentation.name)}</h2>
       <p class="reader-detail__title" data-lightbox-energy>${escapeHtml(title)}</p>
-      ${
-        activeForm
-          ? `
-            <p class="reader-detail__form-title">
-              <span>${escapeHtml(activeForm.label)}</span>
-              ${escapeHtml(activeForm.title)}
-            </p>
-          `
-          : ""
-      }
       <p class="reader-detail__lore">${escapeHtml(lore)}</p>
       ${activeForm?.description ? `<p class="reader-detail__form-description">${escapeHtml(activeForm.description)}</p>` : ""}
       ${renderReaderFormSelector(reader, activeForm)}
       ${renderReaderThemes(presentation)}
       <div class="reader-detail__nav" aria-label="Browse Veilwalkers">
         <button class="reader-detail__nav-button" type="button" data-reader-lightbox-nav="prev" aria-label="Previous Veilwalker">
-          <span aria-hidden="true">&larr;</span>
+          <span aria-hidden="true">&lsaquo;</span>
         </button>
         <button class="reader-detail__nav-button" type="button" data-reader-lightbox-nav="next" aria-label="Next Veilwalker">
-          <span aria-hidden="true">&rarr;</span>
+          <span aria-hidden="true">&rsaquo;</span>
         </button>
       </div>
     </div>

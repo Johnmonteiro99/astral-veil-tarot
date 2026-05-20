@@ -26,10 +26,18 @@ const cardEnergyTypes = [
   "neutral",
 ];
 const readingSectionScrollDelay = 450;
-const FORCE_MYSTERY_SCORPIO_TEST = false;
+const FORCE_MYSTERY_SCORPIO_TEST = true;
+const ZEPHYRA_LOCKED_MESSAGE =
+  "She lingers where dust guards forgotten names and silent pages keep their watch. When the moon remembers its crimson face, her voice may return to the circle.";
 
 let selectedReader = null;
 let selectedReaderIndex = -1;
+let featuredReaderIndex = 0;
+let readerSelectionPreview = { readerId: null, message: "" };
+let readerSelectionMessageCursor = {};
+let readerCarouselTouchStartX = 0;
+let readerCarouselTouchStartY = 0;
+let lastReaderCarouselWheelAt = 0;
 let selectedCardCount = 0;
 let currentReadingCards = [];
 let revealedCards = [];
@@ -236,13 +244,25 @@ function renderCombinedReading() {
 }
 
 function getReaderPresentation(reader) {
-  if (!reader?.isBloodMoon || !isBloodMoonReadingActive()) {
+  if (!reader) {
     return reader;
+  }
+
+  const bloodMoonActive = isBloodMoonReadingActive();
+  const image = bloodMoonActive && reader.bloodMoonImage
+    ? reader.bloodMoonImage
+    : reader.image;
+
+  if (!reader.isBloodMoon || !bloodMoonActive) {
+    return {
+      ...reader,
+      image
+    };
   }
 
   return {
     ...reader,
-    image: reader.bloodMoonImage || reader.image,
+    image,
     energy: reader.bloodMoonProfile?.energy || reader.energy,
     intro: reader.bloodMoonProfile?.intro || reader.intro
   };
@@ -254,48 +274,32 @@ function renderReaders() {
   }
 
   const visibleGuidePool = getVisibleGuidePool();
-  const mysteryReaderCard = `
-    <button class="reader-card reader-card--mystery reader-card--veil" type="button" data-reader-id="mystery" aria-disabled="false">
-      <span class="reader-card__mystery-orb" aria-hidden="true">?</span>
-      <span class="reader-card__content">
-        <span class="reader-card__meta">
-          <span class="reader-card__badge">Unknown</span>
-          <span class="reader-card__badge">The Veil</span>
-        </span>
-        <span class="reader-card__name">Mystery Reader</span>
-        <span class="reader-card__selected-label">Guiding this reading</span>
-      </span>
-    </button>
+
+  if (!visibleGuidePool.length) {
+    readerList.innerHTML = "";
+    return;
+  }
+
+  featuredReaderIndex = Math.min(featuredReaderIndex, visibleGuidePool.length - 1);
+  readerList.classList.add("reader-carousel");
+  readerList.innerHTML = `
+    <div class="reader-carousel__stage" data-reader-carousel-stage>
+      <button class="reader-carousel__nav reader-carousel__nav--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker">
+        <span aria-hidden="true">&larr;</span>
+      </button>
+      <div class="reader-carousel__featured" data-featured-reader></div>
+      <button class="reader-carousel__nav reader-carousel__nav--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker">
+        <span aria-hidden="true">&rarr;</span>
+      </button>
+    </div>
+    <div class="reader-carousel__mystery">
+      <button class="reader-mystery-option reader-card--veil${selectedReader?.isMystery && selectedReaderIndex === -1 ? " is-active" : ""}" type="button" data-reader-id="mystery">
+        <span class="reader-mystery-option__title">Let Fate Choose</span>
+      </button>
+    </div>
   `;
 
-  readerList.innerHTML =
-    visibleGuidePool
-    .map((reader) => {
-      const isSelectable = isReaderSelectable(reader);
-      const lockedBadge = reader.requiresBloodMoon
-        ? `<span class="reader-card__badge reader-card__badge--locked">Blood Moon Bound</span>`
-        : "";
-      const lockedMessage = !isSelectable && reader.requiresBloodMoon
-        ? `<span class="reader-card__locked-message" data-reader-lock-message="${escapeHtml(reader.id)}" aria-live="polite"></span>`
-        : "";
-
-      return `
-        <button class="reader-card ${getReaderAccentClass(reader)}${isSelectable ? "" : " is-unavailable"}" type="button" data-reader-id="${escapeHtml(reader.id)}" aria-disabled="${isSelectable ? "false" : "true"}">
-          <img class="reader-card__image" src="${escapeHtml(getReaderSelectionImage(reader))}" alt="${escapeHtml(reader.name)}" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
-          <span class="reader-card__content">
-            <span class="reader-card__meta">
-              <span class="reader-card__badge">${escapeHtml(reader.sign || reader.zodiac || "Zodiac")}</span>
-              <span class="reader-card__badge">${escapeHtml(reader.element || "Veil")}</span>
-              ${lockedBadge}
-            </span>
-            <span class="reader-card__name">${escapeHtml(reader.name)}</span>
-            <span class="reader-card__selected-label">Guiding this reading</span>
-            ${lockedMessage}
-          </span>
-        </button>
-      `;
-    })
-      .join("") + mysteryReaderCard;
+  renderFeaturedReader();
 }
 
 applyBloodMoonState();
@@ -323,7 +327,11 @@ function selectReader(readerId) {
 
   selectedReader = nextReader;
   selectedReaderIndex = readerId === "mystery" ? -1 : nextReaderIndex;
+  if (selectedReaderIndex !== -1) {
+    featuredReaderIndex = selectedReaderIndex;
+  }
 
+  clearReaderSelectionPreview();
   window.clearTimeout(bloodMoonTimeout);
 
   if (selectedReader.isBloodMoon) {
@@ -332,7 +340,7 @@ function selectReader(readerId) {
 
   updateActiveReader();
   readingStatus.textContent = readerId === "mystery"
-    ? selectedReader.revealMessage || "The veil stirs... a guide answers from beyond the known path."
+    ? selectedReader.revealMessage || "Fate stirs... a reader answers from beyond the known path."
     : "Choose a spread to shuffle your cards.";
   cardList.innerHTML = "";
   readingReveals.innerHTML = "";
@@ -391,8 +399,8 @@ function isReaderSelectable(reader) {
 }
 
 function getReaderSelectionImage(reader) {
-  if (reader?.id === "zephyra-noctis") {
-    return reader.phase2Image || reader.bloodMoonImage || reader.phase1Image || reader.image || "";
+  if (isBloodMoonActive() && reader?.bloodMoonImage) {
+    return reader.bloodMoonImage;
   }
 
   return reader?.phase1Image || reader?.image || "";
@@ -402,6 +410,125 @@ function getReaderFocus(reader) {
   return reader?.focus || reader?.readingStyle || reader?.energy || "";
 }
 
+function clearReaderSelectionPreview() {
+  readerSelectionPreview = { readerId: null, message: "" };
+}
+
+function getReaderSelectionMessages(reader) {
+  if (!reader) {
+    return [];
+  }
+
+  const messages = isBloodMoonActive()
+    ? reader.bloodMoonSelectionMessages
+    : reader.normalSelectionMessages;
+
+  if (Array.isArray(messages) && messages.length) {
+    return messages;
+  }
+
+  return [getReaderFocus(reader)].filter(Boolean);
+}
+
+function getNextReaderSelectionMessage(reader) {
+  const messages = getReaderSelectionMessages(reader);
+
+  if (!messages.length) {
+    return "";
+  }
+
+  const modeKey = isBloodMoonActive() ? "bloodMoon" : "normal";
+  const cursorKey = `${modeKey}:${reader.id}`;
+  const nextIndex = ((readerSelectionMessageCursor[cursorKey] ?? -1) + 1) % messages.length;
+
+  readerSelectionMessageCursor[cursorKey] = nextIndex;
+
+  return messages[nextIndex];
+}
+
+function revealFeaturedReaderMessage() {
+  const visibleGuidePool = getVisibleGuidePool();
+  const featuredReader = visibleGuidePool[featuredReaderIndex];
+  const message = getNextReaderSelectionMessage(featuredReader);
+
+  readerSelectionPreview = {
+    readerId: featuredReader?.id || null,
+    message
+  };
+
+  renderFeaturedReader();
+}
+
+function renderFeaturedReader() {
+  if (!readerList) {
+    return;
+  }
+
+  const visibleGuidePool = getVisibleGuidePool();
+  const featuredReader = visibleGuidePool[featuredReaderIndex];
+  const previousReader = visibleGuidePool[(featuredReaderIndex - 1 + visibleGuidePool.length) % visibleGuidePool.length];
+  const nextReader = visibleGuidePool[(featuredReaderIndex + 1) % visibleGuidePool.length];
+  const featuredReaderPanel = readerList.querySelector("[data-featured-reader]");
+
+  if (!featuredReader || !featuredReaderPanel) {
+    return;
+  }
+
+  const isSelectable = isReaderSelectable(featuredReader);
+  const isLocked = !isSelectable && featuredReader.requiresBloodMoon;
+  const isSelected = selectedReader?.id === featuredReader.id && selectedReaderIndex !== -1;
+  const accentClass = getReaderAccentClass(featuredReader);
+  const previewMessage = readerSelectionPreview.readerId === featuredReader.id
+    ? readerSelectionPreview.message
+    : "";
+  const chooseButtonText = isLocked
+    ? "Blood Moon Bound"
+    : isSelected
+      ? "Reading Begins"
+      : "Begin Your Reading";
+
+  featuredReaderPanel.className = `reader-carousel__featured ${accentClass}${isLocked ? " is-unavailable" : ""}${isSelected ? " is-active" : ""}`;
+  featuredReaderPanel.innerHTML = `
+    <article class="reader-image-carousel" aria-live="polite">
+      <button class="reader-image-carousel__preview reader-image-carousel__preview--prev" type="button" data-reader-carousel-preview="prev" aria-label="Preview previous Veilwalker">
+        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+      </button>
+      <button class="reader-image-carousel__center" type="button" data-reader-carousel-message aria-label="Reveal a message from this Veilwalker">
+        <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+      </button>
+      <button class="reader-image-carousel__preview reader-image-carousel__preview--next" type="button" data-reader-carousel-preview="next" aria-label="Preview next Veilwalker">
+        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+      </button>
+      <div class="reader-image-carousel__actions">
+        ${previewMessage ? `<p class="reader-preview-note" data-reader-selection-message>${escapeHtml(previewMessage)}</p>` : ""}
+        <button class="reader-feature-card__choose primary-action" type="button" data-reader-id="${escapeHtml(featuredReader.id)}" ${isSelectable ? "" : "disabled aria-disabled=\"true\""}>
+          ${chooseButtonText}
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+function moveFeaturedReader(direction, { revealMessage = false } = {}) {
+  const visibleGuidePool = getVisibleGuidePool();
+
+  if (!visibleGuidePool.length) {
+    return;
+  }
+
+  const offset = direction === "next" ? 1 : -1;
+
+  featuredReaderIndex = (featuredReaderIndex + offset + visibleGuidePool.length) % visibleGuidePool.length;
+  clearReaderSelectionPreview();
+
+  if (revealMessage) {
+    revealFeaturedReaderMessage();
+    return;
+  }
+
+  renderFeaturedReader();
+}
+
 function updateReaderSelectionConfirmation(readerId) {
   if (!readerSelectionConfirmation || !selectedReader) {
     return;
@@ -409,13 +536,14 @@ function updateReaderSelectionConfirmation(readerId) {
 
   readerSelectionConfirmation.innerHTML = readerId === "mystery"
     ? `
-        <span class="reader-selection__confirmation-title">Mystery Reader</span>
-        <span>Let the Veil choose the current hidden beneath your question.</span>
+        <span class="reader-selection__confirmation-title">Fate chose ${escapeHtml(selectedReader.name)}</span>
+        <span>${escapeHtml(selectedReader.sign || selectedReader.zodiac || "Unknown")} • ${escapeHtml(selectedReader.element || "The Veil")}</span>
+        <span>${escapeHtml(selectedReader.name)} will read this spread through ${escapeHtml(selectedReader.element || "the Veil")}.</span>
       `
     : `
         <span class="reader-selection__confirmation-title">${escapeHtml(selectedReader.name)}</span>
         <span>${escapeHtml(selectedReader.sign || selectedReader.zodiac || "Unknown")} • ${escapeHtml(selectedReader.element || "The Veil")}</span>
-        <span>${escapeHtml(getReaderFocus(selectedReader))}</span>
+        <span>${escapeHtml(selectedReader.name)} will read this spread through ${escapeHtml(selectedReader.element || "the Veil")}.</span>
       `;
 }
 
@@ -436,7 +564,7 @@ function showUnavailableReaderMessage(reader) {
 
   if (lockMessage) {
     lockMessage.textContent = message;
-    lockMessage.closest(".reader-card")?.classList.add("is-lock-pulsing");
+    lockMessage.closest(".reader-card, .reader-carousel__featured")?.classList.add("is-lock-pulsing");
   }
 
   if (readerSelectionConfirmation) {
@@ -449,42 +577,35 @@ function showUnavailableReaderMessage(reader) {
 }
 
 function getUnavailableReaderMessage(reader) {
-  const zephyraMessages = [
-    "She lingers where dust guards forgotten names and silent pages keep their watch. When the moon remembers its crimson face, her voice may return to the circle.",
-    "The scorpion is absent from the circle. She studies where candlelight clings to sealed pages. When the sky bruises red, the Veil may loosen her path.",
-    "Not all readers answer beneath an ordinary moon. One remains among sleeping ink and unwoken shelves. Call again when the heavens turn crimson.",
-    "Her place is kept, but not for this hour. She waits where old words breathe beneath candle smoke. Only the Blood Moon knows the way back.",
-  ];
-
   if (reader?.id === "zephyra-noctis") {
-    return zephyraMessages[Math.floor(Math.random() * zephyraMessages.length)];
+    return ZEPHYRA_LOCKED_MESSAGE;
   }
 
   return `${reader.name} is not available beneath this moon.`;
 }
 
 function chooseMysteryReader() {
-  const allReaders = typeof mysteryReaders === "undefined"
-    ? tarotReaders
-    : [...tarotReaders, ...mysteryReaders];
-
-  if (!allReaders.length) {
-    return null;
-  }
-
   if (FORCE_MYSTERY_SCORPIO_TEST) {
-    const scorpioReader = allReaders.find((reader) => reader.id === "zephyra-noctis");
+    const scorpioReader = getVisibleGuidePool().find((reader) => reader.id === "zephyra-noctis");
 
     if (scorpioReader) {
       return scorpioReader;
     }
   }
 
-  return allReaders[Math.floor(Math.random() * allReaders.length)];
+  const selectableReaders = getSelectableGuidePool();
+
+  return selectableReaders[Math.floor(Math.random() * selectableReaders.length)] || null;
 }
 
 function updateActiveReader() {
   const readerPresentation = getReaderPresentation(selectedReader);
+  const preparationTitle = isBloodMoonReadingActive()
+    ? "Under the Blood Moon"
+    : "Before We Begin";
+  const preparationText = isBloodMoonReadingActive()
+    ? "Focus on the energy drawing you here. Under the Blood Moon, truth arrives unsoftened — revealing hidden wounds, shadowed patterns, and the darker pasts that still shape the present. Choose 3, 5, or 7 cards and prepare to face what rises."
+    : "Take a breath and focus on the energy surrounding your question. Let your thoughts settle, trust your intuition, and choose the spread that feels right for you. Select 3, 5, or 7 cards to begin your reading.";
 
   document.querySelectorAll(".reader-card").forEach((card) => {
     const isMysterySelection =
@@ -497,6 +618,8 @@ function updateActiveReader() {
     );
   });
 
+  renderFeaturedReader();
+
   updateReaderSelectionConfirmation(selectedReaderIndex === -1 ? "mystery" : selectedReader.id);
 
   activeReaderImage.src = readerPresentation.image;
@@ -506,8 +629,8 @@ function updateActiveReader() {
   activeReaderName.textContent = readerPresentation.name;
   activeReaderEnergy.textContent = readerPresentation.energy;
   readerIntroduction.innerHTML = `
-    <p class="reading-section__eyebrow">Before we begin</p>
-    <p>${readerPresentation.intro}</p>
+    <p class="reading-section__eyebrow">${preparationTitle}</p>
+    <p>${preparationText}</p>
   `;
 }
 
@@ -539,7 +662,7 @@ function moveReader(direction) {
     updateActiveReader();
 
     readingStatus.textContent = currentReadingCards.length
-      ? `${selectedReader.name} is now guiding this spread.`
+      ? `${selectedReader.name} is now reading this spread.`
       : "Choose a spread to shuffle your cards.";
 
     readerPortraitFrame.classList.remove(slideClass);
@@ -785,9 +908,7 @@ function startNewReading() {
   resetToGuideSelection();
 }
 
-function resetToGuideSelection() {
-  clearCurrentReading();
-  deactivateBloodMoonEvent();
+function clearSelectedReaderState({ scrollToSelection = false } = {}) {
   selectedReader = null;
   selectedReaderIndex = -1;
   activeReaderImage.src = "";
@@ -811,13 +932,37 @@ function resetToGuideSelection() {
     element.textContent = "";
   });
 
-  readerSelection.scrollIntoView({ behavior: "smooth", block: "start" });
+  renderFeaturedReader();
+
+  if (scrollToSelection) {
+    readerSelection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+function resetToGuideSelection() {
+  clearCurrentReading();
+  deactivateBloodMoonEvent();
+  clearSelectedReaderState({ scrollToSelection: true });
 }
 
 renderReaders();
 
-window.addEventListener("astralVeilBloodMoonChange", () => {
+window.addEventListener("astralVeilBloodMoonChange", (event) => {
+  const isBloodMoonModeActive = typeof event.detail?.isActive === "boolean"
+    ? event.detail.isActive
+    : isBloodMoonActive();
+
+  clearReaderSelectionPreview();
   renderReaders();
+
+  if (!isBloodMoonModeActive) {
+    clearCurrentReading();
+
+    if (selectedReader?.requiresBloodMoon || selectedReader?.isBloodMoon) {
+      clearSelectedReaderState();
+      return;
+    }
+  }
 
   if (selectedReader) {
     updateActiveReader();
@@ -826,12 +971,73 @@ window.addEventListener("astralVeilBloodMoonChange", () => {
 
 if (readerList) {
   readerList.addEventListener("click", (event) => {
+    const carouselNavButton = event.target.closest("[data-reader-carousel-nav]");
+    const carouselPreviewButton = event.target.closest("[data-reader-carousel-preview]");
     const readerCard = event.target.closest("[data-reader-id]");
+
+    if (carouselNavButton) {
+      moveFeaturedReader(carouselNavButton.dataset.readerCarouselNav);
+      return;
+    }
+
+    if (carouselPreviewButton) {
+      moveFeaturedReader(carouselPreviewButton.dataset.readerCarouselPreview, { revealMessage: true });
+      return;
+    }
+
+    if (event.target.closest("[data-reader-carousel-message]")) {
+      revealFeaturedReaderMessage();
+      return;
+    }
 
     if (readerCard) {
       selectReader(readerCard.dataset.readerId);
     }
   });
+
+  readerList.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      moveFeaturedReader("prev");
+    }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      moveFeaturedReader("next");
+    }
+  });
+
+  readerList.addEventListener("touchstart", (event) => {
+    const touch = event.changedTouches[0];
+
+    readerCarouselTouchStartX = touch.clientX;
+    readerCarouselTouchStartY = touch.clientY;
+  }, { passive: true });
+
+  readerList.addEventListener("touchend", (event) => {
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - readerCarouselTouchStartX;
+    const deltaY = touch.clientY - readerCarouselTouchStartY;
+
+    if (Math.abs(deltaX) > 48 && Math.abs(deltaX) > Math.abs(deltaY) * 1.35) {
+      moveFeaturedReader(deltaX < 0 ? "next" : "prev");
+    }
+  }, { passive: true });
+
+  readerList.addEventListener("wheel", (event) => {
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY) || Math.abs(event.deltaX) < 28) {
+      return;
+    }
+
+    const now = Date.now();
+
+    if (now - lastReaderCarouselWheelAt < 420) {
+      return;
+    }
+
+    lastReaderCarouselWheelAt = now;
+    moveFeaturedReader(event.deltaX > 0 ? "next" : "prev");
+  }, { passive: true });
 }
 
 spreadButtons.forEach((button) => {

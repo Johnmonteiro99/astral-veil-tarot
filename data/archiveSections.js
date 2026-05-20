@@ -36,30 +36,30 @@ const archiveSections = [
 const visualRecords = [
   {
     id: "veil-duality-study",
-    title: "Veil Duality Study",
+    title: "Duality Fragment",
     image: "assets/images/noctis/visual-records/the-veil-trine.png",
-    caption: "A recovered visual study of the Veil, where light and shadow reflect across the line between worlds.",
+    caption: "Recovered from an unstable visual record. Two forms appear on opposite sides of an unnamed divide. The archive does not explain the boundary. It only confirms the image was not meant to remain visible.",
     status: "Recovered"
   },
   {
     id: "scorpio-aquarius-library-study",
     title: "Library Study",
     image: "assets/images/noctis/visual-records/bloodmoon-visual2.png",
-    caption: "A recovered record of two Veilwalkers searching through forbidden shelves beneath the Blood Moon.",
+    caption: "Recovered from a shelf record with missing origin marks. Two figures search where the catalogue thins, but the page refuses to identify what they were meant to find.",
     status: "Recovered"
   },
   {
     id: "eclipse-gate-study",
     title: "Eclipse Gate Study",
     image: "",
-    caption: "Image pending recovery.",
+    caption: "Recovery incomplete. The image appears in the index, but collapses before it can be opened.",
     status: "Pending"
   },
   {
     id: "veil-fracture-map",
     title: "Veil Fracture Map",
     image: "",
-    caption: "Image pending recovery.",
+    caption: "Reference found without a stable image. Fracture lines are mentioned, then redacted by an unknown hand.",
     status: "Pending"
   }
 ];
