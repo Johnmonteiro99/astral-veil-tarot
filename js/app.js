@@ -450,9 +450,19 @@ if (menuToggle && mobileMenu) {
     }
   });
 
+  let mobileMenuResizeFrame = null;
+
   window.addEventListener("resize", () => {
-    if (window.innerWidth > 768) {
-      setMobileMenu(false);
+    if (mobileMenuResizeFrame) {
+      return;
     }
-  });
+
+    mobileMenuResizeFrame = window.requestAnimationFrame(() => {
+      mobileMenuResizeFrame = null;
+
+      if (window.innerWidth > 768) {
+        setMobileMenu(false);
+      }
+    });
+  }, { passive: true });
 }

@@ -51,3 +51,14 @@
     animation: none;
   }
 }
+
+@media (max-width: 640px) {
+  .starfield,
+  .mystic-mist {
+    animation: none;
+  }
+
+  .celestial-wash {
+    animation-duration: 32s;
+  }
+}

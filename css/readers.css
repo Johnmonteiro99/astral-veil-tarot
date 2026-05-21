@@ -763,4 +763,19 @@ body.is-lightbox-open {
   .reader-profile-card img {
     height: min(112vw, 430px);
   }
+
+  .reader-profile-card,
+  .reader-lightbox__dialog {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .reader-profile-card,
+  .reader-lightbox__dialog,
+  .reader-lightbox__nav,
+  .reader-lightbox__close {
+    box-shadow:
+      0 12px 30px rgba(0, 0, 0, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
 }

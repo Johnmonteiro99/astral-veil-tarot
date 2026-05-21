@@ -520,13 +520,13 @@ function renderFeaturedReader() {
   featuredReaderPanel.innerHTML = `
     <article class="reader-image-carousel" aria-live="polite">
       <button class="reader-image-carousel__preview reader-image-carousel__preview--prev" type="button" data-reader-carousel-preview="prev" aria-label="Preview previous Veilwalker">
-        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" width="320" height="400" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.visibility='hidden'" />
       </button>
       <button class="reader-image-carousel__center" type="button" data-reader-carousel-message aria-label="Refresh this Veilwalker's preview message">
-        <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+        <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" width="640" height="800" loading="eager" decoding="async" fetchpriority="high" onerror="this.style.visibility='hidden'" />
       </button>
       <button class="reader-image-carousel__preview reader-image-carousel__preview--next" type="button" data-reader-carousel-preview="next" aria-label="Preview next Veilwalker">
-        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" width="320" height="400" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.visibility='hidden'" />
       </button>
       <div class="reader-image-carousel__actions">
         <div class="reader-feature-identity">
@@ -536,7 +536,7 @@ function renderFeaturedReader() {
               zodiacIconPath
                 ? `
                   <span class="zodiac-icon-badge" aria-hidden="true">
-                    <img class="zodiac-icon" src="${escapeHtml(zodiacIconPath)}" alt="" loading="eager" decoding="async" />
+                    <img class="zodiac-icon" src="${escapeHtml(zodiacIconPath)}" alt="" width="20" height="20" loading="eager" decoding="async" />
                   </span>
                 `
                 : ""
@@ -766,10 +766,10 @@ function renderReadingCards(cards) {
         <button class="tarot-card energy-${energy} fade-slide-in" type="button" data-card-index="${index}" aria-label="Reveal ${cardName}">
           <span class="tarot-card__inner">
             <span class="tarot-card__face tarot-card__back">
-              <img src="${cardBackImage}" alt="" loading="lazy" decoding="async" />
+              <img src="${cardBackImage}" alt="" width="260" height="416" loading="lazy" decoding="async" fetchpriority="low" />
             </span>
             <span class="tarot-card__face tarot-card__front">
-              <img src="${escapeHtml(card.image)}" alt="${cardName}" loading="lazy" decoding="async" onerror="this.src='${cardBackImage}'" />
+              <img src="${escapeHtml(card.image)}" alt="${cardName}" width="260" height="416" loading="lazy" decoding="async" fetchpriority="low" onerror="this.src='${cardBackImage}'" />
             </span>
           </span>
         </button>
@@ -829,6 +829,9 @@ function renderReadingResults() {
           class="reading-viewer__image"
           src="${escapeHtml(activeCard.image)}"
           alt="${escapeHtml(cardName)}"
+          width="520"
+          height="832"
+          decoding="async"
           data-expandable-image
           data-image-preview-title="${escapeHtml(cardName)}"
           data-image-preview-caption="${escapeHtml(activePositionLabel)}"

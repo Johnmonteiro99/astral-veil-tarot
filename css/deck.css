@@ -477,4 +477,18 @@ body.is-lightbox-open {
   .deck-gallery {
     grid-template-columns: 1fr;
   }
+
+  .deck-collection-card,
+  .deck-card,
+  .deck-lightbox__dialog {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .deck-collection-card,
+  .deck-card {
+    box-shadow:
+      0 12px 30px rgba(0, 0, 0, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
 }
