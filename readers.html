@@ -120,9 +120,12 @@
     <main class="tarot-stage">
       <section class="page-shell readers-page" aria-labelledby="readers-title">
         <div class="page-hero">
-          <p class="reading-section__eyebrow">Order of the Veil</p>
-          <h1 id="readers-title">Those Who Walk the Veil</h1>
-          <p>Each Veilwalker carries their own energy, secrets, and connection to the astral veil.</p>
+          <p class="reading-section__eyebrow">Readers, witnesses, and fragments</p>
+          <h1 id="readers-title">The Veilwalkers</h1>
+          <p class="page-hero__subtitle">Readers, witnesses, and fragments of the zodiac bound to the Astral Veil.</p>
+          <p>
+            Each Veilwalker carries a sign, an element, and a hidden transformation. Their readings are not predictions alone. They are doorways into memory, shadow, instinct, and the truths waiting beyond the Veil.
+          </p>
         </div>
 
         <div class="reader-profile-grid" data-readers-page-list></div>
@@ -161,9 +164,9 @@
       <button class="reader-lightbox__backdrop" type="button" data-close-lightbox aria-label="Close reader image"></button>
       <div class="reader-lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="reader-lightbox-title">
         <button class="reader-lightbox__close" type="button" data-close-lightbox aria-label="Close reader image">
-          &times;
+          <span aria-hidden="true">&times;</span>
         </button>
-        <img class="reader-lightbox__image" alt="" data-lightbox-image />
+        <img class="reader-lightbox__image" alt="" data-lightbox-image data-expandable-image role="button" tabindex="0" aria-label="Expand reader image" />
         <div class="reader-lightbox__content">
           <h2 id="reader-lightbox-title" data-lightbox-name></h2>
           <p data-lightbox-energy></p>
@@ -172,6 +175,8 @@
     </div>
 
     <script src="data/readers.js"></script>
+    <script src="data/events.js"></script>
+    <script src="js/events.js"></script>
     <script src="js/app.js"></script>
     <script src="js/readers.js"></script>
   </body>

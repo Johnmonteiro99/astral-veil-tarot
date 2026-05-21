@@ -1,0 +1,48 @@
+// Journal entries are structured for a future admin/database migration.
+// Add future entries here with requiredEvent/isLocked/images/futureComicPanels metadata as needed.
+const zephyraJournalEntries = [
+  {
+    id: "ink-darkened-first",
+    label: "JOURNAL 01",
+    title: "The Ink Darkened First",
+    archiveStatus: "Recovered from the Noctis Archive",
+    status: "Partial Entry",
+    author: "Zephyra Noctis",
+    excerpt: "The ink darkened before I touched the page...",
+    requiredEvent: "bloodMoon",
+    isLocked: false,
+    images: [],
+    futureComicPanels: [],
+    body: [
+      "The ink darkened before I touched the page.",
+      "I thought it was the candle at first. A trick of low light. The castle does that to the mind after enough nights without sleep. Stone remembers every voice it has swallowed, and sometimes, when the halls are quiet enough, you can almost hear them trying to speak through the walls.",
+      "I came here to study old systems.",
+      "Astrology. Alchemy. Forgotten sciences. The kind of knowledge people dismiss when they are afraid of what it might explain.",
+      "I told myself I was searching for purpose.",
+      "That was the prettier lie.",
+      "The truth is less graceful.",
+      "I was searching for the thing that made me this way.",
+      "There are patterns in pain if you look long enough. Repetitions. Symbols. Names that return. Faces that change but carry the same wound. I used to think suffering was chaos. Now I am not so sure.",
+      "Chaos does not repeat itself this precisely.",
+      "The Aquarius woman noticed it too.",
+      "She does not speak of fate. She speaks of frequency, pressure, resonance, fracture points. She writes equations beside symbols I have only seen carved beneath burial chambers and temple doors.",
+      "She thinks the castle is built on a fault line.",
+      "Not earth.",
+      "Reality.",
+      "Tonight we found a passage beneath the western archive. It was not on any map, but the dust had been disturbed recently. That should have frightened me more than it did.",
+      "At the bottom of the stairwell, there was a door with no handle.",
+      "Only a symbol.",
+      "A circle split by a thin vertical line.",
+      "The Veil.",
+      "I did not know the word then, but something in me recognized it.",
+      "That is what I cannot explain.",
+      "Recognition without memory.",
+      "Fear without surprise.",
+      "The Aquarius woman asked if I had seen the symbol before.",
+      "I said no.",
+      "The ink darkened again when I wrote that.",
+      "I do not think the page believes me."
+    ],
+    annotation: "Subject showed early resonance with Veil-symbol before formal exposure."
+  }
+];

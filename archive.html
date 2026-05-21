@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Enter the Noctis Archive, a Blood Moon-only Astral Veil lore collection of hidden journals, research, and restricted fragments."
+    />
+    <title>Noctis Archive | Astral Veil</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=IM+Fell+English+SC&family=Marcellus&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/archive.css" />
+  </head>
+  <body class="sun-mode">
+    <header class="site-header">
+      <nav class="navbar" aria-label="Primary navigation">
+        <a class="navbar__brand" href="index.html" aria-label="Astral Veil home">
+          <span class="logo-eye" aria-hidden="true">
+            <svg class="logo-eye__svg" viewBox="0 0 96 64" focusable="false">
+              <path class="logo-eye__card" d="M48 3l38 29-38 29L10 32z" />
+              <path class="logo-eye__outer" d="M8 32c11-16 25-23 40-23s29 7 40 23c-11 16-25 23-40 23S19 48 8 32z" />
+              <circle class="logo-eye__iris" cx="48" cy="32" r="13" />
+              <circle class="logo-eye__pupil" cx="48" cy="32" r="4" />
+              <path class="logo-eye__ray" d="M48 5v8M48 51v8M25 12l5 7M71 12l-5 7M25 52l5-7M71 52l-5-7" />
+            </svg>
+          </span>
+          <span class="navbar__brand-text">Astral Veil</span>
+        </a>
+
+        <ul class="navbar__links">
+          <li><a class="navbar__link" href="index.html">Readings</a></li>
+          <li><a class="navbar__link" href="readers.html">Veilwalkers</a></li>
+          <li><a class="navbar__link" href="deck.html">Deck</a></li>
+          <li><a class="navbar__link" href="about.html">About</a></li>
+        </ul>
+
+        <label class="theme-toggle" aria-label="Switch between sun and moon mode">
+          <input class="theme-toggle__input" type="checkbox" />
+          <span class="theme-toggle__track" aria-hidden="true">
+            <span class="theme-toggle__icon theme-toggle__icon--sun">
+              <svg class="celestial-icon" viewBox="0 0 64 64" focusable="false">
+                <circle class="celestial-icon__core" cx="32" cy="32" r="10" />
+                <circle cx="32" cy="32" r="17" />
+                <path d="M32 6v10M32 48v10M6 32h10M48 32h10" />
+              </svg>
+            </span>
+            <span class="theme-toggle__divider"></span>
+            <span class="theme-toggle__icon theme-toggle__icon--moon">
+              <svg class="celestial-icon" viewBox="0 0 64 64" focusable="false">
+                <path class="celestial-icon__core" d="M43 8c-11 4-18 14-18 26 0 10 6 18 15 22-15 0-28-11-28-26C12 16 25 6 43 8z" />
+                <path d="M47 17l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" />
+              </svg>
+            </span>
+          </span>
+        </label>
+
+        <button
+          class="navbar__menu-toggle"
+          type="button"
+          aria-label="Open navigation menu"
+          aria-controls="mobile-navigation"
+          aria-expanded="false"
+        >
+          <span class="navbar__menu-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="navbar__mobile-menu" id="mobile-navigation" aria-hidden="true">
+          <a class="navbar__mobile-link" href="index.html">Readings</a>
+          <a class="navbar__mobile-link" href="readers.html">Veilwalkers</a>
+          <a class="navbar__mobile-link" href="deck.html">Deck</a>
+          <a class="navbar__mobile-link" href="about.html">About</a>
+        </div>
+      </nav>
+    </header>
+
+    <div class="tarot-background" aria-hidden="true">
+      <div class="celestial-wash"></div>
+      <div class="botanical-veil"></div>
+      <div class="starfield"></div>
+      <div class="mystic-mist"></div>
+      <div class="lunar-orb"></div>
+      <div class="moon-particles"></div>
+    </div>
+
+    <div class="scorpio-constellation" aria-hidden="true">
+      <svg viewBox="0 0 320 220" focusable="false">
+        <polyline points="40,80 78,62 118,76 150,105 185,112 222,90 260,118 285,155" />
+        <circle cx="40" cy="80" r="3" />
+        <circle cx="78" cy="62" r="3" />
+        <circle cx="118" cy="76" r="3" />
+        <circle cx="150" cy="105" r="3" />
+        <circle cx="185" cy="112" r="3" />
+        <circle cx="222" cy="90" r="3" />
+        <circle cx="260" cy="118" r="3" />
+        <circle cx="285" cy="155" r="3" />
+      </svg>
+    </div>
+
+    <main class="tarot-stage">
+      <section class="page-shell archive-page" aria-labelledby="archive-title">
+        <div class="page-hero archive-hero" data-archive-content>
+          <p class="reading-section__eyebrow">Blood Moon Access</p>
+          <h1 id="archive-title">The Noctis Archive</h1>
+          <p>A private codex of recovered notes, forbidden observations, and visual records gathered beneath Zephyra's crimson eclipse.</p>
+        </div>
+
+        <section class="archive-locked" data-archive-locked hidden aria-labelledby="archive-locked-title">
+          <p class="reading-section__eyebrow">Restricted</p>
+          <h1 id="archive-locked-title">The archive is sealed.</h1>
+          <p>This chamber opens only while the Blood Moon event is active.</p>
+          <a class="archive-locked__link" href="index.html">Return to Readings</a>
+        </section>
+
+        <div class="archive-codex" data-archive-content>
+          <aside class="archive-index" aria-label="Archive sections">
+            <p class="archive-index__label">Recovered Index</p>
+            <button class="archive-tab is-active" type="button" data-archive-tab="journal" data-archive-target="zephyra-journal" aria-controls="zephyra-journal">
+              <span>01</span>
+              Zephyra's Journal
+            </button>
+            <button class="archive-tab" type="button" data-archive-tab="research" data-archive-target="veil-research" aria-controls="veil-research">
+              <span>04</span>
+              Veil Research
+            </button>
+            <button class="archive-tab" type="button" data-archive-tab="records" data-archive-target="visual-records" aria-controls="visual-records">
+              <span>09</span>
+              Visual Records
+            </button>
+            <button class="archive-tab" type="button" data-archive-tab="fragments" data-archive-target="restricted-fragments" aria-controls="restricted-fragments">
+              <span>13</span>
+              Restricted Fragments
+            </button>
+            <p class="archive-index__note">Some pages only appear when the Veil thins.</p>
+          </aside>
+
+          <div class="archive-book" aria-live="polite">
+            <article class="archive-spread is-active" id="zephyra-journal" data-archive-panel="journal">
+              <div class="archive-page-leaf archive-page-leaf--entry">
+                <p class="archive-entry__stamp">Zephyra's Journal</p>
+                <h2>Recovered Entries</h2>
+                <p class="archive-entry__lede">Private notes recovered from the Noctis Archive. Select an entry to open the manuscript page.</p>
+                <div class="archive-journal-list" data-journal-entry-list></div>
+              </div>
+              <div class="archive-page-leaf archive-page-leaf--margin">
+                <p class="archive-margin-note">Journal Handling Note</p>
+                <p class="archive-annotation">Entries are unstable when viewed outside Blood Moon conditions. Open only one recovered page at a time.</p>
+                <p class="archive-handwritten">The page reacts when it is observed.</p>
+                <div class="archive-redaction-line"></div>
+                <p class="archive-entry__tag">Archive Status / Indexed</p>
+              </div>
+            </article>
+
+            <article class="archive-spread" id="veil-research" data-archive-panel="research">
+              <div class="archive-page-leaf archive-page-leaf--entry">
+                <p class="archive-entry__stamp">Recovered / Research 04</p>
+                <h2>Veil Research</h2>
+                <p class="archive-entry__lede">Observations, symbols, theories, and forbidden studies connected to the barrier between worlds.</p>
+                <ul class="archive-research-list">
+                  <li>Threshold resonance increases when fear and desire are present together.</li>
+                  <li>Mirror surfaces respond to crimson lunar exposure for thirteen breaths.</li>
+                  <li>Repeated sigil: eye within an eclipse, crossed by an unfinished road.</li>
+                </ul>
+              </div>
+              <div class="archive-page-leaf archive-page-leaf--margin archive-page-leaf--theory-withheld">
+                <p class="archive-margin-note">Theory withheld</p>
+                <div class="theory-withheld-note">
+                  <p class="theory-withheld-note__status">REDACTED THEORY FILE</p>
+                  <div class="theory-file-lines" aria-label="Redacted theory notes">
+                    <p>Threshold resonance pattern: <span class="redaction-mark redaction-mark--long" aria-label="redacted"></span></p>
+                    <p>Observed during crimson lunar exposure.</p>
+                    <p>Subject response: <span class="redaction-mark redaction-mark--short" aria-label="redacted"></span></p>
+                    <p class="theory-file-lines__visible">The Veil is not locked. It is listening for a name.</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="archive-spread archive-spread--visual-records" id="visual-records" data-archive-panel="records">
+              <div class="archive-page-leaf archive-page-leaf--entry archive-page-leaf--visual-records">
+                <p class="archive-entry__stamp">Recovered / Record 09</p>
+                <h2>Visual Records</h2>
+                <p class="archive-entry__lede">Unstable images, interrupted sketches, and visual records recovered without full permission.</p>
+                <p class="archive-visual-note"><span>Curator Note</span> Recovered fragments continue to surface without clear origin. Some records resist cataloguing, while others appear only briefly before falling back into silence. Not every image in this archive was meant to remain.</p>
+                <div class="archive-visual-strip" data-visual-records-gallery aria-label="Visual records gallery"></div>
+              </div>
+            </article>
+
+            <article class="archive-spread" id="restricted-fragments" data-archive-panel="fragments">
+              <div class="archive-page-leaf archive-page-leaf--entry">
+                <p class="archive-entry__stamp">Restricted / Fragment 13</p>
+                <h2>Restricted Fragments</h2>
+                <p class="archive-entry__lede">Locked or redacted entries that hint at future secrets.</p>
+                <div class="archive-fragment-lock">
+                  <p>Access Withheld</p>
+                  <span>Clearance requires a thinner Veil.</span>
+                </div>
+              </div>
+              <div class="archive-page-leaf archive-page-leaf--margin archive-page-leaf--partial-recovery">
+                <p class="archive-margin-note">Partial Recovery</p>
+                <div class="partial-recovery-note">
+                  <span class="partial-recovery-note__seal" aria-hidden="true"></span>
+                  <p class="partial-recovery-note__text">
+                    The thirteenth fragment refers to the door beneath the eye.
+                    <br />
+                    <br />
+                    Not all locks are meant to keep us out.
+                  </p>
+                  <div class="partial-recovery-note__redactions" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <p class="partial-recovery-note__footer">Recovered text unstable.</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div class="site-footer__brand">
+          <h2>Astral Veil™</h2>
+          <p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p>
+          <p class="site-footer__poem">✦ Between fate and imagination ✦</p>
+        </div>
+
+        <nav class="site-footer__nav" aria-label="Footer navigation">
+          <p class="site-footer__label">Explore</p>
+          <a href="index.html">Home</a>
+          <a href="readers.html">Veilwalkers</a>
+          <a href="deck.html">Deck</a>
+          <a href="about.html">About</a>
+          <a href="archive.html" data-archive-footer-link hidden>Noctis Archive</a>
+        </nav>
+
+        <div class="site-footer__creator">
+          <p class="site-footer__label">Creator</p>
+          <p>Crafted by João Monteiro</p>
+          <p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p>
+          <p>Designer • Developer • Worldbuilder</p>
+          <p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p>
+        </div>
+
+        <p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p>
+      </div>
+    </footer>
+
+    <div class="journal-modal" data-journal-modal aria-hidden="true">
+      <button class="journal-modal__backdrop" type="button" data-close-journal-entry aria-label="Close journal entry"></button>
+      <article class="journal-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="journal-modal-title">
+        <button class="journal-modal__close" type="button" data-close-journal-entry aria-label="Close journal entry">
+          &times;
+        </button>
+        <div class="journal-modal__page">
+          <p class="archive-entry__stamp" data-journal-modal-label></p>
+          <h2 id="journal-modal-title" data-journal-modal-title></h2>
+          <div class="archive-entry__meta" data-journal-modal-meta></div>
+          <div class="archive-entry__body archive-entry__body--journal" data-journal-modal-body></div>
+          <aside class="journal-modal__annotation">
+            <p class="archive-margin-note">Recovered Annotation</p>
+            <p data-journal-modal-annotation></p>
+          </aside>
+          <div class="journal-modal__controls" aria-label="Journal entry navigation">
+            <button type="button" data-journal-prev>Previous</button>
+            <span data-journal-counter></span>
+            <button type="button" data-journal-next>Next</button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="visual-record-modal" data-visual-record-modal aria-hidden="true">
+      <button class="visual-record-modal__backdrop" type="button" data-close-visual-record aria-label="Close visual record"></button>
+      <article class="visual-record-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="visual-record-modal-title">
+        <button class="visual-record-modal__close" type="button" data-close-visual-record aria-label="Close visual record">
+          &times;
+        </button>
+        <div class="visual-record-modal__image-frame">
+          <img data-visual-record-modal-image data-expandable-image role="button" tabindex="0" aria-label="Expand visual record image" alt="" />
+        </div>
+        <div class="visual-record-modal__copy">
+          <p class="archive-entry__stamp" data-visual-record-modal-status></p>
+          <h2 id="visual-record-modal-title" data-visual-record-modal-title></h2>
+          <p data-visual-record-modal-caption></p>
+        </div>
+      </article>
+    </div>
+
+    <script src="data/events.js"></script>
+    <script src="data/journalEntries.js"></script>
+    <script src="data/archiveSections.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/archive.js"></script>
+  </body>
+</html>

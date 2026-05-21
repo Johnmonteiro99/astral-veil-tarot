@@ -131,7 +131,7 @@
     <main class="tarot-stage" id="app">
       <section class="reading-section" id="readings" aria-labelledby="reading-title">
         <div class="reading-section__intro">
-          <p class="reading-section__eyebrow">Choose your guide</p>
+          <p class="reading-section__eyebrow">Choose your reader</p>
           <h1 id="reading-title">Begin Your Astral Reading</h1>
           <p>
             Select a reader, choose a spread, then reveal each card when you are ready.
@@ -139,30 +139,31 @@
         </div>
 
         <section id="reader-selection" class="reader-selection reader-panel">
-          <div class="section-heading">
-            <h2>Your Astral Guide</h2>
-            <p>Pick the energy you want to sit with for this reading.</p>
+          <div class="section-heading section-heading--reader-selection">
+            <h2>Choose Your Veilwalker</h2>
+            <p>Each Veilwalker reads through a different zodiac current. Choose the energy closest to your question, or let the Veil decide.</p>
           </div>
 
           <div class="reader-grid" data-reader-list></div>
+          <p class="reader-selection__confirmation" data-reader-selection-confirmation aria-live="polite"></p>
         </section>
 
         <section id="reading-stage" class="reading-stage hidden" data-reading-stage>
           <div class="reader-portrait-frame">
-            <img id="active-reader-image" class="reader-portrait" alt="" data-active-reader-image />
+            <img id="active-reader-image" class="reader-portrait" alt="" data-active-reader-image data-expandable-image role="button" tabindex="0" aria-label="Expand reader image" />
           </div>
           <div class="reader-portrait-caption">
-            <p class="reading-section__eyebrow">Your Astral Guide</p>
+            <p class="reading-section__eyebrow">Your Astral Reader</p>
             <h2 data-active-reader-name></h2>
             <p data-active-reader-energy></p>
           </div>
 
           <div class="reading-actions">
             <button class="reader-nav-button" type="button" data-reader-nav="prev">
-              &larr; Previous Guide
+              &larr; Previous Reader
             </button>
             <button class="reader-nav-button" type="button" data-reader-nav="next">
-              Next Guide &rarr;
+              Next Reader &rarr;
             </button>
           </div>
 
@@ -237,7 +238,12 @@
     </footer>
 
     <script src="data/readers.js"></script>
+    <script src="data/events.js"></script>
     <script src="data/cards.js"></script>
+    <script src="data/cardCombinations.js"></script>
+    <script src="data/spreads.js"></script>
+    <script src="data/decks.js"></script>
+    <script src="js/events.js"></script>
     <script src="js/app.js"></script>
     <script src="js/reading.js"></script>
   </body>

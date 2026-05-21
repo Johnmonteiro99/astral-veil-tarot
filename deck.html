@@ -111,12 +111,12 @@
     <main class="tarot-stage">
       <section class="page-shell deck-page" aria-labelledby="deck-title">
         <div class="page-hero">
-          <p class="reading-section__eyebrow">Major Arcana</p>
-          <h1 id="deck-title">The Astral Deck</h1>
-          <p>Browse the cards used in Astral Veil readings. Each meaning is intentionally brief for now, ready to grow as the deck expands.</p>
+          <p class="reading-section__eyebrow" data-deck-eyebrow>Deck Collection</p>
+          <h1 id="deck-title" data-deck-title>The Astral Decks</h1>
+          <p data-deck-description>Choose a tarot collection to explore the cards held within the Astral Veil.</p>
         </div>
 
-        <div class="deck-gallery" data-deck-gallery></div>
+        <div class="deck-view" data-deck-view></div>
       </section>
     </main>
 
@@ -154,7 +154,7 @@
         <button class="deck-lightbox__close" type="button" data-close-deck-lightbox aria-label="Close card image">
           &times;
         </button>
-        <img class="deck-lightbox__image" alt="" data-lightbox-card-image />
+        <img class="deck-lightbox__image" alt="" data-lightbox-card-image data-expandable-image role="button" tabindex="0" aria-label="Expand card image" />
         <div class="deck-lightbox__content">
           <h2 id="deck-lightbox-title" data-lightbox-card-name></h2>
           <p data-lightbox-card-meaning></p>
@@ -162,7 +162,12 @@
       </div>
     </div>
 
+    <script src="data/events.js"></script>
     <script src="data/cards.js"></script>
+    <script src="data/cardCombinations.js"></script>
+    <script src="data/spreads.js"></script>
+    <script src="data/decks.js"></script>
+    <script src="js/events.js"></script>
     <script src="js/app.js"></script>
     <script src="js/deck.js"></script>
   </body>
