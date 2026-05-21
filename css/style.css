@@ -1727,7 +1727,90 @@ body.blood-moon-mode .page-hero__subtitle {
   grid-column: 1 / -1;
   display: grid;
   justify-items: center;
+  gap: clamp(18px, 2.4vw, 26px);
+  width: min(100%, 560px);
+  margin: clamp(8px, 1.6vw, 18px) auto 0;
+}
+
+.reader-feature-identity {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  min-width: 0;
+  text-align: center;
+}
+
+.reader-feature-identity h3,
+.veilwalker-zodiac-line {
+  margin: 0;
+}
+
+.reader-feature-identity h3 {
+  color: var(--navbar-text);
+  font-family: var(--heading-font);
+  font-size: clamp(1.45rem, 3.2vw, 2rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.veilwalker-zodiac-line {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: color-mix(in srgb, var(--navbar-hover-text) 76%, var(--navbar-muted));
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.zodiac-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border: 1px solid rgba(218, 190, 130, 0.38);
+  border-radius: 0.5rem;
+  color: color-mix(in srgb, var(--navbar-hover-text) 82%, #e3def0);
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.08), transparent 64%),
+    rgba(10, 8, 18, 0.24);
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--reader-glow) 28%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.zodiac-icon {
+  display: block;
+  width: 1.08rem;
+  height: 1.08rem;
+  object-fit: contain;
+  opacity: 0.96;
+  filter: brightness(1.32) contrast(1.08);
+}
+
+body.blood-moon-mode .zodiac-icon-badge,
+.reader-carousel__featured.reader-card--bloodmoon .zodiac-icon-badge {
+  border-color: rgba(169, 119, 83, 0.42);
+  color: rgba(226, 211, 184, 0.82);
+  background:
+    radial-gradient(circle at 50% 28%, rgba(226, 211, 184, 0.08), transparent 64%),
+    rgba(31, 10, 12, 0.42);
+  box-shadow:
+    0 0 14px rgba(102, 31, 26, 0.24),
+    inset 0 1px 0 rgba(226, 211, 184, 0.08);
+}
+
+.reader-selection-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
+  width: 100%;
 }
 
 .reader-feature-card {
@@ -1807,7 +1890,7 @@ body.blood-moon-mode .page-hero__subtitle {
 }
 
 .reader-preview-note {
-  width: min(100%, 48ch);
+  width: min(100%, 46ch);
   margin: 0;
   padding: 2px 0 2px 16px;
   border-left: 1px solid color-mix(in srgb, var(--reader-accent) 64%, transparent);
@@ -1851,7 +1934,7 @@ body.blood-moon-mode .page-hero__subtitle {
 .reader-feature-card__choose {
   width: fit-content;
   min-height: 46px;
-  margin-top: 4px;
+  margin-top: 0;
   padding: 0 18px;
 }
 
@@ -1922,6 +2005,11 @@ body.blood-moon-mode .page-hero__subtitle {
     border-color 220ms ease,
     box-shadow 220ms ease,
     transform 220ms ease;
+}
+
+.reader-selection-button-row .reader-mystery-option {
+  min-height: 46px;
+  padding: 0 18px;
 }
 
 .reader-mystery-option:hover,
@@ -4107,6 +4195,46 @@ body.blood-moon-mode .lunar-orb {
 
   .reader-feature-card h3 {
     font-size: clamp(2rem, 11vw, 3rem);
+  }
+
+  .reader-image-carousel__actions {
+    gap: 16px;
+    margin-top: 10px;
+  }
+
+  .reader-feature-identity h3 {
+    font-size: clamp(1.35rem, 8vw, 1.85rem);
+  }
+
+  .veilwalker-zodiac-line {
+    font-size: 0.78rem;
+  }
+
+  .zodiac-icon-badge {
+    width: 1.55rem;
+    height: 1.55rem;
+  }
+
+  .zodiac-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .reader-preview-note {
+    width: min(100%, 38ch);
+    font-size: 0.94rem;
+  }
+
+  .reader-selection-button-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+    max-width: 320px;
+  }
+
+  .reader-feature-card__choose,
+  .reader-selection-button-row .reader-mystery-option {
+    width: 100%;
   }
 
   .reader-feature-card__traits li {

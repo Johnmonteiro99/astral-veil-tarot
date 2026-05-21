@@ -320,7 +320,6 @@ const mysteryReaders = [
     image: `${readerImageBasePath}scorpio-phase1.png`,
     phase1Image: `${readerImageBasePath}scorpio-phase1.png`,
     phase2Image: `${readerImageBasePath}scorpio-phase2.png`,
-    phase3Image: `${readerImageBasePath}scorpio-phase3.png`,
     gridImage: `${readerImageBasePath}scorpio-phase1.png`,
     bloodMoonImage: `${readerBloodMoonImageBasePath}scorpio-bloodmoon.png`,
     bloodMoonTitle: "Witness of the Hidden Rot",

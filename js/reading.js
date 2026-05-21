@@ -25,15 +25,28 @@ const cardEnergyTypes = [
   "balanced",
   "neutral",
 ];
+const zodiacIconPaths = {
+  Aries: "assets/icons/zodiac/aries.svg",
+  Taurus: "assets/icons/zodiac/taurus.svg",
+  Gemini: "assets/icons/zodiac/gemini.svg",
+  Cancer: "assets/icons/zodiac/cancer.svg",
+  Leo: "assets/icons/zodiac/leo.svg",
+  Virgo: "assets/icons/zodiac/virgo.svg",
+  Libra: "assets/icons/zodiac/libra.svg",
+  Scorpio: "assets/icons/zodiac/scorpio.svg",
+  Sagittarius: "assets/icons/zodiac/sagittarius.svg",
+  Capricorn: "assets/icons/zodiac/capricorn.svg",
+  Aquarius: "assets/icons/zodiac/aquarius.svg",
+  Pisces: "assets/icons/zodiac/pisces.svg",
+};
 const readingSectionScrollDelay = 450;
-const FORCE_MYSTERY_SCORPIO_TEST = true;
 const ZEPHYRA_LOCKED_MESSAGE =
   "She lingers where dust guards forgotten names and silent pages keep their watch. When the moon remembers its crimson face, her voice may return to the circle.";
 
 let selectedReader = null;
 let selectedReaderIndex = -1;
 let featuredReaderIndex = 0;
-let readerSelectionPreview = { readerId: null, message: "" };
+let readerSelectionPreview = { readerId: null, modeKey: null, message: "" };
 let readerSelectionMessageCursor = {};
 let readerCarouselTouchStartX = 0;
 let readerCarouselTouchStartY = 0;
@@ -292,11 +305,6 @@ function renderReaders() {
         <span aria-hidden="true">&rarr;</span>
       </button>
     </div>
-    <div class="reader-carousel__mystery">
-      <button class="reader-mystery-option reader-card--veil${selectedReader?.isMystery && selectedReaderIndex === -1 ? " is-active" : ""}" type="button" data-reader-id="mystery">
-        <span class="reader-mystery-option__title">Let Fate Choose</span>
-      </button>
-    </div>
   `;
 
   renderFeaturedReader();
@@ -406,12 +414,20 @@ function getReaderSelectionImage(reader) {
   return reader?.phase1Image || reader?.image || "";
 }
 
+function getReaderZodiacLabel(reader) {
+  return reader?.sign || reader?.zodiac || "Unknown";
+}
+
+function getReaderZodiacIconPath(reader) {
+  return zodiacIconPaths[getReaderZodiacLabel(reader)] || "";
+}
+
 function getReaderFocus(reader) {
   return reader?.focus || reader?.readingStyle || reader?.energy || "";
 }
 
 function clearReaderSelectionPreview() {
-  readerSelectionPreview = { readerId: null, message: "" };
+  readerSelectionPreview = { readerId: null, modeKey: null, message: "" };
 }
 
 function getReaderSelectionMessages(reader) {
@@ -446,16 +462,29 @@ function getNextReaderSelectionMessage(reader) {
   return messages[nextIndex];
 }
 
+function updateReaderSelectionPreview(reader, { forceNext = false } = {}) {
+  const modeKey = isBloodMoonActive() ? "bloodMoon" : "normal";
+
+  if (
+    !forceNext &&
+    readerSelectionPreview.readerId === reader?.id &&
+    readerSelectionPreview.modeKey === modeKey
+  ) {
+    return;
+  }
+
+  readerSelectionPreview = {
+    readerId: reader?.id || null,
+    modeKey,
+    message: getNextReaderSelectionMessage(reader)
+  };
+}
+
 function revealFeaturedReaderMessage() {
   const visibleGuidePool = getVisibleGuidePool();
   const featuredReader = visibleGuidePool[featuredReaderIndex];
-  const message = getNextReaderSelectionMessage(featuredReader);
 
-  readerSelectionPreview = {
-    readerId: featuredReader?.id || null,
-    message
-  };
-
+  updateReaderSelectionPreview(featuredReader, { forceNext: true });
   renderFeaturedReader();
 }
 
@@ -478,14 +507,14 @@ function renderFeaturedReader() {
   const isLocked = !isSelectable && featuredReader.requiresBloodMoon;
   const isSelected = selectedReader?.id === featuredReader.id && selectedReaderIndex !== -1;
   const accentClass = getReaderAccentClass(featuredReader);
+  updateReaderSelectionPreview(featuredReader);
   const previewMessage = readerSelectionPreview.readerId === featuredReader.id
     ? readerSelectionPreview.message
     : "";
-  const chooseButtonText = isLocked
-    ? "Blood Moon Bound"
-    : isSelected
-      ? "Reading Begins"
-      : "Begin Your Reading";
+  const chooseButtonText = featuredReader.id === "zephyra-noctis"
+    ? "Fate May Find Her"
+    : "Begin Your Reading";
+  const zodiacIconPath = getReaderZodiacIconPath(featuredReader);
 
   featuredReaderPanel.className = `reader-carousel__featured ${accentClass}${isLocked ? " is-unavailable" : ""}${isSelected ? " is-active" : ""}`;
   featuredReaderPanel.innerHTML = `
@@ -493,23 +522,43 @@ function renderFeaturedReader() {
       <button class="reader-image-carousel__preview reader-image-carousel__preview--prev" type="button" data-reader-carousel-preview="prev" aria-label="Preview previous Veilwalker">
         <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
       </button>
-      <button class="reader-image-carousel__center" type="button" data-reader-carousel-message aria-label="Reveal a message from this Veilwalker">
+      <button class="reader-image-carousel__center" type="button" data-reader-carousel-message aria-label="Refresh this Veilwalker's preview message">
         <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
       </button>
       <button class="reader-image-carousel__preview reader-image-carousel__preview--next" type="button" data-reader-carousel-preview="next" aria-label="Preview next Veilwalker">
         <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
       </button>
       <div class="reader-image-carousel__actions">
+        <div class="reader-feature-identity">
+          <h3>${escapeHtml(featuredReader.name)}</h3>
+          <div class="veilwalker-zodiac-line" aria-label="${escapeHtml(getReaderZodiacLabel(featuredReader))}">
+            ${
+              zodiacIconPath
+                ? `
+                  <span class="zodiac-icon-badge" aria-hidden="true">
+                    <img class="zodiac-icon" src="${escapeHtml(zodiacIconPath)}" alt="" loading="eager" decoding="async" />
+                  </span>
+                `
+                : ""
+            }
+            <span>${escapeHtml(getReaderZodiacLabel(featuredReader))}</span>
+          </div>
+        </div>
         ${previewMessage ? `<p class="reader-preview-note" data-reader-selection-message>${escapeHtml(previewMessage)}</p>` : ""}
-        <button class="reader-feature-card__choose primary-action" type="button" data-reader-id="${escapeHtml(featuredReader.id)}" ${isSelectable ? "" : "disabled aria-disabled=\"true\""}>
-          ${chooseButtonText}
-        </button>
+        <div class="reader-selection-button-row">
+          <button class="reader-feature-card__choose reader-mystery-option reader-card--veil" type="button" data-reader-id="${escapeHtml(featuredReader.id)}" ${isSelectable ? "" : "disabled aria-disabled=\"true\""}>
+            <span class="reader-mystery-option__title">${chooseButtonText}</span>
+          </button>
+          <button class="reader-mystery-option reader-card--veil${selectedReader?.isMystery && selectedReaderIndex === -1 ? " is-active" : ""}" type="button" data-reader-id="mystery">
+            <span class="reader-mystery-option__title">Let Fate Choose</span>
+          </button>
+        </div>
       </div>
     </article>
   `;
 }
 
-function moveFeaturedReader(direction, { revealMessage = false } = {}) {
+function moveFeaturedReader(direction) {
   const visibleGuidePool = getVisibleGuidePool();
 
   if (!visibleGuidePool.length) {
@@ -520,11 +569,6 @@ function moveFeaturedReader(direction, { revealMessage = false } = {}) {
 
   featuredReaderIndex = (featuredReaderIndex + offset + visibleGuidePool.length) % visibleGuidePool.length;
   clearReaderSelectionPreview();
-
-  if (revealMessage) {
-    revealFeaturedReaderMessage();
-    return;
-  }
 
   renderFeaturedReader();
 }
@@ -585,15 +629,7 @@ function getUnavailableReaderMessage(reader) {
 }
 
 function chooseMysteryReader() {
-  if (FORCE_MYSTERY_SCORPIO_TEST) {
-    const scorpioReader = getVisibleGuidePool().find((reader) => reader.id === "zephyra-noctis");
-
-    if (scorpioReader) {
-      return scorpioReader;
-    }
-  }
-
-  const selectableReaders = getSelectableGuidePool();
+  const selectableReaders = getVisibleGuidePool();
 
   return selectableReaders[Math.floor(Math.random() * selectableReaders.length)] || null;
 }
@@ -981,7 +1017,7 @@ if (readerList) {
     }
 
     if (carouselPreviewButton) {
-      moveFeaturedReader(carouselPreviewButton.dataset.readerCarouselPreview, { revealMessage: true });
+      moveFeaturedReader(carouselPreviewButton.dataset.readerCarouselPreview);
       return;
     }
 
