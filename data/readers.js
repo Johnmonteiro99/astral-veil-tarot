@@ -514,6 +514,117 @@ function applyReaderSelectionMessages(reader) {
 tarotReaders.forEach(applyReaderSelectionMessages);
 mysteryReaders.forEach(applyReaderSelectionMessages);
 
+const bloodMoonReaderQuotePools = {
+  aries: [
+    "You want movement, but first admit what you are running from.",
+    "You call it courage, but I see impulse wearing armor.",
+    "Charge forward if you must. Your shadow will still arrive before you.",
+    "You do not need permission. You need to stop pretending fear is strategy.",
+    "The fire in you is real. So is the wreckage you refuse to count."
+  ],
+  taurus: [
+    "You cling to what comforts you, even when it is slowly becoming your cage.",
+    "You are not loyal. You are afraid to let go.",
+    "The familiar has teeth, and still you keep feeding it.",
+    "You call this stability, but I smell rot beneath the roots.",
+    "If it truly nourished you, why does it feel like a chain?"
+  ],
+  gemini: [
+    "You have rehearsed every answer except the honest one.",
+    "Both voices know the truth. You are the only one still pretending.",
+    "Your mind keeps moving so your heart cannot testify.",
+    "You have turned confusion into a hiding place.",
+    "Say the thing plainly. The riddle is getting bored."
+  ],
+  cancer: [
+    "Your heart remembers what your mouth refuses to name.",
+    "Do not confuse pain with proof that you must stay.",
+    "You keep guarding a wound that is begging to be cleaned.",
+    "The past is not a home simply because you recognize the furniture.",
+    "You are not too sensitive. You are too loyal to what hurt you."
+  ],
+  leo: [
+    "You want to be seen, but fear what will be revealed.",
+    "Your pride is loud because your wound is louder.",
+    "You keep performing strength for an audience that already left.",
+    "The crown is heavy because you filled it with approval.",
+    "You are not dimmed by truth. You are dimmed by pretending."
+  ],
+  virgo: [
+    "You keep searching for the flaw so you never have to face the fear.",
+    "Perfection is the altar where you sacrifice your peace.",
+    "You cannot organize your way out of an unspoken wound.",
+    "The detail you keep fixing is not the thing that is broken.",
+    "Your standards are sharpest where your shame is deepest."
+  ],
+  libra: [
+    "You call it balance, but you have been bargaining with your own truth.",
+    "You are not keeping peace. You are delaying the collapse.",
+    "Harmony built on silence is just a prettier prison.",
+    "You keep weighing both sides because choosing would expose you.",
+    "Stop decorating the cage and call it what it is."
+  ],
+  "zephyra-noctis": [
+    "You summoned me because the lie finally stopped working.",
+    "Do not waste my time pretending you do not know what needs to die.",
+    "You came to the dark because the light stopped flattering you.",
+    "The secret is not buried. It is waiting for you to stop lying.",
+    "Transformation begins where your excuses end."
+  ],
+  sagittarius: [
+    "You chase freedom, yet drag the same shadow into every horizon.",
+    "Running farther will not make you less haunted.",
+    "You call it adventure when you do not want to call it escape.",
+    "The truth you seek abroad is sitting inside the room you avoid.",
+    "Your next horizon will not save you from your oldest pattern."
+  ],
+  capricorn: [
+    "You built the wall so well, you forgot which side you were trapped on.",
+    "Control has not saved you. It has only made your fear more disciplined.",
+    "You keep climbing because standing still would make you feel the wound.",
+    "Achievement is a poor mask when the soul is starving.",
+    "The structure survived. Did you?"
+  ],
+  aquarius: [
+    "You detached from the wound and called it wisdom.",
+    "You stand above your feelings because you are terrified of drowning in them.",
+    "Distance is not healing. It is only a colder room.",
+    "You keep becoming untouchable, then wonder why nothing reaches you.",
+    "Your mind escaped first. Your heart is still locked inside."
+  ],
+  pisces: [
+    "Your dreams are not confusing. They are accusing.",
+    "You keep calling it fate because choice would make you responsible.",
+    "The vision is not unclear. You are afraid of what it asks from you.",
+    "You dissolve into everyone else, then wonder where you went.",
+    "The fantasy protected you once. Now it is feeding on you."
+  ]
+};
+
+const fallbackBloodMoonQuotes = [
+  "You seek truth, but will you accept it?",
+  "The truth is not hiding from you. You are hiding from it.",
+  "You call it uncertainty. I call it avoidance.",
+  "Do not ask for revelation while clinging to illusion.",
+  "You already know what haunts you. The cards will only make it harder to deny.",
+  "If you came for comfort, you chose the wrong moon.",
+  "Your shadow spoke before you did. I heard enough.",
+  "Do not mistake fear for intuition.",
+  "You are not lost. You are resisting.",
+  "Why summon what you are not ready to face?",
+  "The wound is not silent. You simply learned to ignore it.",
+  "Ask carefully. Some answers do not return quietly."
+];
+
+function applyBloodMoonReaderQuotes(reader) {
+  const quotePool = bloodMoonReaderQuotePools[reader.id] || bloodMoonReaderQuotePools[String(reader.sign || reader.zodiac || "").toLowerCase()];
+
+  reader.bloodMoonQuotes = quotePool || fallbackBloodMoonQuotes;
+}
+
+tarotReaders.forEach(applyBloodMoonReaderQuotes);
+mysteryReaders.forEach(applyBloodMoonReaderQuotes);
+
 function createStandardReaderForms(reader) {
   return [
     {

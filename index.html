@@ -131,9 +131,9 @@
     <main class="tarot-stage" id="app">
       <section class="reading-section" id="readings" aria-labelledby="reading-title">
         <div class="reading-section__intro">
-          <p class="reading-section__eyebrow">Choose your reader</p>
-          <h1 id="reading-title">Begin Your Astral Reading</h1>
-          <p>
+          <p class="reading-section__eyebrow" data-reading-hero-eyebrow>Choose your reader</p>
+          <h1 id="reading-title" data-reading-hero-title>Begin Your Astral Reading</h1>
+          <p data-reading-hero-copy>
             Select a reader, choose a spread, then reveal each card when you are ready.
           </p>
         </div>
@@ -149,51 +149,53 @@
         </section>
 
         <section id="reading-stage" class="reading-stage hidden" data-reading-stage>
-          <div class="reader-portrait-frame">
-            <img id="active-reader-image" class="reader-portrait" alt="" data-active-reader-image data-expandable-image role="button" tabindex="0" aria-label="Expand reader image" />
-          </div>
-          <div class="reader-portrait-caption">
-            <p class="reading-section__eyebrow">Your Astral Reader</p>
-            <h2 data-active-reader-name></h2>
-            <p data-active-reader-energy></p>
-          </div>
-
-          <div class="reading-actions">
-            <button class="reader-nav-button" type="button" data-reader-nav="prev">
-              &larr; Previous Reader
-            </button>
-            <button class="reader-nav-button" type="button" data-reader-nav="next">
-              Next Reader &rarr;
-            </button>
-          </div>
-
-          <div id="reading-status" class="reading-results reading-results--prompt" data-reading-status>
-            Choose a spread to shuffle your cards.
+          <div class="active-reader-header">
+            <div class="reader-portrait-frame">
+              <img id="active-reader-image" class="reader-portrait" alt="" data-active-reader-image data-expandable-image role="button" tabindex="0" aria-label="Expand reader image" />
+            </div>
+            <div class="reader-portrait-caption">
+              <p class="reading-section__eyebrow">Your Astral Reader</p>
+              <h2 data-active-reader-name></h2>
+              <p class="active-reader-header__role" data-active-reader-role></p>
+              <p class="active-reader-header__quote" data-active-reader-quote></p>
+            </div>
+            <div class="reading-actions active-reader-header__nav">
+              <button class="reader-nav-button" type="button" data-reader-nav="prev">
+                &larr; Previous Reader
+              </button>
+              <button class="reader-nav-button" type="button" data-reader-nav="next">
+                Next Reader &rarr;
+              </button>
+            </div>
           </div>
 
-          <div class="reader-introduction" data-reader-introduction></div>
+          <div class="spread-selection-panel">
+            <div class="spread-selection-panel__heading">
+              <p class="reading-section__eyebrow">Spread Selection</p>
+              <h2>Choose Your Spread</h2>
+            </div>
 
-          <div class="reading-controls" role="group" aria-label="Choose a tarot spread">
-            <button class="spread-option" type="button" data-spread="3">
-              <span>3</span>
-              Card Reading
-            </button>
-            <button class="spread-option" type="button" data-spread="5">
-              <span>5</span>
-              Card Reading
-            </button>
-            <button class="spread-option" type="button" data-spread="7">
-              <span>7</span>
-              Card Reading
-            </button>
+            <div class="reader-introduction" data-reader-introduction></div>
+
+            <div class="reading-controls" role="group" aria-label="Choose a tarot spread">
+              <button class="spread-option" type="button" data-spread="3">
+                <span>3</span>
+                Card Reading
+              </button>
+              <button class="spread-option" type="button" data-spread="5">
+                <span>5</span>
+                Card Reading
+              </button>
+              <button class="spread-option" type="button" data-spread="7">
+                <span>7</span>
+                Card Reading
+              </button>
+            </div>
+
+            <div id="reading-status" class="reading-results reading-results--prompt" data-reading-status>
+              Choose a spread to shuffle your cards.
+            </div>
           </div>
-
-          <div class="reading-actions reading-actions--after-spread">
-            <button class="reader-nav-button" type="button" data-new-reading>
-              New Reading
-            </button>
-          </div>
-
         </section>
 
         <section id="reading-section" class="reading-results-section hidden" data-reading-results-section>
