@@ -100,6 +100,16 @@ function getReaderElementClass(reader) {
     : "";
 }
 
+function getReaderBloodMoonCardClass(reader) {
+  if (!isBloodMoonActive()) {
+    return "";
+  }
+
+  // Lyssara gets her own Blood Moon starlight treatment on the Veilwalkers page,
+  // separate from Zephyra's crimson fragment styling.
+  return reader?.id === "aquarius" ? " reader-profile-card--aquarius-bloodmoon" : "";
+}
+
 function getReaderDetailAccentClass(reader) {
   if (reader.isBloodMoon) {
     return "";
@@ -246,10 +256,11 @@ function renderReaderProfiles() {
           presentation.readingStyle ||
           "A trusted Astral Veil guide for reflective tarot readings.";
         const elementClass = getReaderElementClass(reader);
+        const bloodMoonCardClass = getReaderBloodMoonCardClass(reader);
         const fallbackImage = presentation.phase1Image || presentation.image;
 
         return `
-        <button class="reader-profile-card reader-profile-card--${reader.id}${elementClass}${reader.isMystery ? ` reader-profile-card--mystery reader-profile-card--${reader.mysteryAura}` : ""}${isBloodMoonFragment ? " reader-profile-card--blood-fragment" : ""}" type="button" data-reader-id="${reader.id}">
+        <button class="reader-profile-card reader-profile-card--${reader.id}${elementClass}${bloodMoonCardClass}${reader.isMystery ? ` reader-profile-card--mystery reader-profile-card--${reader.mysteryAura}` : ""}${isBloodMoonFragment ? " reader-profile-card--blood-fragment" : ""}" type="button" data-reader-id="${reader.id}">
           <img src="${escapeHtml(presentation.image)}" alt="${escapeHtml(presentation.name)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${escapeHtml(fallbackImage)}';" />
           <div class="reader-profile-card__content">
             <div class="reader-profile-card__badges" aria-label="Reader archetype">

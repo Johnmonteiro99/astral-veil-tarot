@@ -13,6 +13,7 @@ const activeReaderName = document.querySelector("[data-active-reader-name]");
 const activeReaderRole = document.querySelector("[data-active-reader-role]");
 const activeReaderQuote = document.querySelector("[data-active-reader-quote]");
 const readerIntroduction = document.querySelector("[data-reader-introduction]");
+const activeReaderHeader = document.querySelector(".active-reader-header");
 const readerPortraitFrame = document.querySelector(".reader-portrait-frame");
 const spreadButtons = document.querySelectorAll("[data-spread]");
 const readerNavButtons = document.querySelectorAll("[data-reader-nav]");
@@ -590,7 +591,15 @@ function getReaderAccentClass(reader) {
     return "reader-card--bloodmoon";
   }
 
+  if (isBloodMoonActive() && reader?.id === "aquarius") {
+    return "reader-card--event reader-card--aquarius-bloodmoon";
+  }
+
   return "reader-card--event";
+}
+
+function isLyssaraBloodMoonReader(reader) {
+  return isBloodMoonActive() && reader?.id === "aquarius";
 }
 
 function isReaderSelectable(reader) {
@@ -943,6 +952,10 @@ function normalizeForcedFateReaderValue(value) {
 
 function updateActiveReader() {
   const readerPresentation = getReaderPresentation(selectedReader);
+  activeReaderHeader?.classList.toggle(
+    "active-reader-header--aquarius-bloodmoon",
+    isLyssaraBloodMoonReader(selectedReader)
+  );
   updateReadingHeroCopy();
   const preparationTitle = isBloodMoonReadingActive()
     ? "UNDER THE BLOOD MOON"
@@ -1285,6 +1298,7 @@ function startNewReading() {
 function clearSelectedReaderState({ scrollToSelection = false } = {}) {
   selectedReader = null;
   selectedReaderIndex = -1;
+  activeReaderHeader?.classList.remove("active-reader-header--aquarius-bloodmoon");
   activeReaderImage.src = "";
   activeReaderImage.alt = "";
   delete activeReaderImage.dataset.imagePreviewTitle;
