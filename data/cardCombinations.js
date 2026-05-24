@@ -91,23 +91,40 @@ function getPositionLabel(card, index, spread) {
   return spread?.positions?.[index] || `Card ${index + 1}`;
 }
 
+function getCardThreadName(card) {
+  const orientation = typeof getCardOrientationName === "function"
+    ? getCardOrientationName(card)
+    : card.orientation === "reversed" ? "Reversed" : "Upright";
+
+  return orientation === "Reversed" ? `${card.name} Reversed` : card.name;
+}
+
 function getCardSummary(card, isBloodMoon) {
+  if (typeof getCardReadingMeaning === "function") {
+    return getCardReadingMeaning(card).meaning || getCardReadingMeaning(card).summary || "";
+  }
+
   return isBloodMoon && card.bloodMoon?.summary ? card.bloodMoon.summary : card.summary;
 }
 
 function createSingleCardReading(card, isBloodMoon) {
+  const cardName = getCardThreadName(card);
+  const cardMeaning = typeof getCardReadingMeaning === "function"
+    ? getCardReadingMeaning(card)
+    : null;
+
   if (isBloodMoon) {
     return {
       title: "What the Blood Moon Reveals",
-      summary: `${card.name} stands alone beneath the Blood Moon. ${card.bloodMoon?.summary || card.summary}`,
-      advice: card.bloodMoon?.shadowMessage || card.shadowMeaning
+      summary: `${cardName} stands alone beneath the Blood Moon. ${cardMeaning?.meaning || card.bloodMoon?.summary || card.summary}`,
+      advice: cardMeaning?.reflection || card.bloodMoon?.shadowMessage || card.shadowMeaning
     };
   }
 
   return {
     title: "The Thread Between the Cards",
-    summary: `${card.name} offers one clear message: ${card.summary}`,
-    advice: card.reflectionQuestion
+    summary: `${cardName} offers one clear message: ${cardMeaning?.meaning || card.summary}`,
+    advice: cardMeaning?.reflection || card.reflectionQuestion
   };
 }
 
@@ -118,11 +135,13 @@ function createFallbackReading(cards, options) {
   const movement = cards
     .map((card, index) => {
       const position = getPositionLabel(card, index, spread);
-      const action = isBloodMoon
-        ? card.bloodMoon?.shortMeaning || card.shortMeaning
-        : card.shortMeaning;
+      const cardMeaning = typeof getCardReadingMeaning === "function"
+        ? getCardReadingMeaning(card)
+        : null;
+      const action = cardMeaning?.summary ||
+        (isBloodMoon ? card.bloodMoon?.shortMeaning || card.shortMeaning : card.shortMeaning);
 
-      return `${position}: ${card.name} brings ${action.charAt(0).toLowerCase()}${action.slice(1)}`;
+      return `${position}: ${getCardThreadName(card)} brings ${action.charAt(0).toLowerCase()}${action.slice(1)}`;
     })
     .join(" ");
   const themeText = sharedThemes.length
@@ -144,7 +163,7 @@ function createFallbackReading(cards, options) {
   };
 }
 
-function getCustomPairReading(cards, isBloodMoon) {
+function getCustomPairReading(cards, isBloodMoon, spread) {
   if (cards.length < 2) {
     return null;
   }
@@ -167,10 +186,19 @@ function getCustomPairReading(cards, isBloodMoon) {
   }
 
   const primaryPair = matchedPairs[0];
+  const orientationThread = cards
+    .map((card, index) => {
+      const position = getPositionLabel(card, index, spread);
+      const cardMeaning = typeof getCardReadingMeaning === "function" ? getCardReadingMeaning(card) : null;
+      const action = cardMeaning?.summary || getCardSummary(card, isBloodMoon);
+
+      return `${position}: ${getCardThreadName(card)} brings ${action.charAt(0).toLowerCase()}${action.slice(1)}`;
+    })
+    .join(" ");
 
   return {
     title: isBloodMoon ? "What the Blood Moon Reveals" : "The Thread Between the Cards",
-    summary: isBloodMoon ? primaryPair.bloodMoonSummary : primaryPair.summary,
+    summary: `${isBloodMoon ? primaryPair.bloodMoonSummary : primaryPair.summary} ${orientationThread}`,
     advice: primaryPair.advice,
     extraMessages: matchedPairs.slice(1).map((pair) =>
       isBloodMoon ? pair.bloodMoonSummary : pair.summary
@@ -187,6 +215,6 @@ function generateCombinedReading(cards, options = {}) {
     return createSingleCardReading(cards[0], Boolean(options.isBloodMoon));
   }
 
-  return getCustomPairReading(cards, Boolean(options.isBloodMoon)) ||
+  return getCustomPairReading(cards, Boolean(options.isBloodMoon), options.spread) ||
     createFallbackReading(cards, options);
 }

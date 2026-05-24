@@ -26,6 +26,10 @@
   --toggle-bg: rgba(231, 195, 106, 0.18);
 }
 
+/* ================================
+   Base Layout and Theme Modes
+================================ */
+
 * {
   box-sizing: border-box;
 }
@@ -135,6 +139,10 @@ body.blood-moon-mode .site-footer__inner {
     box-shadow 1800ms ease,
     color 1800ms ease;
 }
+
+/* ================================
+   Navigation and Theme Toggle
+================================ */
 
 .site-header {
   /* Keep the navbar at the top of the page without following scroll. */
@@ -445,6 +453,59 @@ body.moon-mode .logo-eye {
     0 0 20px rgba(168, 85, 247, 0.22);
 }
 
+.navbar__link--lumen-archive {
+  color: color-mix(in srgb, var(--navbar-hover-text) 82%, var(--navbar-muted));
+  text-shadow: 0 0 10px color-mix(in srgb, var(--navbar-glow) 42%, transparent);
+}
+
+.navbar__link--lumen-archive::before {
+  opacity: 0.34;
+  transform: scaleX(0.96);
+}
+
+.navbar__link--lumen-archive::after {
+  opacity: 0.58;
+  transform: scaleX(0.82);
+}
+
+.navbar__link--lumen-archive:hover::before,
+.navbar__link--lumen-archive:focus-visible::before,
+.navbar__link--lumen-archive.is-active::before {
+  opacity: 0.78;
+}
+
+.navbar__link--lumen-archive:hover::after,
+.navbar__link--lumen-archive:focus-visible::after,
+.navbar__link--lumen-archive.is-active::after {
+  opacity: 0.95;
+}
+
+body.sun-mode .navbar__link--lumen-archive::before {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 213, 116, 0.16), transparent 68%),
+    rgba(199, 142, 43, 0.08);
+  box-shadow:
+    0 0 16px rgba(255, 213, 116, 0.2),
+    0 0 10px rgba(199, 142, 43, 0.14);
+}
+
+body.sun-mode .navbar__link--lumen-archive::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 213, 116, 0.82), var(--navbar-hover-text), transparent);
+}
+
+body.moon-mode .navbar__link--lumen-archive::before {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(218, 229, 255, 0.14), transparent 68%),
+    rgba(168, 139, 222, 0.1);
+  box-shadow:
+    0 0 16px rgba(218, 229, 255, 0.16),
+    0 0 12px rgba(168, 139, 222, 0.16);
+}
+
+body.moon-mode .navbar__link--lumen-archive::after {
+  background: linear-gradient(90deg, transparent, rgba(218, 229, 255, 0.76), rgba(168, 139, 222, 0.8), transparent);
+}
+
 @media (min-width: 1081px) and (max-width: 1240px) {
   .site-header {
     padding: 0 10px;
@@ -669,6 +730,25 @@ body.moon-mode .logo-eye {
   box-shadow:
     inset 0 0 18px rgba(255, 35, 65, 0.14),
     0 0 14px rgba(255, 35, 65, 0.12);
+}
+
+.navbar__mobile-link--lumen-archive {
+  color: color-mix(in srgb, var(--navbar-hover-text) 82%, var(--navbar-muted));
+  background: color-mix(in srgb, var(--navbar-hover-bg) 34%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--navbar-glow) 36%, transparent);
+}
+
+.navbar__mobile-link--lumen-archive::before {
+  opacity: 0.55;
+  transform: scaleX(0.82);
+}
+
+body.sun-mode .navbar__mobile-link--lumen-archive {
+  box-shadow: inset 0 0 16px rgba(255, 213, 116, 0.08);
+}
+
+body.moon-mode .navbar__mobile-link--lumen-archive {
+  box-shadow: inset 0 0 16px rgba(168, 139, 222, 0.09);
 }
 
 .blood-moon-event-control {
@@ -929,6 +1009,14 @@ body.moon-mode .theme-toggle__icon--sun {
   body.moon-mode .moon-particles {
     animation: none;
   }
+
+  .reader-carousel__featured.reader-card--aquarius-bloodmoon::after {
+    animation: none;
+  }
+
+  .active-reader-header--aquarius-bloodmoon::before {
+    animation: none;
+  }
 }
 
 .theme-toggle:hover,
@@ -941,6 +1029,20 @@ body.moon-mode .theme-toggle__icon--sun {
   box-shadow:
     0 0 18px color-mix(in srgb, var(--navbar-glow) 82%, transparent),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.theme-toggle--blood-pulse .theme-toggle__track {
+  border-color: rgba(255, 116, 126, 0.58);
+  box-shadow:
+    0 0 20px rgba(255, 35, 65, 0.32),
+    0 0 34px rgba(190, 30, 54, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  animation: bloodTogglePulse 1.8s ease-in-out infinite;
+}
+
+.theme-toggle--blood-pulse .theme-toggle__icon--moon {
+  color: rgba(255, 213, 217, 0.96);
+  filter: drop-shadow(0 0 10px rgba(255, 35, 65, 0.42));
 }
 
 .navbar__link:focus-visible,
@@ -973,6 +1075,10 @@ body.moon-mode .theme-toggle__icon--moon {
   color: var(--navbar-text);
 }
 
+/* ================================
+   Shared Page Shells
+================================ */
+
 .page-shell {
   width: min(100%, 1120px);
   max-width: 100%;
@@ -984,6 +1090,8 @@ body.moon-mode .theme-toggle__icon--moon {
 
 .page-hero,
 .about-copy {
+  min-width: 0;
+  max-width: 100%;
   padding: clamp(28px, 5vw, 52px);
   border: 1px solid var(--navbar-border);
   border-radius: 24px;
@@ -1612,6 +1720,50 @@ body.blood-moon-mode .page-hero__subtitle {
   --reader-glow: rgba(194, 39, 52, 0.32);
   --reader-panel: rgba(79, 10, 18, 0.34);
   --reader-badge: rgba(194, 39, 52, 0.18);
+}
+
+/* Lyssara's Blood Moon card keeps Aquarius starlight distinct from Zephyra's crimson shadow. */
+.reader-carousel__featured.reader-card--aquarius-bloodmoon {
+  --reader-accent: rgba(220, 224, 255, 0.58);
+  --reader-glow: rgba(184, 190, 255, 0.26);
+  --reader-panel: rgba(36, 31, 64, 0.3);
+  --reader-badge: rgba(184, 190, 255, 0.12);
+  position: relative;
+  border-color: rgba(221, 225, 255, 0.4);
+  background:
+    radial-gradient(circle at 26% 16%, rgba(232, 236, 255, 0.14), transparent 34%),
+    radial-gradient(circle at 76% 72%, rgba(148, 128, 255, 0.1), transparent 36%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.07), transparent 50%),
+    rgba(22, 7, 16, 0.78);
+  box-shadow:
+    0 24px 72px rgba(0, 0, 0, 0.32),
+    0 0 28px rgba(218, 224, 255, 0.16),
+    0 0 42px rgba(138, 112, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+}
+
+.reader-carousel__featured.reader-card--aquarius-bloodmoon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.5) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(200, 210, 255, 0.36) 0 1px, transparent 1.5px);
+  background-position:
+    14% 22%,
+    78% 34%;
+  background-size:
+    118px 118px,
+    156px 156px;
+  opacity: 0.16;
+  animation: lyssaraStarlightDrift 9s ease-in-out infinite alternate;
+}
+
+.reader-carousel__featured.reader-card--aquarius-bloodmoon > * {
+  position: relative;
+  z-index: 1;
 }
 
 .reader-carousel__featured.is-active {
@@ -2349,6 +2501,33 @@ body.blood-moon-mode .zodiac-icon-badge,
   }
 }
 
+@keyframes sealedReaderPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 18px rgba(190, 30, 54, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  50% {
+    box-shadow:
+      0 0 26px rgba(190, 30, 54, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+}
+
+@keyframes lyssaraStarlightDrift {
+  from {
+    opacity: 0.1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    opacity: 0.18;
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
 .reading-options.is-disabled {
   opacity: 0.58;
 }
@@ -2551,6 +2730,10 @@ body.blood-moon-mode .zodiac-icon-badge,
   color: var(--navbar-hover-text);
 }
 
+/* ================================
+   Reading Layout and Results Viewer
+================================ */
+
 .reading-results-section {
   width: min(100%, 960px);
   margin: 4rem auto 0;
@@ -2651,6 +2834,45 @@ body.blood-moon-mode .zodiac-icon-badge,
   box-shadow:
     0 0 18px color-mix(in srgb, var(--glow-color) 30%, transparent),
     0 16px 38px rgba(0, 0, 0, 0.28);
+}
+
+.card-image {
+  transition: transform 260ms ease;
+}
+
+.card-image.is-reversed,
+.is-reversed {
+  transform: rotate(180deg);
+}
+
+.card-orientation-badge {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 4;
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--glow-border) 72%, transparent);
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: var(--navbar-text);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 48%),
+    rgba(4, 3, 8, 0.72);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--glow-color) 40%, transparent);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.reading-viewer__orientation-badge {
+  right: 18px;
+  bottom: 18px;
 }
 
 .reading-viewer__content {
@@ -2797,7 +3019,81 @@ body.blood-moon-mode .zodiac-icon-badge,
   line-height: 1.72;
 }
 
-.combined-reading p + p,
+.combined-reading__intro {
+  max-width: 68ch;
+}
+
+.combined-reading__thread-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.combined-reading__thread-card {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--navbar-border) 72%, transparent);
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.055), transparent 58%),
+    color-mix(in srgb, var(--glow-ambient) 28%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.combined-reading__position-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 24px;
+  padding: 4px 9px;
+  border: 1px solid color-mix(in srgb, var(--glow-border) 68%, transparent);
+  border-radius: 999px;
+  color: var(--navbar-hover-text);
+  background: color-mix(in srgb, var(--glow-ambient) 48%, transparent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.combined-reading__thread-card h4 {
+  margin: 10px 0 7px;
+  color: var(--navbar-text);
+  font-family: var(--heading-font);
+  font-size: clamp(1.02rem, 1.7vw, 1.18rem);
+  line-height: 1.15;
+}
+
+.combined-reading__thread-card p {
+  font-size: 0.92rem;
+  line-height: 1.62;
+}
+
+.combined-reading__final {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid color-mix(in srgb, var(--navbar-border) 62%, transparent);
+}
+
+.combined-reading__final > span,
+.combined-reading__themes span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--navbar-hover-text);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.combined-reading__themes {
+  margin-top: 10px;
+}
+
 .combined-reading__extras {
   margin-top: 10px;
 }
@@ -2819,6 +3115,15 @@ body.blood-moon-mode .reading-viewer__keywords li {
   background: rgba(116, 18, 30, 0.32);
 }
 
+body.blood-moon-mode .card-orientation-badge {
+  border-color: rgba(255, 116, 126, 0.4);
+  color: rgba(255, 244, 216, 0.96);
+  background:
+    linear-gradient(135deg, rgba(255, 64, 88, 0.16), transparent 48%),
+    rgba(32, 3, 7, 0.82);
+  box-shadow: 0 0 16px rgba(255, 35, 65, 0.24);
+}
+
 body.blood-moon-mode .reading-viewer__insight-grid section,
 body.blood-moon-mode .reading-viewer__reflection,
 body.blood-moon-mode .combined-reading {
@@ -2833,6 +3138,29 @@ body.blood-moon-mode .combined-reading {
     0 18px 54px rgba(0, 0, 0, 0.32),
     0 0 28px rgba(190, 30, 54, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+body.blood-moon-mode .combined-reading__thread-card {
+  border-color: rgba(255, 116, 126, 0.28);
+  background:
+    linear-gradient(145deg, rgba(148, 18, 38, 0.2), transparent 58%),
+    rgba(37, 4, 10, 0.46);
+  box-shadow:
+    0 0 22px rgba(190, 30, 54, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+body.blood-moon-mode .combined-reading__position-pill {
+  border-color: rgba(255, 116, 126, 0.42);
+  color: rgba(255, 244, 216, 0.96);
+  background:
+    linear-gradient(135deg, rgba(255, 64, 88, 0.16), transparent 48%),
+    rgba(65, 8, 16, 0.68);
+  box-shadow: 0 0 14px rgba(255, 35, 65, 0.18);
+}
+
+body.blood-moon-mode .combined-reading__final {
+  border-top-color: rgba(255, 116, 126, 0.22);
 }
 
 .reading-viewer__controls {
@@ -3320,6 +3648,23 @@ body.blood-moon-mode .mystic-mist {
   }
 }
 
+@keyframes bloodTogglePulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 16px rgba(255, 35, 65, 0.24),
+      0 0 28px rgba(190, 30, 54, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  50% {
+    box-shadow:
+      0 0 24px rgba(255, 35, 65, 0.42),
+      0 0 44px rgba(190, 30, 54, 0.26),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  }
+}
+
 body.moon-mode .tarot-background::before {
   background:
     radial-gradient(ellipse at 62% 34%, rgba(132, 86, 206, 0.14), transparent 32%),
@@ -3531,9 +3876,14 @@ body.blood-moon-mode .lunar-orb {
   z-index: 1;
   min-height: 100vh;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   place-items: center;
   padding: clamp(112px, 16vw, 150px) clamp(24px, 5vw, 72px) clamp(36px, 6vw, 82px);
 }
+
+/* ================================
+   Footer
+================================ */
 
 .site-footer {
   position: relative;
@@ -4153,6 +4503,24 @@ body.blood-moon-mode .lunar-orb {
 }
 
 @media (max-width: 640px) {
+  .blood-moon-event-control {
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    max-width: min(220px, calc(100vw - 24px));
+  }
+
+  .blood-moon-event-control__button {
+    min-height: 40px;
+    padding: 0 14px;
+    font-size: 0.82rem;
+  }
+
+  .blood-moon-event-control__hint {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
   .reader-carousel__stage {
     grid-template-columns: 1fr;
   }
@@ -4432,6 +4800,43 @@ body.blood-moon-mode .lunar-orb {
   pointer-events: none;
 }
 
+.reader-carousel__featured.reader-card--aquarius-bloodmoon .reader-selection-split__image {
+  border-color: rgba(225, 229, 255, 0.46);
+  background:
+    radial-gradient(circle at 54% 62%, rgba(242, 244, 255, 0.12), transparent 20%),
+    radial-gradient(circle at 50% 34%, rgba(185, 190, 255, 0.22), transparent 48%),
+    rgba(0, 0, 0, 0.28);
+  box-shadow:
+    0 0 28px rgba(218, 224, 255, 0.18),
+    0 0 38px rgba(130, 110, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.reader-carousel__featured.reader-card--aquarius-bloodmoon .reader-selection-split__image::after {
+  content: "";
+  position: absolute;
+  left: 48%;
+  top: 56%;
+  z-index: 1;
+  width: clamp(78px, 11vw, 132px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.22) 0 9%, rgba(222, 226, 255, 0.14) 10% 28%, transparent 62%);
+  filter: blur(2px);
+  opacity: 0.46;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.reader-carousel__featured.reader-card--aquarius-bloodmoon .reader-selection-split__panel {
+  border-color: rgba(220, 224, 255, 0.28);
+  background:
+    radial-gradient(circle at 12% 12%, rgba(218, 224, 255, 0.12), transparent 48%),
+    radial-gradient(circle at 88% 82%, rgba(135, 110, 255, 0.08), transparent 42%),
+    rgba(255, 255, 255, 0.032);
+}
+
 .reader-selection-split__image:hover,
 .reader-selection-split__image:focus-visible {
   border-color: color-mix(in srgb, var(--reader-accent) 74%, white);
@@ -4458,6 +4863,17 @@ body.blood-moon-mode .lunar-orb {
   filter: brightness(0.76) saturate(0.9);
 }
 
+.reader-carousel__featured--sealed .reader-selection-split__image {
+  border-color: rgba(255, 116, 126, 0.3);
+  box-shadow:
+    0 0 22px rgba(190, 30, 54, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.reader-carousel__featured--sealed .reader-selection-split__image img {
+  filter: brightness(0.72) saturate(0.82) contrast(1.04);
+}
+
 .reader-selection-split__panel {
   display: grid;
   align-content: center;
@@ -4471,6 +4887,18 @@ body.blood-moon-mode .lunar-orb {
     radial-gradient(circle at 12% 12%, color-mix(in srgb, var(--reader-glow) 32%, transparent), transparent 48%),
     rgba(255, 255, 255, 0.035);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.reader-carousel__featured--sealed .reader-selection-split__panel {
+  border-color: rgba(255, 116, 126, 0.34);
+  background:
+    radial-gradient(circle at 12% 12%, rgba(190, 30, 54, 0.18), transparent 46%),
+    linear-gradient(135deg, rgba(255, 64, 88, 0.08), transparent 52%),
+    rgba(255, 255, 255, 0.032);
+  box-shadow:
+    0 0 22px rgba(190, 30, 54, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  animation: sealedReaderPulse 4.8s ease-in-out infinite;
 }
 
 .reader-selection-split__panel .reader-feature-identity {
@@ -4491,6 +4919,26 @@ body.blood-moon-mode .lunar-orb {
   width: min(100%, 46ch);
 }
 
+.reader-availability-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 26px;
+  border: 1px solid rgba(255, 116, 126, 0.4);
+  border-radius: 999px;
+  padding: 5px 10px;
+  color: rgba(255, 232, 235, 0.9);
+  background:
+    linear-gradient(135deg, rgba(255, 64, 88, 0.13), transparent 52%),
+    rgba(32, 3, 7, 0.62);
+  box-shadow: 0 0 14px rgba(190, 30, 54, 0.16);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
 .reader-selection-split__description {
   max-width: 52ch;
   margin: 0;
@@ -4502,6 +4950,31 @@ body.blood-moon-mode .lunar-orb {
 .reader-selection-split__panel .reader-feature-card__locked-message {
   display: block;
   margin: 0;
+}
+
+.reader-feature-card__locked-hint {
+  display: grid;
+  gap: 6px;
+  width: min(100%, 46ch);
+  border-left: 1px solid rgba(255, 116, 126, 0.46);
+  padding-left: 14px;
+}
+
+.reader-feature-card__locked-hint p,
+.reader-feature-card__locked-hint span {
+  margin: 0;
+  color: rgba(255, 213, 217, 0.9);
+  line-height: 1.6;
+}
+
+.reader-feature-card__locked-hint p {
+  font-weight: 700;
+}
+
+.reader-feature-card__locked-hint span {
+  color: rgba(255, 213, 217, 0.68);
+  font-size: 0.9rem;
+  font-style: italic;
 }
 
 .reader-selection-split__panel .reader-selection-button-row {
@@ -4591,6 +5064,8 @@ body.blood-moon-mode .lunar-orb {
 }
 
 .active-reader-header {
+  position: relative;
+  overflow: hidden;
   display: grid;
   grid-template-columns: clamp(150px, 22vw, 260px) minmax(0, 1fr);
   grid-template-areas:
@@ -4610,6 +5085,58 @@ body.blood-moon-mode .lunar-orb {
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+.active-reader-header--aquarius-bloodmoon {
+  border-color: rgba(221, 225, 255, 0.34);
+  background:
+    radial-gradient(circle at 18% 18%, rgba(232, 236, 255, 0.13), transparent 42%),
+    radial-gradient(circle at 86% 78%, rgba(138, 112, 255, 0.09), transparent 38%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 52%),
+    rgba(25, 10, 20, 0.46);
+  box-shadow:
+    0 18px 52px rgba(0, 0, 0, 0.28),
+    0 0 26px rgba(218, 224, 255, 0.14),
+    0 0 38px rgba(138, 112, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+}
+
+.active-reader-header--aquarius-bloodmoon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.44) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(200, 210, 255, 0.28) 0 1px, transparent 1.4px);
+  background-position:
+    18% 24%,
+    82% 58%;
+  background-size:
+    126px 126px,
+    164px 164px;
+  opacity: 0.13;
+}
+
+.active-reader-header--aquarius-bloodmoon::after {
+  content: "";
+  position: absolute;
+  right: clamp(18px, 3vw, 34px);
+  bottom: 12px;
+  left: clamp(18px, 3vw, 34px);
+  height: 9px;
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, transparent, rgba(226, 230, 255, 0.24), rgba(160, 145, 255, 0.18), transparent);
+  box-shadow:
+    0 0 18px rgba(218, 224, 255, 0.16),
+    0 0 26px rgba(138, 112, 255, 0.1);
+  pointer-events: none;
+}
+
+.active-reader-header--aquarius-bloodmoon > * {
+  position: relative;
+  z-index: 1;
+}
+
 .active-reader-header .reader-portrait-frame {
   grid-area: portrait;
   width: clamp(150px, 22vw, 260px);
@@ -4621,6 +5148,19 @@ body.blood-moon-mode .lunar-orb {
   box-shadow:
     0 18px 46px rgba(0, 0, 0, 0.34),
     0 0 24px var(--navbar-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.active-reader-header--aquarius-bloodmoon .reader-portrait-frame {
+  border-color: rgba(225, 229, 255, 0.42);
+  background:
+    radial-gradient(circle at 54% 62%, rgba(242, 244, 255, 0.1), transparent 22%),
+    radial-gradient(circle at 50% 34%, rgba(185, 190, 255, 0.18), transparent 48%),
+    rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.34),
+    0 0 24px rgba(218, 224, 255, 0.16),
+    0 0 34px rgba(130, 110, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
@@ -4680,6 +5220,13 @@ body.blood-moon-mode .lunar-orb {
 body.blood-moon-mode .active-reader-header__quote {
   color: color-mix(in srgb, var(--navbar-text) 86%, #ff314d);
   text-shadow: 0 0 18px rgba(255, 35, 65, 0.2);
+}
+
+.active-reader-header--aquarius-bloodmoon .active-reader-header__quote {
+  color: color-mix(in srgb, var(--navbar-text) 88%, #dde2ff);
+  text-shadow:
+    0 0 16px rgba(218, 224, 255, 0.16),
+    0 0 22px rgba(138, 112, 255, 0.1);
 }
 
 .spread-selection-panel {

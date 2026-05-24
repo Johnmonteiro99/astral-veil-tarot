@@ -20,6 +20,37 @@
     <link rel="stylesheet" href="css/deck.css" />
   </head>
   <body class="sun-mode">
+    <script>
+      (function () {
+        var themeStorageKey = "dailyTarotTheme";
+        var bloodMoonStorageKey = "astralVeilBloodMoonActive";
+        var testBloodMoonStorageKey = "astralVeilTestBloodMoonActive";
+        var params = new URLSearchParams(window.location.search);
+        var queryBloodMoon = params.get("bloodMoon") || params.get("testBloodMoon");
+        var isBloodMoonQuery = queryBloodMoon === "" || /^(1|true|yes|on|active)$/i.test(queryBloodMoon || "");
+        var hasBloodMoonOverride = params.has("bloodMoon") || params.has("testBloodMoon");
+        var isBloodMoon = hasBloodMoonOverride ? isBloodMoonQuery : false;
+        var storedTheme = "";
+
+        try {
+          isBloodMoon = hasBloodMoonOverride ? isBloodMoon : isBloodMoon ||
+            sessionStorage.getItem(bloodMoonStorageKey) === "true" ||
+            localStorage.getItem(bloodMoonStorageKey) === "true" ||
+            sessionStorage.getItem(testBloodMoonStorageKey) === "true" ||
+            localStorage.getItem(testBloodMoonStorageKey) === "true";
+          storedTheme = localStorage.getItem(themeStorageKey) || "";
+        } catch (error) {
+          storedTheme = "";
+        }
+
+        var mode = storedTheme === "moon" || storedTheme === "sun"
+          ? storedTheme
+          : new Date().getHours() >= 6 && new Date().getHours() < 18 ? "sun" : "moon";
+
+        document.body.classList.remove("sun-mode", "moon-mode", "blood-moon-mode");
+        document.body.classList.add(isBloodMoon ? "blood-moon-mode" : mode + "-mode");
+      })();
+    </script>
     <header class="site-header">
       <nav class="navbar" aria-label="Primary navigation">
         <a class="navbar__brand" href="index.html" aria-label="Astral Veil home">

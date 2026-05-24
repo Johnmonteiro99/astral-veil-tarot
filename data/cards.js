@@ -465,8 +465,121 @@ const majorArcanaCards = [
   }
 ];
 
+function sentenceCase(value) {
+  const text = String(value || "").trim();
+
+  if (!text) {
+    return "";
+  }
+
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function getBaseCardId(card) {
+  return String(card?.originalCardId || card?.id || "").replace(/^blood-moon-/, "");
+}
+
+function getCardUprightMeaning(card) {
+  const bloodMoon = card?.bloodMoon || {};
+  const isBloodMoonCard = Boolean(card?.isBloodMoonCard || card?.originalCardId);
+
+  if (isBloodMoonCard) {
+    return {
+      summary: bloodMoon.shortMeaning || card.shortMeaning || "",
+      meaning: bloodMoon.summary || card.summary || "",
+      reflection: bloodMoon.veilHint || card.reflectionQuestion || "",
+      shadow: bloodMoon.shadowMessage || card.shadowMeaning || ""
+    };
+  }
+
+  return {
+    summary: card.shortMeaning || "",
+    meaning: card.summary || "",
+    reflection: card.reflectionQuestion || "",
+    shadow: card.shadowMeaning || "",
+    keywords: card.uprightMeaning || ""
+  };
+}
+
+function createReversedMeaning(card) {
+  const shadow = sentenceCase(card.shadowMeaning || "Blocked momentum, avoidance, or an inner pattern asking for attention.");
+  const reflection = card.reflectionQuestion || "Where is this energy asking for a more honest response?";
+
+  return {
+    summary: `${card.name} reversed asks you to notice where this energy is blocked, delayed, or turned inward.`,
+    meaning: `${card.name} reversed brings ${shadow.toLowerCase()} into focus. The message is not failure; it is an invitation to slow down, name the distortion, and choose with clearer awareness.`,
+    reflection: reflection.replace(/\?$/, "") + "?",
+    shadow
+  };
+}
+
+function createBloodMoonReversedMeaning(card) {
+  const bloodMoon = card.bloodMoon || {};
+  const shadow = sentenceCase(bloodMoon.shadowMessage || card.shadowMeaning || "The avoided pattern is asking to be confronted.");
+
+  return {
+    summary: `${card.name} reversed does not whisper beneath the Blood Moon. It points at the pattern you have been circling.`,
+    meaning: `${shadow} This reversal is blunt medicine: stop decorating the avoidance, look at the wound, and decide what no longer gets to steer you.`,
+    reflection: bloodMoon.veilHint || card.reflectionQuestion || "What truth becomes unavoidable when the shadow stops being excused?",
+    shadow
+  };
+}
+
+function withOrientationMeanings(card) {
+  const reversed = card.reversed || createReversedMeaning(card);
+  const bloodMoonReversed = card.bloodMoon?.reversed || createBloodMoonReversedMeaning(card);
+
+  return {
+    ...card,
+    upright: card.upright || {
+      summary: card.shortMeaning,
+      meaning: card.summary,
+      reflection: card.reflectionQuestion,
+      keywords: card.uprightMeaning
+    },
+    reversed,
+    bloodMoon: {
+      ...card.bloodMoon,
+      upright: card.bloodMoon?.upright || {
+        summary: card.bloodMoon?.shortMeaning || card.shortMeaning,
+        meaning: card.bloodMoon?.summary || card.summary,
+        reflection: card.bloodMoon?.veilHint || card.reflectionQuestion
+      },
+      reversed: bloodMoonReversed
+    }
+  };
+}
+
+function getCardReversedMeaning(card) {
+  const baseCard = majorArcanaCards.find((item) => item.id === getBaseCardId(card));
+  const sourceCard = card?.reversed ? card : baseCard || card;
+  const isBloodMoonCard = Boolean(card?.isBloodMoonCard || card?.originalCardId);
+
+  if (isBloodMoonCard) {
+    return sourceCard?.bloodMoon?.reversed || createBloodMoonReversedMeaning(sourceCard || card);
+  }
+
+  return sourceCard?.reversed || createReversedMeaning(sourceCard || card);
+}
+
+function getCardOrientation(card) {
+  return card?.orientation === "reversed" || card?.isReversed ? "reversed" : "upright";
+}
+
+function getCardOrientationName(card) {
+  return getCardOrientation(card) === "reversed" ? "Reversed" : "Upright";
+}
+
+function getCardReadingMeaning(card) {
+  return getCardOrientation(card) === "reversed"
+    ? getCardReversedMeaning(card)
+    : getCardUprightMeaning(card);
+}
+
+const orientedMajorArcanaCards = majorArcanaCards.map(withOrientationMeanings);
+
 const tarotDeck = majorArcanaCards.map((card) => ({
-  ...card,
+  ...withOrientationMeanings(card),
   meaning: card.shortMeaning
 }));
 

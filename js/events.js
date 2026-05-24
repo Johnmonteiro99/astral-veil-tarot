@@ -37,12 +37,98 @@
     }
   }
 
+  function normalizeEventTestValue(value) {
+    if (value === null) {
+      return null;
+    }
+
+    const normalizedValue = String(value).trim().toLowerCase();
+
+    if (normalizedValue === "" || ["1", "true", "yes", "on", "active"].includes(normalizedValue)) {
+      return true;
+    }
+
+    if (["0", "false", "no", "off", "inactive"].includes(normalizedValue)) {
+      return false;
+    }
+
+    return null;
+  }
+
+  function getEventTestAliases(eventConfig) {
+    return [
+      eventConfig.id,
+      eventConfig.name,
+      eventConfig.name?.replace(/\s+/g, "-"),
+      eventConfig.name?.replace(/\s+/g, "")
+    ]
+      .filter(Boolean)
+      .map((value) => String(value).toLowerCase());
+  }
+
+  function getEventTestOverride(eventId) {
+    const eventConfig = getEventConfig(eventId);
+
+    if (!eventConfig?.testing) {
+      return null;
+    }
+
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const queryParams = eventConfig.testing.queryParams || [];
+
+      for (const paramName of queryParams) {
+        if (params.has(paramName)) {
+          return normalizeEventTestValue(params.get(paramName));
+        }
+      }
+
+      if (params.has("event")) {
+        const eventValue = params.get("event");
+        const normalizedEventValue = String(eventValue || "").trim().toLowerCase();
+        const eventAliases = getEventTestAliases(eventConfig);
+
+        if (eventAliases.includes(normalizedEventValue)) {
+          return true;
+        }
+      }
+
+      const storageKey = eventConfig.testing.storageKey;
+
+      if (storageKey) {
+        return normalizeEventTestValue(
+          sessionStorage.getItem(storageKey) || localStorage.getItem(storageKey)
+        );
+      }
+    } catch (error) {
+      return null;
+    }
+
+    return null;
+  }
+
+  function applyEventTestOverride(eventId) {
+    const override = getEventTestOverride(eventId);
+
+    if (override === null) {
+      return;
+    }
+
+    if (override) {
+      setStoredEventState(eventId, true);
+    } else {
+      clearStoredEventState(eventId);
+    }
+  }
+
   function isEventActive(eventId) {
     const eventConfig = getEventConfig(eventId);
 
     if (eventConfig && eventConfig.enabled === false) {
       return false;
     }
+
+    applyEventTestOverride(eventId);
 
     return getStoredEventState(eventId) === "true";
   }
@@ -87,6 +173,8 @@
     getStoredEventState,
     setStoredEventState,
     clearStoredEventState,
+    getEventTestOverride,
+    applyEventTestOverride,
     isEventActive,
     getActiveDeck,
     notifyEventStateChange
