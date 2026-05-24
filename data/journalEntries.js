@@ -44,5 +44,58 @@ const zephyraJournalEntries = [
       "I do not think the page believes me."
     ],
     annotation: "Subject showed early resonance with Veil-symbol before formal exposure."
+  },
+  {
+    id: "door-without-handle",
+    label: "JOURNAL 02",
+    title: "The Door Without a Handle",
+    archiveStatus: "Recovered from the Noctis Archive",
+    status: "Fragmented Entry",
+    author: "Zephyra Noctis",
+    excerpt: "The door opened only after we stopped asking it to...",
+    requiredEvent: "bloodMoon",
+    isLocked: false,
+    images: [],
+    futureComicPanels: [],
+    body: [
+      "The door opened only after we stopped asking it to.",
+      "I pressed my palm to the symbol because the Aquarius woman told me not to. There are moments when obedience feels like surrender, and surrender has never kept me alive.",
+      "No hinge moved. No lock turned. The stone simply remembered that it was not stone.",
+      "Beyond it, the air tasted of cold iron and rain that had not fallen yet.",
+      "Something below us wrote my name in the dust.",
+      "Not the name I use.",
+      "The first one."
+    ],
+    annotation: "Recovered page carries low-level heat damage along the binding."
+  },
+  {
+    id: "ash-beneath-library",
+    label: "JOURNAL 03",
+    title: "Ash Beneath the Library",
+    archiveStatus: "Indexed / Not Recovered",
+    status: "Locked",
+    author: "Zephyra Noctis",
+    excerpt: "A page is listed here, but the ink refuses the light.",
+    requiredEvent: "bloodMoon",
+    isLocked: true,
+    images: [],
+    futureComicPanels: [],
+    body: [],
+    annotation: "The Veil has not yielded this page."
+  },
+  {
+    id: "when-the-eye-opened",
+    label: "JOURNAL 04",
+    title: "When the Eye Opened",
+    archiveStatus: "Indexed / Not Recovered",
+    status: "Locked",
+    author: "Zephyra Noctis",
+    excerpt: "Recovery required. The margin keeps bleeding through.",
+    requiredEvent: "bloodMoon",
+    isLocked: true,
+    images: [],
+    futureComicPanels: [],
+    body: [],
+    annotation: "Signal missing."
   }
 ];

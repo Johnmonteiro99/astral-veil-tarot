@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Meet the Veilwalkers of Astral Veil, each carrying their own energy, secrets, and connection to the astral veil."
+      content="Enter the Lumen Archive, an Astral Veil sanctuary for reflection, clarity, healing, and light work."
     />
-    <title>Veilwalkers | Astral Veil</title>
+    <title>The Lumen Archive | Astral Veil</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,10 +17,10 @@
     />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/lumen-archive.css" />
     <link rel="stylesheet" href="css/scroll-reader.css" />
-    <link rel="stylesheet" href="css/readers.css" />
   </head>
-  <body class="sun-mode">
+  <body class="sun-mode lumen-archive-page">
     <script>
       (function () {
         var themeStorageKey = "dailyTarotTheme";
@@ -58,16 +58,10 @@
           <span class="logo-eye" aria-hidden="true">
             <svg class="logo-eye__svg" viewBox="0 0 96 64" focusable="false">
               <path class="logo-eye__card" d="M48 3l38 29-38 29L10 32z" />
-              <path class="logo-eye__card logo-eye__card--inner" d="M48 9l29 23-29 23-29-23z" />
               <path class="logo-eye__outer" d="M8 32c11-16 25-23 40-23s29 7 40 23c-11 16-25 23-40 23S19 48 8 32z" />
-              <path class="logo-eye__lid" d="M18 31c8-9 18-14 30-14s22 5 30 14" />
-              <path class="logo-eye__lid" d="M18 34c8 9 18 13 30 13s22-4 30-13" />
               <circle class="logo-eye__iris" cx="48" cy="32" r="13" />
               <circle class="logo-eye__pupil" cx="48" cy="32" r="4" />
               <path class="logo-eye__ray" d="M48 5v8M48 51v8M25 12l5 7M71 12l-5 7M25 52l5-7M71 52l-5-7" />
-              <path class="logo-eye__ornament" d="M36 32h24M48 20v24" />
-              <path class="logo-eye__star" d="M64 24l1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5z" />
-              <path class="logo-eye__crescent" d="M76 25c-4 2-6 5-6 9s2 7 6 9c-6 0-11-4-11-9s5-9 11-9z" />
             </svg>
           </span>
           <span class="navbar__brand-text">Astral Veil</span>
@@ -157,17 +151,78 @@
     </div>
 
     <main class="tarot-stage">
-      <section class="page-shell readers-page" aria-labelledby="readers-title">
-        <div class="page-hero">
-          <p class="reading-section__eyebrow">Readers, witnesses, and fragments</p>
-          <h1 id="readers-title">The Veilwalkers</h1>
-          <p class="page-hero__subtitle">Readers, witnesses, and fragments of the zodiac bound to the Astral Veil.</p>
-          <p>
-            Each Veilwalker carries a sign, an element, and a hidden transformation. Their readings are not predictions alone. They are doorways into memory, shadow, instinct, and the truths waiting beyond the Veil.
-          </p>
-        </div>
+      <section class="lumen-archive" aria-labelledby="lumen-archive-title">
+        <header class="lumen-archive__hero">
+          <div class="lumen-archive__copy">
+            <p class="reading-section__eyebrow">LIGHTWORK INDEX</p>
+            <h1 id="lumen-archive-title">The Lumen Archive</h1>
+            <p class="lumen-archive__subheading">Not every truth arrives as a wound. Some arrive as light.</p>
+            <p>
+              A sanctuary for reflection, clarity, healing, and the truths that help the self return whole.
+            </p>
+          </div>
+          <div class="lumen-sigil" aria-hidden="true">
+            <svg viewBox="0 0 240 240" focusable="false">
+              <circle class="lumen-sigil__halo" cx="120" cy="120" r="78" />
+              <circle class="lumen-sigil__ring" cx="120" cy="120" r="48" />
+              <path class="lumen-sigil__ray" d="M120 28v44M120 168v44M28 120h44M168 120h44" />
+              <path class="lumen-sigil__ray" d="M55 55l31 31M154 154l31 31M185 55l-31 31M86 154l-31 31" />
+              <path class="lumen-sigil__petal" d="M120 74c18 17 18 75 0 92-18-17-18-75 0-92z" />
+              <path class="lumen-sigil__petal" d="M74 120c17-18 75-18 92 0-17 18-75 18-92 0z" />
+              <circle class="lumen-sigil__core" cx="120" cy="120" r="13" />
+            </svg>
+          </div>
+        </header>
 
-        <div class="reader-profile-grid" data-readers-page-list></div>
+        <section class="lumen-atrium" aria-labelledby="lumen-atrium-title">
+          <figure class="lumen-atrium__image">
+            <img
+              src="assets/images/dawn-of-atrium.png"
+              alt="The Dawn Atrium"
+              loading="eager"
+              decoding="async"
+              onerror="this.closest('.lumen-atrium__image').classList.add('is-missing'); this.remove();"
+            />
+            <figcaption aria-hidden="true"><span>D</span></figcaption>
+          </figure>
+
+          <div class="lumen-atrium__content">
+            <p class="lumen-featured-counter">Arrival Room</p>
+            <h2 id="lumen-atrium-title">The Dawn Atrium</h2>
+            <div class="lumen-atrium__letter">
+              <p>Welcome.</p>
+              <p>If you have found your way here, then something in you is ready to be met with light.</p>
+              <p>The Lumen Archive is a sanctuary for quiet return - a place for reflection, healing, truth, and the kind of self-discovery that does not ask you to break yourself apart in order to grow. Each room within it offers a different form of care: some reflect, some steady, some renew, and some reveal.</p>
+              <p>You are not expected to arrive here complete.<br />You are only asked to arrive willing.</p>
+              <p>When your spirit knows where to begin, choose a sanctuary below.</p>
+            </div>
+
+            <form class="lumen-name-form" data-lumen-name-form>
+              <div class="lumen-name-form__fields" data-lumen-name-fields>
+                <label for="lumen-name-input">What name should the light remember?</label>
+                <div class="lumen-name-form__row">
+                  <input id="lumen-name-input" type="text" name="lumen-name" placeholder="Your name..." autocomplete="name" data-lumen-name-input />
+                  <button type="submit">Let the Light Know</button>
+                </div>
+              </div>
+              <p class="lumen-name-form__message" data-lumen-name-message aria-live="polite"></p>
+              <button class="lumen-name-form__change" type="button" data-lumen-name-reset hidden>Speak Another Name</button>
+            </form>
+          </div>
+        </section>
+
+        <section class="lumen-sanctuary" aria-labelledby="lumen-sanctuary-title">
+          <div class="lumen-sanctuary__heading">
+            <h2 id="lumen-sanctuary-title">Choose Your Lightwork</h2>
+            <p class="lumen-sanctuary__subheading">What is asking for light today?</p>
+            <p>Choose the kind of care your spirit is ready to begin.</p>
+          </div>
+
+          <div class="lumen-sanctuary__rail" data-lumen-sanctuary-rail aria-label="Choose a Lumen Archive sanctuary"></div>
+
+          <section class="lumen-sanctuary-viewer" data-lumen-sanctuary-viewer aria-live="polite"></section>
+          <section class="lumen-sanctuary-interior" data-lumen-sanctuary-interior hidden aria-live="polite"></section>
+        </section>
       </section>
     </main>
 
@@ -185,6 +240,7 @@
           <a href="readers.html">Veilwalkers</a>
           <a href="deck.html">Deck</a>
           <a href="about.html">About</a>
+          <a href="lumen-archive.html" data-lumen-archive-footer-link>Lumen Archive</a>
         </nav>
 
         <div class="site-footer__creator">
@@ -199,25 +255,10 @@
       </div>
     </footer>
 
-    <div class="reader-lightbox" data-reader-lightbox aria-hidden="true">
-      <button class="reader-lightbox__backdrop" type="button" data-close-lightbox aria-label="Close reader image"></button>
-      <div class="reader-lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="reader-lightbox-title">
-        <button class="reader-lightbox__close" type="button" data-close-lightbox aria-label="Close reader image">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <img class="reader-lightbox__image" alt="" data-lightbox-image data-expandable-image role="button" tabindex="0" aria-label="Expand reader image" />
-        <div class="reader-lightbox__content">
-          <h2 id="reader-lightbox-title" data-lightbox-name></h2>
-          <p data-lightbox-energy></p>
-        </div>
-      </div>
-    </div>
-
-    <script src="data/readers.js"></script>
     <script src="data/events.js"></script>
     <script src="js/events.js"></script>
     <script src="js/app.js"></script>
     <script src="js/scroll-reader.js"></script>
-    <script src="js/readers.js"></script>
+    <script src="js/lumen-archive.js"></script>
   </body>
 </html>

@@ -273,6 +273,45 @@ const tarotReaders = [
     energy: "Ivory celestial reader attuned to pale starlight, hidden patterns, and quiet revelations.",
     intro: "I read the spaces between signs, where the quietest symbols leave their light. Let the pattern reveal itself slowly.",
     resultMessage: "A violet thread appears where your question touches the unseen.",
+    bloodMoonSignal: {
+      label: "UNSTABLE SIGNAL",
+      text: "A recovered transmission flickers beneath this record.",
+      clue: "Some letters hold their breath longer than others.",
+      button: "Listen Between",
+      transmission: {
+        label: "RECOVERED TRANSMISSION",
+        title: "The Breath Between Thoughts",
+        author: "Associated with Lyssara Voss",
+        body: [
+          "Air is misunderstood because it refuses to stay.",
+          "People call it empty when they cannot hold it. They forget that every voice they have ever loved reached them by crossing air first.",
+          "A word does not belong only to the mouth that releases it. Once spoken, it becomes weather. It travels through rooms, over thresholds, between strangers, into memory. It changes the silence it passes through.",
+          "That is why I listen before I answer.",
+          "The mind tries to become a locked tower when it is afraid. It stacks reasons like stone. It seals every window and calls the stillness wisdom.",
+          "But the body knows better.",
+          { html: "<span class=\"breath-mark\">B</span>efore thought, there is breath." },
+          { html: "Release what the mind keeps ci<span class=\"breath-mark\">R</span>cling." },
+          { html: "Every sil<span class=\"breath-mark\">E</span>nce carries a signal." },
+          { html: "Air enters without <span class=\"breath-mark\">A</span>sking permission." },
+          { html: "The brea<span class=\"breath-mark\">T</span>h leaves." },
+          { html: "<span class=\"breath-mark\">H</span>old nothing that was meant to move." },
+          { html: "Exchang<span class=\"breath-mark\">E</span> is the oldest prayer." },
+          "This is the first law of air:",
+          "nothing living keeps everything inside.",
+          "A closed hand cannot feel the wind.\nA closed heart cannot hear the message.\nA closed mind mistakes its own echo for truth.",
+          "So I leave the window open.",
+          "Not for escape.",
+          "For exchange.",
+          "The breath enters.\nThe breath leaves.\nThe self remains, but never unchanged.",
+          "To become like air is not to vanish.",
+          "It is to move without begging walls to understand you.",
+          "It is to carry what must be said, release what must not stay, and trust that even silence has a current.",
+          "When the signal ended, the room did not become quiet.",
+          "It became spacious.",
+          "And in that space, something pale turned once in the dark."
+        ]
+      }
+    },
     chance: 8
   },
   {

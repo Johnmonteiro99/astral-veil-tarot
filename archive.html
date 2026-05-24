@@ -18,8 +18,40 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
     <link rel="stylesheet" href="css/archive.css" />
+    <link rel="stylesheet" href="css/scroll-reader.css" />
   </head>
   <body class="sun-mode">
+    <script>
+      (function () {
+        var themeStorageKey = "dailyTarotTheme";
+        var bloodMoonStorageKey = "astralVeilBloodMoonActive";
+        var testBloodMoonStorageKey = "astralVeilTestBloodMoonActive";
+        var params = new URLSearchParams(window.location.search);
+        var queryBloodMoon = params.get("bloodMoon") || params.get("testBloodMoon");
+        var isBloodMoonQuery = queryBloodMoon === "" || /^(1|true|yes|on|active)$/i.test(queryBloodMoon || "");
+        var hasBloodMoonOverride = params.has("bloodMoon") || params.has("testBloodMoon");
+        var isBloodMoon = hasBloodMoonOverride ? isBloodMoonQuery : false;
+        var storedTheme = "";
+
+        try {
+          isBloodMoon = hasBloodMoonOverride ? isBloodMoon : isBloodMoon ||
+            sessionStorage.getItem(bloodMoonStorageKey) === "true" ||
+            localStorage.getItem(bloodMoonStorageKey) === "true" ||
+            sessionStorage.getItem(testBloodMoonStorageKey) === "true" ||
+            localStorage.getItem(testBloodMoonStorageKey) === "true";
+          storedTheme = localStorage.getItem(themeStorageKey) || "";
+        } catch (error) {
+          storedTheme = "";
+        }
+
+        var mode = storedTheme === "moon" || storedTheme === "sun"
+          ? storedTheme
+          : new Date().getHours() >= 6 && new Date().getHours() < 18 ? "sun" : "moon";
+
+        document.body.classList.remove("sun-mode", "moon-mode", "blood-moon-mode");
+        document.body.classList.add(isBloodMoon ? "blood-moon-mode" : mode + "-mode");
+      })();
+    </script>
     <header class="site-header">
       <nav class="navbar" aria-label="Primary navigation">
         <a class="navbar__brand" href="index.html" aria-label="Astral Veil home">
@@ -120,12 +152,6 @@
 
     <main class="tarot-stage">
       <section class="page-shell archive-page" aria-labelledby="archive-title">
-        <div class="page-hero archive-hero" data-archive-content>
-          <p class="reading-section__eyebrow">Blood Moon Access</p>
-          <h1 id="archive-title">The Noctis Archive</h1>
-          <p>A private codex of recovered notes, forbidden observations, and visual records gathered beneath Zephyra's crimson eclipse.</p>
-        </div>
-
         <section class="archive-locked" data-archive-locked hidden aria-labelledby="archive-locked-title">
           <p class="reading-section__eyebrow">Restricted</p>
           <h1 id="archive-locked-title">The archive is sealed.</h1>
@@ -133,109 +159,25 @@
           <a class="archive-locked__link" href="index.html">Return to Readings</a>
         </section>
 
-        <div class="archive-codex" data-archive-content>
-          <aside class="archive-index" aria-label="Archive sections">
-            <p class="archive-index__label">Recovered Index</p>
-            <button class="archive-tab is-active" type="button" data-archive-tab="journal" data-archive-target="zephyra-journal" aria-controls="zephyra-journal">
-              <span>01</span>
-              Zephyra's Journal
-            </button>
-            <button class="archive-tab" type="button" data-archive-tab="research" data-archive-target="veil-research" aria-controls="veil-research">
-              <span>04</span>
-              Veil Research
-            </button>
-            <button class="archive-tab" type="button" data-archive-tab="records" data-archive-target="visual-records" aria-controls="visual-records">
-              <span>09</span>
-              Visual Records
-            </button>
-            <button class="archive-tab" type="button" data-archive-tab="fragments" data-archive-target="restricted-fragments" aria-controls="restricted-fragments">
-              <span>13</span>
-              Restricted Fragments
-            </button>
-            <p class="archive-index__note">Some pages only appear when the Veil thins.</p>
-          </aside>
+        <div class="archive-room-shell" data-archive-content>
+          <header class="archive-invitation" aria-labelledby="archive-title">
+            <p class="archive-invitation__kicker">RESTRICTED FLOOR</p>
+            <h1 id="archive-title">This Place Was Not Indexed for Visitors</h1>
+            <div class="archive-invitation__copy">
+              <p>Something has called you here.</p>
+              <p>The library does not summon without purpose.</p>
+            </div>
+          </header>
 
-          <div class="archive-book" aria-live="polite">
-            <article class="archive-spread is-active" id="zephyra-journal" data-archive-panel="journal">
-              <div class="archive-page-leaf archive-page-leaf--entry">
-                <p class="archive-entry__stamp">Zephyra's Journal</p>
-                <h2>Recovered Entries</h2>
-                <p class="archive-entry__lede">Private notes recovered from the Noctis Archive. Select an entry to open the manuscript page.</p>
-                <div class="archive-journal-list" data-journal-entry-list></div>
-              </div>
-              <div class="archive-page-leaf archive-page-leaf--margin">
-                <p class="archive-margin-note">Journal Handling Note</p>
-                <p class="archive-annotation">Entries are unstable when viewed outside Blood Moon conditions. Open only one recovered page at a time.</p>
-                <p class="archive-handwritten">The page reacts when it is observed.</p>
-                <div class="archive-redaction-line"></div>
-                <p class="archive-entry__tag">Archive Status / Indexed</p>
-              </div>
-            </article>
+          <section class="archive-room-hub" data-archive-room-hub aria-labelledby="archive-room-hub-title">
+            <div class="archive-room-hub__heading">
+              <h2 id="archive-room-hub-title">Choose a Chamber</h2>
+              <p>Begin where the lamps are lit, and leave the sealed rooms to their silence.</p>
+            </div>
+            <div class="archive-chamber-rail" data-archive-room-grid aria-label="Noctis Archive chambers"></div>
+          </section>
 
-            <article class="archive-spread" id="veil-research" data-archive-panel="research">
-              <div class="archive-page-leaf archive-page-leaf--entry">
-                <p class="archive-entry__stamp">Recovered / Research 04</p>
-                <h2>Veil Research</h2>
-                <p class="archive-entry__lede">Observations, symbols, theories, and forbidden studies connected to the barrier between worlds.</p>
-                <ul class="archive-research-list">
-                  <li>Threshold resonance increases when fear and desire are present together.</li>
-                  <li>Mirror surfaces respond to crimson lunar exposure for thirteen breaths.</li>
-                  <li>Repeated sigil: eye within an eclipse, crossed by an unfinished road.</li>
-                </ul>
-              </div>
-              <div class="archive-page-leaf archive-page-leaf--margin archive-page-leaf--theory-withheld">
-                <p class="archive-margin-note">Theory withheld</p>
-                <div class="theory-withheld-note">
-                  <p class="theory-withheld-note__status">REDACTED THEORY FILE</p>
-                  <div class="theory-file-lines" aria-label="Redacted theory notes">
-                    <p>Threshold resonance pattern: <span class="redaction-mark redaction-mark--long" aria-label="redacted"></span></p>
-                    <p>Observed during crimson lunar exposure.</p>
-                    <p>Subject response: <span class="redaction-mark redaction-mark--short" aria-label="redacted"></span></p>
-                    <p class="theory-file-lines__visible">The Veil is not locked. It is listening for a name.</p>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <article class="archive-spread archive-spread--visual-records" id="visual-records" data-archive-panel="records">
-              <div class="archive-page-leaf archive-page-leaf--entry archive-page-leaf--visual-records">
-                <p class="archive-entry__stamp">Recovered / Record 09</p>
-                <h2>Visual Records</h2>
-                <p class="archive-entry__lede">Unstable images, interrupted sketches, and visual records recovered without full permission.</p>
-                <p class="archive-visual-note"><span>Curator Note</span> Recovered fragments continue to surface without clear origin. Some records resist cataloguing, while others appear only briefly before falling back into silence. Not every image in this archive was meant to remain.</p>
-                <div class="archive-visual-strip" data-visual-records-gallery aria-label="Visual records gallery"></div>
-              </div>
-            </article>
-
-            <article class="archive-spread" id="restricted-fragments" data-archive-panel="fragments">
-              <div class="archive-page-leaf archive-page-leaf--entry">
-                <p class="archive-entry__stamp">Restricted / Fragment 13</p>
-                <h2>Restricted Fragments</h2>
-                <p class="archive-entry__lede">Locked or redacted entries that hint at future secrets.</p>
-                <div class="archive-fragment-lock">
-                  <p>Access Withheld</p>
-                  <span>Clearance requires a thinner Veil.</span>
-                </div>
-              </div>
-              <div class="archive-page-leaf archive-page-leaf--margin archive-page-leaf--partial-recovery">
-                <p class="archive-margin-note">Partial Recovery</p>
-                <div class="partial-recovery-note">
-                  <span class="partial-recovery-note__seal" aria-hidden="true"></span>
-                  <p class="partial-recovery-note__text">
-                    The thirteenth fragment refers to the door beneath the eye.
-                    <br />
-                    <br />
-                    Not all locks are meant to keep us out.
-                  </p>
-                  <div class="partial-recovery-note__redactions" aria-hidden="true">
-                    <span></span>
-                    <span></span>
-                  </div>
-                  <p class="partial-recovery-note__footer">Recovered text unstable.</p>
-                </div>
-              </div>
-            </article>
-          </div>
+          <section class="archive-room-view" data-archive-room-view hidden aria-live="polite"></section>
         </div>
       </section>
     </main>
@@ -269,52 +211,14 @@
       </div>
     </footer>
 
-    <div class="journal-modal" data-journal-modal aria-hidden="true">
-      <button class="journal-modal__backdrop" type="button" data-close-journal-entry aria-label="Close journal entry"></button>
-      <article class="journal-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="journal-modal-title">
-        <button class="journal-modal__close" type="button" data-close-journal-entry aria-label="Close journal entry">
-          &times;
-        </button>
-        <div class="journal-modal__page">
-          <p class="archive-entry__stamp" data-journal-modal-label></p>
-          <h2 id="journal-modal-title" data-journal-modal-title></h2>
-          <div class="archive-entry__meta" data-journal-modal-meta></div>
-          <div class="archive-entry__body archive-entry__body--journal" data-journal-modal-body></div>
-          <aside class="journal-modal__annotation">
-            <p class="archive-margin-note">Recovered Annotation</p>
-            <p data-journal-modal-annotation></p>
-          </aside>
-          <div class="journal-modal__controls" aria-label="Journal entry navigation">
-            <button type="button" data-journal-prev>Previous</button>
-            <span data-journal-counter></span>
-            <button type="button" data-journal-next>Next</button>
-          </div>
-        </div>
-      </article>
-    </div>
-
-    <div class="visual-record-modal" data-visual-record-modal aria-hidden="true">
-      <button class="visual-record-modal__backdrop" type="button" data-close-visual-record aria-label="Close visual record"></button>
-      <article class="visual-record-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="visual-record-modal-title">
-        <button class="visual-record-modal__close" type="button" data-close-visual-record aria-label="Close visual record">
-          &times;
-        </button>
-        <div class="visual-record-modal__image-frame">
-          <img data-visual-record-modal-image data-expandable-image role="button" tabindex="0" aria-label="Expand visual record image" alt="" />
-        </div>
-        <div class="visual-record-modal__copy">
-          <p class="archive-entry__stamp" data-visual-record-modal-status></p>
-          <h2 id="visual-record-modal-title" data-visual-record-modal-title></h2>
-          <p data-visual-record-modal-caption></p>
-        </div>
-      </article>
-    </div>
+    <div class="archive-room-toast" data-archive-room-toast role="status" aria-live="polite" hidden></div>
 
     <script src="data/events.js"></script>
     <script src="data/journalEntries.js"></script>
     <script src="data/archiveSections.js"></script>
     <script src="js/events.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/scroll-reader.js"></script>
     <script src="js/archive.js"></script>
   </body>
 </html>

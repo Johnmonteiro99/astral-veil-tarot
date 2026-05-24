@@ -22,6 +22,10 @@ const zodiacOrder = [
   "Pisces"
 ];
 
+////////////////////////////////////////////////////
+// Veilwalker Data and Presentation Helpers
+////////////////////////////////////////////////////
+
 function isBloodMoonActive() {
   return Boolean(window.AstralVeilBloodMoon && window.AstralVeilBloodMoon.isBloodMoonActive());
 }
@@ -67,6 +71,7 @@ function getReaderPresentation(reader) {
   };
 }
 
+// Keeps the Veilwalkers grid in zodiac order even when mystery/event profiles are included.
 function getReaderSortOrder(reader) {
   const signIndex = zodiacOrder.indexOf(reader.sign || reader.zodiac);
 
@@ -107,6 +112,7 @@ function getReaderDetailAccentClass(reader) {
     : "";
 }
 
+// Renders the symbolic traits block inside the reader detail lightbox.
 function renderReaderThemes(reader) {
   if (!Array.isArray(reader.themes) || !reader.themes.length) {
     return "";
@@ -122,6 +128,27 @@ function renderReaderThemes(reader) {
   `;
 }
 
+// Lyssara's unstable signal is only surfaced while Blood Moon mode is active.
+function renderBloodMoonSignal(reader) {
+  if (!isBloodMoonActive() || !reader?.bloodMoonSignal) {
+    return "";
+  }
+
+  const signal = reader.bloodMoonSignal;
+
+  return `
+    <section class="reader-detail__section reader-blood-signal" aria-label="${escapeHtml(signal.label)}">
+      <p class="reader-blood-signal__label">${escapeHtml(signal.label)}</p>
+      <p>${escapeHtml(signal.text)}</p>
+      <p class="reader-blood-signal__clue">${escapeHtml(signal.clue)}</p>
+      <button class="reader-blood-signal__button" type="button" data-reader-signal="${escapeHtml(reader.id)}">
+        ${escapeHtml(signal.button)}
+      </button>
+    </section>
+  `;
+}
+
+// Returns available portrait/revelation forms; Blood Moon mode swaps to event-specific art when present.
 function getAvailableReaderForms(reader) {
   if (isBloodMoonActive() && reader?.bloodMoonImage) {
     const label = reader.bloodMoonRevelation || "Blood Moon Rising";
@@ -196,6 +223,11 @@ function renderReaderFormSelector(reader, activeForm) {
   `;
 }
 
+////////////////////////////////////////////////////
+// Veilwalker Grid and Detail Lightbox
+////////////////////////////////////////////////////
+
+// Builds the clickable Veilwalker grid from reader data.
 function renderReaderProfiles() {
   if (!readersPageList || typeof tarotReaders === "undefined") {
     return;
@@ -234,6 +266,7 @@ function renderReaderProfiles() {
     .join("");
 }
 
+// Updates the open lightbox without closing it, so form and next/previous navigation feel immediate.
 function renderOpenReader(reader) {
   if (!reader || !readerLightbox) {
     return;
@@ -281,6 +314,7 @@ function renderOpenReader(reader) {
       ${activeForm?.description ? `<p class="reader-detail__form-description">${escapeHtml(activeForm.description)}</p>` : ""}
       ${renderReaderFormSelector(reader, activeForm)}
       ${renderReaderThemes(presentation)}
+      ${renderBloodMoonSignal(reader)}
       <div class="reader-detail__nav" aria-label="Browse Veilwalkers">
         <button class="reader-detail__nav-button" type="button" data-reader-lightbox-nav="prev" aria-label="Previous Veilwalker">
           <span aria-hidden="true">&lsaquo;</span>
@@ -293,6 +327,7 @@ function renderOpenReader(reader) {
   `;
 }
 
+// Opens a reader profile and resets the active form to the starting portrait.
 function openReaderLightbox(readerId) {
   if (!readerLightbox) {
     return;
@@ -315,6 +350,7 @@ function openReaderLightbox(readerId) {
   document.body.classList.add("is-lightbox-open");
 }
 
+// Moves through readers with wrapping navigation.
 function moveReaderLightbox(direction) {
   if (!readerLightbox?.classList.contains("is-open") || !orderedReaderProfiles.length) {
     return;
@@ -328,6 +364,7 @@ function moveReaderLightbox(direction) {
   renderOpenReader(orderedReaderProfiles[activeReaderIndex]);
 }
 
+// Changes the selected reader form/revelation inside the lightbox.
 function selectReaderForm(formId) {
   if (activeReaderIndex === -1 || !formId) {
     return;
@@ -344,6 +381,26 @@ function selectReaderForm(formId) {
   renderOpenReader(activeReader);
 }
 
+function openReaderSignal(readerId, trigger) {
+  const reader = orderedReaderProfiles.find((item) => item.id === readerId);
+  const transmission = reader?.bloodMoonSignal?.transmission;
+
+  // The recovered transmission lives with Lyssara in Blood Moon mode, keeping
+  // this clue in the Veilwalkers record instead of the Lumen Archive.
+  if (!transmission || !isBloodMoonActive() || !window.AstralVeilScrollReader) {
+    return;
+  }
+
+  window.AstralVeilScrollReader.open({
+    variant: "noctis",
+    label: transmission.label,
+    title: transmission.title,
+    author: transmission.author,
+    body: transmission.body,
+    trigger
+  });
+}
+
 function closeReaderLightbox() {
   if (!readerLightbox) {
     return;
@@ -357,6 +414,10 @@ function closeReaderLightbox() {
 }
 
 renderReaderProfiles();
+
+////////////////////////////////////////////////////
+// Veilwalker Event Listeners
+////////////////////////////////////////////////////
 
 if (readersPageList) {
   readersPageList.addEventListener("click", (event) => {
@@ -376,6 +437,7 @@ if (readerLightbox) {
   readerLightbox.addEventListener("click", (event) => {
     const navButton = event.target.closest("[data-reader-lightbox-nav]");
     const formButton = event.target.closest("[data-reader-form-id]");
+    const signalButton = event.target.closest("[data-reader-signal]");
 
     if (navButton) {
       moveReaderLightbox(navButton.dataset.readerLightboxNav);
@@ -383,6 +445,10 @@ if (readerLightbox) {
 
     if (formButton) {
       selectReaderForm(formButton.dataset.readerFormId);
+    }
+
+    if (signalButton) {
+      openReaderSignal(signalButton.dataset.readerSignal, signalButton);
     }
   });
 

@@ -55,6 +55,11 @@ daily-tarot-app/
 
 Open `index.html` directly in a browser, or serve the folder with any static server. No backend, build step, or API key is required.
 
+## Testing Hooks
+
+- Add `?bloodMoon=1` or `?testBloodMoon=1` to any page URL to activate the Blood Moon event for the current browser session.
+- Add `?bloodMoon=0` to clear the Blood Moon event.
+
 ## Publishing Notes
 
 All paths are relative and domain-ready for static hosting. Large card and reader images should be compressed before production deployment for faster first load.

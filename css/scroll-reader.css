@@ -1,0 +1,323 @@
+body.is-scroll-reader-open {
+  overflow: hidden;
+}
+
+.scroll-reader {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: grid;
+  place-items: center;
+  padding: clamp(12px, 4vw, 42px);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    opacity 240ms ease,
+    visibility 240ms ease;
+}
+
+.scroll-reader.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.scroll-reader__overlay {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.14), transparent 34%),
+    rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+}
+
+.scroll-reader__panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 820px);
+  max-height: min(88vh, 860px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(14px, 2.4vw, 22px);
+  overflow: hidden;
+  border: 1px solid rgba(145, 92, 34, 0.28);
+  border-radius: 26px 22px 28px 20px;
+  padding: clamp(28px, 5vw, 50px) clamp(20px, 5vw, 54px);
+  color: #2f2319;
+  background:
+    linear-gradient(rgba(116, 72, 34, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.36), transparent 32%),
+    linear-gradient(135deg, #fff4cf, #f3dbab 54%, #e2bf83);
+  background-size: 100% 21px, auto, auto;
+  box-shadow:
+    0 34px 100px rgba(0, 0, 0, 0.48),
+    0 0 38px rgba(231, 195, 106, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.36),
+    inset 0 0 44px rgba(116, 72, 34, 0.12);
+  outline: none;
+  transform: translateY(12px) scale(0.975);
+  transition: transform 260ms ease;
+}
+
+.scroll-reader.is-open .scroll-reader__panel {
+  transform: translateY(0) scale(1);
+}
+
+.scroll-reader__panel::before,
+.scroll-reader__panel::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  height: 22px;
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, rgba(93, 52, 23, 0.18), rgba(255, 255, 255, 0.24), rgba(93, 52, 23, 0.16)),
+    rgba(97, 56, 27, 0.16);
+  filter: blur(0.1px);
+  pointer-events: none;
+}
+
+.scroll-reader__panel::before {
+  top: -10px;
+}
+
+.scroll-reader__panel::after {
+  bottom: -10px;
+}
+
+.scroll-reader__rod {
+  position: absolute;
+  left: clamp(28px, 6vw, 72px);
+  right: clamp(28px, 6vw, 72px);
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(95, 55, 26, 0.24);
+  box-shadow: 0 0 12px rgba(95, 55, 26, 0.16);
+  pointer-events: none;
+}
+
+.scroll-reader__rod--top {
+  top: 11px;
+}
+
+.scroll-reader__rod--bottom {
+  bottom: 11px;
+}
+
+.scroll-reader__close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2;
+  min-height: 38px;
+  border: 1px solid rgba(112, 68, 28, 0.28);
+  border-radius: 999px;
+  padding: 0 14px;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.scroll-reader__close:hover,
+.scroll-reader__close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 18px rgba(231, 195, 106, 0.28);
+}
+
+.scroll-reader__header {
+  display: grid;
+  gap: 8px;
+  padding-right: 96px;
+}
+
+.scroll-reader__meta {
+  margin: 0;
+  color: rgba(79, 48, 22, 0.72);
+  font-family: var(--logo-font);
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.scroll-reader__header h2 {
+  margin: 0;
+  color: #342419;
+  font-family: var(--heading-font);
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 0.95;
+}
+
+.scroll-reader__body {
+  max-width: 68ch;
+  min-width: 0;
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-color: rgba(120, 78, 34, 0.52) rgba(255, 255, 255, 0.24);
+}
+
+.scroll-reader__body p {
+  margin: 0 0 1.05em;
+  color: rgba(47, 35, 25, 0.9);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.08rem, 2vw, 1.22rem);
+  line-height: 1.72;
+  white-space: pre-line;
+}
+
+.scroll-reader__seal {
+  position: absolute;
+  right: clamp(22px, 5vw, 48px);
+  bottom: clamp(22px, 5vw, 42px);
+  width: 48px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.32) 0 16%, transparent 17%),
+    repeating-conic-gradient(from 12deg, transparent 0 20deg, rgba(255, 255, 255, 0.16) 21deg 24deg),
+    rgba(179, 120, 48, 0.28);
+  box-shadow:
+    0 0 18px rgba(231, 195, 106, 0.2),
+    inset 0 0 0 1px rgba(92, 52, 21, 0.16);
+  pointer-events: none;
+}
+
+.scroll-reader--lumen .scroll-reader__overlay {
+  background:
+    radial-gradient(circle at 50% 16%, rgba(255, 232, 172, 0.18), transparent 36%),
+    rgba(7, 6, 14, 0.62);
+}
+
+.scroll-reader--lumen .scroll-reader__panel {
+  border-color: rgba(231, 195, 106, 0.34);
+  color: #2f2319;
+  background:
+    linear-gradient(rgba(198, 153, 68, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 18% 14%, rgba(255, 255, 255, 0.46), transparent 34%),
+    radial-gradient(circle at 86% 18%, rgba(255, 232, 172, 0.22), transparent 32%),
+    linear-gradient(135deg, #fff7dc, #f3dfb1 56%, #e8c984);
+  box-shadow:
+    0 34px 100px rgba(0, 0, 0, 0.42),
+    0 0 42px rgba(231, 195, 106, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.42),
+    inset 0 0 44px rgba(159, 105, 33, 0.12);
+}
+
+.scroll-reader--noctis .scroll-reader__overlay {
+  background:
+    radial-gradient(circle at 50% 16%, rgba(255, 35, 65, 0.16), transparent 36%),
+    rgba(0, 0, 0, 0.8);
+}
+
+.scroll-reader--noctis .scroll-reader__panel {
+  border-color: rgba(255, 116, 126, 0.24);
+  color: rgba(255, 232, 222, 0.92);
+  background:
+    linear-gradient(rgba(255, 116, 126, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 18% 16%, rgba(255, 35, 65, 0.12), transparent 34%),
+    radial-gradient(circle at 92% 10%, rgba(231, 195, 106, 0.08), transparent 26%),
+    linear-gradient(135deg, #2b1814, #1a0b0b 54%, #0d0607);
+  box-shadow:
+    0 34px 100px rgba(0, 0, 0, 0.62),
+    0 0 40px rgba(255, 35, 65, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 0 52px rgba(0, 0, 0, 0.34);
+}
+
+.scroll-reader--noctis .scroll-reader__panel::before,
+.scroll-reader--noctis .scroll-reader__panel::after,
+.scroll-reader--noctis .scroll-reader__rod {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.28), rgba(255, 116, 126, 0.18), rgba(0, 0, 0, 0.24)),
+    rgba(70, 22, 18, 0.5);
+}
+
+.scroll-reader--noctis .scroll-reader__close {
+  border-color: rgba(255, 116, 126, 0.28);
+  color: rgba(255, 232, 222, 0.94);
+  background: rgba(0, 0, 0, 0.26);
+}
+
+.scroll-reader--noctis .scroll-reader__meta {
+  color: rgba(255, 182, 175, 0.68);
+}
+
+.scroll-reader--noctis .scroll-reader__header h2 {
+  color: rgba(255, 244, 216, 0.96);
+  text-shadow: 0 0 18px rgba(255, 35, 65, 0.18);
+}
+
+.scroll-reader--noctis .scroll-reader__body {
+  scrollbar-color: rgba(255, 116, 126, 0.42) rgba(0, 0, 0, 0.24);
+}
+
+.scroll-reader--noctis .scroll-reader__body p {
+  color: rgba(255, 232, 222, 0.86);
+}
+
+/* Subtle unstable-ink marks used inside Lyssara's recovered transmission. */
+.scroll-reader--noctis .breath-mark {
+  color: rgba(226, 216, 255, 0.96);
+  border-bottom: 1px dotted rgba(226, 216, 255, 0.62);
+  letter-spacing: 0.045em;
+  text-shadow:
+    0 0 8px rgba(190, 155, 255, 0.34),
+    0 0 12px rgba(255, 35, 65, 0.22);
+}
+
+.scroll-reader--noctis .scroll-reader__seal {
+  background:
+    radial-gradient(circle, rgba(255, 213, 217, 0.32) 0 16%, transparent 17%),
+    repeating-conic-gradient(from 12deg, transparent 0 20deg, rgba(0, 0, 0, 0.2) 21deg 24deg),
+    rgba(120, 18, 30, 0.64);
+  box-shadow:
+    0 0 22px rgba(255, 35, 65, 0.22),
+    inset 0 0 0 1px rgba(255, 213, 217, 0.12);
+}
+
+@media (max-width: 640px) {
+  .scroll-reader {
+    align-items: end;
+    padding: 10px;
+  }
+
+  .scroll-reader__panel {
+    width: 100%;
+    max-height: calc(100vh - 20px);
+    border-radius: 22px 20px 18px 18px;
+    padding: 52px 18px 26px;
+  }
+
+  .scroll-reader__header {
+    padding-right: 0;
+  }
+
+  .scroll-reader__close {
+    top: 12px;
+    right: 12px;
+  }
+
+  .scroll-reader__body {
+    max-width: 100%;
+  }
+
+  .scroll-reader__seal {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reader,
+  .scroll-reader__panel {
+    transition: none;
+  }
+
+  .scroll-reader__panel {
+    transform: none;
+  }
+}

@@ -1,9 +1,16 @@
+/* ================================
+   Deck Collection Rail
+================================ */
+
 .deck-view {
   width: 100%;
+  min-width: 0;
 }
 
 .deck-collection-shell {
   width: min(100%, 1200px);
+  min-width: 0;
+  max-width: 100%;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -83,8 +90,10 @@
   display: block;
   width: 100%;
   aspect-ratio: 2 / 3;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   border-radius: 18px;
+  background: rgba(4, 3, 8, 0.72);
   box-shadow:
     0 18px 42px rgba(0, 0, 0, 0.38),
     0 0 18px rgba(168, 85, 247, 0.14);
@@ -334,6 +343,10 @@
   opacity: 1;
 }
 
+/* ================================
+   Deck Viewer
+================================ */
+
 .deck-view__toolbar {
   display: flex;
   justify-content: center;
@@ -392,8 +405,10 @@
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 76%, transparent);
   border-radius: 20px;
-  padding: 0;
-  background: rgba(0, 0, 0, 0.24);
+  padding: 8px;
+  background:
+    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--deck-viewer-glow) 16%, transparent), transparent 58%),
+    rgba(0, 0, 0, 0.32);
   box-shadow:
     0 22px 62px rgba(0, 0, 0, 0.42),
     0 0 24px color-mix(in srgb, var(--deck-viewer-glow) 58%, transparent);
@@ -418,7 +433,10 @@
   display: block;
   width: 100%;
   aspect-ratio: 2 / 3;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 14px;
+  background: rgba(4, 3, 8, 0.72);
 }
 
 .deck-viewer__content {
@@ -453,6 +471,118 @@
   color: var(--navbar-muted);
   font-size: clamp(0.98rem, 1.4vw, 1.08rem);
   line-height: 1.7;
+}
+
+.deck-viewer__keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.deck-viewer__keywords li {
+  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 48%, rgba(255, 255, 255, 0.14));
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: var(--navbar-text);
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--deck-viewer-glow) 30%, transparent), transparent 70%),
+    rgba(255, 255, 255, 0.04);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: capitalize;
+}
+
+.deck-viewer__meaning-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  max-width: 680px;
+}
+
+.deck-viewer__meaning-card {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 52%, transparent);
+  border-radius: 14px;
+  padding: 12px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 52%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.deck-viewer__meaning-card--shadow,
+.deck-viewer__meaning-card--reflection {
+  grid-column: 1 / -1;
+}
+
+.deck-viewer__meaning-card--shadow {
+  border-color: color-mix(in srgb, #d41f3a 42%, transparent);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(212, 31, 58, 0.13), transparent 55%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 52%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.deck-viewer__meaning-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.deck-viewer__meaning-icon {
+  display: inline-grid;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 52%, transparent);
+  border-radius: 50%;
+  color: var(--navbar-hover-text);
+  background: color-mix(in srgb, var(--deck-viewer-glow) 18%, rgba(0, 0, 0, 0.22));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--deck-viewer-glow) 38%, transparent);
+}
+
+.deck-viewer__meaning-card--shadow .deck-viewer__meaning-icon {
+  border-color: rgba(255, 116, 126, 0.34);
+  color: #ffd5d9;
+  background: rgba(116, 18, 30, 0.32);
+  box-shadow: 0 0 14px rgba(255, 35, 65, 0.24);
+}
+
+.deck-viewer__meaning-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.deck-viewer__meaning-card h3 {
+  margin: 0;
+  color: var(--navbar-hover-text);
+  font-family: var(--body-font);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.deck-viewer__meaning-card p {
+  margin: 0;
+  color: var(--navbar-muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
 }
 
 .deck-viewer__controls {
@@ -519,11 +649,15 @@
 .deck-thumbnail {
   position: relative;
   flex: 0 0 clamp(58px, 7vw, 82px);
+  display: grid;
+  gap: 4px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 46%, transparent);
   border-radius: 12px;
-  padding: 0;
-  background: rgba(0, 0, 0, 0.22);
+  padding: 4px;
+  background:
+    radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--deck-viewer-glow) 14%, transparent), transparent 62%),
+    rgba(0, 0, 0, 0.3);
   cursor: pointer;
   opacity: 0.72;
   scroll-snap-align: center;
@@ -538,14 +672,14 @@
   display: block;
   width: 100%;
   aspect-ratio: 2 / 3;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 8px;
 }
 
 .deck-thumbnail span {
-  position: absolute;
-  right: 5px;
-  bottom: 5px;
   display: inline-grid;
+  justify-self: center;
   place-items: center;
   min-width: 22px;
   height: 22px;
@@ -616,9 +750,11 @@
   display: block;
   width: 100%;
   aspect-ratio: 2 / 3;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   border: 1px solid rgba(231, 195, 106, 0.16);
   border-radius: 16px;
+  background: rgba(4, 3, 8, 0.72);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
 }
 
@@ -645,6 +781,10 @@
 body.is-lightbox-open {
   overflow: hidden;
 }
+
+/* ================================
+   Deck Lightbox and Responsive Rules
+================================ */
 
 .deck-lightbox {
   position: fixed;
@@ -806,6 +946,15 @@ body.is-lightbox-open {
   .deck-viewer__content {
     justify-items: center;
     text-align: center;
+  }
+
+  .deck-viewer__keywords {
+    justify-content: center;
+  }
+
+  .deck-viewer__meaning-grid {
+    grid-template-columns: 1fr;
+    text-align: left;
   }
 
   .deck-viewer__content h2 {

@@ -4,6 +4,10 @@
   gap: 18px;
 }
 
+/* ================================
+   Veilwalker Grid Cards
+================================ */
+
 .reader-profile-card {
   --reader-accent-border: var(--navbar-border);
   --reader-accent-glow: var(--navbar-glow);
@@ -353,6 +357,10 @@ body.is-lightbox-open {
   overflow: hidden;
 }
 
+/* ================================
+   Veilwalker Detail Lightbox
+================================ */
+
 .reader-lightbox {
   position: fixed;
   inset: 0;
@@ -677,6 +685,90 @@ body.is-lightbox-open {
     rgba(255, 255, 255, 0.055);
 }
 
+/* Blood Moon-only unstable signal attached to Lyssara's Veilwalker record. */
+.reader-blood-signal {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 116, 126, 0.28);
+  border-radius: 18px;
+  padding: 16px;
+  background:
+    radial-gradient(circle at 14% 12%, rgba(190, 155, 255, 0.1), transparent 34%),
+    radial-gradient(circle at 90% 20%, rgba(255, 35, 65, 0.12), transparent 38%),
+    rgba(20, 6, 12, 0.36);
+  box-shadow:
+    0 0 24px rgba(255, 35, 65, 0.14),
+    inset 0 0 22px rgba(255, 255, 255, 0.035);
+}
+
+.reader-blood-signal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.055), transparent);
+  opacity: 0.34;
+}
+
+.reader-blood-signal__label {
+  margin: 0;
+  color: rgba(255, 190, 196, 0.86);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.reader-blood-signal p {
+  position: relative;
+  max-width: none;
+  line-height: 1.55;
+}
+
+.reader-blood-signal__clue {
+  color: rgba(224, 212, 255, 0.82);
+  font-style: italic;
+}
+
+.reader-blood-signal__button {
+  position: relative;
+  display: inline-flex;
+  width: fit-content;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 116, 126, 0.36);
+  border-radius: 999px;
+  padding: 0 16px;
+  color: rgba(255, 240, 232, 0.96);
+  background:
+    radial-gradient(circle at 50% 35%, rgba(190, 155, 255, 0.12), transparent 64%),
+    rgba(0, 0, 0, 0.24);
+  box-shadow: 0 0 18px rgba(255, 35, 65, 0.16);
+  cursor: pointer;
+  font-family: var(--body-font);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.reader-blood-signal__button:hover,
+.reader-blood-signal__button:focus-visible {
+  border-color: rgba(255, 190, 196, 0.58);
+  outline: none;
+  box-shadow:
+    0 0 24px rgba(255, 35, 65, 0.24),
+    inset 0 0 14px rgba(190, 155, 255, 0.08);
+  transform: translateY(-1px);
+}
+
 .reader-detail__nav {
   display: flex;
   flex-wrap: wrap;
@@ -729,6 +821,10 @@ body.is-lightbox-open {
     inset 0 0 14px color-mix(in srgb, var(--reader-detail-glow) 18%, transparent);
   transform: translateY(-1px) scale(1.04);
 }
+
+/* ================================
+   Veilwalker Responsive Rules
+================================ */
 
 @media (max-width: 900px) {
   .reader-profile-grid {
