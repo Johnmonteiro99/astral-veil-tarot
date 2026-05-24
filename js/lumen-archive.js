@@ -529,7 +529,9 @@ function renderLumenInterior() {
       </article>
     </div>
 
-    <button class="lumen-return-button" type="button" data-lumen-return-sanctuaries>Return to Sanctuaries</button>
+    <div class="lumen-sanctuary-return-row">
+      <button class="lumen-return-button" type="button" data-lumen-return-sanctuaries>Return to Sanctuaries</button>
+    </div>
   `;
 }
 

@@ -1177,6 +1177,9 @@ body.is-lumen-image-lightbox-open {
 .lumen-scroll-object,
 .lumen-reflection-object {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   overflow: hidden;
   border-radius: 28px;
   min-height: clamp(260px, 28vw, 340px);
@@ -1218,6 +1221,7 @@ body.is-lumen-image-lightbox-open {
   font-size: clamp(1rem, 1.5vw, 1.12rem);
 }
 
+.lumen-scroll-object > *,
 .lumen-reflection-object > * {
   position: relative;
   z-index: 1;
@@ -1227,6 +1231,17 @@ body.is-lumen-image-lightbox-open {
   color: color-mix(in srgb, var(--navbar-text) 90%, var(--navbar-hover-text));
   font-size: clamp(1.35rem, 2.6vw, 2rem);
   line-height: 1.32;
+}
+
+.lumen-scroll-object button,
+.lumen-reflection-object button {
+  margin-top: auto;
+}
+
+.lumen-sanctuary-return-row {
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
 }
 
 body.sun-mode .lumen-archive__hero,
