@@ -75,6 +75,10 @@ let readingSectionScrollTimeout = null;
 let isRenderingReading = false;
 let bloodMoonTimeout = null;
 
+function getReadingScrollBehavior() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+}
+
 ////////////////////////////////////////////////////
 // Blood Moon Reading Bridge
 ////////////////////////////////////////////////////
@@ -554,7 +558,7 @@ function selectReader(readerId) {
 
 // Readers shown in the selector can differ from all known readers when event-only profiles are gated.
 function getSelectableGuidePool() {
-  return getVisibleGuidePool().filter(isReaderSelectable);
+  return getVisibleGuidePool().filter(isReaderFateSelectable);
 }
 
 function getVisibleGuidePool() {
@@ -603,11 +607,23 @@ function isLyssaraBloodMoonReader(reader) {
 }
 
 function isReaderSelectable(reader) {
+  return isReaderDirectlySelectable(reader);
+}
+
+function isReaderDirectlySelectable(reader) {
   if (isZephyraReader(reader)) {
-    return isZephyraAvailableNow();
+    return isBloodMoonActive();
   }
 
   return !reader?.requiresBloodMoon || isBloodMoonActive();
+}
+
+function isReaderFateSelectable(reader) {
+  if (isZephyraReader(reader)) {
+    return isBloodMoonActive() || isZephyraAvailableNow();
+  }
+
+  return isReaderDirectlySelectable(reader);
 }
 
 function getReaderSelectionImage(reader) {
@@ -883,7 +899,7 @@ function getUnavailableReaderMessage(reader) {
   return `${reader.name} is not available beneath this moon.`;
 }
 
-// "Let Fate Choose" draws only from currently selectable readers, so Zephyra is excluded outside her windows.
+// "Let Fate Choose" keeps Zephyra's secret timing window while direct selection waits for Blood Moon.
 function chooseMysteryReader() {
   const selectableReaders = getSelectableGuidePool();
   const forcedReader = getForcedFateReader(selectableReaders);
@@ -1111,8 +1127,158 @@ function renderReadingCards(cards) {
     .join("");
 }
 
+function isReadingCardRevealed(cardIndex) {
+  return revealedCards.some((card) => card.position === cardIndex + 1);
+}
+
+function getReadingCardPositionLabel(cardIndex) {
+  const spread = getActiveSpread();
+
+  return spread?.positions?.[cardIndex] || `Card ${cardIndex + 1}`;
+}
+
+function getRevealedCardIndexByCardIndex(cardIndex) {
+  return revealedCards.findIndex((card) => card.position === cardIndex + 1);
+}
+
+function getActiveReadingCardIndex() {
+  const activeCard = revealedCards[activeRevealedCardIndex];
+
+  return activeCard ? activeCard.position - 1 : -1;
+}
+
+function getRevealedCardIndexesInSpreadOrder() {
+  return currentReadingCards
+    .map((card, index) => index)
+    .filter((index) => isReadingCardRevealed(index));
+}
+
+function getAdjacentRevealedCardIndex(direction) {
+  const revealedIndexes = getRevealedCardIndexesInSpreadOrder();
+  const activeCardIndex = getActiveReadingCardIndex();
+  const currentIndex = revealedIndexes.indexOf(activeCardIndex);
+  const nextIndex = direction === "next" ? currentIndex + 1 : currentIndex - 1;
+
+  return revealedIndexes[nextIndex] ?? -1;
+}
+
+function setActiveReadingCardByCardIndex(cardIndex, { scrollToDetail = true } = {}) {
+  const revealedCardIndex = getRevealedCardIndexByCardIndex(cardIndex);
+
+  if (revealedCardIndex < 0) {
+    return;
+  }
+
+  activeRevealedCardIndex = revealedCardIndex;
+  renderReadingResults();
+
+  if (scrollToDetail) {
+    scrollToActiveReadingDetail();
+  }
+}
+
+function getNextUnrevealedCardIndex() {
+  if (!currentReadingCards.length) {
+    return -1;
+  }
+
+  const activeCard = revealedCards[activeRevealedCardIndex];
+  const startIndex = activeCard ? activeCard.position : 0;
+
+  for (let offset = 0; offset < currentReadingCards.length; offset += 1) {
+    const cardIndex = (startIndex + offset) % currentReadingCards.length;
+
+    if (!isReadingCardRevealed(cardIndex)) {
+      return cardIndex;
+    }
+  }
+
+  return -1;
+}
+
+function areAllReadingCardsRevealed() {
+  return Boolean(currentReadingCards.length) && revealedCards.length === currentReadingCards.length;
+}
+
+function scrollToActiveReadingDetail() {
+  window.requestAnimationFrame(() => {
+    const activeDetail = readingReveals?.querySelector(".reading-viewer");
+
+    activeDetail?.scrollIntoView({
+      behavior: getReadingScrollBehavior(),
+      block: "start",
+    });
+  });
+}
+
+function scrollToReadingThread() {
+  window.requestAnimationFrame(() => {
+    const thread = readingReveals?.querySelector(".combined-reading");
+
+    (thread || readingReveals)?.scrollIntoView({
+      behavior: getReadingScrollBehavior(),
+      block: "start",
+    });
+  });
+}
+
+function revealNextReadingCard() {
+  const nextCardIndex = getNextUnrevealedCardIndex();
+  const nextCardButton = cardList?.querySelector(`[data-card-index="${nextCardIndex}"]`);
+
+  if (!nextCardButton) {
+    return;
+  }
+
+  revealCard(nextCardButton, { scrollToDetail: true });
+}
+
+function renderReadingCardTabs() {
+  const activeCardIndex = getActiveReadingCardIndex();
+
+  return `
+    <nav class="reading-card-tabs" role="tablist" aria-label="Revealed card details">
+      ${currentReadingCards
+        .map((card, index) => {
+          const isRevealed = isReadingCardRevealed(index);
+          const isActive = index === activeCardIndex;
+          const label = getReadingCardPositionLabel(index);
+          const cardName = getCardDisplayName(card);
+
+          return `
+            <button class="reading-card-tab${isActive ? " is-active" : ""}${isRevealed ? " is-revealed" : " is-locked"}" type="button" role="tab" data-reading-card-tab="${index}" aria-selected="${isActive ? "true" : "false"}" aria-current="${isActive ? "true" : "false"}" aria-label="${escapeHtml(isRevealed ? `${label}: ${cardName}` : `${label}: not revealed yet`)}" ${isRevealed ? "" : "disabled"}>
+              <span>${escapeHtml(label)}</span>
+            </button>
+          `;
+        })
+        .join("")}
+    </nav>
+  `;
+}
+
+function renderReadingStickyNav(activeCard) {
+  const previousCardIndex = getAdjacentRevealedCardIndex("prev");
+  const nextCardIndex = getAdjacentRevealedCardIndex("next");
+  const activePositionLabel = getReadingCardPositionLabel(activeCard.position - 1);
+
+  return `
+    <div class="reading-mobile-nav" aria-label="Mobile card detail navigation">
+      <button class="reader-nav-button" type="button" data-reading-sticky-nav="prev" ${previousCardIndex >= 0 ? "" : "disabled"} aria-label="View previous revealed card">
+        Previous
+      </button>
+      <p>
+        <span>${escapeHtml(activePositionLabel)}</span>
+        <strong>Card ${activeCard.position} of ${currentReadingCards.length}</strong>
+      </p>
+      <button class="reader-nav-button" type="button" data-reading-sticky-nav="next" ${nextCardIndex >= 0 ? "" : "disabled"} aria-label="View next revealed card">
+        Next
+      </button>
+    </div>
+  `;
+}
+
 // Reveals one card once, stores it in revealedCards, and keeps its orientation stable for this reading.
-function revealCard(cardButton) {
+function revealCard(cardButton, { scrollToDetail = false } = {}) {
   if (cardButton.classList.contains("is-revealed")) {
     return;
   }
@@ -1133,6 +1299,10 @@ function revealCard(cardButton) {
   });
   activeRevealedCardIndex = revealedCards.length - 1;
   renderReadingResults();
+
+  if (scrollToDetail) {
+    scrollToActiveReadingDetail();
+  }
 }
 
 // Controls the selected-card viewer, Previous/Next browsing, combined message, and New Reading action.
@@ -1148,11 +1318,22 @@ function renderReadingResults() {
     ? activeCard.energy
     : "neutral";
   const showViewerControls = revealedCards.length > 1;
-  const showClosingActions = revealedCards.length === currentReadingCards.length;
+  const showClosingActions = areAllReadingCardsRevealed();
   const progressText =
-    revealedCards.length === currentReadingCards.length
+    areAllReadingCardsRevealed()
       ? "Your full spread has been revealed."
       : `${revealedCards.length} of ${currentReadingCards.length} cards revealed.`;
+  const guidedAction = areAllReadingCardsRevealed()
+    ? {
+        label: "View The Thread Between Them",
+        action: "thread",
+        helper: "All cards have been revealed."
+      }
+    : {
+        label: "Reveal Next Card",
+        action: "next",
+        helper: `${revealedCards.length} of ${currentReadingCards.length} revealed`
+      };
   const activePositionLabel = getCardPositionLabel(activeCard, activeRevealedCardIndex);
   const cardName = getCardDisplayName(activeCard);
   const cardTitle = getCardDisplayName(activeCard, { includeOrientation: true });
@@ -1186,6 +1367,13 @@ function renderReadingResults() {
         <p class="reading-viewer__eyebrow">${escapeHtml(activePositionLabel)} • Card ${activeCard.position} of ${currentReadingCards.length} • ${escapeHtml(orientationLabel)}</p>
         <h3>${escapeHtml(cardTitle)}</h3>
         ${renderCardMeaningDetails(activeCard)}
+
+        <div class="reading-viewer__guided-action">
+          <p>${escapeHtml(guidedAction.helper)}</p>
+          <button class="primary-action" type="button" ${guidedAction.action === "next" ? "data-reveal-next-card" : "data-view-reading-thread"}>
+            ${escapeHtml(guidedAction.label)}
+          </button>
+        </div>
 
         ${
           showViewerControls
@@ -1260,11 +1448,23 @@ function moveReadingViewer(direction) {
 if (readingReveals) {
   readingReveals.addEventListener("click", (event) => {
     const navButton = event.target.closest("[data-reading-viewer-nav]");
+    const revealNextButton = event.target.closest("[data-reveal-next-card]");
+    const viewThreadButton = event.target.closest("[data-view-reading-thread]");
     const resetButton = event.target.closest("[data-reset-reading]");
     const changeReaderButton = event.target.closest("[data-change-reader]");
 
     if (navButton) {
       moveReadingViewer(navButton.dataset.readingViewerNav);
+    }
+
+    if (revealNextButton) {
+      revealNextReadingCard();
+      return;
+    }
+
+    if (viewThreadButton) {
+      scrollToReadingThread();
+      return;
     }
 
     if (resetButton || changeReaderButton) {

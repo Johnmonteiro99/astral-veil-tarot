@@ -77,6 +77,7 @@ const lumenSanctuaries = [
     interiorIntro: "{name}, return first to the breath. The rest can wait.",
     interiorMood: "This room listens for the space between what you carry and what you are ready to release.",
     roomClass: "air",
+    featuredReflection: "What does your breath reveal about the places where you still do not feel safe?",
     scroll: {
       title: "The Space Between Inhale and Return",
       description: "A reflection on breath, release, clarity, and the space between inner noise.",
@@ -353,6 +354,21 @@ function getLumenScrollBehavior() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 }
 
+function shouldAutoScrollLumenPortalOnSelection() {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
+function scrollLumenPortalPreviewIntoView() {
+  if (!lumenViewer) {
+    return;
+  }
+
+  lumenViewer.scrollIntoView({
+    behavior: getLumenScrollBehavior(),
+    block: "start"
+  });
+}
+
 function getLumenSanctuaryInitial(sanctuary) {
   return String(sanctuary.title || "")
     .replace(/^the\s+/i, "")
@@ -414,32 +430,42 @@ function renderLumenViewer() {
   const sanctuary = lumenSanctuaries[activeLumenSanctuaryIndex];
 
   lumenViewer.innerHTML = `
-    <figure class="lumen-featured-image lumen-featured-image--${escapeLumenHtml(sanctuary.id)}">
-      <button class="lumen-featured-image__button" type="button" data-lumen-image-open data-lumen-image-src="${escapeLumenHtml(sanctuary.image)}" data-lumen-image-alt="${escapeLumenHtml(`${sanctuary.title} sanctuary artwork`)}" data-lumen-image-title="${escapeLumenHtml(sanctuary.title)}" aria-label="${escapeLumenHtml(`View ${sanctuary.title} image larger`)}">
-        <img src="${escapeLumenHtml(sanctuary.image)}" alt="${escapeLumenHtml(sanctuary.title)} sanctuary artwork" loading="eager" decoding="async" onerror="this.closest('.lumen-featured-image').classList.add('is-missing'); this.closest('.lumen-featured-image__button').remove();" />
-      </button>
-      <figcaption aria-hidden="true">
-        <span>${escapeLumenHtml(getLumenSanctuaryInitial(sanctuary))}</span>
-      </figcaption>
-    </figure>
+    <div class="sanctuary-portal-preview" data-lumen-portal-swipe aria-live="polite">
+      <div class="sanctuary-mobile-guide">
+        <p>Choose your sanctuary</p>
+        <span>Swipe or use the buttons to explore.</span>
+      </div>
 
-    <div class="lumen-featured-content">
-      <p class="lumen-featured-counter">${activeLumenSanctuaryIndex + 1} OF ${lumenSanctuaries.length}</p>
-      <h2>${escapeLumenHtml(sanctuary.title)}</h2>
-      <p class="lumen-featured-description">${escapeLumenHtml(sanctuary.description)}</p>
-      <ul class="lumen-keywords" aria-label="${escapeLumenHtml(sanctuary.title)} keywords">
-        ${sanctuary.keywords.map((keyword) => `<li>${escapeLumenHtml(keyword)}</li>`).join("")}
-      </ul>
-      <p class="lumen-featured-purpose">${escapeLumenHtml(sanctuary.previewPurpose)}</p>
-      <div class="lumen-sanctuary-actions">
-        <div class="lumen-sanctuary-nav" aria-label="Browse sanctuaries">
-          <button type="button" data-lumen-sanctuary-nav="previous">Previous</button>
-          <button type="button" data-lumen-sanctuary-nav="next">Next</button>
+      <article class="sanctuary-portal-stage is-active" data-lumen-portal-index="${activeLumenSanctuaryIndex}" aria-current="true">
+        <figure class="sanctuary-portal-frame sanctuary-portal-frame--${escapeLumenHtml(sanctuary.id)}">
+          <button class="sanctuary-portal-image-button" type="button" data-lumen-image-open data-lumen-image-src="${escapeLumenHtml(sanctuary.image)}" data-lumen-image-alt="${escapeLumenHtml(`${sanctuary.title} sanctuary artwork`)}" data-lumen-image-title="${escapeLumenHtml(sanctuary.title)}" aria-label="${escapeLumenHtml(`View ${sanctuary.title} image larger`)}">
+            <img class="sanctuary-portal-image" src="${escapeLumenHtml(sanctuary.image)}" alt="${escapeLumenHtml(sanctuary.title)} sanctuary artwork" loading="eager" decoding="async" onerror="this.closest('.sanctuary-portal-frame').classList.add('is-missing'); this.closest('.sanctuary-portal-image-button').remove();" />
+          </button>
+          <figcaption aria-hidden="true">
+            <span>${escapeLumenHtml(getLumenSanctuaryInitial(sanctuary))}</span>
+          </figcaption>
+        </figure>
+
+        <div class="sanctuary-portal-action">
+          <button class="lumen-enter-button" type="button" data-lumen-enter-sanctuary data-lumen-enter-index="${activeLumenSanctuaryIndex}">Enter Sanctuary</button>
         </div>
-        <button class="lumen-enter-button" type="button" data-lumen-enter-sanctuary>Enter Sanctuary</button>
+      </article>
+
+      <div class="sanctuary-portal-controls" aria-label="Browse sanctuary previews">
+        <button class="sanctuary-portal-control" type="button" data-lumen-sanctuary-nav="previous" aria-label="View previous sanctuary">Previous</button>
+        <div class="sanctuary-portal-progress" aria-label="Sanctuary preview progress">
+          ${lumenSanctuaries
+            .map((item, index) => `
+              <button class="sanctuary-portal-dot${index === activeLumenSanctuaryIndex ? " is-active" : ""}" type="button" data-lumen-sanctuary-index="${index}" aria-label="${escapeLumenHtml(`View ${item.title}`)}" aria-current="${index === activeLumenSanctuaryIndex ? "true" : "false"}"></button>
+            `)
+            .join("")}
+        </div>
+        <button class="sanctuary-portal-control" type="button" data-lumen-sanctuary-nav="next" aria-label="View next sanctuary">Next</button>
       </div>
     </div>
   `;
+
+  initializeLumenPortalViewer();
 }
 
 function setActiveLumenSanctuary(index) {
@@ -450,6 +476,69 @@ function setActiveLumenSanctuary(index) {
 
 function selectAdjacentLumenSanctuary(direction) {
   setActiveLumenSanctuary(activeLumenSanctuaryIndex + (direction === "previous" ? -1 : 1));
+}
+
+function getLumenPortalViewport() {
+  return lumenViewer?.querySelector("[data-lumen-portal-swipe]") || null;
+}
+
+function updateLumenPortalActiveClasses() {
+  const stages = lumenViewer?.querySelectorAll("[data-lumen-portal-index]") || [];
+
+  stages.forEach((stage) => {
+    const isActive = Number(stage.dataset.lumenPortalIndex) === activeLumenSanctuaryIndex;
+    stage.classList.toggle("is-active", isActive);
+    stage.setAttribute("aria-current", isActive ? "true" : "false");
+  });
+}
+
+function scrollLumenPortalToActive(behavior = "smooth") {
+  const viewport = getLumenPortalViewport();
+  const activeStage = lumenViewer?.querySelector(`[data-lumen-portal-index="${activeLumenSanctuaryIndex}"]`);
+
+  if (!viewport || !activeStage) {
+    return;
+  }
+
+  activeStage.scrollIntoView({ behavior, block: "nearest", inline: "center" });
+}
+
+function initializeLumenPortalViewer() {
+  const viewport = getLumenPortalViewport();
+
+  if (!viewport) {
+    return;
+  }
+
+  let swipeStart = null;
+
+  viewport.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse") {
+      return;
+    }
+
+    swipeStart = {
+      x: event.clientX,
+      y: event.clientY
+    };
+  }, { passive: true });
+
+  viewport.addEventListener("pointerup", (event) => {
+    if (!swipeStart || event.pointerType === "mouse") {
+      swipeStart = null;
+      return;
+    }
+
+    const deltaX = event.clientX - swipeStart.x;
+    const deltaY = event.clientY - swipeStart.y;
+    swipeStart = null;
+
+    if (Math.abs(deltaX) < 42 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) {
+      return;
+    }
+
+    selectAdjacentLumenSanctuary(deltaX < 0 ? "next" : "previous");
+  });
 }
 
 function getLumenTravelerName() {
@@ -474,9 +563,22 @@ function chooseLumenReflectionIndex(sanctuaryIndex) {
   return nextIndex;
 }
 
+function chooseInitialLumenReflectionIndex(sanctuaryIndex) {
+  const sanctuary = lumenSanctuaries[sanctuaryIndex];
+  const questions = sanctuary?.reflections || [];
+  const featuredReflectionIndex = questions.indexOf(sanctuary?.featuredReflection);
+
+  if (featuredReflectionIndex >= 0) {
+    lumenReflectionIndexes[sanctuaryIndex] = featuredReflectionIndex;
+    return featuredReflectionIndex;
+  }
+
+  return chooseLumenReflectionIndex(sanctuaryIndex);
+}
+
 function getActiveLumenReflection(sanctuaryIndex) {
   const questions = lumenSanctuaries[sanctuaryIndex]?.reflections || [];
-  const questionIndex = lumenReflectionIndexes[sanctuaryIndex] ?? chooseLumenReflectionIndex(sanctuaryIndex);
+  const questionIndex = lumenReflectionIndexes[sanctuaryIndex] ?? chooseInitialLumenReflectionIndex(sanctuaryIndex);
 
   return questions[questionIndex] || "";
 }
@@ -507,37 +609,65 @@ function renderLumenInterior() {
   lumenInterior.hidden = false;
   lumenInterior.className = `lumen-sanctuary-interior lumen-room--${escapeLumenHtml(sanctuary.roomClass || "lumen")}`;
   lumenInterior.innerHTML = `
-    <div class="lumen-sanctuary-header">
-      <p class="lumen-featured-counter">Sanctuary Interior</p>
-      <h2>${escapeLumenHtml(sanctuary.title)}</h2>
-      <p>${escapeLumenHtml(intro)}</p>
-      <p>${escapeLumenHtml(sanctuary.interiorMood)}</p>
-    </div>
+    <div class="lumen-interior-shell">
+      <header class="lumen-interior-header">
+        <p class="lumen-interior-eyebrow">
+          <span>Sanctuary Interior</span>
+          <i aria-hidden="true"></i>
+        </p>
+        <h2>${escapeLumenHtml(sanctuary.title)}</h2>
+        <div class="lumen-interior-intro">
+          <p>${escapeLumenHtml(intro)}</p>
+          <p>${escapeLumenHtml(sanctuary.interiorMood)}</p>
+        </div>
+      </header>
 
-    <div class="lumen-sanctuary-altar">
-      <article class="lumen-scroll-card lumen-scroll-object">
-        <p>SANCTUARY SCROLL</p>
-        <h3>${escapeLumenHtml(sanctuary.scroll.title)}</h3>
-        <p>${escapeLumenHtml(sanctuary.scroll.description)}</p>
-        <button type="button" data-lumen-open-scroll="${activeLumenInteriorIndex}">Unseal Page</button>
+      <div class="lumen-interior-panel-grid">
+        <article class="lumen-interior-panel lumen-interior-panel--scroll">
+          <div class="lumen-interior-panel__badge" aria-hidden="true">
+            <span class="lumen-scroll-glyph"></span>
+          </div>
+          <p class="lumen-interior-panel__label">Sanctuary Scroll</p>
+          <h3>${escapeLumenHtml(sanctuary.scroll.title)}</h3>
+          <div class="lumen-interior-panel__divider" aria-hidden="true"></div>
+          <p class="lumen-interior-panel__copy">${escapeLumenHtml(sanctuary.scroll.description)}</p>
+          <button class="lumen-interior-action" type="button" data-lumen-open-scroll="${activeLumenInteriorIndex}">
+            <span class="lumen-scroll-glyph lumen-scroll-glyph--button" aria-hidden="true"></span>
+            Unseal Scroll
+          </button>
       </article>
 
-      <article class="lumen-reflection-card lumen-reflection-object">
-        <p>REFLECTION</p>
-        <blockquote data-lumen-reflection-prompt>${escapeLumenHtml(prompt)}</blockquote>
-        <button type="button" data-lumen-draw-reflection="${activeLumenInteriorIndex}">Draw Another Reflection</button>
-      </article>
-    </div>
+        <article class="lumen-interior-panel lumen-interior-panel--reflection">
+          <div class="lumen-interior-panel__badge" aria-hidden="true">
+            <span>✶</span>
+          </div>
+          <p class="lumen-interior-panel__label">Reflection</p>
+          <blockquote data-lumen-reflection-prompt>${escapeLumenHtml(prompt)}</blockquote>
+          <div class="lumen-interior-panel__divider" aria-hidden="true"></div>
+          <button class="lumen-interior-action" type="button" data-lumen-draw-reflection="${activeLumenInteriorIndex}">
+            <span aria-hidden="true">↻</span>
+            Draw Another Reflection
+          </button>
+        </article>
+      </div>
 
-    <div class="lumen-sanctuary-return-row">
-      <button class="lumen-return-button" type="button" data-lumen-return-sanctuaries>Return to Sanctuaries</button>
+      <div class="lumen-sanctuary-return-row">
+        <button class="lumen-return-button" type="button" data-lumen-return-sanctuaries>
+          <span aria-hidden="true">←</span>
+          Return to Sanctuaries
+        </button>
+      </div>
+
+      <div class="lumen-interior-flourish" aria-hidden="true">
+        <span></span>
+      </div>
     </div>
   `;
 }
 
 function enterLumenSanctuary() {
   activeLumenInteriorIndex = activeLumenSanctuaryIndex;
-  chooseLumenReflectionIndex(activeLumenInteriorIndex);
+  chooseInitialLumenReflectionIndex(activeLumenInteriorIndex);
   renderLumenInterior();
   lumenInterior?.scrollIntoView({ behavior: getLumenScrollBehavior(), block: "start" });
 }
@@ -752,6 +882,14 @@ if (lumenRail && lumenViewer) {
 
     if (sanctuaryTab) {
       setActiveLumenSanctuary(Number(sanctuaryTab.dataset.lumenSanctuaryIndex));
+
+      if (shouldAutoScrollLumenPortalOnSelection()) {
+        window.requestAnimationFrame(() => {
+          scrollLumenPortalToActive("auto");
+          scrollLumenPortalPreviewIntoView();
+        });
+      }
+
       return;
     }
 
@@ -761,6 +899,12 @@ if (lumenRail && lumenViewer) {
     }
 
     if (sanctuaryEnter) {
+      if (sanctuaryEnter.dataset.lumenEnterIndex) {
+        activeLumenSanctuaryIndex = Number(sanctuaryEnter.dataset.lumenEnterIndex);
+        renderLumenRail();
+        updateLumenPortalActiveClasses();
+      }
+
       enterLumenSanctuary();
       return;
     }
