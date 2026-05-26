@@ -217,6 +217,9 @@ const lumenSanctuaries = [
         "I am learning to trust the unseen work.",
         "To let patience become devotion.\nTo let steadiness become prayer.\nTo let the body be a place I live in, not merely carry.",
         "And maybe grounding is just this:\nchoosing, again and again,\nnot to leave myself.",
+        "Some doors do not open upward.\nSome truths must be found beneath the weight of the world.",
+        "If you are searching for what was buried,\nspeak this where recovered things are named:",
+        "'beneath the root, the veil remembers'",
         "Closing Note:",
         "Every quiet light rooted in the world still belongs to its source, and one day even stillness remembers the way home."
       ]
@@ -369,6 +372,20 @@ function scrollLumenPortalPreviewIntoView() {
   });
 }
 
+function scrollLumenPortalImageIntoView() {
+  const activeFrame = lumenViewer?.querySelector(".sanctuary-portal-stage.is-active .sanctuary-portal-frame");
+
+  if (!activeFrame) {
+    scrollLumenPortalPreviewIntoView();
+    return;
+  }
+
+  activeFrame.scrollIntoView({
+    behavior: getLumenScrollBehavior(),
+    block: "center"
+  });
+}
+
 function getLumenSanctuaryInitial(sanctuary) {
   return String(sanctuary.title || "")
     .replace(/^the\s+/i, "")
@@ -456,7 +473,7 @@ function renderLumenViewer() {
         <div class="sanctuary-portal-progress" aria-label="Sanctuary preview progress">
           ${lumenSanctuaries
             .map((item, index) => `
-              <button class="sanctuary-portal-dot${index === activeLumenSanctuaryIndex ? " is-active" : ""}" type="button" data-lumen-sanctuary-index="${index}" aria-label="${escapeLumenHtml(`View ${item.title}`)}" aria-current="${index === activeLumenSanctuaryIndex ? "true" : "false"}"></button>
+              <button class="sanctuary-portal-segment${index === activeLumenSanctuaryIndex ? " is-active" : ""}" type="button" data-lumen-sanctuary-index="${index}" aria-label="${escapeLumenHtml(`View ${item.title}`)}" aria-current="${index === activeLumenSanctuaryIndex ? "true" : "false"}"></button>
             `)
             .join("")}
         </div>
@@ -881,12 +898,13 @@ if (lumenRail && lumenViewer) {
     const imageOpen = event.target.closest("[data-lumen-image-open]");
 
     if (sanctuaryTab) {
+      const selectedFromRail = Boolean(sanctuaryTab.closest("[data-lumen-sanctuary-rail]"));
       setActiveLumenSanctuary(Number(sanctuaryTab.dataset.lumenSanctuaryIndex));
 
-      if (shouldAutoScrollLumenPortalOnSelection()) {
+      if (selectedFromRail || shouldAutoScrollLumenPortalOnSelection()) {
         window.requestAnimationFrame(() => {
           scrollLumenPortalToActive("auto");
-          scrollLumenPortalPreviewIntoView();
+          scrollLumenPortalImageIntoView();
         });
       }
 

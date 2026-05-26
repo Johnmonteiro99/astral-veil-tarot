@@ -170,7 +170,7 @@ function updateLumenArchiveNav(isVisible) {
       ?.closest("li");
 
     archiveItem.innerHTML = `
-      <a class="navbar__link navbar__link--lumen-archive" href="${lumenArchiveNavItem.href}" data-lumen-archive-nav-link>
+      <a class="navbar__link navbar__link--featured navbar__link--lumen-archive" href="${lumenArchiveNavItem.href}" data-lumen-archive-nav-link>
         ${lumenArchiveNavItem.label}
       </a>
     `;
@@ -182,7 +182,7 @@ function updateLumenArchiveNav(isVisible) {
     const aboutLink = Array.from(mobileMenu.querySelectorAll("a"))
       .find((link) => getNormalizedNavPath(link.href) === "about.html");
 
-    archiveLink.className = "navbar__mobile-link navbar__mobile-link--lumen-archive";
+    archiveLink.className = "navbar__mobile-link navbar__mobile-link--featured navbar__mobile-link--lumen-archive";
     archiveLink.href = lumenArchiveNavItem.href;
     archiveLink.textContent = lumenArchiveNavItem.label;
     archiveLink.dataset.lumenArchiveMobileNavLink = "";
@@ -242,7 +242,7 @@ function updateBloodMoonNav(isActive) {
   setActiveNavLink(window.location.href);
 }
 
-// Floating Blood Moon control lets testers/users exit the event state without visiting a reading flow.
+// Blood Moon replaces the ordinary theme toggle with a single nav control that exits the event.
 function updateBloodMoonControl(isActive) {
   const existingControl = document.querySelector("[data-end-blood-moon-control]");
 
@@ -255,18 +255,32 @@ function updateBloodMoonControl(isActive) {
     return;
   }
 
-  const control = document.createElement("div");
+  const themeToggle = themeToggleInput?.closest(".theme-toggle");
+  const control = document.createElement("button");
 
-  control.className = "blood-moon-event-control";
+  control.className = "blood-moon-nav-control";
   control.dataset.endBloodMoonControl = "";
+  control.dataset.endBloodMoon = "";
+  control.type = "button";
+  control.setAttribute("aria-label", "Seal the Veil and return to normal mode");
+  control.title = "Seal the Veil";
   control.innerHTML = `
-    <button class="blood-moon-event-control__button" type="button" data-end-blood-moon>
-      Seal the Veil
-    </button>
-    <span class="blood-moon-event-control__hint">End the Blood Moon event and return to the ordinary veil.</span>
+    <svg class="blood-moon-nav-control__sigil" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <circle cx="32" cy="32" r="22" />
+      <circle cx="32" cy="32" r="10" />
+      <path d="M32 5v12M32 47v12M5 32h12M47 32h12" />
+      <path d="M17 17l8 8M47 17l-8 8M47 47l-8-8M17 47l8-8" />
+      <path d="M25 32c4-6 10-6 14 0-4 6-10 6-14 0z" />
+    </svg>
+    <span class="blood-moon-nav-control__text">Seal</span>
   `;
 
-  document.body.appendChild(control);
+  if (themeToggle) {
+    themeToggle.insertAdjacentElement("afterend", control);
+    return;
+  }
+
+  navbar?.appendChild(control);
 }
 
 // Broadcasts event changes so reading, deck, archive, and reader pages can update independently.

@@ -822,8 +822,8 @@ body.moon-mode .lumen-sanctuary {
 
 .sanctuary-portal-control:hover,
 .sanctuary-portal-control:focus-visible,
-.sanctuary-portal-dot:hover,
-.sanctuary-portal-dot:focus-visible {
+.sanctuary-portal-segment:hover,
+.sanctuary-portal-segment:focus-visible {
   border-color: color-mix(in srgb, var(--lumen-selector-accent-strong) 80%, white);
   outline: none;
   box-shadow: 0 0 18px color-mix(in srgb, var(--lumen-selector-glow) 48%, transparent);
@@ -831,15 +831,15 @@ body.moon-mode .lumen-sanctuary {
 
 .sanctuary-portal-progress {
   display: flex;
-  gap: 8px;
+  gap: 7px;
   align-items: center;
   justify-content: center;
-  min-width: 84px;
+  min-width: 104px;
 }
 
-.sanctuary-portal-dot {
-  width: 8px;
-  aspect-ratio: 1;
+.sanctuary-portal-segment {
+  width: 22px;
+  height: 3px;
   border: 1px solid color-mix(in srgb, var(--lumen-selector-accent) 48%, transparent);
   border-radius: 999px;
   padding: 0;
@@ -848,8 +848,8 @@ body.moon-mode .lumen-sanctuary {
   cursor: pointer;
 }
 
-.sanctuary-portal-dot.is-active {
-  width: 22px;
+.sanctuary-portal-segment.is-active {
+  width: 34px;
   background: color-mix(in srgb, var(--lumen-selector-accent-strong) 82%, white);
   box-shadow: 0 0 14px color-mix(in srgb, var(--lumen-selector-glow) 58%, transparent);
 }

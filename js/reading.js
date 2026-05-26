@@ -56,6 +56,24 @@ const ZEPHYRA_TIME_LOCK_MESSAGES = [
 ];
 const ZEPHYRA_LOCK_HINT = "She answers only when the hour bends.";
 const ZEPHYRA_LOCK_SECONDARY_HINT = "Return when the sky feels less ordinary.";
+const fireKeyAnchorCardId = "death";
+const fireKeyMajorArcanaIds = new Set([
+  "the-sun",
+  "strength",
+  "the-tower",
+  "the-emperor",
+  "the-chariot",
+  "the-magician"
+]);
+const fireKeyCardNameToId = {
+  "the sun": "the-sun",
+  strength: "strength",
+  "the tower": "the-tower",
+  "the emperor": "the-emperor",
+  "the chariot": "the-chariot",
+  "the magician": "the-magician",
+  death: "death"
+};
 
 // Reading state is kept in memory so a generated spread does not reshuffle or reroll orientation while browsing.
 let selectedReader = null;
@@ -163,6 +181,62 @@ function getRandomArrayItem(items) {
   }
 
   return items[Math.floor(Math.random() * items.length)];
+}
+
+function normalizeFireKeyCardName(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/\breversed\b/g, "")
+    .replace(/[^\w\s-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function getFireKeyCardId(card) {
+  const stableId = normalizeFireKeyCardName(card?.originalCardId || card?.id || "").replace(/^blood-moon-/, "");
+
+  if (stableId === fireKeyAnchorCardId || fireKeyMajorArcanaIds.has(stableId)) {
+    return stableId;
+  }
+
+  const normalizedName = normalizeFireKeyCardName(card?.name || card?.title || getCardDisplayName(card));
+
+  return fireKeyCardNameToId[normalizedName] || "";
+}
+
+function hasFireKeyPattern(cards) {
+  if (!Array.isArray(cards) || !cards.length) {
+    return false;
+  }
+
+  const cardIds = cards.map(getFireKeyCardId).filter(Boolean);
+  const hasDeath = cardIds.includes(fireKeyAnchorCardId);
+  const fireCardCount = cardIds.filter((cardId) => fireKeyMajorArcanaIds.has(cardId)).length;
+
+  return hasDeath && fireCardCount >= 2;
+}
+
+function renderFireKeyCluePanel() {
+  if (!areAllReadingCardsRevealed() || !hasFireKeyPattern(revealedCards)) {
+    return "";
+  }
+
+  const isBloodMoonStyled = isBloodMoonReadingActive() || document.body.classList.contains("blood-moon-mode");
+
+  return `
+    <aside class="fire-key-clue${isBloodMoonStyled ? " fire-key-clue--blood-moon" : ""}" aria-label="Fire Key clue">
+      <p class="fire-key-clue__label">Elemental Trace Detected</p>
+      <h3>The Fire Key Stirs</h3>
+      <div class="fire-key-clue__copy">
+        <p>The thread between these cards begins to smoke.</p>
+        <p>Death has opened the old door.<br />The flame has answered from beneath the ash.</p>
+        <p>Fire is not only what destroys.<br />It is what remains brave enough to become again.</p>
+        <p>When the flame asks what comes after burning,<br />speak:</p>
+      </div>
+      <p class="fire-key-clue__word">REBORN</p>
+      <p class="fire-key-clue__note">Enter the word in Recovered Code.</p>
+    </aside>
+  `;
 }
 
 ////////////////////////////////////////////////////
@@ -289,27 +363,39 @@ function renderBloodMoonCardMeaning(card) {
   const orientationMeaning = typeof getCardReadingMeaning === "function"
     ? getCardReadingMeaning(card)
     : null;
+  const exposureSections = [
+    ["The Shadow", orientationMeaning?.shadow || bloodMoon.shadowMessage || card.shadowMeaning],
+    ["The Mask", orientationMeaning?.mask],
+    ["The Wound", orientationMeaning?.wound],
+    ["The Work", orientationMeaning?.work]
+  ];
+  const veilHint = orientationMeaning?.veilHint || orientationMeaning?.reflection || bloodMoon.veilHint;
 
   return `
     ${renderKeywordBadges(card.keywords)}
-    <p class="reading-viewer__meaning reading-viewer__meaning--short">${escapeHtml(orientationMeaning?.summary || bloodMoon.shortMeaning || card.shortMeaning)}</p>
+    <p class="reading-viewer__meaning reading-viewer__meaning--short">${escapeHtml(orientationMeaning?.headline || orientationMeaning?.summary || bloodMoon.shortMeaning || card.shortMeaning)}</p>
     <p class="reading-viewer__summary">${escapeHtml(orientationMeaning?.meaning || bloodMoon.summary || card.summary)}</p>
-    <div class="reading-viewer__insight-grid reading-viewer__insight-grid--blood-moon">
-      <section>
-        <h4>Shadow Message</h4>
-        <p>${escapeHtml(orientationMeaning?.shadow || bloodMoon.shadowMessage || card.shadowMeaning)}</p>
-      </section>
-      ${
-        orientationMeaning?.reflection || bloodMoon.veilHint
-          ? `
-            <section>
-              <h4>Veil Hint</h4>
-              <p>${escapeHtml(orientationMeaning?.reflection || bloodMoon.veilHint)}</p>
-            </section>
-          `
-          : ""
-      }
+    <div class="bloodmoon-exposure-grid" aria-label="Blood Moon shadow framework">
+      ${exposureSections
+        .filter(([, text]) => Boolean(text))
+        .map(([label, text]) => `
+          <section class="bloodmoon-exposure-card">
+            <h4 class="bloodmoon-exposure-label">${escapeHtml(label)}</h4>
+            <p class="bloodmoon-exposure-text">${escapeHtml(text)}</p>
+          </section>
+        `)
+        .join("")}
     </div>
+    ${
+      veilHint
+        ? `
+          <p class="reading-viewer__reflection reading-viewer__reflection--blood-moon">
+            <span>Veil Hint</span>
+            ${escapeHtml(veilHint)}
+          </p>
+        `
+        : ""
+    }
   `;
 }
 
@@ -783,6 +869,14 @@ function renderFeaturedReader() {
   const readerDescription = isBloodMoonActive() && featuredReader.bloodMoonProfile?.description
     ? featuredReader.bloodMoonProfile.description
     : featuredReader.description || getReaderFocus(featuredReader);
+  const swipeDots = visibleGuidePool
+    .map((reader, index) => `
+      <span
+        class="mobile-reader-swipe-hint__dot${index === featuredReaderIndex ? " is-active" : ""}"
+        aria-hidden="true"
+      ></span>
+    `)
+    .join("");
 
   featuredReaderPanel.className = `reader-carousel__featured ${accentClass}${isLocked ? " is-unavailable" : ""}${isZephyraLocked ? " reader-carousel__featured--sealed" : ""}${isSelected ? " is-active" : ""}`;
   featuredReaderPanel.innerHTML = `
@@ -790,6 +884,12 @@ function renderFeaturedReader() {
       <button class="reader-selection-split__image" type="button" data-reader-carousel-message aria-label="Refresh this Veilwalker's preview message">
         <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
       </button>
+      <div class="mobile-reader-swipe-hint" aria-hidden="true">
+        <div class="mobile-reader-swipe-hint__track">
+          ${swipeDots}
+        </div>
+        <p>Swipe to switch readers</p>
+      </div>
       <div class="reader-selection-split__panel">
         ${isZephyraLocked ? `<span class="reader-availability-pill">Unavailable</span>` : ""}
         <div class="reader-feature-identity">
@@ -1394,6 +1494,7 @@ function renderReadingResults() {
       </div>
     </article>
     ${renderCombinedReading()}
+    ${renderFireKeyCluePanel()}
     ${
       showClosingActions
         ? `

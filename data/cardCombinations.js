@@ -101,7 +101,13 @@ function getCardThreadName(card) {
 
 function getCardSummary(card, isBloodMoon) {
   if (typeof getCardReadingMeaning === "function") {
-    return getCardReadingMeaning(card).meaning || getCardReadingMeaning(card).summary || "";
+    const cardMeaning = getCardReadingMeaning(card);
+
+    if (isBloodMoon) {
+      return cardMeaning.thread || cardMeaning.summary || cardMeaning.meaning || "";
+    }
+
+    return cardMeaning.meaning || cardMeaning.summary || "";
   }
 
   return isBloodMoon && card.bloodMoon?.summary ? card.bloodMoon.summary : card.summary;
@@ -138,8 +144,13 @@ function createFallbackReading(cards, options) {
       const cardMeaning = typeof getCardReadingMeaning === "function"
         ? getCardReadingMeaning(card)
         : null;
-      const action = cardMeaning?.summary ||
+      const action = (isBloodMoon ? cardMeaning?.thread : cardMeaning?.summary) ||
+        cardMeaning?.summary ||
         (isBloodMoon ? card.bloodMoon?.shortMeaning || card.shortMeaning : card.shortMeaning);
+
+      if (isBloodMoon && cardMeaning?.thread) {
+        return `${position}: ${action}`;
+      }
 
       return `${position}: ${getCardThreadName(card)} brings ${action.charAt(0).toLowerCase()}${action.slice(1)}`;
     })
@@ -190,7 +201,13 @@ function getCustomPairReading(cards, isBloodMoon, spread) {
     .map((card, index) => {
       const position = getPositionLabel(card, index, spread);
       const cardMeaning = typeof getCardReadingMeaning === "function" ? getCardReadingMeaning(card) : null;
-      const action = cardMeaning?.summary || getCardSummary(card, isBloodMoon);
+      const action = (isBloodMoon ? cardMeaning?.thread : cardMeaning?.summary) ||
+        cardMeaning?.summary ||
+        getCardSummary(card, isBloodMoon);
+
+      if (isBloodMoon && cardMeaning?.thread) {
+        return `${position}: ${action}`;
+      }
 
       return `${position}: ${getCardThreadName(card)} brings ${action.charAt(0).toLowerCase()}${action.slice(1)}`;
     })

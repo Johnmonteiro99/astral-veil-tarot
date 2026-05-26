@@ -465,6 +465,480 @@ const majorArcanaCards = [
   }
 ];
 
+const bloodMoonMajorArcanaMeanings = {
+  "the-fool": {
+    upright: {
+      summary: "A threshold opens before the shadow has finished speaking.",
+      meaning: "The Fool beneath the Blood Moon steps toward a beginning that is not innocent, but necessary. This card asks whether you are answering a true call, or running toward the unknown because the familiar has become too painful to face.",
+      shadow: "The hidden pattern is escape disguised as freedom.",
+      reflection: "What are you trying to outrun, and what would change if you crossed the threshold awake?",
+      thread: "The Fool shows where a new beginning may also be an old escape wearing brighter clothes."
+    },
+    reversed: {
+      summary: "The leap stalls where fear and impulse wrestle in the dark.",
+      meaning: "The Fool reversed beneath the Blood Moon reveals reckless escape, frozen courage, or innocence that no longer wants to see its own shadow. This card asks where the part of you that learned to survive by fleeing is now asking to choose with open eyes.",
+      shadow: "A doorway can become a hiding place when the old fear chooses the direction.",
+      reflection: "Where are you mistaking motion for liberation?",
+      thread: "The Fool reversed points to a beginning delayed by fear, impulse, or the old urge to disappear."
+    }
+  },
+  "the-magician": {
+    upright: {
+      summary: "Power gathers where intention stops pretending.",
+      meaning: "The Magician beneath the Blood Moon reveals the spell beneath the action: motive, hunger, focus, and hidden will. This card asks whether your power is being used to create honestly, or to control what you are afraid to lose.",
+      shadow: "The shadow is not power itself, but the secret bargain behind its use.",
+      reflection: "What intention would remain if every performance fell away?",
+      thread: "The Magician shows where hidden intention is shaping the ritual more than the visible act."
+    },
+    reversed: {
+      summary: "The spell bends when the will refuses truth.",
+      meaning: "The Magician reversed beneath the Blood Moon reveals manipulation, scattered force, or a gift turned sideways by fear. This card asks where you are using skill to avoid honesty, or letting another person's illusion overwrite your own knowing.",
+      shadow: "A false spell feeds on the part of you that wants an outcome more than truth.",
+      reflection: "Where has cleverness become a mask for avoidance?",
+      thread: "The Magician reversed exposes power used without clean intention."
+    }
+  },
+  "the-high-priestess": {
+    upright: {
+      summary: "The buried knowing waits behind the veil.",
+      meaning: "The High Priestess beneath the Blood Moon guards the truth that has been felt before it can be proven. This card asks you to listen for the secret beneath the secret, especially where silence has become heavy with meaning.",
+      shadow: "The shadow is the knowing you keep treating as a rumor.",
+      reflection: "What have you already sensed, but refused to name?",
+      thread: "The High Priestess reveals the quiet truth that has been waiting beneath silence."
+    },
+    reversed: {
+      summary: "The inner oracle is muffled by fear, secrecy, or denial.",
+      meaning: "The High Priestess reversed beneath the Blood Moon reveals ignored intuition, hidden motives, or a secret kept so long it has begun to shape the room. This card asks where you have silenced your own knowing to keep an old arrangement intact.",
+      shadow: "A buried truth does not vanish; it learns to speak through unease.",
+      reflection: "Where are you choosing not to know what you already know?",
+      thread: "The High Priestess reversed points to intuition muted by fear or secrecy."
+    }
+  },
+  "the-empress": {
+    upright: {
+      summary: "The dark garden asks what your hunger has been feeding.",
+      meaning: "The Empress beneath the Blood Moon reveals comfort, creation, and longing with roots deep in the unseen. This card asks whether what you nurture is alive, or whether care has become a way to keep grief from touching the light.",
+      shadow: "The hidden hunger may be asking for tenderness through the language of possession.",
+      reflection: "What are you feeding because you are afraid to let it wither?",
+      thread: "The Empress shows where care, comfort, and longing have grown around a buried wound."
+    },
+    reversed: {
+      summary: "The garden withers where receiving has become unsafe.",
+      meaning: "The Empress reversed beneath the Blood Moon reveals blocked nourishment, smothering care, or a refusal to receive what the spirit still craves. This card asks where tenderness became tangled with debt, guilt, or the fear of needing too much.",
+      shadow: "The wound may be guarding the gate where softness should enter.",
+      reflection: "Where do you deny yourself care before anyone else can withhold it?",
+      thread: "The Empress reversed reveals a hunger for care twisted by fear, guilt, or refusal."
+    }
+  },
+  "the-emperor": {
+    upright: {
+      summary: "The throne asks whether protection has become a wall.",
+      meaning: "The Emperor rises beneath the Blood Moon as the part of you that wants order because chaos once cost too much. His shadow asks whether your structure protects your life, or only guards the old wound from being touched.",
+      shadow: "Control may be wearing the mask of safety.",
+      reflection: "Where does structure protect you, and where does it keep the wound untouched?",
+      thread: "The Emperor shows where order may be protecting life or guarding an old wound."
+    },
+    reversed: {
+      summary: "The throne cracks where fear has hardened into rule.",
+      meaning: "The Emperor reversed reveals control that has begun to rot from the inside. This card asks where fear is disguising itself as authority, and where rigidity has become a throne built around pain.",
+      shadow: "The hidden wound has turned command into armor.",
+      reflection: "Where has rigidity become a throne built around pain?",
+      thread: "The Emperor reversed shows where control has become armor around an old fear."
+    }
+  },
+  "the-hierophant": {
+    upright: {
+      summary: "The old rite asks which belief still owns your voice.",
+      meaning: "The Hierophant beneath the Blood Moon reveals inherited vows, sacred masks, and teachings that may have outlived their truth. This card asks whether your devotion is chosen, or whether obedience is still speaking through you.",
+      shadow: "The old rule may be calling itself wisdom to avoid being questioned.",
+      reflection: "Which belief frees your spirit, and which one only preserves the old fear?",
+      thread: "The Hierophant reveals inherited vows and beliefs asking to be tested against truth."
+    },
+    reversed: {
+      summary: "The sacred mask slips from the face of control.",
+      meaning: "The Hierophant reversed beneath the Blood Moon exposes false authority, spiritual performance, or rebellion that still revolves around the old altar. This card asks where you are ready to leave a teaching that demanded your silence as proof of devotion.",
+      shadow: "A broken doctrine can still rule if your choices are shaped around it.",
+      reflection: "Where are you still bowing to a rule you no longer believe?",
+      thread: "The Hierophant reversed exposes the old doctrine losing power over the self."
+    }
+  },
+  "the-lovers": {
+    upright: {
+      summary: "Desire and truth stand together beneath the red moon.",
+      meaning: "The Lovers beneath the Blood Moon expose the bond between desire and truth. This card asks whether your choices come from devotion, longing, fear of loss, or the hunger to be chosen.",
+      shadow: "Longing can speak in the voice of destiny when it fears being alone.",
+      reflection: "What choice would still feel true if the hunger to be chosen went quiet?",
+      thread: "The Lovers reveal where desire, devotion, and truth must answer to one another."
+    },
+    reversed: {
+      summary: "The mirror darkens where attachment has replaced alignment.",
+      meaning: "The Lovers reversed reveal attachment where alignment has gone silent. This card asks where you keep reaching for connection that requires you to abandon a piece of yourself.",
+      shadow: "The ache to be held may be bargaining with self-betrayal.",
+      reflection: "Where does connection ask too high a price from your own spirit?",
+      thread: "The Lovers reversed reveals the ache of choosing connection at the cost of self-betrayal."
+    }
+  },
+  "the-chariot": {
+    upright: {
+      summary: "The reins tighten around desire, fear, and momentum.",
+      meaning: "The Chariot beneath the Blood Moon moves through survival fire, ambition, and the need to outrun what waits in stillness. This card asks whether you are directing your force, or letting urgency choose the road.",
+      shadow: "The hidden pattern is motion used to avoid being caught by feeling.",
+      reflection: "What are you trying to conquer because sitting still would reveal too much?",
+      thread: "The Chariot shows where momentum may be command or flight from stillness."
+    },
+    reversed: {
+      summary: "The wheels drag where control has lost its center.",
+      meaning: "The Chariot reversed beneath the Blood Moon reveals scattered force, burnout, or a battle with yourself disguised as a destination. This card asks where pushing harder has become a way to avoid asking why the road feels haunted.",
+      shadow: "Force without direction becomes another form of surrender.",
+      reflection: "Where has urgency taken the reins from your deeper will?",
+      thread: "The Chariot reversed points to force, burnout, or motion without inner command."
+    }
+  },
+  strength: {
+    upright: {
+      summary: "The beast bows when met without shame.",
+      meaning: "Strength beneath the Blood Moon reveals the instinct you have feared, hidden, or tried to master by force. This card asks for power that does not dominate the beast, but understands the wound that taught it to bare its teeth.",
+      shadow: "The untamed part may be protecting something tender.",
+      reflection: "What instinct needs a name instead of a cage?",
+      thread: "Strength shows where the feared instinct may become power when met without shame."
+    },
+    reversed: {
+      summary: "The beast breaks loose where gentleness was denied.",
+      meaning: "Strength reversed beneath the Blood Moon reveals suppressed anger, self-doubt, or force turned inward until it becomes a private war. This card asks where the mask of control has kept your true power starving.",
+      shadow: "The old wound snarls when it is treated as an enemy.",
+      reflection: "Where have you confused containment with healing?",
+      thread: "Strength reversed reveals suppressed instinct asking for truth instead of domination."
+    }
+  },
+  "the-hermit": {
+    upright: {
+      summary: "The lantern enters the room you avoided.",
+      meaning: "The Hermit beneath the Blood Moon is sacred solitude with a blade of truth inside it. This card asks whether you are withdrawing to hear the soul, or disappearing so no one can touch the hidden place.",
+      shadow: "Solitude becomes shadow when it protects the wound from all witness.",
+      reflection: "Where does your silence bring wisdom, and where does it keep you unreachable?",
+      thread: "The Hermit reveals solitude as either sacred guidance or a hiding place."
+    },
+    reversed: {
+      summary: "The lantern dims behind a locked inner door.",
+      meaning: "The Hermit reversed beneath the Blood Moon reveals isolation, avoidance, or wisdom hoarded until it becomes loneliness. This card asks where you have mistaken being unseen for being safe.",
+      shadow: "The hidden self may be starving behind the door it built.",
+      reflection: "Who might you become if you let the lantern be seen?",
+      thread: "The Hermit reversed points to isolation that has begun to imitate protection."
+    }
+  },
+  "wheel-of-fortune": {
+    upright: {
+      summary: "The cycle returns with a name carved into it.",
+      meaning: "The Wheel of Fortune beneath the Blood Moon reveals a pattern returning until it is understood. This card asks you to stop calling the repetition random and look for the old vow turning beneath it.",
+      shadow: "Fate may be the name you give a pattern you have not yet claimed.",
+      reflection: "What keeps returning because it has not been witnessed clearly?",
+      thread: "The Wheel of Fortune shows the repeating cycle asking to be recognized."
+    },
+    reversed: {
+      summary: "The wheel catches on the same hidden wound.",
+      meaning: "The Wheel of Fortune reversed beneath the Blood Moon reveals resistance, fatalism, or a cycle that keeps finding the same door back into your life. This card asks where the old pattern is being fed by the belief that nothing can change.",
+      shadow: "The loop survives when resignation feels easier than choice.",
+      reflection: "Where have you mistaken repetition for destiny?",
+      thread: "The Wheel of Fortune reversed reveals a cycle sustained by resignation or avoidance."
+    }
+  },
+  justice: {
+    upright: {
+      summary: "The crimson scales weigh the truth you cannot unsee.",
+      meaning: "Justice beneath the Blood Moon cuts through glamour, excuse, and half-truth. This card asks for clear accountability: not punishment, but the power that returns when the pattern is named without distortion.",
+      shadow: "The hidden cost of denial has reached the scales.",
+      reflection: "What truth would restore balance if you stopped bargaining with it?",
+      thread: "Justice reveals the truth, consequence, and accountability beneath the pattern."
+    },
+    reversed: {
+      summary: "The scales tilt where denial has been protected.",
+      meaning: "Justice reversed beneath the Blood Moon reveals evasion, unfairness, or a truth bent to preserve an old comfort. This card asks where you are avoiding consequence, or accepting a false verdict because it feels familiar.",
+      shadow: "A distorted truth can become a cage if it is repeated long enough.",
+      reflection: "Where are the scales asking you to stop protecting the lie?",
+      thread: "Justice reversed exposes denial, imbalance, or a truth bent out of shape."
+    }
+  },
+  "the-hanged-man": {
+    upright: {
+      summary: "The suspended soul sees what motion concealed.",
+      meaning: "The Hanged Man beneath the Blood Moon asks for surrender without self-erasure. This card reveals the place where release has been delayed because letting go would expose what the sacrifice has cost.",
+      shadow: "The pause may be holy, or it may be fear dressed as patience.",
+      reflection: "What would you see if you stopped bargaining with the release?",
+      thread: "The Hanged Man reveals the truth that appears only when control is suspended."
+    },
+    reversed: {
+      summary: "The rope tightens where surrender has become refusal.",
+      meaning: "The Hanged Man reversed beneath the Blood Moon reveals paralysis, martyrdom, or a sacrifice that no longer carries meaning. This card asks where waiting has become a way to avoid choosing what must be released.",
+      shadow: "The old vow keeps you hanging because it fears the ground.",
+      reflection: "Where has patience become another name for avoidance?",
+      thread: "The Hanged Man reversed points to surrender delayed until it becomes a cage."
+    }
+  },
+  death: {
+    upright: {
+      summary: "The old self reaches the gate and cannot pass unchanged.",
+      meaning: "Death beneath the Blood Moon is the ending that reveals what has been kept alive past its season. This card asks you to release the identity, attachment, or grief that cannot cross into the next form.",
+      shadow: "The dead thing may still be steering because it has not been buried with truth.",
+      reflection: "What are you carrying that belongs to a version of you already gone?",
+      thread: "Death shows the ending that must be honored before transformation can begin."
+    },
+    reversed: {
+      summary: "The gate will not open while the old skin is clutched.",
+      meaning: "Death reversed beneath the Blood Moon reveals resisted endings, unfinished grief, or a fear of becoming unrecognizable to yourself. This card asks where clinging to the old form has begun to cost more than the change.",
+      shadow: "The cycle decays when it is kept alive by fear.",
+      reflection: "What ending are you refusing because it would ask you to become new?",
+      thread: "Death reversed reveals transformation resisted by attachment to the old self."
+    }
+  },
+  temperance: {
+    upright: {
+      summary: "The shadow and the medicine pour into one cup.",
+      meaning: "Temperance beneath the Blood Moon is inner alchemy: grief with wisdom, anger with restraint, desire with truth. This card asks where the divided parts of you are ready to stop fighting and begin transforming each other.",
+      shadow: "The wound may need integration, not exile.",
+      reflection: "Which opposing forces inside you are asking to be mixed with honesty?",
+      thread: "Temperance reveals the alchemy of bringing divided inner forces into truth."
+    },
+    reversed: {
+      summary: "The cup spills where imbalance has been disguised as peace.",
+      meaning: "Temperance reversed beneath the Blood Moon reveals excess, avoidance, or forced harmony that keeps the real wound unnamed. This card asks where you are calling something balanced only because the conflict has been buried.",
+      shadow: "Peace becomes false when one part of the self is silenced.",
+      reflection: "Where has moderation become a mask for not feeling fully?",
+      thread: "Temperance reversed exposes imbalance hidden beneath forced calm."
+    }
+  },
+  "the-devil": {
+    upright: {
+      summary: "The chain shines where the hidden hunger has been fed.",
+      meaning: "The Devil beneath the Blood Moon reveals craving, shame, obsession, and the contracts made in the dark. This card asks you to name the chain without flinching, because what is named can no longer rule from behind the mask.",
+      shadow: "The hidden hunger calls the chain comfort because freedom feels unfamiliar.",
+      reflection: "What has power over you because part of you still calls it protection?",
+      thread: "The Devil reveals the chain, craving, or shame-pattern asking to be named."
+    },
+    reversed: {
+      summary: "The chain loosens, but the old hunger still knows your name.",
+      meaning: "The Devil reversed beneath the Blood Moon reveals the moment a bond can be broken, if you stop romanticizing the cage. This card asks where liberation is possible, and where the old craving still bargains for one more night.",
+      shadow: "Freedom may feel frightening when bondage has become familiar.",
+      reflection: "What chain is ready to break, and what part of you still reaches for it?",
+      thread: "The Devil reversed points to a chain loosening while the old craving asks to return."
+    }
+  },
+  "the-tower": {
+    upright: {
+      summary: "The false shelter breaks and the buried truth enters.",
+      meaning: "The Tower beneath the Blood Moon is collapse as revelation. This card asks where the structure was never safe, only familiar, and what truth is breaking through because the old walls refused to open.",
+      shadow: "False safety can become more dangerous than the storm.",
+      reflection: "What is falling because it could no longer hold the truth?",
+      thread: "The Tower shows the collapse that exposes what false safety concealed."
+    },
+    reversed: {
+      summary: "The lightning waits where collapse has been delayed.",
+      meaning: "The Tower reversed beneath the Blood Moon reveals a truth held back, a breakdown postponed, or a warning ignored until it grows louder. This card asks where you are patching the wall instead of leaving the burning room.",
+      shadow: "Avoided collapse gathers force in silence.",
+      reflection: "What warning keeps returning because you have not acted on it?",
+      thread: "The Tower reversed reveals a delayed collapse pressing against the walls."
+    }
+  },
+  "the-star": {
+    upright: {
+      summary: "A guarded light survives after the ruin.",
+      meaning: "The Star beneath the Blood Moon is hope after the place where hope felt dangerous. This card asks you to trust the small signal without demanding it become daylight all at once.",
+      shadow: "The wound may distrust hope because it remembers disappointment.",
+      reflection: "What light are you afraid to believe in again?",
+      thread: "The Star reveals the guarded hope that survives after ruin."
+    },
+    reversed: {
+      summary: "The light is present, but the wound refuses to look up.",
+      meaning: "The Star reversed beneath the Blood Moon reveals guarded healing, despair, or the fear of trusting beauty after loss. This card asks where you have mistaken protection for refusing every sign of renewal.",
+      shadow: "The old hurt may call hope foolish to keep itself safe.",
+      reflection: "Where are you denying the light before it can disappoint you?",
+      thread: "The Star reversed points to hope withheld because believing again feels dangerous."
+    }
+  },
+  "the-moon": {
+    upright: {
+      summary: "The dream-path opens where fear learned to wear faces.",
+      meaning: "The Moon beneath the Blood Moon reveals illusion, projection, hidden memory, and the stories fear tells in the dark. This card asks you to move slowly, question every shape, and listen for the truth beneath the image.",
+      shadow: "The shadow may be a fear wearing the mask of intuition.",
+      reflection: "What story might be fear speaking before truth has arrived?",
+      thread: "The Moon reveals illusion, fear, and hidden memory shaping the path."
+    },
+    reversed: {
+      summary: "The fog thins, and the old fear loses its costume.",
+      meaning: "The Moon reversed beneath the Blood Moon reveals distortion beginning to clear, or a hidden truth rising from beneath projection. This card asks where you are ready to stop believing the nightmare simply because it has been familiar.",
+      shadow: "The fear loses power when its mask is named.",
+      reflection: "What becomes visible when the old illusion stops being fed?",
+      thread: "The Moon reversed points to fear and projection beginning to lose their disguise."
+    }
+  },
+  "the-sun": {
+    upright: {
+      summary: "The red light exposes what the shadow made monstrous.",
+      meaning: "The Sun beneath the Blood Moon is not simple joy; it is exposure, truth, and the courage to be seen without the old mask. This card asks where the light is revealing strength in what you once hid.",
+      shadow: "Being seen may frighten the part of you that survived by staying dim.",
+      reflection: "What truth is ready for daylight, even if your old self trembles?",
+      thread: "The Sun reveals the truth that becomes power when brought into light."
+    },
+    reversed: {
+      summary: "The light is blocked by the fear of being witnessed.",
+      meaning: "The Sun reversed beneath the Blood Moon reveals false brightness, hidden exhaustion, or the fear that truth will expose too much. This card asks where you are performing radiance while a quieter part of you asks to be seen honestly.",
+      shadow: "The mask of brightness can hide a deeper hunger for truth.",
+      reflection: "Where are you smiling over something that needs light, not performance?",
+      thread: "The Sun reversed exposes false brightness and the fear of being truly seen."
+    }
+  },
+  judgement: {
+    upright: {
+      summary: "The grave of the old self begins to speak.",
+      meaning: "Judgement beneath the Blood Moon is not gentle awakening. It is the voice that calls from the grave of an old self, asking what truth you already know but keep postponing.",
+      shadow: "The call becomes heavier each time it is refused.",
+      reflection: "What truth have you already heard, but not yet answered?",
+      thread: "Judgement points to the truth calling from the old self's grave."
+    },
+    reversed: {
+      summary: "The call echoes behind a sealed door.",
+      meaning: "Judgement reversed reveals the refusal to answer what your spirit has already heard. This card asks where guilt, shame, or fear of becoming someone new keeps you sealed inside an older version of yourself.",
+      shadow: "The old self survives by convincing you the call can wait forever.",
+      reflection: "What are you avoiding because answering it would require becoming someone new?",
+      thread: "Judgement reversed points to the truth that keeps calling, even when the old self refuses to answer."
+    }
+  },
+  "the-world": {
+    upright: {
+      summary: "The gate closes only after the lesson is claimed.",
+      meaning: "The World beneath the Blood Moon reveals completion with every shadow included. This card asks whether you are ready to leave the cycle with its wisdom, rather than circling back for the familiar ache.",
+      shadow: "The final threshold may require accepting the self you became in the dark.",
+      reflection: "What cycle is complete, and what part of you is afraid to live beyond it?",
+      thread: "The World reveals the cycle ready to close with its shadow integrated."
+    },
+    reversed: {
+      summary: "The circle stays open where closure is feared.",
+      meaning: "The World reversed beneath the Blood Moon reveals unfinished integration, delayed closure, or the fear of leaving a familiar cycle behind. This card asks where you keep returning to the threshold because completion would require a new identity.",
+      shadow: "The old cycle tempts you back by promising a different ending without a different choice.",
+      reflection: "Where are you refusing completion because the next self is still unknown?",
+      thread: "The World reversed points to closure delayed by fear of leaving the cycle."
+    }
+  }
+};
+
+const bloodMoonExposureOverrides = {
+  "the-moon": {
+    upright: {
+      headline: "The dream-path opens where fear learned to wear faces.",
+      meaning: "The Moon beneath the Blood Moon reveals the mist between intuition and terror. It asks where old fear is shaping what you see before truth has had a chance to speak.",
+      shadow: "Fear has learned to wear faces.",
+      mask: "Confusion pretends to be intuition.",
+      wound: "The old self may have learned to survive by reading danger into every shadow.",
+      work: "Separate the vision from the fear. Not every dark shape is an omen.",
+      veilHint: "Where are you mistaking fear for knowing?",
+      thread: "The Moon reveals the places where fear has learned to speak in symbols."
+    }
+  },
+  "the-devil": {
+    upright: {
+      headline: "The chain shines where the hidden hunger has been fed.",
+      meaning: "The Devil beneath the Blood Moon reveals the bond between craving and captivity. It asks where comfort has become a collar, and where desire is being mistaken for devotion.",
+      shadow: "Desire has become a chain.",
+      mask: "The craving calls itself comfort.",
+      wound: "A hidden hunger may have formed where something once felt missing, forbidden, or unsafe to need.",
+      work: "Look at the chain without worshiping it. What can be named can begin to loosen.",
+      veilHint: "What hunger has been guiding you from beneath the surface?",
+      thread: "The Devil reveals where hunger has been dressed as devotion."
+    }
+  },
+  "the-emperor": {
+    reversed: {
+      headline: "The throne has become a wall around the wound.",
+      meaning: "The Emperor reversed reveals control that has begun to rot from the inside. This card asks where fear is disguising itself as authority, and where rigidity has become a throne built around pain.",
+      shadow: "Control has hardened into protection.",
+      mask: "Authority disguises fear.",
+      wound: "Some part of the self may have learned that safety requires never bending.",
+      work: "Loosen the hand around the crown. Power does not need to become a prison.",
+      veilHint: "Where has control become louder than truth?",
+      thread: "The Emperor reversed shows where fear has hardened into authority."
+    }
+  },
+  "the-lovers": {
+    reversed: {
+      headline: "The bond remains, but the self has gone missing.",
+      meaning: "The Lovers reversed reveal attachment where alignment has gone silent. This card asks where connection requires self-abandonment, and where longing has been mistaken for love.",
+      shadow: "Connection has begun to cost the self.",
+      mask: "Longing disguises itself as devotion.",
+      wound: "Some part of the self may have learned that being chosen matters more than being whole.",
+      work: "Ask what part of yourself has been left outside the door to keep the bond alive.",
+      veilHint: "Where are you choosing connection at the cost of yourself?",
+      thread: "The Lovers reversed reveals the ache of choosing connection at the cost of self-betrayal."
+    }
+  },
+  judgement: {
+    upright: {
+      headline: "The grave of the old self begins to speak.",
+      meaning: "Judgement beneath the Blood Moon is not gentle awakening. It is the voice that calls from the grave of an old self, asking what truth you already know but keep postponing.",
+      shadow: "A truth has been heard, but not answered.",
+      mask: "Delay disguises itself as waiting for the right time.",
+      wound: "Some part of the self may have learned that becoming new means betraying who it once had to be.",
+      work: "Name the calling. Stop negotiating with the version of yourself that only knows how to survive.",
+      veilHint: "What truth have you already heard, but not yet answered?",
+      thread: "Judgement shows where the old self still delays the call to become something truer."
+    },
+    reversed: {
+      headline: "The call echoes, but the old self refuses to rise.",
+      meaning: "Judgement reversed reveals the refusal to answer what the spirit has already heard. This card asks where guilt, shame, or fear of becoming someone new keeps the self sealed inside an older shape.",
+      shadow: "The truth is known, but unanswered.",
+      mask: "Avoidance disguises itself as not being ready.",
+      wound: "Some part of the self may have learned that change means exile from who it used to be.",
+      work: "Answer one truth without demanding the whole future reveal itself.",
+      veilHint: "What calling keeps returning, even after you bury it?",
+      thread: "Judgement reversed points to the truth that keeps calling, even when the old self refuses to answer."
+    }
+  }
+};
+
+function createBloodMoonExposureFallback(card, orientationKey, meaning) {
+  const isReversed = orientationKey === "reversed";
+  const cardName = `${card.name}${isReversed ? " reversed" : ""}`;
+  const theme = card.themes?.[0] || "pattern";
+  const secondTheme = card.themes?.[1] || "shadow";
+  const archetype = String(card.archetype || card.name).replace(/^The\s+/i, "").toLowerCase();
+
+  return {
+    headline: meaning.summary || `${cardName} opens a Blood Moon threshold.`,
+    shadow: meaning.shadow || `${cardName} exposes the ${theme} that has been moving beneath the surface.`,
+    mask: `${cardName} disguises the pattern as ${isReversed ? "delay, refusal, or familiar unrest" : `necessary ${theme}`}.`,
+    wound: `Some part of the self may have learned to survive by binding ${theme} to ${secondTheme}.`,
+    work: `${cardName} asks you to face the old ${archetype} pattern without letting it choose the next step.`,
+    veilHint: meaning.reflection || "What truth becomes visible under the Blood Moon?",
+    thread: meaning.thread || `${cardName} reveals where ${theme} and ${secondTheme} meet the shadow.`
+  };
+}
+
+function completeBloodMoonExposure(card, orientationKey) {
+  const meaning = card.bloodMoon?.[orientationKey] || {};
+  const fallback = createBloodMoonExposureFallback(card, orientationKey, meaning);
+  const override = bloodMoonExposureOverrides[card.id]?.[orientationKey] || {};
+
+  return {
+    ...meaning,
+    ...fallback,
+    ...override,
+    summary: override.headline || meaning.headline || meaning.summary || fallback.headline,
+    headline: override.headline || meaning.headline || meaning.summary || fallback.headline,
+    meaning: override.meaning || meaning.meaning || card.bloodMoon?.summary || card.summary || "",
+    shadow: override.shadow || meaning.shadow || card.bloodMoon?.shadowMessage || card.shadowMeaning || fallback.shadow,
+    veilHint: override.veilHint || meaning.veilHint || meaning.reflection || card.bloodMoon?.veilHint || fallback.veilHint,
+    reflection: override.veilHint || meaning.reflection || meaning.veilHint || card.bloodMoon?.veilHint || fallback.veilHint,
+    thread: override.thread || meaning.thread || fallback.thread
+  };
+}
+
+majorArcanaCards.forEach((card) => {
+  card.bloodMoon = {
+    ...(card.bloodMoon || {}),
+    ...(bloodMoonMajorArcanaMeanings[card.id] || {})
+  };
+  card.bloodMoon.upright = completeBloodMoonExposure(card, "upright");
+  card.bloodMoon.reversed = completeBloodMoonExposure(card, "reversed");
+});
+
 function sentenceCase(value) {
   const text = String(value || "").trim();
 
@@ -484,11 +958,19 @@ function getCardUprightMeaning(card) {
   const isBloodMoonCard = Boolean(card?.isBloodMoonCard || card?.originalCardId);
 
   if (isBloodMoonCard) {
+    const upright = bloodMoon.upright || {};
+
     return {
-      summary: bloodMoon.shortMeaning || card.shortMeaning || "",
-      meaning: bloodMoon.summary || card.summary || "",
-      reflection: bloodMoon.veilHint || card.reflectionQuestion || "",
-      shadow: bloodMoon.shadowMessage || card.shadowMeaning || ""
+      headline: upright.headline || upright.summary || bloodMoon.shortMeaning || card.shortMeaning || "",
+      summary: upright.summary || bloodMoon.shortMeaning || card.shortMeaning || "",
+      meaning: upright.meaning || bloodMoon.summary || card.summary || "",
+      reflection: upright.reflection || upright.veilHint || bloodMoon.veilHint || card.reflectionQuestion || "",
+      shadow: upright.shadow || bloodMoon.shadowMessage || card.shadowMeaning || "",
+      mask: upright.mask || "",
+      wound: upright.wound || "",
+      work: upright.work || "",
+      veilHint: upright.veilHint || upright.reflection || bloodMoon.veilHint || card.reflectionQuestion || "",
+      thread: upright.thread || upright.summary || bloodMoon.shortMeaning || card.shortMeaning || ""
     };
   }
 
@@ -518,10 +1000,15 @@ function createBloodMoonReversedMeaning(card) {
   const shadow = sentenceCase(bloodMoon.shadowMessage || card.shadowMeaning || "The avoided pattern is asking to be confronted.");
 
   return {
-    summary: `${card.name} reversed does not whisper beneath the Blood Moon. It points at the pattern you have been circling.`,
-    meaning: `${shadow} This reversal is blunt medicine: stop decorating the avoidance, look at the wound, and decide what no longer gets to steer you.`,
+    summary: `${card.name} reversed turns the Blood Moon toward a hidden pattern asking for a name.`,
+    meaning: `${shadow} This reversal asks you to look at the wound without ornament and decide what no longer gets to steer you.`,
     reflection: bloodMoon.veilHint || card.reflectionQuestion || "What truth becomes unavoidable when the shadow stops being excused?",
-    shadow
+    shadow,
+    mask: `${card.name} reversed disguises the pattern as delay, refusal, or familiar unrest.`,
+    wound: "Some part of the self may have learned to survive by keeping the old pattern intact.",
+    work: "Name the avoidance without ornament. The Blood Moon asks what no longer gets to steer you.",
+    veilHint: bloodMoon.veilHint || card.reflectionQuestion || "What truth becomes unavoidable when the shadow stops being excused?",
+    thread: `${card.name} reversed reveals the old pattern asking to be confronted.`
   };
 }
 
@@ -541,9 +1028,16 @@ function withOrientationMeanings(card) {
     bloodMoon: {
       ...card.bloodMoon,
       upright: card.bloodMoon?.upright || {
+        headline: card.bloodMoon?.shortMeaning || card.shortMeaning,
         summary: card.bloodMoon?.shortMeaning || card.shortMeaning,
         meaning: card.bloodMoon?.summary || card.summary,
-        reflection: card.bloodMoon?.veilHint || card.reflectionQuestion
+        reflection: card.bloodMoon?.veilHint || card.reflectionQuestion,
+        shadow: card.bloodMoon?.shadowMessage || card.shadowMeaning,
+        mask: `${card.name} disguises its shadow as a familiar pattern.`,
+        wound: "Some part of the self may have learned to survive by keeping this pattern close.",
+        work: "Let the Blood Moon show what is ready to be named.",
+        veilHint: card.bloodMoon?.veilHint || card.reflectionQuestion,
+        thread: card.bloodMoon?.shortMeaning || card.shortMeaning
       },
       reversed: bloodMoonReversed
     }

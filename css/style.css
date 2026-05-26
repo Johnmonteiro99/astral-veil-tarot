@@ -101,13 +101,13 @@ body.blood-moon-mode {
   --accent-glow: rgba(255, 35, 65, 0.45);
   --text-primary: #fff0f1;
   --text-secondary: #d8a5ad;
-  --navbar-bg: rgba(32, 3, 7, 0.78);
-  --navbar-border: rgba(210, 30, 55, 0.55);
-  --navbar-text: #fff0f1;
+  --navbar-bg: rgba(18, 1, 6, 0.94);
+  --navbar-border: rgba(160, 20, 40, 0.42);
+  --navbar-text: #fff3ef;
   --navbar-muted: rgba(216, 165, 173, 0.84);
-  --navbar-glow: rgba(255, 35, 65, 0.45);
-  --navbar-hover-bg: rgba(212, 31, 58, 0.16);
-  --navbar-hover-text: #ffd5d9;
+  --navbar-glow: rgba(217, 28, 63, 0.34);
+  --navbar-hover-bg: rgba(120, 8, 24, 0.42);
+  --navbar-hover-text: #fff3ef;
   --toggle-bg: rgba(120, 0, 18, 0.3);
   background:
     radial-gradient(circle at 50% 12%, rgba(180, 18, 35, 0.32), transparent 30%),
@@ -138,6 +138,18 @@ body.blood-moon-mode .site-footer__inner {
     border-color 1800ms ease,
     box-shadow 1800ms ease,
     color 1800ms ease;
+}
+
+body.blood-moon-mode .navbar {
+  background:
+    radial-gradient(circle at 82% 50%, rgba(217, 28, 63, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(20, 2, 8, 0.97), rgba(38, 0, 10, 0.95));
+  border-color: rgba(160, 20, 40, 0.46);
+  box-shadow:
+    0 18px 54px rgba(0, 0, 0, 0.48),
+    0 0 24px rgba(120, 0, 20, 0.22),
+    inset 0 0 18px rgba(255, 30, 70, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 /* ================================
@@ -326,6 +338,25 @@ body.moon-mode .logo-eye {
     drop-shadow(0 0 15px rgba(139, 92, 246, 0.58));
 }
 
+body.blood-moon-mode .logo-eye {
+  color: #d91c3f;
+  filter:
+    drop-shadow(0 0 5px rgba(255, 70, 96, 0.7))
+    drop-shadow(0 0 16px rgba(217, 28, 63, 0.5))
+    drop-shadow(0 0 28px rgba(120, 0, 20, 0.3));
+}
+
+body.blood-moon-mode .navbar__brand-text {
+  background:
+    linear-gradient(105deg, #fff3ef 0%, #ff9aaa 36%, #ff385e 52%, #fff3ef 74%, #ffd8d2 100%);
+  background-size: 220% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  text-shadow:
+    0 0 14px rgba(217, 28, 63, 0.28),
+    0 0 24px rgba(120, 0, 20, 0.22);
+}
+
 @keyframes logoEyePulse {
   from {
     transform: scale(1);
@@ -425,6 +456,61 @@ body.moon-mode .logo-eye {
   transform: scaleX(1);
 }
 
+body.blood-moon-mode .navbar__link {
+  color: rgba(255, 216, 218, 0.78);
+  text-shadow: none;
+}
+
+body.blood-moon-mode .navbar__link::before {
+  inset: 4px 1px;
+  background:
+    linear-gradient(180deg, rgba(86, 5, 18, 0.42), rgba(42, 0, 8, 0.34));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 60, 90, 0.08),
+    0 0 12px rgba(190, 10, 45, 0.14);
+}
+
+body.blood-moon-mode .navbar__link::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 70, 100, 0.72), transparent);
+  box-shadow: 0 0 10px rgba(217, 28, 63, 0.24);
+}
+
+body.blood-moon-mode .navbar__link:hover,
+body.blood-moon-mode .navbar__link:focus-visible {
+  color: #fff3ef;
+  text-shadow: 0 0 12px rgba(217, 28, 63, 0.32);
+}
+
+body.blood-moon-mode .navbar__link:hover::before,
+body.blood-moon-mode .navbar__link:focus-visible::before {
+  opacity: 1;
+  background:
+    linear-gradient(180deg, rgba(92, 7, 20, 0.72), rgba(56, 2, 12, 0.62));
+}
+
+body.blood-moon-mode .navbar__link.is-active {
+  color: #fff3ef;
+  text-shadow:
+    0 0 12px rgba(255, 60, 90, 0.42),
+    0 0 22px rgba(190, 10, 45, 0.32);
+}
+
+body.blood-moon-mode .navbar__link.is-active::before {
+  opacity: 1;
+  transform: scaleX(1);
+  background:
+    linear-gradient(180deg, rgba(150, 12, 32, 0.96), rgba(92, 4, 20, 0.96));
+  border: 1px solid rgba(255, 60, 90, 0.5);
+  box-shadow:
+    0 0 0 1px rgba(255, 50, 80, 0.15) inset,
+    0 0 18px rgba(190, 10, 45, 0.38),
+    0 0 34px rgba(120, 0, 20, 0.24);
+}
+
+body.blood-moon-mode .navbar__link.is-active::after {
+  opacity: 0;
+}
+
 .navbar__link--blood-moon {
   color: #ffd5d9;
   text-shadow: 0 0 12px rgba(255, 35, 65, 0.24);
@@ -453,31 +539,28 @@ body.moon-mode .logo-eye {
     0 0 20px rgba(168, 85, 247, 0.22);
 }
 
-.navbar__link--lumen-archive {
+.navbar__link--featured {
   color: color-mix(in srgb, var(--navbar-hover-text) 82%, var(--navbar-muted));
-  text-shadow: 0 0 10px color-mix(in srgb, var(--navbar-glow) 42%, transparent);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--navbar-glow) 26%, transparent);
 }
 
-.navbar__link--lumen-archive::before {
-  opacity: 0.34;
-  transform: scaleX(0.96);
+.navbar__link--featured:not(.is-active):not(:hover):not(:focus-visible)::before,
+.navbar__link--featured:not(.is-active):not(:hover):not(:focus-visible)::after {
+  opacity: 0;
 }
 
-.navbar__link--lumen-archive::after {
-  opacity: 0.58;
+.navbar__link--featured:not(.is-active):not(:hover):not(:focus-visible)::before {
   transform: scaleX(0.82);
 }
 
-.navbar__link--lumen-archive:hover::before,
-.navbar__link--lumen-archive:focus-visible::before,
-.navbar__link--lumen-archive.is-active::before {
-  opacity: 0.78;
+.navbar__link--featured:not(.is-active):not(:hover):not(:focus-visible)::after {
+  transform: scaleX(0.42);
 }
 
-.navbar__link--lumen-archive:hover::after,
-.navbar__link--lumen-archive:focus-visible::after,
-.navbar__link--lumen-archive.is-active::after {
-  opacity: 0.95;
+.navbar__link--featured.is-active {
+  text-shadow:
+    0 0 14px var(--navbar-glow),
+    0 0 18px color-mix(in srgb, var(--navbar-glow) 34%, transparent);
 }
 
 body.sun-mode .navbar__link--lumen-archive::before {
@@ -504,6 +587,20 @@ body.moon-mode .navbar__link--lumen-archive::before {
 
 body.moon-mode .navbar__link--lumen-archive::after {
   background: linear-gradient(90deg, transparent, rgba(218, 229, 255, 0.76), rgba(168, 139, 222, 0.8), transparent);
+}
+
+body.sun-mode .navbar__link--lumen-archive:not(.is-active):not(:hover):not(:focus-visible) {
+  color: color-mix(in srgb, #ffe4a6 78%, var(--navbar-muted));
+  text-shadow:
+    0 0 8px rgba(255, 213, 116, 0.18),
+    0 0 14px rgba(199, 142, 43, 0.1);
+}
+
+body.moon-mode .navbar__link--lumen-archive:not(.is-active):not(:hover):not(:focus-visible) {
+  color: color-mix(in srgb, #e7edff 72%, var(--navbar-muted));
+  text-shadow:
+    0 0 8px rgba(218, 229, 255, 0.14),
+    0 0 14px rgba(168, 139, 222, 0.1);
 }
 
 @media (min-width: 1081px) and (max-width: 1240px) {
@@ -732,23 +829,63 @@ body.moon-mode .navbar__link--lumen-archive::after {
     0 0 14px rgba(255, 35, 65, 0.12);
 }
 
-.navbar__mobile-link--lumen-archive {
+body.blood-moon-mode .navbar__mobile-menu {
+  background:
+    radial-gradient(circle at 90% 12%, rgba(217, 28, 63, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(20, 2, 8, 0.995), rgba(30, 0, 8, 0.99));
+  background-color: #120208;
+  border-color: rgba(160, 20, 40, 0.46);
+  box-shadow:
+    0 18px 54px rgba(0, 0, 0, 0.62),
+    0 0 24px rgba(120, 0, 20, 0.28),
+    inset 0 0 18px rgba(255, 30, 70, 0.06);
+}
+
+body.blood-moon-mode .navbar__mobile-link {
+  color: rgba(255, 216, 218, 0.8);
+}
+
+body.blood-moon-mode .navbar__mobile-link:hover,
+body.blood-moon-mode .navbar__mobile-link:focus-visible {
+  color: #fff3ef;
+  background:
+    linear-gradient(180deg, rgba(86, 5, 18, 0.62), rgba(42, 0, 8, 0.52));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 60, 90, 0.12),
+    inset 0 0 18px rgba(217, 28, 63, 0.12);
+}
+
+body.blood-moon-mode .navbar__mobile-link.is-active {
+  color: #fff3ef;
+  background:
+    linear-gradient(180deg, rgba(150, 12, 32, 0.96), rgba(92, 4, 20, 0.96));
+  box-shadow:
+    0 0 0 1px rgba(255, 50, 80, 0.15) inset,
+    0 0 18px rgba(190, 10, 45, 0.3);
+}
+
+.navbar__mobile-link--featured {
   color: color-mix(in srgb, var(--navbar-hover-text) 82%, var(--navbar-muted));
-  background: color-mix(in srgb, var(--navbar-hover-bg) 34%, transparent);
-  text-shadow: 0 0 10px color-mix(in srgb, var(--navbar-glow) 36%, transparent);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--navbar-glow) 24%, transparent);
 }
 
-.navbar__mobile-link--lumen-archive::before {
-  opacity: 0.55;
-  transform: scaleX(0.82);
+.navbar__mobile-link--featured:not(.is-active):not(:hover):not(:focus-visible)::before {
+  opacity: 0;
+  transform: scaleX(0.48);
 }
 
-body.sun-mode .navbar__mobile-link--lumen-archive {
-  box-shadow: inset 0 0 16px rgba(255, 213, 116, 0.08);
+body.sun-mode .navbar__mobile-link--lumen-archive:not(.is-active):not(:hover):not(:focus-visible) {
+  color: color-mix(in srgb, #ffe4a6 78%, var(--navbar-muted));
+  text-shadow:
+    0 0 8px rgba(255, 213, 116, 0.18),
+    0 0 14px rgba(199, 142, 43, 0.08);
 }
 
-body.moon-mode .navbar__mobile-link--lumen-archive {
-  box-shadow: inset 0 0 16px rgba(168, 139, 222, 0.09);
+body.moon-mode .navbar__mobile-link--lumen-archive:not(.is-active):not(:hover):not(:focus-visible) {
+  color: color-mix(in srgb, #e7edff 72%, var(--navbar-muted));
+  text-shadow:
+    0 0 8px rgba(218, 229, 255, 0.14),
+    0 0 14px rgba(168, 139, 222, 0.08);
 }
 
 .blood-moon-event-control {
@@ -812,6 +949,73 @@ body.moon-mode .navbar__mobile-link--lumen-archive {
   line-height: 1.35;
   text-align: right;
   text-shadow: 0 0 12px rgba(255, 35, 65, 0.18);
+}
+
+body.blood-moon-mode .theme-toggle {
+  display: none;
+}
+
+.blood-moon-nav-control {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 84px;
+  min-height: 46px;
+  border: 1px solid rgba(255, 60, 90, 0.46);
+  border-radius: 999px;
+  padding: 0 14px;
+  color: #fff3ef;
+  background:
+    radial-gradient(circle at 50% 32%, rgba(255, 60, 90, 0.24), transparent 62%),
+    linear-gradient(180deg, rgba(142, 8, 30, 0.92), rgba(62, 0, 12, 0.94));
+  box-shadow:
+    0 0 0 1px rgba(255, 50, 80, 0.12) inset,
+    0 0 18px rgba(190, 10, 45, 0.34),
+    0 12px 28px rgba(0, 0, 0, 0.34);
+  cursor: pointer;
+  font: 800 0.72rem/1 var(--body-font);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.blood-moon-nav-control__sigil {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  overflow: visible;
+  color: #ffb0b8;
+  filter:
+    drop-shadow(0 0 7px rgba(255, 50, 80, 0.58))
+    drop-shadow(0 0 13px rgba(217, 28, 63, 0.36));
+}
+
+.blood-moon-nav-control__sigil circle,
+.blood-moon-nav-control__sigil path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.blood-moon-nav-control__sigil circle:nth-child(2) {
+  fill: rgba(217, 28, 63, 0.22);
+}
+
+.blood-moon-nav-control:hover,
+.blood-moon-nav-control:focus-visible {
+  border-color: rgba(255, 132, 150, 0.72);
+  box-shadow:
+    0 0 0 1px rgba(255, 50, 80, 0.18) inset,
+    0 0 26px rgba(217, 28, 63, 0.46),
+    0 14px 32px rgba(0, 0, 0, 0.42);
+  transform: translateY(-1px);
 }
 
 .theme-toggle {
@@ -1048,6 +1252,7 @@ body.moon-mode .theme-toggle__icon--sun {
 .navbar__link:focus-visible,
 .navbar__menu-toggle:focus-visible,
 .navbar__mobile-link:focus-visible,
+.blood-moon-nav-control:focus-visible,
 .theme-toggle__input:focus-visible + .theme-toggle__track {
   outline: 2px solid var(--navbar-hover-text);
   outline-offset: 3px;
@@ -2979,6 +3184,57 @@ body.blood-moon-mode .zodiac-icon-badge,
   line-height: 1.6;
 }
 
+.bloodmoon-exposure-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.bloodmoon-exposure-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 116, 126, 0.24);
+  border-radius: 18px;
+  padding: 14px;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(255, 70, 110, 0.11), transparent 46%),
+    linear-gradient(135deg, rgba(132, 24, 42, 0.2), transparent 54%),
+    rgba(20, 4, 9, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 226, 210, 0.06),
+    0 0 18px rgba(255, 35, 65, 0.08);
+}
+
+.bloodmoon-exposure-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgba(255, 116, 126, 0.12), transparent);
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.bloodmoon-exposure-label {
+  position: relative;
+  margin: 0 0 7px;
+  color: rgba(255, 218, 190, 0.94);
+  font-family: var(--body-font);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.bloodmoon-exposure-text {
+  position: relative;
+  margin: 0;
+  color: rgba(245, 221, 214, 0.82);
+  font-size: 0.9rem;
+  line-height: 1.62;
+}
+
 .reading-viewer__reflection {
   margin: 0;
   padding: 14px 16px;
@@ -2995,6 +3251,10 @@ body.blood-moon-mode .zodiac-icon-badge,
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.reading-viewer__reflection--blood-moon span {
+  color: rgba(255, 218, 190, 0.94);
 }
 
 .reading-viewer__guided-action {
@@ -3136,6 +3396,113 @@ body.blood-moon-mode .zodiac-icon-badge,
   gap: 8px;
   padding-top: 10px;
   border-top: 1px solid color-mix(in srgb, var(--navbar-border) 62%, transparent);
+}
+
+.fire-key-clue {
+  position: relative;
+  overflow: hidden;
+  margin-top: 18px;
+  border: 1px solid rgba(219, 139, 58, 0.42);
+  border-radius: 18px;
+  padding: clamp(20px, 3vw, 28px);
+  color: var(--navbar-text);
+  background:
+    radial-gradient(circle at 10% 12%, rgba(255, 116, 42, 0.18), transparent 34%),
+    linear-gradient(135deg, rgba(94, 36, 8, 0.28), rgba(16, 6, 2, 0.48) 62%),
+    color-mix(in srgb, var(--navbar-bg) 88%, rgba(255, 112, 34, 0.12));
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.24),
+    0 0 26px rgba(255, 112, 34, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.fire-key-clue::after {
+  content: "";
+  position: absolute;
+  inset: auto 18px 18px auto;
+  width: 92px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 213, 154, 0.45), rgba(255, 96, 34, 0.22) 38%, transparent 68%);
+  filter: blur(10px);
+  opacity: 0.52;
+  pointer-events: none;
+}
+
+.fire-key-clue__label,
+.fire-key-clue__note {
+  margin: 0;
+  color: rgba(236, 176, 92, 0.88);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.fire-key-clue h3 {
+  margin: 8px 0 14px;
+  color: var(--navbar-hover-text);
+  font-family: var(--heading-font);
+  font-size: clamp(1.7rem, 3.4vw, 2.45rem);
+  line-height: 1.02;
+}
+
+.fire-key-clue__copy {
+  display: grid;
+  gap: 10px;
+  max-width: 58ch;
+}
+
+.fire-key-clue__copy p,
+.fire-key-clue__note {
+  margin: 0;
+}
+
+.fire-key-clue__copy p {
+  color: var(--navbar-muted);
+  line-height: 1.7;
+}
+
+.fire-key-clue__word {
+  width: fit-content;
+  margin: 16px 0 10px;
+  border: 1px solid rgba(255, 168, 76, 0.5);
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: rgba(255, 244, 216, 0.98);
+  background:
+    linear-gradient(135deg, rgba(255, 120, 42, 0.24), rgba(95, 24, 4, 0.52)),
+    rgba(20, 5, 2, 0.58);
+  box-shadow: 0 0 18px rgba(255, 96, 34, 0.22);
+  font-size: 0.86rem;
+  font-weight: 950;
+  letter-spacing: 0.22em;
+}
+
+.fire-key-clue--blood-moon {
+  border-color: rgba(255, 86, 52, 0.48);
+  background:
+    radial-gradient(circle at 12% 14%, rgba(255, 70, 40, 0.22), transparent 36%),
+    linear-gradient(135deg, rgba(132, 18, 24, 0.34), rgba(16, 2, 4, 0.68) 62%),
+    rgba(20, 4, 9, 0.58);
+  box-shadow:
+    0 18px 54px rgba(0, 0, 0, 0.34),
+    0 0 30px rgba(255, 35, 65, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.fire-key-clue--blood-moon .fire-key-clue__label,
+.fire-key-clue--blood-moon .fire-key-clue__note {
+  color: rgba(255, 168, 138, 0.9);
+}
+
+.fire-key-clue--blood-moon .fire-key-clue__word {
+  border-color: rgba(255, 116, 126, 0.52);
+  background:
+    linear-gradient(135deg, rgba(255, 64, 88, 0.24), rgba(72, 5, 13, 0.68)),
+    rgba(24, 2, 6, 0.68);
+  box-shadow: 0 0 20px rgba(255, 35, 65, 0.26);
 }
 
 body.blood-moon-mode .reading-viewer__keywords li {
@@ -4075,8 +4442,9 @@ body.blood-moon-mode .lunar-orb {
 
   body.blood-moon-mode .navbar__mobile-menu {
     background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 46%),
-      rgba(32, 3, 7, 0.95);
+    radial-gradient(circle at 90% 12%, rgba(217, 28, 63, 0.12), transparent 34%),
+      linear-gradient(180deg, rgba(20, 2, 8, 0.995), rgba(30, 0, 8, 0.99));
+    background-color: #120208;
   }
 
   .navbar__brand {
@@ -4126,6 +4494,21 @@ body.blood-moon-mode .lunar-orb {
     width: 70px;
     height: 38px;
     padding: 4px 5px;
+  }
+
+  .blood-moon-nav-control {
+    min-width: 42px;
+    min-height: 38px;
+    padding: 0 8px;
+  }
+
+  .blood-moon-nav-control__text {
+    display: none;
+  }
+
+  .blood-moon-nav-control__sigil {
+    width: 24px;
+    height: 24px;
   }
 
   .celestial-icon {
@@ -4297,6 +4680,12 @@ body.blood-moon-mode .lunar-orb {
   }
 
   .reading-viewer__insight-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+    text-align: left;
+  }
+
+  .bloodmoon-exposure-grid {
     grid-template-columns: 1fr;
     width: 100%;
     text-align: left;
@@ -4501,6 +4890,17 @@ body.blood-moon-mode .lunar-orb {
     width: 64px;
     height: 36px;
     padding: 4px;
+  }
+
+  .blood-moon-nav-control {
+    min-width: 38px;
+    min-height: 36px;
+    padding: 0 7px;
+  }
+
+  .blood-moon-nav-control__sigil {
+    width: 22px;
+    height: 22px;
   }
 
   .celestial-icon {
@@ -4897,6 +5297,10 @@ body.blood-moon-mode .lunar-orb {
   filter: saturate(1.02) contrast(1.04);
 }
 
+.mobile-reader-swipe-hint {
+  display: none;
+}
+
 .reader-carousel__featured.is-unavailable .reader-selection-split__image img {
   filter: brightness(0.76) saturate(0.9);
 }
@@ -5032,6 +5436,101 @@ body.blood-moon-mode .lunar-orb {
 
   .reader-selection-split__panel {
     align-content: start;
+  }
+
+  .mobile-reader-swipe-hint {
+    display: grid;
+    justify-items: center;
+    gap: 0.42rem;
+    width: fit-content;
+    margin: -0.18rem auto 0.1rem;
+    color: color-mix(in srgb, var(--navbar-muted) 72%, var(--navbar-hover-text));
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 0 12px color-mix(in srgb, var(--reader-glow) 42%, transparent);
+    pointer-events: none;
+  }
+
+  .mobile-reader-swipe-hint p {
+    margin: 0;
+  }
+
+  .mobile-reader-swipe-hint__track {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    max-width: min(15rem, 68vw);
+    padding: 0 6px;
+    overflow: hidden;
+  }
+
+  .mobile-reader-swipe-hint__track::before,
+  .mobile-reader-swipe-hint__track::after {
+    content: "";
+    width: 18px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--reader-accent) 58%, rgba(255, 255, 255, 0.46)));
+    box-shadow: 0 0 12px color-mix(in srgb, var(--reader-glow) 46%, transparent);
+    opacity: 0.82;
+  }
+
+  .mobile-reader-swipe-hint__track::after {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--reader-accent) 58%, rgba(255, 255, 255, 0.46)), transparent);
+  }
+
+  .mobile-reader-swipe-hint__dot {
+    flex: 0 0 auto;
+    width: 4px;
+    height: 4px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--navbar-muted) 58%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--reader-glow) 24%, transparent);
+    opacity: 0.54;
+  }
+
+  .mobile-reader-swipe-hint__dot.is-active {
+    width: 18px;
+    background: color-mix(in srgb, var(--reader-accent) 82%, var(--navbar-hover-text));
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--reader-glow) 82%, transparent),
+      0 0 18px color-mix(in srgb, var(--reader-glow) 56%, transparent);
+    opacity: 0.94;
+  }
+
+  body.blood-moon-mode .mobile-reader-swipe-hint,
+  .reader-carousel__featured.reader-card--bloodmoon .mobile-reader-swipe-hint,
+  .reader-carousel__featured--sealed .mobile-reader-swipe-hint {
+    color: rgba(255, 226, 229, 0.76);
+    text-shadow: 0 0 14px rgba(255, 40, 90, 0.24);
+  }
+
+  body.blood-moon-mode .mobile-reader-swipe-hint__track::before,
+  .reader-carousel__featured.reader-card--bloodmoon .mobile-reader-swipe-hint__track::before,
+  .reader-carousel__featured--sealed .mobile-reader-swipe-hint__track::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 90, 130, 0.72));
+    box-shadow: 0 0 14px rgba(255, 40, 90, 0.34);
+  }
+
+  body.blood-moon-mode .mobile-reader-swipe-hint__track::after,
+  .reader-carousel__featured.reader-card--bloodmoon .mobile-reader-swipe-hint__track::after,
+  .reader-carousel__featured--sealed .mobile-reader-swipe-hint__track::after {
+    background: linear-gradient(90deg, rgba(255, 90, 130, 0.72), transparent);
+    box-shadow: 0 0 14px rgba(255, 40, 90, 0.34);
+  }
+
+  body.blood-moon-mode .mobile-reader-swipe-hint__dot.is-active,
+  .reader-carousel__featured.reader-card--bloodmoon .mobile-reader-swipe-hint__dot.is-active,
+  .reader-carousel__featured--sealed .mobile-reader-swipe-hint__dot.is-active {
+    background: rgba(255, 104, 138, 0.88);
+    box-shadow:
+      0 0 10px rgba(255, 70, 110, 0.48),
+      0 0 18px rgba(255, 40, 90, 0.28);
   }
 }
 

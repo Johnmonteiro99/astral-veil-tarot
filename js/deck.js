@@ -417,10 +417,10 @@ function renderDeckGallery(collectionId) {
           ${renderDeckCardMeanings(activeCard)}
           <div class="deck-viewer__controls" aria-label="Browse cards">
             <button class="deck-viewer__nav" type="button" data-deck-viewer-nav="prev">
-              &larr; Previous
+              ‹ Previous
             </button>
             <button class="deck-viewer__nav" type="button" data-deck-viewer-nav="next">
-              Next &rarr;
+              Next ›
             </button>
           </div>
         </div>
