@@ -824,6 +824,99 @@ window.addEventListener("storage", (event) => {
   }
 });
 
+const footerDrawers = document.querySelectorAll("[data-footer-drawer]");
+const astralVeilShareData = {
+  title: "Astral Veil",
+  text: "Explore Astral Veil, an interactive tarot experience with hidden lore, guides, and symbolic storytelling.",
+  url: "https://astralveil.world"
+};
+
+function setFooterShareStatus(footer, message) {
+  const status = footer.querySelector(".site-footer__share-status");
+
+  if (!status) {
+    return;
+  }
+
+  window.clearTimeout(status._astralVeilStatusTimer);
+  status.textContent = message;
+  status.classList.toggle("is-visible", Boolean(message));
+
+  if (message) {
+    status._astralVeilStatusTimer = window.setTimeout(() => {
+      status.textContent = "";
+      status.classList.remove("is-visible");
+    }, 2400);
+  }
+}
+
+async function copyAstralVeilShareLink() {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(astralVeilShareData.url);
+    return;
+  }
+
+  const temporaryInput = document.createElement("textarea");
+  temporaryInput.value = astralVeilShareData.url;
+  temporaryInput.setAttribute("readonly", "");
+  temporaryInput.style.position = "fixed";
+  temporaryInput.style.opacity = "0";
+  temporaryInput.style.pointerEvents = "none";
+  document.body.appendChild(temporaryInput);
+  temporaryInput.select();
+  document.execCommand("copy");
+  temporaryInput.remove();
+}
+
+if (footerDrawers.length) {
+  footerDrawers.forEach((footer) => {
+    const toggle = footer.querySelector(".site-footer__toggle");
+    const toggleLabel = footer.querySelector("[data-footer-toggle-label]");
+    const details = footer.querySelector(".site-footer__inner");
+    const shareButton = footer.querySelector("[data-share-astral-veil]");
+
+    if (toggle && details) {
+      toggle.addEventListener("click", () => {
+        const isExpanded = toggle.getAttribute("aria-expanded") === "true";
+        const nextExpanded = !isExpanded;
+
+        toggle.setAttribute("aria-expanded", String(nextExpanded));
+        details.hidden = !nextExpanded;
+        footer.classList.toggle("is-expanded", nextExpanded);
+
+        if (toggleLabel) {
+          toggleLabel.textContent = nextExpanded ? "Close" : "Explore";
+        }
+      });
+    }
+
+    if (shareButton) {
+      shareButton.addEventListener("click", async () => {
+        try {
+          if (navigator.share) {
+            await navigator.share(astralVeilShareData);
+            return;
+          }
+
+          await copyAstralVeilShareLink();
+          setFooterShareStatus(footer, "Link copied.");
+        } catch (error) {
+          if (error?.name === "AbortError") {
+            return;
+          }
+
+          try {
+            await copyAstralVeilShareLink();
+            setFooterShareStatus(footer, "Link copied.");
+          } catch (copyError) {
+            setFooterShareStatus(footer, "Unable to copy link.");
+          }
+        }
+      });
+    }
+  });
+}
+
 // Controls the compact mobile navigation drawer and closes it on outside clicks, Escape, or desktop resize.
 function setMobileMenu(isOpen) {
   if (!menuToggle || !mobileMenu) {

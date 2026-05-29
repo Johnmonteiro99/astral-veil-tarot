@@ -232,8 +232,8 @@
 .lumen-atrium__letter p {
   margin: 0;
   color: color-mix(in srgb, var(--navbar-muted) 86%, var(--navbar-text));
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(1.08rem, 1.8vw, 1.24rem);
+  font-family: var(--font-body-serif);
+  font-size: clamp(1.16rem, 1.9vw, 1.34rem);
   line-height: 1.72;
 }
 
@@ -308,7 +308,7 @@
   margin: 0;
   padding-top: 4px;
   color: color-mix(in srgb, var(--navbar-text) 88%, var(--navbar-hover-text));
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: var(--font-body-serif);
   font-size: clamp(1.08rem, 1.8vw, 1.24rem);
   line-height: 1.55;
 }
@@ -990,8 +990,8 @@ body.moon-mode .lumen-sanctuary {
 .lumen-interior-intro p {
   margin: 0;
   color: color-mix(in srgb, #fff2d1 82%, var(--navbar-muted));
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(1.26rem, 2vw, 1.7rem);
+  font-family: var(--font-body-serif);
+  font-size: clamp(1.34rem, 2.1vw, 1.82rem);
   line-height: 1.45;
 }
 
@@ -1116,9 +1116,9 @@ body.moon-mode .lumen-sanctuary {
   max-width: 34ch;
   margin: 0;
   color: color-mix(in srgb, #fff2d1 74%, var(--navbar-muted));
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(1.12rem, 1.65vw, 1.42rem);
-  line-height: 1.45;
+  font-family: var(--font-body-serif);
+  font-size: clamp(1.2rem, 1.75vw, 1.52rem);
+  line-height: 1.48;
 }
 
 .lumen-interior-panel__divider {

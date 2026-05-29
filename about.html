@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
@@ -85,27 +85,16 @@
           <input class="theme-toggle__input" type="checkbox" />
           <span class="theme-toggle__track" aria-hidden="true">
             <span class="theme-toggle__icon theme-toggle__icon--sun">
-              <svg class="celestial-icon" viewBox="0 0 64 64" focusable="false">
+              <svg class="celestial-icon celestial-icon--sun" viewBox="0 0 64 64" focusable="false" aria-hidden="true">
                 <circle class="celestial-icon__core" cx="32" cy="32" r="10" />
-                <circle cx="32" cy="32" r="17" />
-                <path d="M32 6v10M32 48v10M6 32h10M48 32h10" />
-                <path d="M14 14l7 7M43 43l7 7M50 14l-7 7M21 43l-7 7" />
-                <path d="M32 2l3 8h-6zM32 62l-3-8h6zM2 32l8-3v6zM62 32l-8 3v-6z" />
-                <path d="M22 10c3 4 17 4 20 0M22 54c3-4 17-4 20 0" />
-                <path d="M10 22c4 3 4 17 0 20M54 22c-4 3-4 17 0 20" />
-                <path d="M26 32h12M32 26v12" />
+                <path d="M32 5v11M32 48v11M5 32h11M48 32h11" />
+                <path d="M13 13l8 8M43 43l8 8M51 13l-8 8M21 43l-8 8" />
               </svg>
             </span>
             <span class="theme-toggle__divider"></span>
             <span class="theme-toggle__icon theme-toggle__icon--moon">
-              <svg class="celestial-icon" viewBox="0 0 64 64" focusable="false">
-                <path class="celestial-icon__core" d="M43 8c-11 4-18 14-18 26 0 10 6 18 15 22-15 0-28-11-28-26C12 16 25 6 43 8z" />
-                <path d="M43 8c-6 7-9 15-8 24 1 8 5 16 13 22" />
-                <path d="M20 11c5 2 11 2 16-1M18 51c5-2 11-1 17 2" />
-                <path d="M47 17l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" />
-                <path d="M53 39l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" />
-                <path d="M21 23l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" />
-                <path d="M28 5c3 4 12 5 17 2M28 59c4-3 12-2 17 0" />
+              <svg class="celestial-icon celestial-icon--moon" viewBox="0 0 64 64" focusable="false" aria-hidden="true">
+                <path class="celestial-icon__core" d="M43 8c-10 4-17 14-17 25s7 20 18 24c-17 1-31-11-31-27S27 6 43 8z" />
               </svg>
             </span>
           </span>
@@ -159,127 +148,261 @@
 
     <main class="tarot-stage">
       <section class="page-shell about-page" aria-labelledby="about-title">
-        <div class="page-hero">
-          <p class="reading-section__eyebrow">About the veil</p>
+        <div class="page-hero about-hero">
+          <span class="about-celestial-mark" aria-hidden="true">✦</span>
+          <p class="about-kicker">About the veil</p>
           <h1 id="about-title">About Astral Veil</h1>
+          <div class="about-title-rule" aria-hidden="true"></div>
           <p>A mystical tarot experience crafted for reflection, atmosphere, and symbolic discovery.</p>
         </div>
 
-        <div class="about-grid">
-          <article class="about-card about-card--wide">
-            <span class="about-card__glyph" aria-hidden="true">✦</span>
-            <h2>The Vision</h2>
+        <section class="about-vision" aria-labelledby="about-vision-title">
+          <div class="about-vision__copy">
+            <span class="about-section-icon" aria-hidden="true">✶</span>
+            <h2 id="about-vision-title">The Vision</h2>
             <p>
-              Astral Veil blends tarot, visual design, storytelling, and interactive web development into a digital ritual space. It is made for tarot lovers who enjoy mystery, atmosphere, and the quiet drama of revealing a card one moment at a time.
-            </p>
-          </article>
-
-          <article class="about-card">
-            <span class="about-card__glyph" aria-hidden="true">☉</span>
-            <h2>For Entertainment & Reflection</h2>
-            <p>
-              The readings are created for entertainment, personal reflection, and symbolic exploration. They are not meant to predict the future with certainty or replace professional advice.
-            </p>
-          </article>
-
-          <article class="about-card">
-            <span class="about-card__glyph" aria-hidden="true">☾</span>
-            <h2>The Astral Guides</h2>
-            <p>
-              Each guide has a distinct personality, tone, and energy. Choosing a reader changes the feeling of the ritual, from warm clarity to moonlit shadow work.
-            </p>
-          </article>
-
-          <article class="about-card">
-            <span class="about-card__glyph" aria-hidden="true">✧</span>
-            <h2>A Living Project</h2>
-            <p>
-              Astral Veil will continue to evolve with new guides, expanded card meanings, fresh spreads, smoother animations, richer visuals, and more meaningful reading experiences.
-            </p>
-          </article>
-
-          <article class="about-card">
-            <span class="about-card__glyph" aria-hidden="true">✶</span>
-            <h2>Future AI Features</h2>
-            <p>
-              Future versions may include AI-assisted readings for deeper, more personalized interpretations while keeping the experience entertainment-based and imagination-led.
-            </p>
-          </article>
-        </div>
-
-        <section class="about-future" aria-labelledby="future-title">
-          <span class="about-future__glyph" aria-hidden="true">&#10022;</span>
-          <p class="reading-section__eyebrow">Future of the veil</p>
-          <h2 id="future-title">The Veil Is Still Opening</h2>
-
-          <div class="about-future__copy">
-            <p>
-              Astral Veil is not meant to remain still. What exists now is only the first glimpse of a larger world forming behind the cards.
+              Astral Veil blends tarot, visual design, storytelling, and interactive web development into a digital ritual space.
             </p>
             <p>
-              In future updates, the readers may begin to speak with their own voices. Their rooms may gain sound, their readings may carry atmosphere, and their stories may slowly unfold through hidden details, rare encounters, and choices made beneath the veil.
-            </p>
-            <p>
-              Each guide carries more than a reading. Some hold memories. Some hide wounds. Some are still becoming what they were always meant to be.
-            </p>
-            <p>
-              There are paths not yet visible, powers not yet awakened, and names that may only appear when the stars allow it.
-            </p>
-            <p>
-              Zephyra Noctis was not always what she is now. Her story remains buried beneath the Blood Moon.
-            </p>
-            <p>
-              For those who return, observe carefully. The veil remembers.
+              It is made for tarot lovers who enjoy mystery, atmosphere, and the quiet drama of revealing a card one moment at a time.
             </p>
           </div>
 
-          <div class="about-future__divider" aria-hidden="true"></div>
-
-          <p class="about-future__signals-title">Coming Through the Veil</p>
-          <div class="about-future__signals" aria-label="Coming Through the Veil">
-            <span>Reader voices and ambient soundscapes</span>
-            <span>Deeper character lore and secret histories</span>
-            <span>Hidden encounters, rare events, and mysteries to solve</span>
-            <span>More personalized and immersive readings</span>
+          <div class="about-vision__art" aria-hidden="true">
+            <div class="about-vision-sigil">
+              <span class="about-vision-sigil__ring"></span>
+              <span class="about-vision-sigil__ring about-vision-sigil__ring--inner"></span>
+              <span class="about-vision-sigil__star about-vision-sigil__star--one"></span>
+              <span class="about-vision-sigil__star about-vision-sigil__star--two"></span>
+              <span class="about-vision-sigil__star about-vision-sigil__star--three"></span>
+              <span class="about-vision-sigil__label about-vision-sigil__label--top">Tarot</span>
+              <span class="about-vision-sigil__label about-vision-sigil__label--right">Hidden Lore</span>
+              <span class="about-vision-sigil__label about-vision-sigil__label--bottom">Discovery</span>
+              <span class="about-vision-sigil__label about-vision-sigil__label--left">Story</span>
+            </div>
           </div>
         </section>
 
-        <div class="about-closing">
+        <section class="about-definition" aria-labelledby="about-definition-title">
           <div class="about-divider" aria-hidden="true"></div>
-          <p>
-            The goal is to make each reading feel immersive, meaningful, and visually memorable.
-          </p>
-          <h2>Step beyond the veil, choose your guide, and let the cards become a mirror for your imagination.</h2>
-        </div>
+          <p class="about-kicker" id="about-definition-title">What Astral Veil Is</p>
+
+          <div class="about-definition__grid">
+            <article class="about-definition__item">
+              <span class="about-section-icon" aria-hidden="true">☉</span>
+              <h2>For Entertainment & Reflection</h2>
+              <p>
+                The readings are created for entertainment, personal reflection, and symbolic exploration. They are not meant to predict the future with certainty or replace professional advice.
+              </p>
+            </article>
+
+            <article class="about-definition__item">
+              <span class="about-section-icon" aria-hidden="true">☾</span>
+              <h2>The Astral Guides</h2>
+              <p>
+                Each guide has a distinct personality, tone, and energy. Choosing a reader changes the feeling of the ritual, from warm clarity to moonlit shadow work.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="about-living" aria-labelledby="about-living-title">
+          <div class="about-divider" aria-hidden="true"></div>
+          <span class="about-section-icon" aria-hidden="true">✧</span>
+          <h2 id="about-living-title">A Living Project</h2>
+          <p class="about-living__subtitle">A world that continues to unfold.</p>
+
+          <div class="about-living__content">
+            <div class="about-living__copy">
+              <p>
+                Astral Veil is designed to grow beyond a traditional tarot experience. It is a living world of symbolic readings, character-driven lore, hidden paths, secret archives, unlockable discoveries, and moments that reward curiosity.
+              </p>
+              <p>
+                The goal is for the site to feel less like a static tarot tool and more like a world the user can return to, explore, and slowly understand.
+              </p>
+            </div>
+
+            <div class="about-living__vertical-divider" aria-hidden="true">
+              <span></span>
+            </div>
+
+            <div class="about-living__pillars" aria-label="Living Project pillars">
+              <article class="about-living__pillar">
+                <span class="about-living__pillar-icon" aria-hidden="true">✦</span>
+                <div>
+                  <h3>Hidden Paths</h3>
+                  <p>Routes, clues, and quiet discoveries placed throughout the experience.</p>
+                </div>
+              </article>
+              <article class="about-living__pillar">
+                <span class="about-living__pillar-icon" aria-hidden="true">✧</span>
+                <div>
+                  <h3>Living Lore</h3>
+                  <p>Guides, histories, and fragments that reveal themselves over time.</p>
+                </div>
+              </article>
+              <article class="about-living__pillar">
+                <span class="about-living__pillar-icon" aria-hidden="true">◇</span>
+                <div>
+                  <h3>Unlockable Relics</h3>
+                  <p>Objects, codes, and sealed pieces waiting to be recovered.</p>
+                </div>
+              </article>
+              <article class="about-living__pillar">
+                <span class="about-living__pillar-icon" aria-hidden="true">☾</span>
+                <div>
+                  <h3>Rare Encounters</h3>
+                  <p>Unexpected moments for users who return and look closely.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div class="about-living__closing">
+            <div class="about-living__closing-rule" aria-hidden="true"></div>
+            <p>
+              It is not only a place to pull cards. It is a world meant to be explored, revisited, and slowly uncovered.
+            </p>
+          </div>
+        </section>
+
+        <section class="about-roadmap" aria-labelledby="future-title">
+          <p class="about-kicker" id="future-title">Future of the Veil</p>
+          <div class="about-timeline" aria-label="Future of the Veil roadmap">
+            <article class="about-timeline__item">
+              <span class="about-timeline__icon" aria-hidden="true">✦</span>
+              <div class="about-timeline__copy">
+                <h3>New Readings</h3>
+                <p>Deeper spreads and immersive reading experiences.</p>
+              </div>
+            </article>
+            <article class="about-timeline__item">
+              <span class="about-timeline__icon" aria-hidden="true">☾</span>
+              <div class="about-timeline__copy">
+                <h3>Veilwalkers</h3>
+                <p>Meet the characters who guide and inspire your journey.</p>
+              </div>
+            </article>
+            <article class="about-timeline__item">
+              <span class="about-timeline__icon" aria-hidden="true">▱</span>
+              <div class="about-timeline__copy">
+                <h3>The Archive</h3>
+                <p>Explore stories, lore, and tarot knowledge through time.</p>
+              </div>
+            </article>
+            <article class="about-timeline__item">
+              <span class="about-timeline__icon" aria-hidden="true">✧</span>
+              <div class="about-timeline__copy">
+                <h3>Interactive Tools</h3>
+                <p>Rituals, journaling, and intuitive tools to enrich your practice.</p>
+              </div>
+            </article>
+            <article class="about-timeline__item">
+              <span class="about-timeline__icon" aria-hidden="true">✶</span>
+              <div class="about-timeline__copy">
+                <h3>Community</h3>
+                <p>A growing circle of seekers, sharing insight and inspiration.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="future-omen" aria-labelledby="future-omen-title">
+            <div class="future-omen__content">
+              <p class="about-kicker">Coming Through the Veil</p>
+              <p id="future-omen-title">When the blue moon rises, it may not come alone.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="about-cta" aria-labelledby="about-cta-title">
+          <div class="about-cta__rule" aria-hidden="true"></div>
+          <div class="about-cta__title-ornament">
+            <span class="about-cta__title-line" aria-hidden="true"></span>
+            <span class="about-cta__title-star" aria-hidden="true">✦</span>
+            <h2 id="about-cta-title">Begin Your Journey</h2>
+            <span class="about-cta__title-star" aria-hidden="true">✦</span>
+            <span class="about-cta__title-line" aria-hidden="true"></span>
+          </div>
+          <p class="about-cta__subtitle">Step into the veil and explore what awaits.</p>
+          <div class="about-cta__cards" aria-label="About page calls to action">
+            <a
+              class="about-cta-card about-cta-card--reading"
+              href="index.html"
+              aria-label="Begin a Reading"
+            >
+              <span class="about-cta-card__content">
+                <span class="about-cta-card__icon" aria-hidden="true">✦</span>
+                <span class="about-cta-card__title">Begin a Reading</span>
+              </span>
+            </a>
+            <a
+              class="about-cta-card about-cta-card--veilwalkers"
+              href="readers.html"
+              aria-label="Meet the Veilwalkers"
+            >
+              <span class="about-cta-card__content">
+                <span class="about-cta-card__icon" aria-hidden="true">☾</span>
+                <span class="about-cta-card__title">Meet the Veilwalkers</span>
+              </span>
+            </a>
+            <a
+              class="about-cta-card about-cta-card--archive"
+              href="lumen-archive.html"
+              aria-label="Visit the Archive"
+            >
+              <span class="about-cta-card__content">
+                <span class="about-cta-card__icon" aria-hidden="true">✧</span>
+                <span class="about-cta-card__title">Visit the Archive</span>
+              </span>
+            </a>
+          </div>
+          <p>For entertainment and reflective purposes only.</p>
+        </section>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <div class="site-footer__inner">
-        <div class="site-footer__brand">
-          <h2>Astral Veil™</h2>
-          <p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p>
-          <p class="site-footer__poem">✦ Between fate and imagination ✦</p>
+    <footer class="site-footer" data-footer-drawer>
+      <div class="site-footer__shell">
+        <div class="site-footer__compact">
+          <p class="site-footer__mark">Astral Veil™</p>
+          <p class="site-footer__tagline">Between fate and imagination</p>
+          <div class="site-footer__actions">
+            <button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details">
+              <span data-footer-toggle-label>Explore</span>
+              <span class="site-footer__chevron" aria-hidden="true">⌄</span>
+            </button>
+            <button class="site-footer__share" type="button" data-share-astral-veil>Share</button>
+          </div>
         </div>
 
-        <nav class="site-footer__nav" aria-label="Footer navigation">
-          <p class="site-footer__label">Explore</p>
-          <a href="index.html">Home</a>
-          <a href="readers.html">Veilwalkers</a>
-          <a href="deck.html">Deck</a>
-          <a href="about.html">About</a>
-          <a href="lumen-archive.html" data-lumen-archive-footer-link>Lumen Archive</a>
-        </nav>
+        <div class="site-footer__inner" id="site-footer-details" hidden>
+          <div class="site-footer__brand">
+            <h2>Astral Veil™</h2>
+            <p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p>
+            <p class="site-footer__poem">✦ Between fate and imagination ✦</p>
+          </div>
 
-        <div class="site-footer__creator">
-          <p class="site-footer__label">Creator</p>
-          <p>Crafted by João Monteiro</p>
-          <p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p>
-          <p>Designer • Developer • Worldbuilder</p>
-          <p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p>
+          <nav class="site-footer__nav" aria-label="Footer navigation">
+            <p class="site-footer__label">Explore</p>
+            <a href="index.html">Home</a>
+            <a href="readers.html">Veilwalkers</a>
+            <a href="deck.html">Deck</a>
+            <a href="about.html">About</a>
+            <a href="lumen-archive.html" data-lumen-archive-footer-link>Lumen Archive</a>
+          </nav>
+
+          <div class="site-footer__creator">
+            <p class="site-footer__label">Creator</p>
+            <p>Crafted by João Monteiro</p>
+            <p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p>
+            <p>Designer • Developer • Worldbuilder</p>
+            <p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p>
+          </div>
+
+          <p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p>
         </div>
 
-        <p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p>
+        <p class="site-footer__share-status" aria-live="polite"></p>
       </div>
     </footer>
 

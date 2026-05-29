@@ -441,7 +441,7 @@ body.blood-moon-mode .reader-profile-card:not(.reader-profile-card--blood):not(.
 
 .reader-profile-card__tagline {
   max-width: 28ch;
-  font-size: 0.98rem;
+  font-size: 1.06rem;
 }
 
 .reader-profile-card__description {
@@ -692,12 +692,14 @@ body.is-lightbox-open {
 }
 
 .reader-detail__lore {
+  font-size: 1.08rem;
   line-height: 1.75;
 }
 
 .reader-detail__form-description {
   color: color-mix(in srgb, var(--navbar-muted) 88%, var(--navbar-text));
-  line-height: 1.65;
+  font-size: 1.04rem;
+  line-height: 1.68;
 }
 
 .reader-detail__section {

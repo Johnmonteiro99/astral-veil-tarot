@@ -1,4 +1,128 @@
 /* ================================
+   Deck Hero
+================================ */
+
+.deck-hero {
+  --deck-hero-accent: var(--theme-divider-accent);
+  --deck-hero-accent-soft: var(--theme-divider-faint);
+  --deck-hero-glow: var(--theme-glow-primary);
+  width: min(100%, 900px);
+  min-width: 0;
+  margin: clamp(5rem, 10vw, 8rem) auto clamp(3rem, 6vw, 5rem);
+  padding: 0 clamp(10px, 3vw, 24px);
+  color: var(--theme-text-main, var(--navbar-text));
+  text-align: center;
+}
+
+.deck-hero__ornament {
+  display: inline-grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  margin: 0 auto 0.85rem;
+  color: var(--deck-hero-accent);
+  font-size: 1.18rem;
+  line-height: 1;
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--deck-hero-glow) 68%, transparent),
+    0 0 26px color-mix(in srgb, var(--deck-hero-accent-soft) 70%, transparent);
+}
+
+.deck-hero__kicker {
+  margin: 0;
+  color: color-mix(in srgb, var(--deck-hero-accent) 86%, var(--theme-text-main, #fff));
+  font-family: var(--body-font);
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.deck-hero h1 {
+  max-width: 100%;
+  margin: 0.65rem auto 0;
+  color: var(--theme-text-main, var(--navbar-text));
+  font-family: var(--heading-font);
+  font-size: clamp(3.2rem, 8vw, 6.5rem);
+  font-weight: 600;
+  line-height: 1.02;
+  text-wrap: balance;
+  text-shadow:
+    0 3px 18px rgba(0, 0, 0, 0.42),
+    0 0 28px color-mix(in srgb, var(--deck-hero-glow) 34%, transparent);
+}
+
+.deck-hero__divider {
+  position: relative;
+  width: min(420px, 70vw);
+  height: 1px;
+  margin: 1.25rem auto 1.5rem;
+  background:
+    linear-gradient(90deg, transparent, var(--deck-hero-accent)) left center / calc(50% - 1.15rem) 1px no-repeat,
+    linear-gradient(90deg, var(--deck-hero-accent), transparent) right center / calc(50% - 1.15rem) 1px no-repeat;
+}
+
+.deck-hero__divider::after {
+  content: "✦";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  color: var(--deck-hero-accent);
+  font-size: 1.15rem;
+  line-height: 1;
+  text-shadow: 0 0 14px color-mix(in srgb, var(--deck-hero-glow) 78%, transparent);
+  transform: translate(-50%, -50%);
+}
+
+.deck-hero__subtitle {
+  max-width: 680px;
+  margin: 0 auto;
+  color: var(--theme-text-muted, var(--navbar-muted));
+  font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+  line-height: 1.6;
+  text-wrap: balance;
+}
+
+body.sun-mode .deck-hero {
+  --deck-hero-accent: var(--sun-gold);
+  --deck-hero-accent-soft: rgba(185, 113, 45, 0.32);
+  --deck-hero-glow: var(--theme-glow-primary);
+}
+
+body.moon-mode .deck-hero {
+  --deck-hero-accent: var(--theme-accent-secondary);
+  --deck-hero-accent-soft: var(--theme-divider-faint);
+  --deck-hero-glow: var(--theme-glow-secondary);
+}
+
+body.blood-moon-mode .deck-hero {
+  --deck-hero-accent: var(--theme-divider-accent);
+  --deck-hero-accent-soft: rgba(255, 154, 170, 0.2);
+  --deck-hero-glow: var(--theme-glow-primary);
+}
+
+@media (max-width: 760px) {
+  .deck-hero {
+    margin-top: clamp(3.75rem, 16vw, 5.25rem);
+    margin-bottom: clamp(2.35rem, 10vw, 3.5rem);
+    padding-inline: 4px;
+  }
+
+  .deck-hero h1 {
+    font-size: clamp(2.65rem, 14vw, 4.2rem);
+  }
+
+  .deck-hero__subtitle {
+    font-size: clamp(1rem, 4.4vw, 1.18rem);
+  }
+}
+
+/* ================================
    Deck Collection Rail
 ================================ */
 
@@ -469,7 +593,7 @@
   max-width: 58ch;
   margin: 0;
   color: var(--navbar-muted);
-  font-size: clamp(0.98rem, 1.4vw, 1.08rem);
+  font-size: clamp(1.08rem, 1.5vw, 1.18rem);
   line-height: 1.7;
 }
 
@@ -772,9 +896,9 @@
 .deck-card p {
   margin: 8px 0 0;
   color: var(--navbar-muted);
-  font-family: var(--body-font);
-  font-size: 0.92rem;
-  line-height: 1.6;
+  font-family: var(--font-body-serif);
+  font-size: 1rem;
+  line-height: 1.62;
   opacity: 0.86;
 }
 

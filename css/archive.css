@@ -2242,8 +2242,8 @@ body.is-visual-record-modal-open {
 .archive-page-leaf--margin .theory-file-lines p {
   margin: 0;
   color: rgba(255, 222, 226, 0.82);
-  font-family: var(--body-font);
-  font-size: clamp(0.86rem, 1.8vw, 0.98rem);
+  font-family: var(--font-body-serif);
+  font-size: clamp(0.96rem, 1.9vw, 1.08rem);
   line-height: 1.75;
 }
 
@@ -2257,8 +2257,8 @@ body.is-visual-record-modal-open {
   border-left: 1px solid rgba(255, 35, 65, 0.56);
   padding-left: 12px;
   color: rgba(255, 231, 233, 0.96);
-  font-family: var(--body-font);
-  font-size: clamp(0.98rem, 2vw, 1.08rem);
+  font-family: var(--font-body-serif);
+  font-size: clamp(1.08rem, 2.1vw, 1.18rem);
   font-weight: 700;
   line-height: 1.55;
   text-shadow: 0 0 14px rgba(255, 35, 65, 0.22);
@@ -2333,8 +2333,8 @@ body.is-visual-record-modal-open {
 .archive-page-leaf--margin .visual-annotation-note p {
   margin: 0;
   color: rgba(255, 222, 226, 0.82);
-  font-family: var(--body-font);
-  font-size: 0.96rem;
+  font-family: var(--font-body-serif);
+  font-size: 1.06rem;
   line-height: 1.7;
 }
 
