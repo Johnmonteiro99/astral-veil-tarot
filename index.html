@@ -157,24 +157,93 @@
       </svg>
     </div>
 
-    <main class="tarot-stage" id="app">
+    <main class="tarot-stage tarot-stage--readings" id="app">
       <section class="reading-section" id="readings" aria-labelledby="reading-title">
-        <div class="reading-section__intro">
-          <p class="reading-section__eyebrow" data-reading-hero-eyebrow>Choose your reader</p>
-          <h1 id="reading-title" data-reading-hero-title>Begin Your Astral Reading</h1>
+        <div class="reading-section__intro reading-section__intro--veilgate">
+          <p class="reading-veil-brand">Astral Veil</p>
+          <p class="reading-section__eyebrow reading-section__eyebrow--veilgate" data-reading-hero-eyebrow>
+            <span aria-hidden="true">✦</span>
+            Choose Your Reader
+            <span aria-hidden="true">✦</span>
+          </p>
+          <h1 id="reading-title" data-reading-hero-title>Meet the Veilwalkers</h1>
           <p data-reading-hero-copy>
-            Select a reader, choose a spread, then reveal each card when you are ready.
+            Each Veilwalker reads through a different zodiac current. Choose the energy closest to your question.
           </p>
         </div>
 
         <section id="reader-selection" class="reader-selection reader-panel">
-          <div class="section-heading section-heading--reader-selection">
-            <h2>Choose Your Veilwalker</h2>
-            <p>Each Veilwalker reads through a different zodiac current. Choose the energy closest to your question, or let the Veil decide.</p>
-          </div>
-
           <div class="reader-grid" data-reader-list></div>
           <p class="reader-selection__confirmation" data-reader-selection-confirmation aria-live="polite"></p>
+          <section class="veilwalker-unique" aria-labelledby="veilwalker-unique-title">
+            <div class="veilwalker-unique__heading">
+              <span class="veilwalker-unique__heading-line" aria-hidden="true"></span>
+              <h2 id="veilwalker-unique-title">What Makes Each Veilwalker Unique</h2>
+              <span class="veilwalker-unique__heading-line" aria-hidden="true"></span>
+            </div>
+            <div class="veilwalker-unique__grid">
+              <article class="veilwalker-unique__item">
+                <span class="veilwalker-unique__icon" aria-hidden="true">
+                  <svg viewBox="0 0 96 96" focusable="false">
+                    <path d="M12 48c10-16 22-24 36-24s26 8 36 24c-10 16-22 24-36 24S22 64 12 48Z" />
+                    <circle cx="48" cy="48" r="14" />
+                    <circle cx="48" cy="48" r="4" />
+                    <path d="M48 10v8M48 78v8M20 20l6 6M70 70l6 6M76 20l-6 6M26 70l-6 6" />
+                  </svg>
+                </span>
+                <h3>Zodiac Current</h3>
+                <p>Each reader channels a different sign's cosmic current.</p>
+              </article>
+              <article class="veilwalker-unique__item">
+                <span class="veilwalker-unique__icon" aria-hidden="true">
+                  <svg viewBox="0 0 96 96" focusable="false">
+                    <path d="M65 13c-17 5-29 20-29 38 0 17 11 31 26 37a40 40 0 1 1 3-75Z" />
+                    <path d="M72 27l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5ZM27 18l1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5 1.5-3Z" />
+                  </svg>
+                </span>
+                <h3>Energy Style</h3>
+                <p>From shadowed mystics to radiant seers, every voice is distinct.</p>
+              </article>
+              <article class="veilwalker-unique__item">
+                <span class="veilwalker-unique__icon" aria-hidden="true">
+                  <svg viewBox="0 0 96 96" focusable="false">
+                    <path d="M48 8v80M8 48h80M20 20l56 56M76 20 20 76" />
+                    <path d="M48 24l7 17 17 7-17 7-7 17-7-17-17-7 17-7 7-17Z" />
+                    <circle cx="48" cy="48" r="5" />
+                  </svg>
+                </span>
+                <h3>Perspective</h3>
+                <p>Each veil reveals a new angle on your question's truth.</p>
+              </article>
+              <article class="veilwalker-unique__item">
+                <span class="veilwalker-unique__icon" aria-hidden="true">
+                  <svg viewBox="0 0 96 96" focusable="false">
+                    <circle cx="48" cy="48" r="34" />
+                    <path d="M32 58l16-24 18 30M32 58l34 6M48 34l18 30" />
+                    <circle cx="32" cy="58" r="4" />
+                    <circle cx="48" cy="34" r="4" />
+                    <circle cx="66" cy="64" r="4" />
+                    <path d="M48 8v8M48 80v8M8 48h8M80 48h8" />
+                  </svg>
+                </span>
+                <h3>Intuition Match</h3>
+                <p>Choose the energy that resonates most, or let fate decide for you.</p>
+              </article>
+            </div>
+            <div class="veilwalker-unique__closing">
+              <div class="veilwalker-unique__closing-rule" aria-hidden="true">
+                <span>✦</span>
+              </div>
+              <p>
+                <span aria-hidden="true">☾</span>
+                <span class="veilwalker-unique__closing-text">
+                  All Veilwalkers are connected.<br />
+                  Trust the pull, follow the stars.
+                </span>
+                <span aria-hidden="true">☽</span>
+              </p>
+            </div>
+          </section>
         </section>
 
         <section id="reading-stage" class="reading-stage hidden" data-reading-stage>

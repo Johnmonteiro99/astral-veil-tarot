@@ -644,31 +644,21 @@ body.blood-moon-mode .deck-hero {
   width: min(100%, 1120px);
   margin: 0 auto;
   min-width: 0;
-  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 72%, transparent);
+  border: 1px solid transparent;
   border-radius: 26px;
   padding: clamp(16px, 3vw, 28px);
   color: var(--navbar-text);
-  background:
-    radial-gradient(circle at 20% 12%, color-mix(in srgb, var(--deck-viewer-glow) 42%, transparent), transparent 40%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 54%),
-    var(--deck-viewer-panel);
-  box-shadow:
-    0 26px 78px rgba(0, 0, 0, 0.38),
-    0 0 34px color-mix(in srgb, var(--deck-viewer-glow) 62%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(18px) saturate(145%);
-  -webkit-backdrop-filter: blur(18px) saturate(145%);
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .deck-viewer--bloodMoon {
   --deck-viewer-accent: var(--accent-color, #d41f3a);
   --deck-viewer-glow: var(--accent-glow, rgba(255, 35, 65, 0.42));
   --deck-viewer-panel: var(--panel-bg, rgba(32, 3, 7, 0.78));
-  background:
-    radial-gradient(circle at 20% 12%, color-mix(in srgb, var(--deck-viewer-glow) 58%, transparent), transparent 38%),
-    radial-gradient(circle at 88% 88%, rgba(80, 0, 12, 0.38), transparent 48%),
-    linear-gradient(135deg, rgba(255, 64, 88, 0.12), rgba(20, 0, 5, 0.2) 52%, rgba(0, 0, 0, 0.24)),
-    var(--deck-viewer-panel);
+  background: transparent;
 }
 
 .deck-viewer__stage {
@@ -684,15 +674,11 @@ body.blood-moon-mode .deck-hero {
   width: min(100%, 340px);
   margin: 0 auto;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 76%, transparent);
+  border: 1px solid transparent;
   border-radius: 20px;
   padding: 8px;
-  background:
-    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--deck-viewer-glow) 16%, transparent), transparent 58%),
-    rgba(0, 0, 0, 0.32);
-  box-shadow:
-    0 22px 62px rgba(0, 0, 0, 0.42),
-    0 0 24px color-mix(in srgb, var(--deck-viewer-glow) 58%, transparent);
+  background: transparent;
+  box-shadow: none;
   cursor: pointer;
   transition:
     border-color 240ms ease,
@@ -702,11 +688,9 @@ body.blood-moon-mode .deck-hero {
 
 .deck-viewer__image-button:hover,
 .deck-viewer__image-button:focus-visible {
-  border-color: color-mix(in srgb, var(--deck-viewer-accent) 70%, white);
+  border-color: transparent;
   outline: none;
-  box-shadow:
-    0 26px 72px rgba(0, 0, 0, 0.48),
-    0 0 34px color-mix(in srgb, var(--deck-viewer-glow) 72%, transparent);
+  box-shadow: none;
   transform: translateY(-2px);
 }
 
@@ -764,7 +748,7 @@ body.blood-moon-mode .deck-hero {
 }
 
 .deck-viewer__keywords li {
-  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 48%, rgba(255, 255, 255, 0.14));
+  border: 1px solid transparent;
   border-radius: 999px;
   padding: 6px 10px;
   color: var(--navbar-text);
@@ -789,7 +773,7 @@ body.blood-moon-mode .deck-hero {
   display: grid;
   gap: 8px;
   min-width: 0;
-  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 52%, transparent);
+  border: 1px solid transparent;
   border-radius: 14px;
   padding: 12px;
   background:
@@ -803,7 +787,7 @@ body.blood-moon-mode .deck-hero {
 }
 
 .deck-viewer__meaning-card--shadow {
-  border-color: color-mix(in srgb, #d41f3a 42%, transparent);
+  border-color: transparent;
   background:
     radial-gradient(circle at 0% 0%, rgba(212, 31, 58, 0.13), transparent 55%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 52%),
@@ -823,7 +807,7 @@ body.blood-moon-mode .deck-hero {
   width: 26px;
   height: 26px;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 52%, transparent);
+  border: 1px solid transparent;
   border-radius: 50%;
   color: var(--navbar-hover-text);
   background: color-mix(in srgb, var(--deck-viewer-glow) 18%, rgba(0, 0, 0, 0.22));
@@ -831,7 +815,7 @@ body.blood-moon-mode .deck-hero {
 }
 
 .deck-viewer__meaning-card--shadow .deck-viewer__meaning-icon {
-  border-color: rgba(255, 116, 126, 0.34);
+  border-color: transparent;
   color: #ffd5d9;
   background: rgba(116, 18, 30, 0.32);
   box-shadow: 0 0 14px rgba(255, 35, 65, 0.24);
@@ -875,7 +859,7 @@ body.blood-moon-mode .deck-hero {
 
 .deck-viewer__nav {
   min-height: 44px;
-  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 74%, transparent);
+  border: 1px solid transparent;
   border-radius: 999px;
   padding: 0 18px;
   color: var(--navbar-text);

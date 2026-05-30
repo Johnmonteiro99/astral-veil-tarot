@@ -250,18 +250,10 @@ function updateReadingHeroCopy() {
     return;
   }
 
-  if (isBloodMoonReadingActive()) {
-    readingHeroEyebrow.textContent = "Blood Moon reading";
-    readingHeroTitle.textContent = "What Truth Have You Come to Disturb?";
-    readingHeroCopy.textContent =
-      "Under the Blood Moon, hidden wounds, shadowed patterns, and forbidden truths rise to the surface.";
-    return;
-  }
-
-  readingHeroEyebrow.textContent = "Choose your reader";
-  readingHeroTitle.textContent = "Begin Your Astral Reading";
+  readingHeroEyebrow.innerHTML = `<span aria-hidden="true">✦</span> Choose Your Reader <span aria-hidden="true">✦</span>`;
+  readingHeroTitle.textContent = "Meet the Veilwalkers";
   readingHeroCopy.textContent =
-    "Select a reader, choose a spread, then reveal each card when you are ready.";
+    "Each Veilwalker reads through a different zodiac current. Choose the energy closest to your question.";
 }
 
 function isBloodMoonCard(card) {
@@ -573,16 +565,6 @@ function renderReaders() {
   readerList.innerHTML = `
     <div class="reader-carousel__stage" data-reader-carousel-stage>
       <div class="reader-carousel__featured" data-featured-reader></div>
-      <div class="reader-carousel__controls" aria-label="Browse Veilwalkers">
-        <button class="reader-carousel__nav reader-carousel__nav--prev" type="button" data-reader-carousel-nav="prev">
-          <span aria-hidden="true">&larr;</span>
-          Previous Reader
-        </button>
-        <button class="reader-carousel__nav reader-carousel__nav--next" type="button" data-reader-carousel-nav="next">
-          Next Reader
-          <span aria-hidden="true">&rarr;</span>
-        </button>
-      </div>
     </div>
   `;
 
@@ -729,6 +711,10 @@ function getReaderZodiacIconPath(reader) {
   return zodiacIconPaths[getReaderZodiacLabel(reader)] || "";
 }
 
+function getReaderCardDisplayName(reader) {
+  return (reader?.name || "").trim().split(/\s+/)[0] || reader?.name || "";
+}
+
 function getReaderFocus(reader) {
   return reader?.focus || reader?.readingStyle || reader?.energy || "";
 }
@@ -859,6 +845,8 @@ function renderFeaturedReader() {
   const isZephyraLocked = isLocked && isZephyraReader(featuredReader);
   const isSelected = selectedReader?.id === featuredReader.id && selectedReaderIndex !== -1;
   const accentClass = getReaderAccentClass(featuredReader);
+  const previousReader = visibleGuidePool[(featuredReaderIndex - 1 + visibleGuidePool.length) % visibleGuidePool.length];
+  const nextReader = visibleGuidePool[(featuredReaderIndex + 1) % visibleGuidePool.length];
   updateReaderSelectionPreview(featuredReader);
   const previewMessage = readerSelectionPreview.readerId === featuredReader.id
     ? readerSelectionPreview.message
@@ -879,37 +867,31 @@ function renderFeaturedReader() {
     `)
     .join("");
 
+  const readerQuote = previewMessage || featuredReader.tagline || featuredReader.description || getReaderFocus(featuredReader);
+
   featuredReaderPanel.className = `reader-carousel__featured ${accentClass}${isLocked ? " is-unavailable" : ""}${isZephyraLocked ? " reader-carousel__featured--sealed" : ""}${isSelected ? " is-active" : ""}`;
   featuredReaderPanel.innerHTML = `
-    <article class="reader-selection-split" aria-live="polite"${isZephyraLocked ? " aria-label=\"Zephyra is currently unavailable.\"" : ""}>
-      <button class="reader-selection-split__image" type="button" data-reader-carousel-message aria-label="Refresh this Veilwalker's preview message">
-        <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+    <article class="reader-selection-orbit" aria-live="polite"${isZephyraLocked ? " aria-label=\"Zephyra is currently unavailable.\"" : ""}>
+      <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker">
+        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
       </button>
-      <div class="mobile-reader-swipe-hint" aria-hidden="true">
-        <div class="mobile-reader-swipe-hint__track">
-          ${swipeDots}
-        </div>
-        <p>Swipe to switch readers</p>
-      </div>
-      <div class="reader-selection-split__panel">
+      <div class="reader-orbit-card reader-orbit-card--featured">
+        <button class="reader-selection-split__image" type="button" data-reader-carousel-message aria-label="Refresh this Veilwalker's preview message">
+          <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+          <span class="reader-card-overlay" aria-hidden="true">
+            <span class="reader-card-overlay__name">${escapeHtml(getReaderCardDisplayName(featuredReader))}</span>
+            <span class="reader-card-overlay__zodiac">
+              ${escapeHtml(getReaderZodiacLabel(featuredReader))}
+              ${
+                zodiacIconPath
+                  ? `<img class="zodiac-icon" src="${escapeHtml(zodiacIconPath)}" alt="" width="20" height="20" loading="eager" decoding="async" />`
+                  : ""
+              }
+            </span>
+            ${readerQuote ? `<span class="reader-card-overlay__quote">“${escapeHtml(readerQuote)}”</span>` : ""}
+          </span>
+        </button>
         ${isZephyraLocked ? `<span class="reader-availability-pill">Unavailable</span>` : ""}
-        <div class="reader-feature-identity">
-          <h3>${escapeHtml(featuredReader.name)}</h3>
-          <div class="veilwalker-zodiac-line" aria-label="${escapeHtml(getReaderZodiacLabel(featuredReader))}">
-            ${
-              zodiacIconPath
-                ? `
-                  <span class="zodiac-icon-badge" aria-hidden="true">
-                    <img class="zodiac-icon" src="${escapeHtml(zodiacIconPath)}" alt="" width="20" height="20" loading="eager" decoding="async" />
-                  </span>
-                `
-                : ""
-            }
-            <span>${escapeHtml(getReaderZodiacLabel(featuredReader))}</span>
-          </div>
-        </div>
-        ${previewMessage ? `<p class="reader-preview-note" data-reader-selection-message>${escapeHtml(previewMessage)}</p>` : ""}
-        ${readerDescription ? `<p class="reader-selection-split__description">${escapeHtml(readerDescription)}</p>` : ""}
         ${isZephyraLocked ? `
           <div class="reader-feature-card__locked-hint">
             <p>${escapeHtml(ZEPHYRA_LOCK_HINT)}</p>
@@ -918,12 +900,25 @@ function renderFeaturedReader() {
         ` : ""}
         ${isLocked ? `<p class="reader-feature-card__locked-message" data-reader-lock-message="${escapeHtml(featuredReader.id)}"></p>` : ""}
         <div class="reader-selection-button-row">
-          <button class="reader-feature-card__choose reader-mystery-option reader-card--veil" type="button" data-reader-id="${escapeHtml(featuredReader.id)}" ${isSelectable ? "" : "data-reader-unavailable=\"true\""}>
+          <button class="reader-feature-card__choose reader-mystery-option reader-card--veil reader-action-button reader-action-button--primary" type="button" data-reader-id="${escapeHtml(featuredReader.id)}" ${isSelectable ? "" : "data-reader-unavailable=\"true\""}>
+            <span class="reader-action-button__icon" aria-hidden="true">✧</span>
             <span class="reader-mystery-option__title">${chooseButtonText}</span>
           </button>
-          <button class="reader-mystery-option reader-card--veil${selectedReader?.isMystery && selectedReaderIndex === -1 ? " is-active" : ""}" type="button" data-reader-id="mystery">
+          <button class="reader-mystery-option reader-card--veil reader-action-button reader-action-button--secondary${selectedReader?.isMystery && selectedReaderIndex === -1 ? " is-active" : ""}" type="button" data-reader-id="mystery">
+            <span class="reader-action-button__icon" aria-hidden="true">☾</span>
             <span class="reader-mystery-option__title">Let Fate Choose</span>
           </button>
+        </div>
+      </div>
+      <button class="reader-carousel__nav reader-carousel__nav--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker"></button>
+      <button class="reader-carousel__nav reader-carousel__nav--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker"></button>
+      <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker">
+        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+      </button>
+      <div class="mobile-reader-swipe-hint" aria-hidden="true">
+        <p><span aria-hidden="true">‹</span> Swipe to meet the other Veilwalkers <span aria-hidden="true">›</span></p>
+        <div class="mobile-reader-swipe-hint__track">
+          ${swipeDots}
         </div>
       </div>
     </article>

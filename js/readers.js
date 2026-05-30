@@ -252,32 +252,6 @@ function moveFeaturedReader(direction) {
   renderFeaturedVeilwalkerSelector();
 }
 
-function shouldAutoScrollZodiacTrack() {
-  return window.matchMedia("(max-width: 900px)").matches;
-}
-
-function scrollActiveZodiacButtonIntoView() {
-  if (!zodiacSelector || !shouldAutoScrollZodiacTrack()) {
-    return;
-  }
-
-  const zodiacTrack = zodiacSelector.querySelector(".veilwalker-zodiac-track");
-  const activeZodiacButton = zodiacSelector.querySelector(".veilwalker-zodiac-button.is-active");
-
-  if (!zodiacTrack || !activeZodiacButton) {
-    return;
-  }
-
-  const maxScrollLeft = zodiacTrack.scrollWidth - zodiacTrack.clientWidth;
-  const targetScrollLeft = activeZodiacButton.offsetLeft - ((zodiacTrack.clientWidth - activeZodiacButton.offsetWidth) / 2);
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  zodiacTrack.scrollTo({
-    left: Math.max(0, Math.min(targetScrollLeft, maxScrollLeft)),
-    behavior: reducedMotion ? "auto" : "smooth",
-  });
-}
-
 function beginReadingWithReader(readerId) {
   const reader = orderedReaderProfiles.find((item) => item.id === readerId);
 
@@ -524,8 +498,6 @@ function renderZodiacSelector() {
     </div>
     <button class="veilwalker-zodiac-arrow veilwalker-zodiac-arrow--next" type="button" data-zodiac-strip-nav="next" aria-label="Next Veilwalker"></button>
   `;
-
-  requestAnimationFrame(scrollActiveZodiacButtonIntoView);
 }
 
 function renderReaderSelectorDots() {
