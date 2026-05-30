@@ -87,8 +87,18 @@ function createExpandedImagePreview() {
 
 function getExpandableImageData(trigger) {
   const image = trigger.matches("img") ? trigger : trigger.querySelector("img");
+  const previewSource = trigger.dataset.imagePreviewSrc || "";
 
   const rawSource = image?.getAttribute("src") || "";
+
+  if (previewSource) {
+    return {
+      src: previewSource,
+      alt: trigger.dataset.imagePreviewAlt || trigger.dataset.imagePreviewTitle || "Expanded image",
+      title: trigger.dataset.imagePreviewTitle || "Expanded image",
+      caption: trigger.dataset.imagePreviewCaption || ""
+    };
+  }
 
   if (!image || image.hidden || (!rawSource && !image.currentSrc)) {
     return null;

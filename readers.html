@@ -158,18 +158,38 @@
       </svg>
     </div>
 
-    <main class="tarot-stage">
+    <main class="tarot-stage readers-stage">
       <section class="page-shell readers-page" aria-labelledby="readers-title">
-        <div class="page-hero">
-          <p class="reading-section__eyebrow">Readers, witnesses, and fragments</p>
-          <h1 id="readers-title">The Veilwalkers</h1>
-          <p class="page-hero__subtitle">Readers, witnesses, and fragments of the zodiac bound to the Astral Veil.</p>
-          <p>
-            Each Veilwalker carries a sign, an element, and a hidden transformation. Their readings are not predictions alone. They are doorways into memory, shadow, instinct, and the truths waiting beyond the Veil.
-          </p>
-        </div>
+        <section class="veilwalker-selector-hero" aria-labelledby="readers-title">
+          <div class="readers-hero-letter">
+            <div class="readers-hero-letter__copy">
+              <p class="reading-section__eyebrow">Readers, witnesses, and fragments</p>
+              <h1 id="readers-title">The Veilwalkers</h1>
+              <div class="readers-hero-letter__rule" aria-hidden="true"></div>
+              <p class="page-hero__subtitle">They walk between what is seen and what remembers.</p>
+              <p>
+                Each Veilwalker carries a sign, an element, and a hidden transformation. Their readings are not predictions alone. They are doorways into memory, shadow, instinct, and the truths waiting beyond the Veil.
+              </p>
+            </div>
+          </div>
+        </section>
 
-        <div class="reader-profile-grid" data-readers-page-list></div>
+        <section class="veilwalker-selector" aria-label="Featured Veilwalker selector">
+          <div class="veilwalker-selector__featured" data-readers-page-list></div>
+          <div class="veilwalker-selector__dots" data-reader-selector-dots aria-label="Veilwalker position"></div>
+          <div class="veilwalker-selector__zodiac" data-zodiac-selector aria-label="Choose a zodiac Veilwalker"></div>
+        </section>
+
+        <div class="veilwalker-selector__closing" aria-label="Veilwalker reminder">
+          <div class="veilwalker-selector__closing-copy veilwalker-selector__closing-copy--standard">
+            <p>They do not predict your fate</p>
+            <p>They help you remember what was always yours</p>
+          </div>
+          <div class="veilwalker-selector__closing-copy veilwalker-selector__closing-copy--blood">
+            <p>They do not predict what comes.</p>
+            <p>They uncover what has been buried in you all along.</p>
+          </div>
+        </div>
       </section>
     </main>
 

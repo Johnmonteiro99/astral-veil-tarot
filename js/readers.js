@@ -1,12 +1,19 @@
 const readersPageList = document.querySelector("[data-readers-page-list]");
+const zodiacSelector = document.querySelector("[data-zodiac-selector]");
+const readerSelectorDots = document.querySelector("[data-reader-selector-dots]");
 const readerLightbox = document.querySelector("[data-reader-lightbox]");
 const lightboxImage = document.querySelector("[data-lightbox-image]");
 const closeLightboxButtons = document.querySelectorAll("[data-close-lightbox]");
 let orderedReaderProfiles = [];
 let activeReaderIndex = -1;
+let featuredReaderIndex = 0;
 let activeReaderFormId = "phase1";
 let lightboxTouchStartX = 0;
 let lastLightboxNavAt = 0;
+let selectorTouchStartX = 0;
+let selectorTouchStartY = 0;
+const selectedReaderStorageKey = "astralVeilSelectedReader";
+const readingPageHref = "index.html";
 const zodiacOrder = [
   "Aries",
   "Taurus",
@@ -21,6 +28,34 @@ const zodiacOrder = [
   "Aquarius",
   "Pisces"
 ];
+const zodiacGlyphs = {
+  Aries: "♈",
+  Taurus: "♉",
+  Gemini: "♊",
+  Cancer: "♋",
+  Leo: "♌",
+  Virgo: "♍",
+  Libra: "♎",
+  Scorpio: "♏",
+  Sagittarius: "♐",
+  Capricorn: "♑",
+  Aquarius: "♒",
+  Pisces: "♓"
+};
+const zodiacIconPaths = {
+  Aries: "../assets/icons/zodiac/aries.svg",
+  Taurus: "../assets/icons/zodiac/taurus.svg",
+  Gemini: "../assets/icons/zodiac/gemini.svg",
+  Cancer: "../assets/icons/zodiac/cancer.svg",
+  Leo: "../assets/icons/zodiac/leo.svg",
+  Virgo: "../assets/icons/zodiac/virgo.svg",
+  Libra: "../assets/icons/zodiac/libra.svg",
+  Scorpio: "../assets/icons/zodiac/scorpio.svg",
+  Sagittarius: "../assets/icons/zodiac/sagittarius.svg",
+  Capricorn: "../assets/icons/zodiac/capricorn.svg",
+  Aquarius: "../assets/icons/zodiac/aquarius.svg",
+  Pisces: "../assets/icons/zodiac/pisces.svg"
+};
 
 ////////////////////////////////////////////////////
 // Veilwalker Data and Presentation Helpers
@@ -120,6 +155,143 @@ function getReaderDetailAccentClass(reader) {
   return ["fire", "earth", "air", "water"].includes(baseElement)
     ? ` reader-lightbox__dialog--${baseElement}`
     : "";
+}
+
+function getFeaturedReader() {
+  if (!orderedReaderProfiles.length) {
+    orderedReaderProfiles = getAllReadersInOrder();
+  }
+
+  return orderedReaderProfiles[featuredReaderIndex] || orderedReaderProfiles[0] || null;
+}
+
+function getReaderPreviewImage(reader) {
+  const presentation = getReaderPresentation(reader);
+
+  return presentation?.image || reader?.phase1Image || reader?.image || "";
+}
+
+function getZodiacIconPath(sign) {
+  return zodiacIconPaths[sign] || "";
+}
+
+function getReaderSummary(reader) {
+  const presentation = getReaderPresentation(reader);
+
+  return (
+    presentation.description ||
+    presentation.lore ||
+    presentation.focus ||
+    presentation.energy ||
+    "A trusted Astral Veil guide for reflective tarot readings."
+  );
+}
+
+function renderReaderDetailRows(reader) {
+  const presentation = getReaderPresentation(reader);
+  const focus = presentation.focus || presentation.energy || "";
+  const traits = Array.isArray(presentation.themes) && presentation.themes.length
+    ? presentation.themes.slice(0, 4).join(", ")
+    : "";
+  const detailRows = [
+    ["Element", presentation.element || ""],
+    ["Focus", focus.replace(/^For\s+/i, "")],
+    ["Traits", traits]
+  ].filter(([, value]) => value);
+
+  if (!detailRows.length) {
+    return "";
+  }
+
+  return `
+    <dl class="veilwalker-feature__detail-list">
+      ${detailRows
+        .map(([label, value]) => `
+          <div class="veilwalker-feature__detail-row">
+            <dt>${escapeHtml(label)}</dt>
+            <dd>${escapeHtml(value)}</dd>
+          </div>
+        `)
+        .join("")}
+    </dl>
+  `;
+}
+
+function isReaderBeginReadingAvailable(reader) {
+  return !reader?.requiresBloodMoon || isBloodMoonActive();
+}
+
+function setFeaturedReader(readerId) {
+  if (!orderedReaderProfiles.length) {
+    orderedReaderProfiles = getAllReadersInOrder();
+  }
+
+  const nextIndex = orderedReaderProfiles.findIndex((reader) => reader.id === readerId);
+
+  if (nextIndex === -1) {
+    return;
+  }
+
+  featuredReaderIndex = nextIndex;
+  renderFeaturedVeilwalkerSelector();
+}
+
+function moveFeaturedReader(direction) {
+  if (!orderedReaderProfiles.length) {
+    orderedReaderProfiles = getAllReadersInOrder();
+  }
+
+  if (!orderedReaderProfiles.length) {
+    return;
+  }
+
+  const offset = direction === "next" ? 1 : -1;
+
+  featuredReaderIndex =
+    (featuredReaderIndex + offset + orderedReaderProfiles.length) % orderedReaderProfiles.length;
+  renderFeaturedVeilwalkerSelector();
+}
+
+function shouldAutoScrollZodiacTrack() {
+  return window.matchMedia("(max-width: 900px)").matches;
+}
+
+function scrollActiveZodiacButtonIntoView() {
+  if (!zodiacSelector || !shouldAutoScrollZodiacTrack()) {
+    return;
+  }
+
+  const zodiacTrack = zodiacSelector.querySelector(".veilwalker-zodiac-track");
+  const activeZodiacButton = zodiacSelector.querySelector(".veilwalker-zodiac-button.is-active");
+
+  if (!zodiacTrack || !activeZodiacButton) {
+    return;
+  }
+
+  const maxScrollLeft = zodiacTrack.scrollWidth - zodiacTrack.clientWidth;
+  const targetScrollLeft = activeZodiacButton.offsetLeft - ((zodiacTrack.clientWidth - activeZodiacButton.offsetWidth) / 2);
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  zodiacTrack.scrollTo({
+    left: Math.max(0, Math.min(targetScrollLeft, maxScrollLeft)),
+    behavior: reducedMotion ? "auto" : "smooth",
+  });
+}
+
+function beginReadingWithReader(readerId) {
+  const reader = orderedReaderProfiles.find((item) => item.id === readerId);
+
+  if (!reader || !isReaderBeginReadingAvailable(reader)) {
+    return;
+  }
+
+  try {
+    localStorage.setItem(selectedReaderStorageKey, reader.id);
+  } catch (error) {
+    // Query parameter below still carries the selection if storage is unavailable.
+  }
+
+  window.location.href = `${readingPageHref}?reader=${encodeURIComponent(reader.id)}`;
 }
 
 // Renders the symbolic traits block inside the reader detail lightbox.
@@ -237,43 +409,147 @@ function renderReaderFormSelector(reader, activeForm) {
 // Veilwalker Grid and Detail Lightbox
 ////////////////////////////////////////////////////
 
-// Builds the clickable Veilwalker grid from reader data.
+// Builds the featured Veilwalker selector from reader data.
 function renderReaderProfiles() {
   if (!readersPageList || typeof tarotReaders === "undefined") {
     return;
   }
 
   orderedReaderProfiles = getAllReadersInOrder();
+  featuredReaderIndex = Math.max(0, Math.min(featuredReaderIndex, orderedReaderProfiles.length - 1));
+  renderFeaturedVeilwalkerSelector();
+}
 
-  readersPageList.innerHTML = orderedReaderProfiles
-    .map(
-      (reader) => {
-        const presentation = getReaderPresentation(reader);
-        const isBloodMoonFragment = Boolean(reader.isBloodMoon && isBloodMoonActive());
-        const tagline =
-          presentation.tagline ||
-          presentation.title ||
-          presentation.readingStyle ||
-          "A trusted Astral Veil guide for reflective tarot readings.";
-        const elementClass = getReaderElementClass(reader);
-        const bloodMoonCardClass = getReaderBloodMoonCardClass(reader);
-        const fallbackImage = presentation.phase1Image || presentation.image;
+function renderFeaturedVeilwalkerSelector() {
+  const reader = getFeaturedReader();
 
-        return `
-        <button class="reader-profile-card reader-profile-card--${reader.id}${elementClass}${bloodMoonCardClass}${reader.isMystery ? ` reader-profile-card--mystery reader-profile-card--${reader.mysteryAura}` : ""}${isBloodMoonFragment ? " reader-profile-card--blood-fragment" : ""}" type="button" data-reader-id="${reader.id}">
-          <img src="${escapeHtml(presentation.image)}" alt="${escapeHtml(presentation.name)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${escapeHtml(fallbackImage)}';" />
-          <div class="reader-profile-card__content">
-            <div class="reader-profile-card__badges" aria-label="Reader archetype">
-              ${presentation.zodiac ? `<span class="reader-profile-card__badge">${escapeHtml(presentation.zodiac)}</span>` : ""}
-              ${presentation.element ? `<span class="reader-profile-card__badge reader-profile-card__badge--muted">${escapeHtml(presentation.element)}</span>` : ""}
-            </div>
-            <h2>${escapeHtml(presentation.name)}</h2>
-            <p class="reader-profile-card__tagline">${escapeHtml(tagline)}</p>
-          </div>
+  if (!reader || !readersPageList) {
+    return;
+  }
+
+  const presentation = getReaderPresentation(reader);
+  const image = getReaderPreviewImage(reader);
+  const sign = presentation.sign || presentation.zodiac || "Unknown";
+  const zodiacIcon = getZodiacIconPath(sign);
+  const summary = getReaderSummary(reader);
+  const title = presentation.tagline || presentation.readingStyle || presentation.title || "";
+  const canBeginReading = isReaderBeginReadingAvailable(reader);
+  const isZephyraReader = reader.id === "zephyra-noctis";
+  const useZephyraLockedStyle = isZephyraReader && !isBloodMoonActive();
+  const unavailableMessage = reader.requiresBloodMoon && !isBloodMoonActive()
+    ? "Available when the Blood Moon opens."
+    : "";
+
+  readersPageList.innerHTML = `
+    <article class="veilwalker-feature${useZephyraLockedStyle ? " veilwalker-feature--zephyra" : ""} reader-profile-card--${escapeHtml(reader.id)}${getReaderElementClass(reader)}${getReaderBloodMoonCardClass(reader)}">
+      <button class="veilwalker-feature__nav veilwalker-feature__nav--prev" type="button" data-reader-selector-nav="prev" aria-label="Previous Veilwalker">
+        <span aria-hidden="true">‹</span>
+      </button>
+      <div class="veilwalker-feature__image-wrap">
+        <img class="veilwalker-feature__image" src="${escapeHtml(image)}" alt="${escapeHtml(presentation.name)}" loading="eager" decoding="async" onerror="this.style.visibility='hidden'" />
+      </div>
+      <div class="veilwalker-feature__details">
+        <div class="veilwalker-feature__meta">
+          <span class="veilwalker-feature__glyph" style="--zodiac-icon: url('${escapeHtml(zodiacIcon)}')" aria-hidden="true"></span>
+          <span>${escapeHtml(sign)}</span>
+          <span aria-hidden="true">•</span>
+          <span>${escapeHtml(presentation.element || "The Veil")}</span>
+        </div>
+        <h2>${escapeHtml(presentation.name)}</h2>
+        ${title ? `<p class="veilwalker-feature__quote">“${escapeHtml(title)}”</p>` : ""}
+        <div class="veilwalker-feature__ornament" aria-hidden="true"></div>
+        <p class="veilwalker-feature__description">${escapeHtml(summary)}</p>
+        ${renderReaderDetailRows(reader)}
+        ${unavailableMessage ? `<p class="veilwalker-feature__unavailable">${escapeHtml(unavailableMessage)}</p>` : ""}
+        <div class="veilwalker-feature__actions">
+          <button class="veilwalker-feature__button ${useZephyraLockedStyle ? "veilwalker-feature__button--zephyra-profile" : "veilwalker-feature__button--secondary"}" type="button" data-reader-profile-id="${escapeHtml(reader.id)}">
+            View Profile <span aria-hidden="true">✦</span>
+          </button>
+          ${useZephyraLockedStyle ? "" : `
+            <button class="veilwalker-feature__button veilwalker-feature__button--primary" type="button" data-reader-begin-id="${escapeHtml(reader.id)}" ${canBeginReading ? "" : "disabled"}>
+              Begin Reading <span aria-hidden="true">✦</span>
+            </button>
+          `}
+        </div>
+      </div>
+      <button class="veilwalker-feature__nav veilwalker-feature__nav--next" type="button" data-reader-selector-nav="next" aria-label="Next Veilwalker">
+        <span aria-hidden="true">›</span>
+      </button>
+    </article>
+  `;
+
+  renderZodiacSelector();
+  renderReaderSelectorDots();
+}
+
+function renderZodiacSelector() {
+  if (!zodiacSelector) {
+    return;
+  }
+
+  const activeReader = getFeaturedReader();
+
+  const zodiacButtons = zodiacOrder
+    .map((sign) => {
+      const reader = orderedReaderProfiles.find((item) => (item.sign || item.zodiac) === sign);
+
+      if (!reader) {
+        return "";
+      }
+
+      const isActive = activeReader?.id === reader.id;
+      const iconPath = getZodiacIconPath(sign);
+
+      return `
+        <button
+          class="veilwalker-zodiac-button${isActive ? " is-active" : ""}"
+          type="button"
+          data-reader-select-id="${escapeHtml(reader.id)}"
+          aria-label="Select ${escapeHtml(sign)} Veilwalker"
+          aria-pressed="${isActive ? "true" : "false"}"
+        >
+          <span class="veilwalker-zodiac-button__glyph" aria-hidden="true">
+            <span class="veilwalker-zodiac-button__icon" style="--zodiac-icon: url('${escapeHtml(iconPath)}')"></span>
+          </span>
+          <span>${escapeHtml(sign)}</span>
         </button>
       `;
-      }
-    )
+    })
+    .join("");
+
+  zodiacSelector.innerHTML = `
+    <button class="veilwalker-zodiac-arrow veilwalker-zodiac-arrow--prev" type="button" data-zodiac-strip-nav="prev" aria-label="Previous Veilwalker"></button>
+    <div class="veilwalker-zodiac-track">
+      ${zodiacButtons}
+    </div>
+    <button class="veilwalker-zodiac-arrow veilwalker-zodiac-arrow--next" type="button" data-zodiac-strip-nav="next" aria-label="Next Veilwalker"></button>
+  `;
+
+  requestAnimationFrame(scrollActiveZodiacButtonIntoView);
+}
+
+function renderReaderSelectorDots() {
+  if (!readerSelectorDots) {
+    return;
+  }
+
+  const activeReader = getFeaturedReader();
+
+  readerSelectorDots.innerHTML = orderedReaderProfiles
+    .map((reader) => {
+      const isActive = activeReader?.id === reader.id;
+      const sign = reader.sign || reader.zodiac || reader.name;
+
+      return `
+        <button
+          class="veilwalker-selector-dot${isActive ? " is-active" : ""}"
+          type="button"
+          data-reader-dot-id="${escapeHtml(reader.id)}"
+          aria-label="Select ${escapeHtml(sign)} Veilwalker"
+          aria-current="${isActive ? "true" : "false"}"
+        ></button>
+      `;
+    })
     .join("");
 }
 
@@ -432,10 +708,76 @@ renderReaderProfiles();
 
 if (readersPageList) {
   readersPageList.addEventListener("click", (event) => {
-    const readerCard = event.target.closest("[data-reader-id]");
+    const navButton = event.target.closest("[data-reader-selector-nav]");
+    const profileButton = event.target.closest("[data-reader-profile-id]");
+    const beginButton = event.target.closest("[data-reader-begin-id]");
 
-    if (readerCard) {
-      openReaderLightbox(readerCard.dataset.readerId);
+    if (navButton) {
+      moveFeaturedReader(navButton.dataset.readerSelectorNav);
+      return;
+    }
+
+    if (profileButton) {
+      openReaderLightbox(profileButton.dataset.readerProfileId);
+      return;
+    }
+
+    if (beginButton) {
+      beginReadingWithReader(beginButton.dataset.readerBeginId);
+    }
+  });
+
+  readersPageList.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      moveFeaturedReader("prev");
+    }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      moveFeaturedReader("next");
+    }
+  });
+
+  readersPageList.addEventListener("touchstart", (event) => {
+    selectorTouchStartX = event.changedTouches[0]?.clientX || 0;
+    selectorTouchStartY = event.changedTouches[0]?.clientY || 0;
+  }, { passive: true });
+
+  readersPageList.addEventListener("touchend", (event) => {
+    const touchEndX = event.changedTouches[0]?.clientX || 0;
+    const touchEndY = event.changedTouches[0]?.clientY || 0;
+    const deltaX = touchEndX - selectorTouchStartX;
+    const deltaY = touchEndY - selectorTouchStartY;
+
+    if (Math.abs(deltaX) > 68 && Math.abs(deltaX) > Math.abs(deltaY) * 2) {
+      moveFeaturedReader(deltaX < 0 ? "next" : "prev");
+    }
+  }, { passive: true });
+}
+
+if (zodiacSelector) {
+  zodiacSelector.addEventListener("click", (event) => {
+    const navButton = event.target.closest("[data-zodiac-strip-nav]");
+    const zodiacButton = event.target.closest("[data-reader-select-id]");
+
+    if (navButton) {
+      moveFeaturedReader(navButton.dataset.zodiacStripNav);
+      return;
+    }
+
+    if (zodiacButton) {
+      setFeaturedReader(zodiacButton.dataset.readerSelectId);
+    }
+  });
+}
+
+if (readerSelectorDots) {
+  readerSelectorDots.addEventListener("click", (event) => {
+    const dotButton = event.target.closest("[data-reader-dot-id]");
+
+    if (dotButton) {
+      setFeaturedReader(dotButton.dataset.readerDotId);
     }
   });
 }

@@ -46,6 +46,7 @@ const zodiacIconPaths = {
 };
 const readingSectionScrollDelay = 450;
 const forcedFateReaderStorageKey = "astralVeilTestFateReader";
+const selectedReaderStorageKey = "astralVeilSelectedReader";
 const ZEPHYRA_LOCKED_MESSAGE =
   "She lingers where dust guards forgotten names and silent pages keep their watch. When the moon remembers its crimson face, her voice may return to the circle.";
 const ZEPHYRA_TIME_LOCK_MESSAGES = [
@@ -1066,6 +1067,104 @@ function normalizeForcedFateReaderValue(value) {
   return normalizedValue;
 }
 
+function getInitialSelectedReaderId() {
+  const queryValue = getSelectedReaderQueryValue();
+  const storedValue = queryValue ? "" : getStoredSelectedReaderValue();
+  const selectedValue = queryValue || storedValue;
+
+  if (!selectedValue) {
+    return "";
+  }
+
+  return normalizeSelectedReaderValue(selectedValue);
+}
+
+function getSelectedReaderQueryValue() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+
+    return (
+      params.get("reader") ||
+      params.get("readerId") ||
+      params.get("veilwalker") ||
+      ""
+    );
+  } catch (error) {
+    return "";
+  }
+}
+
+function getStoredSelectedReaderValue() {
+  try {
+    return localStorage.getItem(selectedReaderStorageKey) || "";
+  } catch (error) {
+    return "";
+  }
+}
+
+function clearStoredSelectedReaderValue() {
+  try {
+    localStorage.removeItem(selectedReaderStorageKey);
+  } catch (error) {
+    // Query-string selection still works when storage is unavailable.
+  }
+}
+
+function slugifyReaderValue(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function normalizeSelectedReaderValue(value) {
+  const normalizedValue = slugifyReaderValue(value);
+
+  if (["scorpio", "zephyra", "zephyra-noctis"].includes(normalizedValue)) {
+    return "zephyra-noctis";
+  }
+
+  const visibleGuidePool = getVisibleGuidePool();
+  const readerMatch = visibleGuidePool.find((reader) => {
+    const sign = slugifyReaderValue(reader.sign || reader.zodiac);
+
+    return (
+      reader.id === normalizedValue ||
+      sign === normalizedValue ||
+      slugifyReaderValue(reader.name) === normalizedValue
+    );
+  });
+
+  return readerMatch?.id || normalizedValue;
+}
+
+function selectInitialReaderFromHandoff() {
+  const initialReaderId = getInitialSelectedReaderId();
+
+  clearStoredSelectedReaderValue();
+
+  if (!initialReaderId) {
+    return;
+  }
+
+  const reader = getVisibleGuidePool().find((item) => item.id === initialReaderId);
+
+  if (!reader) {
+    return;
+  }
+
+  if (!isReaderSelectable(reader)) {
+    featuredReaderIndex = getVisibleGuidePool().findIndex((item) => item.id === initialReaderId);
+    renderFeaturedReader();
+    showUnavailableReaderMessage(reader);
+    return;
+  }
+
+  selectReader(initialReaderId);
+}
+
 function updateActiveReader() {
   const readerPresentation = getReaderPresentation(selectedReader);
   activeReaderHeader?.classList.toggle(
@@ -1640,6 +1739,7 @@ function resetToGuideSelection() {
 }
 
 renderReaders();
+selectInitialReaderFromHandoff();
 
 // When Blood Moon changes, reader availability and deck/card art can change, so refresh visible UI.
 window.addEventListener("astralVeilBloodMoonChange", (event) => {

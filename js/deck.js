@@ -344,7 +344,7 @@ function renderDeckCollection() {
                     <p>${collection.subtitle}</p>
                   </div>
                   <div class="deck-collection-card__actions">
-                    <button class="deck-collection-card__action" type="button" data-view-deck="${collection.id}">
+                    <button class="deck-collection-card__action" type="button" data-view-deck="${collection.id}" ${isCollectionLocked(collection) ? "disabled" : ""}>
                       ${getCollectionActionLabel(collection)}
                     </button>
                   </div>

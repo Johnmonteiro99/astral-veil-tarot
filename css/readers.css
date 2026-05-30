@@ -5,6 +5,677 @@
 }
 
 /* ================================
+   Featured Veilwalker Selector
+================================ */
+
+.veilwalker-selector {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(12px, 2vw, 20px);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.veilwalker-selector__featured {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0 clamp(0px, 2.8vw, 28px);
+}
+
+.veilwalker-feature {
+  --selector-accent: #d2ac62;
+  --selector-accent-soft: color-mix(in srgb, var(--selector-accent) 22%, transparent);
+  --selector-accent-glow: color-mix(in srgb, var(--selector-accent) 26%, transparent);
+  display: grid;
+  grid-template-columns: minmax(340px, 0.92fr) minmax(0, 1fr);
+  gap: clamp(26px, 4.2vw, 58px);
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  position: relative;
+  padding: clamp(14px, 2.2vw, 24px);
+  border: 1px solid color-mix(in srgb, var(--selector-accent) 24%, rgba(255, 255, 255, 0.06));
+  border-radius: 16px;
+  color: var(--navbar-text);
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.18), transparent 34%, rgba(0, 0, 0, 0.12)),
+    linear-gradient(135deg, color-mix(in srgb, var(--selector-accent) 7%, transparent), transparent 58%),
+    rgba(7, 7, 13, 0.54);
+  box-shadow:
+    0 24px 72px rgba(0, 0, 0, 0.28),
+    0 0 22px var(--selector-accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+}
+
+body.sun-mode .veilwalker-feature {
+  --selector-accent: #e4a946;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.16), transparent 34%, rgba(0, 0, 0, 0.12)),
+    linear-gradient(135deg, rgba(234, 169, 70, 0.08), transparent 58%),
+    rgba(24, 19, 10, 0.58);
+}
+
+body.moon-mode .veilwalker-feature {
+  --selector-accent: #d4b36b;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.18), transparent 34%, rgba(0, 0, 0, 0.12)),
+    radial-gradient(circle at 86% 18%, rgba(150, 128, 255, 0.08), transparent 32%),
+    rgba(8, 7, 17, 0.62);
+}
+
+body.blood-moon-mode .veilwalker-feature {
+  --selector-accent: #ff5266;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.2), transparent 34%, rgba(0, 0, 0, 0.16)),
+    linear-gradient(135deg, rgba(255, 54, 75, 0.1), transparent 58%),
+    rgba(24, 2, 6, 0.7);
+}
+
+.veilwalker-feature--zephyra {
+  --selector-accent: #ff5266;
+  --navbar-text: #fff1f2;
+  --navbar-muted: rgba(255, 206, 211, 0.82);
+  border-color: rgba(255, 82, 102, 0.68);
+}
+
+body.sun-mode .veilwalker-feature--zephyra,
+body.moon-mode .veilwalker-feature--zephyra {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 58, 82, 0.34), transparent 34%),
+    radial-gradient(circle at 82% 78%, rgba(154, 7, 29, 0.36), transparent 42%),
+    linear-gradient(135deg, rgba(112, 5, 22, 0.82), rgba(38, 2, 8, 0.95) 58%, rgba(120, 8, 24, 0.78)),
+    #2a0309;
+  box-shadow:
+    0 28px 86px rgba(0, 0, 0, 0.42),
+    0 0 48px rgba(255, 40, 64, 0.34),
+    inset 0 0 42px rgba(255, 40, 64, 0.08),
+    inset 0 1px 0 rgba(255, 210, 214, 0.12);
+}
+
+.veilwalker-feature--zephyra .veilwalker-feature__image-wrap {
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255, 58, 82, 0.18), transparent 48%),
+    linear-gradient(180deg, rgba(92, 4, 17, 0.42), rgba(18, 1, 5, 0.66));
+  box-shadow:
+    inset 0 0 46px rgba(30, 0, 6, 0.7),
+    0 0 34px rgba(255, 40, 64, 0.34);
+}
+
+.veilwalker-feature--zephyra .veilwalker-feature__details {
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, rgba(255, 54, 75, 0.1), transparent 52%),
+    rgba(52, 3, 11, 0.3);
+}
+
+.veilwalker-feature--zephyra .veilwalker-feature__quote,
+.veilwalker-feature--zephyra .veilwalker-feature__meta,
+.veilwalker-feature--zephyra .veilwalker-feature__detail-row dt {
+  color: #ffb9c0;
+}
+
+.veilwalker-feature--zephyra .veilwalker-feature__ornament {
+  background: linear-gradient(90deg, #ff5266, rgba(255, 82, 102, 0));
+  box-shadow: 0 0 16px rgba(255, 40, 64, 0.36);
+}
+
+.veilwalker-feature--zephyra .veilwalker-feature__detail-row {
+  border-top-color: rgba(255, 82, 102, 0.24);
+}
+
+.veilwalker-feature__image-wrap {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  align-self: stretch;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--selector-accent) 12%, transparent), transparent 50%),
+    rgba(0, 0, 0, 0.28);
+  box-shadow:
+    inset 0 0 34px rgba(0, 0, 0, 0.48),
+    0 0 18px color-mix(in srgb, var(--selector-accent) 18%, transparent);
+}
+
+.veilwalker-feature__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: clamp(480px, 48vw, 660px);
+  object-fit: cover;
+  object-position: center top;
+}
+
+.veilwalker-feature__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 0;
+  color: color-mix(in srgb, var(--selector-accent) 88%, #fff);
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    color 220ms ease,
+    filter 220ms ease,
+    transform 220ms ease;
+}
+
+.veilwalker-feature__nav:hover,
+.veilwalker-feature__nav:focus-visible {
+  color: var(--selector-accent);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--selector-accent) 52%, transparent));
+}
+
+.veilwalker-feature__nav::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+}
+
+.veilwalker-feature__nav--prev {
+  left: -52px;
+}
+
+.veilwalker-feature__nav--prev::before {
+  transform: rotate(-135deg);
+}
+
+.veilwalker-feature__nav--next {
+  right: -52px;
+}
+
+.veilwalker-feature__nav--next::before {
+  transform: rotate(45deg);
+}
+
+.veilwalker-feature__nav span {
+  display: none;
+}
+
+.veilwalker-feature__details {
+  display: grid;
+  align-content: center;
+  gap: clamp(12px, 1.7vw, 18px);
+  min-width: 0;
+  padding: clamp(12px, 2.5vw, 28px) clamp(6px, 1.2vw, 14px);
+}
+
+.veilwalker-feature__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  color: color-mix(in srgb, var(--selector-accent) 86%, #fff4d7);
+  font-family: var(--body-font);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.veilwalker-feature__glyph {
+  display: inline-grid;
+  place-items: center;
+  width: 2.55rem;
+  height: 2.55rem;
+  border: 1px solid color-mix(in srgb, var(--selector-accent) 52%, transparent);
+  border-radius: 50%;
+  background: transparent;
+  box-shadow:
+    0 0 16px color-mix(in srgb, var(--selector-accent) 28%, transparent),
+    inset 0 0 14px color-mix(in srgb, var(--selector-accent) 16%, transparent);
+}
+
+.veilwalker-feature__glyph::before {
+  content: "";
+  display: block;
+  width: 1.55rem;
+  height: 1.55rem;
+  background: color-mix(in srgb, var(--selector-accent) 88%, #fff4d7);
+  -webkit-mask: var(--zodiac-icon) center / 58% 58% no-repeat;
+  mask: var(--zodiac-icon) center / 58% 58% no-repeat;
+}
+
+.veilwalker-feature h2 {
+  margin: 0;
+  font-family: var(--heading-font);
+  font-size: clamp(2.45rem, 4.8vw, 4.7rem);
+  line-height: 0.94;
+  letter-spacing: 0;
+  color: var(--navbar-text);
+}
+
+.veilwalker-feature__quote {
+  max-width: 42rem;
+  margin: 0;
+  color: color-mix(in srgb, var(--selector-accent) 78%, #fff);
+  font-size: clamp(1.05rem, 2vw, 1.24rem);
+  font-style: italic;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.veilwalker-feature__ornament {
+  width: min(280px, 70%);
+  height: 1px;
+  background: linear-gradient(90deg, var(--selector-accent), transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--selector-accent) 24%, transparent);
+  opacity: 0.78;
+}
+
+.veilwalker-feature__description,
+.veilwalker-feature__unavailable {
+  max-width: 44rem;
+  margin: 0;
+  color: var(--navbar-muted);
+  line-height: 1.75;
+}
+
+.veilwalker-feature__detail-list {
+  display: grid;
+  gap: 8px;
+  max-width: 44rem;
+  margin: 2px 0 0;
+  padding: 0;
+}
+
+.veilwalker-feature__detail-row {
+  display: grid;
+  grid-template-columns: minmax(72px, 0.24fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: baseline;
+  padding: 8px 0;
+  border-top: 1px solid color-mix(in srgb, var(--selector-accent) 18%, transparent);
+}
+
+.veilwalker-feature__detail-row dt {
+  color: color-mix(in srgb, var(--selector-accent) 86%, #fff4d7);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.veilwalker-feature__detail-row dd {
+  margin: 0;
+  color: color-mix(in srgb, var(--navbar-text) 82%, var(--navbar-muted));
+  line-height: 1.45;
+}
+
+.veilwalker-feature__unavailable {
+  color: color-mix(in srgb, var(--selector-accent) 74%, #fff1f1);
+  font-weight: 700;
+}
+
+.veilwalker-feature__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: clamp(4px, 1vw, 12px);
+}
+
+.veilwalker-feature__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.78rem 1.35rem;
+  border: 1px solid color-mix(in srgb, var(--selector-accent) 54%, transparent);
+  border-radius: 10px;
+  color: var(--navbar-text);
+  background: transparent;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    color 220ms ease,
+    transform 220ms ease;
+}
+
+.veilwalker-feature__button--primary {
+  color: #100b18;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--selector-accent) 92%, #fff), var(--selector-accent));
+  box-shadow: 0 0 22px color-mix(in srgb, var(--selector-accent) 26%, transparent);
+}
+
+body.blood-moon-mode .veilwalker-feature__button--primary {
+  color: #fff7f8;
+  border-color: rgba(255, 124, 140, 0.78);
+  background: linear-gradient(135deg, #d71935 0%, #9c071d 58%, #5e0612 100%);
+  box-shadow:
+    0 0 20px rgba(255, 40, 64, 0.36),
+    inset 0 1px 0 rgba(255, 220, 224, 0.18);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.58);
+}
+
+.veilwalker-feature__button--zephyra-profile {
+  min-width: min(100%, 260px);
+  color: #140b08;
+  background: linear-gradient(135deg, #f5d083, #d4a24d);
+  border-color: rgba(245, 208, 131, 0.82);
+  box-shadow:
+    0 0 22px rgba(212, 162, 77, 0.28),
+    0 0 34px rgba(255, 40, 64, 0.12);
+}
+
+.veilwalker-feature--zephyra .veilwalker-feature__actions {
+  grid-template-columns: minmax(0, 260px);
+}
+
+.veilwalker-feature__button:hover,
+.veilwalker-feature__button:focus-visible {
+  border-color: color-mix(in srgb, var(--selector-accent) 84%, white);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--selector-accent) 28%, transparent);
+  transform: translateY(-1px);
+}
+
+.veilwalker-feature__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.veilwalker-selector__zodiac {
+  --zodiac-sign-color: #d4b36b;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 34px;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--navbar-border) 55%, transparent);
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--navbar-hover-text) 8%, transparent), transparent 50%, color-mix(in srgb, var(--navbar-hover-text) 8%, transparent)),
+    color-mix(in srgb, var(--navbar-bg) 46%, transparent);
+  overflow: hidden;
+}
+
+body.sun-mode .veilwalker-selector__zodiac,
+body.moon-mode .veilwalker-selector__zodiac {
+  --zodiac-sign-color: #d4b36b;
+}
+
+body.blood-moon-mode .veilwalker-selector__zodiac {
+  --zodiac-sign-color: #ff5266;
+}
+
+.veilwalker-zodiac-track {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.veilwalker-zodiac-track::-webkit-scrollbar {
+  display: none;
+}
+
+.veilwalker-zodiac-arrow {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 44px;
+  border: 0;
+  padding: 0;
+  color: var(--zodiac-sign-color);
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.82;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    filter 180ms ease;
+}
+
+.veilwalker-zodiac-arrow::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--zodiac-sign-color) 58%, transparent));
+}
+
+.veilwalker-zodiac-arrow--prev::before {
+  transform: rotate(-135deg);
+}
+
+.veilwalker-zodiac-arrow--next::before {
+  transform: rotate(45deg);
+}
+
+.veilwalker-zodiac-arrow:hover,
+.veilwalker-zodiac-arrow:focus-visible {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--zodiac-sign-color) 68%, transparent));
+}
+
+.veilwalker-zodiac-button {
+  flex: 1 0 auto;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 78px;
+  padding: 0.66rem 0.62rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--navbar-muted);
+  background: transparent;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    color 220ms ease,
+    background 220ms ease,
+    transform 220ms ease;
+}
+
+.veilwalker-zodiac-button__glyph {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--zodiac-sign-color) 18%, transparent);
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.veilwalker-zodiac-button__icon {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: var(--zodiac-sign-color);
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--zodiac-sign-color) 34%, transparent));
+  -webkit-mask: var(--zodiac-icon) center / contain no-repeat;
+  mask: var(--zodiac-icon) center / contain no-repeat;
+  transition:
+    filter 220ms ease,
+    transform 220ms ease;
+}
+
+.veilwalker-zodiac-button:hover,
+.veilwalker-zodiac-button:focus-visible,
+.veilwalker-zodiac-button.is-active {
+  border-color: transparent;
+  color: var(--navbar-text);
+  background: transparent;
+  box-shadow: none;
+}
+
+.veilwalker-zodiac-button.is-active {
+  transform: translateY(-1px);
+}
+
+.veilwalker-zodiac-button.is-active .veilwalker-zodiac-button__glyph,
+.veilwalker-zodiac-button:hover .veilwalker-zodiac-button__glyph,
+.veilwalker-zodiac-button:focus-visible .veilwalker-zodiac-button__glyph {
+  border-color: var(--zodiac-sign-color);
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--zodiac-sign-color) 13%, transparent),
+    0 0 18px color-mix(in srgb, var(--zodiac-sign-color) 52%, transparent);
+  transform: scale(1.05);
+}
+
+.veilwalker-zodiac-button.is-active .veilwalker-zodiac-button__icon,
+.veilwalker-zodiac-button:hover .veilwalker-zodiac-button__icon,
+.veilwalker-zodiac-button:focus-visible .veilwalker-zodiac-button__icon {
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--zodiac-sign-color) 72%, transparent));
+  transform: scale(1.03);
+}
+
+body.blood-moon-mode .veilwalker-zodiac-button__glyph {
+  box-shadow: 0 0 12px rgba(255, 40, 64, 0.24);
+}
+
+.veilwalker-selector__dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  min-height: 18px;
+  margin-top: 2px;
+}
+
+.veilwalker-selector-dot {
+  width: 22px;
+  height: 3px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, #d4b36b 42%, transparent);
+  cursor: pointer;
+  opacity: 0.58;
+  transition:
+    background 180ms ease,
+    box-shadow 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.veilwalker-selector-dot.is-active,
+.veilwalker-selector-dot:hover,
+.veilwalker-selector-dot:focus-visible {
+  background: #d4b36b;
+  box-shadow: 0 0 12px rgba(212, 179, 107, 0.52);
+  opacity: 1;
+  transform: scaleX(1.28);
+}
+
+body.blood-moon-mode .veilwalker-selector-dot {
+  background: rgba(255, 82, 102, 0.36);
+}
+
+body.blood-moon-mode .veilwalker-selector-dot.is-active,
+body.blood-moon-mode .veilwalker-selector-dot:hover,
+body.blood-moon-mode .veilwalker-selector-dot:focus-visible {
+  background: #ff5266;
+  box-shadow: 0 0 12px rgba(255, 40, 64, 0.42);
+}
+
+.veilwalker-selector__closing {
+  display: grid;
+  justify-items: center;
+  max-width: 760px;
+  margin: clamp(10px, 2.4vw, 18px) auto 0;
+  padding-top: clamp(8px, 1.4vw, 14px);
+  color: #d4b36b;
+  font-family: var(--heading-font);
+  font-size: clamp(1.3rem, 2.6vw, 2rem);
+  line-height: 1.3;
+  text-align: center;
+}
+
+.veilwalker-selector__closing::before {
+  content: "";
+  width: min(340px, 70%);
+  height: 1px;
+  margin-bottom: clamp(0.75rem, 1.8vw, 1.15rem);
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, currentColor 38%, transparent);
+  opacity: 0.7;
+}
+
+.veilwalker-selector__closing-copy {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.veilwalker-selector__closing-copy--blood {
+  display: none;
+}
+
+.veilwalker-selector__closing p {
+  margin: 0;
+  text-wrap: balance;
+  text-shadow:
+    0 1px 8px rgba(0, 0, 0, 0.56),
+    0 0 14px rgba(212, 179, 107, 0.16);
+}
+
+body.sun-mode .veilwalker-selector__closing,
+body.moon-mode .veilwalker-selector__closing {
+  color: #d4b36b;
+}
+
+body.blood-moon-mode .veilwalker-selector__closing {
+  color: #ff7a89;
+}
+
+body.blood-moon-mode .veilwalker-selector__closing-copy--standard {
+  display: none;
+}
+
+body.blood-moon-mode .veilwalker-selector__closing-copy--blood {
+  display: grid;
+}
+
+body.blood-moon-mode .veilwalker-selector__closing p {
+  text-shadow:
+    0 1px 8px rgba(0, 0, 0, 0.66),
+    0 0 16px rgba(255, 40, 64, 0.26);
+}
+
+@media (max-width: 1080px) {
+  .veilwalker-feature__nav--prev {
+    left: 4px;
+  }
+
+  .veilwalker-feature__nav--next {
+    right: 4px;
+  }
+}
+
+/* ================================
    Veilwalker Grid Cards
 ================================ */
 
@@ -260,7 +931,7 @@ body.blood-moon-mode .reader-profile-card:not(.reader-profile-card--blood):not(.
   opacity: 0.14;
 }
 
-.reader-profile-card--aquarius-bloodmoon > * {
+.reader-profile-card--aquarius-bloodmoon:not(.veilwalker-feature) > * {
   position: relative;
   z-index: 1;
 }
@@ -782,6 +1453,58 @@ body.is-lightbox-open {
     rgba(255, 255, 255, 0.055);
 }
 
+body.sun-mode .reader-detail__form-button.is-active {
+  border-color: rgba(255, 219, 139, 0.84);
+  color: #fff7df;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 221, 139, 0.24), transparent 68%),
+    linear-gradient(135deg, rgba(184, 112, 38, 0.68), rgba(75, 39, 15, 0.74)),
+    rgba(80, 44, 18, 0.82);
+  box-shadow:
+    0 0 18px rgba(231, 166, 68, 0.34),
+    inset 0 0 16px rgba(255, 221, 139, 0.12);
+}
+
+body.moon-mode .reader-detail__form-button.is-active {
+  border-color: rgba(196, 160, 255, 0.82);
+  color: #f6efff;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(190, 150, 255, 0.26), transparent 68%),
+    linear-gradient(135deg, rgba(98, 58, 170, 0.72), rgba(31, 20, 72, 0.82)),
+    rgba(42, 25, 86, 0.86);
+  box-shadow:
+    0 0 18px rgba(157, 100, 255, 0.34),
+    inset 0 0 16px rgba(214, 190, 255, 0.12);
+}
+
+body.blood-moon-mode .reader-detail__form-button[data-reader-form-id="bloodMoonShadow"] {
+  border-color: rgba(255, 135, 145, 0.88);
+  color: #fff4f1;
+  background:
+    linear-gradient(135deg, rgba(255, 75, 92, 0.96), rgba(128, 7, 24, 0.96)),
+    #b90f28;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 190, 190, 0.36),
+    0 0 18px rgba(255, 35, 65, 0.28);
+}
+
+body.blood-moon-mode .reader-detail__form-button[data-reader-form-id="bloodMoonShadow"] span {
+  color: #fff8f2;
+  text-shadow: 0 1px 2px rgba(40, 0, 6, 0.75);
+}
+
+body.blood-moon-mode .reader-detail__form-button[data-reader-form-id="bloodMoonShadow"]:hover,
+body.blood-moon-mode .reader-detail__form-button[data-reader-form-id="bloodMoonShadow"]:focus-visible,
+body.blood-moon-mode .reader-detail__form-button[data-reader-form-id="bloodMoonShadow"].is-active {
+  border-color: rgba(255, 190, 190, 0.96);
+  background:
+    linear-gradient(135deg, rgba(255, 89, 106, 0.98), rgba(154, 9, 29, 0.98)),
+    #cf1834;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 215, 215, 0.42),
+    0 0 24px rgba(255, 35, 65, 0.38);
+}
+
 /* Blood Moon-only unstable signal attached to Lyssara's Veilwalker record. */
 .reader-blood-signal {
   position: relative;
@@ -868,55 +1591,62 @@ body.is-lightbox-open {
 
 .reader-detail__nav {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 8px;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(72px, 22vw, 220px);
+  width: 100%;
+  margin-top: 10px;
 }
 
 .reader-detail__nav-button {
   display: inline-flex;
-  width: 44px;
+  width: auto;
+  min-width: 44px;
   height: 44px;
   min-height: 44px;
   align-items: center;
   justify-content: center;
-  border: 1px solid color-mix(in srgb, var(--reader-detail-border) 74%, transparent);
-  border-radius: 50%;
-  padding: 0;
-  color: var(--navbar-text);
-  background:
-    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--reader-detail-glow) 38%, transparent), transparent 66%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
-    rgba(255, 255, 255, 0.04);
-  box-shadow:
-    0 0 14px color-mix(in srgb, var(--reader-detail-glow) 42%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border: 0;
+  border-radius: 0;
+  padding: 0 2px;
+  color: color-mix(in srgb, var(--navbar-text) 86%, var(--navbar-hover-text));
+  background: transparent;
+  box-shadow: none;
   cursor: pointer;
   font-family: var(--body-font);
-  font-size: 2rem;
-  font-weight: 900;
   line-height: 1;
   transition:
-    border-color 220ms ease,
-    box-shadow 220ms ease,
     color 220ms ease,
+    filter 220ms ease,
     transform 220ms ease;
 }
 
+.reader-detail__nav-button::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+}
+
+.reader-detail__nav-button[data-reader-lightbox-nav="prev"]::before {
+  transform: rotate(-135deg);
+}
+
+.reader-detail__nav-button[data-reader-lightbox-nav="next"]::before {
+  transform: rotate(45deg);
+}
+
 .reader-detail__nav-button span {
-  display: block;
-  line-height: 0.74;
-  transform: translateY(-1px);
+  display: none;
 }
 
 .reader-detail__nav-button:hover,
 .reader-detail__nav-button:focus-visible {
-  border-color: color-mix(in srgb, var(--reader-detail-border) 84%, rgba(255, 255, 255, 0.24));
   color: var(--navbar-hover-text);
-  box-shadow:
-    0 0 22px color-mix(in srgb, var(--reader-detail-glow) 76%, transparent),
-    inset 0 0 14px color-mix(in srgb, var(--reader-detail-glow) 18%, transparent);
-  transform: translateY(-1px) scale(1.04);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--reader-detail-glow) 72%, transparent));
+  outline: none;
+  transform: translateY(-1px);
 }
 
 /* ================================
@@ -924,6 +1654,41 @@ body.is-lightbox-open {
 ================================ */
 
 @media (max-width: 900px) {
+  .veilwalker-selector__zodiac {
+    order: 1;
+  }
+
+  .veilwalker-selector__featured {
+    order: 2;
+    padding: 0;
+  }
+
+  .veilwalker-selector__dots {
+    order: 3;
+  }
+
+  .veilwalker-selector__closing {
+    order: 4;
+  }
+
+  .veilwalker-feature {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .veilwalker-feature__nav--prev {
+    left: 4px;
+  }
+
+  .veilwalker-feature__nav--next {
+    right: 4px;
+  }
+
+  .veilwalker-feature__image {
+    height: clamp(360px, 72vw, 560px);
+    min-height: 0;
+  }
+
   .reader-profile-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -934,6 +1699,20 @@ body.is-lightbox-open {
 
   .reader-lightbox__dialog {
     grid-template-columns: 1fr;
+  }
+
+  body.sun-mode .reader-lightbox__dialog {
+    --reader-detail-panel:
+      radial-gradient(circle at 18% 14%, rgba(184, 112, 38, 0.18), transparent 34%),
+      linear-gradient(135deg, rgba(255, 200, 112, 0.08), transparent 48%),
+      rgba(18, 10, 5, 0.96);
+  }
+
+  body.moon-mode .reader-lightbox__dialog {
+    --reader-detail-panel:
+      radial-gradient(circle at 18% 14%, rgba(128, 86, 220, 0.2), transparent 34%),
+      linear-gradient(135deg, rgba(196, 160, 255, 0.08), transparent 48%),
+      rgba(8, 6, 22, 0.97);
   }
 
   .reader-lightbox__image {
@@ -949,6 +1728,51 @@ body.is-lightbox-open {
 }
 
 @media (max-width: 620px) {
+  .veilwalker-feature {
+    padding: 14px;
+    border-radius: 18px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .veilwalker-feature__image-wrap {
+    border-radius: 14px;
+  }
+
+  .veilwalker-feature__image {
+    height: min(118vw, 500px);
+    min-height: 360px;
+  }
+
+  .veilwalker-feature__details {
+    gap: 13px;
+    padding: 2px 2px 6px;
+  }
+
+  .veilwalker-feature__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .veilwalker-feature__button {
+    width: 100%;
+  }
+
+  .veilwalker-feature__nav {
+    width: 40px;
+    height: 40px;
+    top: min(59vw, 250px);
+  }
+
+  .veilwalker-feature__nav span {
+    display: none;
+  }
+
+  .veilwalker-zodiac-button {
+    flex-basis: 92px;
+    min-width: 92px;
+  }
+
   .reader-profile-grid {
     grid-template-columns: 1fr;
   }
