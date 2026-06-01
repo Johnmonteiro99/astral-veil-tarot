@@ -152,6 +152,130 @@ body.blood-moon-mode .deck-hero {
   --deck-hero-glow: var(--theme-glow-primary);
 }
 
+.deck-ritual-feature {
+  --deck-ritual-accent: var(--theme-divider-accent);
+  --deck-ritual-accent-soft: var(--theme-divider-faint);
+  --deck-ritual-glow: var(--theme-glow-primary);
+  --deck-ritual-text: #fff7df;
+  --deck-ritual-muted: rgba(255, 244, 216, 0.84);
+  position: relative;
+  display: grid;
+  align-items: center;
+  width: min(100%, 1200px);
+  min-width: 0;
+  min-height: clamp(260px, 30vw, 370px);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--deck-ritual-accent) 62%, rgba(255, 247, 223, 0.18));
+  border-radius: 28px;
+  margin: 0 auto clamp(2rem, 5vw, 3.6rem);
+  color: var(--deck-ritual-text);
+  background-image:
+    linear-gradient(90deg, rgba(5, 8, 10, 0.86), rgba(5, 8, 10, 0.5) 47%, rgba(5, 8, 10, 0.12)),
+    url("../assets/images/concepts-ideas/deck-page-card.png");
+  background-position: center;
+  background-size: cover;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.34),
+    0 0 34px color-mix(in srgb, var(--deck-ritual-glow) 76%, transparent),
+    inset 0 1px 0 rgba(255, 247, 223, 0.12);
+}
+
+.deck-ritual-feature[hidden] {
+  display: none;
+}
+
+.deck-ritual-feature__content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.85rem;
+  max-width: min(520px, 100%);
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.deck-ritual-feature__eyebrow {
+  margin: 0;
+  color: color-mix(in srgb, var(--deck-ritual-accent) 78%, var(--deck-ritual-text));
+  font-family: var(--body-font);
+  font-size: clamp(0.74rem, 1vw, 0.86rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  line-height: 1.35;
+  text-transform: uppercase;
+  text-shadow: 0 0 14px color-mix(in srgb, var(--deck-ritual-glow) 72%, transparent);
+}
+
+.deck-ritual-feature h2 {
+  margin: 0;
+  color: var(--deck-ritual-text);
+  font-family: var(--heading-font);
+  font-size: clamp(2.7rem, 5.4vw, 4.5rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: 0;
+  text-shadow:
+    0 3px 18px rgba(0, 0, 0, 0.52),
+    0 0 26px color-mix(in srgb, var(--deck-ritual-glow) 44%, transparent);
+}
+
+.deck-ritual-feature p {
+  max-width: 460px;
+  margin: 0;
+  color: var(--deck-ritual-muted);
+  font-size: clamp(0.98rem, 1.2vw, 1.12rem);
+  line-height: 1.62;
+}
+
+.deck-ritual-feature__note {
+  color: color-mix(in srgb, var(--deck-ritual-accent) 62%, var(--deck-ritual-text));
+  font-style: italic;
+}
+
+body.sun-mode .deck-ritual-feature {
+  --deck-ritual-accent: var(--sun-gold);
+  --deck-ritual-accent-soft: rgba(64, 111, 80, 0.34);
+  --deck-ritual-glow: rgba(231, 166, 68, 0.36);
+  --deck-ritual-text: #fff7df;
+  --deck-ritual-muted: rgba(255, 239, 198, 0.84);
+  border-color: color-mix(in srgb, var(--sun-gold) 58%, rgba(64, 111, 80, 0.38));
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.32),
+    0 0 34px rgba(231, 166, 68, 0.24),
+    0 0 52px rgba(64, 111, 80, 0.12),
+    inset 0 1px 0 rgba(255, 247, 223, 0.12);
+}
+
+body.moon-mode .deck-ritual-feature {
+  --deck-ritual-accent: var(--theme-accent-secondary);
+  --deck-ritual-accent-soft: rgba(183, 140, 255, 0.26);
+  --deck-ritual-glow: var(--theme-glow-primary);
+  --deck-ritual-text: #f8f0ff;
+  --deck-ritual-muted: rgba(224, 211, 244, 0.86);
+  border-color: color-mix(in srgb, var(--theme-accent-secondary) 54%, rgba(183, 140, 255, 0.34));
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.38),
+    0 0 34px rgba(157, 100, 255, 0.24),
+    0 0 48px rgba(214, 179, 106, 0.12),
+    inset 0 1px 0 rgba(244, 237, 255, 0.12);
+}
+
+body.blood-moon-mode .deck-ritual-feature {
+  --deck-ritual-accent: var(--accent-color, #d41f3a);
+  --deck-ritual-accent-soft: var(--accent-soft, rgba(212, 31, 58, 0.35));
+  --deck-ritual-glow: var(--accent-glow, rgba(255, 35, 65, 0.45));
+  --deck-ritual-text: #fff0df;
+  --deck-ritual-muted: rgba(255, 222, 214, 0.82);
+  border-color: color-mix(in srgb, var(--accent-color, #d41f3a) 70%, rgba(255, 240, 223, 0.16));
+  background-image:
+    linear-gradient(90deg, rgba(10, 0, 3, 0.9), rgba(10, 0, 3, 0.52) 48%, rgba(10, 0, 3, 0.16)),
+    url("../assets/images/concepts-ideas/bloodmoon-deck-page-card.png");
+  box-shadow:
+    0 26px 78px rgba(0, 0, 0, 0.48),
+    0 0 38px color-mix(in srgb, var(--accent-glow, rgba(255, 35, 65, 0.45)) 66%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--accent-color, #d41f3a) 22%, transparent),
+    inset 0 1px 0 rgba(255, 220, 214, 0.1);
+}
+
 @media (max-width: 760px) {
   .deck-hero {
     margin-top: clamp(3.75rem, 16vw, 5.25rem);
@@ -165,6 +289,40 @@ body.blood-moon-mode .deck-hero {
 
   .deck-hero__subtitle {
     font-size: clamp(1rem, 4.4vw, 1.18rem);
+  }
+
+  .deck-ritual-feature {
+    width: min(100%, calc(100vw - 28px));
+    min-height: clamp(260px, 74vw, 320px);
+    border-radius: 24px;
+    margin-bottom: 1.7rem;
+    background-image:
+      linear-gradient(180deg, rgba(5, 8, 10, 0.82), rgba(5, 8, 10, 0.5) 56%, rgba(5, 8, 10, 0.2)),
+      url("../assets/images/concepts-ideas/deck-page-card.png");
+    background-position: 62% center;
+  }
+
+  body.blood-moon-mode .deck-ritual-feature {
+    background-image:
+      linear-gradient(180deg, rgba(10, 0, 3, 0.86), rgba(10, 0, 3, 0.52) 58%, rgba(10, 0, 3, 0.22)),
+      url("../assets/images/concepts-ideas/bloodmoon-deck-page-card.png");
+    background-position: 62% center;
+  }
+
+  .deck-ritual-feature__content {
+    align-content: end;
+    min-height: inherit;
+    padding: clamp(1.35rem, 6vw, 2rem);
+  }
+
+  .deck-ritual-feature h2 {
+    font-size: clamp(2.35rem, 12vw, 3.5rem);
+  }
+
+  .deck-ritual-feature p {
+    max-width: 35ch;
+    font-size: 0.96rem;
+    line-height: 1.55;
   }
 
   .deck-lore-note {

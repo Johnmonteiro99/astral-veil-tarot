@@ -2,6 +2,7 @@ const deckView = document.querySelector("[data-deck-view]");
 const deckEyebrow = document.querySelector("[data-deck-eyebrow]");
 const deckTitle = document.querySelector("[data-deck-title]");
 const deckDescription = document.querySelector("[data-deck-description]");
+const deckRitualFeature = document.querySelector("[data-deck-ritual-feature]");
 const deckLightbox = document.querySelector("[data-deck-lightbox]");
 const lightboxCardImage = document.querySelector("[data-lightbox-card-image]");
 const lightboxCardName = document.querySelector("[data-lightbox-card-name]");
@@ -56,6 +57,12 @@ function updateDeckHero({ eyebrow, title, description }) {
 
   if (deckDescription) {
     deckDescription.textContent = description;
+  }
+}
+
+function setDeckRitualFeatureVisible(isVisible) {
+  if (deckRitualFeature) {
+    deckRitualFeature.hidden = !isVisible;
   }
 }
 
@@ -326,6 +333,7 @@ function renderDeckCollection() {
     title: "The Astral Decks",
     description: "Choose a tarot collection to explore the cards held within the Astral Veil."
   });
+  setDeckRitualFeatureVisible(true);
 
   deckView.innerHTML = `
     <div class="deck-collection-shell">
@@ -390,6 +398,7 @@ function renderDeckGallery(collectionId) {
     title: collection.viewTitle,
     description: collection.viewDescription
   });
+  setDeckRitualFeatureVisible(false);
 
   deckView.innerHTML = `
     <div class="deck-view__toolbar">

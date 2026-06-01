@@ -1573,9 +1573,9 @@ body.moon-mode .theme-toggle__icon--moon {
 .readers-hero-letter {
   position: relative;
   display: grid;
-  align-items: center;
+  align-items: stretch;
   width: min(100%, 1180px);
-  min-height: clamp(360px, 34vw, 470px);
+  min-height: clamp(300px, 28vw, 390px);
   margin: 0 auto;
   overflow: hidden;
   border: 0;
@@ -1598,9 +1598,14 @@ body.moon-mode .theme-toggle__icon--moon {
   position: relative;
   z-index: 1;
   display: grid;
+  align-content: center;
   justify-items: start;
+  gap: clamp(0.7rem, 1.4vw, 1rem);
   width: min(39rem, 50%);
-  padding: clamp(2.5rem, 5vw, 4.8rem) clamp(1.6rem, 4.8vw, 4.8rem);
+  padding:
+    clamp(2rem, 4vw, 3.6rem)
+    clamp(1.6rem, 4.8vw, 4.8rem)
+    clamp(2.45rem, 4.6vw, 4.25rem);
   text-align: left;
 }
 
@@ -1693,7 +1698,7 @@ body.blood-moon-mode .readers-page .page-hero {
 }
 
 body.blood-moon-mode .readers-hero-letter {
-  background-image: url("../assets/images/concepts-ideas/meet-the-veilwalkers.png");
+  background-image: url("../assets/images/concepts-ideas/bloodmoon-veilwalker-section.png");
   box-shadow:
     0 24px 76px rgba(0, 0, 0, 0.34),
     0 0 48px rgba(255, 40, 64, 0.32);
@@ -1714,6 +1719,11 @@ body.blood-moon-mode .page-hero__subtitle {
 .readers-hero-letter p {
   margin-right: 0;
   margin-left: 0;
+  line-height: 1.58;
+}
+
+.readers-hero-letter__copy p {
+  margin-top: 0;
 }
 
 .about-page {
@@ -2927,7 +2937,8 @@ body.moon-mode .about-cta-card__icon {
 .reader-panel,
 .reading-options,
 .deck-panel,
-.reading-stage {
+.reading-stage,
+.reading-results-section {
   padding: clamp(20px, 4vw, 34px);
 }
 
@@ -2942,6 +2953,10 @@ body.moon-mode .about-cta-card__icon {
   opacity: 0;
   overflow: hidden;
   transform: translateY(-12px);
+}
+
+body.is-reading-stage-active .reading-section__intro--veilgate {
+  display: none;
 }
 
 .reading-stage {
@@ -3108,43 +3123,26 @@ body.moon-mode .about-cta-card__icon {
   --reader-badge: rgba(194, 39, 52, 0.18);
 }
 
-/* Lyssara's Blood Moon card keeps Aquarius starlight distinct from Zephyra's crimson shadow. */
 .reader-carousel__featured.reader-card--aquarius-bloodmoon {
   --reader-accent: rgba(220, 224, 255, 0.58);
-  --reader-glow: rgba(184, 190, 255, 0.26);
-  --reader-panel: rgba(36, 31, 64, 0.3);
+  --reader-glow: transparent;
+  --reader-panel: rgba(79, 10, 18, 0.34);
   --reader-badge: rgba(184, 190, 255, 0.12);
   position: relative;
-  border-color: rgba(221, 225, 255, 0.4);
+  border-color: rgba(235, 238, 255, 0.44);
   background:
-    radial-gradient(circle at 26% 16%, rgba(232, 236, 255, 0.14), transparent 34%),
-    radial-gradient(circle at 76% 72%, rgba(148, 128, 255, 0.1), transparent 36%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.07), transparent 50%),
-    rgba(22, 7, 16, 0.78);
+    radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--reader-glow) 72%, transparent), transparent 42%),
+    linear-gradient(135deg, var(--reader-panel), rgba(255, 255, 255, 0.035)),
+    var(--navbar-bg);
   box-shadow:
-    0 24px 72px rgba(0, 0, 0, 0.32),
-    0 0 28px rgba(218, 224, 255, 0.16),
-    0 0 42px rgba(138, 112, 255, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+    0 24px 72px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(235, 238, 255, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .reader-carousel__featured.reader-card--aquarius-bloodmoon::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.5) 0 1px, transparent 1.6px),
-    radial-gradient(circle, rgba(200, 210, 255, 0.36) 0 1px, transparent 1.5px);
-  background-position:
-    14% 22%,
-    78% 34%;
-  background-size:
-    118px 118px,
-    156px 156px;
-  opacity: 0.16;
-  animation: lyssaraStarlightDrift 9s ease-in-out infinite alternate;
+  display: none;
+  content: none;
 }
 
 .reader-carousel__featured.reader-card--aquarius-bloodmoon > * {
@@ -5711,7 +5709,7 @@ body.blood-moon-mode .site-footer__inner {
   }
 
   .readers-hero-letter {
-    min-height: clamp(350px, 50vw, 460px);
+    min-height: clamp(300px, 42vw, 390px);
     background-position: center;
     background-size: cover;
   }
@@ -6571,7 +6569,8 @@ body.blood-moon-mode .site-footer__inner {
   }
 
   .readers-hero-letter {
-    min-height: 390px;
+    min-height: 320px;
+    max-height: none;
     border-radius: 18px;
     background-position: center;
     background-size: cover;
@@ -6579,7 +6578,7 @@ body.blood-moon-mode .site-footer__inner {
 
   .readers-hero-letter__copy {
     width: 100%;
-    padding: 1.55rem;
+    padding: 1.55rem 1.55rem 2rem;
     background: linear-gradient(90deg, rgba(5, 5, 12, 0.82), rgba(5, 5, 12, 0.48), transparent);
   }
 
@@ -7099,40 +7098,23 @@ body.blood-moon-mode .site-footer__inner {
 }
 
 .reader-carousel__featured.reader-card--aquarius-bloodmoon .reader-selection-split__image {
-  border-color: rgba(225, 229, 255, 0.46);
-  background:
-    radial-gradient(circle at 54% 62%, rgba(242, 244, 255, 0.12), transparent 20%),
-    radial-gradient(circle at 50% 34%, rgba(185, 190, 255, 0.22), transparent 48%),
-    rgba(0, 0, 0, 0.28);
+  border-color: rgba(235, 238, 255, 0.52);
+  background: rgba(0, 0, 0, 0.26);
   box-shadow:
-    0 0 28px rgba(218, 224, 255, 0.18),
-    0 0 38px rgba(130, 110, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 0 0 1px rgba(235, 238, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .reader-carousel__featured.reader-card--aquarius-bloodmoon .reader-selection-split__image::after {
-  content: "";
-  position: absolute;
-  left: 48%;
-  top: 56%;
-  z-index: 1;
-  width: clamp(78px, 11vw, 132px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle, rgba(255, 255, 255, 0.22) 0 9%, rgba(222, 226, 255, 0.14) 10% 28%, transparent 62%);
-  filter: blur(2px);
-  opacity: 0.46;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
+  display: none;
+  content: none;
 }
 
 .reader-carousel__featured.reader-card--aquarius-bloodmoon .reader-selection-split__panel {
-  border-color: rgba(220, 224, 255, 0.28);
+  border-color: color-mix(in srgb, var(--reader-accent) 46%, transparent);
   background:
-    radial-gradient(circle at 12% 12%, rgba(218, 224, 255, 0.12), transparent 48%),
-    radial-gradient(circle at 88% 82%, rgba(135, 110, 255, 0.08), transparent 42%),
-    rgba(255, 255, 255, 0.032);
+    radial-gradient(circle at 12% 12%, color-mix(in srgb, var(--reader-glow) 32%, transparent), transparent 48%),
+    rgba(255, 255, 255, 0.035);
 }
 
 .reader-selection-split__image:hover,
@@ -7545,6 +7527,46 @@ body.blood-moon-mode .reader-selection.reader-panel {
 
 .reader-grid.reader-carousel {
   width: min(100%, 1180px);
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.reading-stage-hero {
+  position: relative;
+  min-width: 0;
+  width: min(100% - 32px, 1120px);
+  margin: 0 auto;
+  border-radius: 28px;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.2) 46%, rgba(0, 0, 0, 0.56)),
+    var(--reading-stage-hero-image) center / cover no-repeat;
+  box-shadow:
+    inset 0 -54px 80px rgba(0, 0, 0, 0.46),
+    0 18px 54px rgba(0, 0, 0, 0.24);
+}
+
+.reading-stage-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 72% 22%, color-mix(in srgb, var(--reading-stage-glow) 78%, transparent), transparent 34%),
+    radial-gradient(circle at 25% 56%, color-mix(in srgb, var(--reading-stage-glow) 48%, transparent), transparent 36%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.06) 48%, rgba(0, 0, 0, 0.58));
+  pointer-events: none;
+}
+
+.reading-stage-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-width: 0;
+  gap: clamp(10px, 1.6vw, 18px);
+  width: 100%;
+  min-height: 0;
+  margin: 0 auto;
+  padding: 0;
 }
 
 .reader-carousel__stage {
@@ -8363,48 +8385,22 @@ body.blood-moon-mode .veilwalker-unique {
 .active-reader-header--aquarius-bloodmoon {
   border-color: rgba(221, 225, 255, 0.34);
   background:
-    radial-gradient(circle at 18% 18%, rgba(232, 236, 255, 0.13), transparent 42%),
-    radial-gradient(circle at 86% 78%, rgba(138, 112, 255, 0.09), transparent 38%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 52%),
-    rgba(25, 10, 20, 0.46);
+    radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--navbar-glow) 32%, transparent), transparent 46%),
+    rgba(255, 255, 255, 0.035);
   box-shadow:
-    0 18px 52px rgba(0, 0, 0, 0.28),
-    0 0 26px rgba(218, 224, 255, 0.14),
-    0 0 38px rgba(138, 112, 255, 0.1),
+    0 18px 52px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(221, 225, 255, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.11);
 }
 
 .active-reader-header--aquarius-bloodmoon::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.44) 0 1px, transparent 1.5px),
-    radial-gradient(circle, rgba(200, 210, 255, 0.28) 0 1px, transparent 1.4px);
-  background-position:
-    18% 24%,
-    82% 58%;
-  background-size:
-    126px 126px,
-    164px 164px;
-  opacity: 0.13;
+  display: none;
+  content: none;
 }
 
 .active-reader-header--aquarius-bloodmoon::after {
-  content: "";
-  position: absolute;
-  right: clamp(18px, 3vw, 34px);
-  bottom: 12px;
-  left: clamp(18px, 3vw, 34px);
-  height: 9px;
-  border-radius: 999px;
-  background:
-    linear-gradient(90deg, transparent, rgba(226, 230, 255, 0.24), rgba(160, 145, 255, 0.18), transparent);
-  box-shadow:
-    0 0 18px rgba(218, 224, 255, 0.16),
-    0 0 26px rgba(138, 112, 255, 0.1);
-  pointer-events: none;
+  display: none;
+  content: none;
 }
 
 .active-reader-header--aquarius-bloodmoon > * {
@@ -8428,14 +8424,10 @@ body.blood-moon-mode .veilwalker-unique {
 
 .active-reader-header--aquarius-bloodmoon .reader-portrait-frame {
   border-color: rgba(225, 229, 255, 0.42);
-  background:
-    radial-gradient(circle at 54% 62%, rgba(242, 244, 255, 0.1), transparent 22%),
-    radial-gradient(circle at 50% 34%, rgba(185, 190, 255, 0.18), transparent 48%),
-    rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.3);
   box-shadow:
     0 18px 46px rgba(0, 0, 0, 0.34),
-    0 0 24px rgba(218, 224, 255, 0.16),
-    0 0 34px rgba(130, 110, 255, 0.1),
+    0 0 0 1px rgba(225, 229, 255, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
@@ -8684,6 +8676,872 @@ body.blood-moon-mode .active-reader-header__quote {
   }
 }
 
+/* ================================
+   Immersive Reading Stage
+================================ */
+
+.reading-stage {
+  --reading-stage-accent: #e7c36a;
+  --reading-stage-glow: rgba(231, 195, 106, 0.25);
+  --reading-stage-line: rgba(231, 195, 106, 0.3);
+  --reading-stage-text-bg: rgba(3, 2, 8, 0.42);
+  --reading-stage-text-bg-strong: rgba(3, 2, 8, 0.58);
+  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-moon-section.png");
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  width: min(100%, 1180px);
+}
+
+body.sun-mode .reading-stage,
+body.sun-mode .reading-results-section {
+  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-sun-section.png");
+  --reading-stage-accent: #e7c36a;
+  --reading-stage-glow: rgba(231, 195, 106, 0.3);
+  --reading-stage-line: rgba(231, 195, 106, 0.34);
+  --reading-stage-text-bg: rgba(24, 14, 4, 0.42);
+  --reading-stage-text-bg-strong: rgba(24, 14, 4, 0.58);
+}
+
+body.moon-mode .reading-stage,
+body.moon-mode .reading-results-section {
+  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-moon-section.png");
+  --reading-stage-accent: #d6b36a;
+  --reading-stage-glow: rgba(166, 132, 230, 0.3);
+  --reading-stage-line: rgba(214, 179, 106, 0.3);
+  --reading-stage-text-bg: rgba(4, 5, 18, 0.46);
+  --reading-stage-text-bg-strong: rgba(4, 5, 18, 0.62);
+}
+
+body.blood-moon-mode .reading-stage,
+body.blood-moon-mode .reading-results-section {
+  --reading-stage-hero-image: url("../assets/images/concepts-ideas/bloodmoon-reading-section.png");
+  --reading-stage-accent: #ff5266;
+  --reading-stage-glow: rgba(255, 40, 64, 0.34);
+  --reading-stage-line: rgba(255, 82, 102, 0.34);
+  --reading-stage-text-bg: rgba(10, 0, 3, 0.56);
+  --reading-stage-text-bg-strong: rgba(10, 0, 3, 0.72);
+}
+
+body.blood-moon-mode .reading-stage,
+body.blood-moon-mode .reading-results-section {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.reading-stage-intro {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: min(100%, 1060px);
+  margin: 0 auto clamp(16px, 3vw, 28px);
+  padding: 0 clamp(12px, 2vw, 20px);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+}
+
+.reading-stage-intro__label {
+  margin: 0;
+  color: var(--reading-stage-accent);
+  font-size: clamp(0.74rem, 1.5vw, 0.9rem);
+  font-weight: 900;
+  letter-spacing: 0.48em;
+  text-transform: uppercase;
+  text-shadow: 0 0 14px var(--reading-stage-glow);
+}
+
+.reading-stage-intro h1 {
+  margin: 0;
+  color: var(--navbar-text);
+  font-family: var(--logo-font);
+  font-size: clamp(2.25rem, 4.7vw, 4.45rem);
+  font-weight: 400;
+  letter-spacing: clamp(0.08em, 0.9vw, 0.16em);
+  line-height: 1;
+  max-width: 100%;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow:
+    0 2px 18px rgba(0, 0, 0, 0.56),
+    0 0 24px var(--reading-stage-glow);
+}
+
+.reading-stage-intro__subtitle {
+  margin: 0;
+  color: color-mix(in srgb, var(--navbar-muted) 74%, var(--reading-stage-accent));
+  font-family: var(--font-body-serif);
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  font-style: italic;
+}
+
+.reading-ornament {
+  display: grid;
+  grid-template-columns: minmax(80px, 1fr) auto minmax(80px, 1fr);
+  align-items: center;
+  gap: 16px;
+  width: min(100%, 640px);
+  color: var(--reading-stage-accent);
+}
+
+.reading-ornament span {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--reading-stage-line), transparent);
+  box-shadow: 0 0 10px var(--reading-stage-glow);
+}
+
+.reading-ornament i {
+  font-style: normal;
+  text-shadow: 0 0 12px var(--reading-stage-glow);
+}
+
+.active-reader-header {
+  grid-template-columns: minmax(260px, 0.48fr) minmax(360px, 0.72fr) minmax(140px, 0.42fr);
+  grid-template-areas: "portrait info empty";
+  align-items: stretch;
+  align-content: stretch;
+  grid-template-rows: minmax(0, 1fr);
+  min-height: clamp(420px, 38vw, 560px);
+  height: clamp(420px, 38vw, 560px);
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 64px) 0 clamp(16px, 4vw, 48px);
+  border-color: transparent;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.active-reader-header::before {
+  display: none;
+}
+
+.active-reader-header > * {
+  position: relative;
+  z-index: 1;
+}
+
+.active-reader-header .reader-portrait-frame {
+  grid-area: portrait;
+  align-self: center;
+  justify-self: start;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  width: 100%;
+  height: calc(100% - clamp(36px, 6vw, 72px));
+  min-height: 0;
+  margin-block: auto;
+  border: 1px solid color-mix(in srgb, var(--reading-stage-line) 70%, transparent);
+  border-radius: 18px;
+  aspect-ratio: auto;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--reading-stage-accent) 9%, transparent), transparent 44%),
+    rgba(0, 0, 0, 0.22);
+  box-shadow:
+    -18px 0 34px color-mix(in srgb, var(--reading-stage-glow) 82%, transparent),
+    18px 0 34px color-mix(in srgb, var(--reading-stage-glow) 72%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--reading-stage-line) 44%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.active-reader-header .reader-portrait-frame::before {
+  display: none;
+}
+
+.active-reader-header .reader-portrait {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center top;
+  filter: none;
+}
+
+.active-reader-header__info {
+  grid-area: info;
+  align-self: center;
+  display: grid;
+  align-content: center;
+  gap: clamp(18px, 2.8vw, 30px);
+  min-width: 0;
+  padding-block: clamp(28px, 4vw, 48px);
+}
+
+.active-reader-header .reader-portrait-caption {
+  grid-area: auto;
+  display: grid;
+  gap: clamp(8px, 1.3vw, 14px);
+  align-self: center;
+  max-width: 620px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.active-reader-header .reader-portrait-caption h2 {
+  color: var(--navbar-text);
+  font-family: var(--heading-font);
+  font-size: clamp(2.7rem, 5vw, 4.7rem);
+  text-shadow: 0 0 24px rgba(0, 0, 0, 0.62);
+}
+
+.active-reader-header__role {
+  color: var(--reading-stage-accent);
+  letter-spacing: 0.16em;
+}
+
+.active-reader-header__quote {
+  max-width: 48ch;
+  color: color-mix(in srgb, var(--navbar-text) 88%, var(--reading-stage-accent));
+  font-family: var(--font-body-serif);
+  font-size: clamp(1.08rem, 1.9vw, 1.34rem);
+  line-height: 1.56;
+}
+
+.active-reader-header .active-reader-header__quote {
+  margin: 8px 0 clamp(4px, 1vw, 10px);
+}
+
+.active-reader-header__nav {
+  grid-area: auto;
+  justify-content: start;
+  gap: 14px;
+  margin-top: 0;
+  padding-bottom: clamp(12px, 2vw, 20px);
+  position: static;
+}
+
+.active-reader-header__nav .reader-nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  border-radius: 14px;
+  padding-inline: 18px;
+}
+
+.reader-nav-button__arrow {
+  display: inline-block;
+  font-size: 1.45rem;
+  font-weight: 500;
+  line-height: 0.8;
+}
+
+.spread-selection-panel,
+.reading-results-section {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.spread-selection-panel {
+  gap: clamp(18px, 3vw, 28px);
+  padding: clamp(28px, 5vw, 48px) 0 clamp(22px, 4vw, 34px);
+  border-bottom: 0;
+}
+
+.spread-selection-panel__heading h2,
+.reading-results-header h2 {
+  color: var(--navbar-text);
+  font-family: var(--body-font);
+  font-size: clamp(0.9rem, 2vw, 1.15rem);
+  font-weight: 900;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.spread-selection-panel .reader-introduction {
+  width: min(100%, 780px);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.spread-selection-panel .reader-introduction p:not(.reading-section__eyebrow),
+.reading-results-header p {
+  color: color-mix(in srgb, var(--navbar-muted) 76%, var(--reading-stage-accent));
+  font-family: var(--font-body-serif);
+  font-style: italic;
+}
+
+.spread-selection-panel .reading-controls {
+  width: min(100%, 900px);
+  gap: clamp(18px, 5vw, 74px);
+}
+
+.spread-selection-panel .spread-option {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  min-height: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+}
+
+.spread-selection-panel .spread-option span {
+  display: grid;
+  place-items: center;
+  width: clamp(78px, 9vw, 108px);
+  aspect-ratio: 1;
+  margin: 0;
+  border: 1px solid var(--reading-stage-line);
+  border-radius: 50%;
+  color: var(--navbar-text);
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--reading-stage-glow) 80%, transparent), transparent 68%),
+    rgba(0, 0, 0, 0.18);
+  box-shadow:
+    0 0 20px var(--reading-stage-glow),
+    inset 0 0 0 8px rgba(255, 255, 255, 0.025);
+}
+
+.spread-option strong,
+.spread-option small {
+  display: block;
+}
+
+.spread-option strong {
+  color: var(--navbar-text);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+}
+
+.spread-option small {
+  color: color-mix(in srgb, var(--navbar-muted) 78%, var(--reading-stage-accent));
+  font-family: var(--font-body-serif);
+  font-size: 0.86rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.spread-option:hover:not(:disabled),
+.spread-option:focus-visible:not(:disabled),
+.spread-option.is-active {
+  background: transparent;
+  box-shadow: none;
+  transform: translateY(-4px);
+}
+
+.spread-option:hover:not(:disabled) span,
+.spread-option:focus-visible:not(:disabled) span,
+.spread-option.is-active span {
+  border-color: color-mix(in srgb, var(--reading-stage-accent) 78%, white);
+  box-shadow:
+    0 0 26px var(--reading-stage-glow),
+    0 0 0 1px color-mix(in srgb, var(--reading-stage-accent) 42%, transparent),
+    inset 0 0 0 8px rgba(255, 255, 255, 0.035);
+}
+
+.reading-results-section {
+  width: min(100%, 1180px);
+  padding: 0;
+}
+
+.reading-results-header {
+  position: relative;
+  margin-bottom: 14px;
+  padding-top: clamp(24px, 4vw, 38px);
+}
+
+.reading-results-header,
+.spread-selection-panel__heading {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 3vw, 26px);
+  border-radius: 0;
+  background: transparent;
+}
+
+.deck-area {
+  width: min(100%, 860px);
+  margin: 0 auto clamp(22px, 4vw, 34px);
+  padding-bottom: 4px;
+}
+
+.deck-area .tarot-card {
+  width: clamp(96px, 12vw, 142px);
+  min-width: clamp(96px, 12vw, 142px);
+}
+
+.tarot-card.is-active {
+  filter:
+    drop-shadow(0 0 12px color-mix(in srgb, var(--reading-stage-accent) 58%, transparent))
+    drop-shadow(0 0 28px var(--reading-stage-glow));
+  transform: translateY(-5px) scale(1.035);
+}
+
+.reading-results {
+  width: min(100%, 1080px);
+}
+
+.reading-viewer {
+  grid-template-columns: minmax(260px, 0.82fr) minmax(0, 1.18fr);
+  align-items: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.reading-viewer__content {
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid color-mix(in srgb, var(--reading-stage-line) 78%, transparent);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--reading-stage-accent) 10%, transparent), transparent 58%),
+    var(--reading-stage-text-bg-strong);
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.22),
+    0 0 22px color-mix(in srgb, var(--reading-stage-glow) 56%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+}
+
+.reading-viewer__image-frame {
+  width: min(100%, 340px);
+  padding: 0;
+  border-color: var(--reading-stage-line);
+  background: transparent;
+  box-shadow:
+    0 0 24px var(--reading-stage-glow),
+    0 24px 64px rgba(0, 0, 0, 0.4);
+}
+
+.reading-viewer__image {
+  border-color: color-mix(in srgb, var(--reading-stage-accent) 42%, transparent);
+}
+
+.reading-viewer__eyebrow,
+.combined-reading .reading-viewer__eyebrow,
+.combined-reading__final > span,
+.combined-reading__themes span,
+.reading-viewer__reflection span,
+.reading-viewer__insight-grid h4,
+.bloodmoon-exposure-label {
+  color: var(--reading-stage-accent);
+}
+
+.reading-viewer__insight-grid section,
+.reading-viewer__reflection,
+.bloodmoon-exposure-card {
+  border-width: 1px;
+  border-radius: 14px;
+  border-color: var(--reading-stage-line);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--reading-stage-accent) 9%, transparent), transparent 56%),
+    var(--reading-stage-text-bg);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.reading-viewer__guided-action {
+  justify-items: center;
+  width: min(100%, 720px);
+  margin: clamp(18px, 3vw, 28px) auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  text-align: center;
+}
+
+.reading-viewer__guided-action .reading-ornament {
+  width: min(100%, 460px);
+}
+
+.reading-viewer__guided-action .primary-action {
+  width: min(100%, 360px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.combined-reading {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+}
+
+.combined-reading__intro {
+  margin-inline: auto;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.combined-reading__thread-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+
+.combined-reading__thread-card {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--reading-stage-line);
+  border-radius: 16px;
+  border-color: var(--reading-stage-line);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--reading-stage-accent) 9%, transparent), transparent 58%),
+    var(--reading-stage-text-bg);
+  box-shadow:
+    0 14px 32px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  text-align: left;
+  transform: translateY(0) scale(1);
+  transition:
+    background 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+  will-change: transform;
+}
+
+.combined-reading__thread-card:hover,
+.combined-reading__thread-card:focus-within,
+.combined-reading__thread-card:active {
+  z-index: 1;
+  border-color: color-mix(in srgb, var(--reading-stage-accent) 76%, white);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--reading-stage-accent) 15%, transparent), transparent 58%),
+    var(--reading-stage-text-bg-strong);
+  box-shadow:
+    0 24px 54px rgba(0, 0, 0, 0.3),
+    0 0 26px var(--reading-stage-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  transform: translateY(-8px) scale(1.025);
+}
+
+body.blood-moon-mode .combined-reading__thread-card {
+  border-color: var(--reading-stage-line);
+  background:
+    linear-gradient(145deg, rgba(148, 18, 38, 0.22), transparent 58%),
+    var(--reading-stage-text-bg);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.28),
+    0 0 20px rgba(190, 30, 54, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+body.blood-moon-mode .combined-reading__thread-card:hover,
+body.blood-moon-mode .combined-reading__thread-card:focus-within,
+body.blood-moon-mode .combined-reading__thread-card:active {
+  border-color: color-mix(in srgb, var(--reading-stage-accent) 76%, white);
+  background:
+    linear-gradient(145deg, rgba(170, 22, 44, 0.28), transparent 58%),
+    var(--reading-stage-text-bg-strong);
+  box-shadow:
+    0 24px 54px rgba(0, 0, 0, 0.3),
+    0 0 26px var(--reading-stage-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.combined-reading__thread-card-image {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 2 / 3;
+  border: 1px solid var(--reading-stage-line);
+  border-radius: 8px;
+  box-shadow: 0 0 16px var(--reading-stage-glow);
+}
+
+.combined-reading__thread-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.combined-reading__final {
+  width: min(100%, 760px);
+  margin-inline: auto;
+  border-top-color: var(--reading-stage-line);
+  border-radius: 0;
+  padding: 16px 0 0;
+  background: transparent;
+}
+
+.reading-closing-actions {
+  border-top-color: var(--reading-stage-line);
+}
+
+body.blood-moon-mode .reading-stage-intro h1,
+body.blood-moon-mode .active-reader-header .reader-portrait-caption h2 {
+  color: rgba(255, 239, 226, 0.96);
+}
+
+body.blood-moon-mode .active-reader-header {
+  background: transparent;
+}
+
+@media (max-width: 900px) {
+  .reading-stage-hero__inner {
+    min-height: 0;
+  }
+
+  .active-reader-header {
+    grid-template-columns: minmax(220px, 0.46fr) minmax(320px, 0.76fr) minmax(80px, 0.3fr);
+    min-height: clamp(390px, 54vw, 500px);
+    height: clamp(390px, 54vw, 500px);
+  }
+
+  .reading-viewer {
+    grid-template-columns: minmax(200px, 0.78fr) minmax(0, 1.22fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .reading-stage {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+  }
+
+  .reading-results-section {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+  }
+
+  .reading-stage-hero {
+    background-position: 64% center;
+    width: min(100% - 24px, 1120px);
+    border-radius: 22px;
+  }
+
+  .reading-stage-hero__inner {
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+  }
+
+  .reading-stage-intro h1 {
+    font-size: clamp(1.85rem, 10vw, 2.85rem);
+    letter-spacing: 0.08em;
+    white-space: normal;
+  }
+
+  .active-reader-header {
+    display: flex;
+    grid-template-columns: none;
+    grid-template-areas: none;
+    align-items: stretch;
+    gap: 0;
+    height: min(74vh, 620px);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .active-reader-header::-webkit-scrollbar {
+    height: 0;
+  }
+
+  .active-reader-header .reader-portrait-frame {
+    flex: 0 0 100%;
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+    height: calc(100% - 24px);
+    min-height: 0;
+    margin-block: 12px;
+    justify-content: stretch;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+
+  .active-reader-header .reader-portrait {
+    width: 100%;
+    height: 100%;
+    margin-inline: 0;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .active-reader-header__info {
+    flex: 0 0 100%;
+    min-width: 100%;
+    max-width: 100%;
+    align-self: stretch;
+    align-content: center;
+    justify-items: center;
+    gap: 20px;
+    width: 100%;
+    min-height: 100%;
+    padding: clamp(22px, 6vw, 32px) 18px 28px;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    text-align: center;
+  }
+
+  .active-reader-header .reader-portrait-caption {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .active-reader-header__nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: center;
+    gap: 10px;
+    width: min(100%, 320px);
+    padding-bottom: 0;
+    margin-top: 2px;
+  }
+
+  .active-reader-header__nav .reader-nav-button {
+    width: 100%;
+    min-height: 48px;
+    padding-inline: 10px;
+    white-space: normal;
+  }
+
+  .spread-selection-panel .reading-controls {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    width: min(100%, 320px);
+  }
+
+  .spread-selection-panel .spread-option {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    min-height: 52px;
+    border: 1px solid var(--reading-stage-line);
+    border-radius: 16px;
+    padding: 10px 14px;
+    justify-items: center;
+    text-align: center;
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--reading-stage-accent) 18%, transparent), transparent 62%),
+      var(--reading-stage-text-bg);
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.18),
+      0 0 18px color-mix(in srgb, var(--reading-stage-glow) 46%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .spread-selection-panel .spread-option span {
+    display: none;
+  }
+
+  body.sun-mode .spread-selection-panel .spread-option {
+    background:
+      linear-gradient(135deg, rgba(231, 181, 84, 0.2), transparent 62%),
+      rgba(54, 37, 10, 0.42);
+  }
+
+  body.moon-mode .spread-selection-panel .spread-option {
+    background:
+      linear-gradient(135deg, rgba(158, 130, 226, 0.22), transparent 62%),
+      rgba(12, 9, 32, 0.5);
+  }
+
+  body.blood-moon-mode .spread-selection-panel .spread-option {
+    background:
+      linear-gradient(135deg, rgba(255, 72, 96, 0.24), transparent 62%),
+      rgba(42, 3, 10, 0.58);
+  }
+
+  .spread-selection-panel .spread-option strong,
+  .spread-selection-panel .spread-option small {
+    text-align: center;
+  }
+
+  .spread-option:hover:not(:disabled),
+  .spread-option:focus-visible:not(:disabled),
+  .spread-option.is-active {
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--reading-stage-accent) 28%, transparent), transparent 62%),
+      var(--reading-stage-text-bg-strong);
+    box-shadow:
+      0 12px 28px rgba(0, 0, 0, 0.22),
+      0 0 24px var(--reading-stage-glow),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .deck-area {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    width: 100%;
+    max-width: 100%;
+    justify-items: center;
+    gap: 10px;
+    overflow-x: hidden;
+    scroll-snap-type: none;
+    scroll-padding-inline: 0;
+  }
+
+  .deck-area .tarot-card {
+    grid-column: span 2;
+    width: clamp(84px, 28vw, 96px);
+    min-width: 0;
+    scroll-snap-align: none;
+  }
+
+  .deck-area .tarot-card:nth-child(4):nth-last-child(2) {
+    grid-column: 2 / span 2;
+  }
+
+  .deck-area .tarot-card:nth-child(5):last-child {
+    grid-column: 4 / span 2;
+  }
+
+  .deck-area .tarot-card:nth-child(7):last-child {
+    grid-column: 3 / span 2;
+  }
+
+  .reading-viewer {
+    grid-template-columns: 1fr;
+    padding-inline: 0;
+  }
+
+  .reading-viewer__image-frame {
+    width: min(100%, 280px);
+  }
+
+  .reading-viewer__insight-grid,
+  .bloodmoon-exposure-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .combined-reading__thread-card {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+}
+
 body.is-image-preview-open {
   overflow: hidden;
 }
@@ -8802,6 +9660,27 @@ body.is-image-preview-open {
 .image-preview__caption span {
   color: var(--navbar-muted);
   line-height: 1.5;
+}
+
+body.blood-moon-mode .active-reader-header--aquarius-bloodmoon {
+  border-color: rgba(235, 238, 255, 0.42);
+  background: transparent;
+  box-shadow: 0 0 0 1px rgba(235, 238, 255, 0.18);
+}
+
+body.blood-moon-mode .active-reader-header--aquarius-bloodmoon::before,
+body.blood-moon-mode .active-reader-header--aquarius-bloodmoon::after {
+  display: none;
+  content: none;
+}
+
+body.blood-moon-mode .active-reader-header--aquarius-bloodmoon .reader-portrait-frame {
+  border-color: rgba(235, 238, 255, 0.42);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(235, 238, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 @media (max-width: 640px) {

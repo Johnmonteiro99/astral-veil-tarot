@@ -326,6 +326,7 @@ const lumenNameMessage = document.querySelector("[data-lumen-name-message]");
 const lumenNameReset = document.querySelector("[data-lumen-name-reset]");
 const lumenNameStorageKey = "astralVeilLumenName";
 const lumenWelcomeStorageKey = "astralVeilLumenWelcomeMessage";
+const lumenSelectorOrderIds = ["sanctuary-of-breath", "rooted-grove", "reflection-pool", "garden-of-renewal", "hall-of-mirrors"];
 const lumenWelcomeMessages = [
   "May the rooms ahead meet you with clarity.",
   "Begin softly. Nothing whole needs to be forced.",
@@ -343,6 +344,8 @@ let lumenImageLightbox = null;
 let lumenImageLightboxImage = null;
 let lumenImageLightboxTitle = null;
 let lumenImageLightboxReturnTarget = null;
+let lumenRailLoopResetTimeout = null;
+let isLumenRailLoopListenerReady = false;
 
 function escapeLumenHtml(value) {
   return String(value ?? "")
@@ -359,6 +362,10 @@ function getLumenScrollBehavior() {
 
 function shouldAutoScrollLumenPortalOnSelection() {
   return window.matchMedia("(max-width: 768px)").matches;
+}
+
+function isLumenMobileLightworkRail() {
+  return window.matchMedia("(max-width: 767px)").matches;
 }
 
 function scrollLumenPortalPreviewIntoView() {
@@ -393,41 +400,202 @@ function getLumenSanctuaryInitial(sanctuary) {
     .slice(0, 1);
 }
 
+function getLumenSanctuarySelectorIcon(sanctuary) {
+  const selectorIcons = {
+    "reflection-pool": "assets/images/reflection-button-transparent.png",
+    "garden-of-renewal": "assets/images/renewal-button-transparent.png",
+    "hall-of-mirrors": "assets/images/integration-button-transparent.png",
+    "rooted-grove": "assets/images/grounding-button-transparent.png",
+    "sanctuary-of-breath": "assets/images/breath-button-transparent.png"
+  };
+
+  return selectorIcons[sanctuary?.id] || "";
+}
+
+function getLumenOfferingIcon(label) {
+  const offeringIcons = {
+    Clarity: "assets/icons/symbols/clarity.png",
+    Healing: "assets/icons/symbols/healing.png",
+    Stillness: "assets/icons/symbols/stillness.png",
+    Return: "assets/icons/symbols/return.png",
+    Courage: "assets/icons/symbols/courage.png",
+    Renewal: "assets/icons/symbols/renewal.png",
+    Spark: "assets/icons/symbols/spark.png",
+    Becoming: "assets/icons/symbols/becoming.png",
+    Grounding: "assets/icons/symbols/grounding.png",
+    Patience: "assets/icons/symbols/patience.png",
+    Body: "assets/icons/symbols/body.png",
+    Stability: "assets/icons/symbols/stability.png",
+    Breath: "assets/icons/symbols/breath.png",
+    Release: "assets/icons/symbols/release.png",
+    Voice: "assets/icons/symbols/voice.png",
+    Truth: "assets/icons/symbols/truth.png",
+    Identity: "assets/icons/symbols/identity.png",
+    Integration: "assets/icons/symbols/integration.png",
+    Mercy: "assets/icons/symbols/mercy.png"
+  };
+
+  return offeringIcons[label] || "";
+}
+
+function getLumenOffering(label) {
+  return {
+    label,
+    icon: getLumenOfferingIcon(label)
+  };
+}
+
+function getLumenSanctuaryShowcaseDetails(sanctuary) {
+  const details = {
+    "reflection-pool": {
+      tagline: "Where still waters mirror what is true.",
+      description: "A sanctuary of calm and contemplation. The waters here hold the stillness to quiet the mind and the light to reveal what lies beneath the surface.",
+      secondParagraph: "Enter to release what no longer serves, heal the unseen, and return to your center with renewed peace.",
+      offers: ["Clarity", "Healing", "Stillness", "Return"].map(getLumenOffering)
+    },
+    "sanctuary-of-breath": {
+      tagline: "Where the spirit exhales what it has carried.",
+      description: "A quiet chamber of air, softness, and release. This room invites the body to loosen, the mind to slow, and the voice within to become clear again.",
+      secondParagraph: "Enter when you need space to breathe, speak gently, and return to the rhythm beneath your thoughts.",
+      offers: ["Breath", "Clarity", "Release", "Voice"].map(getLumenOffering)
+    },
+    "garden-of-renewal": {
+      tagline: "Where what was buried begins to bloom.",
+      description: "A living sanctuary of warmth, courage, and new becoming. This room holds the spark that rises after endings and the softness that allows growth to begin again.",
+      secondParagraph: "Enter when your spirit is ready to shed old seasons and remember the part of you still reaching for light.",
+      offers: ["Courage", "Renewal", "Spark", "Becoming"].map(getLumenOffering)
+    },
+    "rooted-grove": {
+      tagline: "Where the body remembers the earth.",
+      description: "A grounded sanctuary of patience, stability, and quiet strength. This room steadies the restless spirit and returns wandering energy back to the body.",
+      secondParagraph: "Enter when you need to feel held, rooted, and present enough to continue.",
+      offers: ["Grounding", "Patience", "Body", "Stability"].map(getLumenOffering)
+    },
+    "hall-of-mirrors": {
+      tagline: "Where truth meets the self without disguise.",
+      description: "A reflective sanctuary of identity, integration, and mercy. The mirrors here do not punish what they reveal. They invite every scattered piece to return.",
+      secondParagraph: "Enter when you are ready to see yourself clearly, gently, and whole.",
+      offers: ["Truth", "Identity", "Integration", "Mercy"].map(getLumenOffering)
+    }
+  };
+
+  return details[sanctuary?.id] || {
+    tagline: sanctuary?.lightworkNote || sanctuary?.selectorSubtitle || "",
+    description: sanctuary?.description || sanctuary?.previewPurpose || "",
+    secondParagraph: sanctuary?.practice || "",
+    offers: (sanctuary?.keywords || []).map(getLumenOffering)
+  };
+}
+
+function getLumenSelectorOrder() {
+  return lumenSelectorOrderIds
+    .map((id) => lumenSanctuaries.findIndex((sanctuary) => sanctuary.id === id))
+    .filter((index) => index >= 0);
+}
+
+function renderLumenRailTab(index, position, options = {}) {
+  const sanctuary = lumenSanctuaries[index];
+  const isActive = index === activeLumenSanctuaryIndex;
+  const rowClass = position === 2 ? "lumen-sanctuary-tab--featured" : "lumen-sanctuary-tab--secondary";
+  const icon = getLumenSanctuarySelectorIcon(sanctuary);
+  const isDuplicate = Boolean(options.isDuplicate);
+
+  return `
+    <button class="lumen-sanctuary-tab ${rowClass} lumen-sanctuary-tab--${escapeLumenHtml(sanctuary.id)}${isActive ? " is-active" : ""}" type="button" data-lumen-sanctuary-index="${index}" data-lumen-loop-copy="${options.copyIndex ?? 0}" ${isDuplicate ? `aria-hidden="true" tabindex="-1"` : `aria-pressed="${isActive ? "true" : "false"}" aria-label="${escapeLumenHtml(`${sanctuary.need}: ${sanctuary.selectorSubtitle}`)}"`}>
+      <span class="lumen-sanctuary-tab__copy">
+        <strong>${escapeLumenHtml(sanctuary.need)}</strong>
+        <span class="lumen-sanctuary-tab__accent" aria-hidden="true"></span>
+        <em>${escapeLumenHtml(sanctuary.selectorSubtitle)}</em>
+      </span>
+      <span class="lumen-sanctuary-tab__icon" aria-hidden="true">
+        <img src="${escapeLumenHtml(icon)}" alt="" loading="eager" decoding="async" />
+      </span>
+    </button>
+  `;
+}
+
 function renderLumenRail() {
   if (!lumenRail) {
     return;
   }
 
-  lumenRail.innerHTML = `
-    <div class="lumen-compass" aria-label="Choose by lightwork need">
-      <div class="lumen-compass__rings" aria-hidden="true"></div>
-      <div class="lumen-compass__lines" aria-hidden="true"></div>
-      <div class="lumen-compass__center" aria-hidden="true">
-        <span></span>
-      </div>
-      ${lumenSanctuaries
-        .map((sanctuary, index) => {
-          const isActive = index === activeLumenSanctuaryIndex;
+  const selectorOrder = getLumenSelectorOrder();
+  const shouldLoop = isLumenMobileLightworkRail();
+  const loopCopies = shouldLoop ? [0, 1, 2] : [0];
 
-          return `
-            <button class="lumen-sanctuary-tab lumen-sanctuary-tab--${escapeLumenHtml(sanctuary.id)}${isActive ? " is-active" : ""}" type="button" data-lumen-sanctuary-index="${index}" aria-pressed="${isActive ? "true" : "false"}" aria-label="${escapeLumenHtml(`${sanctuary.need}: ${sanctuary.selectorSubtitle}`)}">
-              <span class="lumen-sanctuary-tab__copy">
-                <span class="lumen-sanctuary-tab__glyph" aria-hidden="true">${escapeLumenHtml(sanctuary.selectorGlyph)}</span>
-                <strong>${escapeLumenHtml(sanctuary.need)}</strong>
-                <em>${escapeLumenHtml(sanctuary.selectorSubtitle)}</em>
-              </span>
-            </button>
-          `;
-        })
+  lumenRail.innerHTML = `
+    <div class="lumen-compass${shouldLoop ? " lumen-compass--loop" : ""}" aria-label="Choose by lightwork need" data-lumen-loop-track>
+      ${loopCopies
+        .map((copyIndex) => selectorOrder
+          .map((index, position) => renderLumenRailTab(index, position, {
+            copyIndex,
+            isDuplicate: shouldLoop && copyIndex !== 1
+          }))
+          .join(""))
         .join("")}
     </div>
   `;
 
-  const activeTab = lumenRail.querySelector(".lumen-sanctuary-tab.is-active");
+  const activeTab = shouldLoop
+    ? lumenRail.querySelector('.lumen-sanctuary-tab.is-active[data-lumen-loop-copy="1"]')
+    : lumenRail.querySelector(".lumen-sanctuary-tab.is-active");
 
   if (activeTab) {
-    lumenRail.scrollLeft = activeTab.offsetLeft - (lumenRail.clientWidth - activeTab.clientWidth) / 2;
+    centerLumenRailTab(activeTab);
   }
+
+  initializeLumenRailLoop();
+}
+
+function centerLumenRailTab(tab, behavior = "auto") {
+  if (!lumenRail || !tab) {
+    return;
+  }
+
+  lumenRail.scrollTo({
+    left: tab.offsetLeft - (lumenRail.clientWidth - tab.clientWidth) / 2,
+    behavior: getLumenScrollBehavior() === "auto" ? "auto" : behavior
+  });
+}
+
+function resetLumenRailLoopPosition() {
+  if (!lumenRail || !isLumenMobileLightworkRail()) {
+    return;
+  }
+
+  const track = lumenRail.querySelector("[data-lumen-loop-track]");
+  const copyWidth = track ? track.scrollWidth / 3 : 0;
+
+  if (!copyWidth) {
+    return;
+  }
+
+  const lowerLimit = copyWidth * 0.5;
+  const upperLimit = lumenRail.scrollWidth - lumenRail.clientWidth - lumenRail.clientWidth;
+
+  if (lumenRail.scrollLeft < lowerLimit) {
+    lumenRail.scrollLeft += copyWidth;
+  } else if (lumenRail.scrollLeft > upperLimit) {
+    lumenRail.scrollLeft -= copyWidth;
+  }
+}
+
+function initializeLumenRailLoop() {
+  if (!lumenRail || !isLumenMobileLightworkRail()) {
+    return;
+  }
+
+  if (isLumenRailLoopListenerReady) {
+    return;
+  }
+
+  isLumenRailLoopListenerReady = true;
+  lumenRail.addEventListener("scroll", () => {
+    window.clearTimeout(lumenRailLoopResetTimeout);
+    lumenRailLoopResetTimeout = window.setTimeout(() => {
+      window.requestAnimationFrame(resetLumenRailLoopPosition);
+    }, 90);
+  }, { passive: true });
 }
 
 function renderLumenInfoBox(label, value) {
@@ -445,30 +613,51 @@ function renderLumenViewer() {
   }
 
   const sanctuary = lumenSanctuaries[activeLumenSanctuaryIndex];
+  const showcaseDetails = getLumenSanctuaryShowcaseDetails(sanctuary);
 
   lumenViewer.innerHTML = `
     <div class="sanctuary-portal-preview" data-lumen-portal-swipe aria-live="polite">
-      <div class="sanctuary-mobile-guide">
-        <p>Choose your sanctuary</p>
-        <span>Swipe or use the buttons to explore.</span>
-      </div>
-
       <article class="sanctuary-portal-stage is-active" data-lumen-portal-index="${activeLumenSanctuaryIndex}" aria-current="true">
-        <figure class="sanctuary-portal-frame sanctuary-portal-frame--${escapeLumenHtml(sanctuary.id)}">
-          <button class="sanctuary-portal-image-button" type="button" data-lumen-image-open data-lumen-image-src="${escapeLumenHtml(sanctuary.image)}" data-lumen-image-alt="${escapeLumenHtml(`${sanctuary.title} sanctuary artwork`)}" data-lumen-image-title="${escapeLumenHtml(sanctuary.title)}" aria-label="${escapeLumenHtml(`View ${sanctuary.title} image larger`)}">
-            <img class="sanctuary-portal-image" src="${escapeLumenHtml(sanctuary.image)}" alt="${escapeLumenHtml(sanctuary.title)} sanctuary artwork" loading="eager" decoding="async" onerror="this.closest('.sanctuary-portal-frame').classList.add('is-missing'); this.closest('.sanctuary-portal-image-button').remove();" />
-          </button>
-          <figcaption aria-hidden="true">
-            <span>${escapeLumenHtml(getLumenSanctuaryInitial(sanctuary))}</span>
-          </figcaption>
-        </figure>
+        <section class="sanctuary-room-showcase" aria-labelledby="sanctuary-room-title">
+          <div class="sanctuary-room-showcase__visual">
+            <figure class="sanctuary-portal-frame sanctuary-portal-frame--${escapeLumenHtml(sanctuary.id)}">
+              <button class="sanctuary-portal-image-button" type="button" data-lumen-image-open data-lumen-image-src="${escapeLumenHtml(sanctuary.image)}" data-lumen-image-alt="${escapeLumenHtml(`${sanctuary.title} sanctuary artwork`)}" data-lumen-image-title="${escapeLumenHtml(sanctuary.title)}" aria-label="${escapeLumenHtml(`View ${sanctuary.title} image larger`)}">
+                <img class="sanctuary-portal-image sanctuary-room-showcase__image" src="${escapeLumenHtml(sanctuary.image)}" alt="${escapeLumenHtml(sanctuary.title)} sanctuary artwork" loading="eager" decoding="async" onerror="this.closest('.sanctuary-portal-frame').classList.add('is-missing'); this.closest('.sanctuary-portal-image-button').remove();" />
+              </button>
+              <figcaption aria-hidden="true">
+                <span>${escapeLumenHtml(getLumenSanctuaryInitial(sanctuary))}</span>
+              </figcaption>
+            </figure>
+          </div>
 
-        <div class="sanctuary-portal-action">
-          <button class="lumen-enter-button" type="button" data-lumen-enter-sanctuary data-lumen-enter-index="${activeLumenSanctuaryIndex}">Enter Sanctuary</button>
-        </div>
+          <div class="sanctuary-room-showcase__info">
+            <p class="sanctuary-room-showcase__eyebrow">Sanctuary Room</p>
+            <h2 id="sanctuary-room-title">${escapeLumenHtml(sanctuary.title)}</h2>
+            <p class="sanctuary-room-showcase__tagline">${escapeLumenHtml(showcaseDetails.tagline)}</p>
+            <div class="sanctuary-room-showcase__divider" aria-hidden="true"></div>
+            <div class="sanctuary-room-showcase__description">
+              <p>${escapeLumenHtml(showcaseDetails.description)}</p>
+              <p>${escapeLumenHtml(showcaseDetails.secondParagraph)}</p>
+            </div>
+            <div class="sanctuary-room-showcase__offers" aria-label="What this room offers">
+              <p>What this room offers</p>
+              <div class="sanctuary-offers" role="list">
+                ${showcaseDetails.offers
+                  .map((offer) => `
+                    <div class="sanctuary-offer-tile" role="listitem">
+                      <img class="sanctuary-offer-icon" src="${escapeLumenHtml(offer.icon)}" alt="" loading="eager" decoding="async" />
+                      <span class="sanctuary-offer-label">${escapeLumenHtml(offer.label)}</span>
+                    </div>
+                  `)
+                  .join("")}
+              </div>
+            </div>
+            <button class="lumen-enter-button" type="button" data-lumen-enter-sanctuary data-lumen-enter-index="${activeLumenSanctuaryIndex}">Enter Sanctuary</button>
+          </div>
+        </section>
       </article>
 
-      <div class="sanctuary-portal-controls" aria-label="Browse sanctuary previews">
+      <div class="sanctuary-portal-controls sanctuary-room-controls" aria-label="Browse sanctuary previews">
         <button class="sanctuary-portal-control" type="button" data-lumen-sanctuary-nav="previous" aria-label="View previous sanctuary">Previous</button>
         <div class="sanctuary-portal-progress" aria-label="Sanctuary preview progress">
           ${lumenSanctuaries
@@ -726,16 +915,15 @@ function createLumenImageLightbox() {
   lumenImageLightbox.setAttribute("aria-hidden", "true");
   lumenImageLightbox.innerHTML = `
     <button class="lumen-image-lightbox__backdrop" type="button" data-lumen-image-close aria-label="Close expanded image"></button>
-    <section class="lumen-image-lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="lumen-image-lightbox-title" tabindex="-1">
-      <button class="lumen-image-lightbox__close" type="button" data-lumen-image-close aria-label="Close expanded image">Return</button>
-      <p id="lumen-image-lightbox-title" class="lumen-image-lightbox__title"></p>
+    <section class="lumen-image-lightbox__dialog" role="dialog" aria-modal="true" aria-label="Expanded sanctuary artwork" tabindex="-1">
+      <button class="lumen-image-lightbox__close" type="button" data-lumen-image-close aria-label="Close expanded image">&times;</button>
       <img class="lumen-image-lightbox__image" alt="" />
     </section>
   `;
 
   document.body.appendChild(lumenImageLightbox);
   lumenImageLightboxImage = lumenImageLightbox.querySelector(".lumen-image-lightbox__image");
-  lumenImageLightboxTitle = lumenImageLightbox.querySelector(".lumen-image-lightbox__title");
+  lumenImageLightboxTitle = null;
 
   lumenImageLightbox.addEventListener("click", (event) => {
     if (event.target.closest("[data-lumen-image-close]")) {
@@ -753,7 +941,6 @@ function openLumenImageLightbox(src, alt, title, trigger) {
   lumenImageLightboxReturnTarget = trigger instanceof HTMLElement ? trigger : document.activeElement;
   lumenImageLightboxImage.src = src;
   lumenImageLightboxImage.alt = alt || title || "Expanded sanctuary artwork";
-  lumenImageLightboxTitle.textContent = title || "Sanctuary Artwork";
   lumenImageLightbox.classList.add("is-open");
   lumenImageLightbox.setAttribute("aria-hidden", "false");
   document.body.classList.add("is-lumen-image-lightbox-open");
@@ -886,6 +1073,9 @@ if (lumenRail && lumenViewer) {
   renderLumenRail();
   renderLumenViewer();
   initializeLumenNamePrompt();
+
+  const lumenLightworkRailMedia = window.matchMedia("(max-width: 767px)");
+  lumenLightworkRailMedia.addEventListener("change", renderLumenRail);
 
   document.addEventListener("click", (event) => {
     const sanctuaryTab = event.target.closest("[data-lumen-sanctuary-index]");

@@ -8,7 +8,7 @@
       content="Astral Veil is a cinematic tarot experience for reflection, atmosphere, and symbolic storytelling."
     />
     <title>Astral Veil</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -247,23 +247,44 @@
         </section>
 
         <section id="reading-stage" class="reading-stage hidden" data-reading-stage>
-          <div class="active-reader-header">
-            <div class="reader-portrait-frame">
-              <img id="active-reader-image" class="reader-portrait" alt="" data-active-reader-image data-expandable-image role="button" tabindex="0" aria-label="Expand reader image" />
+          <header class="reading-stage-intro" aria-labelledby="reading-stage-title">
+            <p class="reading-stage-intro__label">Astral Veil</p>
+            <h1 id="reading-stage-title" data-reading-stage-title>Astral Reading</h1>
+            <p class="reading-stage-intro__subtitle" data-reading-stage-subtitle>
+              The cards are listening. Follow the current that answers.
+            </p>
+            <div class="reading-ornament" aria-hidden="true">
+              <span></span>
+              <i>✦</i>
+              <span></span>
             </div>
-            <div class="reader-portrait-caption">
-              <p class="reading-section__eyebrow">Your Astral Reader</p>
-              <h2 data-active-reader-name></h2>
-              <p class="active-reader-header__role" data-active-reader-role></p>
-              <p class="active-reader-header__quote" data-active-reader-quote></p>
-            </div>
-            <div class="reading-actions active-reader-header__nav">
-              <button class="reader-nav-button" type="button" data-reader-nav="prev">
-                ‹ Previous Reader
-              </button>
-              <button class="reader-nav-button" type="button" data-reader-nav="next">
-                Next Reader ›
-              </button>
+          </header>
+
+          <div class="reading-stage-hero">
+            <div class="reading-stage-hero__inner">
+              <div class="active-reader-header">
+                <div class="reader-portrait-frame">
+                  <img id="active-reader-image" class="reader-portrait" alt="" data-active-reader-image data-expandable-image role="button" tabindex="0" aria-label="Expand reader image" />
+                </div>
+                <div class="active-reader-header__info">
+                  <div class="reader-portrait-caption">
+                    <p class="reading-section__eyebrow">Your Astral Guide</p>
+                    <h2 data-active-reader-name></h2>
+                    <p class="active-reader-header__role" data-active-reader-role></p>
+                    <p class="active-reader-header__quote" data-active-reader-quote></p>
+                  </div>
+                  <div class="reading-actions active-reader-header__nav">
+                    <button class="reader-nav-button" type="button" data-reader-nav="prev">
+                      <span class="reader-nav-button__arrow" aria-hidden="true">‹</span>
+                      <span>Previous Reader</span>
+                    </button>
+                    <button class="reader-nav-button" type="button" data-reader-nav="next">
+                      <span>Next Reader</span>
+                      <span class="reader-nav-button__arrow" aria-hidden="true">›</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -278,15 +299,18 @@
             <div class="reading-controls" role="group" aria-label="Choose a tarot spread">
               <button class="spread-option" type="button" data-spread="3">
                 <span>3</span>
-                Card Reading
+                <strong>3 Cards</strong>
+                <small>A focused glimpse</small>
               </button>
               <button class="spread-option" type="button" data-spread="5">
                 <span>5</span>
-                Card Reading
+                <strong>5 Cards</strong>
+                <small>A deeper path</small>
               </button>
               <button class="spread-option" type="button" data-spread="7">
                 <span>7</span>
-                Card Reading
+                <strong>7 Cards</strong>
+                <small>A full ritual</small>
               </button>
             </div>
 

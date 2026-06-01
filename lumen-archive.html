@@ -8,7 +8,7 @@
       content="Enter the Lumen Archive, an Astral Veil sanctuary for reflection, clarity, healing, and light work."
     />
     <title>The Lumen Archive | Astral Veil</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -160,25 +160,81 @@
 
     <main class="tarot-stage">
       <section class="lumen-archive" aria-labelledby="lumen-archive-title">
-        <header class="lumen-archive__hero">
-          <div class="lumen-archive__copy">
-            <p class="reading-section__eyebrow">LIGHTWORK INDEX</p>
-            <h1 id="lumen-archive-title">The Lumen Archive</h1>
-            <p class="lumen-archive__subheading">Not every truth arrives as a wound. Some arrive as light.</p>
-            <p>
-              A sanctuary for reflection, clarity, healing, and the truths that help the self return whole.
+        <header class="lumen-hero" aria-labelledby="lumen-archive-title">
+          <div class="lumen-hero__inner">
+            <div class="lumen-hero__eyebrow-row">
+              <span aria-hidden="true"></span>
+              <p>LIGHTWORK INDEX</p>
+              <span aria-hidden="true"></span>
+            </div>
+
+            <div class="lumen-hero__content">
+              <div class="lumen-hero__text">
+                <p class="lumen-hero__small-title">THE</p>
+                <h1 id="lumen-archive-title">LUMEN ARCHIVE</h1>
+                <div class="lumen-hero__divider" aria-hidden="true"></div>
+                <h2>
+                  Not every truth arrives as a wound.<br />
+                  Some arrive as <span class="lumen-hero__accent">light</span>.
+                </h2>
+                <div class="lumen-hero__divider lumen-hero__divider--small" aria-hidden="true"></div>
+                <p>
+                  The Lumen Archive is a sanctuary for reflection, clarity, healing, and the truths that help the self return whole. Explore gentle wisdom, lightwork teachings, and the knowledge that illuminates your becoming.
+                </p>
+              </div>
+            </div>
+
+            <div class="lumen-hero__features" aria-label="Lumen Archive themes">
+              <div class="lumen-hero-feature">
+                <span class="lumen-hero-feature__icon" aria-hidden="true">
+                  <svg viewBox="0 0 64 64" focusable="false">
+                    <circle cx="32" cy="20" r="8" />
+                    <path d="M18 52c3-11 8-17 14-17s11 6 14 17" />
+                    <path d="M24 39c2 4 5 6 8 6s6-2 8-6" />
+                  </svg>
+                </span>
+                <strong>REFLECTION</strong>
+                <small>Look within.</small>
+              </div>
+              <div class="lumen-hero-feature">
+                <span class="lumen-hero-feature__icon" aria-hidden="true">
+                  <svg viewBox="0 0 64 64" focusable="false">
+                    <path d="M43 9c-10 3-17 12-17 23 0 10 6 19 15 23A24 24 0 1 1 43 9z" />
+                    <path d="M45 21l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" />
+                  </svg>
+                </span>
+                <strong>CLARITY</strong>
+                <small>See clearly.</small>
+              </div>
+              <div class="lumen-hero-feature">
+                <span class="lumen-hero-feature__icon" aria-hidden="true">
+                  <svg viewBox="0 0 64 64" focusable="false">
+                    <path d="M32 47c-11-6-15-16-12-30 8 4 12 12 12 30z" />
+                    <path d="M32 47c11-6 15-16 12-30-8 4-12 12-12 30z" />
+                    <path d="M18 42c7 8 21 8 28 0" />
+                    <path d="M32 18v30" />
+                  </svg>
+                </span>
+                <strong>HEALING</strong>
+                <small>Restore softly.</small>
+              </div>
+              <div class="lumen-hero-feature">
+                <span class="lumen-hero-feature__icon" aria-hidden="true">
+                  <svg viewBox="0 0 64 64" focusable="false">
+                    <path d="M32 8l6 17 18 7-18 7-6 17-6-17-18-7 18-7z" />
+                    <path d="M49 9l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" />
+                  </svg>
+                </span>
+                <strong>TRUTH</strong>
+                <small>Remember fully.</small>
+              </div>
+            </div>
+
+            <p class="lumen-hero__quote">
+              <span class="lumen-hero__quote-text">
+                You are not here to collect more knowledge&mdash;you are here to <span class="lumen-hero__accent">remember</span> what already lives within you.
+              </span>
             </p>
-          </div>
-          <div class="lumen-sigil" aria-hidden="true">
-            <svg viewBox="0 0 240 240" focusable="false">
-              <circle class="lumen-sigil__halo" cx="120" cy="120" r="78" />
-              <circle class="lumen-sigil__ring" cx="120" cy="120" r="48" />
-              <path class="lumen-sigil__ray" d="M120 28v44M120 168v44M28 120h44M168 120h44" />
-              <path class="lumen-sigil__ray" d="M55 55l31 31M154 154l31 31M185 55l-31 31M86 154l-31 31" />
-              <path class="lumen-sigil__petal" d="M120 74c18 17 18 75 0 92-18-17-18-75 0-92z" />
-              <path class="lumen-sigil__petal" d="M74 120c17-18 75-18 92 0-17 18-75 18-92 0z" />
-              <circle class="lumen-sigil__core" cx="120" cy="120" r="13" />
-            </svg>
           </div>
         </header>
 
@@ -200,15 +256,26 @@
             <div class="lumen-atrium__letter">
               <p>Welcome.</p>
               <p>If you have found your way here, then something in you is ready to be met with light.</p>
-              <p>The Lumen Archive is a sanctuary for quiet return - a place for reflection, healing, truth, and the kind of self-discovery that does not ask you to break yourself apart in order to grow. Each room within it offers a different form of care: some reflect, some steady, some renew, and some reveal.</p>
+              <span class="lumen-atrium__divider" aria-hidden="true"></span>
+              <p>The Lumen Archive is a sanctuary for quiet return - a place for reflection, healing, truth, and the kind of self-discovery that does not ask you to break yourself apart in order to grow.</p>
+              <p>Each room within it offers a different form of care: some reflect, some steady, some renew, and some reveal.</p>
+              <span class="lumen-atrium__divider" aria-hidden="true"></span>
               <p>You are not expected to arrive here complete.<br />You are only asked to arrive willing.</p>
+              <span class="lumen-atrium__divider" aria-hidden="true"></span>
               <p>When your spirit knows where to begin, choose a sanctuary below.</p>
             </div>
 
-            <form class="lumen-name-form" data-lumen-name-form>
+          </div>
+
+          <section class="lumen-name-entry" aria-label="Name entry">
+            <form class="lumen-name-form lumen-name-entry__card" data-lumen-name-form>
+              <div class="lumen-name-entry__ornament" aria-hidden="true">✦</div>
               <div class="lumen-name-form__fields" data-lumen-name-fields>
-                <label for="lumen-name-input">What name should the light remember?</label>
-                <div class="lumen-name-form__row">
+                <label class="lumen-name-entry__eyebrow" for="lumen-name-input">What name should the light remember?</label>
+                <p class="lumen-name-form__hint lumen-name-entry__helper">
+                  Your name becomes a thread in the celestial weave, remembered in light, whispered in stars.
+                </p>
+                <div class="lumen-name-form__row lumen-name-entry__form">
                   <input id="lumen-name-input" type="text" name="lumen-name" placeholder="Your name..." autocomplete="name" data-lumen-name-input />
                   <button type="submit">Let the Light Know</button>
                 </div>
@@ -216,7 +283,7 @@
               <p class="lumen-name-form__message" data-lumen-name-message aria-live="polite"></p>
               <button class="lumen-name-form__change" type="button" data-lumen-name-reset hidden>Speak Another Name</button>
             </form>
-          </div>
+          </section>
         </section>
 
         <section class="lumen-sanctuary" aria-labelledby="lumen-sanctuary-title">
