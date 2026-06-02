@@ -12,6 +12,8 @@ const closeDeckLightboxButtons = document.querySelectorAll("[data-close-deck-lig
 let activeCollectionId = "original";
 let activeCardIndex = 0;
 let deckMessageTimeout = null;
+const DECK_CARD_IMAGE_WIDTH = 800;
+const DECK_CARD_IMAGE_HEIGHT = 1200;
 const thumbnailPlaceholder =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
 
@@ -343,7 +345,7 @@ function renderDeckCollection() {
             (collection) => `
               <article class="deck-collection-card deck-collection-card--${collection.id}${isCollectionLocked(collection) ? " is-locked" : ""}" data-view-deck="${collection.id}" aria-disabled="${isCollectionLocked(collection)}">
                 <div class="deck-collection-card__preview" aria-hidden="true">
-                  <img src="${collection.coverImage}" alt="" loading="lazy" decoding="async" />
+                  <img src="${collection.coverImage}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" />
                 </div>
                 <div class="deck-collection-card__content">
                   <div class="deck-collection-card__header">
@@ -413,8 +415,11 @@ function renderDeckGallery(collectionId) {
             class="deck-viewer__image"
             src="${escapeHtml(activeCard.image)}"
             alt="${escapeHtml(activeCard.name)}"
+            width="${DECK_CARD_IMAGE_WIDTH}"
+            height="${DECK_CARD_IMAGE_HEIGHT}"
             loading="eager"
             decoding="async"
+            fetchpriority="high"
           />
         </button>
 
@@ -448,6 +453,8 @@ function renderDeckGallery(collectionId) {
                   src="${shouldLoadThumbnail ? escapeHtml(card.image) : thumbnailPlaceholder}"
                   ${shouldLoadThumbnail ? "" : `data-thumbnail-src="${escapeHtml(card.image)}"`}
                   alt=""
+                  width="${DECK_CARD_IMAGE_WIDTH}"
+                  height="${DECK_CARD_IMAGE_HEIGHT}"
                   loading="lazy"
                   decoding="async"
                 />

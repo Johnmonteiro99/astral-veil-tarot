@@ -1,5 +1,9 @@
-const CARD_BACK_IMAGE = "assets/images/cards/original/card-back.jpg";
-const BLOOD_MOON_CARD_BACK_IMAGE = "assets/images/cards/blood-moon/bloodmoon-card-back.png";
+const CARD_BACK_IMAGE = "assets/images/cards/original/card-back.webp";
+const BLOOD_MOON_CARD_BACK_IMAGE = "assets/images/cards/blood-moon/bloodmoon-card-back.webp";
+const CARD_IMAGE_WIDTH = 800;
+const CARD_IMAGE_HEIGHT = 1200;
+const READER_IMAGE_WIDTH = 900;
+const READER_IMAGE_HEIGHT = 1200;
 
 const readerList = document.querySelector("[data-reader-list]");
 const readerSelection = document.querySelector("#reader-selection");
@@ -453,7 +457,7 @@ function renderThreadPositionBlocks(spread) {
         return `
           <section class="combined-reading__thread-card">
             <div class="combined-reading__thread-card-image">
-              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" loading="lazy" decoding="async" onerror="this.src='${getActiveCardBackImage()}'" />
+              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" onerror="this.src='${getActiveCardBackImage()}'" />
             </div>
             <div>
               <span class="combined-reading__position-pill">${escapeHtml(positionLabel)}</span>
@@ -713,6 +717,27 @@ function getReaderSelectionImage(reader) {
   return reader?.phase1Image || reader?.image || "";
 }
 
+function preloadImage(src) {
+  if (!src) {
+    return;
+  }
+
+  const image = new Image();
+  image.decoding = "async";
+  image.src = src;
+}
+
+function preloadReaderSelectionNeighbors(visibleGuidePool, activeIndex) {
+  if (!Array.isArray(visibleGuidePool) || visibleGuidePool.length < 2) {
+    return;
+  }
+
+  [
+    (activeIndex - 1 + visibleGuidePool.length) % visibleGuidePool.length,
+    (activeIndex + 1) % visibleGuidePool.length
+  ].forEach((index) => preloadImage(getReaderSelectionImage(visibleGuidePool[index])));
+}
+
 function getReaderZodiacLabel(reader) {
   return reader?.sign || reader?.zodiac || "Unknown";
 }
@@ -887,11 +912,11 @@ function renderFeaturedReader() {
   featuredReaderPanel.innerHTML = `
     <article class="reader-selection-orbit" aria-live="polite"${isZephyraLocked ? " aria-label=\"Zephyra is currently unavailable.\"" : ""}>
       <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker">
-        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.visibility='hidden'" />
       </button>
       <div class="reader-orbit-card reader-orbit-card--featured">
         <button class="reader-selection-split__image" type="button" data-reader-carousel-message aria-label="Refresh this Veilwalker's preview message">
-          <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+          <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" onerror="this.style.visibility='hidden'" />
           <span class="reader-card-overlay" aria-hidden="true">
             <span class="reader-card-overlay__name">${escapeHtml(getReaderCardDisplayName(featuredReader))}</span>
             <span class="reader-card-overlay__zodiac">
@@ -927,7 +952,7 @@ function renderFeaturedReader() {
       <button class="reader-carousel__nav reader-carousel__nav--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker"></button>
       <button class="reader-carousel__nav reader-carousel__nav--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker"></button>
       <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker">
-        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.visibility='hidden'" />
       </button>
       <div class="mobile-reader-swipe-hint" aria-hidden="true">
         <p><span aria-hidden="true">‹</span> Swipe to meet the other Veilwalkers <span aria-hidden="true">›</span></p>
@@ -937,6 +962,7 @@ function renderFeaturedReader() {
       </div>
     </article>
   `;
+  preloadReaderSelectionNeighbors(visibleGuidePool, featuredReaderIndex);
 }
 
 function moveFeaturedReader(direction) {
@@ -1403,10 +1429,10 @@ function renderReadingCards(cards) {
         <button class="tarot-card energy-${energy} fade-slide-in" type="button" data-card-index="${index}" aria-label="Reveal ${escapeHtml(cardName)}">
           <span class="tarot-card__inner">
             <span class="tarot-card__face tarot-card__back">
-              <img src="${cardBackImage}" alt="" width="260" height="416" loading="lazy" decoding="async" fetchpriority="low" />
+              <img src="${cardBackImage}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" />
             </span>
             <span class="tarot-card__face tarot-card__front">
-              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" loading="lazy" decoding="async" onerror="this.src='${cardBackImage}'" />
+              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.src='${cardBackImage}'" />
               <span class="card-orientation-badge">${escapeHtml(orientationLabel)}</span>
             </span>
           </span>
@@ -1640,8 +1666,9 @@ function renderReadingResults() {
           class="reading-viewer__image card-image${reversedClass}"
           src="${escapeHtml(activeCard.image)}"
           alt="${escapeHtml(cardName)}"
-          width="520"
-          height="832"
+          width="${CARD_IMAGE_WIDTH}"
+          height="${CARD_IMAGE_HEIGHT}"
+          loading="eager"
           decoding="async"
           data-expandable-image
           data-image-preview-title="${escapeHtml(cardTitle)}"

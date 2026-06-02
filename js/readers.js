@@ -236,6 +236,44 @@ function setFeaturedReader(readerId) {
   renderFeaturedVeilwalkerSelector();
 }
 
+function getZodiacButtons() {
+  return Array.from(zodiacSelector?.querySelectorAll(".veilwalker-zodiac-button") || []);
+}
+
+function updateZodiacActiveState() {
+  const activeReader = getFeaturedReader();
+
+  getZodiacButtons().forEach((button) => {
+    const isActive = button.dataset.readerSelectId === activeReader?.id;
+
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+    button.setAttribute("aria-selected", String(isActive));
+
+    if (isActive) {
+      button.setAttribute("aria-current", "true");
+    } else {
+      button.removeAttribute("aria-current");
+    }
+  });
+}
+
+function centerActiveZodiacButton({ behavior = "smooth" } = {}) {
+  const track = zodiacSelector?.querySelector(".veilwalker-zodiac-track");
+  const activeButton = track?.querySelector(".veilwalker-zodiac-button.is-active");
+
+  if (!track || !activeButton) {
+    return;
+  }
+
+  const targetScrollLeft = activeButton.offsetLeft + activeButton.offsetWidth / 2 - track.clientWidth / 2;
+
+  track.scrollTo({
+    left: Math.max(0, targetScrollLeft),
+    behavior
+  });
+}
+
 function moveFeaturedReader(direction) {
   if (!orderedReaderProfiles.length) {
     orderedReaderProfiles = getAllReadersInOrder();
@@ -452,13 +490,23 @@ function renderFeaturedVeilwalkerSelector() {
     </article>
   `;
 
-  renderZodiacSelector();
+  const reusedZodiacSelector = renderZodiacSelector();
+
+  if (reusedZodiacSelector) {
+    window.requestAnimationFrame(() => centerActiveZodiacButton());
+  }
+
   renderReaderSelectorDots();
 }
 
 function renderZodiacSelector() {
   if (!zodiacSelector) {
-    return;
+    return false;
+  }
+
+  if (zodiacSelector.querySelector(".veilwalker-zodiac-track")) {
+    updateZodiacActiveState();
+    return true;
   }
 
   const activeReader = getFeaturedReader();
@@ -481,6 +529,8 @@ function renderZodiacSelector() {
           data-reader-select-id="${escapeHtml(reader.id)}"
           aria-label="Select ${escapeHtml(sign)} Veilwalker"
           aria-pressed="${isActive ? "true" : "false"}"
+          aria-selected="${isActive ? "true" : "false"}"
+          ${isActive ? 'aria-current="true"' : ""}
         >
           <span class="veilwalker-zodiac-button__glyph" aria-hidden="true">
             <span class="veilwalker-zodiac-button__icon" style="--zodiac-icon: url('${escapeHtml(iconPath)}')"></span>
@@ -498,6 +548,9 @@ function renderZodiacSelector() {
     </div>
     <button class="veilwalker-zodiac-arrow veilwalker-zodiac-arrow--next" type="button" data-zodiac-strip-nav="next" aria-label="Next Veilwalker"></button>
   `;
+
+  window.requestAnimationFrame(() => centerActiveZodiacButton({ behavior: "auto" }));
+  return false;
 }
 
 function renderReaderSelectorDots() {

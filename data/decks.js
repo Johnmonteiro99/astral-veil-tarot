@@ -13,7 +13,7 @@ const deckCollections = [
     viewTitle: "The Astral Deck",
     viewDescription:
       "Browse the Major Arcana used in Astral Veil readings, now expanded with reflective meanings, shadows, and questions.",
-    coverImage: "assets/images/cards/original/card-back.jpg",
+    coverImage: "assets/images/cards/original/card-back.webp",
     imagePath: "assets/images/cards/original/",
     cards: () => tarotDeck
   },
@@ -33,7 +33,7 @@ const deckCollections = [
     eyebrow: "Blood Moon Arcana",
     viewTitle: "Blood Moon Deck",
     viewDescription: "A crimson Major Arcana collection revealed only while the Blood Moon event is active.",
-    coverImage: "assets/images/cards/blood-moon/bloodmoon-card-back.png",
+    coverImage: "assets/images/cards/blood-moon/bloodmoon-card-back.webp",
     imagePath: "assets/images/cards/blood-moon/",
     unlockCondition: "Blood Moon event active",
     price: null,

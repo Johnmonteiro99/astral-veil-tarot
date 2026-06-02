@@ -9,6 +9,7 @@
     />
     <title>About | Astral Veil</title>
     <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preload" as="image" href="assets/images/concepts-ideas/living-astral-veil.webp" fetchpriority="high" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -63,23 +64,15 @@
       <nav class="navbar" aria-label="Primary navigation">
         <a class="navbar__brand" href="index.html" aria-label="Astral Veil home">
           <span class="logo-eye" aria-hidden="true">
-            <svg class="logo-eye__svg" viewBox="0 0 96 64" focusable="false">
-              <path class="logo-eye__card" d="M48 3l38 29-38 29L10 32z" />
-              <path class="logo-eye__card logo-eye__card--inner" d="M48 9l29 23-29 23-29-23z" />
-              <path class="logo-eye__outer" d="M8 32c11-16 25-23 40-23s29 7 40 23c-11 16-25 23-40 23S19 48 8 32z" />
-              <path class="logo-eye__lid" d="M18 31c8-9 18-14 30-14s22 5 30 14" />
-              <path class="logo-eye__lid" d="M18 34c8 9 18 13 30 13s22-4 30-13" />
-              <circle class="logo-eye__iris" cx="48" cy="32" r="13" />
-              <circle class="logo-eye__pupil" cx="48" cy="32" r="4" />
-              <path class="logo-eye__ray" d="M48 5v8M48 51v8M25 12l5 7M71 12l-5 7M25 52l5-7M71 52l-5-7" />
-              <path class="logo-eye__ornament" d="M36 32h24M48 20v24" />
-              <path class="logo-eye__star" d="M64 24l1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5z" />
-              <path class="logo-eye__star" d="M34 27l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" />
-              <path class="logo-eye__star" d="M51 39l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" />
-              <path class="logo-eye__crescent" d="M76 25c-4 2-6 5-6 9s2 7 6 9c-6 0-11-4-11-9s5-9 11-9z" />
-              <path class="logo-eye__arcana" d="M43 7c2 3 8 3 10 0M43 57c2-3 8-3 10 0" />
-              <path class="logo-eye__arcana" d="M13 28c3 2 3 6 0 8M83 28c-3 2-3 6 0 8" />
-            </svg>
+            <img
+              class="logo-eye__image"
+              src="assets/icons/symbols/astral-veil-icon-logo-transparent.png"
+              alt=""
+              width="512"
+              height="512"
+              loading="eager"
+              decoding="async"
+            />
           </span>
           <span class="navbar__brand-text">Astral Veil</span>
         </a>
@@ -91,24 +84,21 @@
           <li><a class="navbar__link" href="about.html">About</a></li>
         </ul>
 
-        <label class="theme-toggle" aria-label="Switch between sun and moon mode">
-          <input class="theme-toggle__input" type="checkbox" />
-          <span class="theme-toggle__track" aria-hidden="true">
-            <span class="theme-toggle__icon theme-toggle__icon--sun">
-              <svg class="celestial-icon celestial-icon--sun" viewBox="0 0 64 64" focusable="false" aria-hidden="true">
-                <circle class="celestial-icon__core" cx="32" cy="32" r="10" />
-                <path d="M32 5v11M32 48v11M5 32h11M48 32h11" />
-                <path d="M13 13l8 8M43 43l8 8M51 13l-8 8M21 43l-8 8" />
-              </svg>
-            </span>
-            <span class="theme-toggle__divider"></span>
-            <span class="theme-toggle__icon theme-toggle__icon--moon">
-              <svg class="celestial-icon celestial-icon--moon" viewBox="0 0 64 64" focusable="false" aria-hidden="true">
-                <path class="celestial-icon__core" d="M45.2 8.6C34.8 11.8 27.2 21.5 27.2 33c0 10.9 6.8 20.2 16.4 23.9C40 58.2 36.2 59 32.2 59 17.3 59 5.2 46.9 5.2 32S17.3 5 32.2 5c4.7 0 9.1 1.2 13 3.6z" />
-              </svg>
-            </span>
+        <button class="theme-toggle theme-orb-toggle" type="button" aria-label="Switch between sun and moon mode" data-theme-toggle>
+          <span class="theme-orb-toggle__label theme-orb-toggle__label--sun">Sun</span>
+          <span class="theme-orb-toggle__icon-wrap" aria-hidden="true">
+            <img
+              src="assets/icons/symbols/sun-moon-toggle-transparent.png"
+              alt=""
+              class="theme-orb-toggle__icon"
+              width="512"
+              height="512"
+              loading="eager"
+              decoding="async"
+            />
           </span>
-        </label>
+          <span class="theme-orb-toggle__label theme-orb-toggle__label--moon">Moon</span>
+        </button>
 
         <button
           class="navbar__menu-toggle"
@@ -233,8 +223,13 @@
               aria-label="Expand A Living World image"
             >
               <img
-                src="assets/images/concepts-ideas/living-astral-veil.png"
+                src="assets/images/concepts-ideas/living-astral-veil.webp"
                 alt="Astral Veil living project concept art"
+                width="1672"
+                height="941"
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
               />
             </figure>
 
@@ -322,7 +317,7 @@
             class="future-omen"
             aria-labelledby="future-omen-title"
             data-expandable-image
-            data-image-preview-src="assets/images/future-of-the-veil.png"
+            data-image-preview-src="assets/images/future-of-the-veil.webp"
             data-image-preview-title="Future of the Veil"
             data-image-preview-caption="A glimpse of what may arrive when the blue moon rises."
             role="button"

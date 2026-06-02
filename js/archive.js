@@ -5,6 +5,9 @@ const archiveRoomHub = document.querySelector("[data-archive-room-hub]");
 const archiveRoomGrid = document.querySelector("[data-archive-room-grid]");
 const archiveRoomView = document.querySelector("[data-archive-room-view]");
 const archiveRoomToast = document.querySelector("[data-archive-room-toast]");
+const ARCHIVE_ARTWORK_WIDTH = 1050;
+const ARCHIVE_ARTWORK_HEIGHT = 1400;
+const ARCHIVE_ARTIFACT_SIZE = 900;
 
 let archiveToastTimeout = null;
 let hasNormalizedInitialRoomHash = false;
@@ -74,7 +77,7 @@ const elementalKeys = [
       "Recovered from a place where memory pooled beneath the floor. The relic hums faintly when sorrow, intuition, or forgotten names draw near.",
     useHint:
       "May open paths connected to memory, emotional truth, hidden reflections, or water-aligned sanctuaries.",
-    image: "assets/images/water-artifact-clean.png",
+    image: "assets/images/water-artifact-clean.webp",
     accentClass: "element-water"
   },
   {
@@ -96,7 +99,7 @@ const elementalKeys = [
       "Recovered after the Sanctuary of Breath was entered. Its shape appears weightless at first, but its edges shift when silence gathers around it.",
     useHint:
       "May open a chamber, phrase, or hidden passage connected to breath, release, or air-aligned sanctuaries.",
-    image: "assets/images/air-artifact-clean.png",
+    image: "assets/images/air-artifact-clean.webp",
     accentClass: "element-air"
   },
   {
@@ -116,7 +119,7 @@ const elementalKeys = [
     archiveNote:
       "Placeholder archive note. This relic was recovered through a reading pattern tied to ending, ignition, and return.",
     useHint: "Placeholder use text. This artifact may unlock future paths tied to courage, action, and transformation.",
-    image: "assets/images/fire-artifact-clean.png",
+    image: "assets/images/fire-artifact-clean.webp",
     accentClass: "element-fire"
   },
   {
@@ -138,7 +141,7 @@ const elementalKeys = [
       "Recovered after the Grounding Sanctuary was unsealed. Its stone body seems ordinary until quiet weight gathers around it, then gold veins rise like roots remembering light.",
     useHint:
       "May open paths connected to grounding, ancestry, hidden foundations, or earth-aligned sanctuaries.",
-    image: "assets/images/earth-artifact-clean.png",
+    image: "assets/images/earth-artifact-clean.webp",
     accentClass: "element-earth"
   }
 ];
@@ -201,35 +204,45 @@ const galleryVisualRecords = [
     id: "trio-study",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/trio-study.png",
+    image: "assets/images/noctis/visual-records/trio-study.webp",
+    width: 1120,
+    height: 1400,
     caption: "The Archive has recovered the image, but not its name."
   },
   {
     id: "castle-black",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/castle-black.png",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
+    width: 1400,
+    height: 1050,
     caption: "The Archive has recovered the image, but not its name."
   },
   {
     id: "ufo-landing",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/ufo-landing.png",
+    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    width: 1400,
+    height: 1050,
     caption: "The Archive has recovered the image, but not its name."
   },
   {
     id: "the-veil-trine",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/the-veil-trine.png",
+    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    width: 1120,
+    height: 1400,
     caption: "The Archive has recovered the image, but not its name."
   },
   {
     id: "lost-city",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/lost-city.png",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
+    width: 1400,
+    height: 1052,
     caption: "The Archive has recovered the image, but not its name."
   }
 ];
@@ -528,8 +541,11 @@ function renderFeaturedRoomImage(room) {
       <img
         src="${escapeHtml(room.image)}"
         alt="${escapeHtml(getRoomImageAlt(room))}"
+        width="${ARCHIVE_ARTWORK_WIDTH}"
+        height="${ARCHIVE_ARTWORK_HEIGHT}"
         loading="eager"
         decoding="async"
+        fetchpriority="high"
         data-expandable-image
         data-image-preview-title="${escapeHtml(room.title)}"
         data-image-preview-caption="${escapeHtml(`${getRoomSubtitle(room)} • ${status}`)}"
@@ -605,7 +621,7 @@ function renderRoomThumbnail(room, index, selectedRoomId) {
   return `
     <button class="archive-chamber-card archive-chamber-card--${escapeHtml(statusClass)}${isSelected ? " is-active" : ""}${isLocked ? " is-locked" : ""}" type="button" data-select-room="${escapeHtml(room.id)}" aria-label="Select ${escapeHtml(room.title)}" aria-current="${isSelected ? "true" : "false"}">
       <span class="archive-chamber-card__image">
-        <img src="${escapeHtml(room.image)}" alt="${escapeHtml(getRoomImageAlt(room))}" loading="lazy" decoding="async" onerror="this.closest('.archive-chamber-card__image').classList.add('is-missing'); this.remove();" />
+        <img src="${escapeHtml(room.image)}" alt="${escapeHtml(getRoomImageAlt(room))}" width="${ARCHIVE_ARTWORK_WIDTH}" height="${ARCHIVE_ARTWORK_HEIGHT}" loading="lazy" decoding="async" onerror="this.closest('.archive-chamber-card__image').classList.add('is-missing'); this.remove();" />
       </span>
       <span class="archive-chamber-card__body">
         <strong>${escapeHtml(room.title)}</strong>
@@ -735,7 +751,7 @@ function getSelectedRecoveredObject(recoveredObjects) {
 
 function renderRecoveredObjectIcon(object) {
   if (object.image) {
-    return `<img src="${escapeHtml(object.image)}" alt="${escapeHtml(object.title)} artifact" loading="lazy" decoding="async" onerror="this.closest('.archive-recovered-object-card__icon').classList.add('is-missing'); this.remove();" />`;
+    return `<img src="${escapeHtml(object.image)}" alt="${escapeHtml(object.title)} artifact" width="${ARCHIVE_ARTIFACT_SIZE}" height="${ARCHIVE_ARTIFACT_SIZE}" loading="lazy" decoding="async" onerror="this.closest('.archive-recovered-object-card__icon').classList.add('is-missing'); this.remove();" />`;
   }
 
   return `<span aria-hidden="true">${escapeHtml(object.name?.charAt(0) || "K")}</span>`;
@@ -773,7 +789,7 @@ function renderRecoveredObjectDetail(object) {
       <article class="archive-recovered-object-detail ${escapeHtml(object.accentClass || "")}" role="dialog" aria-modal="true" aria-labelledby="recovered-object-title" aria-live="polite">
         <button class="archive-recovered-object-modal__close" type="button" data-recovered-object-close aria-label="Close recovered artifact details">Close</button>
         <figure class="archive-artifact-modal-figure">
-          <img class="archive-artifact-preview-image" src="${escapeHtml(object.image)}" alt="${escapeHtml(object.title)} artifact" loading="lazy" decoding="async" />
+          <img class="archive-artifact-preview-image" src="${escapeHtml(object.image)}" alt="${escapeHtml(object.title)} artifact" width="${ARCHIVE_ARTIFACT_SIZE}" height="${ARCHIVE_ARTIFACT_SIZE}" loading="lazy" decoding="async" />
         </figure>
         <div class="archive-artifact-lore-panel">
           <div class="archive-recovered-object-detail__header">
@@ -949,7 +965,7 @@ function renderVisualRecordCard(record) {
   return `
     <figure class="archive-visual-record">
       <button class="archive-visual-record__preview" type="button" data-visual-record="${escapeHtml(record.id)}" aria-label="${escapeHtml(`View ${record.title} full size`)}">
-        <img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)} visual record" loading="lazy" decoding="async" onerror="this.closest('.archive-visual-record').classList.add('is-image-missing'); this.remove();" />
+        <img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)} visual record" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="lazy" decoding="async" onerror="this.closest('.archive-visual-record').classList.add('is-image-missing'); this.remove();" />
         <span class="archive-visual-record__missing">Record unavailable</span>
       </button>
       <figcaption>
@@ -995,7 +1011,7 @@ function renderGalleryRecordViewer() {
       <button class="archive-gallery-viewer__nav" type="button" data-gallery-record-nav="previous" aria-label="Previous visual record">‹</button>
       <figure class="archive-gallery-record">
         <button class="archive-gallery-record__image-button" type="button" data-visual-record="${escapeHtml(record.id)}" aria-label="${escapeHtml(`Open visual record ${selectedGalleryRecordIndex + 1} full size`)}">
-          <img src="${escapeHtml(record.image)}" alt="${escapeHtml(`Unknown visual record ${selectedGalleryRecordIndex + 1}`)}" loading="lazy" decoding="async" />
+          <img src="${escapeHtml(record.image)}" alt="${escapeHtml(`Unknown visual record ${selectedGalleryRecordIndex + 1}`)}" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="lazy" decoding="async" />
         </button>
         <figcaption>
           <span>Visual Record</span>
@@ -1051,7 +1067,7 @@ function renderVisualRecordModal() {
           <strong>${escapeHtml(counter)}</strong>
         </div>
         <figure class="visual-record-modal__image-frame">
-          <img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)} visual record" />
+          <img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)} visual record" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="eager" decoding="async" />
         </figure>
         <div class="visual-record-modal__copy">
           <p class="archive-entry__stamp">${escapeHtml(record.label)}</p>

@@ -307,8 +307,8 @@ body.moon-mode .navbar {
 
 .logo-eye {
   display: grid;
-  width: 52px;
-  height: 38px;
+  width: 64px;
+  height: 48px;
   place-items: center;
   color: var(--navbar-hover-text);
   filter: drop-shadow(0 0 10px var(--navbar-glow));
@@ -323,6 +323,14 @@ body.moon-mode .navbar {
   width: 100%;
   height: auto;
   overflow: visible;
+}
+
+.logo-eye__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: center;
 }
 
 .logo-eye__svg path,
@@ -377,6 +385,11 @@ body.moon-mode .navbar {
 
 .navbar__brand:hover .logo-eye__iris,
 .navbar__brand:focus-visible .logo-eye__iris {
+  animation: logoEyePulse 1400ms ease-in-out infinite alternate;
+}
+
+.navbar__brand:hover .logo-eye__image,
+.navbar__brand:focus-visible .logo-eye__image {
   animation: logoEyePulse 1400ms ease-in-out infinite alternate;
 }
 
@@ -745,18 +758,13 @@ body.moon-mode .navbar__link--lumen-archive:not(.is-active):not(:hover):not(:foc
   }
 
   .logo-eye {
-    width: 44px;
-    height: 32px;
+    width: 56px;
+    height: 42px;
   }
 
   .theme-toggle {
-    min-width: 82px;
-  }
-
-  .theme-toggle__track {
-    width: 82px;
-    height: 36px;
-    padding: 4px;
+    width: 118px;
+    height: 38px;
   }
 }
 
@@ -1121,12 +1129,13 @@ body.blood-moon-mode .theme-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-width: 84px;
+  gap: 6px;
+  min-width: 88px;
   min-height: 46px;
+  margin-right: 10px;
   border: 1px solid rgba(255, 60, 90, 0.46);
   border-radius: 999px;
-  padding: 0 14px;
+  padding: 0 10px 0 8px;
   color: #fff3ef;
   background:
     radial-gradient(circle at 50% 32%, rgba(255, 60, 90, 0.24), transparent 62%),
@@ -1136,7 +1145,10 @@ body.blood-moon-mode .theme-toggle {
     0 0 18px rgba(190, 10, 45, 0.34),
     0 12px 28px rgba(0, 0, 0, 0.34);
   cursor: pointer;
-  font: 800 0.72rem/1 var(--body-font);
+  font-family: var(--logo-font);
+  font-size: clamp(0.84rem, 0.64rem + 0.22vw, 0.96rem);
+  font-weight: 400;
+  line-height: 1;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   transition:
@@ -1146,27 +1158,19 @@ body.blood-moon-mode .theme-toggle {
 }
 
 .blood-moon-nav-control__sigil {
-  width: 26px;
-  height: 26px;
+  width: 34px;
+  height: 34px;
   flex: 0 0 auto;
-  overflow: visible;
-  color: #ffb0b8;
+  display: block;
+  object-fit: contain;
   filter:
     drop-shadow(0 0 7px rgba(255, 50, 80, 0.58))
     drop-shadow(0 0 13px rgba(217, 28, 63, 0.36));
 }
 
-.blood-moon-nav-control__sigil circle,
-.blood-moon-nav-control__sigil path {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.blood-moon-nav-control__sigil circle:nth-child(2) {
-  fill: rgba(217, 28, 63, 0.22);
+.blood-moon-nav-control__label {
+  display: inline-block;
+  transform: translateY(1px);
 }
 
 .blood-moon-nav-control:hover,
@@ -1184,211 +1188,174 @@ body.blood-moon-mode .theme-toggle {
   right: clamp(10px, 1.4vw, 22px);
   justify-self: end;
   flex: 0 0 auto;
-  display: inline-flex;
+  display: grid;
   align-items: center;
-  justify-content: flex-end;
   align-self: center;
-  min-width: 84px;
+  width: 128px;
+  height: 42px;
   max-width: 100%;
   margin-left: 0;
-  cursor: pointer;
-  transform: none;
-  transition: transform 250ms ease;
-}
-
-.theme-toggle__input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
-.theme-toggle__track {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  width: 84px;
-  height: 36px;
-  padding: 4px;
-  border: 1px solid color-mix(in srgb, var(--navbar-border) 76%, transparent);
+  border: 1px solid rgba(241, 199, 106, 0.42);
   border-radius: 999px;
+  padding: 0;
+  color: #fff6dc;
   background:
+    radial-gradient(circle at 76% 50%, rgba(241, 199, 106, 0.2), transparent 45%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 58%),
-    color-mix(in srgb, var(--navbar-bg) 70%, rgba(0, 0, 0, 0.32));
+    rgba(15, 13, 18, 0.72);
   box-shadow:
-    0 0 14px color-mix(in srgb, var(--navbar-glow) 30%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 0 18px rgba(241, 199, 106, 0.16),
+    inset 0 0 14px rgba(255, 255, 255, 0.04);
+  cursor: pointer;
   overflow: hidden;
+  transform: none;
   transition:
-    background 350ms ease,
-    border-color 350ms ease,
-    box-shadow 350ms ease,
-    color 350ms ease;
+    border-color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 180ms ease;
 }
 
-.theme-toggle__track::before {
-  content: "";
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  z-index: 1;
-  width: 34px;
-  height: 26px;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--navbar-hover-text) 34%, transparent), transparent 68%),
-    color-mix(in srgb, var(--navbar-hover-bg) 78%, transparent);
-  box-shadow:
-    0 0 12px color-mix(in srgb, var(--navbar-glow) 46%, transparent),
-    inset 0 0 0 1px color-mix(in srgb, var(--navbar-hover-text) 18%, transparent);
-  transition:
-    background 350ms ease,
-    box-shadow 350ms ease,
-    transform 350ms ease;
+.theme-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
-.theme-toggle__track::after {
-  content: "";
+.theme-orb-toggle__label,
+.theme-orb-toggle__icon-wrap {
   position: absolute;
   top: 50%;
-  left: 50%;
-  z-index: 2;
-  width: 1px;
-  height: 17px;
-  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--navbar-border) 72%, transparent), transparent);
-  transform: translate(-50%, -50%);
-  opacity: 0.62;
-}
-
-.theme-toggle__icon {
-  position: relative;
-  z-index: 3;
-  display: grid;
-  place-items: center;
-  color: var(--navbar-muted);
+  z-index: 1;
+  transform: translateY(-50%);
   transition:
-    color 250ms ease,
-    filter 250ms ease,
-    opacity 250ms ease,
-    transform 250ms ease;
+    color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    right 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 280ms ease,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.theme-toggle__divider {
+.theme-orb-toggle__label {
+  font-family: var(--logo-font);
+  font-size: clamp(0.76rem, 0.6rem + 0.18vw, 0.86rem);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.theme-orb-toggle__label--sun {
+  left: 19px;
+}
+
+.theme-orb-toggle__label--moon {
+  right: 16px;
+}
+
+.theme-orb-toggle__icon-wrap {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.theme-orb-toggle__icon {
   display: none;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  transform: translateZ(0);
 }
 
-.celestial-icon {
-  display: block;
-  width: 20px;
-  height: 20px;
-  overflow: visible;
-  flex: 0 0 auto;
-  color: inherit;
+.theme-orb-toggle__icon-wrap::before {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.42rem;
+  line-height: 1;
 }
 
-.theme-toggle .celestial-icon path,
-.theme-toggle .celestial-icon circle {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.theme-toggle .celestial-icon__core {
-  stroke-width: 1.8;
-}
-
-.theme-toggle .celestial-icon--sun .celestial-icon__core {
-  fill: currentColor;
-  fill-opacity: 0.18;
-}
-
-.theme-toggle .celestial-icon--moon .celestial-icon__core {
-  fill: currentColor;
-  fill-opacity: 0.24;
-  stroke-width: 2.2;
-}
-
-.theme-toggle:hover .theme-toggle__icon {
-  transform: translateY(-1px) scale(1.04);
-}
-
-.theme-toggle:hover .celestial-icon {
-  animation: celestialIconFloat 1200ms ease-in-out infinite alternate;
-}
-
-body.sun-mode .theme-toggle__track {
-  border-color: rgba(231, 195, 106, 0.38);
-}
-
-body.moon-mode .theme-toggle__track {
-  border-color: color-mix(in srgb, var(--theme-accent-primary) 36%, var(--theme-accent-secondary));
-}
-
-body.sun-mode .theme-toggle__track::before {
-  transform: translateX(0);
+body.sun-mode .theme-toggle {
+  border-color: rgba(241, 199, 106, 0.46);
   background:
-    radial-gradient(circle at 50% 42%, rgba(255, 230, 163, 0.34), transparent 68%),
-    rgba(231, 195, 106, 0.16);
+    radial-gradient(circle at 78% 50%, rgba(241, 199, 106, 0.2), transparent 46%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 58%),
+    rgba(20, 14, 9, 0.74);
+  box-shadow:
+    0 0 18px rgba(241, 199, 106, 0.16),
+    inset 0 0 14px rgba(255, 255, 255, 0.045);
 }
 
-body.moon-mode .theme-toggle__track::before {
-  transform: translateX(40px);
+body.moon-mode .theme-toggle {
+  border-color: rgba(200, 182, 255, 0.42);
   background:
-    radial-gradient(circle at 50% 42%, rgba(234, 216, 255, 0.32), transparent 68%),
-    rgba(183, 140, 255, 0.16);
+    radial-gradient(circle at 22% 50%, rgba(190, 160, 255, 0.2), transparent 46%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 58%),
+    rgba(12, 10, 24, 0.76);
+  box-shadow:
+    0 0 18px rgba(190, 160, 255, 0.15),
+    inset 0 0 14px rgba(255, 255, 255, 0.045);
 }
 
-body.sun-mode .theme-toggle__track::after {
-  transform: translate(-50%, -50%);
-}
-
-body.moon-mode .theme-toggle__track::after {
-  transform: translate(-50%, -50%);
-}
-
-body.sun-mode .theme-toggle__icon--sun {
-  color: #ffe6a3;
+body.sun-mode .theme-orb-toggle__label--sun,
+body.moon-mode .theme-orb-toggle__label--moon {
   opacity: 1;
+  color: #fff6dc;
+  transform: translateY(-50%);
+}
+
+body.sun-mode .theme-orb-toggle__label--moon {
+  opacity: 0;
+  transform: translate(8px, -50%);
+}
+
+body.moon-mode .theme-orb-toggle__label--sun {
+  opacity: 0;
+  transform: translate(-8px, -50%);
+}
+
+body.sun-mode .theme-orb-toggle__icon-wrap {
+  right: 12px;
   filter:
-    drop-shadow(0 0 5px rgba(255, 212, 128, 0.7))
+    drop-shadow(0 0 6px rgba(255, 212, 128, 0.72))
     drop-shadow(0 0 12px rgba(231, 166, 68, 0.62));
-  transform: scale(1.08);
 }
 
-body.moon-mode .theme-toggle__icon--moon {
-  color: #f3e4ff;
-  opacity: 1;
+body.sun-mode .theme-orb-toggle__icon-wrap::before {
+  content: "☀";
+  color: #ffd36f;
+  text-shadow:
+    0 0 7px rgba(255, 213, 118, 0.86),
+    0 0 16px rgba(231, 166, 68, 0.62);
+}
+
+body.moon-mode .theme-orb-toggle__icon-wrap {
+  right: calc(100% - 44px);
   filter:
-    drop-shadow(0 0 5px rgba(234, 216, 255, 0.48))
+    drop-shadow(0 0 6px rgba(234, 216, 255, 0.54))
     drop-shadow(0 0 13px rgba(139, 92, 246, 0.68));
-  transform: scale(1.08);
 }
 
-body.sun-mode .theme-toggle__icon--moon,
-body.moon-mode .theme-toggle__icon--sun {
-  opacity: 0.48;
-  filter: none;
-}
-
-@keyframes celestialIconFloat {
-  from {
-    transform: rotate(-1deg);
-  }
-
-  to {
-    transform: rotate(1.5deg);
-  }
+body.moon-mode .theme-orb-toggle__icon-wrap::before {
+  content: "☾";
+  color: #f4f0ff;
+  text-shadow:
+    0 0 7px rgba(255, 255, 255, 0.9),
+    0 0 16px rgba(198, 208, 236, 0.76),
+    0 0 24px rgba(139, 92, 246, 0.42);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .theme-toggle:hover .celestial-icon {
-    animation: none;
+  .theme-toggle,
+  .theme-orb-toggle__label,
+  .theme-orb-toggle__icon-wrap {
+    transition: none;
   }
 
   .navbar__brand:hover .logo-eye__iris,
@@ -1419,14 +1386,14 @@ body.moon-mode .theme-toggle__icon--sun {
   transform: translateY(-1px);
 }
 
-.theme-toggle:hover .theme-toggle__track,
-.theme-toggle__input:focus-visible + .theme-toggle__track {
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
   box-shadow:
     0 0 18px color-mix(in srgb, var(--navbar-glow) 42%, transparent),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-.theme-toggle--blood-pulse .theme-toggle__track {
+.theme-toggle--blood-pulse {
   border-color: rgba(255, 116, 126, 0.58);
   box-shadow:
     0 0 20px rgba(255, 35, 65, 0.32),
@@ -1435,8 +1402,7 @@ body.moon-mode .theme-toggle__icon--sun {
   animation: bloodTogglePulse 1.8s ease-in-out infinite;
 }
 
-.theme-toggle--blood-pulse .theme-toggle__icon--moon {
-  color: rgba(255, 213, 217, 0.96);
+.theme-toggle--blood-pulse .theme-orb-toggle__icon-wrap {
   filter: drop-shadow(0 0 10px rgba(255, 35, 65, 0.42));
 }
 
@@ -1444,22 +1410,9 @@ body.moon-mode .theme-toggle__icon--sun {
 .navbar__menu-toggle:focus-visible,
 .navbar__mobile-link:focus-visible,
 .blood-moon-nav-control:focus-visible,
-.theme-toggle__input:focus-visible + .theme-toggle__track {
+.theme-toggle:focus-visible {
   outline: 2px solid var(--navbar-hover-text);
   outline-offset: 3px;
-}
-
-/*
-  The slider uses two custom inline SVGs instead of a moving thumb.
-  The active mode is shown through the icon glow and the glass track light.
-*/
-body.sun-mode .theme-toggle__icon--sun,
-body.moon-mode .theme-toggle__icon--moon {
-  transition:
-    color 350ms ease,
-    filter 350ms ease,
-    opacity 350ms ease,
-    transform 350ms ease;
 }
 
 .reading-section {
@@ -1580,7 +1533,7 @@ body.moon-mode .theme-toggle__icon--moon {
   overflow: hidden;
   border: 0;
   border-radius: 18px;
-  background-image: url("../assets/images/concepts-ideas/meet-the-veilwalkers.png");
+  background-image: url("../assets/images/concepts-ideas/meet-the-veilwalkers.webp");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -1665,7 +1618,7 @@ body.sun-mode .readers-page .page-hero {
 }
 
 body.sun-mode .readers-hero-letter {
-  background-image: url("../assets/images/concepts-ideas/meet-the-veilwalkers.png");
+  background-image: url("../assets/images/concepts-ideas/meet-the-veilwalkers.webp");
   box-shadow:
     0 24px 72px rgba(0, 0, 0, 0.26),
     0 0 46px rgba(228, 169, 70, 0.28);
@@ -1698,7 +1651,7 @@ body.blood-moon-mode .readers-page .page-hero {
 }
 
 body.blood-moon-mode .readers-hero-letter {
-  background-image: url("../assets/images/concepts-ideas/bloodmoon-veilwalker-section.png");
+  background-image: url("../assets/images/concepts-ideas/bloodmoon-veilwalker-section.webp");
   box-shadow:
     0 24px 76px rgba(0, 0, 0, 0.34),
     0 0 48px rgba(255, 40, 64, 0.32);
@@ -2001,7 +1954,7 @@ body.moon-mode .about-cta__rule {
   background:
     linear-gradient(90deg, rgba(7, 16, 14, 0.82) 0%, rgba(7, 16, 14, 0.62) 42%, rgba(7, 16, 14, 0.16) 74%, rgba(7, 16, 14, 0.28) 100%),
     radial-gradient(circle at 28% 50%, color-mix(in srgb, var(--about-glow) 36%, transparent), transparent 52%),
-    url("../assets/images/about-tarotcards-section.png");
+    url("../assets/images/about-tarotcards-section.webp");
   background-position: center;
   background-size: cover;
   box-shadow:
@@ -2015,7 +1968,7 @@ body.moon-mode .about-vision {
   background:
     linear-gradient(90deg, rgba(10, 7, 27, 0.84) 0%, rgba(18, 11, 42, 0.64) 42%, rgba(18, 11, 42, 0.18) 74%, rgba(10, 7, 27, 0.34) 100%),
     radial-gradient(circle at 28% 50%, color-mix(in srgb, var(--about-glow) 48%, transparent), transparent 54%),
-    url("../assets/images/about-tarotcards-section.png");
+    url("../assets/images/about-tarotcards-section.webp");
   background-position: center;
   background-size: cover;
   box-shadow:
@@ -2027,7 +1980,7 @@ body.blood-moon-mode .about-vision {
   background:
     linear-gradient(90deg, rgba(18, 2, 5, 0.88) 0%, rgba(32, 4, 9, 0.7) 42%, rgba(32, 4, 9, 0.18) 74%, rgba(12, 1, 4, 0.42) 100%),
     radial-gradient(circle at 28% 50%, color-mix(in srgb, var(--about-glow) 54%, transparent), transparent 54%),
-    url("../assets/images/about-tarotcards-section.png");
+    url("../assets/images/about-tarotcards-section.webp");
   background-position: center;
   background-size: cover;
   box-shadow:
@@ -2600,7 +2553,7 @@ body.moon-mode .about-living__closing-rule {
   border-radius: 1.35rem;
   background-image:
     linear-gradient(90deg, rgba(6, 14, 12, 0.92) 0%, rgba(6, 14, 12, 0.66) 43%, rgba(6, 14, 12, 0.18) 72%, rgba(6, 14, 12, 0.34) 100%),
-    url("../assets/images/future-of-the-veil.png");
+    url("../assets/images/future-of-the-veil.webp");
   background-position: center;
   background-size: cover;
   box-shadow:
@@ -2619,7 +2572,7 @@ body.moon-mode .about-living__closing-rule {
 body.moon-mode .future-omen {
   background-image:
     linear-gradient(90deg, rgba(8, 6, 24, 0.93) 0%, rgba(15, 10, 38, 0.68) 43%, rgba(15, 10, 38, 0.2) 72%, rgba(8, 6, 24, 0.38) 100%),
-    url("../assets/images/future-of-the-veil.png");
+    url("../assets/images/future-of-the-veil.webp");
   box-shadow:
     0 0 30px rgba(139, 92, 246, 0.32),
     0 24px 70px rgba(5, 3, 18, 0.36);
@@ -2628,7 +2581,7 @@ body.moon-mode .future-omen {
 body.blood-moon-mode .future-omen {
   background-image:
     linear-gradient(90deg, rgba(18, 1, 5, 0.94) 0%, rgba(34, 3, 9, 0.72) 43%, rgba(34, 3, 9, 0.24) 72%, rgba(12, 1, 4, 0.48) 100%),
-    url("../assets/images/future-of-the-veil.png");
+    url("../assets/images/future-of-the-veil.webp");
   box-shadow:
     0 0 34px rgba(217, 28, 63, 0.32),
     0 24px 76px rgba(9, 0, 3, 0.46);
@@ -2751,15 +2704,15 @@ body.blood-moon-mode .future-omen {
 }
 
 .about-cta-card--reading {
-  --about-cta-card-image: url("../assets/images/sbout-reading-button.png");
+  --about-cta-card-image: url("../assets/images/sbout-reading-button.webp");
 }
 
 .about-cta-card--veilwalkers {
-  --about-cta-card-image: url("../assets/images/about-veilwaker-button.png");
+  --about-cta-card-image: url("../assets/images/about-veilwaker-button.webp");
 }
 
 .about-cta-card--archive {
-  --about-cta-card-image: url("../assets/images/about-archive-button.png");
+  --about-cta-card-image: url("../assets/images/about-archive-button.webp");
 }
 
 .about-cta-card::before {
@@ -5758,6 +5711,12 @@ body.blood-moon-mode .site-footer__inner {
   .navbar__brand {
     justify-self: start;
     min-width: 0;
+    gap: 8px;
+  }
+
+  .logo-eye {
+    width: 50px;
+    height: 38px;
   }
 
   .navbar__brand-text {
@@ -5795,62 +5754,61 @@ body.blood-moon-mode .site-footer__inner {
   .theme-toggle {
     justify-self: end;
     right: clamp(6px, 1.6vw, 12px);
-    min-width: 0;
+    width: 104px;
+    height: 36px;
     margin-left: 0;
   }
 
-  .theme-toggle__track {
-    width: 76px;
-    height: 34px;
-    padding: 4px;
+  .theme-orb-toggle__label {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
   }
 
-  .theme-toggle__track::before {
-    top: 4px;
-    left: 4px;
-    width: 30px;
-    height: 26px;
+  .theme-orb-toggle__label--sun {
+    left: 15px;
   }
 
-  .theme-toggle__track::after {
-    top: 50%;
-    left: 50%;
-    width: 1px;
-    height: 16px;
-    transform: translate(-50%, -50%);
+  .theme-orb-toggle__label--moon {
+    right: 12px;
   }
 
-  body.moon-mode .theme-toggle__track::before {
-    transform: translateX(38px);
+  .theme-orb-toggle__icon-wrap {
+    width: 28px;
+    height: 28px;
   }
 
-  body.moon-mode .theme-toggle__track::after {
-    transform: translate(-50%, -50%);
+  .theme-orb-toggle__icon {
+    width: 27px;
+    height: 27px;
   }
 
-  .celestial-icon {
-    width: 19px;
-    height: 19px;
+  .theme-orb-toggle__icon-wrap::before {
+    width: 27px;
+    height: 27px;
+    font-size: 1.28rem;
+  }
+
+  body.sun-mode .theme-orb-toggle__icon-wrap {
+    right: 10px;
+  }
+
+  body.moon-mode .theme-orb-toggle__icon-wrap {
+    right: calc(100% - 38px);
   }
 
   .blood-moon-nav-control {
-    min-width: 42px;
-    min-height: 38px;
-    padding: 0 8px;
-  }
-
-  .blood-moon-nav-control__text {
-    display: none;
+    gap: 4px;
+    min-width: 76px;
+    min-height: 40px;
+    margin-right: 6px;
+    padding: 0 8px 0 6px;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
   }
 
   .blood-moon-nav-control__sigil {
-    width: 24px;
-    height: 24px;
-  }
-
-  .celestial-icon {
-    width: 23px;
-    height: 23px;
+    width: 28px;
+    height: 28px;
   }
 
   .reading-section {
@@ -6161,19 +6119,19 @@ body.blood-moon-mode .site-footer__inner {
     background-position: 58% center;
     background-image:
       linear-gradient(90deg, rgba(6, 14, 12, 0.94) 0%, rgba(6, 14, 12, 0.76) 58%, rgba(6, 14, 12, 0.34) 100%),
-      url("../assets/images/future-of-the-veil.png");
+      url("../assets/images/future-of-the-veil.webp");
   }
 
   body.moon-mode .future-omen {
     background-image:
       linear-gradient(90deg, rgba(8, 6, 24, 0.95) 0%, rgba(15, 10, 38, 0.78) 58%, rgba(15, 10, 38, 0.36) 100%),
-      url("../assets/images/future-of-the-veil.png");
+      url("../assets/images/future-of-the-veil.webp");
   }
 
   body.blood-moon-mode .future-omen {
     background-image:
       linear-gradient(90deg, rgba(18, 1, 5, 0.96) 0%, rgba(34, 3, 9, 0.82) 58%, rgba(34, 3, 9, 0.42) 100%),
-      url("../assets/images/future-of-the-veil.png");
+      url("../assets/images/future-of-the-veil.webp");
   }
 
   .future-omen__content {
@@ -6491,12 +6449,12 @@ body.blood-moon-mode .site-footer__inner {
   }
 
   .logo-eye {
-    width: 36px;
-    height: 28px;
+    width: 48px;
+    height: 36px;
   }
 
   .navbar__brand {
-    gap: 6px;
+    gap: 7px;
   }
 
   .navbar__brand-text {
@@ -6509,49 +6467,61 @@ body.blood-moon-mode .site-footer__inner {
     height: 36px;
   }
 
-  .theme-toggle__track {
-    width: 70px;
+  .theme-toggle {
+    width: 94px;
     height: 34px;
-    padding: 4px;
   }
 
-  .theme-toggle__track::before {
-    top: 4px;
-    left: 4px;
-    width: 27px;
-    height: 24px;
+  .theme-orb-toggle__label {
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
   }
 
-  .theme-toggle__track::after {
-    top: 50%;
-    left: 50%;
-    width: 1px;
-    height: 15px;
-    transform: translate(-50%, -50%);
+  .theme-orb-toggle__label--sun {
+    left: 13px;
   }
 
-  body.moon-mode .theme-toggle__track::before {
-    transform: translateX(35px);
+  .theme-orb-toggle__label--moon {
+    right: 10px;
   }
 
-  body.moon-mode .theme-toggle__track::after {
-    transform: translate(-50%, -50%);
+  .theme-orb-toggle__icon-wrap {
+    width: 26px;
+    height: 26px;
+  }
+
+  .theme-orb-toggle__icon {
+    width: 25px;
+    height: 25px;
+  }
+
+  .theme-orb-toggle__icon-wrap::before {
+    width: 25px;
+    height: 25px;
+    font-size: 1.18rem;
+  }
+
+  body.sun-mode .theme-orb-toggle__icon-wrap {
+    right: 8px;
+  }
+
+  body.moon-mode .theme-orb-toggle__icon-wrap {
+    right: calc(100% - 34px);
   }
 
   .blood-moon-nav-control {
-    min-width: 38px;
-    min-height: 36px;
-    padding: 0 7px;
+    gap: 3px;
+    min-width: 70px;
+    min-height: 38px;
+    margin-right: 4px;
+    padding: 0 7px 0 5px;
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
   }
 
   .blood-moon-nav-control__sigil {
-    width: 22px;
-    height: 22px;
-  }
-
-  .celestial-icon {
-    width: 21px;
-    height: 21px;
+    width: 26px;
+    height: 26px;
   }
 
   .tarot-stage {
@@ -8686,7 +8656,7 @@ body.blood-moon-mode .active-reader-header__quote {
   --reading-stage-line: rgba(231, 195, 106, 0.3);
   --reading-stage-text-bg: rgba(3, 2, 8, 0.42);
   --reading-stage-text-bg-strong: rgba(3, 2, 8, 0.58);
-  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-moon-section.png");
+  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-moon-section.webp");
   border: 0;
   border-radius: 0;
   padding: 0;
@@ -8699,7 +8669,7 @@ body.blood-moon-mode .active-reader-header__quote {
 
 body.sun-mode .reading-stage,
 body.sun-mode .reading-results-section {
-  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-sun-section.png");
+  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-sun-section.webp");
   --reading-stage-accent: #e7c36a;
   --reading-stage-glow: rgba(231, 195, 106, 0.3);
   --reading-stage-line: rgba(231, 195, 106, 0.34);
@@ -8709,7 +8679,7 @@ body.sun-mode .reading-results-section {
 
 body.moon-mode .reading-stage,
 body.moon-mode .reading-results-section {
-  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-moon-section.png");
+  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-moon-section.webp");
   --reading-stage-accent: #d6b36a;
   --reading-stage-glow: rgba(166, 132, 230, 0.3);
   --reading-stage-line: rgba(214, 179, 106, 0.3);
@@ -8719,7 +8689,7 @@ body.moon-mode .reading-results-section {
 
 body.blood-moon-mode .reading-stage,
 body.blood-moon-mode .reading-results-section {
-  --reading-stage-hero-image: url("../assets/images/concepts-ideas/bloodmoon-reading-section.png");
+  --reading-stage-hero-image: url("../assets/images/concepts-ideas/bloodmoon-reading-section.webp");
   --reading-stage-accent: #ff5266;
   --reading-stage-glow: rgba(255, 40, 64, 0.34);
   --reading-stage-line: rgba(255, 82, 102, 0.34);

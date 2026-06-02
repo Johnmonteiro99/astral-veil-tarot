@@ -424,8 +424,12 @@ body.blood-moon-mode .veilwalker-selector__zodiac {
   gap: 8px;
   min-width: 0;
   overflow-x: auto;
-  overscroll-behavior-x: contain;
+  overscroll-behavior-inline: contain;
+  padding-inline: max(0px, calc((100% - clamp(78px, 8vw, 102px)) / 2));
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .veilwalker-zodiac-track::-webkit-scrollbar {
@@ -474,7 +478,7 @@ body.blood-moon-mode .veilwalker-selector__zodiac {
 }
 
 .veilwalker-zodiac-button {
-  flex: 1 0 auto;
+  flex: 0 0 clamp(78px, 8vw, 102px);
   display: grid;
   justify-items: center;
   gap: 6px;
@@ -488,6 +492,7 @@ body.blood-moon-mode .veilwalker-selector__zodiac {
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.03em;
+  scroll-snap-align: center;
   cursor: pointer;
   transition:
     border-color 220ms ease,
@@ -1728,6 +1733,10 @@ body.blood-moon-mode .reader-detail__form-button[data-reader-form-id="bloodMoonS
 }
 
 @media (max-width: 620px) {
+  .veilwalker-zodiac-track {
+    padding-inline: max(0px, calc((100% - 92px) / 2));
+  }
+
   .veilwalker-feature {
     padding: 14px;
     border-radius: 18px;

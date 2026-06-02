@@ -13,7 +13,7 @@ const lumenSanctuaries = [
     previewPurpose: "This path is for emotional clarity, self-discovery, and quiet inner listening.",
     practice: "Use this sanctuary for prompts, writings, and quiet inner listening.",
     lightworkNote: "The surface shows the face. The depth shows what still asks to be known.",
-    image: "assets/images/reflection-pool.png",
+    image: "assets/images/reflection-pool.webp",
     interiorIntro: "{name}, the water does not ask you to explain yourself before it reflects you.",
     interiorMood: "This room is not here to fix your feelings. It is here to let them become visible.",
     roomClass: "water",
@@ -73,7 +73,7 @@ const lumenSanctuaries = [
     previewPurpose: "This path is for clarity, release, and returning to the present.",
     practice: "Use this sanctuary for breathwork, thought-clearing prompts, and inner stillness.",
     lightworkNote: "What leaves the body may also leave the mind.",
-    image: "assets/images/sanctuary-of-breath.png",
+    image: "assets/images/sanctuary-of-breath.webp",
     interiorIntro: "{name}, return first to the breath. The rest can wait.",
     interiorMood: "This room listens for the space between what you carry and what you are ready to release.",
     roomClass: "air",
@@ -135,7 +135,7 @@ const lumenSanctuaries = [
     previewPurpose: "This path is for courage, creative energy, renewal, and becoming.",
     practice: "Use this sanctuary for renewal prompts, confidence work, and choosing what is ready to grow.",
     lightworkNote: "Not all fire destroys. Some fire teaches the seed when to rise.",
-    image: "assets/images/garden-of-renewal.png",
+    image: "assets/images/garden-of-renewal.webp",
     interiorIntro: "{name}, not everything that burns is lost. Some things burn to make room.",
     interiorMood: "This room holds the warmth of endings that became beginnings.",
     roomClass: "fire",
@@ -197,7 +197,7 @@ const lumenSanctuaries = [
     previewPurpose: "This path is for patience, stability, embodiment, and grounding in what is real.",
     practice: "Use this sanctuary for grounding exercises, body awareness, gratitude, and practical reflection.",
     lightworkNote: "The root does not rush toward the sun. It becomes strong enough to hold it.",
-    image: "assets/images/rooted-grove.png",
+    image: "assets/images/rooted-grove.webp",
     interiorIntro: "{name}, let the body remember what the mind keeps rushing past.",
     interiorMood: "This room steadies what has been rushing to become before it was rooted.",
     roomClass: "earth",
@@ -263,7 +263,7 @@ const lumenSanctuaries = [
     previewPurpose: "This path is for truth, identity, self-acceptance, and integration.",
     practice: "Use this sanctuary for integration prompts, self-compassion, and reflecting on who you are becoming.",
     lightworkNote: "A mirror is not a judge. It is a door that learned to shine back.",
-    image: "assets/images/hall-of-mirrors.png",
+    image: "assets/images/hall-of-mirrors.webp",
     interiorIntro: "{name}, stand gently before what looks back.",
     interiorMood: "This room does not ask you to perform wholeness. It asks you to meet what is already waiting.",
     roomClass: "integration",
@@ -315,6 +315,10 @@ const lumenSanctuaries = [
     ]
   }
 ];
+
+const LUMEN_SANCTUARY_IMAGE_WIDTH = 1024;
+const LUMEN_SANCTUARY_IMAGE_HEIGHT = 1536;
+const LUMEN_ICON_SIZE = 256;
 
 const lumenRail = document.querySelector("[data-lumen-sanctuary-rail]");
 const lumenViewer = document.querySelector("[data-lumen-sanctuary-viewer]");
@@ -402,11 +406,11 @@ function getLumenSanctuaryInitial(sanctuary) {
 
 function getLumenSanctuarySelectorIcon(sanctuary) {
   const selectorIcons = {
-    "reflection-pool": "assets/images/reflection-button-transparent.png",
-    "garden-of-renewal": "assets/images/renewal-button-transparent.png",
-    "hall-of-mirrors": "assets/images/integration-button-transparent.png",
-    "rooted-grove": "assets/images/grounding-button-transparent.png",
-    "sanctuary-of-breath": "assets/images/breath-button-transparent.png"
+    "reflection-pool": "assets/images/reflection-button-transparent.webp",
+    "garden-of-renewal": "assets/images/renewal-button-transparent.webp",
+    "hall-of-mirrors": "assets/images/integration-button-transparent.webp",
+    "rooted-grove": "assets/images/grounding-button-transparent.webp",
+    "sanctuary-of-breath": "assets/images/breath-button-transparent.webp"
   };
 
   return selectorIcons[sanctuary?.id] || "";
@@ -508,7 +512,7 @@ function renderLumenRailTab(index, position, options = {}) {
         <em>${escapeLumenHtml(sanctuary.selectorSubtitle)}</em>
       </span>
       <span class="lumen-sanctuary-tab__icon" aria-hidden="true">
-        <img src="${escapeLumenHtml(icon)}" alt="" loading="eager" decoding="async" />
+        <img src="${escapeLumenHtml(icon)}" alt="" width="${LUMEN_ICON_SIZE}" height="${LUMEN_ICON_SIZE}" loading="eager" decoding="async" />
       </span>
     </button>
   `;
@@ -622,7 +626,7 @@ function renderLumenViewer() {
           <div class="sanctuary-room-showcase__visual">
             <figure class="sanctuary-portal-frame sanctuary-portal-frame--${escapeLumenHtml(sanctuary.id)}">
               <button class="sanctuary-portal-image-button" type="button" data-lumen-image-open data-lumen-image-src="${escapeLumenHtml(sanctuary.image)}" data-lumen-image-alt="${escapeLumenHtml(`${sanctuary.title} sanctuary artwork`)}" data-lumen-image-title="${escapeLumenHtml(sanctuary.title)}" aria-label="${escapeLumenHtml(`View ${sanctuary.title} image larger`)}">
-                <img class="sanctuary-portal-image sanctuary-room-showcase__image" src="${escapeLumenHtml(sanctuary.image)}" alt="${escapeLumenHtml(sanctuary.title)} sanctuary artwork" loading="eager" decoding="async" onerror="this.closest('.sanctuary-portal-frame').classList.add('is-missing'); this.closest('.sanctuary-portal-image-button').remove();" />
+                <img class="sanctuary-portal-image sanctuary-room-showcase__image" src="${escapeLumenHtml(sanctuary.image)}" alt="${escapeLumenHtml(sanctuary.title)} sanctuary artwork" width="${LUMEN_SANCTUARY_IMAGE_WIDTH}" height="${LUMEN_SANCTUARY_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" onerror="this.closest('.sanctuary-portal-frame').classList.add('is-missing'); this.closest('.sanctuary-portal-image-button').remove();" />
               </button>
               <figcaption aria-hidden="true">
                 <span>${escapeLumenHtml(getLumenSanctuaryInitial(sanctuary))}</span>
@@ -645,7 +649,7 @@ function renderLumenViewer() {
                 ${showcaseDetails.offers
                   .map((offer) => `
                     <div class="sanctuary-offer-tile" role="listitem">
-                      <img class="sanctuary-offer-icon" src="${escapeLumenHtml(offer.icon)}" alt="" loading="eager" decoding="async" />
+                      <img class="sanctuary-offer-icon" src="${escapeLumenHtml(offer.icon)}" alt="" width="${LUMEN_ICON_SIZE}" height="${LUMEN_ICON_SIZE}" loading="lazy" decoding="async" />
                       <span class="sanctuary-offer-label">${escapeLumenHtml(offer.label)}</span>
                     </div>
                   `)
@@ -917,7 +921,7 @@ function createLumenImageLightbox() {
     <button class="lumen-image-lightbox__backdrop" type="button" data-lumen-image-close aria-label="Close expanded image"></button>
     <section class="lumen-image-lightbox__dialog" role="dialog" aria-modal="true" aria-label="Expanded sanctuary artwork" tabindex="-1">
       <button class="lumen-image-lightbox__close" type="button" data-lumen-image-close aria-label="Close expanded image">&times;</button>
-      <img class="lumen-image-lightbox__image" alt="" />
+      <img class="lumen-image-lightbox__image" alt="" width="${LUMEN_SANCTUARY_IMAGE_WIDTH}" height="${LUMEN_SANCTUARY_IMAGE_HEIGHT}" loading="eager" decoding="async" />
     </section>
   `;
 

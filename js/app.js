@@ -1,4 +1,4 @@
-const themeToggleInput = document.querySelector(".theme-toggle__input");
+const themeToggleButton = document.querySelector("[data-theme-toggle]");
 const themeStorageKey = "dailyTarotTheme";
 const bloodMoonEventId = "bloodMoon";
 const bloodMoonEventStorageKey =
@@ -265,7 +265,7 @@ function updateBloodMoonControl(isActive) {
     return;
   }
 
-  const themeToggle = themeToggleInput?.closest(".theme-toggle");
+  const themeToggle = themeToggleButton?.closest(".theme-toggle");
   const control = document.createElement("button");
 
   control.className = "blood-moon-nav-control";
@@ -275,14 +275,8 @@ function updateBloodMoonControl(isActive) {
   control.setAttribute("aria-label", "Seal the Veil and return to normal mode");
   control.title = "Seal the Veil";
   control.innerHTML = `
-    <svg class="blood-moon-nav-control__sigil" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-      <circle cx="32" cy="32" r="22" />
-      <circle cx="32" cy="32" r="10" />
-      <path d="M32 5v12M32 47v12M5 32h12M47 32h12" />
-      <path d="M17 17l8 8M47 17l-8 8M47 47l-8-8M17 47l8-8" />
-      <path d="M25 32c4-6 10-6 14 0-4 6-10 6-14 0z" />
-    </svg>
-    <span class="blood-moon-nav-control__text">Seal</span>
+    <img class="blood-moon-nav-control__sigil" src="assets/icons/symbols/seal-button-transparent.png" alt="" aria-hidden="true" width="512" height="512" />
+    <span class="blood-moon-nav-control__label">Seal</span>
   `;
 
   if (themeToggle) {
@@ -545,7 +539,7 @@ function trackThemeRitualStep(mode) {
 }
 
 function updateAngelNumberToggleState() {
-  const themeToggle = themeToggleInput?.closest(".theme-toggle");
+  const themeToggle = themeToggleButton?.closest(".theme-toggle");
   const isWindowOpen = !isBloodMoonActive() && isAngelNumberWindow();
 
   themeToggle?.classList.toggle("theme-toggle--blood-pulse", isWindowOpen);
@@ -565,13 +559,12 @@ function applyBloodMoonState() {
   updateBloodMoonNav(isActive);
   updateBloodMoonControl(isActive);
 
-  if (themeToggleInput) {
-    themeToggleInput.disabled = isActive;
-    themeToggleInput.checked = isActive ? true : themeToggleInput.checked;
-    themeToggleInput.setAttribute(
-      "aria-label",
-      isActive ? "Blood Moon mode is active" : "Switch between sun and moon mode"
-    );
+  if (themeToggleButton) {
+    themeToggleButton.disabled = isActive;
+    if (isActive) {
+      themeToggleButton.setAttribute("aria-label", "Blood Moon mode is active");
+      themeToggleButton.setAttribute("aria-pressed", "true");
+    }
   }
 
   if (isActive) {
@@ -721,13 +714,13 @@ function setTheme(mode, { persist = false } = {}) {
   document.body.classList.toggle("moon-mode", !isSunMode);
   document.body.classList.remove("blood-moon-mode");
 
-  if (themeToggleInput) {
-    themeToggleInput.disabled = false;
-    themeToggleInput.checked = !isSunMode;
-    themeToggleInput.setAttribute(
+  if (themeToggleButton) {
+    themeToggleButton.disabled = false;
+    themeToggleButton.setAttribute(
       "aria-label",
       isSunMode ? "Switch to moon mode" : "Switch to sun mode"
     );
+    themeToggleButton.setAttribute("aria-pressed", String(!isSunMode));
   }
 
   if (persist) {
@@ -735,20 +728,20 @@ function setTheme(mode, { persist = false } = {}) {
   }
 }
 
-if (themeToggleInput) {
+if (themeToggleButton) {
   if (applyBloodMoonState()) {
-    themeToggleInput.checked = true;
+    themeToggleButton.setAttribute("aria-pressed", "true");
   } else {
     setTheme(getPreferredThemeMode());
   }
 
-  themeToggleInput.addEventListener("change", () => {
+  themeToggleButton.addEventListener("click", () => {
     if (isBloodMoonActive()) {
       applyBloodMoonState();
       return;
     }
 
-    const nextMode = themeToggleInput.checked ? "moon" : "sun";
+    const nextMode = document.body.classList.contains("sun-mode") ? "moon" : "sun";
 
     if (isAngelNumberWindow()) {
       activateBloodMoon("angel-number-toggle", {
@@ -766,7 +759,7 @@ if (themeToggleInput) {
   }
 }
 
-if (themeToggleInput) {
+if (themeToggleButton) {
   startAngelNumberWatcher();
 }
 

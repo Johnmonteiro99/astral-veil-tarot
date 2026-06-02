@@ -129,7 +129,7 @@
   background:
     linear-gradient(90deg, rgba(8, 6, 12, 0.9) 0%, rgba(8, 6, 12, 0.76) 31%, rgba(8, 6, 12, 0.34) 62%, rgba(8, 6, 12, 0.22) 100%),
     radial-gradient(circle at 24% 28%, color-mix(in srgb, var(--lumen-hero-glow) 72%, transparent), transparent 38%),
-    url("../assets/images/concepts-ideas/lumen-moon-title-section.png") center right / cover no-repeat;
+    url("../assets/images/concepts-ideas/lumen-moon-title-section.webp") center right / cover no-repeat;
   box-shadow:
     0 26px 78px rgba(0, 0, 0, 0.32),
     0 0 42px color-mix(in srgb, var(--lumen-hero-glow) 82%, transparent),
@@ -367,7 +367,7 @@ body.sun-mode .lumen-hero {
   background:
     linear-gradient(90deg, rgba(29, 19, 8, 0.88) 0%, rgba(29, 19, 8, 0.72) 32%, rgba(29, 19, 8, 0.28) 63%, rgba(29, 19, 8, 0.18) 100%),
     radial-gradient(circle at 24% 28%, color-mix(in srgb, var(--lumen-hero-glow) 78%, transparent), transparent 38%),
-    url("../assets/images/concepts-ideas/lumen-sun-title-section.png") center right / cover no-repeat;
+    url("../assets/images/concepts-ideas/lumen-sun-title-section.webp") center right / cover no-repeat;
 }
 
 body.moon-mode .lumen-hero {
@@ -380,7 +380,7 @@ body.moon-mode .lumen-hero {
   background:
     linear-gradient(90deg, rgba(7, 6, 19, 0.92) 0%, rgba(7, 6, 19, 0.78) 32%, rgba(7, 6, 19, 0.34) 63%, rgba(7, 6, 19, 0.2) 100%),
     radial-gradient(circle at 24% 28%, color-mix(in srgb, var(--lumen-hero-glow) 78%, transparent), transparent 38%),
-    url("../assets/images/concepts-ideas/lumen-moon-title-section.png") center right / cover no-repeat;
+    url("../assets/images/concepts-ideas/lumen-moon-title-section.webp") center right / cover no-repeat;
 }
 
 body.blood-moon-mode .lumen-hero {
@@ -1383,9 +1383,9 @@ body.moon-mode .lumen-sanctuary {
   position: absolute;
   inset: 0;
   background:
-    url("../assets/images/reflection-button-transparent.png") center / contain no-repeat,
-    url("../assets/images/reflection-button-transparent.png") center / contain no-repeat,
-    url("../assets/images/reflection-button-transparent.png") center / contain no-repeat;
+    url("../assets/images/reflection-button-transparent.webp") center / contain no-repeat,
+    url("../assets/images/reflection-button-transparent.webp") center / contain no-repeat,
+    url("../assets/images/reflection-button-transparent.webp") center / contain no-repeat;
   filter:
     brightness(2.5)
     contrast(1.36)
@@ -1603,9 +1603,10 @@ body.moon-mode .lumen-sanctuary {
 
 .sanctuary-offers {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(0.65rem, 1.4vw, 1rem);
-  max-width: 520px;
+  width: min(100%, 390px);
+  max-width: 100%;
   margin: 0;
 }
 
@@ -1614,9 +1615,9 @@ body.moon-mode .lumen-sanctuary {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: auto;
   min-width: 0;
-  min-height: 88px;
+  min-height: 78px;
   border: 1px solid color-mix(in srgb, var(--lumen-selector-accent-strong) 42%, transparent);
   border-radius: 16px;
   padding: 0.85rem 0.55rem;
@@ -1664,11 +1665,11 @@ body.moon-mode .lumen-sanctuary {
   font-family: var(--body-font);
   font-size: clamp(0.66rem, 0.9vw, 0.76rem);
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.025em;
   line-height: 1.2;
   text-align: center;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 
 .sanctuary-portal-frame figcaption {
@@ -2690,7 +2691,8 @@ body.moon-mode .lumen-sanctuary-viewer {
   .sanctuary-offers {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.55rem;
-    max-width: 100%;
+    width: 100%;
+    max-width: 360px;
   }
 
   .sanctuary-offer-tile {
@@ -2707,7 +2709,7 @@ body.moon-mode .lumen-sanctuary-viewer {
 
   .sanctuary-offer-label {
     font-size: 0.62rem;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
   }
 
   .sanctuary-portal-controls {
