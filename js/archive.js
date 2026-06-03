@@ -876,33 +876,6 @@ function renderArchiveLorePanel() {
         <span>During the Blood Moon, sealed doors breathe.</span>
         <span>What you seek is also seeking you.</span>
       </div>
-      <div class="archive-remembers-panel__sigil" aria-hidden="true">
-        <svg class="archive-remembers-eye" viewBox="0 0 160 160" focusable="false" role="img">
-          <defs>
-            <radialGradient id="archiveBloodMoonGradient" cx="50%" cy="42%" r="58%">
-              <stop offset="0%" stop-color="#ff9a8a" stop-opacity="0.95" />
-              <stop offset="38%" stop-color="#ff334d" stop-opacity="0.82" />
-              <stop offset="74%" stop-color="#6d0618" stop-opacity="0.72" />
-              <stop offset="100%" stop-color="#130006" stop-opacity="0.1" />
-            </radialGradient>
-            <radialGradient id="archiveEyeIrisGradient" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#ffe6c7" />
-              <stop offset="42%" stop-color="#ff5367" />
-              <stop offset="100%" stop-color="#31000b" />
-            </radialGradient>
-          </defs>
-          <circle class="archive-remembers-eye__halo" cx="80" cy="80" r="68" />
-          <circle class="archive-remembers-eye__moon" cx="80" cy="80" r="45" />
-          <path class="archive-remembers-eye__diamond" d="M80 14 L146 80 L80 146 L14 80 Z" />
-          <path class="archive-remembers-eye__ray" d="M80 4 V24 M80 136 V156 M4 80 H24 M136 80 H156 M32 32 L45 45 M128 32 L115 45 M128 128 L115 115 M32 128 L45 115" />
-          <ellipse class="archive-remembers-eye__shape" cx="80" cy="80" rx="42" ry="19" />
-          <circle class="archive-remembers-eye__iris" cx="80" cy="80" r="14" />
-          <circle class="archive-remembers-eye__pupil" cx="80" cy="80" r="5" />
-          <path class="archive-remembers-eye__lid" d="M38 80 C50 58 110 58 122 80 C110 102 50 102 38 80 Z" />
-          <circle class="archive-remembers-eye__ring" cx="80" cy="80" r="57" />
-          <path class="archive-remembers-eye__arc" d="M50 38 A52 52 0 0 1 110 38 M50 122 A52 52 0 0 0 110 122" />
-        </svg>
-      </div>
       <div>
         <span>Keep your mind clear.</span>
         <span>Not every truth is meant to be taken.</span>

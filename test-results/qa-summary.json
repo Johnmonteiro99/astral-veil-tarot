@@ -1,0 +1,1576 @@
+{
+  "results": [
+    {
+      "page": "index.html",
+      "viewport": "mobile",
+      "title": "Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "scrollHeight": 2353,
+      "imageCount": 7,
+      "brokenImages": [
+        "unknown"
+      ],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 396
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 432
+        }
+      ],
+      "domContentLoadedMs": 149,
+      "loadMs": 221,
+      "resourceCount": 22,
+      "totalTransfer": 7945071,
+      "largestResources": [
+        {
+          "name": "assets/images/readers/phase1/pisces-phase1.png",
+          "bytes": 2639260
+        },
+        {
+          "name": "assets/images/readers/phase1/taurus-phase1.png",
+          "bytes": 2431874
+        },
+        {
+          "name": "assets/images/readers/phase1/aries-phase1.png",
+          "bytes": 2075332
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238785
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151904
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97895
+        },
+        {
+          "name": "favicon.png",
+          "bytes": 76060
+        },
+        {
+          "name": "data/cards.js",
+          "bytes": 71054
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "readers.html",
+      "viewport": "mobile",
+      "title": "Veilwalkers | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "scrollHeight": 2246,
+      "imageCount": 4,
+      "brokenImages": [
+        "unknown"
+      ],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 396
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 432
+        },
+        {
+          "tag": "BUTTON",
+          "className": "veilwalker-zodiac-button",
+          "text": "Cancer",
+          "right": 441
+        },
+        {
+          "tag": "SPAN",
+          "className": "veilwalker-zodiac-button__glyph",
+          "text": "",
+          "right": 412
+        },
+        {
+          "tag": "SPAN",
+          "className": "veilwalker-zodiac-button__icon",
+          "text": "",
+          "right": 405
+        },
+        {
+          "tag": "SPAN",
+          "className": "",
+          "text": "Cancer",
+          "right": 417
+        },
+        {
+          "tag": "BUTTON",
+          "className": "veilwalker-zodiac-button",
+          "text": "Leo",
+          "right": 541
+        },
+        {
+          "tag": "SPAN",
+          "className": "veilwalker-zodiac-button__glyph",
+          "text": "",
+          "right": 512
+        }
+      ],
+      "domContentLoadedMs": 31,
+      "loadMs": 31,
+      "resourceCount": 34,
+      "totalTransfer": 264002,
+      "largestResources": [
+        {
+          "name": "assets/images/readers/phase1/aries-phase1.png",
+          "bytes": 2075032
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/images/concepts-ideas/meet-the-veilwalkers.webp",
+          "bytes": 160756
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "css/readers.css",
+          "bytes": 48452
+        },
+        {
+          "name": "data/readers.js",
+          "bytes": 39378
+        },
+        {
+          "name": "https://fonts.gstatic.com/s/lora/v37/0QIvMX1D_JOuMwr7I_FMl_E.woff2",
+          "bytes": 37792
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "archive.html",
+      "viewport": "mobile",
+      "title": "Noctis Archive | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "scrollHeight": 5531,
+      "imageCount": 11,
+      "brokenImages": [],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 396
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 432
+        },
+        {
+          "tag": "DIV",
+          "className": "archive-invitation__content",
+          "text": "SEALED KNOWLEDGE • FORBIDDEN RECORDS\n\nNoctis Archive\n\nHere l",
+          "right": 711
+        },
+        {
+          "tag": "P",
+          "className": "archive-invitation__kicker",
+          "text": "SEALED KNOWLEDGE • FORBIDDEN RECORDS",
+          "right": 711
+        },
+        {
+          "tag": "H1",
+          "className": "",
+          "text": "Noctis Archive",
+          "right": 653
+        },
+        {
+          "tag": "DIV",
+          "className": "archive-invitation__copy",
+          "text": "Here lie the things that were hidden on purpose. The Archive",
+          "right": 667
+        },
+        {
+          "tag": "P",
+          "className": "",
+          "text": "Here lie the things that were hidden on purpose. The Archive",
+          "right": 667
+        },
+        {
+          "tag": "DIV",
+          "className": "archive-blood-status",
+          "text": "BLOOD MOON ACTIVE",
+          "right": 642
+        }
+      ],
+      "domContentLoadedMs": 69,
+      "loadMs": 107,
+      "resourceCount": 24,
+      "totalTransfer": 2193135,
+      "largestResources": [
+        {
+          "name": "assets/images/noctis/noctis-archive-footer-background.png",
+          "bytes": 1639388
+        },
+        {
+          "name": "assets/images/noctis/entry-desk.webp",
+          "bytes": 295874
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "css/archive.css",
+          "bytes": 122551
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "assets/images/noctis-header.webp",
+          "bytes": 70222
+        },
+        {
+          "name": "js/archive.js",
+          "bytes": 54347
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "deck.html",
+      "viewport": "mobile",
+      "title": "Deck | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "scrollHeight": 1964,
+      "imageCount": 5,
+      "brokenImages": [
+        "unknown"
+      ],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 396
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 432
+        },
+        {
+          "tag": "ARTICLE",
+          "className": "deck-collection-card deck-collection-card--bloodMoon is-locked",
+          "text": "LOCKED\nBlood Moon Deck\n\nRevealed only beneath a crimson ecli",
+          "right": 669
+        },
+        {
+          "tag": "DIV",
+          "className": "deck-collection-card__preview",
+          "text": "",
+          "right": 625
+        },
+        {
+          "tag": "IMG",
+          "className": "",
+          "text": "",
+          "right": 597
+        },
+        {
+          "tag": "DIV",
+          "className": "deck-collection-card__content",
+          "text": "LOCKED\nBlood Moon Deck\n\nRevealed only beneath a crimson ecli",
+          "right": 649
+        },
+        {
+          "tag": "DIV",
+          "className": "deck-collection-card__header",
+          "text": "LOCKED\nBlood Moon Deck\n\nRevealed only beneath a crimson ecli",
+          "right": 649
+        },
+        {
+          "tag": "SPAN",
+          "className": "deck-collection-card__badge",
+          "text": "LOCKED",
+          "right": 551
+        }
+      ],
+      "domContentLoadedMs": 22,
+      "loadMs": 23,
+      "resourceCount": 24,
+      "totalTransfer": 758503,
+      "largestResources": [
+        {
+          "name": "assets/images/cards/original/card-back.webp",
+          "bytes": 296974
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/images/concepts-ideas/deck-page-card.webp",
+          "bytes": 208728
+        },
+        {
+          "name": "assets/images/cards/blood-moon/bloodmoon-card-back.webp",
+          "bytes": 194116
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "data/cards.js",
+          "bytes": 70754
+        },
+        {
+          "name": "css/deck.css",
+          "bytes": 39099
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "about.html",
+      "viewport": "mobile",
+      "title": "About | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "scrollHeight": 5309,
+      "imageCount": 3,
+      "brokenImages": [],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 396
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 432
+        }
+      ],
+      "domContentLoadedMs": 15,
+      "loadMs": 22,
+      "resourceCount": 20,
+      "totalTransfer": 810516,
+      "largestResources": [
+        {
+          "name": "assets/images/concepts-ideas/living-astral-veil.webp",
+          "bytes": 310418
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/images/about-tarotcards-section.webp",
+          "bytes": 154890
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "assets/images/sbout-reading-button.webp",
+          "bytes": 94022
+        },
+        {
+          "name": "assets/images/about-veilwaker-button.webp",
+          "bytes": 91542
+        },
+        {
+          "name": "assets/images/future-of-the-veil.webp",
+          "bytes": 83776
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "lumen-archive.html",
+      "viewport": "mobile",
+      "title": "The Lumen Archive | Astral Veil",
+      "bodyClasses": "lumen-archive-page moon-mode",
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "scrollHeight": 4535,
+      "imageCount": 23,
+      "brokenImages": [],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 396
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 432
+        },
+        {
+          "tag": "DIV",
+          "className": "lumen-compass lumen-compass--loop",
+          "text": "Breath\nReturn to your center\nGrounding\nRoot in the now\nRefle",
+          "right": 2319
+        },
+        {
+          "tag": "BUTTON",
+          "className": "lumen-sanctuary-tab lumen-sanctuary-tab--secondary lumen-sanctuary-tab--garden-of-renewal",
+          "text": "Renewal\nBegin again",
+          "right": 601
+        },
+        {
+          "tag": "SPAN",
+          "className": "lumen-sanctuary-tab__copy",
+          "text": "Renewal\nBegin again",
+          "right": 587
+        },
+        {
+          "tag": "STRONG",
+          "className": "",
+          "text": "Renewal",
+          "right": 523
+        },
+        {
+          "tag": "SPAN",
+          "className": "lumen-sanctuary-tab__accent",
+          "text": "",
+          "right": 529
+        },
+        {
+          "tag": "EM",
+          "className": "",
+          "text": "Begin again",
+          "right": 517
+        }
+      ],
+      "domContentLoadedMs": 35,
+      "loadMs": 35,
+      "resourceCount": 28,
+      "totalTransfer": 1456892,
+      "largestResources": [
+        {
+          "name": "assets/images/dawn-of-atrium.webp",
+          "bytes": 402754
+        },
+        {
+          "name": "assets/images/reflection-pool.webp",
+          "bytes": 387170
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/images/concepts-ideas/lumen-sun-title-section.webp",
+          "bytes": 121430
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "assets/images/grounding-button-transparent.webp",
+          "bytes": 84076
+        },
+        {
+          "name": "css/lumen-archive.css",
+          "bytes": 82999
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "index.html",
+      "viewport": "tablet",
+      "title": "Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "scrollHeight": 1927,
+      "imageCount": 7,
+      "brokenImages": [
+        "unknown"
+      ],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 780
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 851
+        }
+      ],
+      "domContentLoadedMs": 60,
+      "loadMs": 74,
+      "resourceCount": 25,
+      "totalTransfer": 0,
+      "largestResources": [
+        {
+          "name": "assets/images/readers/phase1/pisces-phase1.png",
+          "bytes": 2638960
+        },
+        {
+          "name": "assets/images/readers/phase1/taurus-phase1.png",
+          "bytes": 2431574
+        },
+        {
+          "name": "assets/images/readers/phase1/aries-phase1.png",
+          "bytes": 2075032
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "data/cards.js",
+          "bytes": 70754
+        },
+        {
+          "name": "js/reading.js",
+          "bytes": 67551
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "readers.html",
+      "viewport": "tablet",
+      "title": "Veilwalkers | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "scrollHeight": 2059,
+      "imageCount": 4,
+      "brokenImages": [
+        "unknown"
+      ],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 780
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 851
+        },
+        {
+          "tag": "BUTTON",
+          "className": "veilwalker-zodiac-button",
+          "text": "Libra",
+          "right": 853
+        },
+        {
+          "tag": "SPAN",
+          "className": "veilwalker-zodiac-button__glyph",
+          "text": "",
+          "right": 831
+        },
+        {
+          "tag": "SPAN",
+          "className": "veilwalker-zodiac-button__icon",
+          "text": "",
+          "right": 824
+        },
+        {
+          "tag": "SPAN",
+          "className": "",
+          "text": "Libra",
+          "right": 831
+        },
+        {
+          "tag": "BUTTON",
+          "className": "veilwalker-zodiac-button",
+          "text": "Scorpio",
+          "right": 939
+        },
+        {
+          "tag": "SPAN",
+          "className": "veilwalker-zodiac-button__glyph",
+          "text": "",
+          "right": 917
+        }
+      ],
+      "domContentLoadedMs": 10,
+      "loadMs": 26,
+      "resourceCount": 33,
+      "totalTransfer": 0,
+      "largestResources": [
+        {
+          "name": "assets/images/readers/phase1/aries-phase1.png",
+          "bytes": 2075032
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/images/concepts-ideas/meet-the-veilwalkers.webp",
+          "bytes": 160456
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "css/readers.css",
+          "bytes": 48152
+        },
+        {
+          "name": "data/readers.js",
+          "bytes": 39378
+        },
+        {
+          "name": "https://fonts.gstatic.com/s/lora/v37/0QIvMX1D_JOuMwr7I_FMl_E.woff2",
+          "bytes": 37792
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "archive.html",
+      "viewport": "tablet",
+      "title": "Noctis Archive | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "scrollHeight": 4947,
+      "imageCount": 11,
+      "brokenImages": [],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 780
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 851
+        },
+        {
+          "tag": "DIV",
+          "className": "archive-invitation__content",
+          "text": "SEALED KNOWLEDGE • FORBIDDEN RECORDS\n\nNoctis Archive\n\nHere l",
+          "right": 974
+        },
+        {
+          "tag": "P",
+          "className": "archive-invitation__kicker",
+          "text": "SEALED KNOWLEDGE • FORBIDDEN RECORDS",
+          "right": 974
+        },
+        {
+          "tag": "H1",
+          "className": "",
+          "text": "Noctis Archive",
+          "right": 974
+        },
+        {
+          "tag": "DIV",
+          "className": "archive-invitation__copy",
+          "text": "Here lie the things that were hidden on purpose. The Archive",
+          "right": 974
+        },
+        {
+          "tag": "P",
+          "className": "",
+          "text": "Here lie the things that were hidden on purpose. The Archive",
+          "right": 974
+        },
+        {
+          "tag": "P",
+          "className": "archive-invitation__status-note",
+          "text": "The Veil is thin. Deeper chambers stir.",
+          "right": 974
+        }
+      ],
+      "domContentLoadedMs": 17,
+      "loadMs": 23,
+      "resourceCount": 24,
+      "totalTransfer": 0,
+      "largestResources": [
+        {
+          "name": "assets/images/noctis/noctis-archive-footer-background.png",
+          "bytes": 1639088
+        },
+        {
+          "name": "assets/images/noctis/entry-desk.webp",
+          "bytes": 295574
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "css/archive.css",
+          "bytes": 122251
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "assets/images/noctis-header.webp",
+          "bytes": 69922
+        },
+        {
+          "name": "https://fonts.gstatic.com/s/imfellenglishsc/v16/a8IENpD3CDX-4zrWfr1VY879qFF05pZ7PIIPoUgxzQ.woff2",
+          "bytes": 56956
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "deck.html",
+      "viewport": "tablet",
+      "title": "Deck | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "scrollHeight": 1662,
+      "imageCount": 5,
+      "brokenImages": [
+        "unknown"
+      ],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 780
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 851
+        },
+        {
+          "tag": "ARTICLE",
+          "className": "deck-collection-card deck-collection-card--bloodMoon is-locked",
+          "text": "LOCKED\nBlood Moon Deck\n\nRevealed only beneath a crimson ecli",
+          "right": 1077
+        },
+        {
+          "tag": "DIV",
+          "className": "deck-collection-card__preview",
+          "text": "",
+          "right": 801
+        },
+        {
+          "tag": "IMG",
+          "className": "",
+          "text": "",
+          "right": 778
+        },
+        {
+          "tag": "DIV",
+          "className": "deck-collection-card__content",
+          "text": "LOCKED\nBlood Moon Deck\n\nRevealed only beneath a crimson ecli",
+          "right": 1053
+        },
+        {
+          "tag": "DIV",
+          "className": "deck-collection-card__header",
+          "text": "LOCKED\nBlood Moon Deck\n\nRevealed only beneath a crimson ecli",
+          "right": 1053
+        },
+        {
+          "tag": "SPAN",
+          "className": "deck-collection-card__badge",
+          "text": "LOCKED",
+          "right": 901
+        }
+      ],
+      "domContentLoadedMs": 6,
+      "loadMs": 17,
+      "resourceCount": 24,
+      "totalTransfer": 0,
+      "largestResources": [
+        {
+          "name": "assets/images/cards/original/card-back.webp",
+          "bytes": 296674
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/images/concepts-ideas/deck-page-card.webp",
+          "bytes": 208428
+        },
+        {
+          "name": "assets/images/cards/blood-moon/bloodmoon-card-back.webp",
+          "bytes": 193816
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "data/cards.js",
+          "bytes": 70754
+        },
+        {
+          "name": "css/deck.css",
+          "bytes": 38799
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "about.html",
+      "viewport": "tablet",
+      "title": "About | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "scrollHeight": 4709,
+      "imageCount": 3,
+      "brokenImages": [],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 780
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 851
+        }
+      ],
+      "domContentLoadedMs": 10,
+      "loadMs": 25,
+      "resourceCount": 20,
+      "totalTransfer": 0,
+      "largestResources": [
+        {
+          "name": "assets/images/concepts-ideas/living-astral-veil.webp",
+          "bytes": 310118
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/images/about-tarotcards-section.webp",
+          "bytes": 154590
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "assets/images/sbout-reading-button.webp",
+          "bytes": 93722
+        },
+        {
+          "name": "assets/images/about-veilwaker-button.webp",
+          "bytes": 91242
+        },
+        {
+          "name": "assets/images/future-of-the-veil.webp",
+          "bytes": 83476
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "lumen-archive.html",
+      "viewport": "tablet",
+      "title": "The Lumen Archive | Astral Veil",
+      "bodyClasses": "lumen-archive-page moon-mode",
+      "scrollWidth": 753,
+      "clientWidth": 753,
+      "scrollHeight": 3625,
+      "imageCount": 13,
+      "brokenImages": [],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 764
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 834
+        },
+        {
+          "tag": "DIV",
+          "className": "sanctuary-room-showcase__info",
+          "text": "SANCTUARY ROOM\n\nThe Reflection Pool\n\nWhere still waters mirr",
+          "right": 1100
+        },
+        {
+          "tag": "P",
+          "className": "sanctuary-room-showcase__eyebrow",
+          "text": "SANCTUARY ROOM",
+          "right": 1067
+        },
+        {
+          "tag": "H2",
+          "className": "",
+          "text": "The Reflection Pool",
+          "right": 1067
+        },
+        {
+          "tag": "P",
+          "className": "sanctuary-room-showcase__tagline",
+          "text": "Where still waters mirror what is true.",
+          "right": 1067
+        },
+        {
+          "tag": "DIV",
+          "className": "sanctuary-room-showcase__divider",
+          "text": "",
+          "right": 973
+        },
+        {
+          "tag": "DIV",
+          "className": "sanctuary-room-showcase__description",
+          "text": "A sanctuary of calm and contemplation. The waters here hold ",
+          "right": 1067
+        }
+      ],
+      "domContentLoadedMs": 18,
+      "loadMs": 30,
+      "resourceCount": 27,
+      "totalTransfer": 0,
+      "largestResources": [
+        {
+          "name": "assets/images/dawn-of-atrium.webp",
+          "bytes": 402454
+        },
+        {
+          "name": "assets/images/reflection-pool.webp",
+          "bytes": 386870
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/images/concepts-ideas/lumen-sun-title-section.webp",
+          "bytes": 121130
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "assets/images/grounding-button-transparent.webp",
+          "bytes": 83776
+        },
+        {
+          "name": "css/lumen-archive.css",
+          "bytes": 82699
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "index.html",
+      "viewport": "desktop",
+      "title": "Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "scrollHeight": 1940,
+      "imageCount": 7,
+      "brokenImages": [
+        "unknown"
+      ],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 1446
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 1579
+        }
+      ],
+      "domContentLoadedMs": 40,
+      "loadMs": 58,
+      "resourceCount": 25,
+      "totalTransfer": 0,
+      "largestResources": [
+        {
+          "name": "assets/images/readers/phase1/pisces-phase1.png",
+          "bytes": 2638960
+        },
+        {
+          "name": "assets/images/readers/phase1/taurus-phase1.png",
+          "bytes": 2431574
+        },
+        {
+          "name": "assets/images/readers/phase1/aries-phase1.png",
+          "bytes": 2075032
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "data/cards.js",
+          "bytes": 70754
+        },
+        {
+          "name": "js/reading.js",
+          "bytes": 67551
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "readers.html",
+      "viewport": "desktop",
+      "title": "Veilwalkers | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "scrollHeight": 2034,
+      "imageCount": 4,
+      "brokenImages": [
+        "unknown"
+      ],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 1446
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 1579
+        },
+        {
+          "tag": "BUTTON",
+          "className": "veilwalker-zodiac-button",
+          "text": "Capricorn",
+          "right": 1534
+        },
+        {
+          "tag": "SPAN",
+          "className": "veilwalker-zodiac-button__glyph",
+          "text": "",
+          "right": 1499
+        },
+        {
+          "tag": "SPAN",
+          "className": "veilwalker-zodiac-button__icon",
+          "text": "",
+          "right": 1493
+        },
+        {
+          "tag": "SPAN",
+          "className": "",
+          "text": "Capricorn",
+          "right": 1514
+        },
+        {
+          "tag": "BUTTON",
+          "className": "veilwalker-zodiac-button",
+          "text": "Aquarius",
+          "right": 1644
+        },
+        {
+          "tag": "SPAN",
+          "className": "veilwalker-zodiac-button__glyph",
+          "text": "",
+          "right": 1609
+        }
+      ],
+      "domContentLoadedMs": 7,
+      "loadMs": 25,
+      "resourceCount": 33,
+      "totalTransfer": 0,
+      "largestResources": [
+        {
+          "name": "assets/images/readers/phase1/aries-phase1.png",
+          "bytes": 2075032
+        },
+        {
+          "name": "css/style.css",
+          "bytes": 238485
+        },
+        {
+          "name": "assets/images/concepts-ideas/meet-the-veilwalkers.webp",
+          "bytes": 160456
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "css/readers.css",
+          "bytes": 48152
+        },
+        {
+          "name": "data/readers.js",
+          "bytes": 39378
+        },
+        {
+          "name": "https://fonts.gstatic.com/s/lora/v37/0QIvMX1D_JOuMwr7I_FMl_E.woff2",
+          "bytes": 37792
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "archive.html",
+      "viewport": "desktop",
+      "title": "Noctis Archive | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "scrollHeight": 5171,
+      "imageCount": 11,
+      "brokenImages": [],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 1446
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 1579
+        },
+        {
+          "tag": "BUTTON",
+          "className": "archive-chamber-card archive-chamber-card--sealed is-locked",
+          "text": "The Inner Chamber\nNames the deeper archive keeps\nSEALED",
+          "right": 1626
+        },
+        {
+          "tag": "SPAN",
+          "className": "archive-chamber-card__image",
+          "text": "",
+          "right": 1615
+        },
+        {
+          "tag": "IMG",
+          "className": "",
+          "text": "",
+          "right": 1614
+        },
+        {
+          "tag": "SPAN",
+          "className": "archive-chamber-card__body",
+          "text": "The Inner Chamber\nNames the deeper archive keeps\nSEALED",
+          "right": 1615
+        },
+        {
+          "tag": "STRONG",
+          "className": "",
+          "text": "The Inner Chamber",
+          "right": 1611
+        },
+        {
+          "tag": "EM",
+          "className": "",
+          "text": "Names the deeper archive keeps",
+          "right": 1611
+        }
+      ],
+      "domContentLoadedMs": 31,
+      "loadMs": 31,
+      "resourceCount": 25,
+      "totalTransfer": 300,
+      "largestResources": [
+        {
+          "name": "assets/images/noctis/noctis-archive-footer-background.png",
+          "bytes": 1639088
+        },
+        {
+          "name": "assets/images/noctis/entry-desk.webp",
+          "bytes": 295574
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "css/archive.css",
+          "bytes": 122251
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "assets/images/noctis-header.webp",
+          "bytes": 69922
+        },
+        {
+          "name": "https://fonts.gstatic.com/s/imfellenglishsc/v16/a8IENpD3CDX-4zrWfr1VY879qFF05pZ7PIIPoUgxzQ.woff2",
+          "bytes": 56956
+        },
+        {
+          "name": "js/archive.js",
+          "bytes": 54047
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "deck.html",
+      "viewport": "desktop",
+      "title": "Deck | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "scrollHeight": 1993,
+      "imageCount": 5,
+      "brokenImages": [
+        "unknown"
+      ],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 1446
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 1579
+        }
+      ],
+      "domContentLoadedMs": 7,
+      "loadMs": 20,
+      "resourceCount": 24,
+      "totalTransfer": 0,
+      "largestResources": [
+        {
+          "name": "assets/images/cards/original/card-back.webp",
+          "bytes": 296674
+        },
+        {
+          "name": "assets/images/concepts-ideas/deck-page-card.webp",
+          "bytes": 208428
+        },
+        {
+          "name": "assets/images/cards/blood-moon/bloodmoon-card-back.webp",
+          "bytes": 193816
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "data/cards.js",
+          "bytes": 70754
+        },
+        {
+          "name": "css/deck.css",
+          "bytes": 38799
+        },
+        {
+          "name": "https://fonts.gstatic.com/s/lora/v37/0QIvMX1D_JOuMwr7I_FMl_E.woff2",
+          "bytes": 37792
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "about.html",
+      "viewport": "desktop",
+      "title": "About | Astral Veil",
+      "bodyClasses": "moon-mode",
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "scrollHeight": 4694,
+      "imageCount": 3,
+      "brokenImages": [],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 1446
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 1579
+        }
+      ],
+      "domContentLoadedMs": 12,
+      "loadMs": 28,
+      "resourceCount": 20,
+      "totalTransfer": 0,
+      "largestResources": [
+        {
+          "name": "assets/images/concepts-ideas/living-astral-veil.webp",
+          "bytes": 310118
+        },
+        {
+          "name": "assets/images/about-tarotcards-section.webp",
+          "bytes": 154590
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "assets/images/sbout-reading-button.webp",
+          "bytes": 93722
+        },
+        {
+          "name": "assets/images/about-veilwaker-button.webp",
+          "bytes": 91242
+        },
+        {
+          "name": "assets/images/future-of-the-veil.webp",
+          "bytes": 83476
+        },
+        {
+          "name": "assets/images/about-archive-button.webp",
+          "bytes": 75568
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    },
+    {
+      "page": "lumen-archive.html",
+      "viewport": "desktop",
+      "title": "The Lumen Archive | Astral Veil",
+      "bodyClasses": "lumen-archive-page moon-mode",
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "scrollHeight": 4310,
+      "imageCount": 13,
+      "brokenImages": [],
+      "wideElements": [
+        {
+          "tag": "DIV",
+          "className": "botanical-veil",
+          "text": "",
+          "right": 1446
+        },
+        {
+          "tag": "DIV",
+          "className": "mystic-mist",
+          "text": "",
+          "right": 1579
+        }
+      ],
+      "domContentLoadedMs": 22,
+      "loadMs": 30,
+      "resourceCount": 27,
+      "totalTransfer": 0,
+      "largestResources": [
+        {
+          "name": "assets/images/dawn-of-atrium.webp",
+          "bytes": 402454
+        },
+        {
+          "name": "assets/images/reflection-pool.webp",
+          "bytes": 386870
+        },
+        {
+          "name": "assets/icons/symbols/astral-veil-icon-logo-transparent.png",
+          "bytes": 151604
+        },
+        {
+          "name": "assets/images/concepts-ideas/lumen-sun-title-section.webp",
+          "bytes": 121130
+        },
+        {
+          "name": "assets/icons/symbols/sun-moon-toggle-transparent.png",
+          "bytes": 97595
+        },
+        {
+          "name": "assets/images/grounding-button-transparent.webp",
+          "bytes": 83776
+        },
+        {
+          "name": "css/lumen-archive.css",
+          "bytes": 82699
+        },
+        {
+          "name": "assets/images/reflection-button-transparent.webp",
+          "bytes": 79064
+        }
+      ],
+      "failedRequests": [],
+      "badResponses": [],
+      "runtimeIssues": []
+    }
+  ],
+  "screenshotFiles": [
+    "test-results/qa-screenshots/index-mobile.png",
+    "test-results/qa-screenshots/readers-mobile.png",
+    "test-results/qa-screenshots/index-desktop.png",
+    "test-results/qa-screenshots/archive-desktop.png"
+  ]
+}

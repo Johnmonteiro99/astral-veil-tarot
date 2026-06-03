@@ -8087,6 +8087,19 @@ body.blood-moon-mode .reader-selection-orbit .mobile-reader-swipe-hint__dot.is-a
   line-height: 1.48;
 }
 
+.veilwalker-unique__copy {
+  display: block;
+}
+
+.veilwalker-unique__copy--blood,
+body.blood-moon-mode .veilwalker-unique__copy--standard {
+  display: none;
+}
+
+body.blood-moon-mode .veilwalker-unique__copy--blood {
+  display: block;
+}
+
 .veilwalker-unique__closing {
   display: grid;
   justify-items: center;
@@ -9579,6 +9592,19 @@ body.is-image-preview-open {
   transform: translateY(0) scale(1);
 }
 
+.image-preview--minimal .image-preview__dialog {
+  gap: 0;
+  width: auto;
+  max-width: 96vw;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .image-preview__close {
   position: absolute;
   top: 12px;
@@ -9612,6 +9638,15 @@ body.is-image-preview-open {
   border-radius: 16px;
   object-fit: contain;
   background: rgba(0, 0, 0, 0.42);
+}
+
+.image-preview--minimal .image-preview__image {
+  width: auto;
+  max-width: 96vw;
+  max-height: 92vh;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .image-preview__caption {

@@ -611,6 +611,7 @@ function renderOpenReader(reader) {
   lightboxImage.alt = presentation.name;
   lightboxImage.dataset.imagePreviewTitle = presentation.name;
   lightboxImage.dataset.imagePreviewCaption = getReaderImagePreviewCaption(activeForm, title);
+  lightboxImage.dataset.imagePreviewMinimal = "true";
   readerLightbox.querySelector(".reader-lightbox__dialog").className =
     `reader-lightbox__dialog${detailAccentClass}`;
   readerLightbox.querySelector(".reader-lightbox__content").innerHTML = `

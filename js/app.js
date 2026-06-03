@@ -36,6 +36,7 @@ let expandedImagePreview = null;
 let expandedImagePreviewImage = null;
 let expandedImagePreviewTitle = null;
 let expandedImagePreviewCaption = null;
+let expandedImagePreviewCaptionFrame = null;
 let angelWindowTimer = null;
 
 ////////////////////////////////////////////////////
@@ -75,6 +76,7 @@ function createExpandedImagePreview() {
   expandedImagePreviewImage = expandedImagePreview.querySelector("[data-image-preview-image]");
   expandedImagePreviewTitle = expandedImagePreview.querySelector("[data-image-preview-title]");
   expandedImagePreviewCaption = expandedImagePreview.querySelector("[data-image-preview-caption]");
+  expandedImagePreviewCaptionFrame = expandedImagePreview.querySelector(".image-preview__caption");
 
   expandedImagePreview.addEventListener("click", (event) => {
     if (event.target.closest("[data-close-image-preview]")) {
@@ -88,6 +90,8 @@ function createExpandedImagePreview() {
 function getExpandableImageData(trigger) {
   const image = trigger.matches("img") ? trigger : trigger.querySelector("img");
   const previewSource = trigger.dataset.imagePreviewSrc || "";
+  const minimal =
+    trigger.dataset.imagePreviewMinimal === "true" || image?.dataset.imagePreviewMinimal === "true";
 
   const rawSource = image?.getAttribute("src") || "";
 
@@ -96,7 +100,8 @@ function getExpandableImageData(trigger) {
       src: previewSource,
       alt: trigger.dataset.imagePreviewAlt || trigger.dataset.imagePreviewTitle || "Expanded image",
       title: trigger.dataset.imagePreviewTitle || "Expanded image",
-      caption: trigger.dataset.imagePreviewCaption || ""
+      caption: trigger.dataset.imagePreviewCaption || "",
+      minimal
     };
   }
 
@@ -108,7 +113,8 @@ function getExpandableImageData(trigger) {
     src: image.currentSrc || rawSource,
     alt: image.alt || trigger.dataset.imagePreviewTitle || "Expanded image",
     title: trigger.dataset.imagePreviewTitle || image.dataset.imagePreviewTitle || image.alt || "Expanded image",
-    caption: trigger.dataset.imagePreviewCaption || image.dataset.imagePreviewCaption || ""
+    caption: trigger.dataset.imagePreviewCaption || image.dataset.imagePreviewCaption || "",
+    minimal
   };
 }
 
@@ -124,6 +130,8 @@ function openExpandedImagePreview(imageData) {
   expandedImagePreviewTitle.textContent = imageData.title;
   expandedImagePreviewCaption.textContent = imageData.caption;
   expandedImagePreviewCaption.hidden = !imageData.caption;
+  expandedImagePreviewCaptionFrame.hidden = Boolean(imageData.minimal);
+  expandedImagePreview.classList.toggle("image-preview--minimal", Boolean(imageData.minimal));
   expandedImagePreview.classList.add("is-open");
   expandedImagePreview.setAttribute("aria-hidden", "false");
   document.body.classList.add("is-image-preview-open");
