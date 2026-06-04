@@ -51,6 +51,16 @@ export async function getCurrentUser() {
     return { user: null, error: getMissingClientError() };
   }
 
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+  if (sessionError) {
+    return { user: null, error: sessionError };
+  }
+
+  if (!sessionData?.session) {
+    return { user: null, error: null };
+  }
+
   const { data, error } = await supabase.auth.getUser();
 
   return { user: data?.user || null, error };
