@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Astral Veil Admin Sign In</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #10131f;
+        --panel: #181c2a;
+        --panel-soft: #202638;
+        --text: #f4efe7;
+        --muted: #b9b1a7;
+        --line: rgba(244, 239, 231, 0.16);
+        --accent: #d9b45f;
+        --danger: #f09b8f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(circle at top, #27304a 0, var(--bg) 44rem);
+        color: var(--text);
+        font-family: Georgia, "Times New Roman", serif;
+      }
+
+      main {
+        width: min(100% - 2rem, 28rem);
+        padding: 2rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--panel) 92%, transparent);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+      }
+
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(2rem, 8vw, 3rem);
+        letter-spacing: 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      label {
+        display: grid;
+        gap: 0.45rem;
+        margin-bottom: 1rem;
+        color: var(--muted);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 0.9rem;
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--panel-soft);
+        color: var(--text);
+        font: inherit;
+        padding: 0.85rem 0.9rem;
+      }
+
+      button,
+      a {
+        min-height: 2.75rem;
+        border-radius: 6px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-weight: 700;
+      }
+
+      button {
+        width: 100%;
+        border: 0;
+        background: var(--accent);
+        color: #17120a;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.7;
+      }
+
+      a {
+        display: inline-flex;
+        align-items: center;
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      [data-auth-message] {
+        min-height: 1.5rem;
+        margin: 1rem 0 0;
+        color: var(--muted);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 0.92rem;
+      }
+
+      [data-auth-message].is-error {
+        color: var(--danger);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Admin Sign In</h1>
+      <p>Protected access for Astral Veil administration only.</p>
+
+      <form data-admin-login-form>
+        <label>
+          Email
+          <input type="email" name="email" autocomplete="email" required />
+        </label>
+        <label>
+          Password
+          <input type="password" name="password" autocomplete="current-password" required />
+        </label>
+        <button type="submit">Sign In</button>
+        <p data-auth-message role="status" aria-live="polite"></p>
+      </form>
+
+      <a href="index.html">Return to Astral Veil</a>
+    </main>
+
+    <script type="module">
+      import { signIn, signOut, isCurrentUserAdmin } from './src/services/auth.js';
+      import { isSupabaseConfigured } from './src/services/supabase-client.js';
+
+      const form = document.querySelector('[data-admin-login-form]');
+      const message = document.querySelector('[data-auth-message]');
+      const button = form.querySelector('button');
+
+      function setMessage(text, isError = false) {
+        message.textContent = text;
+        message.classList.toggle('is-error', isError);
+      }
+
+      if (!isSupabaseConfigured()) {
+        setMessage('Supabase is not configured for this environment.', true);
+        button.disabled = true;
+      }
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const email = String(formData.get('email') || '').trim();
+        const password = String(formData.get('password') || '');
+
+        button.disabled = true;
+        setMessage('Checking admin access...');
+
+        const { error } = await signIn(email, password);
+
+        if (error) {
+          button.disabled = false;
+          setMessage(error.message, true);
+          return;
+        }
+
+        const { isAdmin, error: profileError } = await isCurrentUserAdmin();
+
+        if (profileError) {
+          button.disabled = false;
+          setMessage(profileError.message, true);
+          return;
+        }
+
+        if (!isAdmin) {
+          await signOut();
+          button.disabled = false;
+          setMessage('This account does not have admin access.', true);
+          return;
+        }
+
+        window.location.assign('admin.html');
+      });
+    </script>
+  </body>
+</html>

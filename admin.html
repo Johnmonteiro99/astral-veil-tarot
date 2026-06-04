@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Astral Veil Admin</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #10131f;
+        --panel: #181c2a;
+        --panel-soft: #202638;
+        --text: #f4efe7;
+        --muted: #b9b1a7;
+        --line: rgba(244, 239, 231, 0.16);
+        --accent: #d9b45f;
+        --danger: #f09b8f;
+        --success: #98d5b3;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background: #10131f;
+        color: var(--text);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: center;
+        padding: 1rem clamp(1rem, 4vw, 2.5rem);
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        font-size: clamp(1.6rem, 5vw, 2.6rem);
+      }
+
+      h2 {
+        font-size: 1.35rem;
+      }
+
+      main {
+        width: min(100% - 2rem, 68rem);
+        margin: 0 auto;
+        padding: clamp(1.25rem, 4vw, 2.5rem) 0;
+      }
+
+      section {
+        margin-bottom: 1rem;
+        padding: 1.25rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      p {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      button,
+      a {
+        min-height: 2.5rem;
+        border-radius: 6px;
+        font: inherit;
+        font-weight: 700;
+      }
+
+      button {
+        border: 1px solid var(--line);
+        background: var(--panel-soft);
+        color: var(--text);
+        cursor: pointer;
+        padding: 0 1rem;
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.7;
+      }
+
+      a {
+        display: inline-flex;
+        align-items: center;
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      th,
+      td {
+        padding: 0.85rem;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--muted);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+      }
+
+      .status {
+        color: var(--muted);
+      }
+
+      .status--success {
+        color: var(--success);
+      }
+
+      .status--error {
+        color: var(--danger);
+      }
+
+      [data-admin-shell] {
+        display: none;
+      }
+
+      [data-admin-shell].is-visible {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Astral Veil Admin</h1>
+        <p>Protected dashboard foundation.</p>
+      </div>
+      <button type="button" data-sign-out hidden>Sign Out</button>
+    </header>
+
+    <main>
+      <section data-access-panel>
+        <h2>Access Check</h2>
+        <p class="status" data-access-message>Checking admin access...</p>
+        <a href="admin-login.html" data-login-link hidden>Go to admin sign in</a>
+      </section>
+
+      <div data-admin-shell>
+        <section>
+          <h2>Dashboard Shell</h2>
+          <p data-admin-user>Admin access confirmed.</p>
+        </section>
+
+        <section>
+          <h2>Connection Status</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Check</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody data-status-table>
+              <tr>
+                <td>Supabase Auth</td>
+                <td class="status">Pending</td>
+              </tr>
+              <tr>
+                <td>Profiles Table</td>
+                <td class="status">Pending</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+
+    <script type="module">
+      import { getSupabaseClient, isSupabaseConfigured } from './src/services/supabase-client.js';
+      import { requireAdmin, signOut } from './src/services/auth.js';
+
+      const accessMessage = document.querySelector('[data-access-message]');
+      const loginLink = document.querySelector('[data-login-link]');
+      const shell = document.querySelector('[data-admin-shell]');
+      const signOutButton = document.querySelector('[data-sign-out]');
+      const adminUser = document.querySelector('[data-admin-user]');
+      const statusTable = document.querySelector('[data-status-table]');
+
+      function setAccessMessage(text, state = '') {
+        accessMessage.textContent = text;
+        accessMessage.className = `status${state ? ` status--${state}` : ''}`;
+      }
+
+      function setStatusRow(index, text, state = '') {
+        const cell = statusTable.rows[index]?.cells[1];
+
+        if (!cell) {
+          return;
+        }
+
+        cell.textContent = text;
+        cell.className = `status${state ? ` status--${state}` : ''}`;
+      }
+
+      async function checkProfilesTable() {
+        const supabase = getSupabaseClient();
+
+        if (!supabase) {
+          setStatusRow(1, 'Not configured', 'error');
+          return;
+        }
+
+        const { error } = await supabase
+          .from('profiles')
+          .select('id', { count: 'exact', head: true })
+          .limit(1);
+
+        if (error) {
+          setStatusRow(1, error.message, 'error');
+          return;
+        }
+
+        setStatusRow(1, 'Reachable', 'success');
+      }
+
+      async function initAdmin() {
+        if (!isSupabaseConfigured()) {
+          setAccessMessage('Supabase is not configured for this environment.', 'error');
+          loginLink.hidden = false;
+          setStatusRow(0, 'Not configured', 'error');
+          setStatusRow(1, 'Not checked', 'error');
+          return;
+        }
+
+        const result = await requireAdmin({ redirectTo: 'admin-login.html', redirectDelay: 1200 });
+
+        if (!result.authorized) {
+          setAccessMessage(result.message, 'error');
+          loginLink.hidden = false;
+          setStatusRow(0, result.reason === 'not_logged_in' ? 'No active session' : 'Blocked', 'error');
+          setStatusRow(1, 'Not checked', 'error');
+          return;
+        }
+
+        setAccessMessage('Admin access confirmed.', 'success');
+        shell.classList.add('is-visible');
+        signOutButton.hidden = false;
+        adminUser.textContent = `Signed in as ${result.user.email || 'admin user'}.`;
+        setStatusRow(0, 'Authenticated admin session', 'success');
+        await checkProfilesTable();
+      }
+
+      signOutButton.addEventListener('click', async () => {
+        signOutButton.disabled = true;
+        await signOut();
+        window.location.assign('admin-login.html');
+      });
+
+      initAdmin();
+    </script>
+  </body>
+</html>

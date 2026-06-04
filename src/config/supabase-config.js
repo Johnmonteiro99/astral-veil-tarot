@@ -1,8 +1,7 @@
 // Supabase configuration for Astral Veil.
-// Real values should come from local environment variables or deployment settings.
-// Do not hardcode private keys in this file.
+// These are frontend-safe values only. Never place service role keys here.
 
 export const SUPABASE_CONFIG = {
-  url: '',
-  anonKey: '',
+  url: 'https://ankqhjibihyakcmfncge.supabase.co',
+  anonKey: 'sb_publishable_EQQf_AJtW-_j2gTNFOZZAQ_6Ob5Dl0U',
 };
