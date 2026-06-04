@@ -1,5 +1,5 @@
 // Supabase configuration for Astral Veil.
-// These are frontend-safe values only. Never place service role keys here.
+// These are frontend-safe project values for the static admin pages.
 
 export const SUPABASE_CONFIG = {
   url: 'https://ankqhjibihyakcmfncge.supabase.co',
