@@ -8,6 +8,10 @@ const lumenArchiveNavItem = {
   label: "LUMEN ARCHIVE",
   href: "lumen-archive.html"
 };
+const noctisArchiveNavItem = {
+  label: "NOCTIS ARCHIVE",
+  href: "archive.html"
+};
 const bloodMoonRitualStorageKey = "astralVeilThemeRitualSteps";
 const BLOOD_MOON_TOGGLE_THRESHOLD = 10;
 const angelNumberActivationMessages = [
@@ -174,6 +178,26 @@ function updateLumenArchiveNav(isVisible) {
     link.hidden = !isVisible;
   });
 
+  document.querySelectorAll("[data-footer-drawer] .site-footer__nav").forEach((footerNav) => {
+    let noctisFooterLink = footerNav.querySelector("[data-archive-footer-link]");
+
+    if (!noctisFooterLink) {
+      noctisFooterLink = document.createElement("a");
+      noctisFooterLink.href = noctisArchiveNavItem.href;
+      noctisFooterLink.textContent = "Noctis Archive";
+      noctisFooterLink.dataset.archiveFooterLink = "";
+
+      const lumenFooterLink = footerNav.querySelector("[data-lumen-archive-footer-link]");
+      if (lumenFooterLink) {
+        lumenFooterLink.insertAdjacentElement("afterend", noctisFooterLink);
+      } else {
+        footerNav.appendChild(noctisFooterLink);
+      }
+    }
+
+    noctisFooterLink.hidden = isVisible;
+  });
+
   if (!isVisible) {
     existingDesktopLink?.closest("li")?.remove();
     existingMobileLink?.remove();
@@ -217,7 +241,7 @@ function updateBloodMoonNav(isActive) {
   const existingMobileLink = document.querySelector("[data-blood-moon-mobile-nav-link]");
   const archiveNavItem = window.AstralVeilEvents
     ?.getEventConfig(bloodMoonEventId)
-    ?.navItems?.[0] || { label: "NOCTIS ARCHIVE", href: "archive.html" };
+    ?.navItems?.[0] || noctisArchiveNavItem;
 
   if (!isActive) {
     existingDesktopLink?.closest("li")?.remove();
