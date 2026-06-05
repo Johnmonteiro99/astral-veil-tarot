@@ -883,6 +883,65 @@
         gap: 1rem;
       }
 
+      .admin-progress-summary {
+        display: grid;
+        grid-auto-columns: minmax(10.5rem, 1fr);
+        grid-auto-flow: column;
+        gap: 0.75rem;
+        overflow-x: auto;
+        padding: 0.1rem 0.1rem 0.75rem;
+        scrollbar-color: rgba(210, 31, 50, 0.82) rgba(18, 3, 5, 0.86);
+        scrollbar-width: thin;
+      }
+
+      .admin-progress-summary::-webkit-scrollbar,
+      .admin-progress-table-scroll::-webkit-scrollbar {
+        height: 0.55rem;
+      }
+
+      .admin-progress-summary::-webkit-scrollbar-track,
+      .admin-progress-table-scroll::-webkit-scrollbar-track {
+        border-radius: 999px;
+        background: rgba(18, 3, 5, 0.86);
+      }
+
+      .admin-progress-summary::-webkit-scrollbar-thumb,
+      .admin-progress-table-scroll::-webkit-scrollbar-thumb {
+        border: 2px solid rgba(18, 3, 5, 0.86);
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(126, 14, 22, 0.94), rgba(210, 31, 50, 0.9), rgba(255, 106, 47, 0.72));
+      }
+
+      .progress-summary-card {
+        display: grid;
+        gap: 0.2rem;
+        min-height: 5.2rem;
+        align-content: center;
+        padding: 0.75rem 0.85rem;
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        background:
+          linear-gradient(180deg, rgba(32, 8, 9, 0.58), rgba(10, 2, 3, 0.82)),
+          rgba(9, 1, 2, 0.68);
+      }
+
+      .progress-summary-card span {
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .progress-summary-card strong {
+        color: #fff0df;
+        font-family: Marcellus, Georgia, serif;
+        font-size: 1.7rem;
+        font-weight: 400;
+        line-height: 1;
+      }
+
       .admin-table-scroll {
         overflow-x: auto;
         scrollbar-color: rgba(210, 31, 50, 0.82) rgba(18, 3, 5, 0.86);
@@ -915,6 +974,10 @@
 
       .admin-table td {
         font-size: 0.95rem;
+      }
+
+      .admin-table td::before {
+        display: none;
       }
 
       .admin-table__title {
@@ -1015,6 +1078,77 @@
       .admin-detail-field span:last-child {
         overflow-wrap: anywhere;
         color: var(--muted);
+      }
+
+      .admin-image-previews {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+        gap: 0.85rem;
+      }
+
+      .admin-image-preview {
+        display: grid;
+        gap: 0.45rem;
+        min-width: 0;
+      }
+
+      .admin-image-preview img {
+        width: 100%;
+        max-height: 8.5rem;
+        object-fit: cover;
+        border: 1px solid rgba(179, 28, 35, 0.28);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.7);
+      }
+
+      .admin-image-preview span {
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .admin-image-preview a,
+      .admin-image-preview small {
+        overflow-wrap: anywhere;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .admin-progress-groups {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .admin-progress-group {
+        display: grid;
+        gap: 0.7rem;
+        padding: 1rem;
+        border: 1px solid rgba(179, 28, 35, 0.22);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.5);
+      }
+
+      .admin-progress-group h4 {
+        margin: 0;
+        color: #fff0df;
+        font-family: Marcellus, Georgia, serif;
+        font-size: 1.1rem;
+        font-weight: 400;
+      }
+
+      .admin-progress-group__state {
+        color: var(--muted);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-weight: 600;
+      }
+
+      .admin-progress-table-scroll {
+        overflow-x: auto;
+        scrollbar-color: rgba(210, 31, 50, 0.82) rgba(18, 3, 5, 0.86);
+        scrollbar-width: thin;
       }
 
       [hidden] {
@@ -1206,6 +1340,56 @@
           width: 100%;
         }
 
+        .admin-table {
+          min-width: 0;
+        }
+
+        .admin-table thead {
+          display: none;
+        }
+
+        .admin-table,
+        .admin-table tbody,
+        .admin-table tr,
+        .admin-table td {
+          display: block;
+          width: 100%;
+        }
+
+        .admin-table tr {
+          padding: 0.85rem;
+          border: 1px solid rgba(179, 28, 35, 0.24);
+          border-radius: 8px;
+          background: rgba(5, 1, 2, 0.52);
+        }
+
+        .admin-table tr + tr {
+          margin-top: 0.8rem;
+        }
+
+        .admin-table td {
+          display: grid;
+          grid-template-columns: minmax(6rem, 0.42fr) minmax(0, 1fr);
+          gap: 0.75rem;
+          align-items: start;
+          padding: 0.45rem 0;
+          border-bottom: 1px solid rgba(179, 28, 35, 0.16);
+        }
+
+        .admin-table td:last-child {
+          border-bottom: 0;
+        }
+
+        .admin-table td::before {
+          content: attr(data-label);
+          display: block;
+          color: #ff9a72;
+          font-size: 0.76rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
         .admin-sidebar,
         .admin-header,
         .panel,
@@ -1270,25 +1454,25 @@
           <a href="#journals" data-admin-view-link="journals">
             <span>Journals</span>
           </a>
-          <a href="#archive-rooms">
+          <a href="#archive-rooms" data-admin-view-link="archive-rooms">
             <span>Archive Rooms</span>
           </a>
-          <a href="#artifacts">
+          <a href="#artifacts" data-admin-view-link="artifacts">
             <span>Artifacts</span>
           </a>
-          <a href="#memory-fragments">
+          <a href="#memory-fragments" data-admin-view-link="memory-fragments">
             <span>Memory Fragments</span>
           </a>
-          <a href="#veilwalkers">
+          <a href="#veilwalkers" data-admin-view-link="veilwalkers">
             <span>Veilwalkers</span>
           </a>
-          <a href="#veilwalker-notes">
+          <a href="#veilwalker-notes" data-admin-view-link="veilwalker-notes">
             <span>Veilwalker Notes</span>
           </a>
-          <a href="#user-progress">
+          <a href="#user-progress" data-admin-view-link="user-progress">
             <span>User Progress</span>
           </a>
-          <a href="#app-settings">
+          <a href="#app-settings" data-admin-view-link="app-settings">
             <span>App Settings</span>
           </a>
         </nav>
@@ -1382,7 +1566,14 @@
                   </div>
                 </article>
 
-                <article class="section-card" id="archive-rooms">
+                <article
+                  class="section-card"
+                  id="archive-rooms-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="archive-rooms"
+                  aria-label="Open Archive Rooms admin section"
+                >
                   <div class="section-card__top">
                     <span class="card-icon" style="--icon-url: url('assets/icons/symbols/archive_rooms1.svg')" aria-hidden="true"></span>
                     <h3>Archive Rooms</h3>
@@ -1394,7 +1585,14 @@
                   </div>
                 </article>
 
-                <article class="section-card" id="artifacts">
+                <article
+                  class="section-card"
+                  id="artifacts-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="artifacts"
+                  aria-label="Open Artifacts admin section"
+                >
                   <div class="section-card__top">
                     <span class="card-icon" style="--icon-url: url('assets/icons/symbols/artifacts1.svg')" aria-hidden="true"></span>
                     <h3>Artifacts</h3>
@@ -1406,7 +1604,14 @@
                   </div>
                 </article>
 
-                <article class="section-card" id="memory-fragments">
+                <article
+                  class="section-card"
+                  id="memory-fragments-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="memory-fragments"
+                  aria-label="Open Memory Fragments admin section"
+                >
                   <div class="section-card__top">
                     <span class="card-icon" style="--icon-url: url('assets/icons/symbols/memory_fragment1.svg')" aria-hidden="true"></span>
                     <h3>Memory Fragments</h3>
@@ -1418,7 +1623,14 @@
                   </div>
                 </article>
 
-                <article class="section-card" id="veilwalkers">
+                <article
+                  class="section-card"
+                  id="veilwalkers-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="veilwalkers"
+                  aria-label="Open Veilwalkers admin section"
+                >
                   <div class="section-card__top">
                     <span class="card-icon" style="--icon-url: url('assets/icons/symbols/veilwalkers1.svg')" aria-hidden="true"></span>
                     <h3>Veilwalkers</h3>
@@ -1430,7 +1642,14 @@
                   </div>
                 </article>
 
-                <article class="section-card" id="veilwalker-notes">
+                <article
+                  class="section-card"
+                  id="veilwalker-notes-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="veilwalker-notes"
+                  aria-label="Open Veilwalker Notes admin section"
+                >
                   <div class="section-card__top">
                     <span class="card-icon" style="--icon-url: url('assets/icons/symbols/user_notes1.svg')" aria-hidden="true"></span>
                     <h3>Veilwalker Notes</h3>
@@ -1442,7 +1661,14 @@
                   </div>
                 </article>
 
-                <article class="section-card" id="user-progress">
+                <article
+                  class="section-card"
+                  id="user-progress-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="user-progress"
+                  aria-label="Open User Progress admin section"
+                >
                   <div class="section-card__top">
                     <span class="card-icon" style="--icon-url: url('assets/icons/symbols/user_progress.svg')" aria-hidden="true"></span>
                     <h3>User Progress</h3>
@@ -1450,11 +1676,18 @@
                   </div>
                   <div class="section-card__meta">
                     <span class="card-status">Read-only preview</span>
-                    <span class="count-pill">Count: --</span>
+                    <span class="count-pill">Count: Profiles later</span>
                   </div>
                 </article>
 
-                <article class="section-card" id="app-settings">
+                <article
+                  class="section-card"
+                  id="app-settings-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="app-settings"
+                  aria-label="Open App Settings admin section"
+                >
                   <div class="section-card__top">
                     <span class="card-icon" style="--icon-url: url('assets/icons/symbols/settings1.svg')" aria-hidden="true"></span>
                     <h3>App Settings</h3>
@@ -1487,11 +1720,12 @@
                     <thead>
                       <tr>
                         <th scope="col">Title</th>
-                        <th scope="col">Key</th>
-                        <th scope="col">Status</th>
+                        <th scope="col">Slug</th>
+                        <th scope="col">Journal Key</th>
+                        <th scope="col">Type</th>
                         <th scope="col">Mode</th>
+                        <th scope="col">Published</th>
                         <th scope="col">Updated</th>
-                        <th scope="col">Created</th>
                         <th scope="col">Action</th>
                       </tr>
                     </thead>
@@ -1511,6 +1745,370 @@
                 <div class="admin-detail__meta" data-journal-detail-meta></div>
                 <div class="admin-detail__field-grid" data-journal-detail-fields></div>
                 <div class="admin-detail__body" data-journal-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="archive-rooms" aria-labelledby="archive-rooms-title" data-admin-view="archive-rooms" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="archive-rooms-title">Archive Rooms</h2>
+                  <p>Review Noctis and Lumen room content, statuses, images, and ordering from the archive rooms table.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="admin-table-panel" aria-label="Archive Rooms table">
+                <p class="admin-state" data-archive-rooms-state>Loading archive rooms...</p>
+                <div class="admin-table-scroll" data-archive-rooms-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Room Key</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Archive Type</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Sort</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-archive-rooms-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-archive-room-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Archive room detail</p>
+                    <h3 data-archive-room-detail-title>Selected Room</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-archive-room-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-archive-room-detail-meta></div>
+                <div class="admin-detail__field-grid" data-archive-room-detail-fields></div>
+                <div class="admin-detail__body" data-archive-room-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="artifacts" aria-labelledby="artifacts-title" data-admin-view="artifacts" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="artifacts-title">Artifacts</h2>
+                  <p>Review recovered objects, keys, relics, unlock methods, and source locations from the artifacts table.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="admin-table-panel" aria-label="Artifacts table">
+                <p class="admin-state" data-artifacts-state>Loading artifacts...</p>
+                <div class="admin-table-scroll" data-artifacts-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Artifact Key</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Element</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Unlock</th>
+                        <th scope="col">Source</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-artifacts-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-artifact-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Artifact detail</p>
+                    <h3 data-artifact-detail-title>Selected Artifact</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-artifact-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-artifact-detail-meta></div>
+                <div class="admin-detail__field-grid" data-artifact-detail-fields></div>
+                <div class="admin-detail__body" data-artifact-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="memory-fragments" aria-labelledby="memory-fragments-title" data-admin-view="memory-fragments" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="memory-fragments-title">Memory Fragments</h2>
+                  <p>Review hidden story fragments, sequence pieces, related rooms, and artifact-linked discoveries.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="admin-table-panel" aria-label="Memory Fragments table">
+                <p class="admin-state" data-memory-fragments-state>Loading memory fragments...</p>
+                <div class="admin-table-scroll" data-memory-fragments-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Fragment Key</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Sequence</th>
+                        <th scope="col">Room</th>
+                        <th scope="col">Artifact</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-memory-fragments-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-memory-fragment-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Memory fragment detail</p>
+                    <h3 data-memory-fragment-detail-title>Selected Fragment</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-memory-fragment-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-memory-fragment-detail-meta></div>
+                <div class="admin-detail__field-grid" data-memory-fragment-detail-fields></div>
+                <div class="admin-detail__body" data-memory-fragment-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="veilwalker-notes" aria-labelledby="veilwalker-notes-title" data-admin-view="veilwalker-notes" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="veilwalker-notes-title">Veilwalker Notes</h2>
+                  <p>Review hidden profile notes, scrolls, mode-linked writings, and character-linked transmissions.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="admin-table-panel" aria-label="Veilwalker Notes table">
+                <p class="admin-state" data-veilwalker-notes-state>Loading veilwalker notes...</p>
+                <div class="admin-table-scroll" data-veilwalker-notes-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Note Key</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Veilwalker</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Hidden</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-veilwalker-notes-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-veilwalker-note-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Veilwalker note detail</p>
+                    <h3 data-veilwalker-note-detail-title>Selected Note</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-veilwalker-note-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-veilwalker-note-detail-meta></div>
+                <div class="admin-detail__field-grid" data-veilwalker-note-detail-fields></div>
+                <div class="admin-detail__body" data-veilwalker-note-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="veilwalkers" aria-labelledby="veilwalkers-title" data-admin-view="veilwalkers" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="veilwalkers-title">Veilwalkers</h2>
+                  <p>Review character identities, zodiac profiles, traits, image references, and mode-ready Veilwalker data.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="admin-table-panel" aria-label="Veilwalkers table">
+                <p class="admin-state" data-veilwalkers-state>Loading veilwalkers...</p>
+                <div class="admin-table-scroll" data-veilwalkers-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Key</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Zodiac</th>
+                        <th scope="col">Element</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Sort</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-veilwalkers-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-veilwalker-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Veilwalker detail</p>
+                    <h3 data-veilwalker-detail-title>Selected Veilwalker</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-veilwalker-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-veilwalker-detail-meta></div>
+                <div class="admin-detail__field-grid" data-veilwalker-detail-fields></div>
+                <div class="admin-image-previews" data-veilwalker-detail-images></div>
+                <div class="admin-detail__body" data-veilwalker-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="user-progress" aria-labelledby="user-progress-title" data-admin-view="user-progress" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="user-progress-title">User Progress</h2>
+                  <p>Review account records and saved progression across artifacts, rooms, fragments, discoveries, readings, and events.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="admin-progress-summary" aria-label="User progress summary">
+                <article class="progress-summary-card">
+                  <span>Total Profiles</span>
+                  <strong data-user-progress-count="profiles">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Artifact Unlocks</span>
+                  <strong data-user-progress-count="user_artifacts">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Room Records</span>
+                  <strong data-user-progress-count="user_rooms">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Fragments</span>
+                  <strong data-user-progress-count="user_fragments">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Discoveries</span>
+                  <strong data-user-progress-count="user_discoveries">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Readings</span>
+                  <strong data-user-progress-count="user_readings">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Events</span>
+                  <strong data-user-progress-count="user_events">--</strong>
+                </article>
+              </section>
+
+              <section class="admin-table-panel" aria-label="User profiles table">
+                <p class="admin-state" data-user-progress-state>Loading user profiles...</p>
+                <div class="admin-table-scroll" data-user-progress-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">User</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Avatar</th>
+                        <th scope="col">User ID</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-user-progress-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-user-progress-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">User progress detail</p>
+                    <h3 data-user-progress-detail-title>Selected User</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-user-progress-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-user-progress-detail-meta></div>
+                <div class="admin-detail__field-grid" data-user-progress-detail-fields></div>
+                <div class="admin-progress-groups" data-user-progress-detail-groups></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="app-settings" aria-labelledby="app-settings-title" data-admin-view="app-settings" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="app-settings-title">App Settings</h2>
+                  <p>Review global site settings, event flags, and future mode controls without changing live public behavior.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="admin-table-panel" aria-label="App Settings table">
+                <p class="admin-state" data-app-settings-state>Loading app settings...</p>
+                <div class="admin-table-scroll" data-app-settings-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Setting Key</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Public</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-app-settings-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-app-setting-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">App setting detail</p>
+                    <h3 data-app-setting-detail-title>Selected Setting</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-app-setting-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-app-setting-detail-meta></div>
+                <div class="admin-detail__field-grid" data-app-setting-detail-fields></div>
+                <div class="admin-detail__body" data-app-setting-detail-body></div>
               </section>
             </section>
 
