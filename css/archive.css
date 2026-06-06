@@ -805,24 +805,6 @@ body.blood-moon-mode .archive-code-panel p {
   -webkit-line-clamp: 2;
 }
 
-.archive-recovered-object-card__copy em,
-.archive-recovered-object-card__copy small {
-  overflow: hidden;
-  color: color-mix(in srgb, var(--artifact-accent) 68%, rgba(255, 218, 210, 0.76));
-  font-size: 0.62rem;
-  font-style: normal;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.archive-recovered-object-card__copy small {
-  color: rgba(255, 226, 218, 0.62);
-  font-size: 0.58rem;
-}
-
 .archive-recovered-object-modal {
   position: fixed;
   inset: 0;
@@ -1325,12 +1307,6 @@ body.blood-moon-mode .archive-remembers-panel {
 
   .archive-recovered-object-card__copy strong {
     font-size: clamp(0.98rem, 6vw, 1.14rem);
-  }
-
-  .archive-recovered-object-card__copy em,
-  .archive-recovered-object-card__copy small {
-    font-size: 0.61rem;
-    letter-spacing: 0.07em;
   }
 
   .archive-recovered-object-modal {

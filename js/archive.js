@@ -26,7 +26,6 @@ let archiveCodeFeedbackMode = "";
 
 const archiveKeyStorageKey = "astralVeilNoctisElementalKeys";
 const archiveKeySessionStorageKey = "astralVeilNoctisElementalKeysSession";
-const archiveRoomSessionStorageKey = "astralVeilNoctisRoomsSession";
 const artifactProgressState = {
   isLoaded: false,
   user: null,
@@ -120,7 +119,7 @@ const elementalKeys = [
   {
     id: "fire",
     name: "Fire",
-    title: "Fire Key",
+    title: "Ember Key",
     type: "Recovered Relic",
     element: "Fire",
     alignment: ["Fire", "Rebirth", "Will", "Ash"],
@@ -140,7 +139,7 @@ const elementalKeys = [
   {
     id: "earth",
     name: "Earth",
-    title: "Earth Key",
+    title: "Rootstone Key",
     type: "Recovered Relic",
     element: "Earth",
     alignment: ["Earth", "Root", "Memory", "Grounding"],
@@ -374,16 +373,10 @@ function getRoomStatusClass(room) {
 
 function getRoomDetails(room) {
   if (room?.id === "memory-vault") {
-    const isUnlocked = !isRoomLocked(room);
-
     return {
       ...archiveRoomDetails[room.id],
-      accessNotes: isUnlocked
-        ? "Open. The four recovered relics have turned within the lock."
-        : getRoomLockedMessage(room),
-      archiveHint: isUnlocked
-        ? "The door remembers the names of Air, Water, Earth, and Fire."
-        : archiveRoomDetails[room.id]?.archiveHint || "A missing piece is still shaping the door."
+      accessNotes: getRoomLockedMessage(room),
+      archiveHint: "Memory Vault unlock rule will be added later."
     };
   }
 
@@ -425,42 +418,10 @@ function saveSessionElementalKeys(unlockedKeys) {
   }
 }
 
-function getSessionRoomProgress() {
-  try {
-    const parsedValue = JSON.parse(sessionStorage.getItem(archiveRoomSessionStorageKey) || "[]");
-    const entries = Array.isArray(parsedValue) ? parsedValue : [];
-
-    return new Map(entries
-      .filter((entry) => entry && getRoomById(entry.room_key))
-      .map((entry) => [entry.room_key, entry]));
-  } catch (error) {
-    return new Map();
-  }
-}
-
-function saveSessionRoomProgress() {
-  try {
-    sessionStorage.setItem(
-      archiveRoomSessionStorageKey,
-      JSON.stringify([...roomProgressState.rooms.values()])
-    );
-  } catch (error) {
-    return;
-  }
-}
-
 function normalizeRoomStatus(value) {
   const status = String(value || "").toLowerCase();
 
-  if (status.includes("visited")) {
-    return "visited";
-  }
-
-  if (status.includes("unlocked")) {
-    return "unlocked";
-  }
-
-  if (status.includes("open")) {
+  if (status.includes("open") || status.includes("visited") || status.includes("unlocked")) {
     return "open";
   }
 
@@ -486,14 +447,6 @@ function getRoomProgress(roomKey) {
 function formatRoomProgressStatus(status) {
   const normalizedStatus = normalizeRoomStatus(status);
 
-  if (normalizedStatus === "visited") {
-    return "Visited";
-  }
-
-  if (normalizedStatus === "unlocked") {
-    return "Unlocked";
-  }
-
   if (normalizedStatus === "open") {
     return "Open";
   }
@@ -505,6 +458,10 @@ function getRoomProgressRows(rows) {
   return new Map((Array.isArray(rows) ? rows : [])
     .filter((row) => row && getRoomById(row.room_key))
     .map((row) => [row.room_key, row]));
+}
+
+function isProgressionRoom(roomKey) {
+  return roomKey === "memory-vault" || roomKey === "restricted-wing";
 }
 
 async function loadArtifactProgress() {
@@ -519,7 +476,7 @@ async function loadArtifactProgress() {
     if (!isSupabaseConfigured()) {
       artifactProgressState.unlockedKeys = getSessionElementalKeys();
       artifactProgressState.isLoaded = true;
-      roomProgressState.rooms = getSessionRoomProgress();
+      roomProgressState.rooms = new Map();
       roomProgressState.isLoaded = true;
       return;
     }
@@ -533,7 +490,7 @@ async function loadArtifactProgress() {
       artifactProgressState.isLoaded = true;
       roomProgressState.user = null;
       roomProgressState.supabase = null;
-      roomProgressState.rooms = getSessionRoomProgress();
+      roomProgressState.rooms = new Map();
       roomProgressState.isLoaded = true;
       return;
     }
@@ -567,15 +524,15 @@ async function loadArtifactProgress() {
     artifactProgressState.isLoaded = true;
     roomProgressState.user = null;
     roomProgressState.supabase = null;
-    roomProgressState.rooms = getSessionRoomProgress();
+    roomProgressState.rooms = new Map();
     roomProgressState.isLoaded = true;
   }
 }
 
-async function saveRoomProgress(roomKey, { status = "visited", unlockMethod = "room_entry", sourceLocation = "Noctis Archive", metadata = {} } = {}) {
+async function saveRoomProgress(roomKey, { status = "open", unlockMethod = "room_entry", sourceLocation = "Noctis Archive", metadata = {} } = {}) {
   const room = getRoomById(roomKey);
 
-  if (!room || !roomProgressState.isLoaded) {
+  if (!room || !isProgressionRoom(roomKey) || !roomProgressState.isLoaded) {
     return { status: "skipped" };
   }
 
@@ -599,9 +556,7 @@ async function saveRoomProgress(roomKey, { status = "visited", unlockMethod = "r
   };
 
   if (!roomProgressState.user || !roomProgressState.supabase) {
-    roomProgressState.rooms.set(roomKey, nextProgress);
-    saveSessionRoomProgress();
-    return { status: "session" };
+    return { status: "skipped" };
   }
 
   const payload = {
@@ -614,7 +569,7 @@ async function saveRoomProgress(roomKey, { status = "visited", unlockMethod = "r
     updated_at: nextProgress.updated_at
   };
 
-  if (!existingProgress?.unlocked_at && ["open", "unlocked", "visited"].includes(normalizedStatus)) {
+  if (!existingProgress?.unlocked_at && normalizedStatus === "open") {
     payload.unlocked_at = nextProgress.updated_at;
   }
 
@@ -711,7 +666,7 @@ function areAllSavedElementalKeysRecovered() {
 }
 
 function getArtifactGatedRooms() {
-  return getArchiveRooms().filter((room) => room.id === "memory-vault" || room.id === "restricted-wing");
+  return getArchiveRooms().filter((room) => room.id === "restricted-wing");
 }
 
 async function saveUnlockedArtifactGatedRooms() {
@@ -720,7 +675,7 @@ async function saveUnlockedArtifactGatedRooms() {
   }
 
   await Promise.all(getArtifactGatedRooms().map((room) => saveRoomProgress(room.id, {
-    status: "unlocked",
+    status: "open",
     unlockMethod: "artifact_progress",
     sourceLocation: "Noctis Archive",
     metadata: {
@@ -746,10 +701,6 @@ function getElementalKeyProgressText() {
 }
 
 function getRoomStatus(room) {
-  if (room?.id === "memory-vault" && areAllSavedElementalKeysRecovered()) {
-    return formatRoomProgressStatus(getRoomProgress(room.id)?.status) || "Open";
-  }
-
   if (room && !isRoomLocked(room)) {
     const progressStatus = formatRoomProgressStatus(getRoomProgress(room.id)?.status);
 
@@ -763,7 +714,7 @@ function getRoomStatus(room) {
 
 function isRoomLocked(room) {
   if (room?.id === "memory-vault") {
-    return !areAllSavedElementalKeysRecovered();
+    return true;
   }
 
   if (room?.id === "restricted-wing") {
@@ -776,15 +727,12 @@ function isRoomLocked(room) {
 // The Restricted Wing remains sealed until all four elemental keys are recovered,
 // but the visible copy keeps that requirement obscure.
 function getRoomLockedMessage(room) {
-  if ((room?.id === "memory-vault" || room?.id === "restricted-wing") && !isLoggedInArchiveUser()) {
+  if (room?.id === "restricted-wing" && !isLoggedInArchiveUser()) {
     return "Log in to bind your discoveries and continue deeper into the Archive.";
   }
 
   if (room?.id === "memory-vault" && isRoomLocked(room)) {
-    const missingKeys = getMissingElementalKeys();
-    const missingText = missingKeys.length ? ` Missing: ${missingKeys.join(", ")}.` : "";
-
-    return `The Memory Vault does not answer yet. Four recovered relics must be named before its door remembers how to open. ${getElementalKeyProgressText()}.${missingText}`;
+    return "The Memory Vault remains sealed. Memory Vault unlock rule will be added later.";
   }
 
   if (room?.id === "restricted-wing" && isRoomLocked(room)) {
@@ -1096,8 +1044,6 @@ function renderRecoveredObjectCard(object) {
       </span>
       <span class="archive-recovered-object-card__copy">
         <strong>${escapeHtml(object.title)}</strong>
-        <em>${escapeHtml(object.element || object.type || "Recovered Object")}</em>
-        <small>${escapeHtml(object.type || "Recovered Object")}</small>
       </span>
     </button>
   `;
@@ -1416,12 +1362,12 @@ function renderMemoryVaultRoom(room) {
     <div class="archive-room-panel archive-room-panel--memory-vault">
       <div class="archive-memory-vault-header">
         <p class="archive-entry__stamp">Memory Vault</p>
-        <h3>The Vault Has Opened</h3>
-        <p>The four recovered relics turn within the lock. Something old recognizes you from behind the door.</p>
+        <h3>The Vault Remains Sealed</h3>
+        <p>Memory Vault unlock rule will be added later.</p>
       </div>
       <section class="archive-memory-vault-unlock" aria-label="Memory Vault unlock source">
-        <span>Unlocked By</span>
-        <p>Air · Water · Earth · Fire</p>
+        <span>Unlock Rule</span>
+        <p>Pending</p>
       </section>
       <p class="archive-memory-vault-note">Final Memory Vault records will be added later.</p>
     </div>
@@ -1537,7 +1483,7 @@ async function handleArchiveCodeSubmit(form) {
       archiveCodeFeedback = "The fourth relic answers for now. Artifact discovered. Log in to bind your relics to your Archive and continue deeper into the Veil.";
     } else {
       archiveCodeFeedbackMode = "";
-      archiveCodeFeedback = "The fourth relic answers. Somewhere in the Archive, the Memory Vault unlocks. Artifact saved to your Archive.";
+      archiveCodeFeedback = "The fourth relic answers. Somewhere in the Archive, the Restricted Wing unlocks. Artifact saved to your Archive.";
     }
   }
 
@@ -1600,8 +1546,8 @@ async function enterArchiveRoom(roomId) {
     window.history.replaceState({ archiveRoom: "" }, "", window.location.pathname + window.location.search);
   }
 
-  const saveResult = await saveRoomProgress(room.id, {
-    status: "visited",
+  await saveRoomProgress(room.id, {
+    status: "open",
     unlockMethod: "room_entry",
     sourceLocation: "Noctis Archive",
     metadata: {
@@ -1611,10 +1557,6 @@ async function enterArchiveRoom(roomId) {
 
   renderArchiveRooms();
   focusEnteredChamber(room);
-
-  if (saveResult.status === "session") {
-    showRoomToast("Log in to save this room progress to your Archive.");
-  }
 }
 
 // Clears the hash and restores the chamber selector hub.
@@ -1665,7 +1607,7 @@ async function syncRoomFromHash() {
   activeArchiveShelfEntryId = "";
   window.history.replaceState({ archiveRoom: "" }, "", window.location.pathname + window.location.search);
   await saveRoomProgress(room.id, {
-    status: "visited",
+    status: "open",
     unlockMethod: "direct_link",
     sourceLocation: "Noctis Archive",
     metadata: {
