@@ -17,6 +17,7 @@ const accountNav = document.querySelector('[data-account-nav]');
 const accountNavToggle = document.querySelector('[data-account-nav-toggle]');
 const savedReadingsList = document.querySelector('[data-saved-readings-list]');
 const artifactCountValue = document.querySelector('[data-account-artifact-count]');
+const roomCountValue = document.querySelector('[data-account-room-count]');
 
 let savedReadingsLoaded = false;
 let activeUser = null;
@@ -229,6 +230,28 @@ async function loadArtifactCount() {
   artifactCountValue.textContent = error ? 'Soon' : String(count || 0);
 }
 
+async function loadRoomCount() {
+  if (!roomCountValue || !activeUser) {
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    roomCountValue.textContent = 'Soon';
+    return;
+  }
+
+  roomCountValue.textContent = '...';
+
+  const { count, error } = await supabase
+    .from('user_rooms')
+    .select('room_key', { count: 'exact', head: true })
+    .eq('user_id', activeUser.id);
+
+  roomCountValue.textContent = error ? 'Soon' : String(count || 0);
+}
+
 function showError(message) {
   loadingPanel.hidden = true;
   accountPanel.hidden = true;
@@ -305,6 +328,7 @@ async function loadAccount() {
   loadingPanel.hidden = true;
   accountPanel.hidden = false;
   loadArtifactCount();
+  loadRoomCount();
 
   if (getAccountSectionFromHash() === 'past-readings') {
     loadSavedReadings();

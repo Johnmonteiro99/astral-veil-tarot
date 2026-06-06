@@ -22,14 +22,22 @@ let visualRecordTouchStartX = 0;
 let visualRecordTouchStartY = 0;
 let galleryTouchStartX = 0;
 let galleryTouchStartY = 0;
+let archiveCodeFeedbackMode = "";
 
 const archiveKeyStorageKey = "astralVeilNoctisElementalKeys";
 const archiveKeySessionStorageKey = "astralVeilNoctisElementalKeysSession";
+const archiveRoomSessionStorageKey = "astralVeilNoctisRoomsSession";
 const artifactProgressState = {
   isLoaded: false,
   user: null,
   supabase: null,
   unlockedKeys: []
+};
+const roomProgressState = {
+  isLoaded: false,
+  user: null,
+  supabase: null,
+  rooms: new Map()
 };
 const correctArchiveCodes = {
   water: "WITHIN",
@@ -417,6 +425,88 @@ function saveSessionElementalKeys(unlockedKeys) {
   }
 }
 
+function getSessionRoomProgress() {
+  try {
+    const parsedValue = JSON.parse(sessionStorage.getItem(archiveRoomSessionStorageKey) || "[]");
+    const entries = Array.isArray(parsedValue) ? parsedValue : [];
+
+    return new Map(entries
+      .filter((entry) => entry && getRoomById(entry.room_key))
+      .map((entry) => [entry.room_key, entry]));
+  } catch (error) {
+    return new Map();
+  }
+}
+
+function saveSessionRoomProgress() {
+  try {
+    sessionStorage.setItem(
+      archiveRoomSessionStorageKey,
+      JSON.stringify([...roomProgressState.rooms.values()])
+    );
+  } catch (error) {
+    return;
+  }
+}
+
+function normalizeRoomStatus(value) {
+  const status = String(value || "").toLowerCase();
+
+  if (status.includes("visited")) {
+    return "visited";
+  }
+
+  if (status.includes("unlocked")) {
+    return "unlocked";
+  }
+
+  if (status.includes("open")) {
+    return "open";
+  }
+
+  if (status.includes("restricted")) {
+    return "restricted";
+  }
+
+  if (status.includes("sealed")) {
+    return "sealed";
+  }
+
+  if (status.includes("locked")) {
+    return "locked";
+  }
+
+  return status || "open";
+}
+
+function getRoomProgress(roomKey) {
+  return roomProgressState.rooms.get(roomKey) || null;
+}
+
+function formatRoomProgressStatus(status) {
+  const normalizedStatus = normalizeRoomStatus(status);
+
+  if (normalizedStatus === "visited") {
+    return "Visited";
+  }
+
+  if (normalizedStatus === "unlocked") {
+    return "Unlocked";
+  }
+
+  if (normalizedStatus === "open") {
+    return "Open";
+  }
+
+  return "";
+}
+
+function getRoomProgressRows(rows) {
+  return new Map((Array.isArray(rows) ? rows : [])
+    .filter((row) => row && getRoomById(row.room_key))
+    .map((row) => [row.room_key, row]));
+}
+
 async function loadArtifactProgress() {
   clearLegacyArtifactLocalStorage();
 
@@ -429,6 +519,8 @@ async function loadArtifactProgress() {
     if (!isSupabaseConfigured()) {
       artifactProgressState.unlockedKeys = getSessionElementalKeys();
       artifactProgressState.isLoaded = true;
+      roomProgressState.rooms = getSessionRoomProgress();
+      roomProgressState.isLoaded = true;
       return;
     }
 
@@ -439,14 +531,24 @@ async function loadArtifactProgress() {
       artifactProgressState.supabase = null;
       artifactProgressState.unlockedKeys = getSessionElementalKeys();
       artifactProgressState.isLoaded = true;
+      roomProgressState.user = null;
+      roomProgressState.supabase = null;
+      roomProgressState.rooms = getSessionRoomProgress();
+      roomProgressState.isLoaded = true;
       return;
     }
 
     const supabase = getSupabaseClient();
-    const { data, error } = await supabase
-      .from("user_artifacts")
-      .select("artifact_key")
-      .eq("user_id", user.id);
+    const [{ data, error }, { data: roomData, error: roomError }] = await Promise.all([
+      supabase
+        .from("user_artifacts")
+        .select("artifact_key")
+        .eq("user_id", user.id),
+      supabase
+        .from("user_rooms")
+        .select("room_key, status, unlock_method, source_location, metadata, unlocked_at, updated_at")
+        .eq("user_id", user.id)
+    ]);
 
     artifactProgressState.user = user;
     artifactProgressState.supabase = supabase;
@@ -454,12 +556,93 @@ async function loadArtifactProgress() {
       ? []
       : getValidElementalKeyIds((data || []).map((artifact) => artifact.artifact_key));
     artifactProgressState.isLoaded = true;
+    roomProgressState.user = user;
+    roomProgressState.supabase = supabase;
+    roomProgressState.rooms = roomError ? new Map() : getRoomProgressRows(roomData);
+    roomProgressState.isLoaded = true;
   } catch (error) {
     artifactProgressState.user = null;
     artifactProgressState.supabase = null;
     artifactProgressState.unlockedKeys = getSessionElementalKeys();
     artifactProgressState.isLoaded = true;
+    roomProgressState.user = null;
+    roomProgressState.supabase = null;
+    roomProgressState.rooms = getSessionRoomProgress();
+    roomProgressState.isLoaded = true;
   }
+}
+
+async function saveRoomProgress(roomKey, { status = "visited", unlockMethod = "room_entry", sourceLocation = "Noctis Archive", metadata = {} } = {}) {
+  const room = getRoomById(roomKey);
+
+  if (!room || !roomProgressState.isLoaded) {
+    return { status: "skipped" };
+  }
+
+  const normalizedStatus = normalizeRoomStatus(status);
+  const existingProgress = getRoomProgress(roomKey);
+  const nextProgress = {
+    ...existingProgress,
+    user_id: roomProgressState.user?.id || null,
+    room_key: roomKey,
+    status: normalizedStatus,
+    unlock_method: unlockMethod,
+    source_location: sourceLocation,
+    metadata: {
+      ...(existingProgress?.metadata || {}),
+      room_title: room.title || "",
+      room_type: room.type || "",
+      room_status: getRoomStatus(room),
+      ...metadata
+    },
+    updated_at: new Date().toISOString()
+  };
+
+  if (!roomProgressState.user || !roomProgressState.supabase) {
+    roomProgressState.rooms.set(roomKey, nextProgress);
+    saveSessionRoomProgress();
+    return { status: "session" };
+  }
+
+  const payload = {
+    user_id: roomProgressState.user.id,
+    room_key: roomKey,
+    status: normalizedStatus,
+    unlock_method: unlockMethod,
+    source_location: sourceLocation,
+    metadata: nextProgress.metadata,
+    updated_at: nextProgress.updated_at
+  };
+
+  if (!existingProgress?.unlocked_at && ["open", "unlocked", "visited"].includes(normalizedStatus)) {
+    payload.unlocked_at = nextProgress.updated_at;
+  }
+
+  const query = roomProgressState.supabase.from("user_rooms");
+  const { error } = existingProgress
+    ? await query.update(payload).eq("user_id", roomProgressState.user.id).eq("room_key", roomKey)
+    : await query.insert(payload);
+
+  if (error) {
+    const isDuplicate = error.code === "23505" || /duplicate|unique/i.test(error.message || "");
+
+    if (isDuplicate) {
+      const { error: updateError } = await roomProgressState.supabase
+        .from("user_rooms")
+        .update(payload)
+        .eq("user_id", roomProgressState.user.id)
+        .eq("room_key", roomKey);
+
+      if (updateError) {
+        return { status: "error", error: updateError };
+      }
+    } else {
+      return { status: "error", error };
+    }
+  }
+
+  roomProgressState.rooms.set(roomKey, nextProgress);
+  return { status: "saved" };
 }
 
 function getUnlockedElementalKeys() {
@@ -519,6 +702,34 @@ function areAllElementalKeysRecovered() {
   return elementalKeys.every((key) => unlockedKeys.includes(key.id));
 }
 
+function isLoggedInArchiveUser() {
+  return Boolean(artifactProgressState.user && artifactProgressState.supabase);
+}
+
+function areAllSavedElementalKeysRecovered() {
+  return isLoggedInArchiveUser() && areAllElementalKeysRecovered();
+}
+
+function getArtifactGatedRooms() {
+  return getArchiveRooms().filter((room) => room.id === "memory-vault" || room.id === "restricted-wing");
+}
+
+async function saveUnlockedArtifactGatedRooms() {
+  if (!areAllSavedElementalKeysRecovered()) {
+    return;
+  }
+
+  await Promise.all(getArtifactGatedRooms().map((room) => saveRoomProgress(room.id, {
+    status: "unlocked",
+    unlockMethod: "artifact_progress",
+    sourceLocation: "Noctis Archive",
+    metadata: {
+      required_artifacts: elementalKeyDisplayOrder,
+      recovered_artifacts: getUnlockedElementalKeys()
+    }
+  })));
+}
+
 function getMissingElementalKeys() {
   const unlockedKeys = getUnlockedElementalKeys();
 
@@ -535,8 +746,16 @@ function getElementalKeyProgressText() {
 }
 
 function getRoomStatus(room) {
-  if (room?.id === "memory-vault" && areAllElementalKeysRecovered()) {
-    return "Open";
+  if (room?.id === "memory-vault" && areAllSavedElementalKeysRecovered()) {
+    return formatRoomProgressStatus(getRoomProgress(room.id)?.status) || "Open";
+  }
+
+  if (room && !isRoomLocked(room)) {
+    const progressStatus = formatRoomProgressStatus(getRoomProgress(room.id)?.status);
+
+    if (progressStatus) {
+      return progressStatus;
+    }
   }
 
   return room?.status || "";
@@ -544,11 +763,11 @@ function getRoomStatus(room) {
 
 function isRoomLocked(room) {
   if (room?.id === "memory-vault") {
-    return !areAllElementalKeysRecovered();
+    return !areAllSavedElementalKeysRecovered();
   }
 
   if (room?.id === "restricted-wing") {
-    return !areAllElementalKeysRecovered();
+    return !areAllSavedElementalKeysRecovered();
   }
 
   return Boolean(room?.isLocked);
@@ -557,6 +776,10 @@ function isRoomLocked(room) {
 // The Restricted Wing remains sealed until all four elemental keys are recovered,
 // but the visible copy keeps that requirement obscure.
 function getRoomLockedMessage(room) {
+  if ((room?.id === "memory-vault" || room?.id === "restricted-wing") && !isLoggedInArchiveUser()) {
+    return "Log in to bind your discoveries and continue deeper into the Archive.";
+  }
+
   if (room?.id === "memory-vault" && isRoomLocked(room)) {
     const missingKeys = getMissingElementalKeys();
     const missingText = missingKeys.length ? ` Missing: ${missingKeys.join(", ")}.` : "";
@@ -949,6 +1172,16 @@ function renderRecoveredObjects() {
 }
 
 function renderArchiveCodePanel() {
+  const feedbackMarkup = archiveCodeFeedbackMode === "guest-artifact"
+    ? `
+      ${escapeHtml(archiveCodeFeedback)}
+      <span class="archive-code-panel__actions">
+        <a href="auth.html?returnTo=archive.html%23entry-desk">Log In / Sign Up</a>
+        <button type="button" data-archive-continue>Continue Exploring</button>
+      </span>
+    `
+    : escapeHtml(archiveCodeFeedback || "No whispers heard yet.");
+
   return `
     <form class="archive-code-panel" data-archive-code-form>
       <div class="archive-section-copy">
@@ -967,7 +1200,7 @@ function renderArchiveCodePanel() {
         <div class="archive-code-whispers__copy">
           <h4>Code Whispers</h4>
           <p class="archive-code-panel__feedback" data-archive-code-feedback aria-live="polite">
-            ${archiveCodeFeedback ? escapeHtml(archiveCodeFeedback) : "No whispers heard yet."}
+            ${feedbackMarkup}
           </p>
         </div>
         <div class="archive-code-whispers__emblem" aria-hidden="true"></div>
@@ -1249,18 +1482,21 @@ async function handleArchiveCodeSubmit(form) {
   );
 
   if (!matchedKeyId) {
+    archiveCodeFeedbackMode = "";
     archiveCodeFeedback = archiveCodeFailureMessages[Math.floor(Math.random() * archiveCodeFailureMessages.length)];
     renderArchiveRooms();
     return;
   }
 
   if (!artifactProgressState.isLoaded) {
+    archiveCodeFeedbackMode = "";
     archiveCodeFeedback = "The archive is still checking what has been recovered. Try again in a moment.";
     renderArchiveRooms();
     return;
   }
 
   if (isElementalKeyUnlocked(matchedKeyId)) {
+    archiveCodeFeedbackMode = "";
     archiveCodeFeedback = artifactProgressState.user
       ? "Artifact already saved to your Archive."
       : archiveKeyFeedback[matchedKeyId]?.alreadyUnlocked || "The archive has already answered.";
@@ -1271,12 +1507,14 @@ async function handleArchiveCodeSubmit(form) {
   const saveResult = await saveUnlockedElementalKey(matchedKeyId);
 
   if (saveResult.status === "error") {
+    archiveCodeFeedbackMode = "";
     archiveCodeFeedback = "The artifact surfaced, but could not be saved. Please try again.";
     renderArchiveRooms();
     return;
   }
 
   if (saveResult.status === "duplicate") {
+    archiveCodeFeedbackMode = "";
     archiveCodeFeedback = artifactProgressState.user
       ? "Artifact already saved to your Archive."
       : archiveKeyFeedback[matchedKeyId]?.alreadyUnlocked || "The archive has already answered.";
@@ -1284,18 +1522,23 @@ async function handleArchiveCodeSubmit(form) {
     return;
   }
 
+  archiveCodeFeedbackMode = saveResult.status === "session" ? "guest-artifact" : "";
   archiveCodeFeedback = saveResult.status === "session"
-    ? `${archiveKeyFeedback[matchedKeyId]?.unlocked || "Something has surfaced."} Log in to save this artifact to your Archive.`
+    ? `${archiveKeyFeedback[matchedKeyId]?.unlocked || "Something has surfaced."} Artifact discovered. Log in to bind this relic to your Archive and continue deeper into the Veil.`
     : `${archiveKeyFeedback[matchedKeyId]?.unlocked || "Something has surfaced."} Artifact saved to your Archive.`;
 
   if (
     saveResult.previousKeys.length < elementalKeys.length &&
     areAllElementalKeysRecovered()
   ) {
-    const vaultMessage = "The fourth relic answers. Somewhere in the Archive, the Memory Vault unlocks.";
-    archiveCodeFeedback = saveResult.status === "session"
-      ? `${vaultMessage} Log in to save this artifact to your Archive.`
-      : `${vaultMessage} Artifact saved to your Archive.`;
+    await saveUnlockedArtifactGatedRooms();
+    if (saveResult.status === "session") {
+      archiveCodeFeedbackMode = "guest-artifact";
+      archiveCodeFeedback = "The fourth relic answers for now. Artifact discovered. Log in to bind your relics to your Archive and continue deeper into the Veil.";
+    } else {
+      archiveCodeFeedbackMode = "";
+      archiveCodeFeedback = "The fourth relic answers. Somewhere in the Archive, the Memory Vault unlocks. Artifact saved to your Archive.";
+    }
   }
 
   renderArchiveRooms();
@@ -1337,7 +1580,7 @@ function focusEnteredChamber(room) {
 ////////////////////////////////////////////////////
 
 // Enter actions keep the redesigned viewer intact while moving into the selected chamber's records.
-function enterArchiveRoom(roomId) {
+async function enterArchiveRoom(roomId) {
   const room = getRoomById(roomId);
 
   if (!room) {
@@ -1357,8 +1600,21 @@ function enterArchiveRoom(roomId) {
     window.history.replaceState({ archiveRoom: "" }, "", window.location.pathname + window.location.search);
   }
 
+  const saveResult = await saveRoomProgress(room.id, {
+    status: "visited",
+    unlockMethod: "room_entry",
+    sourceLocation: "Noctis Archive",
+    metadata: {
+      selected_from: "archive_chamber_viewer"
+    }
+  });
+
   renderArchiveRooms();
   focusEnteredChamber(room);
+
+  if (saveResult.status === "session") {
+    showRoomToast("Log in to save this room progress to your Archive.");
+  }
 }
 
 // Clears the hash and restores the chamber selector hub.
@@ -1383,7 +1639,7 @@ function returnToRoomHub({ updateHash = true, scroll = true } = {}) {
 }
 
 // Supports direct links such as archive.html#entry-desk while rejecting locked room hashes.
-function syncRoomFromHash() {
+async function syncRoomFromHash() {
   const roomId = window.location.hash.replace("#", "");
   const room = getRoomById(roomId);
 
@@ -1408,6 +1664,14 @@ function syncRoomFromHash() {
   enteredArchiveRoomId = room.id;
   activeArchiveShelfEntryId = "";
   window.history.replaceState({ archiveRoom: "" }, "", window.location.pathname + window.location.search);
+  await saveRoomProgress(room.id, {
+    status: "visited",
+    unlockMethod: "direct_link",
+    sourceLocation: "Noctis Archive",
+    metadata: {
+      selected_from: "hash_route"
+    }
+  });
   renderArchiveRooms();
 }
 
@@ -1429,17 +1693,26 @@ function handleArchiveBloodMoonChange(event) {
 
 async function initializeArchive() {
   await loadArtifactProgress();
+  await saveUnlockedArtifactGatedRooms();
   renderArchiveRooms();
   renderArchiveAccessState();
-  syncRoomFromHash();
+  await syncRoomFromHash();
 }
 
 initializeArchive();
 
 // Delegated archive actions cover room entry, room back buttons, thumbnail selection, and chamber nav.
 document.addEventListener("click", (event) => {
+  const continueButton = event.target.closest("[data-archive-continue]");
   const roomButton = event.target.closest("[data-room-id], [data-room-enter]");
   const backButton = event.target.closest("[data-room-back]");
+
+  if (continueButton) {
+    archiveCodeFeedback = "";
+    archiveCodeFeedbackMode = "";
+    renderArchiveRooms();
+    return;
+  }
 
   if (backButton) {
     returnToRoomHub();
