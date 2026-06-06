@@ -358,26 +358,47 @@
 
       .avatar {
         width: 100%;
+        min-height: 0;
         aspect-ratio: 1;
-        display: grid;
-        place-items: center;
         border: 1px solid rgba(228, 189, 118, 0.82);
         border-radius: 50%;
+        display: grid;
+        place-items: center;
         background:
           radial-gradient(circle at 50% 72%, rgba(228, 189, 118, 0.2), transparent 22%),
           linear-gradient(135deg, rgba(43, 29, 68, 0.9), rgba(15, 13, 28, 0.94));
         color: var(--gold);
+        cursor: pointer;
         font: 700 clamp(2.7rem, 9vw, 5.2rem)/1 "Cormorant Garamond", Georgia, serif;
         overflow: hidden;
+        padding: 0;
         box-shadow:
           0 0 0 6px rgba(228, 189, 118, 0.06),
           0 0 42px rgba(185, 156, 255, 0.14);
       }
 
+      .avatar:focus-visible {
+        outline: 0;
+        box-shadow:
+          0 0 0 6px rgba(228, 189, 118, 0.12),
+          0 0 0 9px rgba(228, 189, 118, 0.16),
+          0 0 42px rgba(185, 156, 255, 0.18);
+      }
+
       .avatar.has-image {
-        background-position: center;
-        background-size: cover;
         color: transparent;
+      }
+
+      .avatar img {
+        grid-area: 1 / 1;
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+      }
+
+      .avatar span {
+        grid-area: 1 / 1;
       }
 
       .avatar-edit {
@@ -387,6 +408,83 @@
         min-height: 2.2rem;
         border-radius: 8px;
         padding: 0 0.65rem;
+      }
+
+      .avatar-edit:disabled {
+        cursor: wait;
+        opacity: 0.72;
+      }
+
+      .avatar-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .avatar-status {
+        margin: 0.8rem 0 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.4;
+        text-align: center;
+      }
+
+      .avatar-status.is-error {
+        color: var(--error);
+      }
+
+      .avatar-status.is-success {
+        color: #d6f1c2;
+      }
+
+      .avatar-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: grid;
+        place-items: center;
+        padding: clamp(1rem, 4vw, 2rem);
+      }
+
+      .avatar-modal[hidden] {
+        display: none;
+      }
+
+      .avatar-modal__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(3, 4, 12, 0.78);
+        backdrop-filter: blur(8px);
+      }
+
+      .avatar-modal__dialog {
+        position: relative;
+        width: min(92vw, 34rem);
+        border: 1px solid rgba(228, 189, 118, 0.3);
+        border-radius: 14px;
+        background: rgba(8, 9, 18, 0.94);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.48);
+        padding: clamp(1rem, 3vw, 1.4rem);
+      }
+
+      .avatar-modal__close {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 2.25rem;
+        min-height: 2.25rem;
+        border-radius: 50%;
+        padding: 0;
+      }
+
+      .avatar-modal__image {
+        width: 100%;
+        max-height: min(72vh, 34rem);
+        display: block;
+        border-radius: 10px;
+        object-fit: contain;
       }
 
       .hero-copy {
@@ -464,6 +562,7 @@
       }
 
       .role-badge,
+      .zodiac-badge,
       .coming-soon {
         border: 1px solid rgba(185, 156, 255, 0.32);
         border-radius: 6px;
@@ -472,6 +571,7 @@
       }
 
       .role-badge,
+      .zodiac-badge,
       .coming-soon {
         padding: 0.3rem 0.65rem;
         font-size: 0.72rem;
@@ -597,6 +697,84 @@
         border-radius: 12px;
         background: rgba(7, 8, 20, 0.42);
         padding: 1rem;
+      }
+
+      .profile-form {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .profile-form__grid {
+        display: grid;
+        grid-template-columns: 1.4fr minmax(7rem, 0.55fr) minmax(7rem, 0.55fr);
+        gap: 0.9rem;
+      }
+
+      .profile-field {
+        display: grid;
+        gap: 0.45rem;
+      }
+
+      .profile-field span,
+      .profile-preview span {
+        color: var(--gold);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.13em;
+        line-height: 1.25;
+        text-transform: uppercase;
+      }
+
+      .profile-field input {
+        width: 100%;
+        min-height: 2.85rem;
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        background: rgba(7, 8, 20, 0.62);
+        color: var(--text);
+        font: 600 1rem/1.35 var(--body-font);
+        padding: 0.72rem 0.85rem;
+      }
+
+      .profile-field input:focus-visible {
+        border-color: rgba(228, 189, 118, 0.58);
+        outline: 0;
+        box-shadow: 0 0 0 3px rgba(228, 189, 118, 0.12);
+      }
+
+      .profile-preview {
+        display: grid;
+        gap: 0.45rem;
+        border: 1px solid var(--line-soft);
+        border-radius: 12px;
+        background: rgba(7, 8, 20, 0.42);
+        padding: 1rem;
+      }
+
+      .profile-preview strong {
+        color: var(--text);
+        font-family: var(--display-font);
+        font-size: 1.45rem;
+        line-height: 1;
+      }
+
+      .profile-form__actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.8rem;
+      }
+
+      .profile-form__status {
+        color: var(--muted);
+      }
+
+      .profile-form__status.is-error {
+        color: var(--error);
+      }
+
+      .profile-form__status.is-success {
+        color: #d6f1c2;
       }
 
       .saved-readings {
@@ -824,7 +1002,8 @@
         }
 
         .hero-card,
-        .panel-grid {
+        .panel-grid,
+        .profile-form__grid {
           grid-template-columns: 1fr;
         }
 
@@ -962,8 +1141,13 @@
             <section class="account-section" data-account-section="overview" aria-label="Overview">
               <section class="hero-card" aria-labelledby="account-title">
                 <div class="avatar-wrap">
-                  <div class="avatar" data-account-avatar aria-hidden="true">AV</div>
-                  <button class="avatar-edit" type="button" disabled title="Profile picture editing coming soon">Edit</button>
+                  <button class="avatar" data-account-avatar type="button" aria-label="Preview profile picture">
+                    <span data-account-avatar-initials>AV</span>
+                    <img data-account-avatar-image alt="" hidden />
+                  </button>
+                  <button class="avatar-edit" type="button" data-avatar-upload-trigger aria-label="Change profile picture">Change</button>
+                  <input class="avatar-input" data-avatar-upload-input type="file" accept="image/png,image/jpeg,image/webp" />
+                  <p class="avatar-status" data-avatar-status role="status" aria-live="polite"></p>
                 </div>
                 <div class="hero-copy">
                   <p class="eyebrow">Welcome back,</p>
@@ -974,6 +1158,7 @@
                     <span class="identity-divider" aria-hidden="true"></span>
                     <span class="member-pill">Member since <span data-member-since>Coming soon</span></span>
                     <span class="role-badge" data-account-role>user</span>
+                    <span class="zodiac-badge" data-account-zodiac>Zodiac: Not set</span>
                   </div>
                 </div>
               </section>
@@ -1048,15 +1233,35 @@
 
             <section class="account-section panel" data-account-section="account-settings" hidden aria-label="Account Settings">
               <p class="section-title">Account Settings</p>
-              <h2>Profile and preference tools are coming soon.</h2>
+              <h2>Edit your profile.</h2>
+              <form class="profile-form" data-profile-form>
+                <div class="profile-form__grid">
+                  <label class="profile-field">
+                    <span>Display Name</span>
+                    <input name="display_name" type="text" autocomplete="name" maxlength="80" />
+                  </label>
+                  <label class="profile-field">
+                    <span>Birthday Month</span>
+                    <input name="birth_month" type="number" inputmode="numeric" min="1" max="12" placeholder="MM" />
+                  </label>
+                  <label class="profile-field">
+                    <span>Birthday Day</span>
+                    <input name="birth_day" type="number" inputmode="numeric" min="1" max="31" placeholder="DD" />
+                  </label>
+                </div>
+                <div class="profile-preview" aria-live="polite">
+                  <span>Zodiac Preview</span>
+                  <strong data-zodiac-preview>Zodiac: Not set</strong>
+                </div>
+                <div class="profile-form__actions">
+                  <button type="submit" data-profile-submit>Save Profile</button>
+                  <p class="profile-form__status" data-profile-status role="status" aria-live="polite"></p>
+                </div>
+              </form>
               <div class="panel-grid">
                 <div class="placeholder-box">
-                  <h3>Display Name</h3>
-                  <p>Display name editing will be added later.</p>
-                </div>
-                <div class="placeholder-box">
                   <h3>Profile Picture</h3>
-                  <p>Avatar upload coming soon.</p>
+                  <p>Use the Change button on your profile picture to upload a PNG, JPG, or WebP image.</p>
                 </div>
                 <div class="placeholder-box">
                   <h3>Profile Background</h3>
@@ -1095,6 +1300,14 @@
             <p class="account-footer">The Veil remembers what time forgets.</p>
           </section>
         </main>
+      </div>
+    </div>
+
+    <div class="avatar-modal" data-avatar-preview-modal hidden>
+      <div class="avatar-modal__backdrop" data-avatar-preview-close></div>
+      <div class="avatar-modal__dialog" role="dialog" aria-modal="true" aria-label="Profile picture preview">
+        <button class="avatar-modal__close" type="button" data-avatar-preview-close aria-label="Close profile picture preview">x</button>
+        <img class="avatar-modal__image" data-avatar-preview-image alt="Profile picture preview" />
       </div>
     </div>
 

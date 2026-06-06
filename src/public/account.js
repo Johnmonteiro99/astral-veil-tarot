@@ -8,6 +8,14 @@ const emailValue = document.querySelector('[data-account-email]');
 const nameValue = document.querySelector('[data-account-name]');
 const roleValue = document.querySelector('[data-account-role]');
 const avatar = document.querySelector('[data-account-avatar]');
+const avatarInitials = document.querySelector('[data-account-avatar-initials]');
+const avatarImage = document.querySelector('[data-account-avatar-image]');
+const avatarUploadButton = document.querySelector('[data-avatar-upload-trigger]');
+const avatarUploadInput = document.querySelector('[data-avatar-upload-input]');
+const avatarStatus = document.querySelector('[data-avatar-status]');
+const avatarPreviewModal = document.querySelector('[data-avatar-preview-modal]');
+const avatarPreviewImage = document.querySelector('[data-avatar-preview-image]');
+const avatarPreviewCloseButtons = Array.from(document.querySelectorAll('[data-avatar-preview-close]'));
 const logoutButtons = Array.from(document.querySelectorAll('[data-logout]'));
 const adminLink = document.querySelector('[data-admin-link]');
 const memberSinceValue = document.querySelector('[data-member-since]');
@@ -18,9 +26,42 @@ const accountNavToggle = document.querySelector('[data-account-nav-toggle]');
 const savedReadingsList = document.querySelector('[data-saved-readings-list]');
 const artifactCountValue = document.querySelector('[data-account-artifact-count]');
 const roomCountValue = document.querySelector('[data-account-room-count]');
+const zodiacValue = document.querySelector('[data-account-zodiac]');
+const profileForm = document.querySelector('[data-profile-form]');
+const profileSubmitButton = document.querySelector('[data-profile-submit]');
+const profileStatus = document.querySelector('[data-profile-status]');
+const zodiacPreview = document.querySelector('[data-zodiac-preview]');
 
 let savedReadingsLoaded = false;
 let activeUser = null;
+let activeProfile = null;
+let activeAvatarUrl = '';
+
+const avatarBucketName = 'avatars';
+const maxAvatarInputFileSize = 8 * 1024 * 1024;
+const targetAvatarUploadSize = 2 * 1024 * 1024;
+const maxAvatarImageSide = 800;
+const avatarCompressionQuality = 0.82;
+const allowedAvatarTypes = new Map([
+  ['image/png', 'png'],
+  ['image/jpeg', 'jpg'],
+  ['image/webp', 'webp'],
+]);
+const zodiacRanges = [
+  ['Capricorn', 1, 19],
+  ['Aquarius', 2, 18],
+  ['Pisces', 3, 20],
+  ['Aries', 4, 19],
+  ['Taurus', 5, 20],
+  ['Gemini', 6, 20],
+  ['Cancer', 7, 22],
+  ['Leo', 8, 22],
+  ['Virgo', 9, 22],
+  ['Libra', 10, 22],
+  ['Scorpio', 11, 21],
+  ['Sagittarius', 12, 21],
+  ['Capricorn', 12, 31],
+];
 
 function getAccountSectionFromHash() {
   const sectionName = window.location.hash.replace(/^#/, '');
@@ -51,6 +92,357 @@ function getInitials(name, email) {
     .slice(0, 2);
 
   return parts.map((part) => part.charAt(0).toUpperCase()).join('') || 'AV';
+}
+
+function getZodiacSign(month, day) {
+  const numericMonth = Number(month);
+  const numericDay = Number(day);
+
+  if (!numericMonth || !numericDay) {
+    return '';
+  }
+
+  return zodiacRanges.find(([, endMonth, endDay]) => (
+    numericMonth < endMonth || (numericMonth === endMonth && numericDay <= endDay)
+  ))?.[0] || '';
+}
+
+function isValidBirthday(month, day) {
+  if (!month && !day) {
+    return true;
+  }
+
+  const numericMonth = Number(month);
+  const numericDay = Number(day);
+
+  if (!Number.isInteger(numericMonth) || !Number.isInteger(numericDay)) {
+    return false;
+  }
+
+  if (numericMonth < 1 || numericMonth > 12) {
+    return false;
+  }
+
+  const daysByMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  return numericDay >= 1 && numericDay <= daysByMonth[numericMonth - 1];
+}
+
+function getProfileDisplayName(profile, user) {
+  return getProfileValue(profile, ['display_name', 'name', 'full_name', 'username'])
+    || getProfileValue(user?.user_metadata, ['display_name', 'name', 'full_name']);
+}
+
+function setProfileStatus(message, type = '') {
+  if (!profileStatus) {
+    return;
+  }
+
+  profileStatus.textContent = message;
+  profileStatus.classList.toggle('is-error', type === 'error');
+  profileStatus.classList.toggle('is-success', type === 'success');
+}
+
+function setAvatarStatus(message, type = '') {
+  if (!avatarStatus) {
+    return;
+  }
+
+  avatarStatus.textContent = message;
+  avatarStatus.classList.toggle('is-error', type === 'error');
+  avatarStatus.classList.toggle('is-success', type === 'success');
+}
+
+function updateZodiacDisplay(sign) {
+  const label = sign ? `Zodiac: ${sign}` : 'Zodiac: Not set';
+
+  if (zodiacValue) {
+    zodiacValue.textContent = label;
+  }
+
+  if (zodiacPreview) {
+    zodiacPreview.textContent = label;
+  }
+}
+
+function updateHeroProfile(profile, user) {
+  const email = user?.email || 'Signed-in user';
+  const displayName = getProfileDisplayName(profile, user);
+  const avatarUrl = getProfileValue(profile, ['avatar_url']);
+  const profileBackgroundUrl = getProfileValue(profile, ['profile_background_url']);
+  const heroCard = document.querySelector('.hero-card');
+
+  nameValue.textContent = displayName || 'Astral Veil Seeker';
+  activeAvatarUrl = avatarUrl;
+  avatarInitials.textContent = getInitials(displayName, email);
+  avatar.classList.remove('has-image');
+  avatar.setAttribute('aria-label', avatarUrl ? 'Preview profile picture' : 'Profile picture not set');
+  avatarImage.hidden = true;
+  avatarImage.removeAttribute('src');
+
+  if (avatarUrl) {
+    avatarImage.src = avatarUrl;
+    avatarImage.hidden = false;
+    avatar.classList.add('has-image');
+    avatar.setAttribute('aria-label', `Preview ${displayName || email} profile picture`);
+  }
+
+  if (heroCard && profileBackgroundUrl) {
+    heroCard.style.backgroundImage = `linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.014)), url("${profileBackgroundUrl.replace(/"/g, '%22')}")`;
+    heroCard.style.backgroundSize = 'cover';
+    heroCard.style.backgroundPosition = 'center';
+  }
+
+  updateZodiacDisplay(getProfileValue(profile, ['zodiac_sign']));
+}
+
+function updateNavbarProfileAvatars(profile, user) {
+  const avatarUrl = getProfileValue(profile, ['avatar_url']);
+  const initials = getInitials(getProfileDisplayName(profile, user), user?.email);
+
+  document.querySelectorAll('.navbar-account__avatar').forEach((navAvatar) => {
+    navAvatar.classList.toggle('has-image', Boolean(avatarUrl));
+
+    if (avatarUrl) {
+      navAvatar.textContent = '';
+      navAvatar.style.backgroundImage = `url("${avatarUrl.replace(/"/g, '%22')}")`;
+      return;
+    }
+
+    navAvatar.textContent = initials;
+    navAvatar.style.backgroundImage = '';
+  });
+}
+
+function populateProfileForm(profile, user) {
+  if (!profileForm) {
+    return;
+  }
+
+  profileForm.elements.display_name.value = getProfileDisplayName(profile, user) || '';
+  profileForm.elements.birth_month.value = profile?.birth_month || '';
+  profileForm.elements.birth_day.value = profile?.birth_day || '';
+  updateZodiacDisplay(getProfileValue(profile, ['zodiac_sign']) || getZodiacSign(profile?.birth_month, profile?.birth_day));
+  setProfileStatus('');
+}
+
+async function fetchCurrentProfile(supabase, userId) {
+  if (!supabase || !userId) {
+    return { profile: null, error: null };
+  }
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .maybeSingle();
+
+  return { profile: data || null, error };
+}
+
+function updateAccountProfileDisplay(profile, user) {
+  const email = user?.email || 'Signed-in user';
+  const role = getProfileValue(profile, ['role']) || 'user';
+  const memberSince = getProfileValue(profile, ['created_at', 'inserted_at']) || user?.created_at;
+
+  emailValue.textContent = email;
+  roleValue.textContent = role;
+  memberSinceValue.textContent = formatDate(memberSince);
+  updateHeroProfile(profile, user);
+  updateNavbarProfileAvatars(profile, user);
+  populateProfileForm(profile, user);
+}
+
+function getAvatarFileExtension(file) {
+  const extensionFromType = allowedAvatarTypes.get(file?.type);
+
+  if (extensionFromType) {
+    return extensionFromType;
+  }
+
+  const extensionFromName = String(file?.name || '').split('.').pop()?.toLowerCase();
+
+  return ['png', 'jpg', 'jpeg', 'webp'].includes(extensionFromName) ? extensionFromName : '';
+}
+
+function validateAvatarFile(file) {
+  if (!file) {
+    return {
+      isValid: false,
+      message: 'Choose an image to upload.',
+      debug: { reason: 'missing-file' },
+    };
+  }
+
+  const extension = getAvatarFileExtension(file);
+  const debug = {
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    extension,
+  };
+
+  if (!allowedAvatarTypes.has(file.type) || !extension) {
+    return {
+      isValid: false,
+      message: 'Please choose a PNG, JPG, or WebP image.',
+      debug,
+    };
+  }
+
+  if (file.size > maxAvatarInputFileSize) {
+    return {
+      isValid: false,
+      message: 'Profile picture must be 8MB or smaller.',
+      debug,
+    };
+  }
+
+  return {
+    isValid: true,
+    extension,
+  };
+}
+
+function setAvatarUploadLoading(isLoading, label = 'Uploading...') {
+  if (!avatarUploadButton) {
+    return;
+  }
+
+  if (isLoading) {
+    if (!avatarUploadButton.dataset.originalText) {
+      avatarUploadButton.dataset.originalText = avatarUploadButton.textContent;
+    }
+
+    avatarUploadButton.textContent = label;
+    avatarUploadButton.disabled = true;
+    return;
+  }
+
+  avatarUploadButton.textContent = avatarUploadButton.dataset.originalText || 'Change';
+  delete avatarUploadButton.dataset.originalText;
+  avatarUploadButton.disabled = false;
+}
+
+function loadImageForAvatar(file) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('The selected image could not be loaded.'));
+    };
+    image.src = objectUrl;
+  });
+}
+
+function canvasToBlob(canvas, type, quality) {
+  return new Promise((resolve) => {
+    canvas.toBlob(resolve, type, quality);
+  });
+}
+
+function isUsableAvatarBlob(blob, expectedType) {
+  return blob instanceof Blob && blob.size > 0 && blob.type === expectedType;
+}
+
+async function createCompressedAvatarBlob(canvas) {
+  const compressionQualities = [avatarCompressionQuality, 0.72, 0.62];
+
+  for (const quality of compressionQualities) {
+    const webpBlob = await canvasToBlob(canvas, 'image/webp', quality);
+
+    if (isUsableAvatarBlob(webpBlob, 'image/webp') && (webpBlob.size <= targetAvatarUploadSize || quality === compressionQualities[compressionQualities.length - 1])) {
+      return {
+        blob: webpBlob,
+        contentType: 'image/webp',
+        extension: 'webp',
+      };
+    }
+  }
+
+  for (const quality of compressionQualities) {
+    const jpegBlob = await canvasToBlob(canvas, 'image/jpeg', quality);
+
+    if (isUsableAvatarBlob(jpegBlob, 'image/jpeg') && (jpegBlob.size <= targetAvatarUploadSize || quality === compressionQualities[compressionQualities.length - 1])) {
+      return {
+        blob: jpegBlob,
+        contentType: 'image/jpeg',
+        extension: 'jpg',
+      };
+    }
+  }
+
+  throw new Error('The selected image could not be compressed.');
+}
+
+async function prepareAvatarUpload(file) {
+  const image = await loadImageForAvatar(file);
+  const longestSide = Math.max(image.naturalWidth, image.naturalHeight);
+  const scale = longestSide > maxAvatarImageSide ? maxAvatarImageSide / longestSide : 1;
+  const canvas = document.createElement('canvas');
+  const width = Math.max(1, Math.round(image.naturalWidth * scale));
+  const height = Math.max(1, Math.round(image.naturalHeight * scale));
+  const context = canvas.getContext('2d');
+
+  if (!context) {
+    throw new Error('Canvas is not available for profile picture compression.');
+  }
+
+  canvas.width = width;
+  canvas.height = height;
+  context.drawImage(image, 0, 0, width, height);
+
+  const compressed = await createCompressedAvatarBlob(canvas);
+  const uploadFile = new File(
+    [compressed.blob],
+    `profile-${Date.now()}.${compressed.extension}`,
+    { type: compressed.contentType }
+  );
+
+  if (uploadFile.size > targetAvatarUploadSize) {
+    console.warn('Compressed avatar is still larger than 2MB:', {
+      originalSize: file.size,
+      compressedSize: uploadFile.size,
+      width,
+      height,
+      contentType: compressed.contentType,
+    });
+  }
+
+  return {
+    file: uploadFile,
+    contentType: compressed.contentType,
+    extension: compressed.extension,
+    originalSize: file.size,
+    resizedWidth: width,
+    resizedHeight: height,
+  };
+}
+
+function openAvatarPreview() {
+  if (!avatarPreviewModal || !avatarPreviewImage || !activeAvatarUrl) {
+    return;
+  }
+
+  avatarPreviewImage.src = activeAvatarUrl;
+  avatarPreviewModal.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAvatarPreview() {
+  if (!avatarPreviewModal || !avatarPreviewImage) {
+    return;
+  }
+
+  avatarPreviewModal.hidden = true;
+  avatarPreviewImage.removeAttribute('src');
+  document.body.style.overflow = '';
 }
 
 function formatDate(value) {
@@ -310,19 +702,11 @@ async function loadAccount() {
   }
 
   activeUser = user;
+  activeProfile = profile || {};
 
-  const email = user.email || 'Signed-in user';
-  const displayName = getProfileValue(profile, ['display_name', 'name', 'full_name', 'username'])
-    || getProfileValue(user.user_metadata, ['display_name', 'name', 'full_name']);
-  const role = getProfileValue(profile, ['role']) || 'user';
-  const memberSince = getProfileValue(profile, ['created_at', 'inserted_at']) || user.created_at;
   const { isAdmin } = await isCurrentUserAdmin();
 
-  emailValue.textContent = email;
-  nameValue.textContent = displayName || 'Astral Veil Seeker';
-  roleValue.textContent = role;
-  memberSinceValue.textContent = formatDate(memberSince);
-  avatar.textContent = getInitials(displayName, email);
+  updateAccountProfileDisplay(activeProfile, user);
 
   adminLink.hidden = !isAdmin;
   loadingPanel.hidden = true;
@@ -370,6 +754,281 @@ sectionButtons.forEach((button) => {
 
 accountNavToggle?.addEventListener('click', () => {
   setMobileNavOpen(!accountNav?.classList.contains('is-open'));
+});
+
+async function refreshProfileAfterUpdate(supabase, fallbackProfile) {
+  const { profile: refreshedProfile, error: refetchError } = await fetchCurrentProfile(supabase, activeUser.id);
+
+  if (refetchError) {
+    console.error('Account profile refetch failed:', refetchError);
+  }
+
+  activeProfile = refreshedProfile || {
+    ...activeProfile,
+    ...fallbackProfile,
+  };
+  updateAccountProfileDisplay(activeProfile, activeUser);
+}
+
+async function uploadAvatar(file) {
+  setAvatarStatus('');
+  setProfileStatus('');
+
+  if (!activeUser) {
+    setAvatarStatus('Please log in before changing your profile picture.', 'error');
+    return;
+  }
+
+  const validation = validateAvatarFile(file);
+
+  if (!validation.isValid) {
+    console.error('Avatar file validation failed:', validation.debug || { file });
+    setAvatarStatus(validation.message, 'error');
+    setProfileStatus(validation.message, 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setAvatarStatus('Profile picture uploads are not available in this environment.', 'error');
+    setProfileStatus('Profile picture uploads are not available in this environment.', 'error');
+    return;
+  }
+
+  setAvatarUploadLoading(true, 'Preparing...');
+  setAvatarStatus('Preparing profile picture...');
+  setProfileStatus('Preparing profile picture...');
+
+  try {
+  let uploadCandidate;
+
+  try {
+    uploadCandidate = await prepareAvatarUpload(file);
+  } catch (compressionError) {
+    console.error('Avatar compression failed:', compressionError);
+    setAvatarUploadLoading(false);
+    setAvatarStatus('We could not prepare your profile picture. Please try another image.', 'error');
+    setProfileStatus('We could not prepare your profile picture. Please try another image.', 'error');
+    return;
+  }
+
+  const uploadFile = uploadCandidate.file;
+  const uploadContentType = uploadCandidate.contentType || uploadFile.type;
+  const supportedUploadTypes = new Set(['image/webp', 'image/jpeg']);
+
+  if (!(uploadFile instanceof Blob) || uploadFile.size <= 0 || !supportedUploadTypes.has(uploadContentType)) {
+    console.error('Avatar compression produced an invalid upload file:', {
+      file: uploadFile,
+      contentType: uploadContentType,
+      candidate: uploadCandidate,
+    });
+    setAvatarUploadLoading(false);
+    setAvatarStatus('We could not prepare your profile picture. Please try another image.', 'error');
+    setProfileStatus('We could not prepare your profile picture. Please try another image.', 'error');
+    return;
+  }
+
+  const uploadExtension = uploadContentType === 'image/jpeg' ? 'jpg' : 'webp';
+  const storagePath = `${activeUser.id}/profile-${Date.now()}.${uploadExtension}`;
+  const uploadDebugContext = {
+    bucket: avatarBucketName,
+    path: storagePath,
+    contentType: uploadContentType,
+    fileSize: uploadFile.size,
+    originalFileSize: uploadCandidate.originalSize || file.size,
+    resizedWidth: uploadCandidate.resizedWidth,
+    resizedHeight: uploadCandidate.resizedHeight,
+    userId: activeUser.id,
+  };
+
+  if (!storagePath.startsWith(`${activeUser.id}/`) || storagePath.includes('avatars/')) {
+    console.error('Avatar storage path is invalid:', uploadDebugContext);
+    setAvatarUploadLoading(false);
+    setAvatarStatus('We could not prepare your profile picture. Please try another image.', 'error');
+    setProfileStatus('We could not prepare your profile picture. Please try another image.', 'error');
+    return;
+  }
+
+  setAvatarStatus('Uploading profile picture...');
+  setProfileStatus('Uploading profile picture...');
+  setAvatarUploadLoading(true, 'Uploading...');
+
+  const { error: uploadError } = await supabase.storage
+    .from(avatarBucketName)
+    .upload(storagePath, uploadFile, {
+      cacheControl: '3600',
+      contentType: uploadContentType,
+      upsert: false,
+    });
+
+  if (uploadError) {
+    console.error('Avatar storage upload failed:', {
+      error: uploadError,
+      ...uploadDebugContext,
+    });
+    setAvatarUploadLoading(false);
+    setAvatarStatus('We could not upload your profile picture. Please try again.', 'error');
+    setProfileStatus('We could not upload your profile picture. Please try again.', 'error');
+    return;
+  }
+
+  const { data: publicUrlData } = supabase.storage
+    .from(avatarBucketName)
+    .getPublicUrl(storagePath);
+  const avatarUrl = publicUrlData?.publicUrl || '';
+
+  if (!avatarUrl) {
+    console.error('Avatar public URL retrieval failed:', {
+      data: publicUrlData,
+      ...uploadDebugContext,
+    });
+    setAvatarUploadLoading(false);
+    setAvatarStatus('We could not finish updating your profile picture. Please try again.', 'error');
+    setProfileStatus('We could not finish updating your profile picture. Please try again.', 'error');
+    return;
+  }
+
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update({ avatar_url: avatarUrl })
+    .eq('id', activeUser.id);
+
+  setAvatarUploadLoading(false);
+
+  if (profileError) {
+    console.error('Avatar profile update failed', profileError);
+    console.error('Avatar profile update failed after storage upload:', {
+      error: profileError,
+      avatarUrl,
+      userId: activeUser.id,
+    });
+    setAvatarStatus('Image uploaded, but we could not update your profile. Please try again.', 'error');
+    setProfileStatus('Image uploaded, but we could not update your profile. Please try again.', 'error');
+    return;
+  }
+
+  await refreshProfileAfterUpdate(supabase, { avatar_url: avatarUrl });
+  setAvatarStatus('Profile picture updated.', 'success');
+  setProfileStatus('Profile picture updated.', 'success');
+  } finally {
+    setAvatarUploadLoading(false);
+  }
+}
+
+avatarUploadButton?.addEventListener('click', () => {
+  avatarUploadInput?.click();
+});
+
+avatar?.addEventListener('click', openAvatarPreview);
+
+avatarPreviewCloseButtons.forEach((button) => {
+  button.addEventListener('click', closeAvatarPreview);
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && avatarPreviewModal && !avatarPreviewModal.hidden) {
+    closeAvatarPreview();
+  }
+});
+
+avatarUploadInput?.addEventListener('change', async () => {
+  const [file] = avatarUploadInput.files || [];
+
+  await uploadAvatar(file);
+  avatarUploadInput.value = '';
+});
+
+function updateZodiacPreviewFromForm() {
+  if (!profileForm) {
+    return;
+  }
+
+  const month = String(profileForm.elements.birth_month.value || '').trim();
+  const day = String(profileForm.elements.birth_day.value || '').trim();
+  const sign = isValidBirthday(month, day) ? getZodiacSign(month, day) : '';
+
+  if (zodiacPreview) {
+    zodiacPreview.textContent = sign ? `Zodiac: ${sign}` : 'Zodiac: Not set';
+  }
+}
+
+profileForm?.addEventListener('input', (event) => {
+  if (event.target.name === 'birth_month' || event.target.name === 'birth_day') {
+    updateZodiacPreviewFromForm();
+    setProfileStatus('');
+  }
+});
+
+profileForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  if (!activeUser) {
+    setProfileStatus('Please log in before saving your profile.', 'error');
+    return;
+  }
+
+  const formData = new FormData(profileForm);
+  const displayName = String(formData.get('display_name') || '').trim();
+  const monthValue = String(formData.get('birth_month') || '').trim();
+  const dayValue = String(formData.get('birth_day') || '').trim();
+  const hasBirthday = Boolean(monthValue || dayValue);
+
+  if (hasBirthday && (!monthValue || !dayValue)) {
+    setProfileStatus('Enter both birthday month and day, or leave both blank.', 'error');
+    return;
+  }
+
+  if (!isValidBirthday(monthValue, dayValue)) {
+    setProfileStatus('That birthday month and day do not look valid.', 'error');
+    return;
+  }
+
+  const birthMonth = hasBirthday ? Number(monthValue) : null;
+  const birthDay = hasBirthday ? Number(dayValue) : null;
+  const zodiacSign = hasBirthday ? getZodiacSign(birthMonth, birthDay) : null;
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setProfileStatus('Profile saving is not available in this environment.', 'error');
+    return;
+  }
+
+  profileSubmitButton.disabled = true;
+  setProfileStatus('Saving profile...');
+
+  const payload = {
+    display_name: displayName || null,
+    birth_month: birthMonth,
+    birth_day: birthDay,
+    zodiac_sign: zodiacSign,
+  };
+
+  const { error } = await supabase
+    .from('profiles')
+    .update(payload)
+    .eq('id', activeUser.id);
+
+  profileSubmitButton.disabled = false;
+
+  if (error) {
+    console.error('Account profile save failed:', error);
+    setProfileStatus('We could not save your profile. Please try again.', 'error');
+    return;
+  }
+
+  const { profile: refreshedProfile, error: refetchError } = await fetchCurrentProfile(supabase, activeUser.id);
+
+  if (refetchError) {
+    console.error('Account profile refetch failed:', refetchError);
+  }
+
+  activeProfile = refreshedProfile || {
+    ...activeProfile,
+    ...payload,
+  };
+  updateAccountProfileDisplay(activeProfile, activeUser);
+  setProfileStatus('Profile saved.', 'success');
 });
 
 savedReadingsList?.addEventListener('click', (event) => {

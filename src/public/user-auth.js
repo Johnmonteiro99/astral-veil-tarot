@@ -13,6 +13,12 @@ const passwordToggle = document.querySelector('[data-password-toggle]');
 const forgotPasswordLink = document.querySelector('[data-forgot-password]');
 const authOptions = document.querySelector('[data-auth-options]');
 const returnToStorageKey = 'astralVeilReturnTo';
+const defaultPublicAuthRedirect = 'index.html';
+const blockedPublicReturnPaths = new Set([
+  '/account.html',
+  '/admin.html',
+  '/admin-login.html',
+]);
 
 let authMode = 'login';
 
@@ -21,14 +27,22 @@ function getSafeReturnTo(value) {
     return '';
   }
 
+  const trimmedValue = String(value).trim();
+
+  if (/^[a-z][a-z\d+.-]*:/i.test(trimmedValue) || trimmedValue.startsWith('//')) {
+    return '';
+  }
+
   try {
-    const url = new URL(value, window.location.origin);
+    const url = new URL(trimmedValue, window.location.origin);
 
     if (url.origin !== window.location.origin) {
       return '';
     }
 
-    if (/\/auth\.html$/i.test(url.pathname)) {
+    const normalizedPath = url.pathname.toLowerCase();
+
+    if (/\/auth\.html$/i.test(normalizedPath) || blockedPublicReturnPaths.has(normalizedPath)) {
       return '';
     }
 
@@ -59,7 +73,7 @@ function getAuthRedirectTarget() {
   const queryReturnTo = getSafeReturnTo(params.get('returnTo'));
   const storedReturnTo = getSafeReturnTo(getStoredReturnTo());
 
-  return queryReturnTo || storedReturnTo || 'account.html';
+  return queryReturnTo || storedReturnTo || defaultPublicAuthRedirect;
 }
 
 function redirectAfterAuth({ replace = false } = {}) {
