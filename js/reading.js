@@ -305,6 +305,17 @@ function getActiveSpread() {
   return typeof getSpreadByCount === "function" ? getSpreadByCount(selectedCardCount) : null;
 }
 
+function getActiveSpreadKey() {
+  if (typeof spreads !== "object" || !spreads) {
+    return selectedCardCount ? `${selectedCardCount}_card` : "";
+  }
+
+  const spreadEntry = Object.entries(spreads)
+    .find(([, spread]) => spread?.count === Number(selectedCardCount));
+
+  return spreadEntry?.[0] || `${selectedCardCount}_card`;
+}
+
 function getCardPositionLabel(card, index) {
   const spread = getActiveSpread();
 
@@ -528,6 +539,129 @@ function renderCombinedReading() {
       }
     </article>
   `;
+}
+
+function getCompletedReadingSummary() {
+  if (typeof generateCombinedReading !== "function" || !revealedCards.length) {
+    return { title: "", resultSummary: "", advice: "", extraMessages: [] };
+  }
+
+  const combinedReading = generateCombinedReading(revealedCards, {
+    isBloodMoon: isBloodMoonReadingActive(),
+    spread: getActiveSpread()
+  });
+
+  if (!combinedReading) {
+    return { title: "", resultSummary: "", advice: "", extraMessages: [] };
+  }
+
+  return {
+    title: combinedReading.title || "",
+    resultSummary: [combinedReading.summary, combinedReading.advice].filter(Boolean).join("\n\n"),
+    advice: combinedReading.advice || "",
+    extraMessages: Array.isArray(combinedReading.extraMessages) ? combinedReading.extraMessages : []
+  };
+}
+
+function getCurrentModeKey() {
+  if (isBloodMoonReadingActive()) {
+    return "blood_moon";
+  }
+
+  if (document.body.classList.contains("sun-mode")) {
+    return "sun";
+  }
+
+  if (document.body.classList.contains("moon-mode")) {
+    return "moon";
+  }
+
+  return "default";
+}
+
+function getCompletedReadingCards() {
+  return revealedCards
+    .slice()
+    .sort((firstCard, secondCard) => firstCard.position - secondCard.position)
+    .map((card, index) => {
+      const orientation = getCardOrientationLabel(card).toLowerCase();
+      const orientationMeaning = typeof getCardReadingMeaning === "function"
+        ? getCardReadingMeaning(card)
+        : null;
+
+      return {
+        card_key: card.originalCardId || card.id || "",
+        name: card.name || getCardDisplayName(card),
+        title: getCardDisplayName(card, { includeOrientation: true }),
+        orientation,
+        upright: orientation === "upright",
+        reversed: orientation === "reversed",
+        position: card.position,
+        position_label: getCardPositionLabel(card, index),
+        meaning: orientationMeaning?.meaning || card.summary || "",
+        summary: orientationMeaning?.summary || card.shortMeaning || card.bloodMoon?.shortMeaning || "",
+      };
+    });
+}
+
+function getCompletedReadingPayload() {
+  const activeSpread = getActiveSpread();
+  const completedSummary = getCompletedReadingSummary();
+  const modeKey = getCurrentModeKey();
+  const spreadType = getActiveSpreadKey();
+  const cards = getCompletedReadingCards();
+  const triggeredCombination = hasFireKeyPattern(revealedCards) ? "fire_key" : "";
+
+  return {
+    reader_key: selectedReader?.id || "",
+    reader_name: selectedReader?.name || "",
+    mode_key: modeKey,
+    spread_type: spreadType,
+    card_count: selectedCardCount,
+    cards,
+    result_summary: completedSummary.resultSummary,
+    metadata: {
+      reading_source: "standard",
+      ai_generated: false,
+      requires_credits: false,
+      mode: modeKey,
+      spread: {
+        key: spreadType,
+        card_count: selectedCardCount,
+        positions: activeSpread?.positions || [],
+        combined_label: activeSpread?.combinedLabel || "",
+      },
+      reader: {
+        key: selectedReader?.id || "",
+        name: selectedReader?.name || "",
+        zodiac: selectedReader?.sign || selectedReader?.zodiac || "",
+      },
+      timestamp: new Date().toISOString(),
+      combined_title: completedSummary.title,
+      combined_advice: completedSummary.advice,
+      extra_messages: completedSummary.extraMessages,
+      triggered_card_combination: triggeredCombination || null,
+      blood_moon_active: isBloodMoonReadingActive(),
+    },
+    is_saved: true,
+  };
+}
+
+function dispatchCompletedReadingEvent() {
+  if (!areAllReadingCardsRevealed()) {
+    return;
+  }
+
+  const payload = getCompletedReadingPayload();
+  const eventKey = JSON.stringify({
+    reader: payload.reader_key,
+    mode: payload.mode_key,
+    spread: payload.spread_type,
+    cards: payload.cards.map((card) => `${card.position}:${card.card_key}:${card.orientation}`),
+  });
+
+  payload.reading_key = eventKey;
+  window.dispatchEvent(new CustomEvent("astralveil:reading-completed", { detail: payload }));
 }
 
 ////////////////////////////////////////////////////
@@ -1732,6 +1866,7 @@ function renderReadingResults() {
         : ""
     }
   `;
+  dispatchCompletedReadingEvent();
 }
 
 function scheduleReadingSectionScroll() {

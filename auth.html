@@ -6,29 +6,46 @@
     <meta name="description" content="Log in or sign up for an Astral Veil account." />
     <title>Log In | Astral Veil</title>
     <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preload" as="image" href="assets/images/concepts-ideas/astral-veil-login-final.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
         color-scheme: dark;
-        --bg: #08070d;
-        --panel: rgba(18, 15, 27, 0.86);
-        --panel-strong: rgba(30, 24, 42, 0.94);
-        --text: #f8f0e7;
-        --muted: #cfc0b5;
-        --line: rgba(218, 174, 112, 0.28);
-        --ember: #c65a37;
-        --gold: #e7bd77;
+        --bg: #050712;
+        --panel: rgba(8, 9, 17, 0.58);
+        --panel-strong: rgba(10, 12, 22, 0.78);
+        --text: #fbf5ec;
+        --muted: #cfc9d6;
+        --line: rgba(231, 194, 126, 0.34);
+        --line-bright: rgba(255, 227, 164, 0.66);
+        --red: #c94347;
+        --red-soft: rgba(201, 67, 71, 0.34);
+        --blue: #628cff;
+        --blue-soft: rgba(98, 140, 255, 0.34);
+        --gold: #ead099;
         --error: #ffb6b6;
         --success: #d6f1c2;
       }
 
       * {
         box-sizing: border-box;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
       }
 
       body {
@@ -38,31 +55,77 @@
         place-items: center;
         overflow-x: hidden;
         background:
-          linear-gradient(180deg, rgba(8, 7, 13, 0.68), rgba(8, 7, 13, 0.96)),
-          url("assets/images/hall-of-mirrors.webp") center / cover no-repeat fixed,
+          radial-gradient(circle at 50% 54%, rgba(5, 8, 20, 0), rgba(4, 5, 11, 0.26) 68%, rgba(3, 4, 9, 0.52)),
+          linear-gradient(90deg, rgba(58, 5, 9, 0.08), transparent 34%, transparent 66%, rgba(17, 40, 116, 0.08)),
+          url("assets/images/concepts-ideas/astral-veil-login-final.png") center / cover no-repeat fixed,
           var(--bg);
         color: var(--text);
         font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        padding: clamp(1rem, 4vw, 2rem);
+        padding: clamp(1rem, 3vw, 2rem);
       }
 
-      main {
+      body::before {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.28)),
+          radial-gradient(circle at 50% 60%, rgba(11, 14, 26, 0.05), rgba(3, 4, 9, 0.32) 70%);
+        content: "";
+        pointer-events: none;
+      }
+
+      .auth-shell {
+        position: relative;
+        z-index: 1;
         width: min(100%, 31rem);
         display: grid;
-        gap: 1.25rem;
-        padding: clamp(1.35rem, 5vw, 2.2rem);
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
-          var(--panel);
-        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.46);
-        backdrop-filter: blur(14px);
+        gap: clamp(1.1rem, 2.8vw, 1.55rem);
+        margin-top: clamp(0.25rem, 3vh, 1.85rem);
       }
 
       .auth-heading {
         display: grid;
-        gap: 0.45rem;
+        gap: 0.4rem;
+        justify-items: center;
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0;
+        font-family: Cinzel, "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(2.45rem, 9vw, 4rem);
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        line-height: 0.95;
+        text-shadow:
+          0 0 16px rgba(234, 208, 153, 0.24),
+          0 2px 18px rgba(0, 0, 0, 0.42);
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      main {
+        position: relative;
+        display: grid;
+        gap: 1rem;
+        padding: clamp(1.35rem, 4vw, 2.1rem);
+        border: 1px solid rgba(151, 170, 220, 0.28);
+        border-radius: 24px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.025)),
+          radial-gradient(circle at 18% 0%, rgba(201, 67, 71, 0.2), transparent 13rem),
+          radial-gradient(circle at 86% 14%, rgba(98, 140, 255, 0.22), transparent 14rem),
+          var(--panel);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+          0 0 44px rgba(98, 140, 255, 0.08),
+          0 28px 90px rgba(0, 0, 0, 0.54);
+        backdrop-filter: blur(18px) saturate(128%);
       }
 
       .eyebrow,
@@ -77,30 +140,17 @@
       .eyebrow {
         margin: 0;
         color: var(--gold);
-        font-size: 0.78rem;
-      }
-
-      h1 {
-        margin: 0;
-        font-family: "Cormorant Garamond", Georgia, serif;
-        font-size: clamp(2.45rem, 12vw, 4rem);
-        line-height: 0.95;
-      }
-
-      p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.65;
+        font-size: 0.72rem;
+        letter-spacing: 0.22em;
       }
 
       .mode-switch {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
-        padding: 0.35rem;
-        border: 1px solid rgba(231, 189, 119, 0.18);
-        border-radius: 8px;
-        background: rgba(4, 3, 8, 0.48);
+        gap: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
       }
 
       button,
@@ -111,18 +161,15 @@
       }
 
       button {
-        border: 1px solid rgba(231, 189, 119, 0.34);
-        background: rgba(255, 255, 255, 0.04);
-        color: var(--text);
+        border: 0;
+        background: transparent;
+        color: rgba(251, 245, 236, 0.62);
         cursor: pointer;
       }
 
       button:hover,
-      button:focus-visible,
-      button.is-active {
-        border-color: rgba(231, 189, 119, 0.7);
-        background: rgba(198, 90, 55, 0.2);
-        color: var(--gold);
+      button:focus-visible {
+        color: var(--text);
       }
 
       button:disabled {
@@ -130,47 +177,180 @@
         opacity: 0.68;
       }
 
+      [data-auth-mode] {
+        position: relative;
+      }
+
+      [data-auth-mode]::after {
+        position: absolute;
+        right: 18%;
+        bottom: 0;
+        left: 18%;
+        height: 2px;
+        border-radius: 999px;
+        background: transparent;
+        content: "";
+      }
+
+      [data-auth-mode].is-active {
+        color: var(--text);
+      }
+
+      [data-auth-mode="login"].is-active::after {
+        background: linear-gradient(90deg, transparent, var(--red), transparent);
+        box-shadow: 0 0 18px var(--red-soft);
+      }
+
+      [data-auth-mode="signup"].is-active::after {
+        background: linear-gradient(90deg, transparent, var(--blue), transparent);
+        box-shadow: 0 0 18px var(--blue-soft);
+      }
+
       form {
         display: grid;
-        gap: 0.95rem;
+        gap: 0.85rem;
       }
 
       label {
-        display: grid;
-        gap: 0.45rem;
         color: var(--gold);
-        font-size: 0.76rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
+      }
+
+      .auth-field {
+        position: relative;
+        display: block;
+      }
+
+      .field-icon,
+      .password-toggle {
+        position: absolute;
+        top: 50%;
+        display: grid;
+        place-items: center;
+        color: rgba(251, 245, 236, 0.72);
+        transform: translateY(-50%);
+      }
+
+      .field-icon {
+        left: 1rem;
+        width: 1.15rem;
+        height: 1.15rem;
+        pointer-events: none;
+      }
+
+      .field-icon svg,
+      .password-toggle svg {
+        width: 100%;
+        height: 100%;
+        stroke: currentColor;
+        stroke-width: 1.8;
       }
 
       input {
         width: 100%;
         min-height: 3.05rem;
-        border: 1px solid rgba(231, 189, 119, 0.28);
-        border-radius: 6px;
+        border: 1px solid rgba(234, 208, 153, 0.28);
+        border-radius: 10px;
         background: var(--panel-strong);
         color: var(--text);
         font: 500 1rem/1.4 inherit;
-        padding: 0.85rem 0.95rem;
+        padding: 0.85rem 1rem 0.85rem 3rem;
+        box-shadow: 0 0 18px rgba(0, 0, 0, 0.16) inset;
+      }
+
+      input::placeholder {
+        color: rgba(207, 201, 214, 0.72);
+      }
+
+      input[name="password"] {
+        padding-right: 3rem;
       }
 
       input:focus {
-        border-color: rgba(231, 189, 119, 0.78);
-        outline: 3px solid rgba(198, 90, 55, 0.22);
+        border-color: rgba(234, 208, 153, 0.82);
+        outline: 3px solid rgba(234, 208, 153, 0.14);
+      }
+
+      .password-toggle {
+        right: 0.95rem;
+        width: 1.25rem;
+        min-height: 1.25rem;
+        border-radius: 999px;
+        padding: 0;
+      }
+
+      .password-toggle:hover,
+      .password-toggle:focus-visible {
+        color: var(--text);
+      }
+
+      .auth-options {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        color: rgba(207, 201, 214, 0.86);
+        font-size: 0.84rem;
+      }
+
+      .remember-me {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        color: inherit;
+        font-size: inherit;
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
+      }
+
+      .remember-me input {
+        width: 0.95rem;
+        min-height: 0.95rem;
+        accent-color: var(--red);
+        padding: 0;
+      }
+
+      .forgot-link,
+      .terms-text a {
+        color: rgba(139, 169, 255, 0.92);
+        text-decoration: none;
+      }
+
+      .forgot-link:hover,
+      .forgot-link:focus-visible,
+      .terms-text a:hover,
+      .terms-text a:focus-visible {
+        color: var(--text);
       }
 
       .primary-action {
-        margin-top: 0.35rem;
+        min-height: 3.2rem;
+        margin-top: 0.4rem;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
         background:
-          linear-gradient(180deg, rgba(231, 189, 119, 0.22), rgba(198, 90, 55, 0.18)),
+          linear-gradient(90deg, rgba(190, 49, 61, 0.9), rgba(107, 89, 189, 0.92), rgba(63, 105, 217, 0.94)),
           rgba(23, 15, 18, 0.88);
-        color: var(--gold);
+        color: #fff8ef;
+        box-shadow:
+          0 0 24px rgba(98, 140, 255, 0.18),
+          0 0 24px rgba(201, 67, 71, 0.16),
+          0 14px 34px rgba(0, 0, 0, 0.26);
+      }
+
+      .primary-action:hover,
+      .primary-action:focus-visible {
+        color: #fff;
+        filter: brightness(1.06);
       }
 
       [data-auth-message] {
         padding: 0.85rem;
-        border: 1px solid rgba(231, 189, 119, 0.22);
-        border-radius: 6px;
-        background: rgba(8, 6, 12, 0.68);
+        border: 1px solid rgba(234, 208, 153, 0.22);
+        border-radius: 10px;
+        background: rgba(8, 8, 16, 0.72);
         color: var(--muted);
       }
 
@@ -189,68 +369,206 @@
         color: var(--success);
       }
 
+      .social-divider {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 0.8rem;
+        align-items: center;
+        color: rgba(207, 201, 214, 0.72);
+        font-size: 0.85rem;
+      }
+
+      .social-divider::before,
+      .social-divider::after {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(234, 208, 153, 0.22));
+        content: "";
+      }
+
+      .social-divider::after {
+        background: linear-gradient(90deg, rgba(234, 208, 153, 0.22), transparent);
+      }
+
+      .social-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.7rem;
+      }
+
+      .social-button {
+        min-height: 3rem;
+        border: 1px solid rgba(234, 208, 153, 0.18);
+        background: rgba(10, 12, 22, 0.48);
+        color: rgba(251, 245, 236, 0.8);
+        font-size: 1.15rem;
+        letter-spacing: 0;
+        text-transform: none;
+      }
+
+      .social-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.72;
+      }
+
+      .terms-text {
+        max-width: 25rem;
+        margin: 0 auto;
+        color: rgba(207, 201, 214, 0.82);
+        font-size: 0.82rem;
+        line-height: 1.5;
+        text-align: center;
+      }
+
       .auth-links {
         display: flex;
         flex-wrap: wrap;
         gap: 0.75rem;
-        justify-content: space-between;
+        justify-content: center;
+        padding-top: 0.15rem;
       }
 
       .text-link {
         display: inline-flex;
         align-items: center;
-        color: var(--gold);
-        font-size: 0.78rem;
+        justify-content: center;
+        min-height: 2.15rem;
+        border: 1px solid rgba(234, 208, 153, 0.2);
+        border-radius: 10px;
+        background:
+          linear-gradient(90deg, rgba(201, 67, 71, 0.06), rgba(98, 140, 255, 0.08)),
+          rgba(10, 12, 22, 0.24);
+        color: rgba(234, 208, 153, 0.88);
+        font-size: 0.72rem;
+        padding: 0 0.78rem;
         text-decoration: none;
       }
 
+      .text-link:hover,
+      .text-link:focus-visible {
+        border-color: rgba(234, 208, 153, 0.42);
+        color: var(--text);
+      }
+
       @media (max-width: 520px) {
+        body {
+          align-items: start;
+          background-position: center top;
+          padding-top: 1rem;
+        }
+
+        .auth-shell {
+          gap: 0.9rem;
+          margin-top: 0;
+        }
+
         main {
           width: 100%;
+          margin-top: 0;
+          padding: 1.15rem;
+          border-radius: 18px;
         }
 
         .auth-links {
           display: grid;
         }
+
+        h1 {
+          font-size: clamp(2.15rem, 11vw, 2.9rem);
+          letter-spacing: 0.12em;
+        }
+
+        .auth-options {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 0.55rem;
+        }
       }
     </style>
   </head>
   <body>
-    <main>
+    <div class="auth-shell">
       <section class="auth-heading" aria-labelledby="auth-title">
-        <p class="eyebrow">Astral Veil Account</p>
-        <h1 id="auth-title" data-auth-title>Log In</h1>
-        <p data-auth-copy>Return to your archive and keep your thread close.</p>
+        <h1 id="auth-title">ASTRAL VEIL</h1>
+        <p>Tarot readings, hidden lore, and personal discovery.</p>
       </section>
 
-      <div class="mode-switch" aria-label="Choose authentication mode">
-        <button class="is-active" type="button" data-auth-mode="login" aria-pressed="true">Log In</button>
-        <button type="button" data-auth-mode="signup" aria-pressed="false">Sign Up</button>
-      </div>
+      <main>
+        <span class="sr-only" data-auth-title>Log In</span>
+        <span class="sr-only" data-auth-copy>Return to your archive and keep your thread close.</span>
 
-      <form data-user-auth-form>
-        <label data-display-name-field hidden>
-          Display Name
-          <input name="display_name" type="text" autocomplete="name" disabled />
-        </label>
-        <label>
-          Email
-          <input name="email" type="email" autocomplete="email" required />
-        </label>
-        <label>
-          Password
-          <input name="password" type="password" autocomplete="current-password" required />
-        </label>
-        <button class="primary-action" type="submit" data-auth-submit>Log In</button>
-      </form>
+        <div class="mode-switch" aria-label="Choose authentication mode">
+          <button class="is-active" type="button" data-auth-mode="login" aria-pressed="true">Log In</button>
+          <button type="button" data-auth-mode="signup" aria-pressed="false">Sign Up</button>
+        </div>
 
-      <p data-auth-message role="status" aria-live="polite" hidden></p>
+        <form data-user-auth-form>
+          <label class="auth-field" data-display-name-field hidden>
+            <span class="sr-only">Display Name</span>
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                <circle cx="12" cy="7.5" r="3.4" />
+                <path d="M5.6 20c.7-4 3-6.1 6.4-6.1s5.7 2.1 6.4 6.1" />
+              </svg>
+            </span>
+            <input name="display_name" type="text" autocomplete="name" placeholder="Display name" aria-label="Display name" disabled />
+          </label>
+          <label class="auth-field">
+            <span class="sr-only">Email address</span>
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                <rect x="4" y="6" width="16" height="12" rx="2" />
+                <path d="m5 8 7 5 7-5" />
+              </svg>
+            </span>
+            <input name="email" type="email" autocomplete="email" placeholder="Email address" aria-label="Email address" required />
+          </label>
+          <label class="auth-field">
+            <span class="sr-only">Password</span>
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                <rect x="5.5" y="10.2" width="13" height="9" rx="1.8" />
+                <path d="M8.5 10.2V7.5a3.5 3.5 0 0 1 7 0v2.7" />
+              </svg>
+            </span>
+            <input name="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password" required />
+            <button class="password-toggle" type="button" data-password-toggle aria-label="Show password">
+              <svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true">
+                <path d="M3 12s3.4-5 9-5 9 5 9 5-3.4 5-9 5-9-5-9-5Z" />
+                <circle cx="12" cy="12" r="2.4" />
+                <path d="M4 20 20 4" />
+              </svg>
+            </button>
+          </label>
+          <div class="auth-options" data-auth-options>
+            <label class="remember-me">
+              <input type="checkbox" name="remember_me" />
+              <span>Remember me</span>
+            </label>
+            <a class="forgot-link" href="#" data-forgot-password>Forgot password?</a>
+          </div>
+          <button class="primary-action" type="submit" data-auth-submit>Log In</button>
+        </form>
 
-      <div class="auth-links">
-        <a class="text-link" href="index.html">Back to Astral Veil</a>
-        <a class="text-link" href="account.html" data-account-link hidden>Go to Account</a>
-      </div>
-    </main>
+        <p data-auth-message role="status" aria-live="polite" hidden></p>
+
+        <div class="social-divider" aria-hidden="true">or continue with</div>
+        <div class="social-actions" aria-label="Social login options">
+          <button class="social-button" type="button" disabled title="Coming soon" aria-label="Google login coming soon">Google</button>
+          <button class="social-button" type="button" disabled title="Coming soon" aria-label="Apple login coming soon">Apple</button>
+        </div>
+
+        <p class="terms-text">
+          By continuing, you agree to our
+          <a href="terms.html">Terms of Service</a><br />
+          and
+          <a href="privacy.html">Privacy Policy</a>.
+        </p>
+
+        <div class="auth-links">
+          <a class="text-link" href="index.html" data-home-link>Back to Astral Veil</a>
+        </div>
+      </main>
+    </div>
 
     <script type="module" src="src/public/user-auth.js"></script>
   </body>

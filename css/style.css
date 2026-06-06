@@ -685,6 +685,61 @@ body.blood-moon-mode .navbar__link[aria-current="page"]::after {
     0 0 18px color-mix(in srgb, var(--navbar-glow) 34%, transparent);
 }
 
+.navbar-account {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.navbar-account__button {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid color-mix(in srgb, var(--navbar-border) 78%, transparent);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 32%, var(--navbar-hover-bg), transparent 62%),
+    color-mix(in srgb, var(--navbar-bg) 72%, transparent);
+  color: var(--navbar-hover-text);
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--navbar-glow) 46%, transparent);
+  text-decoration: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.navbar-account__button:hover,
+.navbar-account__button:focus-visible {
+  border-color: color-mix(in srgb, var(--navbar-hover-text) 72%, transparent);
+  box-shadow:
+    0 0 22px color-mix(in srgb, var(--navbar-glow) 72%, transparent),
+    inset 0 0 18px color-mix(in srgb, var(--navbar-glow) 28%, transparent);
+  transform: translateY(-1px);
+}
+
+.navbar-account__avatar {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--navbar-hover-text) 28%, transparent), transparent),
+    color-mix(in srgb, var(--navbar-bg) 80%, rgba(0, 0, 0, 0.28));
+  background-position: center;
+  background-size: cover;
+  color: var(--navbar-hover-text);
+  font-family: var(--font-body-sans);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.navbar-account__avatar.has-image {
+  color: transparent;
+}
+
 body.sun-mode .navbar__link--lumen-archive::before {
   background:
     radial-gradient(circle at 50% 50%, rgba(255, 213, 116, 0.16), transparent 68%),
@@ -947,6 +1002,34 @@ body.moon-mode .navbar__link--lumen-archive:not(.is-active):not(:hover):not(:foc
   box-shadow:
     inset 0 0 18px rgba(255, 35, 65, 0.14),
     0 0 14px rgba(255, 35, 65, 0.12);
+}
+
+.navbar-account--mobile {
+  display: grid;
+}
+
+.navbar-account__button--mobile {
+  width: 100%;
+  height: auto;
+  min-height: 46px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.7rem;
+  border-radius: 16px;
+  padding: 0 16px;
+  color: var(--navbar-muted);
+  font-family: var(--logo-font);
+  font-size: 0.98rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+.navbar-account--mobile .navbar-account__avatar {
+  width: 30px;
+  height: 30px;
 }
 
 body.sun-mode .navbar__mobile-link:hover,
@@ -9274,6 +9357,44 @@ body.blood-moon-mode .combined-reading__thread-card:active {
 
 .reading-closing-actions {
   border-top-color: var(--reading-stage-line);
+}
+
+.reading-save-panel {
+  display: grid;
+  justify-items: center;
+  gap: 0.7rem;
+  width: min(100%, 520px);
+  margin: clamp(18px, 3vw, 28px) auto 0;
+  padding-top: clamp(14px, 2vw, 18px);
+  border-top: 1px solid var(--reading-stage-line);
+  text-align: center;
+}
+
+.reading-save-panel__button {
+  width: min(100%, 300px);
+}
+
+.reading-save-panel__prompt,
+.reading-save-panel__status {
+  margin: 0;
+  color: color-mix(in srgb, var(--navbar-muted) 80%, var(--reading-stage-accent));
+  font-family: var(--font-body-serif);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.reading-save-panel__prompt a {
+  color: var(--reading-stage-accent);
+  font-family: var(--font-body-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.reading-save-panel__status.is-error,
+.reading-save-panel__prompt--error {
+  color: #ffb6b6;
 }
 
 body.blood-moon-mode .reading-stage-intro h1,

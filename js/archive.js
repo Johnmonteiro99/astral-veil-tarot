@@ -24,6 +24,13 @@ let galleryTouchStartX = 0;
 let galleryTouchStartY = 0;
 
 const archiveKeyStorageKey = "astralVeilNoctisElementalKeys";
+const archiveKeySessionStorageKey = "astralVeilNoctisElementalKeysSession";
+const artifactProgressState = {
+  isLoaded: false,
+  user: null,
+  supabase: null,
+  unlockedKeys: []
+};
 const correctArchiveCodes = {
   water: "WITHIN",
   air: "BREATHE",
@@ -380,25 +387,126 @@ function getRoomDetails(room) {
   };
 }
 
-function getUnlockedElementalKeys() {
-  try {
-    const parsedValue = JSON.parse(localStorage.getItem(archiveKeyStorageKey) || "[]");
+function getValidElementalKeyIds(value) {
+  const values = Array.isArray(value) ? value : [];
 
-    return Array.isArray(parsedValue)
-      ? parsedValue.filter((keyId) => elementalKeys.some((key) => key.id === keyId))
-      : [];
+  return [...new Set(values.filter((keyId) => elementalKeys.some((key) => key.id === keyId)))];
+}
+
+function clearLegacyArtifactLocalStorage() {
+  try {
+    localStorage.removeItem(archiveKeyStorageKey);
+  } catch (error) {
+    return;
+  }
+}
+
+function getSessionElementalKeys() {
+  try {
+    return getValidElementalKeyIds(JSON.parse(sessionStorage.getItem(archiveKeySessionStorageKey) || "[]"));
   } catch (error) {
     return [];
   }
 }
 
-// Key progress is saved in localStorage so recovered keys survive refreshes.
-function saveUnlockedElementalKeys(unlockedKeys) {
+function saveSessionElementalKeys(unlockedKeys) {
   try {
-    localStorage.setItem(archiveKeyStorageKey, JSON.stringify([...new Set(unlockedKeys)]));
+    sessionStorage.setItem(archiveKeySessionStorageKey, JSON.stringify(getValidElementalKeyIds(unlockedKeys)));
   } catch (error) {
     return;
   }
+}
+
+async function loadArtifactProgress() {
+  clearLegacyArtifactLocalStorage();
+
+  try {
+    const [{ getCurrentUser }, { getSupabaseClient, isSupabaseConfigured }] = await Promise.all([
+      import("../src/services/auth.js"),
+      import("../src/services/supabase-client.js")
+    ]);
+
+    if (!isSupabaseConfigured()) {
+      artifactProgressState.unlockedKeys = getSessionElementalKeys();
+      artifactProgressState.isLoaded = true;
+      return;
+    }
+
+    const { user, error: userError } = await getCurrentUser();
+
+    if (userError || !user) {
+      artifactProgressState.user = null;
+      artifactProgressState.supabase = null;
+      artifactProgressState.unlockedKeys = getSessionElementalKeys();
+      artifactProgressState.isLoaded = true;
+      return;
+    }
+
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("user_artifacts")
+      .select("artifact_key")
+      .eq("user_id", user.id);
+
+    artifactProgressState.user = user;
+    artifactProgressState.supabase = supabase;
+    artifactProgressState.unlockedKeys = error
+      ? []
+      : getValidElementalKeyIds((data || []).map((artifact) => artifact.artifact_key));
+    artifactProgressState.isLoaded = true;
+  } catch (error) {
+    artifactProgressState.user = null;
+    artifactProgressState.supabase = null;
+    artifactProgressState.unlockedKeys = getSessionElementalKeys();
+    artifactProgressState.isLoaded = true;
+  }
+}
+
+function getUnlockedElementalKeys() {
+  return getValidElementalKeyIds(artifactProgressState.unlockedKeys);
+}
+
+async function saveUnlockedElementalKey(keyId) {
+  const previousKeys = getUnlockedElementalKeys();
+
+  if (previousKeys.includes(keyId)) {
+    return { status: "duplicate", previousKeys };
+  }
+
+  if (!artifactProgressState.user || !artifactProgressState.supabase) {
+    artifactProgressState.unlockedKeys = getValidElementalKeyIds([...previousKeys, keyId]);
+    saveSessionElementalKeys(artifactProgressState.unlockedKeys);
+    return { status: "session", previousKeys };
+  }
+
+  const artifact = elementalKeys.find((key) => key.id === keyId);
+  const { error } = await artifactProgressState.supabase
+    .from("user_artifacts")
+    .insert({
+      user_id: artifactProgressState.user.id,
+      artifact_key: keyId,
+      unlock_method: "code_entry",
+      source_location: artifact?.recoveredFrom || "Entry Desk",
+      metadata: {
+        artifact_title: artifact?.title || "",
+        artifact_element: artifact?.element || "",
+        archive_room: selectedArchiveRoomId || "entry-desk"
+      }
+    });
+
+  if (error) {
+    const isDuplicate = error.code === "23505" || /duplicate|unique/i.test(error.message || "");
+
+    if (isDuplicate) {
+      artifactProgressState.unlockedKeys = getValidElementalKeyIds([...previousKeys, keyId]);
+      return { status: "duplicate", previousKeys };
+    }
+
+    return { status: "error", previousKeys, error };
+  }
+
+  artifactProgressState.unlockedKeys = getValidElementalKeyIds([...previousKeys, keyId]);
+  return { status: "saved", previousKeys };
 }
 
 function isElementalKeyUnlocked(keyId) {
@@ -1133,7 +1241,7 @@ function normalizeArchiveCode(value) {
     .trim();
 }
 
-function handleArchiveCodeSubmit(form) {
+async function handleArchiveCodeSubmit(form) {
   const formData = new FormData(form);
   const submittedCode = normalizeArchiveCode(formData.get("archive-code"));
   const matchedKeyId = Object.keys(correctArchiveCodes).find(
@@ -1146,23 +1254,48 @@ function handleArchiveCodeSubmit(form) {
     return;
   }
 
-  if (isElementalKeyUnlocked(matchedKeyId)) {
-    archiveCodeFeedback = archiveKeyFeedback[matchedKeyId]?.alreadyUnlocked || "The archive has already answered.";
+  if (!artifactProgressState.isLoaded) {
+    archiveCodeFeedback = "The archive is still checking what has been recovered. Try again in a moment.";
     renderArchiveRooms();
     return;
   }
 
-  // Recovered keys persist in localStorage; the visible object list stays vague
-  // while the Restricted Wing still checks the complete internal key set.
-  const previousKeys = getUnlockedElementalKeys();
-  saveUnlockedElementalKeys([...previousKeys, matchedKeyId]);
-  archiveCodeFeedback = archiveKeyFeedback[matchedKeyId]?.unlocked || "Something has surfaced.";
+  if (isElementalKeyUnlocked(matchedKeyId)) {
+    archiveCodeFeedback = artifactProgressState.user
+      ? "Artifact already saved to your Archive."
+      : archiveKeyFeedback[matchedKeyId]?.alreadyUnlocked || "The archive has already answered.";
+    renderArchiveRooms();
+    return;
+  }
+
+  const saveResult = await saveUnlockedElementalKey(matchedKeyId);
+
+  if (saveResult.status === "error") {
+    archiveCodeFeedback = "The artifact surfaced, but could not be saved. Please try again.";
+    renderArchiveRooms();
+    return;
+  }
+
+  if (saveResult.status === "duplicate") {
+    archiveCodeFeedback = artifactProgressState.user
+      ? "Artifact already saved to your Archive."
+      : archiveKeyFeedback[matchedKeyId]?.alreadyUnlocked || "The archive has already answered.";
+    renderArchiveRooms();
+    return;
+  }
+
+  archiveCodeFeedback = saveResult.status === "session"
+    ? `${archiveKeyFeedback[matchedKeyId]?.unlocked || "Something has surfaced."} Log in to save this artifact to your Archive.`
+    : `${archiveKeyFeedback[matchedKeyId]?.unlocked || "Something has surfaced."} Artifact saved to your Archive.`;
 
   if (
-    previousKeys.length < elementalKeys.length &&
+    saveResult.previousKeys.length < elementalKeys.length &&
     areAllElementalKeysRecovered()
   ) {
-    archiveCodeFeedback = "The fourth relic answers. Somewhere in the Archive, the Memory Vault unlocks.";
+    const vaultMessage = "The fourth relic answers. Somewhere in the Archive, the Memory Vault unlocks.";
+    archiveCodeFeedback = saveResult.status === "session"
+      ? `${vaultMessage} Log in to save this artifact to your Archive.`
+      : `${vaultMessage} Artifact saved to your Archive.`;
   }
 
   renderArchiveRooms();
@@ -1294,9 +1427,14 @@ function handleArchiveBloodMoonChange(event) {
   }
 }
 
-renderArchiveRooms();
-renderArchiveAccessState();
-syncRoomFromHash();
+async function initializeArchive() {
+  await loadArtifactProgress();
+  renderArchiveRooms();
+  renderArchiveAccessState();
+  syncRoomFromHash();
+}
+
+initializeArchive();
 
 // Delegated archive actions cover room entry, room back buttons, thumbnail selection, and chamber nav.
 document.addEventListener("click", (event) => {

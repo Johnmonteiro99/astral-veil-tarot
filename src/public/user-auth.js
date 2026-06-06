@@ -8,9 +8,72 @@ const submitButton = document.querySelector('[data-auth-submit]');
 const displayNameField = document.querySelector('[data-display-name-field]');
 const modeTitle = document.querySelector('[data-auth-title]');
 const modeCopy = document.querySelector('[data-auth-copy]');
-const accountLink = document.querySelector('[data-account-link]');
+const passwordInput = form.querySelector('input[name="password"]');
+const passwordToggle = document.querySelector('[data-password-toggle]');
+const forgotPasswordLink = document.querySelector('[data-forgot-password]');
+const authOptions = document.querySelector('[data-auth-options]');
+const returnToStorageKey = 'astralVeilReturnTo';
 
 let authMode = 'login';
+
+function getSafeReturnTo(value) {
+  if (!value) {
+    return '';
+  }
+
+  try {
+    const url = new URL(value, window.location.origin);
+
+    if (url.origin !== window.location.origin) {
+      return '';
+    }
+
+    if (/\/auth\.html$/i.test(url.pathname)) {
+      return '';
+    }
+
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return '';
+  }
+}
+
+function getStoredReturnTo() {
+  try {
+    return sessionStorage.getItem(returnToStorageKey) || '';
+  } catch {
+    return '';
+  }
+}
+
+function clearStoredReturnTo() {
+  try {
+    sessionStorage.removeItem(returnToStorageKey);
+  } catch {
+    return;
+  }
+}
+
+function getAuthRedirectTarget() {
+  const params = new URLSearchParams(window.location.search);
+  const queryReturnTo = getSafeReturnTo(params.get('returnTo'));
+  const storedReturnTo = getSafeReturnTo(getStoredReturnTo());
+
+  return queryReturnTo || storedReturnTo || 'account.html';
+}
+
+function redirectAfterAuth({ replace = false } = {}) {
+  const target = getAuthRedirectTarget();
+
+  clearStoredReturnTo();
+
+  if (replace) {
+    window.location.replace(target);
+    return;
+  }
+
+  window.location.assign(target);
+}
 
 function setMessage(text, type = '') {
   message.textContent = text;
@@ -30,6 +93,8 @@ function setMode(nextMode) {
 
   displayNameField.hidden = !isSignup;
   displayNameField.querySelector('input').disabled = !isSignup;
+  authOptions.hidden = isSignup;
+  passwordInput.autocomplete = isSignup ? 'new-password' : 'current-password';
   submitButton.textContent = isSignup ? 'Sign Up' : 'Log In';
   modeTitle.textContent = isSignup ? 'Sign Up' : 'Log In';
   modeCopy.textContent = isSignup
@@ -47,14 +112,23 @@ async function redirectIfSignedIn() {
   }
 
   if (user) {
-    form.hidden = true;
-    accountLink.hidden = false;
-    setMessage('You are already signed in.', 'success');
+    redirectAfterAuth({ replace: true });
   }
 }
 
 modeButtons.forEach((button) => {
   button.addEventListener('click', () => setMode(button.dataset.authMode));
+});
+
+passwordToggle.addEventListener('click', () => {
+  const isPasswordVisible = passwordInput.type === 'text';
+  passwordInput.type = isPasswordVisible ? 'password' : 'text';
+  passwordToggle.setAttribute('aria-label', isPasswordVisible ? 'Show password' : 'Hide password');
+});
+
+forgotPasswordLink.addEventListener('click', (event) => {
+  event.preventDefault();
+  setMessage('Password reset will be available soon.', 'success');
 });
 
 form.addEventListener('submit', async (event) => {
@@ -86,7 +160,7 @@ form.addEventListener('submit', async (event) => {
     return;
   }
 
-  window.location.assign('account.html');
+  redirectAfterAuth();
 });
 
 if (!isSupabaseConfigured()) {
