@@ -34,6 +34,25 @@ export async function signIn(email, password) {
   return supabase.auth.signInWithPassword({ email, password });
 }
 
+export async function signUp(email, password, { displayName = '' } = {}) {
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    return { data: null, error: getMissingClientError() };
+  }
+
+  const trimmedDisplayName = String(displayName || '').trim();
+  const options = trimmedDisplayName
+    ? { data: { display_name: trimmedDisplayName } }
+    : undefined;
+
+  return supabase.auth.signUp({
+    email,
+    password,
+    options,
+  });
+}
+
 export async function signOut() {
   const supabase = getSupabaseClient();
 
@@ -90,6 +109,18 @@ export async function getCurrentProfile() {
     .maybeSingle();
 
   return { profile: data || null, error };
+}
+
+export async function getCurrentUserWithProfile() {
+  const { user, error: userError } = await getCurrentUser();
+
+  if (userError || !user) {
+    return { user, profile: null, error: userError };
+  }
+
+  const { profile, error: profileError } = await getCurrentProfile();
+
+  return { user, profile, error: profileError };
 }
 
 export async function isCurrentUserAdmin() {
