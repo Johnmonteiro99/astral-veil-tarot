@@ -34,9 +34,6 @@ let navLinks = document.querySelectorAll(".navbar__link, .navbar__mobile-link");
 let mobileMenuLinks = document.querySelectorAll(".navbar__mobile-link");
 let expandedImagePreview = null;
 let expandedImagePreviewImage = null;
-let expandedImagePreviewTitle = null;
-let expandedImagePreviewCaption = null;
-let expandedImagePreviewCaptionFrame = null;
 let angelWindowTimer = null;
 
 ////////////////////////////////////////////////////
@@ -60,23 +57,16 @@ function createExpandedImagePreview() {
   expandedImagePreview.setAttribute("aria-hidden", "true");
   expandedImagePreview.innerHTML = `
     <button class="image-preview__backdrop" type="button" data-close-image-preview aria-label="Close expanded image"></button>
-    <figure class="image-preview__dialog" role="dialog" aria-modal="true" aria-labelledby="image-preview-title">
+    <div class="image-preview__dialog" role="dialog" aria-modal="true" aria-label="Expanded image">
       <button class="image-preview__close" type="button" data-close-image-preview aria-label="Close expanded image">
-        &times;
+        <span class="close-circle-icon" aria-hidden="true"></span>
       </button>
       <img class="image-preview__image" alt="" data-image-preview-image />
-      <figcaption class="image-preview__caption">
-        <strong id="image-preview-title" data-image-preview-title></strong>
-        <span data-image-preview-caption></span>
-      </figcaption>
-    </figure>
+    </div>
   `;
 
   document.body.appendChild(expandedImagePreview);
   expandedImagePreviewImage = expandedImagePreview.querySelector("[data-image-preview-image]");
-  expandedImagePreviewTitle = expandedImagePreview.querySelector("[data-image-preview-title]");
-  expandedImagePreviewCaption = expandedImagePreview.querySelector("[data-image-preview-caption]");
-  expandedImagePreviewCaptionFrame = expandedImagePreview.querySelector(".image-preview__caption");
 
   expandedImagePreview.addEventListener("click", (event) => {
     if (event.target.closest("[data-close-image-preview]")) {
@@ -127,10 +117,6 @@ function openExpandedImagePreview(imageData) {
   createExpandedImagePreview();
   expandedImagePreviewImage.src = imageData.src;
   expandedImagePreviewImage.alt = imageData.alt;
-  expandedImagePreviewTitle.textContent = imageData.title;
-  expandedImagePreviewCaption.textContent = imageData.caption;
-  expandedImagePreviewCaption.hidden = !imageData.caption;
-  expandedImagePreviewCaptionFrame.hidden = Boolean(imageData.minimal);
   expandedImagePreview.classList.toggle("image-preview--minimal", Boolean(imageData.minimal));
   expandedImagePreview.classList.add("is-open");
   expandedImagePreview.setAttribute("aria-hidden", "false");

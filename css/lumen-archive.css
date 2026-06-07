@@ -2249,8 +2249,9 @@ body.is-lumen-image-lightbox-open {
   width: auto;
   height: auto;
   object-fit: contain;
-  border-radius: 18px;
-  box-shadow: 0 0 28px color-mix(in srgb, var(--navbar-glow) 44%, transparent);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 body.sun-mode .lumen-archive__hero,

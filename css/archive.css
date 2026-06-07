@@ -1884,121 +1884,35 @@ body.is-visual-record-modal-open {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.55fr);
-  grid-template-areas:
-    "label label"
-    "image copy";
-  gap: clamp(16px, 3vw, 28px);
-  width: min(100%, 1180px);
-  max-height: min(92vh, 940px);
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--navbar-border) 72%, rgba(255, 35, 65, 0.34));
-  border-radius: 26px;
-  padding: clamp(16px, 3vw, 24px);
+  width: auto;
+  max-width: 96vw;
+  max-height: 94vh;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
   color: var(--navbar-text);
-  background:
-    radial-gradient(circle at 18% 14%, rgba(255, 35, 65, 0.12), transparent 42%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.025) 48%, transparent),
-    rgba(8, 5, 16, 0.96);
-  box-shadow:
-    0 34px 90px rgba(0, 0, 0, 0.52),
-    0 0 38px rgba(255, 35, 65, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-.visual-record-modal__viewer-label {
-  grid-area: label;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px 16px;
-  padding-right: 54px;
-  color: rgba(255, 213, 217, 0.76);
-  font-size: 0.72rem;
-  font-weight: 900;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.visual-record-modal__viewer-label strong {
-  color: rgba(255, 244, 216, 0.9);
-  font-size: 0.7rem;
+  background: transparent;
+  box-shadow: none;
 }
 
 .visual-record-modal__image-frame {
-  grid-area: image;
   display: grid;
   min-height: 0;
   place-items: center;
-  overflow: hidden;
-  border: 1px solid rgba(231, 195, 106, 0.14);
-  border-radius: 18px;
-  background:
-    radial-gradient(circle at 50% 30%, rgba(255, 35, 65, 0.12), transparent 52%),
-    rgba(0, 0, 0, 0.28);
-  box-shadow:
-    0 20px 48px rgba(0, 0, 0, 0.32),
-    0 0 24px rgba(255, 35, 65, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  animation: visualRecordPageTurn 260ms ease both;
+  overflow: visible;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .visual-record-modal__image-frame img {
   display: block;
-  max-width: min(92vw, 100%);
-  max-height: min(80vh, 760px);
+  max-width: 96vw;
+  max-height: 92vh;
   object-fit: contain;
-}
-
-.visual-record-modal__copy {
-  grid-area: copy;
-  display: grid;
-  gap: 12px;
-  align-self: center;
-}
-
-.visual-record-modal__copy h2 {
-  margin: 10px 0 0;
-  font-family: var(--archive-manuscript-font);
-  font-size: clamp(2rem, 5vw, 3.8rem);
-  line-height: 0.98;
-}
-
-.visual-record-modal__copy p:last-child {
-  margin: 14px 0 0;
-  color: var(--navbar-muted);
-  line-height: 1.7;
-}
-
-.visual-record-modal__controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.visual-record-modal__controls button {
-  min-height: 42px;
-  border: 1px solid rgba(255, 116, 126, 0.28);
-  border-radius: 999px;
-  padding: 0 16px;
-  color: rgba(255, 226, 218, 0.92);
-  background:
-    linear-gradient(135deg, rgba(255, 116, 126, 0.08), transparent 52%),
-    rgba(8, 0, 4, 0.66);
-  box-shadow: 0 0 16px rgba(255, 35, 65, 0.12);
-  cursor: pointer;
-  font: inherit;
-  font-weight: 900;
-}
-
-.visual-record-modal__controls button:hover,
-.visual-record-modal__controls button:focus-visible {
-  border-color: rgba(255, 224, 214, 0.72);
-  outline: none;
-  box-shadow: 0 0 26px rgba(255, 35, 65, 0.22);
-  transform: translateY(-1px);
 }
 
 .visual-record-modal__close {
@@ -2008,6 +1922,8 @@ body.is-visual-record-modal-open {
   z-index: 2;
   width: 42px;
   height: 42px;
+  display: grid;
+  place-items: center;
   border: 1px solid var(--navbar-border);
   border-radius: 50%;
   color: var(--navbar-text);
@@ -3193,16 +3109,7 @@ body.is-archive-detail-open {
   }
 
   .visual-record-modal__dialog {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "label"
-      "image"
-      "copy";
-    overflow-y: auto;
-  }
-
-  .visual-record-modal__copy {
-    align-self: start;
+    max-height: 94vh;
   }
 
   .archive-visual-strip {
@@ -3278,16 +3185,8 @@ body.is-archive-detail-open {
     max-height: calc(100vh - 20px);
   }
 
-  .visual-record-modal__viewer-label {
-    padding-right: 48px;
-  }
-
   .visual-record-modal__image-frame img {
-    max-height: min(62vh, 560px);
-  }
-
-  .visual-record-modal__controls button {
-    flex: 1 1 128px;
+    max-height: 92vh;
   }
 
   .journal-modal__controls {

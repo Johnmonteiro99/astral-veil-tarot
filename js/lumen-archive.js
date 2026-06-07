@@ -920,7 +920,9 @@ function createLumenImageLightbox() {
   lumenImageLightbox.innerHTML = `
     <button class="lumen-image-lightbox__backdrop" type="button" data-lumen-image-close aria-label="Close expanded image"></button>
     <section class="lumen-image-lightbox__dialog" role="dialog" aria-modal="true" aria-label="Expanded sanctuary artwork" tabindex="-1">
-      <button class="lumen-image-lightbox__close" type="button" data-lumen-image-close aria-label="Close expanded image">&times;</button>
+      <button class="lumen-image-lightbox__close" type="button" data-lumen-image-close aria-label="Close expanded image">
+        <span class="close-circle-icon" aria-hidden="true"></span>
+      </button>
       <img class="lumen-image-lightbox__image" alt="" width="${LUMEN_SANCTUARY_IMAGE_WIDTH}" height="${LUMEN_SANCTUARY_IMAGE_HEIGHT}" loading="eager" decoding="async" />
     </section>
   `;

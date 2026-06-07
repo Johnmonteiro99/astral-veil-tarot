@@ -27,15 +27,26 @@ const savedReadingsList = document.querySelector('[data-saved-readings-list]');
 const artifactCountValue = document.querySelector('[data-account-artifact-count]');
 const roomCountValue = document.querySelector('[data-account-room-count]');
 const zodiacValue = document.querySelector('[data-account-zodiac]');
+const zodiacIcon = document.querySelector('[data-account-zodiac-icon]');
+const zodiacLabel = document.querySelector('[data-account-zodiac-label]');
 const profileForm = document.querySelector('[data-profile-form]');
 const profileSubmitButton = document.querySelector('[data-profile-submit]');
 const profileStatus = document.querySelector('[data-profile-status]');
 const zodiacPreview = document.querySelector('[data-zodiac-preview]');
+const zodiacDates = document.querySelector('[data-zodiac-dates]');
+const birthdayInput = document.querySelector('[data-birthday-input]');
+const settingsZodiacImage = document.querySelector('[data-settings-zodiac-image]');
+const journalNewEntryButton = document.querySelector('[data-journal-new-entry]');
+const journalStatus = document.querySelector('[data-journal-status]');
 
 let savedReadingsLoaded = false;
+let savedReadingsCache = [];
+let activeReadingFilter = 'all';
 let activeUser = null;
 let activeProfile = null;
 let activeAvatarUrl = '';
+let avatarStatusClearTimer = null;
+let profileStatusClearTimer = null;
 
 const avatarBucketName = 'avatars';
 const maxAvatarInputFileSize = 8 * 1024 * 1024;
@@ -62,6 +73,20 @@ const zodiacRanges = [
   ['Sagittarius', 12, 21],
   ['Capricorn', 12, 31],
 ];
+const zodiacDateRanges = {
+  Aries: 'Mar 21 - Apr 19',
+  Taurus: 'Apr 20 - May 20',
+  Gemini: 'May 21 - Jun 20',
+  Cancer: 'Jun 21 - Jul 22',
+  Leo: 'Jul 23 - Aug 22',
+  Virgo: 'Aug 23 - Sep 22',
+  Libra: 'Sep 23 - Oct 22',
+  Scorpio: 'Oct 23 - Nov 21',
+  Sagittarius: 'Nov 22 - Dec 21',
+  Capricorn: 'Dec 22 - Jan 19',
+  Aquarius: 'Jan 20 - Feb 18',
+  Pisces: 'Feb 19 - Mar 20',
+};
 
 function getAccountSectionFromHash() {
   const sectionName = window.location.hash.replace(/^#/, '');
@@ -128,6 +153,76 @@ function isValidBirthday(month, day) {
   return numericDay >= 1 && numericDay <= daysByMonth[numericMonth - 1];
 }
 
+function formatBirthdayInput(month, day) {
+  if (!month || !day) {
+    return '';
+  }
+
+  return `${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}`;
+}
+
+function parseBirthdayInput(value) {
+  const trimmed = String(value || '').trim();
+
+  if (!trimmed) {
+    return {
+      day: '',
+      isComplete: false,
+      isEmpty: true,
+      isValid: true,
+      month: '',
+    };
+  }
+
+  const match = trimmed.match(/^(\d{1,2})\s*\/\s*(\d{1,2})$/);
+
+  if (!match) {
+    return {
+      day: '',
+      isComplete: false,
+      isEmpty: false,
+      isValid: false,
+      month: '',
+    };
+  }
+
+  const month = Number(match[1]);
+  const day = Number(match[2]);
+
+  return {
+    day,
+    isComplete: true,
+    isEmpty: false,
+    isValid: isValidBirthday(month, day),
+    month,
+  };
+}
+
+function normalizeBirthdayInputValue(value) {
+  const digits = String(value || '').replace(/\D/g, '').slice(0, 4);
+
+  if (digits.length <= 2) {
+    return digits;
+  }
+
+  return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+}
+
+function syncBirthdayHiddenFields(month, day) {
+  if (!profileForm) {
+    return;
+  }
+
+  profileForm.elements.birth_month.value = month || '';
+  profileForm.elements.birth_day.value = day || '';
+}
+
+function getZodiacCardImagePath(sign) {
+  const iconName = String(sign || '').trim().toLowerCase();
+
+  return iconName ? `processed-zodiac-cards/${iconName}-card-cutout.png` : '';
+}
+
 function getProfileDisplayName(profile, user) {
   return getProfileValue(profile, ['display_name', 'name', 'full_name', 'username'])
     || getProfileValue(user?.user_metadata, ['display_name', 'name', 'full_name']);
@@ -138,9 +233,35 @@ function setProfileStatus(message, type = '') {
     return;
   }
 
+  if (profileStatusClearTimer) {
+    window.clearTimeout(profileStatusClearTimer);
+    profileStatusClearTimer = null;
+  }
+
   profileStatus.textContent = message;
+  profileStatus.removeAttribute('aria-label');
   profileStatus.classList.toggle('is-error', type === 'error');
   profileStatus.classList.toggle('is-success', type === 'success');
+  profileStatus.classList.remove('is-complete');
+}
+
+function showProfileSavedStatus() {
+  if (!profileStatus) {
+    return;
+  }
+
+  if (profileStatusClearTimer) {
+    window.clearTimeout(profileStatusClearTimer);
+  }
+
+  profileStatus.innerHTML = '<img class="profile-form__status-icon" src="assets/icons/symbols/checked.svg" alt="" aria-hidden="true" />';
+  profileStatus.setAttribute('aria-label', 'Profile saved.');
+  profileStatus.classList.remove('is-error');
+  profileStatus.classList.add('is-success', 'is-complete');
+
+  profileStatusClearTimer = window.setTimeout(() => {
+    setProfileStatus('');
+  }, 3200);
 }
 
 function setAvatarStatus(message, type = '') {
@@ -148,21 +269,104 @@ function setAvatarStatus(message, type = '') {
     return;
   }
 
+  if (avatarStatusClearTimer) {
+    window.clearTimeout(avatarStatusClearTimer);
+    avatarStatusClearTimer = null;
+  }
+
   avatarStatus.textContent = message;
+  avatarStatus.removeAttribute('aria-label');
   avatarStatus.classList.toggle('is-error', type === 'error');
   avatarStatus.classList.toggle('is-success', type === 'success');
+  avatarStatus.classList.remove('is-complete');
+}
+
+function showAvatarCompleteStatus() {
+  if (!avatarStatus) {
+    return;
+  }
+
+  if (avatarStatusClearTimer) {
+    window.clearTimeout(avatarStatusClearTimer);
+  }
+
+  avatarStatus.innerHTML = '<img class="avatar-status__icon" src="assets/icons/symbols/checked.svg" alt="" aria-hidden="true" />';
+  avatarStatus.setAttribute('aria-label', 'Profile picture updated.');
+  avatarStatus.classList.remove('is-error');
+  avatarStatus.classList.add('is-success', 'is-complete');
+
+  avatarStatusClearTimer = window.setTimeout(() => {
+    setAvatarStatus('');
+  }, 3200);
+}
+
+function updateSettingsZodiacPreview(sign) {
+  if (zodiacPreview) {
+    zodiacPreview.textContent = sign || 'Enter your birthday to reveal your zodiac.';
+  }
+
+  if (zodiacDates) {
+    zodiacDates.textContent = sign ? zodiacDateRanges[sign] || '' : '';
+    zodiacDates.hidden = !sign;
+  }
+
+  if (!settingsZodiacImage) {
+    return;
+  }
+
+  const iconName = String(sign || '').trim().toLowerCase();
+  const previewFrame = settingsZodiacImage.closest('.profile-preview__icon');
+
+  settingsZodiacImage.hidden = !iconName;
+  settingsZodiacImage.removeAttribute('src');
+  settingsZodiacImage.onerror = null;
+  previewFrame?.classList.remove('is-fallback');
+  if (previewFrame) {
+    previewFrame.hidden = !iconName;
+  }
+
+  if (!iconName) {
+    return;
+  }
+
+  settingsZodiacImage.onerror = () => {
+    settingsZodiacImage.onerror = () => {
+      settingsZodiacImage.hidden = true;
+    };
+    previewFrame?.classList.add('is-fallback');
+    settingsZodiacImage.src = `assets/icons/zodiac/${iconName}.svg`;
+  };
+  settingsZodiacImage.src = getZodiacCardImagePath(sign);
 }
 
 function updateZodiacDisplay(sign) {
   const label = sign ? `Zodiac: ${sign}` : 'Zodiac: Not set';
 
   if (zodiacValue) {
-    zodiacValue.textContent = label;
+    zodiacValue.classList.toggle('is-empty', !sign);
   }
 
-  if (zodiacPreview) {
-    zodiacPreview.textContent = label;
+  if (zodiacLabel) {
+    zodiacLabel.textContent = sign || 'Zodiac not set';
+  } else if (zodiacValue) {
+    zodiacValue.textContent = sign || 'Zodiac not set';
   }
+
+  if (zodiacIcon) {
+    const iconName = String(sign || '').trim().toLowerCase();
+
+    zodiacIcon.hidden = !iconName;
+    zodiacIcon.removeAttribute('src');
+    zodiacIcon.onerror = () => {
+      zodiacIcon.hidden = true;
+    };
+
+    if (iconName) {
+      zodiacIcon.src = `assets/icons/zodiac/${iconName}.svg`;
+    }
+  }
+
+  updateSettingsZodiacPreview(sign);
 }
 
 function updateHeroProfile(profile, user) {
@@ -220,8 +424,10 @@ function populateProfileForm(profile, user) {
   }
 
   profileForm.elements.display_name.value = getProfileDisplayName(profile, user) || '';
-  profileForm.elements.birth_month.value = profile?.birth_month || '';
-  profileForm.elements.birth_day.value = profile?.birth_day || '';
+  syncBirthdayHiddenFields(profile?.birth_month || '', profile?.birth_day || '');
+  if (birthdayInput) {
+    birthdayInput.value = formatBirthdayInput(profile?.birth_month, profile?.birth_day);
+  }
   updateZodiacDisplay(getProfileValue(profile, ['zodiac_sign']) || getZodiacSign(profile?.birth_month, profile?.birth_day));
   setProfileStatus('');
 }
@@ -246,7 +452,9 @@ function updateAccountProfileDisplay(profile, user) {
   const memberSince = getProfileValue(profile, ['created_at', 'inserted_at']) || user?.created_at;
 
   emailValue.textContent = email;
-  roleValue.textContent = role;
+  if (roleValue) {
+    roleValue.textContent = role;
+  }
   memberSinceValue.textContent = formatDate(memberSince);
   updateHeroProfile(profile, user);
   updateNavbarProfileAvatars(profile, user);
@@ -310,17 +518,14 @@ function setAvatarUploadLoading(isLoading, label = 'Uploading...') {
   }
 
   if (isLoading) {
-    if (!avatarUploadButton.dataset.originalText) {
-      avatarUploadButton.dataset.originalText = avatarUploadButton.textContent;
-    }
-
-    avatarUploadButton.textContent = label;
+    avatarUploadButton.setAttribute('aria-busy', 'true');
+    avatarUploadButton.title = label;
     avatarUploadButton.disabled = true;
     return;
   }
 
-  avatarUploadButton.textContent = avatarUploadButton.dataset.originalText || 'Change';
-  delete avatarUploadButton.dataset.originalText;
+  avatarUploadButton.removeAttribute('aria-busy');
+  avatarUploadButton.removeAttribute('title');
   avatarUploadButton.disabled = false;
 }
 
@@ -501,40 +706,218 @@ function formatReadableValue(value, fallback = 'Unknown') {
   return String(value);
 }
 
+function toTitleLabel(value, fallback = 'Unknown') {
+  if (value === null || typeof value === 'undefined' || value === '') {
+    return fallback;
+  }
+
+  const labels = {
+    blood_moon: 'Blood Moon',
+    blue_moon: 'Blue Moon',
+    sun: 'Sun',
+    moon: 'Moon',
+    threeCard: 'Three Card Spread',
+    fiveCard: 'Five Card Spread',
+    sevenCard: 'Seven Card Spread',
+    standard: 'Standard',
+  };
+  const normalized = String(value).trim();
+
+  if (labels[normalized]) {
+    return labels[normalized];
+  }
+
+  return normalized
+    .replace(/[_-]+/g, ' ')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (letter) => letter.toUpperCase()) || fallback;
+}
+
+function getReadingMetadata(reading) {
+  return reading?.metadata && typeof reading.metadata === 'object' && !Array.isArray(reading.metadata)
+    ? reading.metadata
+    : {};
+}
+
+function isAiReading(reading) {
+  const metadata = getReadingMetadata(reading);
+
+  return metadata.reading_source === 'ai' || metadata.ai_generated === true;
+}
+
+function getReadingTypeLabel(reading) {
+  return isAiReading(reading) ? 'AI Reading' : 'Standard Reading';
+}
+
+function getReadingQuestion(reading) {
+  const metadata = getReadingMetadata(reading);
+
+  return reading?.question || metadata.question || '';
+}
+
+function getReadingModeValue(reading) {
+  const metadata = getReadingMetadata(reading);
+
+  return reading?.mode_key || metadata.mode || '';
+}
+
+function getReadingModeClass(reading) {
+  const mode = String(getReadingModeValue(reading)).toLowerCase().replace(/[\s-]+/g, '_');
+
+  if (mode.includes('blood')) {
+    return 'is-blood-moon';
+  }
+
+  if (mode.includes('blue')) {
+    return 'is-blue-moon';
+  }
+
+  if (mode.includes('sun')) {
+    return 'is-sun';
+  }
+
+  if (mode.includes('moon')) {
+    return 'is-moon';
+  }
+
+  return 'is-standard';
+}
+
+function formatOrientation(card) {
+  const orientation = card?.orientation
+    || (card?.reversed ? 'reversed' : card?.upright ? 'upright' : '');
+
+  return orientation ? toTitleLabel(orientation, '') : '';
+}
+
+function formatCreditCost(reading) {
+  const metadata = getReadingMetadata(reading);
+  const creditCost = reading?.credit_cost ?? metadata.credit_cost ?? metadata.credits_used;
+
+  if (!isAiReading(reading) || creditCost === null || typeof creditCost === 'undefined' || creditCost === '') {
+    return '';
+  }
+
+  const numericCost = Number(creditCost);
+  const label = numericCost === 1 ? 'credit' : 'credits';
+
+  return Number.isFinite(numericCost) ? `${numericCost} ${label} used` : `${creditCost} credits used`;
+}
+
 function formatSavedCard(card, index) {
   const position = card?.position_label || card?.position || `Card ${index + 1}`;
   const title = card?.title || card?.name || 'Unknown card';
-  const orientation = card?.orientation || (card?.reversed ? 'reversed' : card?.upright ? 'upright' : '');
-  const summary = card?.summary || card?.meaning || '';
+  const orientation = formatOrientation(card);
+  const summary = getReadableTextItems(card?.summary || card?.meaning || card?.description)[0] || '';
 
   return `
-    <div class="saved-reading-card__card">
-      <strong>${escapeHtml(position)}</strong>
-      <p>${escapeHtml(title)}${orientation ? ` · ${escapeHtml(orientation)}` : ''}</p>
+    <article class="saved-reading-card__card">
+      <span>${escapeHtml(toTitleLabel(position, `Card ${index + 1}`))}</span>
+      <strong>${escapeHtml(title)}</strong>
+      ${orientation ? `<p class="saved-reading-card__orientation">${escapeHtml(orientation)}</p>` : ''}
       ${summary ? `<p>${escapeHtml(summary)}</p>` : ''}
+    </article>
+  `;
+}
+
+function getReadableTextItems(value) {
+  if (value === null || typeof value === 'undefined' || value === '') {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap(getReadableTextItems);
+  }
+
+  if (typeof value === 'object') {
+    return [
+      value.text,
+      value.message,
+      value.summary,
+      value.advice,
+      value.content,
+    ].flatMap(getReadableTextItems);
+  }
+
+  const text = String(value).trim();
+
+  return text ? [text] : [];
+}
+
+function renderReadingParagraphs(reading) {
+  const metadata = getReadingMetadata(reading);
+  const sections = [
+    reading.result_summary,
+    metadata.combined_advice,
+    metadata.extra_messages,
+    metadata.ai_response,
+  ]
+    .flatMap(getReadableTextItems);
+
+  if (!sections.length) {
+    return '<p>No reading interpretation was saved.</p>';
+  }
+
+  return sections
+    .map((section) => `<p>${escapeHtml(String(section).trim())}</p>`)
+    .join('');
+}
+
+function renderSavedReadingDetails(reading, detailsId) {
+  const cards = Array.isArray(reading.cards) ? reading.cards : [];
+  const metadata = getReadingMetadata(reading);
+  const question = getReadingQuestion(reading);
+  const modeLabel = toTitleLabel(getReadingModeValue(reading));
+  const spreadLabel = toTitleLabel(reading.spread_type || metadata.spread);
+  const cardCountLabel = `${formatReadableValue(reading.card_count, cards.length || 'Unknown')} Cards`;
+
+  return `
+    <div class="saved-reading-card__details" data-saved-reading-details="${escapeHtml(detailsId)}" hidden>
+      <div class="saved-reading-card__detail-header">
+        <div>
+          <span>${escapeHtml(getReadingTypeLabel(reading))}</span>
+          <h4>${escapeHtml(reading.reader_name || 'Astral Reading')}</h4>
+        </div>
+        <p>${escapeHtml(formatDateTime(reading.created_at))}</p>
+        <p>${escapeHtml(modeLabel)} · ${escapeHtml(spreadLabel)} · ${escapeHtml(cardCountLabel)}</p>
+      </div>
+      ${isAiReading(reading) && question ? `
+        <div class="saved-reading-card__question">
+          <span>Question</span>
+          <p>${escapeHtml(question)}</p>
+        </div>
+      ` : ''}
+      <section class="saved-reading-card__detail-section" aria-label="Cards drawn">
+        <h4>Cards Drawn</h4>
+        ${
+          cards.length
+            ? `<div class="saved-reading-card__cards">${cards.map(formatSavedCard).join('')}</div>`
+            : '<p>No card details were saved for this reading.</p>'
+        }
+      </section>
+      <section class="saved-reading-card__detail-section" aria-label="Reading interpretation">
+        <h4>Reading Interpretation</h4>
+        <div class="saved-reading-card__summary">${renderReadingParagraphs(reading)}</div>
+      </section>
     </div>
   `;
 }
 
-function renderSavedReadingDetails(reading) {
-  const cards = Array.isArray(reading.cards) ? reading.cards : [];
-  const metadata = reading.metadata && Object.keys(reading.metadata).length
-    ? JSON.stringify(reading.metadata, null, 2)
-    : '';
-
+function renderReadingFilters() {
   return `
-    <div class="saved-reading-card__details" data-saved-reading-details="${escapeHtml(reading.id || '')}" hidden>
-      ${
-        cards.length
-          ? `<div class="saved-reading-card__cards">${cards.map(formatSavedCard).join('')}</div>`
-          : '<p>No card details were saved for this reading.</p>'
-      }
-      ${
-        reading.result_summary
-          ? `<p class="saved-reading-card__summary">${escapeHtml(reading.result_summary)}</p>`
-          : '<p>No reading summary was saved.</p>'
-      }
-      ${metadata ? `<pre class="saved-reading-card__metadata">${escapeHtml(metadata)}</pre>` : ''}
+    <div class="reading-filter-chips" role="group" aria-label="Filter reading archive">
+      ${['all', 'standard', 'ai'].map((filter) => `
+        <button
+          class="reading-filter-chip${activeReadingFilter === filter ? ' is-active' : ''}"
+          type="button"
+          data-reading-filter="${filter}"
+          aria-pressed="${activeReadingFilter === filter ? 'true' : 'false'}"
+        >
+          ${filter === 'all' ? 'All' : filter === 'ai' ? 'AI' : 'Standard'}
+        </button>
+      `).join('')}
     </div>
   `;
 }
@@ -545,30 +928,77 @@ function renderSavedReadings(readings) {
   }
 
   if (!readings.length) {
-    savedReadingsList.innerHTML = '<p class="saved-readings__state">No saved readings yet.</p>';
+    savedReadingsList.innerHTML = `
+      ${renderReadingFilters()}
+      <div class="saved-readings__empty">
+        <h3>No saved readings yet.</h3>
+        <p>Readings you choose to save will appear here.</p>
+      </div>
+    `;
     return;
   }
 
-  savedReadingsList.innerHTML = readings
-    .map((reading) => `
-      <article class="saved-reading-card">
+  const filteredReadings = readings.filter((reading) => {
+    if (activeReadingFilter === 'ai') {
+      return isAiReading(reading);
+    }
+
+    if (activeReadingFilter === 'standard') {
+      return !isAiReading(reading);
+    }
+
+    return true;
+  });
+
+  if (!filteredReadings.length) {
+    savedReadingsList.innerHTML = `
+      ${renderReadingFilters()}
+      <div class="saved-readings__empty">
+        <h3>No readings found.</h3>
+        <p>No ${activeReadingFilter === 'ai' ? 'AI' : 'standard'} readings are saved yet.</p>
+      </div>
+    `;
+    return;
+  }
+
+  savedReadingsList.innerHTML = `
+    ${renderReadingFilters()}
+    ${filteredReadings
+    .map((reading, index) => {
+      const metadata = getReadingMetadata(reading);
+      const detailsId = reading.id || `saved-reading-${index}`;
+      const question = getReadingQuestion(reading);
+      const title = isAiReading(reading) && question
+        ? `“${question}”`
+        : reading.reader_name || metadata.title || 'Astral Reading';
+      const modeLabel = toTitleLabel(getReadingModeValue(reading));
+      const spreadLabel = toTitleLabel(reading.spread_type || metadata.spread);
+      const cardCountLabel = `${formatReadableValue(reading.card_count, Array.isArray(reading.cards) ? reading.cards.length : 'Unknown')} Cards`;
+      const creditText = formatCreditCost(reading);
+
+      return `
+      <article class="saved-reading-card ${getReadingModeClass(reading)}">
         <div class="saved-reading-card__header">
           <div class="saved-reading-card__title">
+            <span class="saved-reading-card__badge">${escapeHtml(getReadingTypeLabel(reading))}</span>
             <span class="saved-reading-card__date">${escapeHtml(formatDateTime(reading.created_at))}</span>
-            <h3>${escapeHtml(reading.reader_name || 'Astral Reading')}</h3>
+            <h3>${escapeHtml(title)}</h3>
+            <p>${escapeHtml([
+              isAiReading(reading) && question ? reading.reader_name : '',
+              modeLabel,
+              spreadLabel,
+              cardCountLabel,
+            ].filter(Boolean).join(' · '))}</p>
+            ${creditText ? `<p class="saved-reading-card__credits">${escapeHtml(creditText)}</p>` : ''}
           </div>
-          <button class="card-action" type="button" data-saved-reading-toggle="${escapeHtml(reading.id || '')}">View Reading</button>
+          <button class="card-action saved-reading-card__toggle" type="button" data-saved-reading-toggle="${escapeHtml(detailsId)}">View Reading</button>
         </div>
-        <div class="saved-reading-card__meta">
-          <span>Mode: ${escapeHtml(formatReadableValue(reading.mode_key))}</span>
-          <span>Spread: ${escapeHtml(formatReadableValue(reading.spread_type))}</span>
-          <span>Cards: ${escapeHtml(formatReadableValue(reading.card_count))}</span>
-          <span>Saved: ${escapeHtml(formatReadableValue(reading.is_saved))}</span>
-        </div>
-        ${renderSavedReadingDetails(reading)}
+        ${renderSavedReadingDetails(reading, detailsId)}
       </article>
-    `)
-    .join('');
+    `;
+    })
+    .join('')}
+  `;
 }
 
 async function loadSavedReadings() {
@@ -597,7 +1027,8 @@ async function loadSavedReadings() {
   }
 
   savedReadingsLoaded = true;
-  renderSavedReadings(data || []);
+  savedReadingsCache = data || [];
+  renderSavedReadings(savedReadingsCache);
 }
 
 async function loadArtifactCount() {
@@ -909,8 +1340,8 @@ async function uploadAvatar(file) {
   }
 
   await refreshProfileAfterUpdate(supabase, { avatar_url: avatarUrl });
-  setAvatarStatus('Profile picture updated.', 'success');
-  setProfileStatus('Profile picture updated.', 'success');
+  showAvatarCompleteStatus();
+  setProfileStatus('');
   } finally {
     setAvatarUploadLoading(false);
   }
@@ -940,21 +1371,28 @@ avatarUploadInput?.addEventListener('change', async () => {
 });
 
 function updateZodiacPreviewFromForm() {
-  if (!profileForm) {
+  if (!profileForm || !birthdayInput) {
     return;
   }
 
-  const month = String(profileForm.elements.birth_month.value || '').trim();
-  const day = String(profileForm.elements.birth_day.value || '').trim();
-  const sign = isValidBirthday(month, day) ? getZodiacSign(month, day) : '';
+  const birthday = parseBirthdayInput(birthdayInput.value);
+  const sign = birthday.isComplete && birthday.isValid ? getZodiacSign(birthday.month, birthday.day) : '';
 
-  if (zodiacPreview) {
-    zodiacPreview.textContent = sign ? `Zodiac: ${sign}` : 'Zodiac: Not set';
-  }
+  syncBirthdayHiddenFields(
+    birthday.isComplete && birthday.isValid ? birthday.month : '',
+    birthday.isComplete && birthday.isValid ? birthday.day : ''
+  );
+  updateSettingsZodiacPreview(sign);
 }
 
 profileForm?.addEventListener('input', (event) => {
-  if (event.target.name === 'birth_month' || event.target.name === 'birth_day') {
+  if (event.target.matches('[data-birthday-input]')) {
+    const normalizedValue = normalizeBirthdayInputValue(event.target.value);
+
+    if (event.target.value !== normalizedValue) {
+      event.target.value = normalizedValue;
+    }
+
     updateZodiacPreviewFromForm();
     setProfileStatus('');
   }
@@ -970,24 +1408,25 @@ profileForm?.addEventListener('submit', async (event) => {
 
   const formData = new FormData(profileForm);
   const displayName = String(formData.get('display_name') || '').trim();
-  const monthValue = String(formData.get('birth_month') || '').trim();
-  const dayValue = String(formData.get('birth_day') || '').trim();
-  const hasBirthday = Boolean(monthValue || dayValue);
+  const birthday = parseBirthdayInput(birthdayInput?.value || '');
+  const hasBirthday = !birthday.isEmpty;
 
-  if (hasBirthday && (!monthValue || !dayValue)) {
-    setProfileStatus('Enter both birthday month and day, or leave both blank.', 'error');
+  if (hasBirthday && !birthday.isComplete) {
+    setProfileStatus('Enter your birthday as MM/DD, or leave it blank.', 'error');
     return;
   }
 
-  if (!isValidBirthday(monthValue, dayValue)) {
+  if (!birthday.isValid) {
     setProfileStatus('That birthday month and day do not look valid.', 'error');
     return;
   }
 
-  const birthMonth = hasBirthday ? Number(monthValue) : null;
-  const birthDay = hasBirthday ? Number(dayValue) : null;
+  const birthMonth = hasBirthday ? birthday.month : null;
+  const birthDay = hasBirthday ? birthday.day : null;
   const zodiacSign = hasBirthday ? getZodiacSign(birthMonth, birthDay) : null;
   const supabase = getSupabaseClient();
+
+  syncBirthdayHiddenFields(birthMonth, birthDay);
 
   if (!supabase) {
     setProfileStatus('Profile saving is not available in this environment.', 'error');
@@ -1028,10 +1467,32 @@ profileForm?.addEventListener('submit', async (event) => {
     ...payload,
   };
   updateAccountProfileDisplay(activeProfile, activeUser);
-  setProfileStatus('Profile saved.', 'success');
+  showProfileSavedStatus();
+});
+
+journalNewEntryButton?.addEventListener('click', () => {
+  if (!journalStatus) {
+    return;
+  }
+
+  journalStatus.textContent = 'Journal writing is coming soon.';
+
+  window.setTimeout(() => {
+    if (journalStatus.textContent === 'Journal writing is coming soon.') {
+      journalStatus.textContent = '';
+    }
+  }, 3200);
 });
 
 savedReadingsList?.addEventListener('click', (event) => {
+  const filterButton = event.target.closest('[data-reading-filter]');
+
+  if (filterButton) {
+    activeReadingFilter = filterButton.dataset.readingFilter || 'all';
+    renderSavedReadings(savedReadingsCache);
+    return;
+  }
+
   const toggleButton = event.target.closest('[data-saved-reading-toggle]');
 
   if (!toggleButton) {

@@ -1313,31 +1313,16 @@ function renderVisualRecordModal() {
     return "";
   }
 
-  const recordIndex = getOpenVisualRecordIndex();
-  const recordCount = galleryVisualRecords.length;
-  const counter = `Visual Record ${recordIndex + 1} of ${recordCount}`;
-
   return `
     <div class="visual-record-modal is-open" role="presentation">
       <button class="visual-record-modal__backdrop" type="button" data-visual-record-close aria-label="Close visual record"></button>
-      <article class="visual-record-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="visual-record-title">
-        <button class="visual-record-modal__close" type="button" data-visual-record-close aria-label="Close visual record">×</button>
-        <div class="visual-record-modal__viewer-label">
-          <span>Visual Record Viewer</span>
-          <strong>${escapeHtml(counter)}</strong>
-        </div>
+      <article class="visual-record-modal__dialog" role="dialog" aria-modal="true" aria-label="Expanded visual record">
+        <button class="visual-record-modal__close" type="button" data-visual-record-close aria-label="Close visual record">
+          <span class="close-circle-icon" aria-hidden="true"></span>
+        </button>
         <figure class="visual-record-modal__image-frame">
           <img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)} visual record" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="eager" decoding="async" />
         </figure>
-        <div class="visual-record-modal__copy">
-          <p class="archive-entry__stamp">${escapeHtml(record.label)}</p>
-          <h2 id="visual-record-title">${escapeHtml(record.title)}</h2>
-          <p>${escapeHtml(record.caption)}</p>
-          <div class="visual-record-modal__controls" aria-label="Browse visual records">
-            <button type="button" data-visual-record-nav="previous">‹ Previous</button>
-            <button type="button" data-visual-record-nav="next">Next ›</button>
-          </div>
-        </div>
       </article>
     </div>
   `;

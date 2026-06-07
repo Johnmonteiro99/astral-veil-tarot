@@ -2,6 +2,7 @@ import { getCurrentUserWithProfile } from '../services/auth.js';
 import { isSupabaseConfigured } from '../services/supabase-client.js';
 
 const returnToStorageKey = 'astralVeilReturnTo';
+const publicAuthNavCacheKey = 'astralVeilPublicAuthNav';
 
 function getSafeCurrentPath() {
   const path = `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -48,6 +49,38 @@ function getInitials(profile, user) {
   return parts.map((part) => part.charAt(0).toUpperCase()).join('') || 'AV';
 }
 
+function getCachedPublicAuthNav() {
+  try {
+    const cached = JSON.parse(sessionStorage.getItem(publicAuthNavCacheKey) || 'null');
+
+    if (!cached || cached.state !== 'authenticated') {
+      return null;
+    }
+
+    return cached;
+  } catch {
+    return null;
+  }
+}
+
+function cachePublicAuthNav({ user, profile }) {
+  try {
+    if (!user) {
+      sessionStorage.removeItem(publicAuthNavCacheKey);
+      return;
+    }
+
+    sessionStorage.setItem(publicAuthNavCacheKey, JSON.stringify({
+      state: 'authenticated',
+      userId: user.id,
+      avatarUrl: getProfileValue(profile, user, ['avatar_url', 'picture']),
+      initials: getInitials(profile, user),
+    }));
+  } catch {
+    return;
+  }
+}
+
 function createLoginLink(className, datasetValue) {
   const link = document.createElement('a');
 
@@ -61,23 +94,35 @@ function createLoginLink(className, datasetValue) {
   return link;
 }
 
-function createAvatar(profile, user) {
+function createAuthPlaceholder(mobile = false) {
+  const placeholder = document.createElement('span');
+
+  placeholder.className = mobile
+    ? 'navbar-account-placeholder navbar-account-placeholder--mobile'
+    : 'navbar-account-placeholder';
+  placeholder.dataset.publicAuthNavPlaceholder = mobile ? 'mobile' : 'desktop';
+  placeholder.setAttribute('aria-hidden', 'true');
+
+  return placeholder;
+}
+
+function createAvatar({ avatarUrl = '', initials = 'AV' } = {}) {
   const avatar = document.createElement('span');
-  const avatarUrl = getProfileValue(profile, user, ['avatar_url', 'picture']);
 
   avatar.className = 'navbar-account__avatar';
+  avatar.setAttribute('aria-hidden', 'true');
 
   if (avatarUrl) {
     avatar.style.backgroundImage = `url("${avatarUrl.replace(/"/g, '%22')}")`;
     avatar.classList.add('has-image');
   } else {
-    avatar.textContent = getInitials(profile, user);
+    avatar.textContent = initials;
   }
 
   return avatar;
 }
 
-function createAccountControl({ user, profile, mobile = false }) {
+function createAccountControl({ avatarUrl = '', initials = 'AV', mobile = false } = {}) {
   const wrap = document.createElement('div');
   const link = document.createElement('a');
 
@@ -85,7 +130,7 @@ function createAccountControl({ user, profile, mobile = false }) {
   link.className = mobile ? 'navbar-account__button navbar-account__button--mobile' : 'navbar-account__button';
   link.href = 'account.html';
   link.setAttribute('aria-label', 'Open account page');
-  link.append(createAvatar(profile, user));
+  link.append(createAvatar({ avatarUrl, initials }));
 
   if (mobile) {
     const label = document.createElement('span');
@@ -97,21 +142,80 @@ function createAccountControl({ user, profile, mobile = false }) {
   return wrap;
 }
 
-function renderPublicAuthNav({ user, profile }) {
+function getResolvedAuthView({ user, profile, cached, loading = false }) {
+  if (loading && cached) {
+    return {
+      state: 'authenticated',
+      avatarUrl: cached.avatarUrl || '',
+      initials: cached.initials || 'AV',
+    };
+  }
+
+  if (loading) {
+    return { state: 'loading' };
+  }
+
+  if (!user) {
+    return { state: 'anonymous' };
+  }
+
+  return {
+    state: 'authenticated',
+    avatarUrl: getProfileValue(profile, user, ['avatar_url', 'picture']),
+    initials: getInitials(profile, user),
+  };
+}
+
+function renderPublicAuthMount(mount, view, { mobile = false } = {}) {
+  if (!mount) {
+    return;
+  }
+
+  if (mount.dataset.publicAuthState === view.state) {
+    if (view.state !== 'authenticated') {
+      return;
+    }
+
+    const avatar = mount.querySelector('.navbar-account__avatar');
+
+    if (avatar) {
+      avatar.textContent = view.avatarUrl ? '' : view.initials;
+      avatar.style.backgroundImage = view.avatarUrl ? `url("${view.avatarUrl.replace(/"/g, '%22')}")` : '';
+      avatar.classList.toggle('has-image', Boolean(view.avatarUrl));
+    }
+
+    return;
+  }
+
+  mount.dataset.publicAuthState = view.state;
+
+  if (view.state === 'loading') {
+    mount.replaceChildren(createAuthPlaceholder(mobile));
+    return;
+  }
+
+  if (view.state === 'authenticated') {
+    mount.replaceChildren(createAccountControl({
+      avatarUrl: view.avatarUrl,
+      initials: view.initials,
+      mobile,
+    }));
+    return;
+  }
+
+  mount.replaceChildren(createLoginLink(
+    mobile ? 'navbar__mobile-link navbar__mobile-link--account' : 'navbar__link navbar__link--account',
+    mobile ? 'mobile' : 'desktop'
+  ));
+}
+
+function renderPublicAuthNav({ user = null, profile = null, cached = null, loading = false } = {}) {
   const desktopMount = document.querySelector('[data-public-auth-nav="desktop"]');
   const mobileMount = document.querySelector('[data-public-auth-nav="mobile"]');
+  const view = getResolvedAuthView({ user, profile, cached, loading });
 
-  if (desktopMount) {
-    desktopMount.replaceChildren(user
-      ? createAccountControl({ user, profile })
-      : createLoginLink('navbar__link navbar__link--account', 'desktop'));
-  }
-
-  if (mobileMount) {
-    mobileMount.replaceChildren(user
-      ? createAccountControl({ user, profile, mobile: true })
-      : createLoginLink('navbar__mobile-link navbar__mobile-link--account', 'mobile'));
-  }
+  renderPublicAuthMount(desktopMount, view);
+  renderPublicAuthMount(mobileMount, view, { mobile: true });
 }
 
 function ensurePublicAuthMounts() {
@@ -133,19 +237,29 @@ function ensurePublicAuthMounts() {
 
 async function initPublicAuthNav() {
   ensurePublicAuthMounts();
-  renderPublicAuthNav({ user: null, profile: null });
+  const cached = getCachedPublicAuthNav();
+
+  renderPublicAuthNav({ cached, loading: true });
 
   if (!isSupabaseConfigured()) {
+    renderPublicAuthNav({ user: null, profile: null });
     return;
   }
 
   const { user, profile, error } = await getCurrentUserWithProfile();
 
-  if (error || !user) {
+  if (error) {
+    renderPublicAuthNav(cached ? { cached, loading: true } : { user: null, profile: null });
+    return;
+  }
+
+  if (!user) {
+    cachePublicAuthNav({ user: null, profile: null });
     renderPublicAuthNav({ user: null, profile: null });
     return;
   }
 
+  cachePublicAuthNav({ user, profile });
   renderPublicAuthNav({ user, profile });
 }
 
