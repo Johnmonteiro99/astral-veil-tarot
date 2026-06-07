@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Write private Astral Veil journal entries for daily notes, reflections, and reading thoughts."
+    />
+    <title>Journal | Astral Veil</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/journal.css" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YVLLXXW0QJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-YVLLXXW0QJ');
+    </script>
+  </head>
+  <body class="sun-mode journal-page">
+    <script>
+      (function () {
+        var themeStorageKey = "dailyTarotTheme";
+        var bloodMoonStorageKey = "astralVeilBloodMoonActive";
+        var testBloodMoonStorageKey = "astralVeilTestBloodMoonActive";
+        var params = new URLSearchParams(window.location.search);
+        var queryBloodMoon = params.get("bloodMoon") || params.get("testBloodMoon");
+        var isBloodMoonQuery = queryBloodMoon === "" || /^(1|true|yes|on|active)$/i.test(queryBloodMoon || "");
+        var hasBloodMoonOverride = params.has("bloodMoon") || params.has("testBloodMoon");
+        var isBloodMoon = hasBloodMoonOverride ? isBloodMoonQuery : false;
+        var storedTheme = "";
+
+        try {
+          isBloodMoon = hasBloodMoonOverride ? isBloodMoon : isBloodMoon ||
+            sessionStorage.getItem(bloodMoonStorageKey) === "true" ||
+            localStorage.getItem(bloodMoonStorageKey) === "true" ||
+            sessionStorage.getItem(testBloodMoonStorageKey) === "true" ||
+            localStorage.getItem(testBloodMoonStorageKey) === "true";
+          storedTheme = localStorage.getItem(themeStorageKey) || "";
+        } catch (error) {
+          storedTheme = "";
+        }
+
+        var mode = storedTheme === "moon" || storedTheme === "sun"
+          ? storedTheme
+          : new Date().getHours() >= 6 && new Date().getHours() < 18 ? "sun" : "moon";
+
+        document.body.classList.remove("sun-mode", "moon-mode", "blood-moon-mode");
+        document.body.classList.add(isBloodMoon ? "blood-moon-mode" : mode + "-mode");
+      })();
+    </script>
+    <header class="site-header">
+      <nav class="navbar" aria-label="Primary navigation">
+        <a class="navbar__brand" href="index.html" aria-label="Astral Veil home">
+          <span class="logo-eye" aria-hidden="true">
+            <img
+              class="logo-eye__image"
+              src="assets/icons/symbols/astral-veil-icon-logo-transparent.png"
+              alt=""
+              width="512"
+              height="512"
+              loading="eager"
+              decoding="async"
+            />
+          </span>
+          <span class="navbar__brand-text">Astral Veil</span>
+        </a>
+
+        <ul class="navbar__links">
+          <li><a class="navbar__link" href="index.html">Readings</a></li>
+          <li><a class="navbar__link" href="readers.html">Veilwalkers</a></li>
+          <li><a class="navbar__link" href="deck.html">Deck</a></li>
+          <li><a class="navbar__link" href="journal.html">Journal</a></li>
+          <li><a class="navbar__link" href="about.html">About</a></li>
+        </ul>
+
+        <button class="theme-toggle theme-orb-toggle" type="button" aria-label="Switch between sun and moon mode" data-theme-toggle>
+          <span class="theme-orb-toggle__label theme-orb-toggle__label--sun">Sun</span>
+          <span class="theme-orb-toggle__icon-wrap" aria-hidden="true">
+            <img
+              src="assets/icons/symbols/sun-moon-toggle-transparent.png"
+              alt=""
+              class="theme-orb-toggle__icon"
+              width="512"
+              height="512"
+              loading="eager"
+              decoding="async"
+            />
+          </span>
+          <span class="theme-orb-toggle__label theme-orb-toggle__label--moon">Moon</span>
+        </button>
+
+        <button
+          class="navbar__menu-toggle"
+          type="button"
+          aria-label="Open navigation menu"
+          aria-controls="mobile-navigation"
+          aria-expanded="false"
+        >
+          <span class="navbar__menu-icon" aria-hidden="true"></span>
+        </button>
+
+        <div class="navbar__mobile-menu" id="mobile-navigation" aria-hidden="true">
+          <a class="navbar__mobile-link" href="index.html">Readings</a>
+          <a class="navbar__mobile-link" href="readers.html">Veilwalkers</a>
+          <a class="navbar__mobile-link" href="deck.html">Deck</a>
+          <a class="navbar__mobile-link" href="journal.html">Journal</a>
+          <a class="navbar__mobile-link" href="about.html">About</a>
+        </div>
+      </nav>
+    </header>
+
+    <div class="tarot-background" aria-hidden="true">
+      <div class="celestial-wash"></div>
+      <div class="botanical-veil"></div>
+      <div class="starfield"></div>
+      <div class="mystic-mist"></div>
+      <div class="lunar-orb"></div>
+      <div class="moon-particles"></div>
+    </div>
+
+    <main class="journal-main" data-journal-shell hidden>
+      <section class="journal-hero" aria-labelledby="journal-title">
+        <h1 id="journal-title" data-journal-greeting>Good evening, Veilwalker.</h1>
+        <p data-journal-intro>A quiet place to check in with yourself.</p>
+      </section>
+
+      <aside class="journal-attached-reading" data-attached-reading hidden></aside>
+
+      <form class="journal-entry-form journal-redesign-shell" data-journal-form>
+        <section class="journal-main-panel journal-panel" aria-label="Write a journal entry">
+          <div class="journal-panel__header">
+            <p class="journal-chamber__eyebrow">
+              <span class="journal-icon journal-icon--journal" aria-hidden="true"></span>
+              New Reflection
+            </p>
+            <h2 data-main-journal-prompt>Express what the mind is thinking of today.</h2>
+          </div>
+
+          <div class="journal-title-row">
+            <label class="journal-field">
+              <span>Title</span>
+              <input type="text" name="title" maxlength="140" autocomplete="off" placeholder="Optional title" />
+            </label>
+            <label class="journal-field">
+              <span>Entry date</span>
+              <input type="date" name="entry_date" required />
+            </label>
+          </div>
+
+          <label class="journal-field journal-field--body">
+            <span>
+              <span class="journal-icon journal-icon--edit" aria-hidden="true"></span>
+              Reflection
+            </span>
+            <textarea name="body" rows="14" placeholder="Let the page hold what wants to be named."></textarea>
+          </label>
+
+          <section class="journal-guided" data-guided-section>
+            <button class="journal-guided__toggle" type="button" data-guided-toggle aria-haspopup="dialog">
+              <span class="journal-icon journal-icon--guided-reflection" aria-hidden="true"></span>
+              <span class="journal-guided__copy">
+                <span class="journal-guided__title">Guided Reflection <span>(Optional)</span></span>
+                <span data-guided-helper>Answer a few questions to go deeper.</span>
+              </span>
+              <span class="journal-guided__chevron" aria-hidden="true"></span>
+            </button>
+          </section>
+
+          <div class="journal-entry-form__meta">
+            <p data-reflection-length>Empty</p>
+            <p class="journal-privacy-note">
+              <img src="assets/icons/symbols/lock.svg" alt="" aria-hidden="true" />
+              <span data-privacy-reminder>Only you can see this reflection.</span>
+            </p>
+          </div>
+
+          <div class="journal-entry-form__actions">
+            <button type="submit" data-journal-save>
+              <span class="journal-icon journal-icon--save" aria-hidden="true"></span>
+              Save Entry
+            </button>
+            <button type="button" data-journal-clear>
+              <span class="journal-icon journal-icon--clear" aria-hidden="true"></span>
+              Clear
+            </button>
+          </div>
+
+          <p class="journal-message" data-journal-message role="status" aria-live="polite"></p>
+        </section>
+
+        <aside class="journal-companion-panel journal-panel" aria-label="Journal check-in controls">
+          <section class="journal-companion-section">
+            <p class="journal-chamber__eyebrow">
+              <span class="journal-icon journal-icon--star" aria-hidden="true"></span>
+              Today’s Check-In
+            </p>
+            <label class="journal-field journal-field--check-in">
+              <span data-check-in-label>How are you feeling today?</span>
+              <input type="text" name="check_in" maxlength="220" autocomplete="off" placeholder="A few words are enough." />
+              <small data-check-in-helper>Optional - a small check-in for you.</small>
+            </label>
+          </section>
+
+          <section class="journal-companion-section">
+            <label class="journal-field journal-field--mood">
+              <span>Mood</span>
+              <select name="mood" data-mood-select></select>
+            </label>
+          </section>
+
+          <section class="journal-companion-section">
+            <fieldset class="journal-tags" data-journal-tags>
+              <legend>Quick Tags</legend>
+            </fieldset>
+          </section>
+
+          <section class="journal-companion-section journal-daily-prompt" aria-label="Prompt of the day">
+            <span>Prompt of the Day</span>
+            <p data-prompt-of-day>What part of today asked to be remembered?</p>
+          </section>
+
+          <a class="journal-chamber__archive-link" href="account.html#journal-entries">
+            View Archive
+          </a>
+        </aside>
+      </form>
+
+      <section class="journal-recent-rail" aria-labelledby="recent-journal-title">
+        <div class="journal-entry-list-section__header">
+          <div class="journal-entry-list-section__copy">
+            <h2 id="recent-journal-title" data-recent-title>Recent Reflections</h2>
+            <p data-recent-subtitle>A few echoes from your private archive.</p>
+          </div>
+        </div>
+        <div class="journal-entry-list" data-recent-journal-entries aria-live="polite">
+          <p class="journal-recent-empty">No reflections have been saved yet.</p>
+        </div>
+        <a class="journal-chamber__archive-link journal-recent-rail__archive-link" href="account.html#journal-entries">View All Entries</a>
+      </section>
+    </main>
+
+    <div class="journal-guided-modal" data-guided-modal hidden>
+      <div class="journal-guided-modal__backdrop" data-guided-modal-backdrop></div>
+      <section
+        class="journal-guided-modal__dialog"
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="guided-reflection-modal-title"
+        aria-describedby="guided-reflection-modal-subtitle"
+      >
+        <div class="journal-guided-modal__header">
+          <div>
+            <p class="journal-chamber__eyebrow" data-guided-modal-eyebrow>Guided Reflection</p>
+            <h2 id="guided-reflection-modal-title" data-guided-modal-title>Guided Reflection</h2>
+            <p id="guided-reflection-modal-subtitle" data-guided-modal-subtitle>Answer a few questions to go deeper.</p>
+          </div>
+          <button class="journal-guided-modal__close" type="button" data-guided-modal-cancel aria-label="Close guided reflection">Close</button>
+        </div>
+
+        <div class="journal-guided-modal__questions" data-guided-questions aria-live="polite"></div>
+
+        <div class="journal-guided-modal__actions">
+          <button class="journal-guided__refresh" type="button" data-guided-refresh>Refresh Questions</button>
+          <button type="button" data-guided-modal-cancel>Cancel</button>
+          <button type="button" data-guided-add>Add to Reflection</button>
+        </div>
+      </section>
+    </div>
+
+    <p class="journal-auth-state" data-journal-auth-loading role="status">Opening your journal...</p>
+
+    <footer class="site-footer">
+      <button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details">
+        <span>Open the Archive Seal</span>
+      </button>
+
+      <div class="site-footer__panel">
+        <div class="site-footer__inner" id="site-footer-details" hidden>
+          <div class="site-footer__brand">
+            <h2>Astral Veil™</h2>
+            <p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p>
+            <p class="site-footer__poem">✦ Between fate and imagination ✦</p>
+          </div>
+
+          <nav class="site-footer__nav" aria-label="Footer navigation">
+            <p class="site-footer__label">Explore</p>
+            <a href="index.html">Home</a>
+            <a href="readers.html">Veilwalkers</a>
+            <a href="deck.html">Deck</a>
+            <a href="journal.html">Journal</a>
+            <a href="about.html">About</a>
+            <a href="lumen-archive.html" data-lumen-archive-footer-link>Lumen Archive</a>
+          </nav>
+
+          <div class="site-footer__creator">
+            <p class="site-footer__label">Creator</p>
+            <p>Crafted by João Monteiro</p>
+            <p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p>
+            <p>Designer • Developer • Worldbuilder</p>
+            <p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p>
+          </div>
+
+          <p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p>
+        </div>
+
+        <p class="site-footer__share-status" aria-live="polite"></p>
+      </div>
+    </footer>
+
+    <script src="data/events.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/app.js"></script>
+    <script type="module" src="src/public/public-auth-nav.js"></script>
+    <script type="module" src="src/public/journal.js"></script>
+  </body>
+</html>

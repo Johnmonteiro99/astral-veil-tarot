@@ -1586,11 +1586,13 @@ body.moon-mode .lumen-sanctuary {
 
 .sanctuary-room-showcase__offers {
   display: grid;
+  justify-items: center;
   gap: 0.8rem;
   margin: clamp(1.35rem, 2.8vw, 1.8rem) 0 clamp(1.45rem, 3vw, 2rem);
 }
 
 .sanctuary-room-showcase__offers p {
+  width: min(100%, 440px);
   margin: 0;
   color: var(--lumen-selector-accent-strong);
   font-family: var(--body-font);
@@ -1598,16 +1600,17 @@ body.moon-mode .lumen-sanctuary {
   font-weight: 900;
   letter-spacing: 0.16em;
   line-height: 1.2;
+  text-align: center;
   text-transform: uppercase;
 }
 
 .sanctuary-offers {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
   gap: clamp(0.65rem, 1.4vw, 1rem);
-  width: min(100%, 390px);
+  width: min(100%, 440px);
   max-width: 100%;
-  margin: 0;
+  margin-inline: auto;
 }
 
 .sanctuary-offer-tile {

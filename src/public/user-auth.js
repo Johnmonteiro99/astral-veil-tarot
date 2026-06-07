@@ -181,6 +181,10 @@ if (!isSupabaseConfigured()) {
   submitButton.disabled = true;
   setMessage('Account access is not configured for this environment.', 'error');
 } else {
-  setMode('login');
+  const initialAuthMode = new URLSearchParams(window.location.search).get('mode') === 'signup'
+    ? 'signup'
+    : 'login';
+
+  setMode(initialAuthMode);
   redirectIfSignedIn();
 }

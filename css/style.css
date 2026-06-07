@@ -452,7 +452,7 @@ body.blood-moon-mode .navbar__brand-text {
   max-width: 100%;
   justify-content: center;
   align-items: center;
-  gap: clamp(10px, 1.6vw, 26px);
+  gap: clamp(8px, 1.1vw, 18px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -464,11 +464,11 @@ body.blood-moon-mode .navbar__brand-text {
   display: inline-flex;
   align-items: center;
   min-height: 34px;
-  padding: 0 clamp(8px, 0.95vw, 14px);
+  padding: 0 clamp(7px, 0.75vw, 12px);
   border-radius: 0;
   color: var(--navbar-muted);
   font-family: var(--logo-font);
-  font-size: clamp(0.84rem, 0.64rem + 0.22vw, 0.96rem);
+  font-size: clamp(0.8rem, 0.64rem + 0.18vw, 0.92rem);
   font-weight: 400;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -8678,11 +8678,24 @@ body.blood-moon-mode .active-reader-header__quote {
   margin-top: clamp(2rem, 4vw, 3rem);
 }
 
-.reading-closing-actions {
+.reading-actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.reading-actions__button {
+  min-height: 48px;
+}
+
+.reading-actions-secondary {
   gap: 12px;
+}
+
+.reading-closing-actions {
   margin-top: 18px;
   padding-top: 18px;
   border-top: 1px solid color-mix(in srgb, var(--navbar-border) 58%, transparent);
@@ -8788,13 +8801,11 @@ body.blood-moon-mode .active-reader-header__quote {
     margin-top: 2rem;
   }
 
-  .reading-closing-actions {
-    display: grid;
-    grid-template-columns: 1fr;
+  .reading-actions {
+    flex-direction: column;
   }
 
-  .reading-closing-actions .primary-action,
-  .reading-closing-actions .reader-nav-button {
+  .reading-actions .reading-actions__button {
     width: 100%;
   }
 }
@@ -9420,7 +9431,7 @@ body.blood-moon-mode .combined-reading__thread-card:active {
   display: grid;
   justify-items: center;
   gap: 0.7rem;
-  width: min(100%, 520px);
+  width: min(100%, 640px);
   margin: clamp(18px, 3vw, 28px) auto 0;
   padding-top: clamp(14px, 2vw, 18px);
   border-top: 1px solid var(--reading-stage-line);
@@ -9428,7 +9439,20 @@ body.blood-moon-mode .combined-reading__thread-card:active {
 }
 
 .reading-save-panel__button {
-  width: min(100%, 300px);
+  flex: 1 1 0;
+  min-width: min(100%, 220px);
+  max-width: 280px;
+  min-height: 48px;
+}
+
+.reading-save-panel__actions {
+  width: 100%;
+}
+
+.reading-save-panel__button--reflect {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--reading-stage-accent) 18%, transparent) inset,
+    0 0 22px color-mix(in srgb, var(--reading-stage-accent) 26%, transparent);
 }
 
 .reading-save-panel__prompt,
@@ -9447,6 +9471,17 @@ body.blood-moon-mode .combined-reading__thread-card:active {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+@media (max-width: 520px) {
+  .reading-save-panel__actions {
+    flex-direction: column;
+  }
+
+  .reading-save-panel__button {
+    width: min(100%, 320px);
+    max-width: 100%;
+  }
 }
 
 .reading-save-panel__status.is-error,

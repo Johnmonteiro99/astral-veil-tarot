@@ -565,7 +565,7 @@ function getCompletedReadingSummary() {
 
 function getCurrentModeKey() {
   if (isBloodMoonReadingActive()) {
-    return "blood_moon";
+    return "bloodmoon";
   }
 
   if (document.body.classList.contains("sun-mode")) {
@@ -641,7 +641,7 @@ function getCompletedReadingPayload() {
       combined_advice: completedSummary.advice,
       extra_messages: completedSummary.extraMessages,
       triggered_card_combination: triggeredCombination || null,
-      blood_moon_active: isBloodMoonReadingActive(),
+      bloodmoon_active: isBloodMoonReadingActive(),
     },
     is_saved: true,
   };
@@ -1854,11 +1854,11 @@ function renderReadingResults() {
     ${
       showClosingActions
         ? `
-          <div class="reading-closing-actions" aria-label="Reading actions">
-            <button class="primary-action" type="button" data-reset-reading>
+          <div class="reading-actions reading-actions-secondary reading-closing-actions" aria-label="Reading actions">
+            <button class="reader-nav-button reading-actions__button" type="button" data-reset-reading>
               New Reading
             </button>
-            <button class="reader-nav-button" type="button" data-change-reader>
+            <button class="reader-nav-button reading-actions__button" type="button" data-change-reader>
               Change Reader
             </button>
           </div>

@@ -6,6 +6,7 @@ const FREE_SAVED_READING_LIMIT = 25;
 const readingSaveState = {
   currentReading: null,
   currentUser: undefined,
+  savedReadingIds: new Map(),
   savedReadingKeys: new Set(),
   savingReadingKeys: new Set(),
 };
@@ -49,7 +50,7 @@ function renderLoginPrompt(container) {
   container.innerHTML = `
     <p class="reading-save-panel__prompt">
       Log in to save this reading.
-      <a href="auth.html">Log in</a>
+      <a href="auth.html?returnTo=${encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)}">Log in</a>
     </p>
   `;
 }
@@ -57,11 +58,18 @@ function renderLoginPrompt(container) {
 function renderSaveButton(container, readingKey) {
   const isSaved = readingSaveState.savedReadingKeys.has(readingKey);
   const isSaving = readingSaveState.savingReadingKeys.has(readingKey);
+  const bloodMoon = document.body.classList.contains('blood-moon-mode');
+  const reflectLabel = bloodMoon ? 'Write What This Exposed' : 'Reflect in Journal';
 
   container.innerHTML = `
-    <button class="primary-action reading-save-panel__button" type="button" data-save-reading ${isSaved || isSaving ? 'disabled' : ''}>
-      ${isSaved ? 'Reading Saved' : isSaving ? 'Saving...' : 'Save Reading'}
-    </button>
+    <div class="reading-actions reading-actions-primary reading-save-panel__actions">
+      <button class="primary-action reading-actions__button reading-save-panel__button" type="button" data-save-reading ${isSaved || isSaving ? 'disabled' : ''}>
+        ${isSaved ? 'Reading Saved' : isSaving ? 'Saving...' : 'Save Reading'}
+      </button>
+      <button class="primary-action reading-actions__button reading-save-panel__button reading-save-panel__button--reflect" type="button" data-reflect-reading ${isSaving ? 'disabled' : ''}>
+        ${reflectLabel}
+      </button>
+    </div>
     <p class="reading-save-panel__status" data-reading-save-status aria-live="polite">
       ${isSaved ? 'Reading saved to your Archive.' : ''}
     </p>
@@ -81,6 +89,7 @@ function buildReadingInsert(reading, userId) {
     metadata: {
       ...(reading.metadata || {}),
       reading_source: 'standard',
+      reading_key: reading.reading_key || null,
       ai_generated: false,
       requires_credits: false,
     },
@@ -96,6 +105,38 @@ async function getSavedReadingCount(supabase, userId) {
     .eq('is_saved', true);
 
   return { count: count || 0, error };
+}
+
+async function findSavedReadingId(supabase, userId, readingKey) {
+  if (!readingKey) {
+    return null;
+  }
+
+  if (readingSaveState.savedReadingIds.has(readingKey)) {
+    return readingSaveState.savedReadingIds.get(readingKey);
+  }
+
+  const { data, error } = await supabase
+    .from('user_readings')
+    .select('id, metadata')
+    .eq('user_id', userId)
+    .eq('is_saved', true)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (error) {
+    console.error('Saved reading lookup failed:', error);
+    return null;
+  }
+
+  const match = (data || []).find((reading) => reading?.metadata?.reading_key === readingKey);
+
+  if (match?.id) {
+    readingSaveState.savedReadingIds.set(readingKey, match.id);
+    readingSaveState.savedReadingKeys.add(readingKey);
+  }
+
+  return match?.id || null;
 }
 
 function showSaveStatus(container, message, { isError = false } = {}) {
@@ -127,12 +168,12 @@ async function renderReadingSavePanel() {
   renderSaveButton(container, reading.reading_key);
 }
 
-async function saveCurrentReading() {
+async function saveCurrentReading({ redirectToJournal = false } = {}) {
   const reading = readingSaveState.currentReading;
   const container = getSaveContainer();
 
-  if (!reading || !container || readingSaveState.savedReadingKeys.has(reading.reading_key)) {
-    return;
+  if (!reading || !container) {
+    return null;
   }
 
   const user = await getCachedCurrentUser();
@@ -140,7 +181,17 @@ async function saveCurrentReading() {
 
   if (!user || !supabase) {
     renderLoginPrompt(container);
-    return;
+    return null;
+  }
+
+  const existingReadingId = await findSavedReadingId(supabase, user.id, reading.reading_key);
+
+  if (existingReadingId) {
+    renderSaveButton(container, reading.reading_key);
+    if (redirectToJournal) {
+      window.location.href = `journal.html?readingId=${encodeURIComponent(existingReadingId)}`;
+    }
+    return existingReadingId;
   }
 
   readingSaveState.savingReadingKeys.add(reading.reading_key);
@@ -152,7 +203,7 @@ async function saveCurrentReading() {
     readingSaveState.savingReadingKeys.delete(reading.reading_key);
     renderSaveButton(container, reading.reading_key);
     showSaveStatus(container, 'We could not check your Archive space. Please try again.', { isError: true });
-    return;
+    return null;
   }
 
   if (count >= FREE_SAVED_READING_LIMIT) {
@@ -163,23 +214,32 @@ async function saveCurrentReading() {
       'Your Archive can hold 25 saved readings for now. Delete older readings or expand your Archive when upgrades become available.',
       { isError: true }
     );
-    return;
+    return null;
   }
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('user_readings')
-    .insert(buildReadingInsert(reading, user.id));
+    .insert(buildReadingInsert(reading, user.id))
+    .select('id')
+    .maybeSingle();
 
   readingSaveState.savingReadingKeys.delete(reading.reading_key);
 
   if (error) {
     renderSaveButton(container, reading.reading_key);
     showSaveStatus(container, 'We could not save this reading. Please try again.', { isError: true });
-    return;
+    return null;
   }
 
+  if (data?.id) {
+    readingSaveState.savedReadingIds.set(reading.reading_key, data.id);
+  }
   readingSaveState.savedReadingKeys.add(reading.reading_key);
   renderSaveButton(container, reading.reading_key);
+  if (redirectToJournal && data?.id) {
+    window.location.href = `journal.html?readingId=${encodeURIComponent(data.id)}`;
+  }
+  return data?.id || null;
 }
 
 window.addEventListener('astralveil:reading-completed', (event) => {
@@ -195,10 +255,14 @@ window.addEventListener('astralveil:reading-completed', (event) => {
 
 document.addEventListener('click', (event) => {
   const saveButton = event.target.closest('[data-save-reading]');
+  const reflectButton = event.target.closest('[data-reflect-reading]');
 
-  if (!saveButton) {
+  if (saveButton) {
+    saveCurrentReading();
     return;
   }
 
-  saveCurrentReading();
+  if (reflectButton) {
+    saveCurrentReading({ redirectToJournal: true });
+  }
 });

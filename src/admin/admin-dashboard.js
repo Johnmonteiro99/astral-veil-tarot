@@ -3,6 +3,7 @@ import { requireAdmin, signOut } from '../services/auth.js';
 
 const countTables = [
   'journals',
+  'journal_prompts',
   'archive_rooms',
   'artifacts',
   'memory_fragments',
@@ -44,6 +45,21 @@ const journalFormTitle = document.querySelector('[data-journal-form-title]');
 const journalFormState = document.querySelector('[data-journal-form-state]');
 const journalFormSubmitButton = document.querySelector('[data-journal-form-submit]');
 const journalFormCancelButtons = document.querySelectorAll('[data-journal-form-cancel], [data-journal-form-cancel-secondary]');
+const journalPromptsState = document.querySelector('[data-journal-prompts-state]');
+const journalPromptsTableWrap = document.querySelector('[data-journal-prompts-table-wrap]');
+const journalPromptsTableBody = document.querySelector('[data-journal-prompts-table-body]');
+const journalPromptsPagination = document.querySelector('[data-journal-prompts-pagination]');
+const journalPromptsPaginationSummary = document.querySelector('[data-journal-prompts-pagination-summary]');
+const journalPromptsPaginationControls = document.querySelector('[data-journal-prompts-pagination-controls]');
+const journalPromptsPageSizeSelect = document.querySelector('[data-journal-prompts-page-size]');
+const journalPromptNewButton = document.querySelector('[data-journal-prompt-new]');
+const journalPromptFormPanel = document.querySelector('[data-journal-prompt-form-panel]');
+const journalPromptForm = document.querySelector('[data-journal-prompt-form]');
+const journalPromptFormTitle = document.querySelector('[data-journal-prompt-form-title]');
+const journalPromptFormState = document.querySelector('[data-journal-prompt-form-state]');
+const journalPromptFormSubmitButton = document.querySelector('[data-journal-prompt-form-submit]');
+const journalPromptFormCancelButtons = document.querySelectorAll('[data-journal-prompt-form-cancel], [data-journal-prompt-form-cancel-secondary]');
+const journalPromptFilters = Array.from(document.querySelectorAll('[data-journal-prompt-filter]'));
 const archiveRoomsState = document.querySelector('[data-archive-rooms-state]');
 const archiveRoomsTableWrap = document.querySelector('[data-archive-rooms-table-wrap]');
 const archiveRoomsTableBody = document.querySelector('[data-archive-rooms-table-body]');
@@ -243,6 +259,12 @@ const userProgressSections = [
 let journalsLoaded = false;
 let journalRows = [];
 let editingJournalId = null;
+let journalPromptsLoaded = false;
+let journalPromptRows = [];
+let editingJournalPromptId = null;
+let journalPromptsCurrentPage = 1;
+let journalPromptsPageSize = 10;
+let journalPromptsTotalCount = 0;
 let archiveRoomsLoaded = false;
 let archiveRoomRows = [];
 let editingArchiveRoomId = null;
@@ -422,6 +444,56 @@ function getJournalRelatedCharacter(row) {
 
 function getJournalSortOrder(row) {
   return formatValue(getFirstValue(row, ['sort_order', 'display_order', 'order']));
+}
+
+function getJournalPromptId(row) {
+  return getFirstValue(row, ['id']);
+}
+
+function getJournalPromptText(row) {
+  return formatValue(getFirstValue(row, ['prompt_text', 'text', 'question']), 'Untitled prompt');
+}
+
+function getJournalPromptPreview(row) {
+  return formatCompactValue(getJournalPromptText(row), 'Untitled prompt');
+}
+
+function getJournalPromptType(row) {
+  return formatValue(getFirstValue(row, ['prompt_type', 'type']), 'guided_question');
+}
+
+function getJournalPromptMode(row) {
+  return formatValue(getFirstValue(row, ['mode']), 'all');
+}
+
+function getJournalPromptMood(row) {
+  return formatValue(getFirstValue(row, ['mood']), 'any');
+}
+
+function getJournalPromptIntensity(row) {
+  return formatValue(getFirstValue(row, ['intensity']), 'gentle');
+}
+
+function getJournalPromptCategory(row) {
+  return formatValue(getFirstValue(row, ['category']));
+}
+
+function getJournalPromptSortOrder(row) {
+  return formatValue(getFirstValue(row, ['sort_order']));
+}
+
+function getJournalPromptActiveBoolean(row) {
+  const activeValue = getFirstValue(row, ['is_active', 'active', 'enabled']);
+
+  if (typeof activeValue === 'boolean') {
+    return activeValue;
+  }
+
+  return String(activeValue || '').toLowerCase() === 'true';
+}
+
+function getJournalPromptActiveState(row) {
+  return getJournalPromptActiveBoolean(row) ? 'Active' : 'Inactive';
 }
 
 function getArchiveRoomTitle(row) {
@@ -990,6 +1062,24 @@ function hideJournalFormState() {
   journalFormState.className = 'admin-state';
 }
 
+function setJournalPromptsState(message, state = '') {
+  journalPromptsState.textContent = message;
+  journalPromptsState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  journalPromptsState.hidden = false;
+}
+
+function setJournalPromptFormState(message, state = '') {
+  journalPromptFormState.textContent = message;
+  journalPromptFormState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  journalPromptFormState.hidden = false;
+}
+
+function hideJournalPromptFormState() {
+  journalPromptFormState.hidden = true;
+  journalPromptFormState.textContent = '';
+  journalPromptFormState.className = 'admin-state';
+}
+
 function setArchiveRoomsState(message, state = '') {
   archiveRoomsState.textContent = message;
   archiveRoomsState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
@@ -1117,6 +1207,27 @@ function hideJournalForm() {
   journalFormSubmitButton.textContent = 'Save Journal';
 }
 
+function setJournalPromptFormCancelVisible(isVisible) {
+  journalPromptFormCancelButtons.forEach((button) => {
+    button.hidden = !isVisible;
+  });
+}
+
+function hideJournalPromptForm() {
+  editingJournalPromptId = null;
+  journalPromptForm.reset();
+  journalPromptForm.elements.prompt_type.value = 'guided_question';
+  journalPromptForm.elements.mode.value = 'lumen';
+  journalPromptForm.elements.mood.value = 'any';
+  journalPromptForm.elements.intensity.value = 'gentle';
+  journalPromptForm.elements.is_active.checked = true;
+  hideJournalPromptFormState();
+  journalPromptFormTitle.textContent = 'New Prompt';
+  journalPromptFormSubmitButton.disabled = false;
+  journalPromptFormSubmitButton.textContent = 'Save Prompt';
+  setJournalPromptFormCancelVisible(false);
+}
+
 function hideArchiveRoomDetail() {
   archiveRoomDetail.hidden = true;
 }
@@ -1211,6 +1322,18 @@ function appendTextCell(rowElement, label, value, className = '') {
   rowElement.append(cell);
 }
 
+function appendJournalPromptBadgeCell(rowElement, label, value, badgeClassName = '') {
+  const cell = document.createElement('td');
+  const badge = document.createElement('span');
+
+  cell.dataset.label = label;
+  cell.className = 'journal-prompts-table__meta';
+  badge.className = `admin-badge${badgeClassName ? ` ${badgeClassName}` : ''}`;
+  badge.textContent = value || '--';
+  cell.append(badge);
+  rowElement.append(cell);
+}
+
 function renderJournalRows(rows) {
   journalsTableBody.replaceChildren();
 
@@ -1252,6 +1375,176 @@ function renderJournalRows(rows) {
     tableRow.append(actionCell);
     journalsTableBody.append(tableRow);
   });
+}
+
+function getJournalPromptFilterValue(filterName) {
+  const field = journalPromptFilters.find((filter) => filter.dataset.journalPromptFilter === filterName);
+
+  return field?.value || '__all';
+}
+
+function applyJournalPromptFilters(query) {
+  const typeFilter = getJournalPromptFilterValue('prompt_type');
+  const modeFilter = getJournalPromptFilterValue('mode');
+  const moodFilter = getJournalPromptFilterValue('mood');
+  const activeFilter = getJournalPromptFilterValue('active');
+
+  let nextQuery = query;
+
+  if (typeFilter !== '__all') {
+    nextQuery = nextQuery.eq('prompt_type', typeFilter);
+  }
+
+  if (modeFilter !== '__all') {
+    nextQuery = nextQuery.eq('mode', modeFilter);
+  }
+
+  if (moodFilter !== '__all') {
+    nextQuery = nextQuery.eq('mood', moodFilter);
+  }
+
+  if (activeFilter === 'active') {
+    nextQuery = nextQuery.eq('is_active', true);
+  }
+
+  if (activeFilter === 'inactive') {
+    nextQuery = nextQuery.eq('is_active', false);
+  }
+
+  return nextQuery;
+}
+
+function getJournalPromptsTotalPages() {
+  return Math.max(1, Math.ceil(journalPromptsTotalCount / journalPromptsPageSize));
+}
+
+function getJournalPromptsPageNumbers() {
+  const totalPages = getJournalPromptsTotalPages();
+  const maxButtons = 7;
+  const halfWindow = Math.floor(maxButtons / 2);
+  let start = Math.max(1, journalPromptsCurrentPage - halfWindow);
+  const end = Math.min(totalPages, start + maxButtons - 1);
+
+  start = Math.max(1, end - maxButtons + 1);
+
+  return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+}
+
+function renderJournalPromptsPagination() {
+  const totalPages = getJournalPromptsTotalPages();
+  const hasPrompts = journalPromptsTotalCount > 0;
+
+  if (!journalPromptsPagination || !journalPromptsPaginationControls || !journalPromptsPaginationSummary) {
+    return;
+  }
+
+  journalPromptsPagination.hidden = !hasPrompts;
+  journalPromptsPaginationControls.replaceChildren();
+
+  if (!hasPrompts) {
+    journalPromptsPaginationSummary.textContent = 'Showing 0-0 of 0 prompts';
+    return;
+  }
+
+  const from = (journalPromptsCurrentPage - 1) * journalPromptsPageSize + 1;
+  const to = Math.min(from + journalPromptRows.length - 1, journalPromptsTotalCount);
+  const previousButton = document.createElement('button');
+  const nextButton = document.createElement('button');
+
+  journalPromptsPaginationSummary.textContent = `Showing ${from}-${to} of ${journalPromptsTotalCount} prompts`;
+
+  previousButton.className = 'admin-pagination__button';
+  previousButton.type = 'button';
+  previousButton.textContent = 'Previous';
+  previousButton.disabled = journalPromptsCurrentPage <= 1;
+  previousButton.addEventListener('click', () => {
+    if (journalPromptsCurrentPage > 1) {
+      journalPromptsCurrentPage -= 1;
+      loadJournalPrompts();
+    }
+  });
+  journalPromptsPaginationControls.append(previousButton);
+
+  getJournalPromptsPageNumbers().forEach((pageNumber) => {
+    const pageButton = document.createElement('button');
+
+    pageButton.className = `admin-pagination__button${pageNumber === journalPromptsCurrentPage ? ' is-active' : ''}`;
+    pageButton.type = 'button';
+    pageButton.textContent = String(pageNumber);
+    pageButton.setAttribute('aria-label', `Page ${pageNumber}`);
+    pageButton.setAttribute('aria-current', pageNumber === journalPromptsCurrentPage ? 'page' : 'false');
+    pageButton.disabled = pageNumber === journalPromptsCurrentPage;
+    pageButton.addEventListener('click', () => {
+      journalPromptsCurrentPage = pageNumber;
+      loadJournalPrompts();
+    });
+    journalPromptsPaginationControls.append(pageButton);
+  });
+
+  nextButton.className = 'admin-pagination__button';
+  nextButton.type = 'button';
+  nextButton.textContent = 'Next';
+  nextButton.disabled = journalPromptsCurrentPage >= totalPages;
+  nextButton.addEventListener('click', () => {
+    if (journalPromptsCurrentPage < totalPages) {
+      journalPromptsCurrentPage += 1;
+      loadJournalPrompts();
+    }
+  });
+  journalPromptsPaginationControls.append(nextButton);
+}
+
+function renderJournalPromptRows(rows = journalPromptRows) {
+  journalPromptsTableBody.replaceChildren();
+
+  if (!rows.length) {
+    setJournalPromptsState('No prompts found for these filters.');
+    journalPromptsTableWrap.hidden = true;
+    renderJournalPromptsPagination();
+    return;
+  }
+
+  rows.forEach((row) => {
+    const tableRow = document.createElement('tr');
+    const actionCell = document.createElement('td');
+    const actionGroup = document.createElement('div');
+    const editButton = document.createElement('button');
+    const activeButton = document.createElement('button');
+
+    appendTextCell(tableRow, 'Prompt', getJournalPromptText(row), 'journal-prompts-table__prompt');
+    appendTextCell(tableRow, 'Type', getJournalPromptType(row), 'journal-prompts-table__meta');
+    appendJournalPromptBadgeCell(tableRow, 'Mode', getJournalPromptMode(row), 'admin-badge--mode');
+    appendJournalPromptBadgeCell(tableRow, 'Mood', getJournalPromptMood(row), 'admin-badge--mood');
+    appendJournalPromptBadgeCell(tableRow, 'Intensity', getJournalPromptIntensity(row), 'admin-badge--intensity');
+    appendTextCell(tableRow, 'Category', getJournalPromptCategory(row), 'journal-prompts-table__meta');
+    appendJournalPromptBadgeCell(
+      tableRow,
+      'Status',
+      getJournalPromptActiveState(row),
+      getJournalPromptActiveBoolean(row) ? 'admin-badge--active' : 'admin-badge--inactive',
+    );
+
+    editButton.className = 'admin-row-action';
+    editButton.type = 'button';
+    editButton.textContent = 'Edit';
+    editButton.addEventListener('click', () => showJournalPromptForm(row));
+
+    activeButton.className = 'admin-row-action';
+    activeButton.type = 'button';
+    activeButton.textContent = getJournalPromptActiveBoolean(row) ? 'Deactivate' : 'Activate';
+    activeButton.addEventListener('click', () => toggleJournalPromptActive(row, activeButton));
+
+    actionGroup.className = 'admin-action-group';
+    actionCell.dataset.label = 'Action';
+    actionGroup.append(editButton, activeButton);
+    actionCell.append(actionGroup);
+    tableRow.append(actionCell);
+    journalPromptsTableBody.append(tableRow);
+  });
+
+  journalPromptsState.hidden = true;
+  journalPromptsTableWrap.hidden = false;
+  renderJournalPromptsPagination();
 }
 
 function appendDetailField(container, label, value) {
@@ -1474,6 +1767,197 @@ async function toggleJournalPublished(row, button) {
   }
 
   await refreshJournals(nextPublishedState ? 'Journal published.' : 'Journal unpublished.');
+}
+
+function setJournalPromptFormValue(fieldName, value) {
+  const field = journalPromptForm.elements[fieldName];
+
+  if (!field) {
+    return;
+  }
+
+  if (field.type === 'checkbox') {
+    field.checked = Boolean(value);
+    return;
+  }
+
+  field.value = value && value !== '--' ? value : '';
+}
+
+function showJournalPromptForm(row = null) {
+  hideJournalPromptFormState();
+
+  if (row) {
+    editingJournalPromptId = getJournalPromptId(row);
+    journalPromptFormTitle.textContent = 'Edit Prompt';
+    journalPromptFormSubmitButton.textContent = 'Save Prompt';
+    setJournalPromptFormCancelVisible(true);
+    setJournalPromptFormValue('prompt_text', getJournalPromptText(row));
+    setJournalPromptFormValue('prompt_type', getJournalPromptType(row));
+    setJournalPromptFormValue('mode', getJournalPromptMode(row));
+    setJournalPromptFormValue('mood', getJournalPromptMood(row));
+    setJournalPromptFormValue('intensity', getJournalPromptIntensity(row));
+    setJournalPromptFormValue('category', getJournalPromptCategory(row));
+    setJournalPromptFormValue('sort_order', getJournalPromptSortOrder(row));
+    setJournalPromptFormValue('is_active', getJournalPromptActiveBoolean(row));
+  } else {
+    hideJournalPromptForm();
+  }
+
+  journalPromptFormPanel.hidden = false;
+  journalPromptForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function getJournalPromptFormPayload() {
+  const formData = new FormData(journalPromptForm);
+  const sortOrderValue = String(formData.get('sort_order') || '').trim();
+  const payload = {
+    prompt_text: String(formData.get('prompt_text') || '').trim(),
+    prompt_type: String(formData.get('prompt_type') || 'guided_question').trim() || 'guided_question',
+    mode: String(formData.get('mode') || 'lumen').trim() || 'lumen',
+    mood: String(formData.get('mood') || 'any').trim() || 'any',
+    intensity: String(formData.get('intensity') || 'gentle').trim() || 'gentle',
+    category: String(formData.get('category') || '').trim() || null,
+    is_active: formData.has('is_active'),
+  };
+
+  if (sortOrderValue !== '') {
+    const sortOrder = Number(sortOrderValue);
+
+    if (!Number.isNaN(sortOrder)) {
+      payload.sort_order = sortOrder;
+    }
+  }
+
+  return payload;
+}
+
+async function getNextJournalPromptSortOrder(supabase, payload) {
+  const { data, error } = await supabase
+    .from('journal_prompts')
+    .select('sort_order')
+    .eq('prompt_type', payload.prompt_type)
+    .eq('mode', payload.mode)
+    .eq('mood', payload.mood)
+    .not('sort_order', 'is', null)
+    .order('sort_order', { ascending: false })
+    .limit(1);
+
+  if (error) {
+    console.error('Journal prompt sort order lookup failed:', error);
+    throw error;
+  }
+
+  const maxSortOrder = Number(data?.[0]?.sort_order);
+
+  return Number.isFinite(maxSortOrder) ? maxSortOrder + 1 : 1;
+}
+
+function validateJournalPromptPayload(payload) {
+  const missingFields = [];
+
+  if (!payload.prompt_text) {
+    missingFields.push('prompt text');
+  }
+
+  return missingFields;
+}
+
+async function refreshJournalPrompts(message = '') {
+  journalPromptsLoaded = false;
+  await loadJournalPrompts();
+
+  if (message) {
+    setJournalPromptsState(message, 'success');
+  }
+}
+
+async function handleJournalPromptFormSubmit(event) {
+  event.preventDefault();
+
+  const payload = getJournalPromptFormPayload();
+  const missingFields = validateJournalPromptPayload(payload);
+
+  if (missingFields.length) {
+    setJournalPromptFormState(`Please fill in required fields: ${missingFields.join(', ')}.`, 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setJournalPromptFormState('Journal prompts cannot be saved because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  journalPromptFormSubmitButton.disabled = true;
+  setJournalPromptFormState(editingJournalPromptId ? 'Saving prompt changes...' : 'Creating prompt...');
+
+  if (!editingJournalPromptId && !Object.prototype.hasOwnProperty.call(payload, 'sort_order')) {
+    try {
+      payload.sort_order = await getNextJournalPromptSortOrder(supabase, payload);
+    } catch {
+      journalPromptFormSubmitButton.disabled = false;
+      setJournalPromptFormState('Journal prompt could not be sorted automatically. Please try again or enter a sort order.', 'error');
+      return;
+    }
+  }
+
+  const nextPayload = {
+    ...payload,
+    updated_at: new Date().toISOString(),
+  };
+
+  const query = editingJournalPromptId
+    ? supabase.from('journal_prompts').update(nextPayload).eq('id', editingJournalPromptId).select('*').single()
+    : supabase.from('journal_prompts').insert(payload).select('*').single();
+
+  const { error } = await query;
+
+  if (error) {
+    journalPromptFormSubmitButton.disabled = false;
+    setJournalPromptFormState(`Journal prompt could not be saved. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  const successMessage = editingJournalPromptId ? 'Journal prompt updated successfully.' : 'Journal prompt created successfully.';
+  hideJournalPromptForm();
+  await refreshJournalPrompts(successMessage);
+}
+
+async function toggleJournalPromptActive(row, button) {
+  const promptId = getJournalPromptId(row);
+  const supabase = getSupabaseClient();
+
+  if (!promptId) {
+    setJournalPromptsState('This prompt cannot be updated because it is missing an id.', 'error');
+    return;
+  }
+
+  if (!supabase) {
+    setJournalPromptsState('Journal prompts cannot be updated because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  const nextActiveState = !getJournalPromptActiveBoolean(row);
+  const { error } = await supabase
+    .from('journal_prompts')
+    .update({
+      is_active: nextActiveState,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', promptId)
+    .select('id')
+    .single();
+
+  if (error) {
+    button.disabled = false;
+    setJournalPromptsState(`Prompt status could not be updated. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  await refreshJournalPrompts(nextActiveState ? 'Journal prompt activated.' : 'Journal prompt deactivated.');
 }
 
 function renderArchiveRoomRows(rows) {
@@ -3796,6 +4280,55 @@ async function loadJournals() {
   journalsTableWrap.hidden = false;
 }
 
+async function loadJournalPrompts() {
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setJournalPromptsState('Journal prompts are unavailable because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  const from = (journalPromptsCurrentPage - 1) * journalPromptsPageSize;
+  const to = from + journalPromptsPageSize - 1;
+
+  setJournalPromptsState('Loading journal prompts...');
+  journalPromptsTableWrap.hidden = true;
+  if (journalPromptsPagination) {
+    journalPromptsPagination.hidden = true;
+  }
+
+  let query = supabase
+    .from('journal_prompts')
+    .select('*', { count: 'exact' })
+    .order('mode', { ascending: true })
+    .order('mood', { ascending: true })
+    .order('prompt_type', { ascending: true })
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
+  query = applyJournalPromptFilters(query);
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    setJournalPromptsState('Journal prompts could not be loaded. Please try again later.', 'error');
+    return;
+  }
+
+  journalPromptRows = Array.isArray(data) ? data : [];
+  journalPromptsTotalCount = Number(count || 0);
+  journalPromptsLoaded = true;
+
+  if (!journalPromptRows.length && journalPromptsTotalCount > 0 && journalPromptsCurrentPage > getJournalPromptsTotalPages()) {
+    journalPromptsCurrentPage = getJournalPromptsTotalPages();
+    await loadJournalPrompts();
+    return;
+  }
+
+  renderJournalPromptRows();
+}
+
 async function loadArchiveRooms() {
   if (archiveRoomsLoaded) {
     return;
@@ -4287,7 +4820,7 @@ function bindNavToggle() {
 }
 
 function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
-  const availableViews = ['overview', 'journals', 'archive-rooms', 'artifacts', 'memory-fragments', 'veilwalkers', 'veilwalker-notes', 'user-progress', 'app-settings'];
+  const availableViews = ['overview', 'journals', 'journal-prompts', 'archive-rooms', 'artifacts', 'memory-fragments', 'veilwalkers', 'veilwalker-notes', 'user-progress', 'app-settings'];
   const normalizedViewName = availableViews.includes(viewName) ? viewName : 'overview';
 
   adminViews.forEach((view) => {
@@ -4304,6 +4837,10 @@ function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
 
   if (normalizedViewName === 'journals') {
     loadJournals();
+  }
+
+  if (normalizedViewName === 'journal-prompts') {
+    loadJournalPrompts();
   }
 
   if (normalizedViewName === 'archive-rooms') {
@@ -4363,6 +4900,24 @@ function bindViewLinks() {
   journalForm.addEventListener('submit', handleJournalFormSubmit);
   journalFormCancelButtons.forEach((button) => {
     button.addEventListener('click', hideJournalForm);
+  });
+  journalPromptNewButton.addEventListener('click', () => showJournalPromptForm());
+  journalPromptForm.addEventListener('submit', handleJournalPromptFormSubmit);
+  journalPromptFormCancelButtons.forEach((button) => {
+    button.addEventListener('click', hideJournalPromptForm);
+  });
+  journalPromptFilters.forEach((filter) => {
+    filter.addEventListener('change', () => {
+      journalPromptsCurrentPage = 1;
+      journalPromptsLoaded = false;
+      loadJournalPrompts();
+    });
+  });
+  journalPromptsPageSizeSelect?.addEventListener('change', () => {
+    journalPromptsPageSize = Number(journalPromptsPageSizeSelect.value) || 10;
+    journalPromptsCurrentPage = 1;
+    journalPromptsLoaded = false;
+    loadJournalPrompts();
   });
   archiveRoomDetailCloseButton.addEventListener('click', hideArchiveRoomDetail);
   archiveRoomNewButton.addEventListener('click', () => showArchiveRoomForm());

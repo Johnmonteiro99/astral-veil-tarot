@@ -82,8 +82,27 @@
         padding: 0 1rem;
       }
 
+      .button-link {
+        min-height: 2.75rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(10, 11, 26, 0.62);
+        color: var(--gold);
+        font: 700 0.78rem/1.2 var(--body-font);
+        letter-spacing: 0.1em;
+        padding: 0 1rem;
+        text-align: center;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
       button:hover,
       button:focus-visible,
+      .button-link:hover,
+      .button-link:focus-visible,
       .text-link:hover,
       .text-link:focus-visible,
       .nav-link:hover,
@@ -977,8 +996,9 @@
       .activity-card,
       .reflection-card {
         display: grid;
-        gap: 0.85rem;
-        padding: clamp(1.05rem, 2.2vw, 1.35rem);
+        align-content: start;
+        gap: 0.68rem;
+        padding: clamp(0.95rem, 1.9vw, 1.15rem);
       }
 
       .activity-card h2,
@@ -994,8 +1014,26 @@
         display: grid;
         gap: 0.7rem;
         margin: 0;
-        padding: 0;
+        max-height: 9.2rem;
+        overflow-y: auto;
+        padding: 0 0.35rem 0 0;
         list-style: none;
+        scrollbar-color: rgba(228, 189, 118, 0.48) rgba(255, 255, 255, 0.055);
+        scrollbar-width: thin;
+      }
+
+      .activity-list::-webkit-scrollbar {
+        width: 0.42rem;
+      }
+
+      .activity-list::-webkit-scrollbar-track {
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.055);
+      }
+
+      .activity-list::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(228, 189, 118, 0.66), rgba(185, 156, 255, 0.28));
       }
 
       .activity-list li {
@@ -1006,6 +1044,22 @@
         font-family: var(--font-ui);
         font-size: 0.92rem;
         line-height: 1.5;
+      }
+
+      .activity-list li > span {
+        display: grid;
+        gap: 0.12rem;
+      }
+
+      .activity-list strong {
+        color: rgba(247, 240, 232, 0.86);
+        font-weight: 700;
+      }
+
+      .activity-list small {
+        color: rgba(247, 240, 232, 0.56);
+        font-size: 0.78rem;
+        line-height: 1.45;
       }
 
       .activity-list li::before {
@@ -1218,6 +1272,14 @@
         font-weight: 600;
       }
 
+      .journal-preview__status.is-error {
+        color: #f0b7b7;
+      }
+
+      .journal-preview__status.is-success {
+        color: #cfe8bd;
+      }
+
       .journal-tabs {
         display: flex;
         flex-wrap: wrap;
@@ -1242,6 +1304,92 @@
         border-color: rgba(228, 189, 118, 0.54);
         color: var(--gold);
         box-shadow: 0 0 18px rgba(228, 189, 118, 0.1);
+      }
+
+      .journal-filter-controls {
+        display: grid;
+        gap: 0.75rem;
+        border: 1px solid rgba(228, 189, 118, 0.14);
+        border-radius: 14px;
+        background:
+          linear-gradient(135deg, rgba(228, 189, 118, 0.045), rgba(185, 156, 255, 0.035)),
+          rgba(7, 8, 20, 0.3);
+        padding: 0.85rem;
+      }
+
+      .journal-filter-controls[hidden] {
+        display: none;
+      }
+
+      .journal-filter-controls__bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 0.65rem;
+      }
+
+      .journal-filter-controls__label {
+        margin: 0;
+        color: var(--gold);
+        font-family: var(--font-ui);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .journal-filter-controls__button,
+      .journal-day-chip {
+        min-height: 2.15rem;
+        border: 1px solid rgba(185, 156, 255, 0.24);
+        border-radius: 999px;
+        background: rgba(7, 8, 20, 0.42);
+        color: rgba(247, 240, 232, 0.78);
+        font-family: var(--font-ui);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        padding: 0 0.75rem;
+        text-transform: uppercase;
+      }
+
+      .journal-filter-controls__button:hover,
+      .journal-filter-controls__button:focus-visible,
+      .journal-day-chip:hover,
+      .journal-day-chip:focus-visible,
+      .journal-day-chip.is-active {
+        border-color: rgba(228, 189, 118, 0.54);
+        color: var(--gold);
+        box-shadow: 0 0 18px rgba(228, 189, 118, 0.1);
+      }
+
+      .journal-day-chips {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.45rem;
+      }
+
+      .journal-day-chip span {
+        color: rgba(247, 240, 232, 0.58);
+        font-size: 0.66rem;
+        letter-spacing: 0.03em;
+        margin-left: 0.24rem;
+      }
+
+      .journal-filter-select {
+        width: min(100%, 260px);
+        min-height: 2.4rem;
+        border: 1px solid rgba(185, 156, 255, 0.24);
+        border-radius: 999px;
+        background: rgba(7, 8, 20, 0.42);
+        color: rgba(247, 240, 232, 0.88);
+        font-family: var(--font-ui);
+        font-size: 0.82rem;
+        font-weight: 700;
+        padding: 0 0.85rem;
       }
 
       .journal-week-row {
@@ -1389,6 +1537,364 @@
         font-family: var(--font-display);
         font-size: clamp(1.32rem, 2.4vw, 1.75rem);
         font-weight: 400;
+      }
+
+      .journal-form {
+        display: grid;
+        gap: 1rem;
+        border: 1px solid rgba(228, 189, 118, 0.18);
+        border-radius: 12px;
+        background:
+          linear-gradient(135deg, rgba(228, 189, 118, 0.06), rgba(185, 156, 255, 0.04)),
+          rgba(7, 8, 20, 0.44);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.025) inset,
+          0 16px 38px rgba(0, 0, 0, 0.18);
+        padding: clamp(1rem, 2vw, 1.25rem);
+      }
+
+      .journal-form[hidden] {
+        display: none;
+      }
+
+      .journal-form__grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(10rem, 0.7fr) minmax(10rem, 0.7fr);
+        gap: 0.85rem;
+      }
+
+      .journal-field {
+        display: grid;
+        gap: 0.42rem;
+        min-width: 0;
+      }
+
+      .journal-field span {
+        color: rgba(247, 240, 232, 0.76);
+        font-family: var(--font-ui);
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .journal-field input,
+      .journal-field select,
+      .journal-field textarea {
+        width: 100%;
+        min-width: 0;
+        border: 1px solid rgba(185, 156, 255, 0.22);
+        border-radius: 10px;
+        background: rgba(4, 5, 16, 0.48);
+        color: var(--text);
+        font: 600 0.95rem/1.35 var(--font-ui);
+        letter-spacing: 0;
+        outline: 0;
+        padding: 0.78rem 0.85rem;
+        transition:
+          border-color 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      .journal-field textarea {
+        min-height: 11rem;
+        line-height: 1.6;
+        resize: vertical;
+      }
+
+      .journal-field small {
+        color: rgba(247, 240, 232, 0.58);
+        font-family: var(--font-ui);
+        font-size: 0.78rem;
+        line-height: 1.45;
+      }
+
+      .journal-tags-edit {
+        display: grid;
+        gap: 0.45rem;
+      }
+
+      .journal-field input:focus-visible,
+      .journal-field select:focus-visible,
+      .journal-field textarea:focus-visible {
+        border-color: rgba(228, 189, 118, 0.54);
+        box-shadow: 0 0 0 3px rgba(228, 189, 118, 0.1);
+      }
+
+      .journal-form__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        justify-content: flex-end;
+      }
+
+      .journal-list {
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      .journal-entry-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 1rem;
+        align-items: start;
+        border: 1px solid rgba(228, 189, 118, 0.18);
+        border-radius: 12px;
+        background:
+          linear-gradient(135deg, rgba(228, 189, 118, 0.052), rgba(185, 156, 255, 0.04)),
+          rgba(7, 8, 20, 0.42);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.025) inset,
+          0 14px 34px rgba(0, 0, 0, 0.16);
+        padding: clamp(1rem, 2vw, 1.15rem);
+      }
+
+      .journal-entry-card__copy {
+        display: grid;
+        gap: 0.52rem;
+        min-width: 0;
+      }
+
+      .journal-entry-card h3 {
+        color: var(--gold);
+        font-family: var(--font-display);
+        font-size: clamp(1.25rem, 2.1vw, 1.6rem);
+        font-weight: 400;
+        line-height: 1.12;
+        overflow-wrap: anywhere;
+      }
+
+      .journal-entry-card__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        color: rgba(247, 240, 232, 0.68);
+        font-family: var(--font-ui);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .journal-entry-card__chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.38rem;
+      }
+
+      .journal-entry-card__chips span {
+        border: 1px solid rgba(185, 156, 255, 0.2);
+        border-radius: 999px;
+        color: rgba(247, 240, 232, 0.72);
+        font-family: var(--font-ui);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        padding: 0.22rem 0.5rem;
+        text-transform: uppercase;
+      }
+
+      .journal-entry-card__chip--mood,
+      .journal-entry-card__chip--mode,
+      .journal-entry-card__chip--type {
+        border-color: rgba(228, 189, 118, 0.24);
+        color: rgba(228, 189, 118, 0.86);
+      }
+
+      .journal-entry-card__preview {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        margin: 0;
+        color: rgba(247, 240, 232, 0.78);
+        font-size: 0.94rem;
+        line-height: 1.6;
+        overflow: hidden;
+        overflow-wrap: anywhere;
+      }
+
+      .journal-entry-card__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: flex-end;
+        align-self: end;
+      }
+
+      body.journal-modal-open {
+        overflow: hidden;
+      }
+
+      .journal-entry-view {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        display: grid;
+        place-items: center;
+        padding: clamp(1rem, 3vw, 2rem);
+      }
+
+      .journal-entry-view[hidden] {
+        display: none;
+      }
+
+      .journal-entry-view__backdrop {
+        position: absolute;
+        inset: 0;
+        min-height: 0;
+        border: 0;
+        background: rgba(3, 4, 12, 0.72);
+        box-shadow: none;
+        padding: 0;
+        backdrop-filter: blur(8px);
+      }
+
+      .journal-entry-view__dialog {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        width: min(46rem, 100%);
+        max-height: min(82vh, 52rem);
+        gap: 0.9rem;
+        overflow-y: auto;
+        border: 1px solid rgba(228, 189, 118, 0.2);
+        border-radius: 14px;
+        background:
+          linear-gradient(145deg, rgba(228, 189, 118, 0.075), rgba(185, 156, 255, 0.045)),
+          rgba(7, 8, 20, 0.94);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.028) inset,
+          0 30px 80px rgba(0, 0, 0, 0.42);
+        padding: clamp(1rem, 2vw, 1.25rem);
+      }
+
+      .journal-entry-view__header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 1rem;
+        align-items: start;
+      }
+
+      .journal-entry-view__meta,
+      .journal-entry-view__chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+      }
+
+      .journal-entry-view__meta {
+        color: rgba(247, 240, 232, 0.66);
+        font-family: var(--font-ui);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .journal-entry-view h3 {
+        margin-top: 0.3rem;
+        color: var(--gold);
+        font-family: var(--font-display);
+        font-size: clamp(1.45rem, 2.6vw, 2rem);
+        font-weight: 400;
+        line-height: 1.08;
+        overflow-wrap: anywhere;
+      }
+
+      .journal-entry-view__chips span {
+        border: 1px solid rgba(185, 156, 255, 0.2);
+        border-radius: 999px;
+        color: rgba(247, 240, 232, 0.74);
+        font-family: var(--font-ui);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        padding: 0.22rem 0.5rem;
+        text-transform: uppercase;
+      }
+
+      .journal-entry-view__content {
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      .journal-entry-view__section {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .journal-entry-view__section strong {
+        color: rgba(228, 189, 118, 0.88);
+        font-family: var(--font-ui);
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .journal-entry-view__section p {
+        margin: 0;
+        color: rgba(247, 240, 232, 0.82);
+        font-size: 0.98rem;
+        line-height: 1.68;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+      }
+
+      .journal-entry-view__guided {
+        display: grid;
+        gap: 0.72rem;
+      }
+
+      .journal-entry-view__guided .journal-entry-view__section strong {
+        color: var(--gold);
+      }
+
+      .journal-entry-view__guided .journal-entry-view__section p {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .journal-pagination {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid rgba(228, 189, 118, 0.16);
+        border-radius: 12px;
+        background: rgba(7, 8, 20, 0.38);
+        padding: 0.8rem;
+      }
+
+      .journal-pagination[hidden] {
+        display: none;
+      }
+
+      .journal-pagination__summary {
+        color: rgba(247, 240, 232, 0.64);
+        font-family: var(--font-ui);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .journal-pagination__controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.42rem;
+        justify-content: flex-end;
+      }
+
+      .journal-pagination__button {
+        min-height: 2.35rem;
+        min-width: 2.35rem;
+        padding: 0 0.7rem;
+      }
+
+      .journal-pagination__button.is-active {
+        border-color: rgba(228, 189, 118, 0.58);
+        background: rgba(228, 189, 118, 0.12);
+        color: var(--gold);
       }
 
       .profile-form {
@@ -2452,8 +2958,52 @@
           scrollbar-color: rgba(228, 189, 118, 0.42) transparent;
         }
 
+        .journal-filter-controls {
+          padding: 0.75rem;
+        }
+
+        .journal-filter-controls__bar {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .journal-filter-controls__button,
+        .journal-filter-select {
+          width: 100%;
+        }
+
         .journal-tab {
           flex: 0 0 auto;
+        }
+
+        .journal-form__grid,
+        .journal-entry-card,
+        .journal-entry-view__header {
+          grid-template-columns: 1fr;
+        }
+
+        .journal-form__actions,
+        .journal-entry-card__actions,
+        .journal-entry-view__header .card-action {
+          justify-content: stretch;
+        }
+
+        .journal-form__actions button,
+        .journal-entry-card__actions button,
+        .journal-entry-view__header .card-action {
+          flex: 1 1 9rem;
+        }
+
+        .journal-entry-view__dialog {
+          max-height: 86vh;
+        }
+
+        .journal-pagination {
+          align-items: stretch;
+        }
+
+        .journal-pagination__controls {
+          justify-content: flex-start;
         }
 
         .journal-week-row {
@@ -2671,7 +3221,7 @@
               <p class="section-title journey-title">Your Journey So Far</p>
               <section class="journey-row" aria-label="Journey summary placeholders">
                 <div class="stat-card">
-                  <span class="stat-value">Soon</span>
+                  <span class="stat-value" data-account-saved-reading-count>Soon</span>
                   <span class="stat-label">Saved Readings</span>
                 </div>
                 <div class="stat-card">
@@ -2687,7 +3237,7 @@
                   <span class="stat-label">Rooms Visited</span>
                 </div>
                 <div class="stat-card">
-                  <span class="stat-value">Soon</span>
+                  <span class="stat-value" data-account-journal-count>Soon</span>
                   <span class="stat-label">Journal Entries</span>
                 </div>
               </section>
@@ -2701,14 +3251,14 @@
                       <span class="overview-action-card__arrow" aria-hidden="true"></span>
                     </span>
                   </a>
-                  <button class="overview-action-card overview-action-card--journal" type="button" data-account-section-target="journal-entries" style="--overview-card-image: url('assets/images/background%20_images/write-journal.png');">
+                  <a class="overview-action-card overview-action-card--journal" href="journal.html" style="--overview-card-image: url('assets/images/background%20_images/write-journal.png');">
                     <span class="overview-action-card__copy">
                       <span class="overview-action-card__title">Write in Journal</span>
                       <small>Reflect, release, and record your journey.</small>
                       <span class="overview-action-card__arrow" aria-hidden="true"></span>
                     </span>
-                  </button>
-                  <a class="overview-action-card overview-action-card--discoveries" href="archive.html" style="--overview-card-image: url('assets/images/background%20_images/explore-discovery.png');">
+                  </a>
+                  <a class="overview-action-card overview-action-card--discoveries" href="lumen-archive.html" style="--overview-card-image: url('assets/images/background%20_images/explore-discovery.png');">
                     <span class="overview-action-card__copy">
                       <span class="overview-action-card__title">Discoveries</span>
                       <small>Revisit insights and hidden truths.</small>
@@ -2725,17 +3275,16 @@
                 <div class="overview-side">
                   <article class="activity-card">
                     <p class="section-title">Recent Activity</p>
-                    <h2>Your Archive is listening.</h2>
-                    <ul class="activity-list">
-                      <li>Your recent activity will appear here.</li>
-                      <li>Saved readings, artifacts, and room visits will gather as your path grows.</li>
+                    <h2 data-account-activity-title>Your Archive is listening.</h2>
+                    <ul class="activity-list" data-account-activity-list>
+                      <li>Saved readings, artifacts, and reflections will gather here as your path grows.</li>
                     </ul>
                   </article>
 
                   <article class="reflection-card">
                     <p class="section-title">Reflection Message</p>
-                    <h2>Begin gently.</h2>
-                    <p>The Archive remembers every step, even the quiet ones.</p>
+                    <h2 data-account-reflection-title>Begin gently.</h2>
+                    <p data-account-reflection-body>The Archive remembers every step, even the quiet ones.</p>
                   </article>
                 </div>
               </section>
@@ -2754,118 +3303,117 @@
                 <div class="journal-preview__header">
                   <div class="journal-preview__copy">
                     <p class="section-title">Journal Entries</p>
-                    <h2>Private reflections, daily notes, and reading thoughts will gather here.</h2>
+                    <h2>Your private reflection archive.</h2>
                   </div>
                   <div class="journal-preview__actions">
-                    <button type="button" data-journal-new-entry>New Entry</button>
+                    <a class="button-link" href="journal.html">Write New Entry</a>
                     <p class="journal-preview__status" data-journal-status role="status" aria-live="polite"></p>
                   </div>
                 </div>
 
-                <div class="journal-tabs" role="tablist" aria-label="Journal timeline preview">
-                  <button class="journal-tab is-active" type="button" aria-selected="true">Week</button>
-                  <button class="journal-tab" type="button" aria-selected="false">Month</button>
-                  <button class="journal-tab" type="button" aria-selected="false">Year</button>
+                <div class="journal-tabs" role="tablist" aria-label="Filter journal entries">
+                  <button class="journal-tab is-active" type="button" data-journal-filter="all" aria-selected="true">All</button>
+                  <button class="journal-tab" type="button" data-journal-filter="week" aria-selected="false">Week</button>
+                  <button class="journal-tab" type="button" data-journal-filter="month" aria-selected="false">Month</button>
+                  <button class="journal-tab" type="button" data-journal-filter="year" aria-selected="false">Year</button>
+                  <button class="journal-tab" type="button" data-journal-filter="reading" aria-selected="false">Reading</button>
+                  <button class="journal-tab" type="button" data-journal-filter="shadow" aria-selected="false">Shadow</button>
                 </div>
 
-                <div class="journal-week-row" aria-label="Week preview">
-                  <article class="journal-day-card">
-                    <div>
-                      <strong>Mon</strong>
-                      <time>Day 01</time>
-                    </div>
-                    <p>No entry yet</p>
-                  </article>
-                  <article class="journal-day-card is-sample">
-                    <div>
-                      <strong>Tue</strong>
-                      <time>Day 02</time>
-                    </div>
-                    <p>Reflection saved</p>
-                  </article>
-                  <article class="journal-day-card">
-                    <div>
-                      <strong>Wed</strong>
-                      <time>Day 03</time>
-                    </div>
-                    <p>No entry yet</p>
-                  </article>
-                  <article class="journal-day-card">
-                    <div>
-                      <strong>Thu</strong>
-                      <time>Day 04</time>
-                    </div>
-                    <p>No entry yet</p>
-                  </article>
-                  <article class="journal-day-card is-sample">
-                    <div>
-                      <strong>Fri</strong>
-                      <time>Day 05</time>
-                    </div>
-                    <p>Reading thoughts</p>
-                  </article>
-                  <article class="journal-day-card">
-                    <div>
-                      <strong>Sat</strong>
-                      <time>Day 06</time>
-                    </div>
-                    <p>No entry yet</p>
-                  </article>
-                  <article class="journal-day-card">
-                    <div>
-                      <strong>Sun</strong>
-                      <time>Day 07</time>
-                    </div>
-                    <p>No entry yet</p>
-                  </article>
+                <div class="journal-filter-controls" data-journal-filter-controls hidden></div>
+
+                <form class="journal-form" data-journal-form hidden>
+                  <div class="journal-form__grid">
+                    <label class="journal-field">
+                      <span>Title</span>
+                      <input type="text" name="title" maxlength="140" autocomplete="off" required />
+                    </label>
+                    <label class="journal-field">
+                      <span>Entry date</span>
+                      <input type="date" name="entry_date" required />
+                    </label>
+                    <label class="journal-field">
+                      <span>Mood</span>
+                      <select name="mood">
+                        <option value="">Choose a mood</option>
+                        <option value="Calm">Calm</option>
+                        <option value="Hopeful">Hopeful</option>
+                        <option value="Restless">Restless</option>
+                        <option value="Inspired">Inspired</option>
+                        <option value="Heavy">Heavy</option>
+                        <option value="Confused">Confused</option>
+                        <option value="Grateful">Grateful</option>
+                        <option value="Clear">Clear</option>
+                        <option value="tender">Tender</option>
+                        <option value="curious">Curious</option>
+                        <option value="Exposed">Exposed</option>
+                        <option value="Raw">Raw</option>
+                        <option value="Angry">Angry</option>
+                        <option value="Numb">Numb</option>
+                        <option value="Haunted">Haunted</option>
+                        <option value="Unsettled">Unsettled</option>
+                        <option value="Avoidant">Avoidant</option>
+                        <option value="Ready">Ready</option>
+                      </select>
+                    </label>
+                  </div>
+                  <label class="journal-field">
+                    <span>Check-in</span>
+                    <input type="text" name="check_in" maxlength="180" autocomplete="off" />
+                  </label>
+                  <label class="journal-field journal-tags-edit">
+                    <span>Tags</span>
+                    <input type="text" name="tags" maxlength="240" autocomplete="off" />
+                    <small>Separate tags with commas.</small>
+                  </label>
+                  <label class="journal-field">
+                    <span>Prompt</span>
+                    <input type="text" name="prompt" maxlength="220" autocomplete="off" />
+                  </label>
+                  <label class="journal-field journal-field--body">
+                    <span>Body</span>
+                    <textarea name="body" rows="8"></textarea>
+                  </label>
+                  <label class="journal-field">
+                    <span>Guided answers</span>
+                    <textarea name="guided_answers_text" rows="6"></textarea>
+                    <small>One answer per paragraph. Questions stay private in your entry history.</small>
+                  </label>
+                  <div class="journal-form__actions">
+                    <button type="submit" data-journal-save>Save Entry</button>
+                    <button class="card-action" type="button" data-journal-cancel>Cancel</button>
+                  </div>
+                </form>
+
+                <div class="journal-list" data-journal-list aria-live="polite"></div>
+
+                <div class="journal-pagination" data-journal-pagination hidden>
+                  <span class="journal-pagination__summary" data-journal-pagination-summary>Showing 0-0 of 0 entries</span>
+                  <div class="journal-pagination__controls" data-journal-pagination-controls aria-label="Journal entry pages"></div>
                 </div>
 
-                <div class="journal-preview-grid">
-                  <article class="journal-preview-card">
-                    <div>
-                      <h3>Month view will group entries by week.</h3>
-                      <p>Weeks will reveal clusters of notes, saved readings, and reflection patterns.</p>
-                    </div>
-                    <div class="journal-month-row">
-                      <div class="journal-month-week">
-                        <span class="journal-month-chip">Week 1</span>
-                        <div class="journal-month-dots" aria-hidden="true">
-                          <span></span>
-                          <span class="is-muted"></span>
-                          <span></span>
-                          <span class="is-muted"></span>
-                        </div>
-                      </div>
-                      <div class="journal-month-week">
-                        <span class="journal-month-chip">Week 2</span>
-                        <div class="journal-month-dots" aria-hidden="true">
-                          <span class="is-muted"></span>
-                          <span></span>
-                          <span class="is-muted"></span>
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-
-                  <article class="journal-preview-card">
-                    <div>
-                      <h3>Year view will gather entries by month.</h3>
-                      <p>A quieter way to see the shape of your year.</p>
-                    </div>
-                    <ul class="journal-year-list">
-                      <li class="journal-year-row">January <span>0 entries</span></li>
-                      <li class="journal-year-row">February <span>Coming soon</span></li>
-                      <li class="journal-year-row">March <span>0 entries</span></li>
-                    </ul>
-                  </article>
-                </div>
-
-                <div class="journal-empty-state">
-                  <h3>Your journal is still quiet.</h3>
-                  <p>Soon, this space will hold the thoughts you choose to keep.</p>
+                <div class="journal-empty-state" data-journal-empty hidden>
+                  <h3>No reflections found yet.</h3>
+                  <p>Write your first reflection when you are ready.</p>
+                  <a class="button-link" href="journal.html">Write New Entry</a>
                 </div>
               </div>
             </section>
+
+            <div class="journal-entry-view" data-journal-view hidden aria-live="polite">
+              <button class="journal-entry-view__backdrop" type="button" data-journal-view-backdrop aria-label="Close journal entry view"></button>
+              <article class="journal-entry-view__dialog" role="dialog" aria-modal="true" aria-labelledby="journal-view-title">
+                <div class="journal-entry-view__header">
+                  <div>
+                    <div class="journal-entry-view__meta" data-journal-view-meta></div>
+                    <h3 id="journal-view-title" data-journal-view-title>Journal entry</h3>
+                  </div>
+                  <button class="card-action" type="button" data-journal-view-close>Close</button>
+                </div>
+                <div class="journal-entry-view__chips" data-journal-view-chips></div>
+                <div class="journal-entry-view__content" data-journal-view-content></div>
+              </article>
+            </div>
 
             <section class="account-section panel settings-section" data-account-section="account-settings" hidden aria-label="Account Settings">
                 <div class="settings-card">

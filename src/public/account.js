@@ -24,8 +24,14 @@ const accountSections = Array.from(document.querySelectorAll('[data-account-sect
 const accountNav = document.querySelector('[data-account-nav]');
 const accountNavToggle = document.querySelector('[data-account-nav-toggle]');
 const savedReadingsList = document.querySelector('[data-saved-readings-list]');
+const savedReadingCountValue = document.querySelector('[data-account-saved-reading-count]');
 const artifactCountValue = document.querySelector('[data-account-artifact-count]');
 const roomCountValue = document.querySelector('[data-account-room-count]');
+const journalCountValue = document.querySelector('[data-account-journal-count]');
+const activityTitle = document.querySelector('[data-account-activity-title]');
+const activityList = document.querySelector('[data-account-activity-list]');
+const reflectionTitle = document.querySelector('[data-account-reflection-title]');
+const reflectionBody = document.querySelector('[data-account-reflection-body]');
 const zodiacValue = document.querySelector('[data-account-zodiac]');
 const zodiacIcon = document.querySelector('[data-account-zodiac-icon]');
 const zodiacLabel = document.querySelector('[data-account-zodiac-label]');
@@ -36,19 +42,55 @@ const zodiacPreview = document.querySelector('[data-zodiac-preview]');
 const zodiacDates = document.querySelector('[data-zodiac-dates]');
 const birthdayInput = document.querySelector('[data-birthday-input]');
 const settingsZodiacImage = document.querySelector('[data-settings-zodiac-image]');
-const journalNewEntryButton = document.querySelector('[data-journal-new-entry]');
 const journalStatus = document.querySelector('[data-journal-status]');
+const journalForm = document.querySelector('[data-journal-form]');
+const journalSaveButton = document.querySelector('[data-journal-save]');
+const journalCancelButton = document.querySelector('[data-journal-cancel]');
+const journalList = document.querySelector('[data-journal-list]');
+const journalEmptyState = document.querySelector('[data-journal-empty]');
+const journalFilterButtons = Array.from(document.querySelectorAll('[data-journal-filter]'));
+const journalView = document.querySelector('[data-journal-view]');
+const journalViewMeta = document.querySelector('[data-journal-view-meta]');
+const journalViewTitle = document.querySelector('[data-journal-view-title]');
+const journalViewChips = document.querySelector('[data-journal-view-chips]');
+const journalViewContent = document.querySelector('[data-journal-view-content]');
+const journalViewCloseButton = document.querySelector('[data-journal-view-close]');
+const journalViewBackdrop = document.querySelector('[data-journal-view-backdrop]');
+const journalPagination = document.querySelector('[data-journal-pagination]');
+const journalPaginationSummary = document.querySelector('[data-journal-pagination-summary]');
+const journalPaginationControls = document.querySelector('[data-journal-pagination-controls]');
+const journalFilterControls = document.querySelector('[data-journal-filter-controls]');
 
 let savedReadingsLoaded = false;
 let savedReadingsCache = [];
 let activeReadingFilter = 'all';
+let journalEntriesLoaded = false;
+let journalEntriesCache = [];
+let activeJournalFilter = 'all';
+let editingJournalEntryId = '';
+let activeJournalPage = 1;
+let journalPageSize = 10;
+let journalTotalEntries = 0;
+let journalFilterDatesLoaded = false;
+let journalFilterDateValues = [];
+let activeJournalWeekStart = getStartOfWeek(new Date());
+let activeJournalDay = '';
+let activeJournalMonth = '';
+let activeJournalYear = '';
+let overviewMetrics = {
+  savedReadings: 0,
+  artifacts: 0,
+  journals: 0,
+};
 let activeUser = null;
 let activeProfile = null;
 let activeAvatarUrl = '';
 let avatarStatusClearTimer = null;
 let profileStatusClearTimer = null;
+let journalStatusClearTimer = null;
 
 const avatarBucketName = 'avatars';
+const journalEntrySelectColumns = 'id, user_id, title, body, check_in, entry_date, mood_key, mood, tags, prompt, guided_answers, mode, source_type, source_reading_id, linked_reading_id, reflection_type, metadata, created_at, updated_at';
 const maxAvatarInputFileSize = 8 * 1024 * 1024;
 const targetAvatarUploadSize = 2 * 1024 * 1024;
 const maxAvatarImageSide = 800;
@@ -712,7 +754,7 @@ function toTitleLabel(value, fallback = 'Unknown') {
   }
 
   const labels = {
-    blood_moon: 'Blood Moon',
+    bloodmoon: 'Blood Moon',
     blue_moon: 'Blue Moon',
     sun: 'Sun',
     moon: 'Moon',
@@ -722,9 +764,14 @@ function toTitleLabel(value, fallback = 'Unknown') {
     standard: 'Standard',
   };
   const normalized = String(value).trim();
+  const compactNormalized = normalized.toLowerCase().replace(/[\s_-]+/g, '');
 
   if (labels[normalized]) {
     return labels[normalized];
+  }
+
+  if (labels[compactNormalized]) {
+    return labels[compactNormalized];
   }
 
   return normalized
@@ -1033,14 +1080,14 @@ async function loadSavedReadings() {
 
 async function loadArtifactCount() {
   if (!artifactCountValue || !activeUser) {
-    return;
+    return 0;
   }
 
   const supabase = getSupabaseClient();
 
   if (!supabase) {
     artifactCountValue.textContent = 'Soon';
-    return;
+    return 0;
   }
 
   artifactCountValue.textContent = '...';
@@ -1050,29 +1097,1127 @@ async function loadArtifactCount() {
     .select('artifact_key', { count: 'exact', head: true })
     .eq('user_id', activeUser.id);
 
-  artifactCountValue.textContent = error ? 'Soon' : String(count || 0);
+  if (error) {
+    console.error('Artifact count load failed:', error);
+    artifactCountValue.textContent = 'Soon';
+    return 0;
+  }
+
+  overviewMetrics.artifacts = count || 0;
+  artifactCountValue.textContent = String(count || 0);
+  return count || 0;
 }
 
 async function loadRoomCount() {
-  if (!roomCountValue || !activeUser) {
+  if (!roomCountValue) {
+    return;
+  }
+
+  roomCountValue.textContent = 'Soon';
+}
+
+async function loadSavedReadingCount() {
+  if (!savedReadingCountValue || !activeUser) {
+    return 0;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    savedReadingCountValue.textContent = 'Soon';
+    return 0;
+  }
+
+  savedReadingCountValue.textContent = '...';
+
+  const { count, error } = await supabase
+    .from('user_readings')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', activeUser.id)
+    .eq('is_saved', true);
+
+  if (error) {
+    console.error('Saved reading count load failed:', error);
+    savedReadingCountValue.textContent = 'Soon';
+    return 0;
+  }
+
+  overviewMetrics.savedReadings = count || 0;
+  savedReadingCountValue.textContent = String(count || 0);
+  return count || 0;
+}
+
+function setJournalStatus(message, type = '') {
+  if (!journalStatus) {
+    return;
+  }
+
+  if (journalStatusClearTimer) {
+    window.clearTimeout(journalStatusClearTimer);
+    journalStatusClearTimer = null;
+  }
+
+  journalStatus.textContent = message;
+  journalStatus.classList.toggle('is-error', type === 'error');
+  journalStatus.classList.toggle('is-success', type === 'success');
+
+  if (message && type !== 'error') {
+    journalStatusClearTimer = window.setTimeout(() => {
+      setJournalStatus('');
+    }, 3200);
+  }
+}
+
+function getTodayInputValue() {
+  const date = new Date();
+
+  return getDateInputValue(date);
+}
+
+function getDateInputValue(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function parseEntryDate(value) {
+  const match = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) {
+    return null;
+  }
+
+  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatEntryDate(value) {
+  const date = parseEntryDate(value) || new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return 'Unknown date';
+  }
+
+  return new Intl.DateTimeFormat('en', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date);
+}
+
+function getStartOfWeek(date) {
+  const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  start.setDate(start.getDate() - start.getDay());
+
+  return start;
+}
+
+function addDays(date, dayCount) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + dayCount);
+
+  return next;
+}
+
+function getMonthInputValue(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function getEntryMonthKey(value) {
+  const date = parseEntryDate(value);
+
+  return date ? getMonthInputValue(date) : '';
+}
+
+function getEntryYearKey(value) {
+  const date = parseEntryDate(value);
+
+  return date ? String(date.getFullYear()) : '';
+}
+
+function formatMonthLabel(monthKey) {
+  const match = String(monthKey || '').match(/^(\d{4})-(\d{2})$/);
+
+  if (!match) {
+    return 'Unknown month';
+  }
+
+  return new Intl.DateTimeFormat('en', {
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(Number(match[1]), Number(match[2]) - 1, 1));
+}
+
+function formatWeekRangeLabel(startDate) {
+  const endDate = addDays(startDate, 6);
+  const sameMonth = startDate.getMonth() === endDate.getMonth();
+  const startLabel = new Intl.DateTimeFormat('en', {
+    month: 'short',
+    day: 'numeric',
+  }).format(startDate);
+  const endLabel = new Intl.DateTimeFormat('en', {
+    month: sameMonth ? undefined : 'short',
+    day: 'numeric',
+    year: startDate.getFullYear() === endDate.getFullYear() ? undefined : 'numeric',
+  }).format(endDate);
+
+  return `Week of ${startLabel} - ${endLabel}`;
+}
+
+function getJournalFilterWindow(filterName) {
+  if (filterName === 'week') {
+    const start = new Date(activeJournalWeekStart);
+    const end = addDays(start, 7);
+
+    if (activeJournalDay) {
+      const selectedDay = parseEntryDate(activeJournalDay);
+
+      if (selectedDay) {
+        return { start: selectedDay, end: addDays(selectedDay, 1) };
+      }
+    }
+
+    return { start, end };
+  }
+
+  if (filterName === 'month') {
+    const monthKey = activeJournalMonth || getMonthInputValue(new Date());
+    const match = monthKey.match(/^(\d{4})-(\d{2})$/);
+
+    if (!match) {
+      return null;
+    }
+
+    const start = new Date(Number(match[1]), Number(match[2]) - 1, 1);
+    const end = new Date(start.getFullYear(), start.getMonth() + 1, 1);
+
+    return { start, end };
+  }
+
+  if (filterName === 'year') {
+    const year = Number(activeJournalYear || new Date().getFullYear());
+
+    if (!year) {
+      return null;
+    }
+
+    const start = new Date(year, 0, 1);
+    const end = new Date(year + 1, 0, 1);
+
+    return { start, end };
+  }
+
+  return null;
+}
+
+function applyJournalEntryFilters(query) {
+  const filterWindow = getJournalFilterWindow(activeJournalFilter);
+
+  if (filterWindow) {
+    return query
+      .gte('entry_date', getDateInputValue(filterWindow.start))
+      .lt('entry_date', getDateInputValue(filterWindow.end));
+  }
+
+  if (activeJournalFilter === 'reading') {
+    return query.or('reflection_type.eq.reading_reflection,source_type.eq.reading,source_reading_id.not.is.null,linked_reading_id.not.is.null');
+  }
+
+  if (activeJournalFilter === 'shadow') {
+    return query.or('mode.eq.bloodmoon,mode.eq.blood_moon,reflection_type.eq.shadow_reflection,mood.ilike.%shadow%,mood_key.ilike.%shadow%');
+  }
+
+  return query;
+}
+
+function getJournalFilterEmptyTitle() {
+  if (activeJournalFilter === 'week') {
+    return activeJournalDay ? 'No reflections found for this day.' : 'No reflections found for this week.';
+  }
+
+  if (activeJournalFilter === 'month') {
+    return 'No reflections found for this month.';
+  }
+
+  if (activeJournalFilter === 'year') {
+    return 'No reflections found for this year.';
+  }
+
+  if (activeJournalFilter === 'reading') {
+    return 'No reading reflections found yet.';
+  }
+
+  if (activeJournalFilter === 'shadow') {
+    return 'No shadow reflections found yet.';
+  }
+
+  return 'No reflections found yet.';
+}
+
+function getJournalEntryDateCounts() {
+  return journalFilterDateValues.reduce((counts, entryDate) => {
+    counts.set(entryDate, (counts.get(entryDate) || 0) + 1);
+    return counts;
+  }, new Map());
+}
+
+function getAvailableJournalMonths() {
+  return [...new Set(journalFilterDateValues.map(getEntryMonthKey).filter(Boolean))];
+}
+
+function getAvailableJournalYears() {
+  return [...new Set(journalFilterDateValues.map(getEntryYearKey).filter(Boolean))];
+}
+
+function ensureJournalDateSelections() {
+  const months = getAvailableJournalMonths();
+  const years = getAvailableJournalYears();
+
+  if (!activeJournalMonth || (months.length && !months.includes(activeJournalMonth))) {
+    activeJournalMonth = months[0] || getMonthInputValue(new Date());
+  }
+
+  if (!activeJournalYear || (years.length && !years.includes(activeJournalYear))) {
+    activeJournalYear = years[0] || String(new Date().getFullYear());
+  }
+}
+
+function renderJournalFilterControls() {
+  if (!journalFilterControls) {
+    return;
+  }
+
+  if (!['week', 'month', 'year'].includes(activeJournalFilter)) {
+    journalFilterControls.hidden = true;
+    journalFilterControls.innerHTML = '';
+    return;
+  }
+
+  ensureJournalDateSelections();
+  journalFilterControls.hidden = false;
+
+  if (activeJournalFilter === 'week') {
+    const dateCounts = getJournalEntryDateCounts();
+    const days = Array.from({ length: 7 }, (_, index) => addDays(activeJournalWeekStart, index));
+
+    journalFilterControls.innerHTML = `
+      <div class="journal-filter-controls__bar">
+        <button class="journal-filter-controls__button" type="button" data-journal-week-nav="previous">Previous Week</button>
+        <p class="journal-filter-controls__label">${escapeHtml(formatWeekRangeLabel(activeJournalWeekStart))}</p>
+        <button class="journal-filter-controls__button" type="button" data-journal-week-nav="next">Next Week</button>
+      </div>
+      <div class="journal-day-chips" aria-label="Filter selected week by day">
+        ${days.map((day) => {
+          const dateKey = getDateInputValue(day);
+          const label = new Intl.DateTimeFormat('en', { weekday: 'short' }).format(day);
+          const count = dateCounts.get(dateKey) || 0;
+
+          return `
+            <button class="journal-day-chip${activeJournalDay === dateKey ? ' is-active' : ''}" type="button" data-journal-day="${escapeHtml(dateKey)}" aria-pressed="${activeJournalDay === dateKey ? 'true' : 'false'}">
+              ${escapeHtml(label)}<span>${count}</span>
+            </button>
+          `;
+        }).join('')}
+      </div>
+    `;
+    return;
+  }
+
+  if (activeJournalFilter === 'month') {
+    const months = getAvailableJournalMonths();
+
+    journalFilterControls.innerHTML = `
+      <div class="journal-filter-controls__bar">
+        <label class="journal-filter-controls__label" for="journal-month-filter">Month</label>
+        <select class="journal-filter-select" id="journal-month-filter" data-journal-month-select>
+          ${(months.length ? months : [activeJournalMonth]).map((monthKey) => `
+            <option value="${escapeHtml(monthKey)}" ${monthKey === activeJournalMonth ? 'selected' : ''}>${escapeHtml(formatMonthLabel(monthKey))}</option>
+          `).join('')}
+        </select>
+      </div>
+    `;
+    return;
+  }
+
+  const years = getAvailableJournalYears();
+
+  journalFilterControls.innerHTML = `
+    <div class="journal-filter-controls__bar">
+      <label class="journal-filter-controls__label" for="journal-year-filter">Year</label>
+      <select class="journal-filter-select" id="journal-year-filter" data-journal-year-select>
+        ${(years.length ? years : [activeJournalYear]).map((year) => `
+          <option value="${escapeHtml(year)}" ${year === activeJournalYear ? 'selected' : ''}>${escapeHtml(year)}</option>
+        `).join('')}
+      </select>
+    </div>
+  `;
+}
+
+function normalizeJournalTags(value) {
+  if (Array.isArray(value)) {
+    return value
+      .map((tag) => String(tag || '').trim())
+      .filter(Boolean)
+      .slice(0, 12);
+  }
+
+  return String(value || '')
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter(Boolean)
+    .slice(0, 12);
+}
+
+function getJournalGuidedAnswers(value) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((item) => {
+      if (typeof item === 'string') {
+        return { question: '', answer: item.trim() };
+      }
+
+      return {
+        question: String(item?.question || '').trim(),
+        answer: String(item?.answer || '').trim(),
+      };
+    })
+    .filter((item) => item.answer);
+}
+
+function getGuidedAnswersEditText(value) {
+  return getJournalGuidedAnswers(value).map((item) => item.answer).join('\n\n');
+}
+
+function parseGuidedAnswersText(value, existingAnswers = []) {
+  const existing = getJournalGuidedAnswers(existingAnswers);
+
+  return String(value || '')
+    .split(/\n{2,}/)
+    .map((answer) => answer.trim())
+    .filter(Boolean)
+    .map((answer, index) => ({
+      question: existing[index]?.question || 'Guided note',
+      answer,
+    }));
+}
+
+function getJournalBodyPreviewSource(entry) {
+  const text = String(entry?.body || '').replace(/\r\n/g, '\n').trim();
+
+  if (!text) {
+    return '';
+  }
+
+  const guidedMarkerMatch = text.match(/\n{0,2}(Guided Reflection|Shadow Reflection)\n/i);
+
+  if (!guidedMarkerMatch) {
+    return text;
+  }
+
+  return text.slice(0, guidedMarkerMatch.index).trim();
+}
+
+function getJournalPreviewText(entry) {
+  const guidedAnswers = getJournalGuidedAnswers(entry?.guided_answers);
+  const bodyText = getJournalBodyPreviewSource(entry).replace(/\s+/g, ' ').trim();
+
+  if (!bodyText && guidedAnswers.length) {
+    return `Guided reflection with ${guidedAnswers.length} answered ${guidedAnswers.length === 1 ? 'question' : 'questions'}.`;
+  }
+
+  if (bodyText.length <= 160) {
+    return bodyText || 'No details yet.';
+  }
+
+  return `${bodyText.slice(0, 157).trim()}...`;
+}
+
+function renderJournalCardBadges(entry) {
+  const mood = entry.mood ? toTitleLabel(entry.mood, '') : entry.mood_key ? toTitleLabel(entry.mood_key, '') : '';
+  const mode = entry.mode ? toTitleLabel(entry.mode, '') : '';
+  const reflectionType = entry.reflection_type ? toTitleLabel(entry.reflection_type, '') : '';
+  const tags = normalizeJournalTags(entry.tags);
+  const visibleTags = tags.slice(0, 3);
+  const remainingTagCount = Math.max(0, tags.length - visibleTags.length);
+  const badges = [
+    mood ? { label: mood, type: 'mood' } : null,
+    mode ? { label: mode, type: 'mode' } : null,
+    reflectionType ? { label: reflectionType, type: 'type' } : null,
+    ...visibleTags.map((tag) => ({ label: toTitleLabel(tag, tag), type: 'tag' })),
+    remainingTagCount ? { label: `+${remainingTagCount} more`, type: 'more' } : null,
+  ].filter(Boolean);
+
+  if (!badges.length) {
+    return '';
+  }
+
+  return `
+    <div class="journal-entry-card__chips">
+      ${badges.map((badge) => `<span class="journal-entry-card__chip journal-entry-card__chip--${escapeHtml(badge.type)}">${escapeHtml(badge.label)}</span>`).join('')}
+    </div>
+  `;
+}
+
+function hideJournalEntryView() {
+  if (!journalView) {
+    return;
+  }
+
+  journalView.hidden = true;
+  document.body.classList.remove('journal-modal-open');
+  journalViewMeta?.replaceChildren();
+  journalViewChips?.replaceChildren();
+  journalViewContent?.replaceChildren();
+}
+
+function appendJournalViewSection(label, value) {
+  const text = String(value || '').trim();
+
+  if (!text || !journalViewContent) {
+    return;
+  }
+
+  const section = document.createElement('div');
+  const sectionLabel = document.createElement('strong');
+  const paragraph = document.createElement('p');
+
+  section.className = 'journal-entry-view__section';
+  sectionLabel.textContent = label;
+  paragraph.textContent = text;
+  section.append(sectionLabel, paragraph);
+  journalViewContent.append(section);
+}
+
+function getJournalAttachedReadingSummary(entry) {
+  const attachedReading = entry?.metadata?.attached_reading;
+
+  if (!attachedReading || typeof attachedReading !== 'object') {
+    return '';
+  }
+
+  const summaryParts = [
+    attachedReading.reader_name ? `Reader: ${attachedReading.reader_name}` : '',
+    attachedReading.spread_label || attachedReading.spread_type
+      ? `Spread: ${toTitleLabel(attachedReading.spread_label || attachedReading.spread_type, '')}`
+      : '',
+    attachedReading.mode_key ? `Mode: ${toTitleLabel(attachedReading.mode_key, '')}` : '',
+    attachedReading.reading_date ? `Reading date: ${formatDateTime(attachedReading.reading_date)}` : '',
+  ].filter(Boolean);
+  const cards = Array.isArray(attachedReading.cards) ? attachedReading.cards : [];
+  const cardSummary = cards
+    .map((card, index) => {
+      const title = String(card?.title || '').trim();
+      const positionLabel = String(card?.positionLabel || '').trim();
+
+      if (!title) {
+        return '';
+      }
+
+      return positionLabel ? `${positionLabel}: ${title}` : title || `Card ${index + 1}`;
+    })
+    .filter(Boolean);
+
+  if (cardSummary.length) {
+    summaryParts.push(`Cards: ${cardSummary.join(' · ')}`);
+  }
+
+  return summaryParts.join('\n');
+}
+
+function showJournalEntryView(entry) {
+  if (!journalView || !journalViewMeta || !journalViewTitle || !journalViewChips || !journalViewContent) {
+    return;
+  }
+
+  const mood = entry.mood ? toTitleLabel(entry.mood, '') : entry.mood_key ? toTitleLabel(entry.mood_key, '') : '';
+  const tags = normalizeJournalTags(entry.tags).slice(0, 8);
+  const chips = [
+    mood,
+    ...tags,
+    entry.mode ? toTitleLabel(entry.mode, '') : '',
+    entry.reflection_type ? toTitleLabel(entry.reflection_type, '') : '',
+  ].filter(Boolean);
+  const updatedLabel = entry.updated_at && entry.updated_at !== entry.created_at
+    ? `Updated ${formatDateTime(entry.updated_at)}`
+    : '';
+  const guidedAnswers = getJournalGuidedAnswers(entry.guided_answers);
+  const sourceReadingLabel = entry.source_reading_id || entry.linked_reading_id
+    ? 'Attached reading'
+    : entry.source_type && entry.source_type !== 'journal'
+      ? toTitleLabel(entry.source_type, '')
+      : '';
+
+  journalViewMeta.innerHTML = `
+    <span>${escapeHtml(formatEntryDate(entry.entry_date))}</span>
+    ${entry.created_at ? `<span>${escapeHtml(`Created ${formatDateTime(entry.created_at)}`)}</span>` : ''}
+    ${updatedLabel ? `<span>${escapeHtml(updatedLabel)}</span>` : ''}
+  `;
+  journalViewTitle.textContent = entry.title || 'Untitled Entry';
+  journalViewChips.innerHTML = chips.map((chip) => `<span>${escapeHtml(chip)}</span>`).join('');
+  journalViewContent.replaceChildren();
+
+  appendJournalViewSection('Source', sourceReadingLabel);
+  appendJournalViewSection('Attached Reading', getJournalAttachedReadingSummary(entry));
+  appendJournalViewSection('Check-in', entry.check_in);
+  appendJournalViewSection('Prompt', entry.prompt || entry.metadata?.prompt);
+  appendJournalViewSection('Reflection', getJournalBodyPreviewSource(entry));
+
+  if (guidedAnswers.length) {
+    const guidedWrapper = document.createElement('div');
+
+    guidedWrapper.className = 'journal-entry-view__guided';
+    guidedAnswers.forEach((item) => {
+      const section = document.createElement('div');
+      const question = document.createElement('strong');
+      const answer = document.createElement('p');
+
+      section.className = 'journal-entry-view__section';
+      question.textContent = item.question || 'Guided answer';
+      answer.textContent = item.answer;
+      section.append(question, answer);
+      guidedWrapper.append(section);
+    });
+    journalViewContent.append(guidedWrapper);
+  }
+
+  if (!journalViewContent.children.length) {
+    appendJournalViewSection('Entry', 'No details yet.');
+  }
+
+  resetJournalForm();
+  journalView.hidden = false;
+  document.body.classList.add('journal-modal-open');
+  journalViewCloseButton?.focus({ preventScroll: true });
+}
+
+function getJournalTotalPages() {
+  return Math.max(1, Math.ceil(journalTotalEntries / journalPageSize));
+}
+
+function getJournalPageNumbers() {
+  const totalPages = getJournalTotalPages();
+  const maxButtons = 7;
+  const halfWindow = Math.floor(maxButtons / 2);
+  let start = Math.max(1, activeJournalPage - halfWindow);
+  const end = Math.min(totalPages, start + maxButtons - 1);
+
+  start = Math.max(1, end - maxButtons + 1);
+
+  return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+}
+
+function renderJournalPagination() {
+  if (!journalPagination || !journalPaginationSummary || !journalPaginationControls) {
+    return;
+  }
+
+  const hasEntries = journalTotalEntries > 0;
+  const from = hasEntries ? (activeJournalPage - 1) * journalPageSize + 1 : 0;
+  const to = hasEntries ? Math.min(from + journalEntriesCache.length - 1, journalTotalEntries) : 0;
+  const totalPages = getJournalTotalPages();
+
+  journalPagination.hidden = !hasEntries;
+  journalPaginationSummary.textContent = `Showing ${from}-${to} of ${journalTotalEntries} entries`;
+  journalPaginationControls.replaceChildren();
+
+  if (!hasEntries) {
+    return;
+  }
+
+  const previousButton = document.createElement('button');
+  const nextButton = document.createElement('button');
+
+  previousButton.className = 'journal-pagination__button';
+  previousButton.type = 'button';
+  previousButton.textContent = 'Previous';
+  previousButton.disabled = activeJournalPage <= 1;
+  previousButton.addEventListener('click', () => {
+    if (activeJournalPage > 1) {
+      activeJournalPage -= 1;
+      loadJournalEntries({ force: true });
+    }
+  });
+  journalPaginationControls.append(previousButton);
+
+  getJournalPageNumbers().forEach((pageNumber) => {
+    const pageButton = document.createElement('button');
+
+    pageButton.className = `journal-pagination__button${pageNumber === activeJournalPage ? ' is-active' : ''}`;
+    pageButton.type = 'button';
+    pageButton.textContent = String(pageNumber);
+    pageButton.setAttribute('aria-label', `Page ${pageNumber}`);
+    pageButton.setAttribute('aria-current', pageNumber === activeJournalPage ? 'page' : 'false');
+    pageButton.disabled = pageNumber === activeJournalPage;
+    pageButton.addEventListener('click', () => {
+      activeJournalPage = pageNumber;
+      loadJournalEntries({ force: true });
+    });
+    journalPaginationControls.append(pageButton);
+  });
+
+  nextButton.className = 'journal-pagination__button';
+  nextButton.type = 'button';
+  nextButton.textContent = 'Next';
+  nextButton.disabled = activeJournalPage >= totalPages;
+  nextButton.addEventListener('click', () => {
+    if (activeJournalPage < totalPages) {
+      activeJournalPage += 1;
+      loadJournalEntries({ force: true });
+    }
+  });
+  journalPaginationControls.append(nextButton);
+}
+
+function updateJournalCountDisplay(count = journalEntriesCache.length) {
+  overviewMetrics.journals = count || 0;
+
+  if (journalCountValue) {
+    journalCountValue.textContent = String(count || 0);
+  }
+}
+
+function getActivityTimestamp(value) {
+  const date = new Date(value || 0);
+
+  return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+}
+
+function getArtifactActivityLabel(artifact) {
+  return toTitleLabel(artifact?.artifact_key || 'artifact', 'Artifact');
+}
+
+function renderOverviewActivityItems(items) {
+  if (!activityTitle || !activityList) {
+    return;
+  }
+
+  if (!items.length) {
+    activityTitle.textContent = 'Your Archive is listening.';
+    activityList.innerHTML = `
+      <li>
+        <span>
+          <strong>Your Archive is listening.</strong>
+          <small>Saved readings, artifacts, and reflections will gather here as your path grows.</small>
+        </span>
+      </li>
+    `;
+    return;
+  }
+
+  activityTitle.textContent = 'Recent Activity';
+  activityList.innerHTML = items.slice(0, 10).map((item) => `
+    <li>
+      <span>
+        <strong>${escapeHtml(item.title)}</strong>
+        <small>${escapeHtml(item.detail)}</small>
+      </span>
+    </li>
+  `).join('');
+}
+
+function chooseOverviewReflectionMessage({ journals = [], artifacts = [], savedReadings = [] } = {}) {
+  const today = getTodayInputValue();
+  const isEntryToday = (entry) => (
+    entry.entry_date === today
+    || String(entry.created_at || '').startsWith(today)
+  );
+  const isReadingReflection = (entry) => (
+    entry.reflection_type === 'reading_reflection'
+    || entry.source_type === 'reading'
+    || entry.source_reading_id
+    || entry.linked_reading_id
+  );
+  const isShadowReflection = (entry) => (
+    ['bloodmoon', 'blood_moon'].includes(String(entry.mode || '').toLowerCase())
+    || entry.reflection_type === 'shadow_reflection'
+    || /shadow/i.test(`${entry.mood || ''} ${entry.mood_key || ''}`)
+  );
+  const hasShadowToday = journals.some((entry) => isEntryToday(entry) && isShadowReflection(entry));
+  const hasReadingReflectionToday = journals.some((entry) => isEntryToday(entry) && isReadingReflection(entry));
+  const hasJournalToday = journals.some(isEntryToday);
+
+  if (hasShadowToday) {
+    return {
+      title: 'A shadow has been recorded.',
+      body: 'Not every truth arrives softly.',
+    };
+  }
+
+  if (hasReadingReflectionToday) {
+    return {
+      title: 'The cards followed you into the Archive.',
+      body: 'Some readings ask to be carried beyond the moment.',
+    };
+  }
+
+  if (hasJournalToday) {
+    return {
+      title: 'You left a reflection today.',
+      body: 'The Archive has received your words.',
+    };
+  }
+
+  if (artifacts.length || overviewMetrics.artifacts) {
+    return {
+      title: 'Something hidden has been recovered.',
+      body: 'Some doors remember who carries the keys.',
+    };
+  }
+
+  if (savedReadings.length || overviewMetrics.savedReadings) {
+    return {
+      title: 'A reading has been preserved.',
+      body: 'Return to it when the message begins to change shape.',
+    };
+  }
+
+  if (overviewMetrics.journals > 1 || journals.length > 1) {
+    return {
+      title: 'Your reflections are gathering.',
+      body: 'Small truths become easier to see when they return in patterns.',
+    };
+  }
+
+  return {
+    title: 'Begin gently.',
+    body: 'The Archive remembers every step, even the quiet ones.',
+  };
+}
+
+function renderOverviewReflection(message) {
+  if (!reflectionTitle || !reflectionBody) {
+    return;
+  }
+
+  reflectionTitle.textContent = message.title;
+  reflectionBody.textContent = message.body;
+}
+
+function renderJournalEntries() {
+  if (!journalList || !journalEmptyState) {
+    return;
+  }
+
+  renderJournalFilterControls();
+  journalFilterButtons.forEach((button) => {
+    const isActive = button.dataset.journalFilter === activeJournalFilter;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+
+  const entries = journalEntriesCache;
+
+  journalEmptyState.hidden = entries.length > 0;
+  const emptyTitle = journalEmptyState.querySelector('h3');
+
+  if (emptyTitle) {
+    emptyTitle.textContent = getJournalFilterEmptyTitle();
+  }
+
+  if (!entries.length) {
+    journalList.innerHTML = '';
+    renderJournalPagination();
+    return;
+  }
+
+  journalList.innerHTML = entries
+    .map((entry) => {
+      const updatedLabel = entry.updated_at && entry.updated_at !== entry.created_at
+        ? `Updated ${formatDateTime(entry.updated_at)}`
+        : `Created ${formatDateTime(entry.created_at)}`;
+
+      return `
+        <article class="journal-entry-card">
+          <div class="journal-entry-card__copy">
+            <div class="journal-entry-card__meta">
+              <span>${escapeHtml(formatEntryDate(entry.entry_date))}</span>
+              <span>${escapeHtml(updatedLabel)}</span>
+            </div>
+            <h3>${escapeHtml(entry.title || 'Untitled Entry')}</h3>
+            ${renderJournalCardBadges(entry)}
+            <p class="journal-entry-card__preview">${escapeHtml(getJournalPreviewText(entry))}</p>
+          </div>
+          <div class="journal-entry-card__actions">
+            <button class="card-action" type="button" data-journal-view-entry="${escapeHtml(entry.id)}">View</button>
+            <button class="card-action" type="button" data-journal-edit="${escapeHtml(entry.id)}">Edit</button>
+            <button class="card-action" type="button" data-journal-delete="${escapeHtml(entry.id)}">Delete</button>
+          </div>
+        </article>
+      `;
+    })
+    .join('');
+  renderJournalPagination();
+}
+
+function sortJournalEntries(entries) {
+  return [...entries].sort((firstEntry, secondEntry) => {
+    const firstTime = (parseEntryDate(firstEntry.entry_date) || new Date(firstEntry.created_at || 0)).getTime();
+    const secondTime = (parseEntryDate(secondEntry.entry_date) || new Date(secondEntry.created_at || 0)).getTime();
+
+    if (firstTime !== secondTime) {
+      return secondTime - firstTime;
+    }
+
+    return new Date(secondEntry.updated_at || secondEntry.created_at || 0).getTime()
+      - new Date(firstEntry.updated_at || firstEntry.created_at || 0).getTime();
+  });
+}
+
+function resetJournalForm() {
+  if (!journalForm) {
+    return;
+  }
+
+  editingJournalEntryId = '';
+  journalForm.reset();
+  journalForm.elements.entry_date.value = getTodayInputValue();
+  journalForm.hidden = true;
+  if (journalSaveButton) {
+    journalSaveButton.textContent = 'Save Entry';
+    journalSaveButton.disabled = false;
+  }
+}
+
+function showJournalForm(entry = null) {
+  if (!journalForm) {
+    return;
+  }
+
+  editingJournalEntryId = entry?.id || '';
+  hideJournalEntryView();
+  journalForm.hidden = false;
+  journalForm.elements.title.value = entry?.title || '';
+  journalForm.elements.entry_date.value = entry?.entry_date || getTodayInputValue();
+  journalForm.elements.mood.value = entry?.mood || entry?.mood_key || '';
+  journalForm.elements.check_in.value = entry?.check_in || '';
+  journalForm.elements.tags.value = normalizeJournalTags(entry?.tags).join(', ');
+  journalForm.elements.prompt.value = entry?.prompt || entry?.metadata?.prompt || '';
+  journalForm.elements.body.value = entry?.body || '';
+  journalForm.elements.guided_answers_text.value = getGuidedAnswersEditText(entry?.guided_answers);
+  if (journalSaveButton) {
+    journalSaveButton.textContent = 'Save Entry';
+  }
+  setJournalStatus('');
+  journalForm.elements.title.focus();
+}
+
+async function loadJournalCount() {
+  if (!journalCountValue || !activeUser) {
+    return 0;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    journalCountValue.textContent = 'Soon';
+    return 0;
+  }
+
+  journalCountValue.textContent = '...';
+
+  const { count, error } = await supabase
+    .from('user_journal_entries')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', activeUser.id);
+
+  if (error) {
+    console.error('Journal count load failed:', error);
+    journalCountValue.textContent = 'Soon';
+    return 0;
+  }
+
+  updateJournalCountDisplay(count || 0);
+  return count || 0;
+}
+
+async function loadOverviewActivity() {
+  if (!activeUser) {
     return;
   }
 
   const supabase = getSupabaseClient();
 
   if (!supabase) {
-    roomCountValue.textContent = 'Soon';
+    renderOverviewActivityItems([]);
+    renderOverviewReflection(chooseOverviewReflectionMessage());
     return;
   }
 
-  roomCountValue.textContent = '...';
+  const [readingsResponse, journalsResponse, artifactsResponse] = await Promise.all([
+    supabase
+      .from('user_readings')
+      .select('id, created_at, reader_name, mode_key, spread_type, card_count, is_saved, metadata')
+      .eq('user_id', activeUser.id)
+      .eq('is_saved', true)
+      .order('created_at', { ascending: false })
+      .limit(10),
+    supabase
+      .from('user_journal_entries')
+      .select('id, title, entry_date, created_at, updated_at, mode, source_type, source_reading_id, linked_reading_id, reflection_type, mood, mood_key')
+      .eq('user_id', activeUser.id)
+      .order('created_at', { ascending: false })
+      .limit(10),
+    supabase
+      .from('user_artifacts')
+      .select('artifact_key, unlocked_at, created_at, updated_at')
+      .eq('user_id', activeUser.id)
+      .order('unlocked_at', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false })
+      .limit(10),
+  ]);
 
-  const { count, error } = await supabase
-    .from('user_rooms')
-    .select('room_key', { count: 'exact', head: true })
-    .eq('user_id', activeUser.id);
+  if (readingsResponse.error) {
+    console.error('Recent saved readings activity load failed:', readingsResponse.error);
+  }
+  if (journalsResponse.error) {
+    console.error('Recent journal activity load failed:', journalsResponse.error);
+  }
+  if (artifactsResponse.error) {
+    console.error('Recent artifact activity load failed:', artifactsResponse.error);
+  }
 
-  roomCountValue.textContent = error ? 'Soon' : String(count || 0);
+  const savedReadings = readingsResponse.error ? [] : readingsResponse.data || [];
+  const journals = journalsResponse.error ? [] : journalsResponse.data || [];
+  const artifacts = artifactsResponse.error ? [] : artifactsResponse.data || [];
+  const activityItems = [
+    ...savedReadings.map((reading) => {
+      const detailParts = [
+        toTitleLabel(reading.mode_key || reading.metadata?.mode, ''),
+        toTitleLabel(reading.spread_type || reading.metadata?.spread?.key || reading.metadata?.spread, ''),
+        formatDateTime(reading.created_at),
+      ].filter(Boolean);
+
+      return {
+        timestamp: getActivityTimestamp(reading.created_at),
+        title: 'You saved a reading.',
+        detail: detailParts.join(' · ') || 'Saved reading',
+      };
+    }),
+    ...journals.map((entry) => {
+      const isReadingReflection = entry.reflection_type === 'reading_reflection'
+        || entry.source_type === 'reading'
+        || entry.source_reading_id
+        || entry.linked_reading_id;
+      const title = isReadingReflection
+        ? 'You wrote a reading reflection.'
+        : 'You wrote a journal reflection.';
+      const detailParts = [
+        entry.title || '',
+        formatDateTime(entry.created_at || entry.entry_date),
+      ].filter(Boolean);
+
+      return {
+        timestamp: getActivityTimestamp(entry.created_at || entry.entry_date),
+        title,
+        detail: detailParts.join(' · ') || 'Journal reflection',
+      };
+    }),
+    ...artifacts.map((artifact) => {
+      const activityDate = artifact.unlocked_at || artifact.created_at || artifact.updated_at;
+
+      return {
+        timestamp: getActivityTimestamp(activityDate),
+        title: 'You unlocked an artifact.',
+        detail: `${getArtifactActivityLabel(artifact)} · ${formatDateTime(activityDate)}`,
+      };
+    }),
+  ].sort((first, second) => second.timestamp - first.timestamp).slice(0, 10);
+
+  renderOverviewActivityItems(activityItems);
+  renderOverviewReflection(chooseOverviewReflectionMessage({ journals, artifacts, savedReadings }));
+}
+
+async function loadJournalFilterDates({ force = false } = {}) {
+  if (!activeUser || (journalFilterDatesLoaded && !force)) {
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from('user_journal_entries')
+    .select('entry_date')
+    .eq('user_id', activeUser.id)
+    .order('entry_date', { ascending: false })
+    .range(0, 999);
+
+  if (error) {
+    console.error('Journal filter dates load failed:', error);
+    return;
+  }
+
+  journalFilterDateValues = (data || [])
+    .map((entry) => entry.entry_date)
+    .filter(Boolean);
+  journalFilterDatesLoaded = true;
+  ensureJournalDateSelections();
+}
+
+async function loadJournalEntries({ force = false } = {}) {
+  if (!journalList || !activeUser || (journalEntriesLoaded && !force)) {
+    renderJournalEntries();
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setJournalStatus('Journal entries are not available in this environment.', 'error');
+    return;
+  }
+
+  await loadJournalFilterDates({ force });
+
+  journalList.innerHTML = '<p class="saved-readings__state">Loading journal entries...</p>';
+  journalEmptyState.hidden = true;
+  if (journalPagination) {
+    journalPagination.hidden = true;
+  }
+
+  const from = (activeJournalPage - 1) * journalPageSize;
+  const to = from + journalPageSize - 1;
+
+  let query = supabase
+    .from('user_journal_entries')
+    .select(journalEntrySelectColumns, { count: 'exact' })
+    .eq('user_id', activeUser.id)
+    .order('entry_date', { ascending: false })
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
+  query = applyJournalEntryFilters(query);
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    console.error('Journal entries load failed:', error);
+    journalList.innerHTML = '';
+    journalEmptyState.hidden = true;
+    setJournalStatus('We could not load your journal entries. Please try again.', 'error');
+    return;
+  }
+
+  journalEntriesLoaded = true;
+  journalEntriesCache = data || [];
+  journalTotalEntries = Number(count || 0);
+
+  if (!journalEntriesCache.length && journalTotalEntries > 0 && activeJournalPage > getJournalTotalPages()) {
+    activeJournalPage = getJournalTotalPages();
+    await loadJournalEntries({ force: true });
+    return;
+  }
+
+  renderJournalEntries();
 }
 
 function showError(message) {
@@ -1101,6 +2246,10 @@ function showAccountSection(sectionName) {
 
   if (sectionName === 'past-readings') {
     loadSavedReadings();
+  }
+
+  if (sectionName === 'journal-entries') {
+    loadJournalEntries();
   }
 }
 
@@ -1142,11 +2291,21 @@ async function loadAccount() {
   adminLink.hidden = !isAdmin;
   loadingPanel.hidden = true;
   accountPanel.hidden = false;
-  loadArtifactCount();
+  Promise.all([
+    loadSavedReadingCount(),
+    loadArtifactCount(),
+    loadJournalCount(),
+  ]).then(() => {
+    loadOverviewActivity();
+  });
   loadRoomCount();
 
   if (getAccountSectionFromHash() === 'past-readings') {
     loadSavedReadings();
+  }
+
+  if (getAccountSectionFromHash() === 'journal-entries') {
+    loadJournalEntries();
   }
 }
 
@@ -1470,18 +2629,260 @@ profileForm?.addEventListener('submit', async (event) => {
   showProfileSavedStatus();
 });
 
-journalNewEntryButton?.addEventListener('click', () => {
-  if (!journalStatus) {
+journalCancelButton?.addEventListener('click', () => {
+  resetJournalForm();
+  setJournalStatus('');
+});
+
+journalViewCloseButton?.addEventListener('click', () => {
+  hideJournalEntryView();
+});
+
+journalViewBackdrop?.addEventListener('click', () => {
+  hideJournalEntryView();
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && journalView && !journalView.hidden) {
+    hideJournalEntryView();
+  }
+});
+
+journalFilterButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    activeJournalFilter = button.dataset.journalFilter || 'all';
+    activeJournalPage = 1;
+    activeJournalDay = '';
+    if (activeJournalFilter === 'week' && !activeJournalWeekStart) {
+      activeJournalWeekStart = getStartOfWeek(new Date());
+    }
+    ensureJournalDateSelections();
+    journalEntriesLoaded = false;
+    hideJournalEntryView();
+    loadJournalEntries({ force: true });
+  });
+});
+
+journalFilterControls?.addEventListener('click', (event) => {
+  const weekNavButton = event.target.closest('[data-journal-week-nav]');
+  const dayButton = event.target.closest('[data-journal-day]');
+
+  if (weekNavButton) {
+    activeJournalWeekStart = addDays(activeJournalWeekStart, weekNavButton.dataset.journalWeekNav === 'next' ? 7 : -7);
+    activeJournalDay = '';
+    activeJournalPage = 1;
+    journalEntriesLoaded = false;
+    hideJournalEntryView();
+    loadJournalEntries({ force: true });
     return;
   }
 
-  journalStatus.textContent = 'Journal writing is coming soon.';
+  if (dayButton) {
+    activeJournalDay = activeJournalDay === dayButton.dataset.journalDay ? '' : dayButton.dataset.journalDay;
+    activeJournalPage = 1;
+    journalEntriesLoaded = false;
+    hideJournalEntryView();
+    loadJournalEntries({ force: true });
+  }
+});
 
-  window.setTimeout(() => {
-    if (journalStatus.textContent === 'Journal writing is coming soon.') {
-      journalStatus.textContent = '';
+journalFilterControls?.addEventListener('change', (event) => {
+  const monthSelect = event.target.closest('[data-journal-month-select]');
+  const yearSelect = event.target.closest('[data-journal-year-select]');
+
+  if (monthSelect) {
+    activeJournalMonth = monthSelect.value;
+  } else if (yearSelect) {
+    activeJournalYear = yearSelect.value;
+  } else {
+    return;
+  }
+
+  activeJournalPage = 1;
+  journalEntriesLoaded = false;
+  hideJournalEntryView();
+  loadJournalEntries({ force: true });
+});
+
+journalForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  if (!activeUser) {
+    setJournalStatus('Please log in before saving a journal entry.', 'error');
+    return;
+  }
+
+  if (!editingJournalEntryId) {
+    setJournalStatus('Open an existing journal entry to edit it here, or write a new entry from the Journal page.', 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setJournalStatus('Journal saving is not available in this environment.', 'error');
+    return;
+  }
+
+  const formData = new FormData(journalForm);
+  const title = String(formData.get('title') || '').trim();
+  const body = String(formData.get('body') || '').trim();
+  const entryDate = String(formData.get('entry_date') || '').trim();
+  const mood = String(formData.get('mood') || '').trim();
+  const checkIn = String(formData.get('check_in') || '').trim();
+  const tags = normalizeJournalTags(formData.get('tags'));
+  const prompt = String(formData.get('prompt') || '').trim();
+  const existingEntry = journalEntriesCache.find((entry) => entry.id === editingJournalEntryId);
+  const guidedAnswers = parseGuidedAnswersText(formData.get('guided_answers_text'), existingEntry?.guided_answers);
+
+  if (!title || !entryDate || (!checkIn && !body && !guidedAnswers.length)) {
+    setJournalStatus('Add a title, date, and check-in, reflection, or guided answer before saving.', 'error');
+    return;
+  }
+
+  if (!parseEntryDate(entryDate)) {
+    setJournalStatus('Choose a valid entry date.', 'error');
+    return;
+  }
+
+  const payload = {
+    title,
+    body,
+    check_in: checkIn || null,
+    entry_date: entryDate,
+    mood: mood || null,
+    mood_key: mood ? mood.toLowerCase().replace(/\s+/g, '_') : null,
+    tags,
+    prompt: prompt || null,
+    guided_answers: guidedAnswers,
+    metadata: {
+      ...(existingEntry?.metadata && typeof existingEntry.metadata === 'object' && !Array.isArray(existingEntry.metadata) ? existingEntry.metadata : {}),
+      prompt: prompt || existingEntry?.metadata?.prompt || '',
+    },
+  };
+
+  if (journalSaveButton) {
+    journalSaveButton.disabled = true;
+  }
+  setJournalStatus('Updating journal entry...');
+
+  const response = await supabase
+    .from('user_journal_entries')
+    .update({ ...payload, updated_at: new Date().toISOString() })
+    .eq('id', editingJournalEntryId)
+    .eq('user_id', activeUser.id)
+    .select(journalEntrySelectColumns)
+    .maybeSingle();
+
+  if (journalSaveButton) {
+    journalSaveButton.disabled = false;
+  }
+
+  if (response.error) {
+    console.error('Journal entry save failed:', response.error);
+    setJournalStatus('We could not save your journal entry. Please try again.', 'error');
+    return;
+  }
+
+  if (!response.data) {
+    console.error('Journal entry save returned no row:', { editingJournalEntryId, userId: activeUser.id });
+    setJournalStatus('We could not update that journal entry. Please refresh and try again.', 'error');
+    return;
+  }
+
+  journalEntriesCache = sortJournalEntries(journalEntriesCache.map((entry) => (
+    entry.id === response.data.id ? response.data : entry
+  )));
+  setJournalStatus('Journal entry updated.', 'success');
+
+  journalEntriesLoaded = true;
+  resetJournalForm();
+  await loadJournalCount();
+  await loadJournalEntries({ force: true });
+});
+
+journalList?.addEventListener('click', async (event) => {
+  const viewButton = event.target.closest('[data-journal-view-entry]');
+  const editButton = event.target.closest('[data-journal-edit]');
+  const deleteButton = event.target.closest('[data-journal-delete]');
+
+  if (viewButton) {
+    const entry = journalEntriesCache.find((item) => item.id === viewButton.dataset.journalViewEntry);
+
+    if (!entry) {
+      setJournalStatus('We could not find that journal entry. Please refresh and try again.', 'error');
+      return;
     }
-  }, 3200);
+
+    showJournalEntryView(entry);
+    return;
+  }
+
+  if (editButton) {
+    const entry = journalEntriesCache.find((item) => item.id === editButton.dataset.journalEdit);
+
+    if (!entry) {
+      setJournalStatus('We could not find that journal entry. Please refresh and try again.', 'error');
+      return;
+    }
+
+    showJournalForm(entry);
+    return;
+  }
+
+  if (!deleteButton) {
+    return;
+  }
+
+  const entryId = deleteButton.dataset.journalDelete;
+  const entry = journalEntriesCache.find((item) => item.id === entryId);
+
+  if (!entry) {
+    setJournalStatus('We could not find that journal entry. Please refresh and try again.', 'error');
+    return;
+  }
+
+  const shouldDelete = window.confirm(`Delete "${entry.title || 'this journal entry'}"?`);
+
+  if (!shouldDelete) {
+    return;
+  }
+
+  if (!activeUser) {
+    setJournalStatus('Please log in before deleting a journal entry.', 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setJournalStatus('Journal deletion is not available in this environment.', 'error');
+    return;
+  }
+
+  deleteButton.disabled = true;
+  setJournalStatus('Deleting journal entry...');
+
+  const { error } = await supabase
+    .from('user_journal_entries')
+    .delete()
+    .eq('id', entryId)
+    .eq('user_id', activeUser.id);
+
+  deleteButton.disabled = false;
+
+  if (error) {
+    console.error('Journal entry delete failed:', error);
+    setJournalStatus('We could not delete your journal entry. Please try again.', 'error');
+    return;
+  }
+
+  journalEntriesCache = journalEntriesCache.filter((item) => item.id !== entryId);
+  resetJournalForm();
+  hideJournalEntryView();
+  setJournalStatus('Journal entry deleted.', 'success');
+  await loadJournalCount();
+  await loadJournalEntries({ force: true });
 });
 
 savedReadingsList?.addEventListener('click', (event) => {

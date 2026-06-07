@@ -12,6 +12,10 @@ const closeDeckLightboxButtons = document.querySelectorAll("[data-close-deck-lig
 let activeCollectionId = "original";
 let activeCardIndex = 0;
 let deckMessageTimeout = null;
+let deckAuthState = {
+  checked: false,
+  user: null
+};
 const DECK_CARD_IMAGE_WIDTH = 800;
 const DECK_CARD_IMAGE_HEIGHT = 1200;
 const thumbnailPlaceholder =
@@ -30,10 +34,26 @@ function isDeckEventActive(eventId) {
   return Boolean(window.AstralVeilEvents?.isEventActive(eventId));
 }
 
+function isBloodMoonCollection(collection) {
+  return collection?.id === "bloodMoon" || collection?.requiredEvent === "bloodMoon";
+}
+
+function isDeckUserAuthenticated() {
+  return Boolean(deckAuthState.user);
+}
+
+function canViewBloodMoonDeck() {
+  return isDeckUserAuthenticated() || isDeckEventActive("bloodMoon") || document.body.classList.contains("blood-moon-mode");
+}
+
 // Central lock check for free, event, purchased, premium, and coming-soon collections.
 function isCollectionLocked(collection) {
   if (!collection) {
     return true;
+  }
+
+  if (isBloodMoonCollection(collection)) {
+    return !canViewBloodMoonDeck();
   }
 
   if (collection.accessType === "event") {
@@ -85,6 +105,10 @@ function getCollectionById(collectionId) {
 }
 
 function getCollectionStatus(collection) {
+  if (isBloodMoonCollection(collection) && canViewBloodMoonDeck() && isDeckUserAuthenticated() && !isDeckEventActive("bloodMoon")) {
+    return "Account Unlocked";
+  }
+
   return isCollectionLocked(collection)
     ? collection.lockedStatus || "Locked"
     : collection.unlockedStatus || collection.status;
@@ -94,6 +118,22 @@ function getCollectionActionLabel(collection) {
   return isCollectionLocked(collection)
     ? collection.lockedActionLabel || "Locked"
     : collection.actionLabel;
+}
+
+function getDeckReturnToPath() {
+  return `${window.location.pathname}${window.location.search}${window.location.hash}` || "/deck.html";
+}
+
+function getDeckAuthUrl(mode = "login") {
+  const params = new URLSearchParams({
+    returnTo: getDeckReturnToPath()
+  });
+
+  if (mode === "signup") {
+    params.set("mode", "signup");
+  }
+
+  return `auth.html?${params.toString()}`;
 }
 
 function escapeHtml(value) {
@@ -324,6 +364,82 @@ function showDeckMessage(message) {
   }, 3200);
 }
 
+function renderDeckAccessLoading() {
+  if (!deckView) {
+    return;
+  }
+
+  deckView.innerHTML = `
+    <div class="deck-access-loading" role="status" aria-live="polite">
+      Checking deck access...
+    </div>
+  `;
+}
+
+function renderBloodMoonLockedPrompt() {
+  if (!deckView) {
+    return;
+  }
+
+  const collection = getCollectionById("bloodMoon");
+
+  updateDeckHero({
+    eyebrow: collection?.eyebrow || "Blood Moon Arcana",
+    title: collection?.title || "Blood Moon Deck",
+    description: "A sealed crimson collection waits at the edge of the Astral Veil."
+  });
+  setDeckRitualFeatureVisible(false);
+
+  deckView.innerHTML = `
+    <section class="deck-lock-panel deck-lock-panel--bloodMoon" aria-labelledby="blood-moon-deck-lock-title">
+      <span class="deck-lock-panel__eyebrow">Deck Sealed</span>
+      <h2 id="blood-moon-deck-lock-title">The Blood Moon Deck is sealed.</h2>
+      <p>
+        Create an account to study the Blood Moon deck at any time, or awaken Blood Moon through the hidden paths.
+      </p>
+      <div class="deck-lock-panel__actions">
+        <a class="deck-lock-panel__button deck-lock-panel__button--primary" href="${escapeHtml(getDeckAuthUrl("signup"))}">
+          Create Account
+        </a>
+        <a class="deck-lock-panel__button" href="${escapeHtml(getDeckAuthUrl("login"))}">
+          Log In
+        </a>
+        <button class="deck-lock-panel__button deck-lock-panel__button--ghost" type="button" data-back-to-decks>
+          Return to Deck
+        </button>
+      </div>
+    </section>
+  `;
+}
+
+async function hydrateDeckAuthState() {
+  try {
+    const { getCurrentUser } = await import("../src/services/auth.js");
+    const { user, error } = await getCurrentUser();
+
+    if (error) {
+      console.error("Unable to check deck auth state:", error);
+    }
+
+    deckAuthState = {
+      checked: true,
+      user: user || null
+    };
+  } catch (error) {
+    console.error("Unable to load deck auth helper:", error);
+    deckAuthState = {
+      checked: true,
+      user: null
+    };
+  }
+}
+
+async function initializeDeckAccess() {
+  renderDeckAccessLoading();
+  await hydrateDeckAuthState();
+  renderDeckCollection();
+}
+
 // Renders the deck-selection rail and handles locked deck messaging through delegated clicks.
 function renderDeckCollection() {
   if (!deckView || typeof deckCollections === "undefined") {
@@ -342,8 +458,12 @@ function renderDeckCollection() {
       <div class="deck-collection" aria-label="Available tarot decks">
         ${deckCollections
           .map(
-            (collection) => `
-              <article class="deck-collection-card deck-collection-card--${collection.id}${isCollectionLocked(collection) ? " is-locked" : ""}" data-view-deck="${collection.id}" aria-disabled="${isCollectionLocked(collection)}">
+            (collection) => {
+              const isLocked = isCollectionLocked(collection);
+              const canOpenLockedPrompt = isBloodMoonCollection(collection);
+
+              return `
+              <article class="deck-collection-card deck-collection-card--${collection.id}${isLocked ? " is-locked" : ""}" data-view-deck="${collection.id}" aria-disabled="${isLocked}">
                 <div class="deck-collection-card__preview" aria-hidden="true">
                   <img src="${collection.coverImage}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" />
                 </div>
@@ -354,13 +474,14 @@ function renderDeckCollection() {
                     <p>${collection.subtitle}</p>
                   </div>
                   <div class="deck-collection-card__actions">
-                    <button class="deck-collection-card__action" type="button" data-view-deck="${collection.id}" ${isCollectionLocked(collection) ? "disabled" : ""}>
+                    <button class="deck-collection-card__action" type="button" data-view-deck="${collection.id}" ${isLocked && !canOpenLockedPrompt ? "disabled" : ""}>
                       ${getCollectionActionLabel(collection)}
                     </button>
                   </div>
                 </div>
               </article>
-            `
+            `;
+            }
           )
           .join("")}
       </div>
@@ -378,6 +499,11 @@ function renderDeckGallery(collectionId) {
   const collection = getCollectionById(collectionId);
 
   if (!collection || isCollectionLocked(collection)) {
+    if (isBloodMoonCollection(collection)) {
+      renderBloodMoonLockedPrompt();
+      return;
+    }
+
     renderDeckCollection();
     return;
   }
@@ -498,6 +624,12 @@ function openDeckLightbox(cardId) {
   }
 
   const activeCollection = getCollectionById(activeCollectionId) || deckCollections[0];
+
+  if (isCollectionLocked(activeCollection)) {
+    closeDeckLightbox();
+    return;
+  }
+
   const card = getCollectionCards(activeCollection).find((item) => item.id === cardId);
 
   if (!card || !deckLightbox) {
@@ -525,8 +657,6 @@ function closeDeckLightbox() {
   document.body.classList.remove("is-lightbox-open");
 }
 
-renderDeckCollection();
-
 ////////////////////////////////////////////////////
 // Deck Viewer Event Listeners
 ////////////////////////////////////////////////////
@@ -544,6 +674,13 @@ if (deckView) {
       const collection = getCollectionById(deckTrigger.dataset.viewDeck);
 
       if (collection && isCollectionLocked(collection)) {
+        if (isBloodMoonCollection(collection)) {
+          activeCollectionId = collection.id;
+          activeCardIndex = 0;
+          renderBloodMoonLockedPrompt();
+          return;
+        }
+
         showDeckMessage(collection.lockedMessage || "This deck is locked.");
         return;
       }
@@ -599,14 +736,22 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-window.addEventListener("astralVeilBloodMoonChange", (event) => {
-  if (event.detail.isActive) {
+window.addEventListener("astralVeilBloodMoonChange", () => {
+  closeDeckLightbox();
+
+  if (activeCollectionId === "bloodMoon") {
+    if (canViewBloodMoonDeck()) {
+      renderDeckGallery("bloodMoon");
+      return;
+    }
+
+    activeCollectionId = "original";
+    activeCardIndex = 0;
     renderDeckCollection();
     return;
   }
 
-  closeDeckLightbox();
-  activeCollectionId = "original";
-  activeCardIndex = 0;
   renderDeckCollection();
 });
+
+initializeDeckAccess();

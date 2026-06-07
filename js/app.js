@@ -169,8 +169,8 @@ function updateLumenArchiveNav(isVisible) {
 
   if (desktopLinks && !existingDesktopLink) {
     const archiveItem = document.createElement("li");
-    const aboutItem = Array.from(desktopLinks.querySelectorAll("a"))
-      .find((link) => getNormalizedNavPath(link.href) === "about.html")
+    const targetItem = Array.from(desktopLinks.querySelectorAll("a"))
+      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)))
       ?.closest("li");
 
     archiveItem.innerHTML = `
@@ -178,19 +178,19 @@ function updateLumenArchiveNav(isVisible) {
         ${lumenArchiveNavItem.label}
       </a>
     `;
-    desktopLinks.insertBefore(archiveItem, aboutItem || null);
+    desktopLinks.insertBefore(archiveItem, targetItem || null);
   }
 
   if (mobileMenu && !existingMobileLink) {
     const archiveLink = document.createElement("a");
-    const aboutLink = Array.from(mobileMenu.querySelectorAll("a"))
-      .find((link) => getNormalizedNavPath(link.href) === "about.html");
+    const targetLink = Array.from(mobileMenu.querySelectorAll("a"))
+      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)));
 
     archiveLink.className = "navbar__mobile-link navbar__mobile-link--featured navbar__mobile-link--lumen-archive";
     archiveLink.href = lumenArchiveNavItem.href;
     archiveLink.textContent = lumenArchiveNavItem.label;
     archiveLink.dataset.lumenArchiveMobileNavLink = "";
-    mobileMenu.insertBefore(archiveLink, aboutLink || null);
+    mobileMenu.insertBefore(archiveLink, targetLink || null);
   }
 
   refreshNavCollections();
@@ -218,8 +218,8 @@ function updateBloodMoonNav(isActive) {
 
   if (desktopLinks && !existingDesktopLink) {
     const archiveItem = document.createElement("li");
-    const aboutItem = Array.from(desktopLinks.querySelectorAll("a"))
-      .find((link) => getNormalizedNavPath(link.href) === "about.html")
+    const targetItem = Array.from(desktopLinks.querySelectorAll("a"))
+      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)))
       ?.closest("li");
 
     archiveItem.innerHTML = `
@@ -227,19 +227,19 @@ function updateBloodMoonNav(isActive) {
         ${archiveNavItem.label}
       </a>
     `;
-    desktopLinks.insertBefore(archiveItem, aboutItem || null);
+    desktopLinks.insertBefore(archiveItem, targetItem || null);
   }
 
   if (mobileMenu && !existingMobileLink) {
     const archiveLink = document.createElement("a");
-    const aboutLink = Array.from(mobileMenu.querySelectorAll("a"))
-      .find((link) => getNormalizedNavPath(link.href) === "about.html");
+    const targetLink = Array.from(mobileMenu.querySelectorAll("a"))
+      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)));
 
     archiveLink.className = "navbar__mobile-link navbar__mobile-link--blood-moon";
     archiveLink.href = archiveNavItem.href;
     archiveLink.textContent = archiveNavItem.label;
     archiveLink.dataset.bloodMoonMobileNavLink = "";
-    mobileMenu.insertBefore(archiveLink, aboutLink || null);
+    mobileMenu.insertBefore(archiveLink, targetLink || null);
   }
 
   refreshNavCollections();

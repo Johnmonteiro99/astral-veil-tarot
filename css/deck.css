@@ -787,6 +787,120 @@ body.blood-moon-mode .deck-ritual-feature {
   opacity: 1;
 }
 
+.deck-access-loading,
+.deck-lock-panel {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  border: 1px solid color-mix(in srgb, var(--navbar-border) 70%, rgba(255, 255, 255, 0.12));
+  border-radius: 24px;
+  padding: clamp(24px, 4vw, 44px);
+  color: var(--navbar-text);
+  background:
+    radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--navbar-glow) 34%, transparent), transparent 44%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.16)),
+    var(--navbar-bg);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.36),
+    0 0 26px color-mix(in srgb, var(--navbar-glow) 58%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  text-align: center;
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+}
+
+.deck-access-loading {
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.deck-lock-panel--bloodMoon {
+  border-color: color-mix(in srgb, var(--accent-color, #d41f3a) 72%, rgba(255, 213, 217, 0.2));
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent-glow, rgba(255, 35, 65, 0.42)) 48%, transparent), transparent 52%),
+    radial-gradient(circle at 88% 88%, rgba(80, 0, 12, 0.35), transparent 50%),
+    linear-gradient(135deg, rgba(255, 64, 88, 0.11), rgba(20, 0, 5, 0.28) 54%, rgba(0, 0, 0, 0.22)),
+    var(--panel-bg, rgba(32, 3, 7, 0.8));
+  box-shadow:
+    0 28px 86px rgba(0, 0, 0, 0.5),
+    0 0 44px color-mix(in srgb, var(--accent-glow, rgba(255, 35, 65, 0.42)) 62%, transparent),
+    inset 0 1px 0 rgba(255, 213, 217, 0.1);
+}
+
+.deck-lock-panel__eyebrow {
+  display: inline-flex;
+  margin-bottom: 0.8rem;
+  color: color-mix(in srgb, var(--accent-color, #d41f3a) 72%, #ffd5d9);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.deck-lock-panel h2 {
+  margin: 0;
+  color: var(--text-primary, #fff0f1);
+  font-family: var(--logo-font);
+  font-size: clamp(2.1rem, 5vw, 4rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.deck-lock-panel p {
+  max-width: 58ch;
+  margin: 1rem auto 0;
+  color: var(--text-secondary, rgba(216, 165, 173, 0.88));
+  font-size: clamp(1rem, 1.5vw, 1.14rem);
+  line-height: 1.7;
+}
+
+.deck-lock-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: clamp(20px, 3vw, 30px);
+}
+
+.deck-lock-panel__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  border: 1px solid color-mix(in srgb, var(--accent-color, #d41f3a) 68%, rgba(255, 213, 217, 0.22));
+  border-radius: 999px;
+  padding: 0 1.25rem;
+  color: var(--text-primary, #fff0f1);
+  background: color-mix(in srgb, var(--accent-soft, rgba(212, 31, 58, 0.35)) 70%, rgba(255, 255, 255, 0.04));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--accent-glow, rgba(255, 35, 65, 0.42)) 48%, transparent);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.deck-lock-panel__button--primary {
+  background:
+    linear-gradient(135deg, rgba(255, 213, 217, 0.13), transparent 48%),
+    color-mix(in srgb, var(--accent-color, #d41f3a) 64%, rgba(0, 0, 0, 0.22));
+}
+
+.deck-lock-panel__button--ghost {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.deck-lock-panel__button:hover,
+.deck-lock-panel__button:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 28px color-mix(in srgb, var(--accent-glow, rgba(255, 35, 65, 0.42)) 68%, transparent),
+    inset 0 0 14px rgba(255, 213, 217, 0.06);
+}
+
 /* ================================
    Deck Viewer
 ================================ */
