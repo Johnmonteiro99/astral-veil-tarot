@@ -128,7 +128,7 @@ function createAccountControl({ avatarUrl = '', initials = 'AV', mobile = false 
 
   wrap.className = mobile ? 'navbar-account navbar-account--mobile' : 'navbar-account';
   link.className = mobile ? 'navbar-account__button navbar-account__button--mobile' : 'navbar-account__button';
-  link.href = 'account.html';
+  link.href = 'account.html#overview';
   link.setAttribute('aria-label', 'Open account page');
   link.append(createAvatar({ avatarUrl, initials }));
 

@@ -1115,3 +1115,9 @@ const bloodMoonDeck = {
     isBloodMoonCard: true
   }))
 };
+
+if (typeof window !== "undefined") {
+  window.majorArcanaCards = majorArcanaCards;
+  window.tarotDeck = tarotDeck;
+  window.bloodMoonDeck = bloodMoonDeck;
+}

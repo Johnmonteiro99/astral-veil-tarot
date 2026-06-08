@@ -352,6 +352,7 @@
       }
 
       .hero-card {
+        --profile-hero-background: url("assets/images/unlockables/user-profile-bg.png");
         position: relative;
         overflow: hidden;
         display: grid;
@@ -363,7 +364,7 @@
         background:
           linear-gradient(90deg, rgba(6, 7, 22, 0.72), rgba(6, 7, 22, 0.5) 46%, rgba(6, 7, 22, 0.28)),
           linear-gradient(135deg, rgba(228, 189, 118, 0.08), rgba(185, 156, 255, 0.08)),
-          url("assets/images/user-profile-background.png");
+          var(--profile-hero-background);
         background-position: center;
         background-size: cover;
         box-shadow:
@@ -372,6 +373,28 @@
           0 0 34px rgba(228, 189, 118, 0.14),
           0 0 70px rgba(228, 189, 118, 0.08);
         padding: clamp(1.35rem, 3vw, 2.6rem);
+      }
+
+      .profile-background-edit {
+        position: absolute;
+        right: clamp(1rem, 2.4vw, 1.45rem);
+        bottom: clamp(1rem, 2.4vw, 1.45rem);
+        z-index: 2;
+        width: 2.35rem;
+        min-height: 2.35rem;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        padding: 0;
+      }
+
+      .profile-background-edit img {
+        width: 0.92rem;
+        height: 0.92rem;
+        display: block;
+        filter:
+          invert(77%) sepia(51%) saturate(377%) hue-rotate(358deg) brightness(96%) contrast(92%)
+          drop-shadow(0 0 5px rgba(228, 189, 118, 0.18));
       }
 
       .avatar-wrap {
@@ -529,6 +552,10 @@
         display: none;
       }
 
+      body.saved-reading-modal-open {
+        overflow: hidden;
+      }
+
       .avatar-modal__backdrop {
         position: absolute;
         inset: 0;
@@ -577,6 +604,205 @@
         border: 0;
         border-radius: 0;
         object-fit: contain;
+      }
+
+      .saved-reading-modal {
+        place-items: center;
+        z-index: 32;
+      }
+
+      .saved-reading-modal__backdrop {
+        z-index: 0;
+        background:
+          radial-gradient(circle at 50% 16%, rgba(228, 189, 118, 0.12), transparent 34rem),
+          rgba(3, 4, 12, 0.82);
+      }
+
+      .saved-reading-modal__dialog {
+        position: relative;
+        z-index: 1;
+        width: min(100%, 62rem);
+        max-height: min(88vh, 54rem);
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        gap: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(228, 189, 118, 0.24);
+        border-radius: 18px;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.014)),
+          rgba(7, 8, 20, 0.94);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.032) inset,
+          0 26px 80px rgba(0, 0, 0, 0.42),
+          0 0 42px rgba(228, 189, 118, 0.1);
+        padding: clamp(1rem, 3vw, 1.5rem);
+      }
+
+      .saved-reading-modal__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        border-bottom: 1px solid rgba(228, 189, 118, 0.13);
+        padding-bottom: 0.85rem;
+      }
+
+      .saved-reading-modal__header h3 {
+        color: var(--gold);
+        font-family: var(--font-display);
+        font-size: clamp(1.35rem, 3vw, 1.85rem);
+        font-weight: 400;
+      }
+
+      .saved-reading-modal__close {
+        width: 2.35rem;
+        min-height: 2.35rem;
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+        border-radius: 50%;
+        padding: 0;
+      }
+
+      .saved-reading-modal__content {
+        position: relative;
+        z-index: 1;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding-right: 0.25rem;
+        scrollbar-color: rgba(228, 189, 118, 0.42) rgba(228, 189, 118, 0.08);
+      }
+
+      .saved-reading-modal__footer {
+        display: flex;
+        justify-content: flex-end;
+        border-top: 1px solid rgba(228, 189, 118, 0.13);
+        padding-top: 0.85rem;
+      }
+
+      body.profile-background-modal-open {
+        overflow: hidden;
+      }
+
+      .profile-background-modal__dialog {
+        position: relative;
+        z-index: 1;
+        width: min(100%, 42rem);
+        max-height: min(86vh, 42rem);
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(228, 189, 118, 0.24);
+        border-radius: 18px;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.014)),
+          rgba(7, 8, 20, 0.96);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.032) inset,
+          0 26px 80px rgba(0, 0, 0, 0.42),
+          0 0 42px rgba(255, 40, 64, 0.1);
+        padding: clamp(1rem, 3vw, 1.5rem);
+      }
+
+      .profile-background-modal__header {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 1rem;
+        border-bottom: 1px solid rgba(228, 189, 118, 0.13);
+        padding-bottom: 0.85rem;
+      }
+
+      .profile-background-modal__header h3 {
+        color: var(--gold);
+        font-family: var(--font-display);
+        font-size: clamp(1.35rem, 3vw, 1.85rem);
+        font-weight: 400;
+      }
+
+      .profile-background-modal__header p,
+      .profile-background-modal__status {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .profile-background-modal__content {
+        min-height: 0;
+        overflow-y: auto;
+        padding-right: 0.2rem;
+      }
+
+      .profile-background-list {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .profile-background-option {
+        width: 100%;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: minmax(7.5rem, 11rem) minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.9rem;
+        border: 1px solid rgba(228, 189, 118, 0.18);
+        border-radius: 12px;
+        background:
+          linear-gradient(135deg, rgba(228, 189, 118, 0.065), rgba(185, 156, 255, 0.035)),
+          rgba(8, 9, 22, 0.72);
+        color: var(--text);
+        padding: 0.7rem;
+        text-align: left;
+      }
+
+      .profile-background-option.is-active {
+        border-color: rgba(255, 82, 102, 0.48);
+        box-shadow: 0 0 24px rgba(255, 40, 64, 0.12);
+      }
+
+      .profile-background-option__preview {
+        width: 100%;
+        aspect-ratio: 3 / 1;
+        display: block;
+        border: 1px solid rgba(228, 189, 118, 0.16);
+        border-radius: 8px;
+        background-position: center;
+        background-size: cover;
+      }
+
+      .profile-background-option__copy {
+        display: grid;
+        gap: 0.2rem;
+        min-width: 0;
+      }
+
+      .profile-background-option__copy strong {
+        color: var(--gold);
+        font-family: var(--font-display);
+        font-size: 1.08rem;
+        font-weight: 500;
+      }
+
+      .profile-background-option__copy small,
+      .profile-background-option__state {
+        color: var(--muted);
+        font-family: var(--font-ui);
+        font-size: 0.78rem;
+        line-height: 1.4;
+      }
+
+      .profile-background-option__state {
+        border: 1px solid rgba(228, 189, 118, 0.22);
+        border-radius: 999px;
+        padding: 0.32rem 0.55rem;
+        white-space: nowrap;
+      }
+
+      .profile-background-option.is-active .profile-background-option__state {
+        border-color: rgba(255, 82, 102, 0.46);
+        color: #ffd8d2;
       }
 
       .hero-copy {
@@ -647,6 +873,37 @@
         gap: 0.35rem;
         justify-items: start;
         margin-top: 1rem;
+      }
+
+      .profile-title-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        max-width: 100%;
+        margin-top: 0.82rem;
+        border: 1px solid rgba(255, 90, 104, 0.46);
+        border-radius: 11px;
+        background:
+          linear-gradient(135deg, rgba(92, 8, 18, 0.92), rgba(20, 3, 9, 0.96)),
+          rgba(9, 4, 9, 0.92);
+        color: #ff5a68;
+        font-family: var(--font-ui);
+        font-size: 0.76rem;
+        font-weight: 900;
+        line-height: 1.1;
+        letter-spacing: 0.14em;
+        padding: 0.48rem 0.78rem;
+        text-shadow: 0 0 8px rgba(255, 44, 67, 0.3);
+        text-transform: uppercase;
+        box-shadow:
+          0 0 0 1px rgba(255, 139, 149, 0.045) inset,
+          0 0 14px rgba(255, 40, 64, 0.16),
+          0 10px 22px rgba(0, 0, 0, 0.2);
+      }
+
+      .profile-title-badge[hidden] {
+        display: none;
       }
 
       .identity-line p,
@@ -2251,6 +2508,15 @@
         font-size: 0.88rem;
       }
 
+      .preferences-status {
+        min-height: 1.25rem;
+        margin: 0.15rem 0 0;
+        color: var(--muted);
+        font-family: var(--font-ui);
+        font-size: 0.82rem;
+        text-align: center;
+      }
+
       .switch {
         position: relative;
         width: 3rem;
@@ -2310,18 +2576,40 @@
 
       .saved-readings {
         display: grid;
+        gap: 0;
+      }
+
+      .reading-archive {
+        display: grid;
+        gap: clamp(1rem, 2.2vw, 1.45rem);
+      }
+
+      .reading-archive__header {
+        align-items: end;
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      .reading-archive__copy {
+        display: grid;
+        gap: 0.45rem;
+      }
+
+      .reading-archive__copy h2 {
+        max-width: 44rem;
+      }
+
+      .reading-archive__list-card {
         gap: 1rem;
       }
 
       .saved-readings__state {
         margin: 0;
+        padding: 0.35rem 0;
       }
 
       .saved-readings__empty {
         display: grid;
         gap: 0.35rem;
-        border: 1px solid rgba(228, 189, 118, 0.18);
-        border-radius: 14px;
         background:
           linear-gradient(135deg, rgba(228, 189, 118, 0.055), rgba(185, 156, 255, 0.04)),
           rgba(7, 8, 20, 0.42);
@@ -2339,6 +2627,7 @@
         display: flex;
         flex-wrap: wrap;
         gap: 0.55rem;
+        justify-content: flex-end;
       }
 
       .reading-filter-chip {
@@ -2367,37 +2656,46 @@
         --reading-glow: rgba(var(--reading-accent-rgb), 0.12);
         display: grid;
         gap: 0.95rem;
-        border: 1px solid var(--reading-border);
-        border-radius: 14px;
+        border: 0;
+        border-top: 1px solid var(--reading-border);
+        border-bottom: 1px solid rgba(var(--reading-accent-rgb), 0.2);
+        border-radius: 0;
         background:
-          linear-gradient(135deg, rgba(var(--reading-accent-rgb), 0.08), transparent 58%),
+          linear-gradient(90deg, rgba(var(--reading-accent-rgb), 0.105), transparent 46%),
           rgba(7, 8, 20, 0.42);
         box-shadow:
-          0 0 0 1px rgba(255, 255, 255, 0.025) inset,
-          0 18px 46px rgba(0, 0, 0, 0.2),
+          0 10px 30px rgba(0, 0, 0, 0.14),
           0 0 28px var(--reading-glow);
         padding: clamp(1rem, 2vw, 1.25rem);
       }
 
-      .saved-reading-card.is-blood-moon {
+      .saved-reading-card + .saved-reading-card {
+        margin-top: -1px;
+      }
+
+      .saved-reading-card.is-blood-moon,
+      .saved-reading-card__details.is-blood-moon {
         --reading-accent-rgb: 190, 48, 66;
         --reading-border: rgba(190, 48, 66, 0.42);
         --reading-glow: rgba(190, 48, 66, 0.15);
       }
 
-      .saved-reading-card.is-moon {
+      .saved-reading-card.is-moon,
+      .saved-reading-card__details.is-moon {
         --reading-accent-rgb: 183, 189, 255;
         --reading-border: rgba(183, 189, 255, 0.38);
         --reading-glow: rgba(183, 189, 255, 0.14);
       }
 
-      .saved-reading-card.is-sun {
+      .saved-reading-card.is-sun,
+      .saved-reading-card__details.is-sun {
         --reading-accent-rgb: 228, 189, 118;
         --reading-border: rgba(228, 189, 118, 0.42);
         --reading-glow: rgba(228, 189, 118, 0.15);
       }
 
-      .saved-reading-card.is-blue-moon {
+      .saved-reading-card.is-blue-moon,
+      .saved-reading-card__details.is-blue-moon {
         --reading-accent-rgb: 74, 190, 255;
         --reading-border: rgba(74, 190, 255, 0.42);
         --reading-glow: rgba(74, 190, 255, 0.14);
@@ -2406,29 +2704,29 @@
       .saved-reading-card__header {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
-        align-items: flex-start;
+        align-items: center;
         gap: 0.85rem;
       }
 
       .saved-reading-card__title {
-        display: grid;
-        gap: 0.38rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.48rem 0.75rem;
         min-width: 0;
       }
 
-      .saved-reading-card__title h3 {
-        color: var(--gold);
-        font-size: clamp(1.38rem, 2.5vw, 1.95rem);
-        font-weight: 400;
-        overflow-wrap: anywhere;
-      }
-
-      .saved-reading-card__title p {
+      .saved-reading-card__meta {
         margin: 0;
         color: rgba(247, 240, 232, 0.78);
         font-family: var(--font-ui);
-        font-size: 0.9rem;
+        font-size: 0.86rem;
         line-height: 1.5;
+      }
+
+      .saved-reading-card__meta strong {
+        color: var(--text);
+        font-weight: 700;
       }
 
       .saved-reading-card__badge {
@@ -2455,11 +2753,77 @@
 
       .saved-reading-card__credits {
         color: rgb(var(--reading-accent-rgb));
+        font-family: var(--font-ui);
+        font-size: 0.8rem;
         font-weight: 700;
       }
 
-      .saved-reading-card__toggle {
+      .saved-reading-card__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        justify-content: flex-end;
+      }
+
+      .saved-reading-card__toggle,
+      .saved-reading-card__delete {
         white-space: nowrap;
+      }
+
+      .saved-reading-card__delete {
+        border-color: rgba(190, 48, 66, 0.34);
+        color: #f0b7b7;
+      }
+
+      .saved-reading-card__delete:hover,
+      .saved-reading-card__delete:focus-visible {
+        border-color: rgba(190, 48, 66, 0.58);
+        color: #fff;
+        box-shadow: 0 0 18px rgba(190, 48, 66, 0.1);
+      }
+
+      .reading-pagination {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: center;
+        border-top: 1px solid rgba(228, 189, 118, 0.13);
+        padding-top: 1rem;
+      }
+
+      .reading-pagination[hidden] {
+        display: none;
+      }
+
+      .reading-pagination__summary {
+        flex: 1 1 13rem;
+        color: rgba(247, 240, 232, 0.64);
+        font-family: var(--font-ui);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .reading-pagination__controls {
+        display: flex;
+        flex: 1 1 auto;
+        flex-wrap: wrap;
+        gap: 0.42rem;
+        justify-content: flex-end;
+      }
+
+      .reading-pagination__button {
+        min-height: 2.35rem;
+        min-width: 2.35rem;
+        padding: 0 0.7rem;
+      }
+
+      .reading-pagination__button.is-active {
+        border-color: rgba(228, 189, 118, 0.58);
+        background: rgba(228, 189, 118, 0.12);
+        color: var(--gold);
       }
 
       .saved-reading-card__detail-header,
@@ -2472,10 +2836,12 @@
       }
 
       .saved-reading-card__details {
+        --reading-accent-rgb: 185, 156, 255;
+        --reading-border: rgba(var(--reading-accent-rgb), 0.32);
+        --reading-glow: rgba(var(--reading-accent-rgb), 0.12);
         display: grid;
         gap: 0.9rem;
-        border-top: 1px solid rgba(var(--reading-accent-rgb), 0.18);
-        padding-top: 1rem;
+        min-width: 0;
       }
 
       .saved-reading-card__detail-header {
@@ -2483,6 +2849,26 @@
         gap: 0.45rem;
       }
 
+      .saved-reading-card__visual-section {
+        position: relative;
+        display: grid;
+        gap: 0.85rem;
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid rgba(var(--reading-accent-rgb), 0.18);
+        border-radius: 14px;
+        background:
+          linear-gradient(135deg, rgba(var(--reading-accent-rgb), 0.08), transparent 60%),
+          rgba(6, 7, 18, 0.42);
+        padding: clamp(0.85rem, 2vw, 1.05rem);
+      }
+
+      .saved-reading-card__visual-header {
+        display: grid;
+        gap: 0.25rem;
+      }
+
+      .saved-reading-card__visual-header span,
       .saved-reading-card__detail-header span,
       .saved-reading-card__question span {
         color: rgb(var(--reading-accent-rgb));
@@ -2493,12 +2879,110 @@
         text-transform: uppercase;
       }
 
+      .saved-reading-card__visual-header h4,
       .saved-reading-card__detail-header h4,
       .saved-reading-card__detail-section h4 {
         color: var(--gold);
         font-family: var(--font-display);
         font-size: clamp(1.18rem, 2vw, 1.45rem);
         font-weight: 400;
+      }
+
+      .saved-reading-card__visual-row {
+        display: grid;
+        grid-auto-columns: minmax(7.75rem, 10.5rem);
+        grid-auto-flow: column;
+        gap: clamp(0.75rem, 2vw, 1rem);
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-inline: contain;
+        padding: 0.1rem 0 0.65rem;
+        scroll-padding-inline: 0.25rem;
+        scroll-snap-type: x mandatory;
+        scrollbar-color: rgba(var(--reading-accent-rgb), 0.52) rgba(var(--reading-accent-rgb), 0.09);
+      }
+
+      .saved-reading-card__visual-row.is-centered {
+        grid-auto-columns: minmax(7.75rem, 10.5rem);
+        justify-content: center;
+      }
+
+      .saved-reading-card__visual-row::-webkit-scrollbar {
+        height: 0.42rem;
+      }
+
+      .saved-reading-card__visual-row::-webkit-scrollbar-track {
+        background: rgba(var(--reading-accent-rgb), 0.09);
+        border-radius: 999px;
+      }
+
+      .saved-reading-card__visual-row::-webkit-scrollbar-thumb {
+        background: rgba(var(--reading-accent-rgb), 0.48);
+        border-radius: 999px;
+      }
+
+      .saved-reading-card__visual {
+        display: grid;
+        gap: 0.65rem;
+        min-width: 0;
+        scroll-snap-align: start;
+      }
+
+      .saved-reading-card__visual-frame {
+        aspect-ratio: 240 / 420;
+        overflow: hidden;
+        border: 1px solid rgba(var(--reading-accent-rgb), 0.3);
+        border-radius: 12px;
+        background: rgba(3, 4, 12, 0.72);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.035) inset,
+          0 16px 32px rgba(0, 0, 0, 0.22),
+          0 0 24px rgba(var(--reading-accent-rgb), 0.1);
+      }
+
+      .saved-reading-card__visual-image {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+      }
+
+      .saved-reading-card__visual-image.is-reversed {
+        transform: rotate(180deg);
+      }
+
+      .saved-reading-card__visual-copy {
+        display: grid;
+        gap: 0.16rem;
+        min-width: 0;
+        text-align: center;
+      }
+
+      .saved-reading-card__visual-copy span {
+        color: rgb(var(--reading-accent-rgb));
+        font-family: var(--font-ui);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .saved-reading-card__visual-copy strong {
+        color: var(--gold);
+        font-family: var(--font-display);
+        font-size: 1.08rem;
+        font-weight: 400;
+        line-height: 1.08;
+      }
+
+      .saved-reading-card__visual-copy p {
+        margin: 0;
+        color: rgba(247, 240, 232, 0.76);
+        font-family: var(--font-ui);
+        font-size: 0.76rem;
+        font-weight: 700;
       }
 
       .saved-reading-card__detail-header p,
@@ -2516,7 +3000,7 @@
 
       .saved-reading-card__cards {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
         gap: 0.7rem;
       }
 
@@ -2552,6 +3036,11 @@
         color: var(--muted);
         font-size: 0.86rem;
         line-height: 1.5;
+      }
+
+      .saved-reading-card__card-copy {
+        display: grid;
+        gap: 0.55rem;
       }
 
       .saved-reading-card__orientation {
@@ -2727,6 +3216,7 @@
         .hero-card {
           justify-items: center;
           min-height: auto;
+          padding-bottom: 4.1rem;
           text-align: center;
         }
 
@@ -2734,6 +3224,15 @@
         .hero-copy,
         .identity-line {
           justify-items: center;
+        }
+
+        .profile-title-badge {
+          margin-inline: auto;
+        }
+
+        .profile-background-edit {
+          right: 50%;
+          transform: translateX(50%);
         }
 
         .avatar-wrap {
@@ -2938,8 +3437,65 @@
           grid-template-columns: 1fr;
         }
 
-        .saved-reading-card__toggle {
+        .reading-archive__header {
+          align-items: start;
+          grid-template-columns: 1fr;
+        }
+
+        .reading-filter-chips {
+          flex-wrap: nowrap;
+          justify-content: flex-start;
+          overflow-x: auto;
+          padding-bottom: 0.25rem;
+          scrollbar-color: rgba(228, 189, 118, 0.42) transparent;
+        }
+
+        .reading-filter-chip {
+          flex: 0 0 auto;
+        }
+
+        .saved-reading-card__actions {
+          justify-content: stretch;
+        }
+
+        .saved-reading-card__toggle,
+        .saved-reading-card__delete {
+          flex: 1 1 9rem;
           width: 100%;
+        }
+
+        .reading-pagination {
+          align-items: stretch;
+          text-align: center;
+        }
+
+        .reading-pagination__summary,
+        .reading-pagination__controls {
+          flex-basis: 100%;
+          justify-content: center;
+        }
+
+        .saved-reading-modal {
+          align-items: end;
+          padding: 0.75rem;
+        }
+
+        .saved-reading-modal__dialog {
+          max-height: 90vh;
+          border-radius: 16px;
+        }
+
+        .saved-reading-modal__header {
+          align-items: flex-start;
+        }
+
+        .saved-reading-card__visual-row,
+        .saved-reading-card__visual-row.is-centered {
+          grid-auto-columns: minmax(8.5rem, 46vw);
+          justify-content: start;
+          overflow-x: auto;
+          overflow-y: hidden;
+          padding-right: 0.75rem;
         }
 
         .journal-preview__header,
@@ -3111,6 +3667,21 @@
           box-shadow: 0 0 9px rgba(228, 189, 118, 0.28);
         }
       }
+
+      @media (max-width: 620px) {
+        .profile-background-option {
+          grid-template-columns: 1fr;
+          justify-items: stretch;
+        }
+
+        .profile-background-option__state {
+          justify-self: start;
+        }
+
+        .profile-background-modal__header {
+          align-items: start;
+        }
+      }
     </style>
   </head>
   <body>
@@ -3184,7 +3755,7 @@
 
           <section class="account-content" data-account-panel hidden aria-label="Your Archive">
             <section class="account-section" data-account-section="overview" aria-label="Overview">
-              <section class="hero-card" aria-labelledby="account-title">
+              <section class="hero-card" data-profile-hero-card aria-labelledby="account-title">
                 <div class="avatar-wrap">
                   <div class="avatar-frame">
                     <button class="avatar" data-account-avatar type="button" aria-label="Preview profile picture">
@@ -3205,6 +3776,9 @@
                 <div class="hero-copy">
                   <p class="eyebrow">Welcome back,</p>
                   <h1 id="account-title"><span data-account-name>Account</span></h1>
+                  <span class="profile-title-badge" data-profile-title-badge hidden>
+                    <span data-profile-title-label></span>
+                  </span>
                   <div class="identity-line">
                     <p class="identity-item" data-account-email-row>
                       <img class="identity-icon" src="assets/icons/symbols/email.svg" alt="" aria-hidden="true" />
@@ -3216,6 +3790,9 @@
                     </span>
                   </div>
                 </div>
+                <button class="profile-background-edit" type="button" data-profile-background-edit aria-label="Edit profile background" title="Edit">
+                  <img src="assets/icons/symbols/edit.svg" alt="" aria-hidden="true" />
+                </button>
               </section>
 
               <p class="section-title journey-title">Your Journey So Far</p>
@@ -3229,11 +3806,11 @@
                   <span class="stat-label">Artifacts Unlocked</span>
                 </div>
                 <div class="stat-card">
-                  <span class="stat-value">Soon</span>
+                  <span class="stat-value" data-account-discovery-count>0</span>
                   <span class="stat-label">Discoveries Recorded</span>
                 </div>
                 <div class="stat-card">
-                  <span class="stat-value" data-account-room-count>Soon</span>
+                  <span class="stat-value" data-account-room-count>0</span>
                   <span class="stat-label">Rooms Visited</span>
                 </div>
                 <div class="stat-card">
@@ -3290,11 +3867,28 @@
               </section>
             </section>
 
-            <section class="account-section panel" data-account-section="past-readings" hidden aria-label="Past Readings">
-              <p class="section-title">Reading Archive</p>
-              <h2>Saved readings and future AI readings will gather here.</h2>
-              <div class="saved-readings" data-saved-readings-list>
-                <p class="saved-readings__state">Loading saved readings...</p>
+            <section class="account-section reading-archive" data-account-section="past-readings" hidden aria-label="Past Readings">
+              <div class="panel reading-archive__header">
+                <div class="reading-archive__copy">
+                  <p class="section-title">Reading Archive</p>
+                  <h2>Saved readings and future AI readings will gather here.</h2>
+                </div>
+                <div data-reading-filter-controls>
+                  <div class="reading-filter-chips" role="group" aria-label="Filter reading archive">
+                    <button class="reading-filter-chip is-active" type="button" data-reading-filter="all" aria-pressed="true">All</button>
+                    <button class="reading-filter-chip" type="button" data-reading-filter="standard" aria-pressed="false">Standard</button>
+                    <button class="reading-filter-chip" type="button" data-reading-filter="ai" aria-pressed="false">AI</button>
+                  </div>
+                </div>
+              </div>
+              <div class="panel reading-archive__list-card">
+                <div class="saved-readings" data-saved-readings-list>
+                  <p class="saved-readings__state">Loading saved readings...</p>
+                </div>
+                <footer class="reading-pagination" data-reading-pagination hidden>
+                  <span class="reading-pagination__summary" data-reading-pagination-summary>Showing 0-0 of 0 readings</span>
+                  <div class="reading-pagination__controls" data-reading-pagination-controls aria-label="Reading archive pages"></div>
+                </footer>
               </div>
             </section>
 
@@ -3459,6 +4053,17 @@
                       <div class="preferences-options" aria-label="Future preference options">
                         <div class="preference-option">
                           <div>
+                            <span class="preference-option__label">Show Profile Title</span>
+                            <p>Display your earned title beneath your name.</p>
+                          </div>
+                          <label class="switch" aria-label="Show profile title">
+                            <input type="checkbox" data-preference-show-profile-title checked />
+                            <span aria-hidden="true"></span>
+                          </label>
+                        </div>
+
+                        <div class="preference-option">
+                          <div>
                             <span class="preference-option__label">Allow Reversed Cards</span>
                             <p>Include reversed card meanings in readings.</p>
                           </div>
@@ -3501,6 +4106,7 @@
                             <option>Moon</option>
                           </select>
                         </label>
+                        <p class="preferences-status" data-preferences-status role="status" aria-live="polite"></p>
                       </div>
                     </details>
                   </div>
@@ -3584,6 +4190,41 @@
           </section>
         </main>
       </div>
+    </div>
+
+    <div class="avatar-modal saved-reading-modal" data-saved-reading-modal hidden>
+      <button class="avatar-modal__backdrop saved-reading-modal__backdrop" type="button" data-saved-reading-modal-close aria-label="Close saved reading"></button>
+      <article class="saved-reading-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="saved-reading-modal-title">
+        <header class="saved-reading-modal__header">
+          <h3 id="saved-reading-modal-title" data-saved-reading-modal-title>Saved Reading</h3>
+          <button class="saved-reading-modal__close" type="button" data-saved-reading-modal-close aria-label="Close saved reading">
+            <span class="avatar-modal__close-icon" aria-hidden="true"></span>
+          </button>
+        </header>
+        <div class="saved-reading-modal__content" data-saved-reading-modal-content></div>
+        <footer class="saved-reading-modal__footer">
+          <button class="card-action" type="button" data-saved-reading-modal-close>Close</button>
+        </footer>
+      </article>
+    </div>
+
+    <div class="avatar-modal profile-background-modal" data-profile-background-modal hidden>
+      <button class="avatar-modal__backdrop saved-reading-modal__backdrop" type="button" data-profile-background-close aria-label="Close profile backgrounds"></button>
+      <article class="profile-background-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="profile-background-modal-title">
+        <header class="profile-background-modal__header">
+          <div>
+            <h3 id="profile-background-modal-title">Profile Backgrounds</h3>
+            <p>Choose a background your Archive has unlocked.</p>
+          </div>
+          <button class="saved-reading-modal__close" type="button" data-profile-background-close aria-label="Close profile backgrounds">
+            <span class="avatar-modal__close-icon" aria-hidden="true"></span>
+          </button>
+        </header>
+        <div class="profile-background-modal__content">
+          <div class="profile-background-list" data-profile-background-list></div>
+          <p class="profile-background-modal__status" data-profile-background-status role="status" aria-live="polite"></p>
+        </div>
+      </article>
     </div>
 
     <div class="avatar-modal" data-avatar-preview-modal hidden>

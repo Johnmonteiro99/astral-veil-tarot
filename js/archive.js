@@ -17,6 +17,8 @@ let activeArchiveShelfEntryId = "";
 let archiveCodeFeedback = "";
 let openRecoveredObjectId = "";
 let openVisualRecordId = "";
+let restrictedWingRitualOpen = false;
+let restrictedWingGuestPromptOpen = false;
 let selectedGalleryRecordIndex = 0;
 let visualRecordTouchStartX = 0;
 let visualRecordTouchStartY = 0;
@@ -372,6 +374,22 @@ function getRoomStatusClass(room) {
 }
 
 function getRoomDetails(room) {
+  if (room?.id === "restricted-wing" && !isRoomLocked(room)) {
+    if (shouldShowGuestRestrictedWingPrompt()) {
+      return {
+        ...archiveRoomDetails[room.id],
+        accessNotes: "The artifacts have answered for now. Create a free account to bind this discovery to your Archive.",
+        archiveHint: "The seal recognizes the keys, but not yet the keeper."
+      };
+    }
+
+    return {
+      ...archiveRoomDetails[room.id],
+      accessNotes: "The artifacts have opened the seal. The Wing is not ready to reveal what waits inside.",
+      archiveHint: "The artifacts remain bound to your archive."
+    };
+  }
+
   if (room?.id === "memory-vault") {
     return {
       ...archiveRoomDetails[room.id],
@@ -600,6 +618,91 @@ async function saveRoomProgress(roomKey, { status = "open", unlockMethod = "room
   return { status: "saved" };
 }
 
+function trackArchiveRoomVisit(room, metadata = {}) {
+  if (!room) {
+    return;
+  }
+
+  import("../src/public/progression.js")
+    .then(({ trackRoomVisit }) => trackRoomVisit({
+      roomKey: room.id,
+      roomName: room.title,
+      title: room.title,
+      description: room.description || "",
+      archiveType: "noctis",
+      mode: "bloodmoon",
+      metadata: {
+        room_type: room.type || "",
+        room_status: getRoomStatus(room),
+        ...metadata
+      }
+    }))
+    .catch((error) => {
+      console.warn("[Astral Veil progression] Noctis room visit was not tracked.", error);
+    });
+}
+
+function trackArchiveDiscovery(discovery = {}) {
+  import("../src/public/progression.js")
+    .then(({ trackDiscovery }) => trackDiscovery({
+      archiveType: "noctis",
+      mode: "bloodmoon",
+      ...discovery,
+      metadata: {
+        archive_room: selectedArchiveRoomId || "entry-desk",
+        ...(discovery.metadata || {})
+      }
+    }))
+    .catch((error) => {
+      console.warn("[Astral Veil progression] Discovery was not tracked.", error);
+    });
+}
+
+function trackArtifactDiscovery(keyId) {
+  const artifact = elementalKeys.find((key) => key.id === keyId);
+
+  if (!artifact || !isLoggedInArchiveUser()) {
+    return;
+  }
+
+  const elementName = artifact.name || artifact.element || keyId;
+
+  trackArchiveDiscovery({
+    discoveryKey: `artifact_${keyId}_unlocked`,
+    title: `${elementName} Artifact Recovered`,
+    description: artifact.archiveNote || artifact.description || artifact.shortDescription || "",
+    category: "artifact",
+    metadata: {
+      artifact_key: artifact.id,
+      artifact_title: artifact.title || "",
+      artifact_element: artifact.element || ""
+    }
+  });
+}
+
+function trackRestrictedWingSealDiscovery() {
+  if (!isLoggedInArchiveUser()) {
+    return;
+  }
+
+  import("../src/public/profile-unlocks.js")
+    .then(({ grantRestrictedWingProfileRewards }) => grantRestrictedWingProfileRewards())
+    .catch((error) => {
+      console.warn("[Astral Veil progression] Restricted Wing profile rewards were not granted.", error);
+    });
+
+  trackArchiveDiscovery({
+    discoveryKey: "restricted_wing_seal_opened",
+    title: "Restricted Wing Seal Opened",
+    description: "The four artifacts answered, and the seal began to break.",
+    category: "room_unlock",
+    metadata: {
+      required_artifacts: elementalKeyDisplayOrder,
+      recovered_artifacts: getUnlockedElementalKeys()
+    }
+  });
+}
+
 function getUnlockedElementalKeys() {
   return getValidElementalKeyIds(artifactProgressState.unlockedKeys);
 }
@@ -644,6 +747,7 @@ async function saveUnlockedElementalKey(keyId) {
   }
 
   artifactProgressState.unlockedKeys = getValidElementalKeyIds([...previousKeys, keyId]);
+  trackArtifactDiscovery(keyId);
   return { status: "saved", previousKeys };
 }
 
@@ -663,6 +767,10 @@ function isLoggedInArchiveUser() {
 
 function areAllSavedElementalKeysRecovered() {
   return isLoggedInArchiveUser() && areAllElementalKeysRecovered();
+}
+
+function shouldShowGuestRestrictedWingPrompt() {
+  return !isLoggedInArchiveUser() && areAllElementalKeysRecovered();
 }
 
 function getArtifactGatedRooms() {
@@ -701,6 +809,10 @@ function getElementalKeyProgressText() {
 }
 
 function getRoomStatus(room) {
+  if (room?.id === "restricted-wing" && !isRoomLocked(room)) {
+    return "Open";
+  }
+
   if (room && !isRoomLocked(room)) {
     const progressStatus = formatRoomProgressStatus(getRoomProgress(room.id)?.status);
 
@@ -718,7 +830,7 @@ function isRoomLocked(room) {
   }
 
   if (room?.id === "restricted-wing") {
-    return !areAllSavedElementalKeysRecovered();
+    return !areAllElementalKeysRecovered();
   }
 
   return Boolean(room?.isLocked);
@@ -727,10 +839,6 @@ function isRoomLocked(room) {
 // The Restricted Wing remains sealed until all four elemental keys are recovered,
 // but the visible copy keeps that requirement obscure.
 function getRoomLockedMessage(room) {
-  if (room?.id === "restricted-wing" && !isLoggedInArchiveUser()) {
-    return "Log in to bind your discoveries and continue deeper into the Archive.";
-  }
-
   if (room?.id === "memory-vault" && isRoomLocked(room)) {
     return "The Memory Vault remains sealed. Memory Vault unlock rule will be added later.";
   }
@@ -970,6 +1078,8 @@ function renderArchiveRooms() {
       </div>
       ${renderArchiveLorePanel()}
       ${renderVisualRecordModal()}
+      ${renderRestrictedWingRitualOverlay()}
+      ${renderRestrictedWingGuestPromptOverlay()}
     </div>
   `;
 
@@ -982,6 +1092,10 @@ function renderArchiveRooms() {
   }
 
   document.body.classList.toggle("is-visual-record-modal-open", Boolean(getOpenVisualRecord()));
+  document.body.classList.toggle(
+    "is-restricted-wing-ritual-open",
+    restrictedWingRitualOpen || restrictedWingGuestPromptOpen
+  );
 }
 
 // Small toast for locked-room attempts; it avoids changing hash or leaving the selector.
@@ -1328,6 +1442,69 @@ function renderVisualRecordModal() {
   `;
 }
 
+function renderRestrictedWingRitualOverlay() {
+  if (!restrictedWingRitualOpen) {
+    return "";
+  }
+
+  return `
+    <div class="restricted-wing-ritual is-open" role="presentation">
+      <button class="restricted-wing-ritual__backdrop" type="button" data-restricted-wing-ritual-close aria-label="Return to the Archive"></button>
+      <article class="restricted-wing-ritual__dialog" role="dialog" aria-modal="true" aria-labelledby="restricted-wing-ritual-title">
+        <p class="restricted-wing-ritual__eyebrow">Restricted Wing</p>
+        <h2 id="restricted-wing-ritual-title">The Four Artifacts Have Answered</h2>
+        <div class="restricted-wing-ritual__body">
+          <p>The seal has broken, but the door does not open for force alone.</p>
+          <p>Something beyond it is waking slowly.</p>
+          <p>You have unlocked the Restricted Wing, but the Wing has not yet chosen to reveal itself.</p>
+          <p>Return when the blood remembers the shape of the key.</p>
+        </div>
+        <p class="restricted-wing-ritual__note">The artifacts remain bound to your archive.</p>
+        <button class="restricted-wing-ritual__button" type="button" data-restricted-wing-ritual-close>Return to the Archive</button>
+      </article>
+    </div>
+  `;
+}
+
+function getRestrictedWingAuthHref(mode = "login") {
+  const params = new URLSearchParams({
+    returnTo: "archive.html#restricted-wing"
+  });
+
+  if (mode === "signup") {
+    params.set("mode", "signup");
+  }
+
+  return `auth.html?${params.toString()}`;
+}
+
+function renderRestrictedWingGuestPromptOverlay() {
+  if (!restrictedWingGuestPromptOpen) {
+    return "";
+  }
+
+  return `
+    <div class="restricted-wing-ritual restricted-wing-ritual--guest is-open" role="presentation">
+      <button class="restricted-wing-ritual__backdrop" type="button" data-restricted-wing-guest-close aria-label="Return to the Archive"></button>
+      <article class="restricted-wing-ritual__dialog" role="dialog" aria-modal="true" aria-labelledby="restricted-wing-guest-title">
+        <p class="restricted-wing-ritual__eyebrow">Restricted Wing</p>
+        <h2 id="restricted-wing-guest-title">The Door Has Recognized the Keys</h2>
+        <div class="restricted-wing-ritual__body">
+          <p>You have gathered the artifacts, and the seal has begun to answer.</p>
+          <p>But the Restricted Wing does not reveal itself to a passing shadow.</p>
+          <p>Create a free account to bind this discovery to your Archive and return when the door is ready to open.</p>
+        </div>
+        <p class="restricted-wing-ritual__note">Your account keeps artifacts, readings, reflections, and future discoveries tied to your path.</p>
+        <div class="restricted-wing-ritual__actions">
+          <a class="restricted-wing-ritual__button" href="${escapeHtml(getRestrictedWingAuthHref("signup"))}">Create Free Account</a>
+          <a class="restricted-wing-ritual__button restricted-wing-ritual__button--secondary" href="${escapeHtml(getRestrictedWingAuthHref("login"))}">Log In</a>
+          <button class="restricted-wing-ritual__button restricted-wing-ritual__button--ghost" type="button" data-restricted-wing-guest-close>Return to the Archive</button>
+        </div>
+      </article>
+    </div>
+  `;
+}
+
 // Gallery renders recovered visual records from the Noctis visual archive.
 function renderGalleryRoom(room) {
   return `
@@ -1506,6 +1683,62 @@ function focusEnteredChamber(room) {
   });
 }
 
+function openRestrictedWingRitual() {
+  selectedArchiveRoomId = "restricted-wing";
+  enteredArchiveRoomId = "";
+  activeArchiveShelfEntryId = "";
+  restrictedWingGuestPromptOpen = false;
+  restrictedWingRitualOpen = true;
+
+  if (window.location.hash) {
+    window.history.replaceState({ archiveRoom: "" }, "", window.location.pathname + window.location.search);
+  }
+
+  renderArchiveRooms();
+  window.requestAnimationFrame(() => {
+    document.querySelector(".restricted-wing-ritual__button[data-restricted-wing-ritual-close]")?.focus({ preventScroll: true });
+  });
+}
+
+function closeRestrictedWingRitual() {
+  if (!restrictedWingRitualOpen) {
+    return;
+  }
+
+  restrictedWingRitualOpen = false;
+  enteredArchiveRoomId = "";
+  renderArchiveRooms();
+  archiveRoomHub?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function openRestrictedWingGuestPrompt() {
+  selectedArchiveRoomId = "restricted-wing";
+  enteredArchiveRoomId = "";
+  activeArchiveShelfEntryId = "";
+  restrictedWingRitualOpen = false;
+  restrictedWingGuestPromptOpen = true;
+
+  if (window.location.hash) {
+    window.history.replaceState({ archiveRoom: "" }, "", window.location.pathname + window.location.search);
+  }
+
+  renderArchiveRooms();
+  window.requestAnimationFrame(() => {
+    document.querySelector(".restricted-wing-ritual--guest .restricted-wing-ritual__actions a")?.focus({ preventScroll: true });
+  });
+}
+
+function closeRestrictedWingGuestPrompt() {
+  if (!restrictedWingGuestPromptOpen) {
+    return;
+  }
+
+  restrictedWingGuestPromptOpen = false;
+  enteredArchiveRoomId = "";
+  renderArchiveRooms();
+  archiveRoomHub?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 ////////////////////////////////////////////////////
 // Chamber Entry and Hash Routing
 ////////////////////////////////////////////////////
@@ -1527,6 +1760,21 @@ async function enterArchiveRoom(roomId) {
     return;
   }
 
+  if (room.id === "restricted-wing") {
+    if (shouldShowGuestRestrictedWingPrompt()) {
+      openRestrictedWingGuestPrompt();
+      return;
+    }
+
+    trackArchiveRoomVisit(room, {
+      selected_from: "archive_chamber_viewer",
+      revealed_state: "unlocked_not_revealed"
+    });
+    trackRestrictedWingSealDiscovery();
+    openRestrictedWingRitual();
+    return;
+  }
+
   if (window.location.hash) {
     window.history.replaceState({ archiveRoom: "" }, "", window.location.pathname + window.location.search);
   }
@@ -1538,6 +1786,9 @@ async function enterArchiveRoom(roomId) {
     metadata: {
       selected_from: "archive_chamber_viewer"
     }
+  });
+  trackArchiveRoomVisit(room, {
+    selected_from: "archive_chamber_viewer"
   });
 
   renderArchiveRooms();
@@ -1558,6 +1809,8 @@ function returnToRoomHub({ updateHash = true, scroll = true } = {}) {
   archiveRoomView.innerHTML = "";
   archiveRoomHub.hidden = false;
   enteredArchiveRoomId = "";
+  restrictedWingRitualOpen = false;
+  restrictedWingGuestPromptOpen = false;
   renderArchiveRooms();
 
   if (scroll) {
@@ -1587,6 +1840,22 @@ async function syncRoomFromHash() {
   }
 
   hasNormalizedInitialRoomHash = true;
+
+  if (room.id === "restricted-wing") {
+    if (shouldShowGuestRestrictedWingPrompt()) {
+      openRestrictedWingGuestPrompt();
+      return;
+    }
+
+    trackArchiveRoomVisit(room, {
+      selected_from: "hash_route",
+      revealed_state: "unlocked_not_revealed"
+    });
+    trackRestrictedWingSealDiscovery();
+    openRestrictedWingRitual();
+    return;
+  }
+
   selectedArchiveRoomId = room.id;
   enteredArchiveRoomId = room.id;
   activeArchiveShelfEntryId = "";
@@ -1598,6 +1867,9 @@ async function syncRoomFromHash() {
     metadata: {
       selected_from: "hash_route"
     }
+  });
+  trackArchiveRoomVisit(room, {
+    selected_from: "hash_route"
   });
   renderArchiveRooms();
 }
@@ -1633,6 +1905,8 @@ document.addEventListener("click", (event) => {
   const continueButton = event.target.closest("[data-archive-continue]");
   const roomButton = event.target.closest("[data-room-id], [data-room-enter]");
   const backButton = event.target.closest("[data-room-back]");
+  const restrictedWingRitualClose = event.target.closest("[data-restricted-wing-ritual-close]");
+  const restrictedWingGuestClose = event.target.closest("[data-restricted-wing-guest-close]");
 
   if (continueButton) {
     archiveCodeFeedback = "";
@@ -1643,6 +1917,16 @@ document.addEventListener("click", (event) => {
 
   if (backButton) {
     returnToRoomHub();
+    return;
+  }
+
+  if (restrictedWingRitualClose) {
+    closeRestrictedWingRitual();
+    return;
+  }
+
+  if (restrictedWingGuestClose) {
+    closeRestrictedWingGuestPrompt();
     return;
   }
 
@@ -1712,6 +1996,18 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && restrictedWingGuestPromptOpen) {
+    event.preventDefault();
+    closeRestrictedWingGuestPrompt();
+    return;
+  }
+
+  if (event.key === "Escape" && restrictedWingRitualOpen) {
+    event.preventDefault();
+    closeRestrictedWingRitual();
+    return;
+  }
+
   if (event.key === "ArrowRight" && openVisualRecordId) {
     event.preventDefault();
     moveVisualRecord("next");

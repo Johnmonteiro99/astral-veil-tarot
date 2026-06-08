@@ -879,7 +879,32 @@ function enterLumenSanctuary() {
   activeLumenInteriorIndex = activeLumenSanctuaryIndex;
   chooseInitialLumenReflectionIndex(activeLumenInteriorIndex);
   renderLumenInterior();
+  trackLumenSanctuaryVisit(lumenSanctuaries[activeLumenInteriorIndex]);
   lumenInterior?.scrollIntoView({ behavior: getLumenScrollBehavior(), block: "start" });
+}
+
+function trackLumenSanctuaryVisit(sanctuary) {
+  if (!sanctuary) {
+    return;
+  }
+
+  import("../src/public/progression.js")
+    .then(({ trackRoomVisit }) => trackRoomVisit({
+      roomKey: sanctuary.id,
+      roomName: sanctuary.title,
+      title: sanctuary.title,
+      description: sanctuary.description || sanctuary.purpose || sanctuary.selectorSubtitle || "",
+      archiveType: "lumen",
+      mode: document.body.classList.contains("moon-mode") ? "moon" : "sun",
+      metadata: {
+        room_class: sanctuary.roomClass || "",
+        lightwork_need: sanctuary.need || "",
+        selected_from: "lumen_sanctuary_entry"
+      }
+    }))
+    .catch((error) => {
+      console.warn("[Astral Veil progression] Lumen room visit was not tracked.", error);
+    });
 }
 
 function returnToLumenSanctuaries() {

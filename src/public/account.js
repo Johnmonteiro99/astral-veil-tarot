@@ -1,5 +1,11 @@
 import { getCurrentUserWithProfile, isCurrentUserAdmin, signOut } from '../services/auth.js';
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
+import {
+  getProfileUnlockDefinition,
+  grantRestrictedWingProfileRewards,
+  restrictedWingProfileRewardKeys,
+} from './profile-unlocks.js';
+import { getUserProgressStats } from './progression.js';
 
 const loadingPanel = document.querySelector('[data-account-loading]');
 const accountPanel = document.querySelector('[data-account-panel]');
@@ -16,6 +22,14 @@ const avatarStatus = document.querySelector('[data-avatar-status]');
 const avatarPreviewModal = document.querySelector('[data-avatar-preview-modal]');
 const avatarPreviewImage = document.querySelector('[data-avatar-preview-image]');
 const avatarPreviewCloseButtons = Array.from(document.querySelectorAll('[data-avatar-preview-close]'));
+const profileHeroCard = document.querySelector('[data-profile-hero-card]');
+const profileTitleBadge = document.querySelector('[data-profile-title-badge]');
+const profileTitleLabel = document.querySelector('[data-profile-title-label]');
+const profileBackgroundEditButton = document.querySelector('[data-profile-background-edit]');
+const profileBackgroundModal = document.querySelector('[data-profile-background-modal]');
+const profileBackgroundList = document.querySelector('[data-profile-background-list]');
+const profileBackgroundStatus = document.querySelector('[data-profile-background-status]');
+const profileBackgroundCloseButtons = Array.from(document.querySelectorAll('[data-profile-background-close]'));
 const logoutButtons = Array.from(document.querySelectorAll('[data-logout]'));
 const adminLink = document.querySelector('[data-admin-link]');
 const memberSinceValue = document.querySelector('[data-member-since]');
@@ -24,8 +38,17 @@ const accountSections = Array.from(document.querySelectorAll('[data-account-sect
 const accountNav = document.querySelector('[data-account-nav]');
 const accountNavToggle = document.querySelector('[data-account-nav-toggle]');
 const savedReadingsList = document.querySelector('[data-saved-readings-list]');
+const readingFilterControls = document.querySelector('[data-reading-filter-controls]');
+const readingPagination = document.querySelector('[data-reading-pagination]');
+const readingPaginationSummary = document.querySelector('[data-reading-pagination-summary]');
+const readingPaginationControls = document.querySelector('[data-reading-pagination-controls]');
+const savedReadingModal = document.querySelector('[data-saved-reading-modal]');
+const savedReadingModalContent = document.querySelector('[data-saved-reading-modal-content]');
+const savedReadingModalTitle = document.querySelector('[data-saved-reading-modal-title]');
+const savedReadingModalCloseButtons = Array.from(document.querySelectorAll('[data-saved-reading-modal-close]'));
 const savedReadingCountValue = document.querySelector('[data-account-saved-reading-count]');
 const artifactCountValue = document.querySelector('[data-account-artifact-count]');
+const discoveryCountValue = document.querySelector('[data-account-discovery-count]');
 const roomCountValue = document.querySelector('[data-account-room-count]');
 const journalCountValue = document.querySelector('[data-account-journal-count]');
 const activityTitle = document.querySelector('[data-account-activity-title]');
@@ -38,6 +61,8 @@ const zodiacLabel = document.querySelector('[data-account-zodiac-label]');
 const profileForm = document.querySelector('[data-profile-form]');
 const profileSubmitButton = document.querySelector('[data-profile-submit]');
 const profileStatus = document.querySelector('[data-profile-status]');
+const showProfileTitleToggle = document.querySelector('[data-preference-show-profile-title]');
+const preferencesStatus = document.querySelector('[data-preferences-status]');
 const zodiacPreview = document.querySelector('[data-zodiac-preview]');
 const zodiacDates = document.querySelector('[data-zodiac-dates]');
 const birthdayInput = document.querySelector('[data-birthday-input]');
@@ -64,6 +89,9 @@ const journalFilterControls = document.querySelector('[data-journal-filter-contr
 let savedReadingsLoaded = false;
 let savedReadingsCache = [];
 let activeReadingFilter = 'all';
+let activeReadingPage = 1;
+let savedReadingDeckDataPromise = null;
+let activeSavedReadingModalId = '';
 let journalEntriesLoaded = false;
 let journalEntriesCache = [];
 let activeJournalFilter = 'all';
@@ -80,17 +108,36 @@ let activeJournalYear = '';
 let overviewMetrics = {
   savedReadings: 0,
   artifacts: 0,
+  discoveries: 0,
+  rooms: 0,
   journals: 0,
 };
 let activeUser = null;
 let activeProfile = null;
 let activeAvatarUrl = '';
+let activeProfileUnlocks = [];
 let avatarStatusClearTimer = null;
 let profileStatusClearTimer = null;
 let journalStatusClearTimer = null;
 
 const avatarBucketName = 'avatars';
+const defaultProfileBackgroundKey = 'default';
+const defaultProfileBackgroundPath = 'assets/images/unlockables/user-profile-bg.png';
 const journalEntrySelectColumns = 'id, user_id, title, body, check_in, entry_date, mood_key, mood, tags, prompt, guided_answers, mode, source_type, source_reading_id, linked_reading_id, reflection_type, metadata, created_at, updated_at';
+const discoveryActivitySelectColumns = [
+  'id',
+  'discovery_key',
+  'discovery_type',
+  'source_location',
+  'mode_key',
+  'related_artifact_key',
+  'related_room_key',
+  'related_fragment_key',
+  'related_veilwalker_key',
+  'metadata',
+  'discovered_at',
+].join(', ');
+const savedReadingsPageSize = 10;
 const maxAvatarInputFileSize = 8 * 1024 * 1024;
 const targetAvatarUploadSize = 2 * 1024 * 1024;
 const maxAvatarImageSide = 800;
@@ -133,9 +180,33 @@ const zodiacDateRanges = {
 function getAccountSectionFromHash() {
   const sectionName = window.location.hash.replace(/^#/, '');
 
-  return accountSections.some((section) => section.dataset.accountSection === sectionName)
-    ? sectionName
-    : 'overview';
+  if (accountSections.some((section) => section.dataset.accountSection === sectionName)) {
+    return sectionName;
+  }
+
+  if (window.location.hash) {
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#overview`);
+  }
+
+  return 'overview';
+}
+
+function setAccountSectionHash(sectionName) {
+  const nextSection = accountSections.find((section) => section.dataset.accountSection === sectionName);
+
+  if (!nextSection) {
+    return;
+  }
+
+  const nextHash = `#${sectionName}`;
+
+  if (window.location.hash === nextHash) {
+    showAccountSection(sectionName);
+    setMobileNavOpen(false);
+    return;
+  }
+
+  window.location.hash = sectionName;
 }
 
 function getProfileValue(profile, keys) {
@@ -268,6 +339,358 @@ function getZodiacCardImagePath(sign) {
 function getProfileDisplayName(profile, user) {
   return getProfileValue(profile, ['display_name', 'name', 'full_name', 'username'])
     || getProfileValue(user?.user_metadata, ['display_name', 'name', 'full_name']);
+}
+
+function getProfilePreferences(profile) {
+  return profile?.preferences && typeof profile.preferences === 'object' && !Array.isArray(profile.preferences)
+    ? profile.preferences
+    : {};
+}
+
+function shouldShowProfileTitle(profile) {
+  return getProfilePreferences(profile).show_profile_title !== false;
+}
+
+function updatePreferenceControls(profile) {
+  if (showProfileTitleToggle) {
+    showProfileTitleToggle.checked = shouldShowProfileTitle(profile);
+  }
+}
+
+function getUnlockedProfileItem(unlockKey) {
+  return activeProfileUnlocks.find((unlock) => unlock.unlock_key === unlockKey) || null;
+}
+
+function isDefaultProfileBackgroundKey(unlockKey) {
+  return !unlockKey || unlockKey === defaultProfileBackgroundKey;
+}
+
+function getEquippedProfileBackground(profile) {
+  const backgroundUrl = getProfileValue(profile, ['profile_background_url']);
+
+  if (!backgroundUrl) {
+    return {
+      key: 'default',
+      label: 'Default Archive',
+      assetPath: defaultProfileBackgroundPath,
+    };
+  }
+
+  const unlockedBackground = activeProfileUnlocks.find((unlock) => unlock.asset_path === backgroundUrl) || null;
+  const assetPath = unlockedBackground?.asset_path || backgroundUrl;
+
+  if (assetPath) {
+    return {
+      key: unlockedBackground?.unlock_key || 'custom_background',
+      label: unlockedBackground?.label || 'Profile Background',
+      assetPath,
+    };
+  }
+
+  return null;
+}
+
+function getEquippedProfileTitle(profile) {
+  const titleKey = getProfileValue(profile, ['equipped_profile_title'])
+    || (getUnlockedProfileItem('restricted_wing_title_marked') ? 'restricted_wing_title_marked' : '');
+  const unlockedTitle = getUnlockedProfileItem(titleKey);
+  const definition = getProfileUnlockDefinition(titleKey);
+  const label = unlockedTitle?.label || definition?.label || '';
+
+  return label
+    ? {
+      key: titleKey,
+      label,
+      modeKey: unlockedTitle?.mode_key || definition?.mode_key || '',
+    }
+    : null;
+}
+
+function setProfileHeroBackground(assetPath = defaultProfileBackgroundPath) {
+  if (!profileHeroCard) {
+    return;
+  }
+
+  const sanitizedPath = String(assetPath || defaultProfileBackgroundPath).replace(/"/g, '%22');
+  profileHeroCard.style.setProperty('--profile-hero-background', `url("${sanitizedPath}")`);
+}
+
+function updateProfileTitleBadge(profile) {
+  if (!profileTitleBadge || !profileTitleLabel) {
+    return;
+  }
+
+  const title = getEquippedProfileTitle(profile);
+
+  if (!title || !shouldShowProfileTitle(profile)) {
+    profileTitleBadge.hidden = true;
+    profileTitleBadge.className = 'profile-title-badge';
+    profileTitleLabel.textContent = '';
+    return;
+  }
+
+  profileTitleBadge.hidden = false;
+  profileTitleBadge.className = `profile-title-badge profile-title-badge--${String(title.modeKey || 'bloodmoon').replace(/[^a-z0-9_-]/gi, '')}`;
+  profileTitleLabel.textContent = title.label;
+}
+
+async function loadProfileUnlocks() {
+  if (!activeUser) {
+    activeProfileUnlocks = [];
+    return activeProfileUnlocks;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    activeProfileUnlocks = [];
+    return activeProfileUnlocks;
+  }
+
+  const { data, error } = await supabase
+    .from('user_profile_unlocks')
+    .select('unlock_key, unlock_type, label, description, source_key, mode_key, asset_path, metadata, unlocked_at')
+    .eq('user_id', activeUser.id)
+    .order('unlocked_at', { ascending: false });
+
+  if (error) {
+    console.warn('[Astral Veil account] Profile unlocks could not be loaded.');
+    activeProfileUnlocks = [];
+    return activeProfileUnlocks;
+  }
+
+  activeProfileUnlocks = data || [];
+  return activeProfileUnlocks;
+}
+
+async function ensureRestrictedWingProfileRewards() {
+  if (!activeUser) {
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    return;
+  }
+
+  const missingReward = restrictedWingProfileRewardKeys.some((key) => !getUnlockedProfileItem(key));
+
+  if (!missingReward) {
+    return;
+  }
+
+  const [discoveryResponse, artifactResponse] = await Promise.all([
+    supabase
+      .from('user_discoveries')
+      .select('id')
+      .eq('user_id', activeUser.id)
+      .eq('discovery_key', 'restricted_wing_seal_opened')
+      .maybeSingle(),
+    supabase
+      .from('user_artifacts')
+      .select('artifact_key')
+      .eq('user_id', activeUser.id),
+  ]);
+
+  if (discoveryResponse.error && discoveryResponse.error.code !== 'PGRST116') {
+    console.warn('[Astral Veil account] Restricted Wing discovery check failed.');
+  }
+
+  if (artifactResponse.error) {
+    console.warn('[Astral Veil account] Artifact reward backfill check failed.');
+  }
+
+  const artifactKeys = new Set((artifactResponse.data || []).map((artifact) => artifact.artifact_key));
+  const hasAllArtifacts = ['air', 'water', 'earth', 'fire'].every((key) => artifactKeys.has(key));
+  const hasRestrictedWingDiscovery = Boolean(discoveryResponse.data);
+
+  if (!hasRestrictedWingDiscovery && !hasAllArtifacts) {
+    return;
+  }
+
+  const result = await grantRestrictedWingProfileRewards();
+
+  if (result.status === 'saved') {
+    await loadProfileUnlocks();
+
+    const { profile: refreshedProfile } = await fetchCurrentProfile(supabase, activeUser.id);
+    if (refreshedProfile) {
+      activeProfile = refreshedProfile;
+    }
+  }
+}
+
+function renderProfileBackgroundOptions() {
+  if (!profileBackgroundList) {
+    return;
+  }
+
+  const equippedBackgroundUrl = getProfileValue(activeProfile, ['profile_background_url']);
+  const unlockedBackgrounds = activeProfileUnlocks.filter((unlock) => unlock.unlock_type === 'background');
+  const options = [
+    {
+      unlock_key: defaultProfileBackgroundKey,
+      label: 'Default Archive',
+      description: 'The original Astral Veil profile background.',
+      asset_path: defaultProfileBackgroundPath,
+    },
+    ...unlockedBackgrounds,
+  ];
+
+  profileBackgroundList.innerHTML = options.map((option) => {
+    const definition = getProfileUnlockDefinition(option.unlock_key);
+    const assetPath = definition?.asset_path || option.asset_path || defaultProfileBackgroundPath;
+    const isActive = option.unlock_key === defaultProfileBackgroundKey
+      ? !equippedBackgroundUrl
+      : assetPath === equippedBackgroundUrl;
+
+    return `
+      <button class="profile-background-option${isActive ? ' is-active' : ''}" type="button" data-profile-background-select="${escapeHtml(option.unlock_key)}">
+        <span class="profile-background-option__preview" style="background-image: url('${escapeHtml(assetPath)}')"></span>
+        <span class="profile-background-option__copy">
+          <strong>${escapeHtml(option.label || 'Profile Background')}</strong>
+          <small>${escapeHtml(option.description || 'Unlocked profile background.')}</small>
+        </span>
+        <span class="profile-background-option__state">${isActive ? 'Active' : 'Choose'}</span>
+      </button>
+    `;
+  }).join('');
+}
+
+function openProfileBackgroundModal() {
+  if (!profileBackgroundModal) {
+    return;
+  }
+
+  renderProfileBackgroundOptions();
+
+  if (profileBackgroundStatus && !activeProfileUnlocks.some((unlock) => unlock.unlock_type === 'background')) {
+    profileBackgroundStatus.textContent = 'No profile backgrounds unlocked yet. Progress through the Archive to reveal new designs.';
+  } else if (profileBackgroundStatus) {
+    profileBackgroundStatus.textContent = '';
+  }
+
+  profileBackgroundModal.hidden = false;
+  document.body.classList.add('profile-background-modal-open');
+  profileBackgroundModal.querySelector('[data-profile-background-close]')?.focus({ preventScroll: true });
+}
+
+function closeProfileBackgroundModal() {
+  if (!profileBackgroundModal) {
+    return;
+  }
+
+  profileBackgroundModal.hidden = true;
+  document.body.classList.remove('profile-background-modal-open');
+
+  if (profileBackgroundStatus) {
+    profileBackgroundStatus.textContent = '';
+  }
+}
+
+async function selectProfileBackground(unlockKey) {
+  if (!activeUser) {
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    return;
+  }
+
+  const isDefault = isDefaultProfileBackgroundKey(unlockKey);
+  const selectedUnlock = isDefault
+    ? null
+    : activeProfileUnlocks.find((unlock) => unlock.unlock_key === unlockKey && unlock.unlock_type === 'background');
+  const definition = isDefault ? null : getProfileUnlockDefinition(unlockKey);
+  const nextBackgroundUrl = isDefault ? null : definition?.asset_path || selectedUnlock?.asset_path || null;
+
+  if (!isDefault && !selectedUnlock) {
+    if (profileBackgroundStatus) {
+      profileBackgroundStatus.textContent = 'That background is not unlocked yet.';
+    }
+    return;
+  }
+
+  if (profileBackgroundStatus) {
+    profileBackgroundStatus.textContent = 'Equipping background...';
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ profile_background_url: nextBackgroundUrl })
+    .eq('id', activeUser.id);
+
+  if (error) {
+    console.warn('[Astral Veil account] Profile background could not be equipped.', error);
+    if (profileBackgroundStatus) {
+      profileBackgroundStatus.textContent = 'We could not equip that background. Please try again.';
+    }
+    return;
+  }
+
+  activeProfile = {
+    ...(activeProfile || {}),
+    profile_background_url: nextBackgroundUrl,
+  };
+  updateAccountProfileDisplay(activeProfile, activeUser);
+  renderProfileBackgroundOptions();
+
+  if (profileBackgroundStatus) {
+    profileBackgroundStatus.textContent = 'Background equipped.';
+  }
+
+  await refreshProfileAfterUpdate(supabase, { profile_background_url: nextBackgroundUrl });
+  renderProfileBackgroundOptions();
+}
+
+async function updateProfilePreference(preferenceKey, value) {
+  if (!activeUser) {
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    return;
+  }
+
+  const nextPreferences = {
+    ...getProfilePreferences(activeProfile),
+    [preferenceKey]: value,
+  };
+
+  if (preferencesStatus) {
+    preferencesStatus.textContent = 'Saving preference...';
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ preferences: nextPreferences })
+    .eq('id', activeUser.id);
+
+  if (error) {
+    console.warn('[Astral Veil account] Preference could not be saved.', error);
+
+    if (preferencesStatus) {
+      preferencesStatus.textContent = 'We could not save that preference. Please try again.';
+    }
+
+    updatePreferenceControls(activeProfile);
+    return;
+  }
+
+  activeProfile = {
+    ...(activeProfile || {}),
+    preferences: nextPreferences,
+  };
+  updateAccountProfileDisplay(activeProfile, activeUser);
+
+  if (preferencesStatus) {
+    preferencesStatus.textContent = 'Preference saved.';
+  }
 }
 
 function setProfileStatus(message, type = '') {
@@ -415,8 +838,7 @@ function updateHeroProfile(profile, user) {
   const email = user?.email || 'Signed-in user';
   const displayName = getProfileDisplayName(profile, user);
   const avatarUrl = getProfileValue(profile, ['avatar_url']);
-  const profileBackgroundUrl = getProfileValue(profile, ['profile_background_url']);
-  const heroCard = document.querySelector('.hero-card');
+  const equippedBackground = getEquippedProfileBackground(profile);
 
   nameValue.textContent = displayName || 'Astral Veil Seeker';
   activeAvatarUrl = avatarUrl;
@@ -433,11 +855,8 @@ function updateHeroProfile(profile, user) {
     avatar.setAttribute('aria-label', `Preview ${displayName || email} profile picture`);
   }
 
-  if (heroCard && profileBackgroundUrl) {
-    heroCard.style.backgroundImage = `linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.014)), url("${profileBackgroundUrl.replace(/"/g, '%22')}")`;
-    heroCard.style.backgroundSize = 'cover';
-    heroCard.style.backgroundPosition = 'center';
-  }
+  setProfileHeroBackground(equippedBackground?.assetPath || defaultProfileBackgroundPath);
+  updateProfileTitleBadge(profile);
 
   updateZodiacDisplay(getProfileValue(profile, ['zodiac_sign']));
 }
@@ -501,6 +920,7 @@ function updateAccountProfileDisplay(profile, user) {
   updateHeroProfile(profile, user);
   updateNavbarProfileAvatars(profile, user);
   populateProfileForm(profile, user);
+  updatePreferenceControls(profile);
 }
 
 function getAvatarFileExtension(file) {
@@ -810,6 +1230,17 @@ function getReadingModeValue(reading) {
   return reading?.mode_key || metadata.mode || '';
 }
 
+function getReadingSpreadValue(reading) {
+  const metadata = getReadingMetadata(reading);
+  const spread = reading?.spread_type || metadata.spread || '';
+
+  if (spread && typeof spread === 'object' && !Array.isArray(spread)) {
+    return spread.key || spread.label || spread.name || spread.combined_label || '';
+  }
+
+  return spread;
+}
+
 function getReadingModeClass(reading) {
   const mode = String(getReadingModeValue(reading)).toLowerCase().replace(/[\s-]+/g, '_');
 
@@ -853,19 +1284,153 @@ function formatCreditCost(reading) {
   return Number.isFinite(numericCost) ? `${numericCost} ${label} used` : `${creditCost} credits used`;
 }
 
-function formatSavedCard(card, index) {
+function isBloodMoonReading(reading) {
+  return String(getReadingModeValue(reading)).toLowerCase().includes('blood');
+}
+
+function loadSavedReadingDeckData() {
+  if (window.tarotDeck && window.bloodMoonDeck) {
+    return Promise.resolve();
+  }
+
+  if (savedReadingDeckDataPromise) {
+    return savedReadingDeckDataPromise;
+  }
+
+  savedReadingDeckDataPromise = new Promise((resolve, reject) => {
+    const existingScript = document.querySelector('script[src="data/cards.js"]');
+
+    if (existingScript) {
+      existingScript.addEventListener('load', () => resolve(), { once: true });
+      existingScript.addEventListener('error', () => reject(new Error('Card data failed to load.')), { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'data/cards.js';
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Card data failed to load.'));
+    document.head.appendChild(script);
+  });
+
+  return savedReadingDeckDataPromise;
+}
+
+function normalizeCardLookupKey(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/^blood[-_\s]*moon[-_\s]*/, '')
+    .replace(/\breversed\b/g, '')
+    .replace(/\bupright\b/g, '')
+    .replace(/^the\s+high\s+priestess$/, 'the-high-priestess')
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function getCardLookupCandidates(card) {
+  return [
+    card?.card_key,
+    card?.originalCardId,
+    card?.id,
+    card?.key,
+    card?.name,
+    card?.title,
+  ]
+    .map(normalizeCardLookupKey)
+    .filter(Boolean);
+}
+
+function resolveSavedReadingCardArt(card, reading) {
+  const isBloodMoon = isBloodMoonReading(reading);
+  const activeDeck = isBloodMoon ? window.bloodMoonDeck?.cards : window.tarotDeck;
+  const standardDeck = window.tarotDeck || [];
+  const deckCards = Array.isArray(activeDeck) ? activeDeck : standardDeck;
+  const candidates = getCardLookupCandidates(card);
+
+  const matchedCard = deckCards.find((deckCard) => {
+    const deckKeys = [
+      deckCard?.id,
+      deckCard?.originalCardId,
+      deckCard?.name,
+    ].map(normalizeCardLookupKey);
+
+    return deckKeys.some((key) => candidates.includes(key));
+  }) || standardDeck.find((deckCard) => {
+    const deckKeys = [
+      deckCard?.id,
+      deckCard?.name,
+    ].map(normalizeCardLookupKey);
+
+    return deckKeys.some((key) => candidates.includes(key));
+  });
+
+  if (matchedCard?.image) {
+    return matchedCard.image;
+  }
+
+  return isBloodMoon
+    ? 'assets/images/cards/blood-moon/bloodmoon-card-back.webp'
+    : 'assets/images/cards/original/card-back.webp';
+}
+
+function formatSavedCardVisual(card, reading, index) {
   const position = card?.position_label || card?.position || `Card ${index + 1}`;
-  const title = card?.title || card?.name || 'Unknown card';
-  const orientation = formatOrientation(card);
-  const summary = getReadableTextItems(card?.summary || card?.meaning || card?.description)[0] || '';
+  const title = card?.name || card?.title || 'Unknown card';
+  const orientation = formatOrientation(card) || 'Upright';
+  const image = resolveSavedReadingCardArt(card, reading);
+  const fallbackImage = isBloodMoonReading(reading)
+    ? 'assets/images/cards/blood-moon/bloodmoon-card-back.webp'
+    : 'assets/images/cards/original/card-back.webp';
+  const isReversed = orientation.toLowerCase() === 'reversed';
+  const altParts = [toTitleLabel(position, `Card ${index + 1}`), title, orientation].filter(Boolean);
 
   return `
-    <article class="saved-reading-card__card">
-      <span>${escapeHtml(toTitleLabel(position, `Card ${index + 1}`))}</span>
-      <strong>${escapeHtml(title)}</strong>
-      ${orientation ? `<p class="saved-reading-card__orientation">${escapeHtml(orientation)}</p>` : ''}
-      ${summary ? `<p>${escapeHtml(summary)}</p>` : ''}
+    <article class="saved-reading-card__visual" tabindex="0">
+      <div class="saved-reading-card__visual-frame">
+        <img
+          class="saved-reading-card__visual-image${isReversed ? ' is-reversed' : ''}"
+          src="${escapeHtml(image)}"
+          alt="${escapeHtml(altParts.join(' / '))}"
+          width="240"
+          height="420"
+          loading="lazy"
+          decoding="async"
+          onerror="this.src='${escapeHtml(fallbackImage)}'"
+        />
+      </div>
+      <div class="saved-reading-card__visual-copy">
+        <span>${escapeHtml(toTitleLabel(position, `Card ${index + 1}`))}</span>
+        <strong>${escapeHtml(title)}</strong>
+        <p>${escapeHtml(orientation)}</p>
+      </div>
     </article>
+  `;
+}
+
+function renderSavedCardCarousel(reading) {
+  const cards = Array.isArray(reading.cards) ? reading.cards : [];
+
+  if (!cards.length) {
+    return `
+      <section class="saved-reading-card__detail-section" aria-label="Cards drawn">
+        <h4>Cards Drawn</h4>
+        <p>No card details were saved for this reading.</p>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="saved-reading-card__visual-section" aria-label="Cards drawn">
+      <div class="saved-reading-card__visual-header">
+        <span>Cards Drawn</span>
+        <h4>Reopened from the spread</h4>
+      </div>
+      <div class="saved-reading-card__visual-row${cards.length <= 3 ? ' is-centered' : ''}" tabindex="0">
+        ${cards.map((card, index) => formatSavedCardVisual(card, reading, index)).join('')}
+      </div>
+    </section>
   `;
 }
 
@@ -880,11 +1445,19 @@ function getReadableTextItems(value) {
 
   if (typeof value === 'object') {
     return [
+      value.title,
       value.text,
       value.message,
+      value.meaning,
       value.summary,
       value.advice,
       value.content,
+      value.description,
+      value.interpretation,
+      value.reader_message,
+      value.readerMessage,
+      value.spread_meaning,
+      value.spreadMeaning,
     ].flatMap(getReadableTextItems);
   }
 
@@ -893,23 +1466,107 @@ function getReadableTextItems(value) {
   return text ? [text] : [];
 }
 
-function renderReadingParagraphs(reading) {
-  const metadata = getReadingMetadata(reading);
-  const sections = [
-    reading.result_summary,
-    metadata.combined_advice,
-    metadata.extra_messages,
-    metadata.ai_response,
-  ]
-    .flatMap(getReadableTextItems);
+function uniqueReadableTextItems(items) {
+  const seen = new Set();
 
-  if (!sections.length) {
-    return '<p>No reading interpretation was saved.</p>';
+  return items
+    .map((item) => String(item || '').trim())
+    .filter(Boolean)
+    .filter((item) => {
+      const key = item.toLowerCase();
+
+      if (seen.has(key)) {
+        return false;
+      }
+
+      seen.add(key);
+      return true;
+    });
+}
+
+function getSavedCardTextItems(card) {
+  return uniqueReadableTextItems([
+    card?.summary,
+    card?.meaning,
+    card?.message,
+    card?.description,
+    card?.interpretation,
+    card?.reader_message,
+    card?.readerMessage,
+    card?.spread_meaning,
+    card?.spreadMeaning,
+    card?.position_meaning,
+    card?.positionMeaning,
+    card?.metadata?.summary,
+    card?.metadata?.meaning,
+    card?.metadata?.message,
+    card?.metadata?.interpretation,
+  ].flatMap(getReadableTextItems));
+}
+
+function renderTextParagraphs(items, fallbackText = '') {
+  const paragraphs = uniqueReadableTextItems(items.flatMap(getReadableTextItems));
+
+  if (!paragraphs.length) {
+    return fallbackText ? `<p>${escapeHtml(fallbackText)}</p>` : '';
   }
 
-  return sections
-    .map((section) => `<p>${escapeHtml(String(section).trim())}</p>`)
+  return paragraphs
+    .map((section) => `<p>${escapeHtml(section)}</p>`)
     .join('');
+}
+
+function getReadingThreadTextItems(reading) {
+  const metadata = getReadingMetadata(reading);
+
+  return uniqueReadableTextItems([
+    reading.result_summary,
+    reading.thread_summary,
+    reading.threadSummary,
+    reading.summary,
+    reading.reader_message,
+    reading.readerMessage,
+    reading.spread_meaning,
+    reading.spreadMeaning,
+    metadata.combined_title,
+    metadata.combined_advice,
+    metadata.extra_messages,
+    metadata.thread_summary,
+    metadata.threadSummary,
+    metadata.thread,
+    metadata.combined_summary,
+    metadata.combinedSummary,
+    metadata.reader_message,
+    metadata.readerMessage,
+    metadata.spread_meaning,
+    metadata.spreadMeaning,
+    metadata.ai_response,
+  ].flatMap(getReadableTextItems));
+}
+
+function renderReadingParagraphs(reading) {
+  return renderTextParagraphs(
+    getReadingThreadTextItems(reading),
+    'No detailed interpretation was saved for this reading.'
+  );
+}
+
+function renderSavedCardDetails(card, index) {
+  const position = card?.position_label || card?.position || `Card ${index + 1}`;
+  const title = card?.title || card?.name || 'Unknown card';
+  const orientation = formatOrientation(card);
+  const textItems = getSavedCardTextItems(card);
+
+  return `
+    <article class="saved-reading-card__card">
+      <span>${escapeHtml(toTitleLabel(position, `Card ${index + 1}`))}</span>
+      <strong>${escapeHtml(title)}</strong>
+      ${orientation ? `<p class="saved-reading-card__orientation">${escapeHtml(orientation)}</p>` : ''}
+      <div class="saved-reading-card__card-copy">
+        ${renderTextParagraphs(textItems, 'No detailed interpretation was saved for this card.')}
+      </div>
+    </article>
+  `;
 }
 
 function renderSavedReadingDetails(reading, detailsId) {
@@ -917,19 +1574,21 @@ function renderSavedReadingDetails(reading, detailsId) {
   const metadata = getReadingMetadata(reading);
   const question = getReadingQuestion(reading);
   const modeLabel = toTitleLabel(getReadingModeValue(reading));
-  const spreadLabel = toTitleLabel(reading.spread_type || metadata.spread);
+  const spreadLabel = toTitleLabel(getReadingSpreadValue(reading));
   const cardCountLabel = `${formatReadableValue(reading.card_count, cards.length || 'Unknown')} Cards`;
+  const readerName = reading.reader_name || metadata.reader?.name || metadata.reader_name || 'Astral Reading';
 
   return `
-    <div class="saved-reading-card__details" data-saved-reading-details="${escapeHtml(detailsId)}" hidden>
+    <div class="saved-reading-card__details ${getReadingModeClass(reading)}" data-saved-reading-details="${escapeHtml(detailsId)}">
       <div class="saved-reading-card__detail-header">
         <div>
           <span>${escapeHtml(getReadingTypeLabel(reading))}</span>
-          <h4>${escapeHtml(reading.reader_name || 'Astral Reading')}</h4>
+          <h4>${escapeHtml(readerName)}</h4>
         </div>
         <p>${escapeHtml(formatDateTime(reading.created_at))}</p>
         <p>${escapeHtml(modeLabel)} · ${escapeHtml(spreadLabel)} · ${escapeHtml(cardCountLabel)}</p>
       </div>
+      ${renderSavedCardCarousel(reading)}
       ${isAiReading(reading) && question ? `
         <div class="saved-reading-card__question">
           <span>Question</span>
@@ -937,55 +1596,35 @@ function renderSavedReadingDetails(reading, detailsId) {
         </div>
       ` : ''}
       <section class="saved-reading-card__detail-section" aria-label="Cards drawn">
-        <h4>Cards Drawn</h4>
+        <h4>Reading Details</h4>
         ${
           cards.length
-            ? `<div class="saved-reading-card__cards">${cards.map(formatSavedCard).join('')}</div>`
+            ? `<div class="saved-reading-card__cards">${cards.map(renderSavedCardDetails).join('')}</div>`
             : '<p>No card details were saved for this reading.</p>'
         }
       </section>
       <section class="saved-reading-card__detail-section" aria-label="Reading interpretation">
-        <h4>Reading Interpretation</h4>
+        <h4>Thread Summary</h4>
         <div class="saved-reading-card__summary">${renderReadingParagraphs(reading)}</div>
       </section>
     </div>
   `;
 }
 
-function renderReadingFilters() {
-  return `
-    <div class="reading-filter-chips" role="group" aria-label="Filter reading archive">
-      ${['all', 'standard', 'ai'].map((filter) => `
-        <button
-          class="reading-filter-chip${activeReadingFilter === filter ? ' is-active' : ''}"
-          type="button"
-          data-reading-filter="${filter}"
-          aria-pressed="${activeReadingFilter === filter ? 'true' : 'false'}"
-        >
-          ${filter === 'all' ? 'All' : filter === 'ai' ? 'AI' : 'Standard'}
-        </button>
-      `).join('')}
-    </div>
-  `;
+function updateReadingFilters() {
+  if (!readingFilterControls) {
+    return;
+  }
+
+  readingFilterControls.querySelectorAll('[data-reading-filter]').forEach((button) => {
+    const isActive = button.dataset.readingFilter === activeReadingFilter;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
 }
 
-function renderSavedReadings(readings) {
-  if (!savedReadingsList) {
-    return;
-  }
-
-  if (!readings.length) {
-    savedReadingsList.innerHTML = `
-      ${renderReadingFilters()}
-      <div class="saved-readings__empty">
-        <h3>No saved readings yet.</h3>
-        <p>Readings you choose to save will appear here.</p>
-      </div>
-    `;
-    return;
-  }
-
-  const filteredReadings = readings.filter((reading) => {
+function getFilteredSavedReadings(readings) {
+  return readings.filter((reading) => {
     if (activeReadingFilter === 'ai') {
       return isAiReading(reading);
     }
@@ -996,32 +1635,102 @@ function renderSavedReadings(readings) {
 
     return true;
   });
+}
+
+function renderReadingPagination(totalReadings) {
+  if (!readingPagination || !readingPaginationSummary || !readingPaginationControls) {
+    return;
+  }
+
+  if (!totalReadings) {
+    readingPagination.hidden = true;
+    readingPaginationSummary.textContent = 'Showing 0 of 0 readings';
+    readingPaginationControls.innerHTML = '';
+    return;
+  }
+
+  const totalPages = Math.ceil(totalReadings / savedReadingsPageSize);
+  const start = (activeReadingPage - 1) * savedReadingsPageSize + 1;
+  const end = Math.min(activeReadingPage * savedReadingsPageSize, totalReadings);
+
+  readingPaginationSummary.textContent = `Showing ${start}–${end} of ${totalReadings} readings`;
+
+  if (totalPages <= 1) {
+    readingPagination.hidden = false;
+    readingPaginationControls.innerHTML = '';
+    return;
+  }
+
+  const buttons = [
+    `<button class="reading-pagination__button" type="button" data-reading-page="${activeReadingPage - 1}"${activeReadingPage === 1 ? ' disabled' : ''}>Previous</button>`,
+    ...Array.from({ length: totalPages }, (_, index) => {
+      const page = index + 1;
+
+      return `
+        <button
+          class="reading-pagination__button${page === activeReadingPage ? ' is-active' : ''}"
+          type="button"
+          data-reading-page="${page}"
+          aria-current="${page === activeReadingPage ? 'page' : 'false'}"
+        >
+          ${page}
+        </button>
+      `;
+    }),
+    `<button class="reading-pagination__button" type="button" data-reading-page="${activeReadingPage + 1}"${activeReadingPage === totalPages ? ' disabled' : ''}>Next</button>`,
+  ];
+
+  readingPagination.hidden = false;
+  readingPaginationControls.innerHTML = buttons.join('');
+}
+
+function renderSavedReadings(readings) {
+  if (!savedReadingsList) {
+    return;
+  }
+
+  updateReadingFilters();
+
+  if (!readings.length) {
+    savedReadingsList.innerHTML = `
+      <div class="saved-readings__empty">
+        <h3>No saved readings yet.</h3>
+        <p>Readings you choose to save will appear here.</p>
+      </div>
+    `;
+    renderReadingPagination(0);
+    return;
+  }
+
+  const filteredReadings = getFilteredSavedReadings(readings);
+  const totalPages = Math.max(1, Math.ceil(filteredReadings.length / savedReadingsPageSize));
+
+  activeReadingPage = Math.min(Math.max(activeReadingPage, 1), totalPages);
 
   if (!filteredReadings.length) {
     savedReadingsList.innerHTML = `
-      ${renderReadingFilters()}
       <div class="saved-readings__empty">
         <h3>No readings found.</h3>
         <p>No ${activeReadingFilter === 'ai' ? 'AI' : 'standard'} readings are saved yet.</p>
       </div>
     `;
+    renderReadingPagination(0);
     return;
   }
 
+  const pageStartIndex = (activeReadingPage - 1) * savedReadingsPageSize;
+  const visibleReadings = filteredReadings.slice(pageStartIndex, pageStartIndex + savedReadingsPageSize);
+
   savedReadingsList.innerHTML = `
-    ${renderReadingFilters()}
-    ${filteredReadings
+    ${visibleReadings
     .map((reading, index) => {
       const metadata = getReadingMetadata(reading);
-      const detailsId = reading.id || `saved-reading-${index}`;
-      const question = getReadingQuestion(reading);
-      const title = isAiReading(reading) && question
-        ? `“${question}”`
-        : reading.reader_name || metadata.title || 'Astral Reading';
+      const detailsId = reading.id || `saved-reading-${pageStartIndex + index}`;
       const modeLabel = toTitleLabel(getReadingModeValue(reading));
-      const spreadLabel = toTitleLabel(reading.spread_type || metadata.spread);
+      const spreadLabel = toTitleLabel(getReadingSpreadValue(reading));
       const cardCountLabel = `${formatReadableValue(reading.card_count, Array.isArray(reading.cards) ? reading.cards.length : 'Unknown')} Cards`;
       const creditText = formatCreditCost(reading);
+      const readerName = reading.reader_name || metadata.reader?.name || metadata.reader_name || 'Astral Veil';
 
       return `
       <article class="saved-reading-card ${getReadingModeClass(reading)}">
@@ -1029,23 +1738,24 @@ function renderSavedReadings(readings) {
           <div class="saved-reading-card__title">
             <span class="saved-reading-card__badge">${escapeHtml(getReadingTypeLabel(reading))}</span>
             <span class="saved-reading-card__date">${escapeHtml(formatDateTime(reading.created_at))}</span>
-            <h3>${escapeHtml(title)}</h3>
-            <p>${escapeHtml([
-              isAiReading(reading) && question ? reading.reader_name : '',
-              modeLabel,
-              spreadLabel,
-              cardCountLabel,
-            ].filter(Boolean).join(' · '))}</p>
-            ${creditText ? `<p class="saved-reading-card__credits">${escapeHtml(creditText)}</p>` : ''}
+            <span class="saved-reading-card__meta"><strong>Veilwalker</strong> ${escapeHtml(readerName)}</span>
+            <span class="saved-reading-card__meta"><strong>Mode</strong> ${escapeHtml(modeLabel)}</span>
+            <span class="saved-reading-card__meta"><strong>Spread</strong> ${escapeHtml(spreadLabel)}</span>
+            <span class="saved-reading-card__meta"><strong>Cards</strong> ${escapeHtml(cardCountLabel)}</span>
+            ${creditText ? `<span class="saved-reading-card__credits">${escapeHtml(creditText)}</span>` : ''}
           </div>
-          <button class="card-action saved-reading-card__toggle" type="button" data-saved-reading-toggle="${escapeHtml(detailsId)}">View Reading</button>
+          <div class="saved-reading-card__actions">
+            <button class="card-action saved-reading-card__toggle" type="button" data-saved-reading-view="${escapeHtml(detailsId)}">View Reading</button>
+            <button class="card-action saved-reading-card__delete" type="button" data-saved-reading-delete="${escapeHtml(String(reading.id || ''))}"${reading.id ? '' : ' disabled'}>Delete</button>
+          </div>
         </div>
-        ${renderSavedReadingDetails(reading, detailsId)}
       </article>
     `;
     })
     .join('')}
   `;
+
+  renderReadingPagination(filteredReadings.length);
 }
 
 async function loadSavedReadings() {
@@ -1066,6 +1776,7 @@ async function loadSavedReadings() {
     .from('user_readings')
     .select('id, created_at, reader_name, mode_key, spread_type, card_count, is_saved, cards, result_summary, metadata')
     .eq('user_id', activeUser.id)
+    .eq('is_saved', true)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -1076,6 +1787,112 @@ async function loadSavedReadings() {
   savedReadingsLoaded = true;
   savedReadingsCache = data || [];
   renderSavedReadings(savedReadingsCache);
+}
+
+async function deleteSavedReading(readingId, button) {
+  if (!readingId || !activeUser) {
+    return;
+  }
+
+  const confirmed = window.confirm('Delete this saved reading? This cannot be undone.');
+
+  if (!confirmed) {
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    return;
+  }
+
+  const originalText = button?.textContent || 'Delete';
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Deleting...';
+  }
+
+  const { error } = await supabase
+    .from('user_readings')
+    .delete()
+    .eq('id', readingId)
+    .eq('user_id', activeUser.id);
+
+  if (error) {
+    console.error('Saved reading delete failed:', error);
+
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+
+    window.alert('We could not delete this reading. Please try again.');
+    return;
+  }
+
+  savedReadingsCache = savedReadingsCache.filter((reading) => reading.id !== readingId);
+  if (activeSavedReadingModalId === String(readingId)) {
+    closeSavedReadingModal();
+  }
+  renderSavedReadings(savedReadingsCache);
+  await loadSavedReadingCount();
+}
+
+function findSavedReadingByViewId(readingId) {
+  if (!readingId) {
+    return null;
+  }
+
+  return savedReadingsCache.find((reading) => String(reading.id) === String(readingId)) || null;
+}
+
+function closeSavedReadingModal() {
+  if (!savedReadingModal) {
+    return;
+  }
+
+  savedReadingModal.hidden = true;
+  document.body.classList.remove('saved-reading-modal-open');
+  activeSavedReadingModalId = '';
+
+  if (savedReadingModalContent) {
+    savedReadingModalContent.innerHTML = '';
+  }
+}
+
+async function openSavedReadingModal(readingId) {
+  if (!savedReadingModal || !savedReadingModalContent) {
+    return;
+  }
+
+  const reading = findSavedReadingByViewId(readingId);
+
+  if (!reading) {
+    return;
+  }
+
+  activeSavedReadingModalId = String(readingId);
+  savedReadingModal.hidden = false;
+  document.body.classList.add('saved-reading-modal-open');
+  savedReadingModalContent.innerHTML = '<p class="saved-readings__state">Opening reading...</p>';
+
+  if (savedReadingModalTitle) {
+    savedReadingModalTitle.textContent = reading.reader_name || getReadingMetadata(reading).reader?.name || 'Saved Reading';
+  }
+
+  try {
+    await loadSavedReadingDeckData();
+  } catch (error) {
+    console.error('Saved reading card art load failed:', error);
+  }
+
+  if (activeSavedReadingModalId !== String(readingId) || savedReadingModal.hidden) {
+    return;
+  }
+
+  savedReadingModalContent.innerHTML = renderSavedReadingDetails(reading, `modal-${readingId}`);
+  savedReadingModal.querySelector('[data-saved-reading-modal-close]')?.focus({ preventScroll: true });
 }
 
 async function loadArtifactCount() {
@@ -1098,7 +1915,7 @@ async function loadArtifactCount() {
     .eq('user_id', activeUser.id);
 
   if (error) {
-    console.error('Artifact count load failed:', error);
+    console.warn('Artifact count load failed.');
     artifactCountValue.textContent = 'Soon';
     return 0;
   }
@@ -1109,11 +1926,46 @@ async function loadArtifactCount() {
 }
 
 async function loadRoomCount() {
-  if (!roomCountValue) {
-    return;
+  if (!roomCountValue && !discoveryCountValue) {
+    return 0;
   }
 
-  roomCountValue.textContent = 'Soon';
+  if (roomCountValue) {
+    roomCountValue.textContent = '...';
+  }
+
+  if (discoveryCountValue) {
+    discoveryCountValue.textContent = '...';
+  }
+
+  try {
+    const stats = await getUserProgressStats();
+
+    overviewMetrics.rooms = stats.roomsVisited || 0;
+    overviewMetrics.discoveries = stats.discoveriesRecorded || 0;
+
+    if (roomCountValue) {
+      roomCountValue.textContent = String(stats.roomsVisited || 0);
+    }
+
+    if (discoveryCountValue) {
+      discoveryCountValue.textContent = String(stats.discoveriesRecorded || 0);
+    }
+
+    return stats.roomsVisited || 0;
+  } catch (error) {
+    console.warn('Progress stats load failed.');
+
+    if (roomCountValue) {
+      roomCountValue.textContent = '0';
+    }
+
+    if (discoveryCountValue) {
+      discoveryCountValue.textContent = '0';
+    }
+
+    return 0;
+  }
 }
 
 async function loadSavedReadingCount() {
@@ -2049,7 +2901,7 @@ async function loadOverviewActivity() {
     return;
   }
 
-  const [readingsResponse, journalsResponse, artifactsResponse] = await Promise.all([
+  const [readingsResponse, journalsResponse, artifactsResponse, roomVisitsResponse, discoveriesResponse] = await Promise.all([
     supabase
       .from('user_readings')
       .select('id, created_at, reader_name, mode_key, spread_type, card_count, is_saved, metadata')
@@ -2065,26 +2917,44 @@ async function loadOverviewActivity() {
       .limit(10),
     supabase
       .from('user_artifacts')
-      .select('artifact_key, unlocked_at, created_at, updated_at')
+      .select('artifact_key')
       .eq('user_id', activeUser.id)
-      .order('unlocked_at', { ascending: false, nullsFirst: false })
-      .order('created_at', { ascending: false })
+      .limit(10),
+    supabase
+      .from('user_room_visits')
+      .select('room_key, room_name, archive_type, mode, last_visited_at, visit_count')
+      .eq('user_id', activeUser.id)
+      .order('last_visited_at', { ascending: false })
+      .limit(10),
+    supabase
+      .from('user_discoveries')
+      .select(discoveryActivitySelectColumns)
+      .eq('user_id', activeUser.id)
+      .order('discovered_at', { ascending: false })
       .limit(10),
   ]);
 
   if (readingsResponse.error) {
-    console.error('Recent saved readings activity load failed:', readingsResponse.error);
+    console.warn('Recent saved readings activity load failed.');
   }
   if (journalsResponse.error) {
-    console.error('Recent journal activity load failed:', journalsResponse.error);
+    console.warn('Recent journal activity load failed.');
   }
   if (artifactsResponse.error) {
-    console.error('Recent artifact activity load failed:', artifactsResponse.error);
+    console.warn('Recent artifact activity load failed.');
+  }
+  if (roomVisitsResponse.error) {
+    console.warn('Recent room visit activity load failed.');
+  }
+  if (discoveriesResponse.error) {
+    console.warn('[Astral Veil account] Recent discovery activity skipped.');
   }
 
   const savedReadings = readingsResponse.error ? [] : readingsResponse.data || [];
   const journals = journalsResponse.error ? [] : journalsResponse.data || [];
   const artifacts = artifactsResponse.error ? [] : artifactsResponse.data || [];
+  const roomVisits = roomVisitsResponse.error ? [] : roomVisitsResponse.data || [];
+  const discoveries = discoveriesResponse.error ? [] : discoveriesResponse.data || [];
   const activityItems = [
     ...savedReadings.map((reading) => {
       const detailParts = [
@@ -2119,12 +2989,58 @@ async function loadOverviewActivity() {
       };
     }),
     ...artifacts.map((artifact) => {
-      const activityDate = artifact.unlocked_at || artifact.created_at || artifact.updated_at;
+      return {
+        timestamp: 0,
+        title: 'You unlocked an artifact.',
+        detail: getArtifactActivityLabel(artifact),
+      };
+    }),
+    ...roomVisits.map((visit) => {
+      const roomName = visit.room_name || toTitleLabel(visit.room_key, 'Archive room');
+      const isReturnVisit = Number(visit.visit_count || 0) > 1;
+      const archiveLabel = toTitleLabel(visit.archive_type, '');
+      const modeLabel = toTitleLabel(visit.mode, '');
+      const detailParts = [
+        archiveLabel,
+        modeLabel,
+        formatDateTime(visit.last_visited_at),
+      ].filter(Boolean);
 
       return {
-        timestamp: getActivityTimestamp(activityDate),
-        title: 'You unlocked an artifact.',
-        detail: `${getArtifactActivityLabel(artifact)} · ${formatDateTime(activityDate)}`,
+        timestamp: getActivityTimestamp(visit.last_visited_at),
+        title: isReturnVisit ? `You returned to ${roomName}.` : `You entered ${roomName}.`,
+        detail: detailParts.join(' · ') || 'Room visit',
+      };
+    }),
+    ...discoveries.map((discovery) => {
+      const metadata = discovery.metadata && typeof discovery.metadata === 'object' && !Array.isArray(discovery.metadata)
+        ? discovery.metadata
+        : {};
+      const discoveryType = discovery.discovery_type || '';
+      const displayTitle = metadata.title || toTitleLabel(discovery.discovery_key, 'Discovery recorded');
+      const displayDescription = metadata.description || [toTitleLabel(discoveryType, ''), discovery.source_location || '']
+        .filter(Boolean)
+        .join(' · ');
+      const isArtifact = discoveryType === 'artifact';
+      const isRestrictedWingSeal = discovery.discovery_key === 'restricted_wing_seal_opened';
+      const artifactName = isArtifact
+        ? String(displayTitle || 'an artifact').replace(/\s+recovered$/i, '')
+        : '';
+      const detailParts = [
+        displayDescription,
+        toTitleLabel(discovery.source_location, ''),
+        toTitleLabel(discovery.mode_key, ''),
+        formatDateTime(discovery.discovered_at),
+      ].filter(Boolean);
+
+      return {
+        timestamp: getActivityTimestamp(discovery.discovered_at),
+        title: isRestrictedWingSeal
+          ? 'You opened the Restricted Wing seal.'
+          : isArtifact
+            ? `You recovered the ${artifactName}.`
+            : displayTitle || 'You recorded a discovery.',
+        detail: detailParts.join(' · ') || 'Discovery recorded',
       };
     }),
   ].sort((first, second) => second.timestamp - first.timestamp).slice(0, 10);
@@ -2244,6 +3160,10 @@ function showAccountSection(sectionName) {
     button.setAttribute('aria-current', isActive ? 'page' : 'false');
   });
 
+  if (sectionName === 'overview') {
+    loadRoomCount();
+  }
+
   if (sectionName === 'past-readings') {
     loadSavedReadings();
   }
@@ -2255,6 +3175,7 @@ function showAccountSection(sectionName) {
 
 function showHashAccountSection() {
   showAccountSection(getAccountSectionFromHash());
+  setMobileNavOpen(false);
 }
 
 function setMobileNavOpen(isOpen) {
@@ -2286,6 +3207,8 @@ async function loadAccount() {
 
   const { isAdmin } = await isCurrentUserAdmin();
 
+  await loadProfileUnlocks();
+  await ensureRestrictedWingProfileRewards();
   updateAccountProfileDisplay(activeProfile, user);
 
   adminLink.hidden = !isAdmin;
@@ -2295,18 +3218,11 @@ async function loadAccount() {
     loadSavedReadingCount(),
     loadArtifactCount(),
     loadJournalCount(),
+    loadRoomCount(),
   ]).then(() => {
     loadOverviewActivity();
   });
-  loadRoomCount();
-
-  if (getAccountSectionFromHash() === 'past-readings') {
-    loadSavedReadings();
-  }
-
-  if (getAccountSectionFromHash() === 'journal-entries') {
-    loadJournalEntries();
-  }
+  showHashAccountSection();
 }
 
 async function handleLogout(event) {
@@ -2337,8 +3253,7 @@ logoutButtons.forEach((button) => {
 
 sectionButtons.forEach((button) => {
   button.addEventListener('click', () => {
-    showAccountSection(button.dataset.accountSectionTarget);
-    setMobileNavOpen(false);
+    setAccountSectionHash(button.dataset.accountSectionTarget);
   });
 });
 
@@ -2516,7 +3431,34 @@ avatarPreviewCloseButtons.forEach((button) => {
   button.addEventListener('click', closeAvatarPreview);
 });
 
+profileBackgroundEditButton?.addEventListener('click', openProfileBackgroundModal);
+
+profileBackgroundCloseButtons.forEach((button) => {
+  button.addEventListener('click', closeProfileBackgroundModal);
+});
+
+profileBackgroundList?.addEventListener('click', async (event) => {
+  const option = event.target.closest('[data-profile-background-select]');
+
+  if (!option || option.disabled) {
+    return;
+  }
+
+  option.disabled = true;
+  await selectProfileBackground(option.dataset.profileBackgroundSelect || 'default');
+  option.disabled = false;
+});
+
+showProfileTitleToggle?.addEventListener('change', () => {
+  updateProfilePreference('show_profile_title', showProfileTitleToggle.checked);
+});
+
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && profileBackgroundModal && !profileBackgroundModal.hidden) {
+    closeProfileBackgroundModal();
+    return;
+  }
+
   if (event.key === 'Escape' && avatarPreviewModal && !avatarPreviewModal.hidden) {
     closeAvatarPreview();
   }
@@ -2885,35 +3827,62 @@ journalList?.addEventListener('click', async (event) => {
   await loadJournalEntries({ force: true });
 });
 
-savedReadingsList?.addEventListener('click', (event) => {
+readingFilterControls?.addEventListener('click', (event) => {
   const filterButton = event.target.closest('[data-reading-filter]');
 
-  if (filterButton) {
-    activeReadingFilter = filterButton.dataset.readingFilter || 'all';
-    renderSavedReadings(savedReadingsCache);
+  if (!filterButton) {
     return;
   }
 
-  const toggleButton = event.target.closest('[data-saved-reading-toggle]');
+  activeReadingFilter = filterButton.dataset.readingFilter || 'all';
+  activeReadingPage = 1;
+  renderSavedReadings(savedReadingsCache);
+});
 
-  if (!toggleButton) {
+readingPaginationControls?.addEventListener('click', (event) => {
+  const pageButton = event.target.closest('[data-reading-page]');
+
+  if (!pageButton || pageButton.disabled) {
     return;
   }
 
-  const details = savedReadingsList.querySelector(
-    `[data-saved-reading-details="${CSS.escape(toggleButton.dataset.savedReadingToggle)}"]`
-  );
+  const nextPage = Number(pageButton.dataset.readingPage);
 
-  if (!details) {
+  if (!Number.isFinite(nextPage)) {
     return;
   }
 
-  const isOpening = details.hidden;
-  details.hidden = !isOpening;
-  toggleButton.textContent = isOpening ? 'Hide Reading' : 'View Reading';
+  activeReadingPage = nextPage;
+  renderSavedReadings(savedReadingsCache);
+});
+
+savedReadingsList?.addEventListener('click', (event) => {
+  const viewButton = event.target.closest('[data-saved-reading-view]');
+
+  if (viewButton) {
+    openSavedReadingModal(viewButton.dataset.savedReadingView);
+    return;
+  }
+
+  const deleteButton = event.target.closest('[data-saved-reading-delete]');
+
+  if (!deleteButton || deleteButton.disabled) {
+    return;
+  }
+
+  deleteSavedReading(deleteButton.dataset.savedReadingDelete, deleteButton);
+});
+
+savedReadingModalCloseButtons.forEach((button) => {
+  button.addEventListener('click', closeSavedReadingModal);
 });
 
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && savedReadingModal && !savedReadingModal.hidden) {
+    closeSavedReadingModal();
+    return;
+  }
+
   if (event.key === 'Escape') {
     setMobileNavOpen(false);
   }
