@@ -10,6 +10,7 @@ const lightboxCardMeaning = document.querySelector("[data-lightbox-card-meaning]
 const closeDeckLightboxButtons = document.querySelectorAll("[data-close-deck-lightbox]");
 
 let activeCollectionId = "original";
+let activeDeckFilter = "All";
 let activeCardIndex = 0;
 let deckMessageTimeout = null;
 let deckAuthState = {
@@ -20,6 +21,21 @@ const DECK_CARD_IMAGE_WIDTH = 800;
 const DECK_CARD_IMAGE_HEIGHT = 1200;
 const thumbnailPlaceholder =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+const deckLibraryFilters = ["All", "Lumen", "Blood Moon", "Event Decks", "Member Decks", "Lore"];
+const deckLibrarySections = [
+  {
+    id: "free",
+    title: "Free Decks"
+  },
+  {
+    id: "unlockable",
+    title: "Unlockable Decks"
+  },
+  {
+    id: "purchasable",
+    title: "Purchasable Decks"
+  }
+];
 
 ////////////////////////////////////////////////////
 // Deck Collection Access and Card Data Helpers
@@ -88,6 +104,22 @@ function setDeckRitualFeatureVisible(isVisible) {
   }
 }
 
+function isSmallDeckViewport() {
+  return window.matchMedia("(max-width: 760px)").matches;
+}
+
+function scrollToDeckPageTop({ behavior = "smooth" } = {}) {
+  const target = document.querySelector(".deck-page") || document.querySelector(".tarot-stage") || document.body;
+  const targetTop = Math.max(0, target.getBoundingClientRect().top + window.scrollY - 12);
+
+  window.requestAnimationFrame(() => {
+    window.scrollTo({
+      top: targetTop,
+      behavior
+    });
+  });
+}
+
 function getCollectionCards(collection) {
   if (!collection || typeof collection.cards !== "function") {
     return [];
@@ -102,6 +134,18 @@ function getCollectionById(collectionId) {
   }
 
   return deckCollections.find((item) => item.id === collectionId);
+}
+
+function getCollectionCategory(collection) {
+  return collection?.category || "Lumen";
+}
+
+function getCollectionSection(collection) {
+  return collection?.librarySection || "free";
+}
+
+function getCollectionTheme(collection) {
+  return collection?.theme || collection?.id || "lumen";
 }
 
 function getCollectionStatus(collection) {
@@ -376,6 +420,127 @@ function renderDeckAccessLoading() {
   `;
 }
 
+function renderDeckFilterControls() {
+  return `
+    <div class="deck-filter-row" aria-label="Filter deck collections">
+      <button class="deck-filter-arrow deck-filter-arrow--prev" type="button" data-deck-filter-nav="prev" aria-label="Previous deck filter"></button>
+      <div class="deck-filter-track">
+        ${deckLibraryFilters
+          .map(
+            (filter) => `
+              <button class="deck-filter-pill${filter === activeDeckFilter ? " is-active" : ""}" type="button" data-deck-filter="${escapeHtml(filter)}" aria-pressed="${filter === activeDeckFilter ? "true" : "false"}">
+                ${escapeHtml(filter)}
+              </button>
+            `
+          )
+          .join("")}
+      </div>
+      <button class="deck-filter-arrow deck-filter-arrow--next" type="button" data-deck-filter-nav="next" aria-label="Next deck filter"></button>
+    </div>
+  `;
+}
+
+function centerActiveDeckFilter({ behavior = "smooth" } = {}) {
+  const track = deckView?.querySelector(".deck-filter-track");
+  const activeButton = track?.querySelector(".deck-filter-pill.is-active");
+
+  if (!track || !activeButton) {
+    return;
+  }
+
+  const targetScrollLeft = activeButton.offsetLeft + activeButton.offsetWidth / 2 - track.clientWidth / 2;
+
+  track.scrollTo({
+    left: Math.max(0, targetScrollLeft),
+    behavior
+  });
+}
+
+function setDeckFilter(filter, { behavior = "smooth" } = {}) {
+  if (!deckLibraryFilters.includes(filter)) {
+    return;
+  }
+
+  activeDeckFilter = filter;
+  renderDeckCollection();
+  window.requestAnimationFrame(() => centerActiveDeckFilter({ behavior }));
+}
+
+function moveDeckFilter(direction) {
+  const currentIndex = deckLibraryFilters.indexOf(activeDeckFilter);
+  const offset = direction === "next" ? 1 : -1;
+  const nextIndex = (currentIndex + offset + deckLibraryFilters.length) % deckLibraryFilters.length;
+
+  setDeckFilter(deckLibraryFilters[nextIndex]);
+}
+
+function renderDeckCollectionCard(collection) {
+  const isLocked = isCollectionLocked(collection);
+  const canOpenLockedPrompt = isBloodMoonCollection(collection);
+  const status = getCollectionStatus(collection);
+  const actionLabel = getCollectionActionLabel(collection);
+  const category = getCollectionCategory(collection);
+  const theme = getCollectionTheme(collection);
+
+  return `
+    <article class="deck-collection-card deck-collection-card--${escapeHtml(theme)}${isLocked ? " is-locked" : ""}" data-deck-card data-deck-category="${escapeHtml(category)}" data-view-deck="${escapeHtml(collection.id)}" aria-disabled="${isLocked}">
+      <span class="deck-collection-card__badge">${escapeHtml(status)}</span>
+      <div class="deck-collection-card__preview" aria-hidden="true">
+        <img src="${escapeHtml(collection.coverImage)}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" />
+      </div>
+      <div class="deck-collection-card__content">
+        <p class="deck-collection-card__category">${escapeHtml(category)}</p>
+        <h2>${escapeHtml(collection.title)}</h2>
+        <p>${escapeHtml(collection.subtitle)}</p>
+      </div>
+      <div class="deck-collection-card__actions">
+        <button class="deck-collection-card__action" type="button" data-view-deck="${escapeHtml(collection.id)}" ${isLocked && !canOpenLockedPrompt ? "disabled" : ""}>
+          ${escapeHtml(actionLabel)}
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+function getFilteredDeckCollections() {
+  if (typeof deckCollections === "undefined") {
+    return [];
+  }
+
+  if (activeDeckFilter === "All") {
+    return deckCollections;
+  }
+
+  return deckCollections.filter((collection) => getCollectionCategory(collection) === activeDeckFilter);
+}
+
+function renderDeckLibrarySections() {
+  const filteredCollections = getFilteredDeckCollections();
+
+  return deckLibrarySections
+    .map((section) => {
+      const sectionCollections = filteredCollections.filter((collection) => getCollectionSection(collection) === section.id);
+
+      if (!sectionCollections.length) {
+        return "";
+      }
+
+      return `
+        <section class="deck-library-section" aria-labelledby="deck-library-${escapeHtml(section.id)}">
+          <div class="deck-library-section__header">
+            <span aria-hidden="true"></span>
+            <h2 id="deck-library-${escapeHtml(section.id)}">${escapeHtml(section.title)}</h2>
+            <span aria-hidden="true"></span>
+          </div>
+          <div class="deck-collection" aria-label="${escapeHtml(section.title)}">
+            ${sectionCollections.map(renderDeckCollectionCard).join("")}
+          </div>
+        </section>
+      `;
+    })
+    .join("");
+}
+
 function renderBloodMoonLockedPrompt() {
   if (!deckView) {
     return;
@@ -410,6 +575,8 @@ function renderBloodMoonLockedPrompt() {
       </div>
     </section>
   `;
+
+  scrollToDeckPageTop();
 }
 
 async function hydrateDeckAuthState() {
@@ -455,39 +622,13 @@ function renderDeckCollection() {
 
   deckView.innerHTML = `
     <div class="deck-collection-shell">
-      <div class="deck-collection" aria-label="Available tarot decks">
-        ${deckCollections
-          .map(
-            (collection) => {
-              const isLocked = isCollectionLocked(collection);
-              const canOpenLockedPrompt = isBloodMoonCollection(collection);
-
-              return `
-              <article class="deck-collection-card deck-collection-card--${collection.id}${isLocked ? " is-locked" : ""}" data-view-deck="${collection.id}" aria-disabled="${isLocked}">
-                <div class="deck-collection-card__preview" aria-hidden="true">
-                  <img src="${collection.coverImage}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" />
-                </div>
-                <div class="deck-collection-card__content">
-                  <div class="deck-collection-card__header">
-                    <span class="deck-collection-card__badge">${getCollectionStatus(collection)}</span>
-                    <h2>${collection.title}</h2>
-                    <p>${collection.subtitle}</p>
-                  </div>
-                  <div class="deck-collection-card__actions">
-                    <button class="deck-collection-card__action" type="button" data-view-deck="${collection.id}" ${isLocked && !canOpenLockedPrompt ? "disabled" : ""}>
-                      ${getCollectionActionLabel(collection)}
-                    </button>
-                  </div>
-                </div>
-              </article>
-            `;
-            }
-          )
-          .join("")}
-      </div>
+      ${renderDeckFilterControls()}
+      ${renderDeckLibrarySections()}
     </div>
     <p class="deck-collection-message" data-deck-message aria-live="polite"></p>
   `;
+
+  window.requestAnimationFrame(() => centerActiveDeckFilter({ behavior: "auto" }));
 }
 
 // Renders the large selected-card-left, meaning-panel-right viewer and bottom thumbnail rail.
@@ -614,6 +755,14 @@ function selectDeckCard(index) {
   renderDeckGallery(activeCollectionId);
 }
 
+function selectDeckThumbnailCard(index) {
+  selectDeckCard(index);
+
+  if (isSmallDeckViewport()) {
+    scrollToDeckPageTop();
+  }
+}
+
 function moveDeckCard(direction) {
   selectDeckCard(activeCardIndex + (direction === "next" ? 1 : -1));
 }
@@ -665,10 +814,22 @@ function closeDeckLightbox() {
 if (deckView) {
   deckView.addEventListener("click", (event) => {
     const deckTrigger = event.target.closest("[data-view-deck]");
+    const filterTrigger = event.target.closest("[data-deck-filter]");
+    const filterNavButton = event.target.closest("[data-deck-filter-nav]");
     const backButton = event.target.closest("[data-back-to-decks]");
     const thumbnailButton = event.target.closest("[data-card-index]");
     const viewerNavButton = event.target.closest("[data-deck-viewer-nav]");
     const featuredCardButton = event.target.closest("[data-featured-card-image]");
+
+    if (filterNavButton) {
+      moveDeckFilter(filterNavButton.dataset.deckFilterNav);
+      return;
+    }
+
+    if (filterTrigger) {
+      setDeckFilter(filterTrigger.dataset.deckFilter || "All");
+      return;
+    }
 
     if (deckTrigger) {
       const collection = getCollectionById(deckTrigger.dataset.viewDeck);
@@ -687,6 +848,7 @@ if (deckView) {
 
       activeCardIndex = 0;
       renderDeckGallery(deckTrigger.dataset.viewDeck);
+      scrollToDeckPageTop();
       return;
     }
 
@@ -704,7 +866,7 @@ if (deckView) {
     }
 
     if (thumbnailButton) {
-      selectDeckCard(Number(thumbnailButton.dataset.cardIndex));
+      selectDeckThumbnailCard(Number(thumbnailButton.dataset.cardIndex));
       return;
     }
 

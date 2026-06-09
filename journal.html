@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Literata:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Marcellus&family=Space+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
@@ -140,100 +140,112 @@
 
       <form class="journal-entry-form journal-redesign-shell" data-journal-form>
         <section class="journal-main-panel journal-panel" aria-label="Write a journal entry">
-          <div class="journal-panel__header">
-            <p class="journal-chamber__eyebrow">
-              <span class="journal-icon journal-icon--journal" aria-hidden="true"></span>
-              New Reflection
-            </p>
-            <h2 data-main-journal-prompt>Express what the mind is thinking of today.</h2>
+          <div class="journal-entry-context-grid" aria-label="Journal context">
+            <section class="journal-companion-section journal-entry-context-grid__check-in">
+              <label class="journal-field journal-field--check-in">
+                <small>OPTIONAL CHECK-IN</small>
+                <span data-check-in-label>How are you feeling today?</span>
+                <small>A small check-in for you.</small>
+                <input type="text" name="check_in" maxlength="220" autocomplete="off" placeholder="A few words are enough." />
+              </label>
+            </section>
+
+            <section class="journal-companion-section journal-daily-prompt" aria-label="Prompt of the day">
+              <span>Prompt of the Day</span>
+              <p data-prompt-of-day>What part of today asked to be remembered?</p>
+            </section>
+
+            <section class="journal-companion-section journal-entry-context-grid__mood">
+              <label class="journal-field journal-field--mood">
+                <span>Mood</span>
+                <small>How would you describe your mood today?</small>
+                <select name="mood" data-mood-select></select>
+              </label>
+            </section>
           </div>
 
-          <div class="journal-title-row">
-            <label class="journal-field">
-              <span>Title</span>
-              <input type="text" name="title" maxlength="140" autocomplete="off" placeholder="Optional title" />
-            </label>
-            <label class="journal-field">
-              <span>Entry date</span>
-              <input type="date" name="entry_date" required />
-            </label>
-          </div>
+          <section class="journal-reflection-card">
+            <div class="journal-panel__header">
+              <p class="journal-chamber__eyebrow">New Reflection</p>
+            </div>
 
-          <label class="journal-field journal-field--body">
-            <span>
-              <span class="journal-icon journal-icon--edit" aria-hidden="true"></span>
-              Reflection
-            </span>
-            <textarea name="body" rows="14" placeholder="Let the page hold what wants to be named."></textarea>
-          </label>
+            <div class="journal-title-row">
+              <label class="journal-field">
+                <span>Title</span>
+                <input type="text" name="title" maxlength="140" autocomplete="off" placeholder="Optional title" />
+              </label>
+              <label class="journal-field">
+                <span>Entry date</span>
+                <input type="date" name="entry_date" required />
+              </label>
+            </div>
 
-          <section class="journal-guided" data-guided-section>
-            <button class="journal-guided__toggle" type="button" data-guided-toggle aria-haspopup="dialog">
-              <span class="journal-icon journal-icon--guided-reflection" aria-hidden="true"></span>
-              <span class="journal-guided__copy">
-                <span class="journal-guided__title">Guided Reflection <span>(Optional)</span></span>
-                <span data-guided-helper>Answer a few questions to go deeper.</span>
-              </span>
-              <span class="journal-guided__chevron" aria-hidden="true"></span>
-            </button>
-          </section>
+            <section class="journal-guided" data-guided-section>
+              <label class="journal-guided__toggle">
+                <span class="journal-guided__title">
+                  <span class="journal-icon journal-icon--spark" aria-hidden="true"></span>
+                  Guided Reflection
+                </span>
+                <input type="checkbox" data-guided-toggle />
+                <span class="journal-guided__switch" aria-hidden="true"></span>
+              </label>
+            </section>
 
-          <div class="journal-entry-form__meta">
-            <p class="journal-privacy-note">
-              <img src="assets/icons/symbols/lock.svg" alt="" aria-hidden="true" />
-              <span data-privacy-reminder>Only you can see this reflection.</span>
-            </p>
-          </div>
-
-          <div class="journal-entry-form__actions">
-            <button type="submit" data-journal-save>
-              <span class="journal-icon journal-icon--save" aria-hidden="true"></span>
-              Save Entry
-            </button>
-            <button type="button" data-journal-clear>
-              <span class="journal-icon journal-icon--clear" aria-hidden="true"></span>
-              Clear
-            </button>
-          </div>
-
-          <p class="journal-message" data-journal-message role="status" aria-live="polite"></p>
-        </section>
-
-        <aside class="journal-companion-panel journal-panel" aria-label="Journal check-in controls">
-          <section class="journal-companion-section">
-            <p class="journal-chamber__eyebrow">
-              <span class="journal-icon journal-icon--star" aria-hidden="true"></span>
-              Today’s Check-In
-            </p>
-            <label class="journal-field journal-field--check-in">
-              <span data-check-in-label>How are you feeling today?</span>
-              <input type="text" name="check_in" maxlength="220" autocomplete="off" placeholder="A few words are enough." />
-              <small data-check-in-helper>Optional - a small check-in for you.</small>
-            </label>
-          </section>
-
-          <section class="journal-companion-section">
-            <label class="journal-field journal-field--mood">
-              <span>Mood</span>
-              <select name="mood" data-mood-select></select>
-            </label>
-          </section>
-
-          <section class="journal-companion-section">
             <fieldset class="journal-tags" data-journal-tags>
               <legend>Quick Tags</legend>
             </fieldset>
+
+            <label class="journal-field journal-field--body">
+              <span>Reflection</span>
+              <textarea name="body" rows="14" placeholder="Let the page hold what wants to be named."></textarea>
+            </label>
           </section>
 
-          <section class="journal-companion-section journal-daily-prompt" aria-label="Prompt of the day">
-            <span>Prompt of the Day</span>
-            <p data-prompt-of-day>What part of today asked to be remembered?</p>
+          <section class="journal-form-footer" aria-label="Journal actions and recent entries">
+            <aside class="journal-form-footer__recent" aria-labelledby="journal-form-recent-title">
+              <div class="journal-form-footer__recent-header">
+                <h2 id="journal-form-recent-title">Recent Reflections</h2>
+              </div>
+              <div class="journal-form-footer__recent-list" data-form-recent-journal-entries></div>
+              <a class="journal-form-footer__recent-link" href="account.html#journal-entries">
+                View all recent entries
+                <span class="journal-icon journal-icon--arrow-long-right" aria-hidden="true"></span>
+              </a>
+            </aside>
+
+            <div class="journal-form-footer__symbol" aria-hidden="true">
+              <img class="journal-form-footer__symbol-sun-moon" src="assets/icons/symbols/sun-moon-transparent.png" alt="" />
+              <img class="journal-form-footer__symbol-seal" src="assets/icons/symbols/seal-button-transparent.png" alt="" />
+            </div>
+
+            <div class="journal-form-footer__actions">
+              <div class="journal-entry-form__meta">
+                <div class="journal-privacy-note">
+                  <p data-privacy-reminder>
+                    Your entries are private to your Astral Veil account and saved only under your signed-in profile.
+                  </p>
+                  <span class="journal-privacy-note__pill">
+                    <img src="assets/icons/symbols/lock.svg" alt="" aria-hidden="true" />
+                    Reflection: Private
+                  </span>
+                </div>
+              </div>
+
+              <div class="journal-entry-form__actions">
+                <button type="submit" data-journal-save>
+                  <span class="journal-icon journal-icon--clarity" aria-hidden="true"></span>
+                  Save Entry
+                </button>
+                <button type="button" data-journal-clear>
+                  <span class="journal-icon journal-icon--clear" aria-hidden="true"></span>
+                  Clear
+                </button>
+              </div>
+            </div>
           </section>
 
-          <a class="journal-chamber__archive-link" href="account.html#journal-entries">
-            View Archive
-          </a>
-        </aside>
+          <p class="journal-message" data-journal-message role="status" aria-live="polite"></p>
+        </section>
       </form>
 
       <section class="journal-recent-rail" aria-labelledby="recent-journal-title">

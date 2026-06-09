@@ -33,6 +33,7 @@ const reflectionLength = document.querySelector('[data-reflection-length]');
 const privacyReminder = document.querySelector('[data-privacy-reminder]');
 const attachedReadingWrap = document.querySelector('[data-attached-reading]');
 const recentEntriesWrap = document.querySelector('[data-recent-journal-entries]');
+const formRecentEntriesWrap = document.querySelector('[data-form-recent-journal-entries]');
 const recentTitle = document.querySelector('[data-recent-title]');
 const recentSubtitle = document.querySelector('[data-recent-subtitle]');
 
@@ -78,6 +79,7 @@ let confirmedGuidedAnswers = [];
 let questionCursor = 0;
 let promptRequestToken = 0;
 let messageClearTimer = null;
+let insertedGuidedBlock = '';
 
 function getCurrentReturnPath() {
   return `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -251,20 +253,18 @@ function applyThemeCopy() {
   }
 
   if (guidedHelper) {
-    guidedHelper.textContent = 'Answer a few questions to go deeper.';
+    guidedHelper.textContent = 'Add guided questions to your reflection.';
   }
 
   if (guidedToggle) {
     guidedToggle.setAttribute(
       'aria-label',
-      bloodMoon ? 'Begin shadow reflection' : 'Open guided reflection questions',
+      bloodMoon ? 'Add shadow reflection questions' : 'Add guided reflection questions',
     );
   }
 
   if (privacyReminder) {
-    privacyReminder.textContent = bloodMoon
-      ? 'This shadow stays in your private archive.'
-      : 'Only you can see this reflection.';
+    privacyReminder.textContent = 'Your entries are private to your Astral Veil account and saved only under your signed-in profile.';
   }
 
   if (recentTitle) {
@@ -424,6 +424,10 @@ function getDraftGuidedAnswers() {
       answer: textarea.value.trim(),
     }))
     .filter((item) => item.question && item.answer);
+}
+
+function getReflectionField() {
+  return journalForm?.elements.body || null;
 }
 
 function getReflectionLengthLabel() {
@@ -627,7 +631,9 @@ async function chooseQuestions() {
   }
 
   activeQuestions = selected.length ? selected : getFallbackQuestions().slice(0, 3);
-  renderGuidedQuestions();
+  if (guidedModal && !guidedModal.hidden) {
+    renderGuidedQuestions();
+  }
   setMessage('');
   if (guidedToggle) {
     guidedToggle.disabled = false;
@@ -731,6 +737,94 @@ function formatGuidedReflectionText(answers) {
   ].join('\n').trim();
 }
 
+function toRomanNumeral(index) {
+  return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][index] || `${index + 1}`;
+}
+
+function formatGuidedQuestionBlock(questions) {
+  const heading = isBloodMoonMode() ? 'Shadow Reflection' : 'Guided Reflection';
+  const questionLines = questions.flatMap((question, index) => [
+    `${toRomanNumeral(index)}. ${question}`,
+    'Answer:',
+    '',
+  ]);
+
+  return [
+    heading,
+    '',
+    ...questionLines,
+  ].join('\n').trim();
+}
+
+function removeInsertedGuidedBlock() {
+  const bodyField = getReflectionField();
+
+  if (!bodyField || !insertedGuidedBlock) {
+    return true;
+  }
+
+  const currentValue = String(bodyField.value || '');
+  const trimmedBlock = insertedGuidedBlock.trim();
+  const patterns = [
+    insertedGuidedBlock,
+    `\n\n${insertedGuidedBlock}`,
+    trimmedBlock,
+    `\n\n${trimmedBlock}`,
+  ];
+  const match = patterns.find((pattern) => currentValue.endsWith(pattern));
+
+  if (!match) {
+    setMessage('Guided questions will stay in your reflection so your writing is not removed.', 'success');
+    insertedGuidedBlock = '';
+    return false;
+  }
+
+  bodyField.value = currentValue.slice(0, currentValue.length - match.length).trimEnd();
+  insertedGuidedBlock = '';
+  updateReflectionLength();
+  return true;
+}
+
+async function addGuidedQuestionsToReflection() {
+  const bodyField = getReflectionField();
+
+  if (!bodyField) {
+    return;
+  }
+
+  if (!activeQuestions.length) {
+    await chooseQuestions();
+  }
+
+  if (!activeQuestions.length) {
+    setMessage('Guided questions are unavailable right now.', 'error');
+    guidedToggle.checked = false;
+    return;
+  }
+
+  removeInsertedGuidedBlock();
+
+  const existingBody = String(bodyField.value || '').trimEnd();
+  insertedGuidedBlock = formatGuidedQuestionBlock(activeQuestions);
+  bodyField.value = existingBody ? `${existingBody}\n\n${insertedGuidedBlock}` : insertedGuidedBlock;
+  updateReflectionLength();
+  setMessage('Guided questions added to your reflection.', 'success');
+  bodyField.focus();
+}
+
+async function handleGuidedToggleChange() {
+  if (!guidedToggle) {
+    return;
+  }
+
+  if (guidedToggle.checked) {
+    await addGuidedQuestionsToReflection();
+    return;
+  }
+
+  removeInsertedGuidedBlock();
+}
+
 function addGuidedAnswersToReflection() {
   const answers = getDraftGuidedAnswers();
 
@@ -765,6 +859,7 @@ function resetForm() {
   renderTags(getDefaultTagsForContext());
   activeQuestions = [];
   confirmedGuidedAnswers = [];
+  insertedGuidedBlock = '';
   questionCursor = 0;
   promptRequestToken += 1;
   if (guidedQuestionsWrap) {
@@ -775,6 +870,7 @@ function resetForm() {
   }
   if (guidedToggle) {
     guidedToggle.disabled = false;
+    guidedToggle.checked = false;
   }
   closeGuidedModal({ force: true });
   updateReflectionLength();
@@ -953,8 +1049,32 @@ function renderRecentEntries(entries = []) {
   }).join('');
 }
 
+function renderFormRecentEntries(entries = []) {
+  if (!formRecentEntriesWrap) {
+    return;
+  }
+
+  formRecentEntriesWrap.innerHTML = entries.slice(0, 3).map((entry, index) => {
+    const title = getFallbackTitle({
+      title: entry.title,
+      mood: entry.mood || entry.mood_key,
+      entryDate: entry.entry_date,
+    });
+
+    return `
+      <a class="journal-form-footer__recent-entry" href="account.html#journal-entries" aria-label="${escapeHtml(`Open journal archive for ${title}`)}">
+        <span class="journal-form-footer__recent-title">
+          <span class="journal-form-footer__recent-index">${escapeHtml(toRomanNumeral(index))}.</span>
+          <span class="journal-form-footer__recent-name">${escapeHtml(title)}</span>
+        </span>
+        <time datetime="${escapeHtml(entry.entry_date || '')}">${escapeHtml(formatEntryDate(entry.entry_date))}</time>
+      </a>
+    `;
+  }).join('');
+}
+
 async function loadRecentEntries() {
-  if (!recentEntriesWrap || !activeUser) {
+  if ((!recentEntriesWrap && !formRecentEntriesWrap) || !activeUser) {
     return;
   }
 
@@ -962,6 +1082,7 @@ async function loadRecentEntries() {
 
   if (!supabase) {
     renderRecentEntries([]);
+    renderFormRecentEntries([]);
     return;
   }
 
@@ -976,10 +1097,12 @@ async function loadRecentEntries() {
   if (error) {
     console.error('Recent journal entries load failed:', error);
     renderRecentEntries([]);
+    renderFormRecentEntries([]);
     return;
   }
 
   renderRecentEntries(data || []);
+  renderFormRecentEntries(data || []);
 }
 
 async function loadAttachedReading() {
@@ -1166,14 +1289,13 @@ clearButton?.addEventListener('click', () => {
 moodSelect?.addEventListener('change', () => {
   activeQuestions = [];
   questionCursor = 0;
-  if (guidedModal && !guidedModal.hidden) {
-    chooseQuestions();
+  if (guidedToggle?.checked) {
+    guidedToggle.checked = false;
+    removeInsertedGuidedBlock();
   }
 });
 
-guidedToggle?.addEventListener('click', () => {
-  openGuidedModal();
-});
+guidedToggle?.addEventListener('change', handleGuidedToggleChange);
 guidedRefresh?.addEventListener('click', () => {
   if (hasDraftGuidedAnswers() && !window.confirm('Refresh questions and discard these draft answers?')) {
     return;

@@ -1,6 +1,11 @@
 .journal-page {
+  --journal-heading-font: "Cormorant Garamond", serif;
+  --journal-ui-font: "Space Grotesk", sans-serif;
+  --journal-writing-font: "Literata", serif;
+
   min-height: 100vh;
   overflow-x: hidden;
+  font-family: var(--journal-ui-font);
 }
 
 body.journal-guided-modal-open {
@@ -43,7 +48,7 @@ body.journal-guided-modal-open {
 .journal-recent-rail h2 {
   margin: 0;
   color: var(--navbar-text);
-  font-family: var(--font-display, "Cormorant Garamond", serif);
+  font-family: var(--journal-heading-font);
   font-weight: 600;
   line-height: 1.05;
 }
@@ -80,8 +85,16 @@ body.journal-guided-modal-open {
   --journal-icon-url: url("../assets/icons/symbols/archive_rooms1.svg");
 }
 
+.journal-icon--arrow-long-right {
+  --journal-icon-url: url("../assets/icons/symbols/arrow-long-right.svg");
+}
+
 .journal-icon--clear {
   --journal-icon-url: url("../assets/icons/symbols/clear.svg");
+}
+
+.journal-icon--clarity {
+  --journal-icon-url: url("../assets/icons/symbols/clarity.png");
 }
 
 .journal-icon--dream {
@@ -145,20 +158,28 @@ body.journal-guided-modal-open {
   --journal-icon-url: url("../assets/icons/symbols/shadow-bloodmoon.svg");
 }
 
+.journal-icon--spark {
+  --journal-icon-url: url("../assets/icons/symbols/spark.png");
+}
+
 .journal-icon--work {
   --journal-icon-url: url("../assets/icons/symbols/work.svg");
 }
 
 .journal-redesign-shell {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(1.5rem, 3vw, 2.25rem);
   align-items: stretch;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .journal-panel,
 .journal-auth-state,
 .journal-attached-reading {
+  min-width: 0;
+  max-width: 100%;
   border: 1px solid color-mix(in srgb, var(--navbar-border) 72%, transparent);
   border-radius: 18px;
   background:
@@ -222,8 +243,25 @@ body.blood-moon-mode .journal-recent-rail {
 .journal-main-panel {
   position: relative;
   display: grid;
-  gap: clamp(1rem, 2.2vw, 1.35rem);
+  gap: clamp(1rem, 2.2vw, 1.4rem);
+  min-width: 0;
   padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.journal-entry-context-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.18fr) minmax(0, 0.86fr);
+  gap: clamp(0.85rem, 1.8vw, 1.1rem);
+  align-items: stretch;
+  min-width: 0;
+  border: 1px solid rgba(99, 58, 25, 0.2);
+  border-radius: 16px;
+  background: rgba(255, 248, 226, 0.08);
+  padding: clamp(1rem, 2.4vw, 1.35rem);
+}
+
+.journal-entry-context-grid > * {
+  min-width: 0;
 }
 
 .journal-main-panel::before,
@@ -272,6 +310,18 @@ body.blood-moon-mode .journal-main-panel::after {
   border-bottom: 1px solid rgba(78, 48, 18, 0.2);
 }
 
+.journal-entry-context-grid .journal-companion-section {
+  min-width: 0;
+  border-bottom: 0;
+  border-right: 1px solid rgba(78, 48, 18, 0.2);
+  padding: 0 clamp(0.75rem, 1.5vw, 1rem) 0 0;
+}
+
+.journal-entry-context-grid .journal-companion-section:last-child {
+  border-right: 0;
+  padding-right: 0;
+}
+
 .journal-companion-section:last-of-type {
   border-bottom: 0;
   padding-bottom: 0;
@@ -281,9 +331,19 @@ body.blood-moon-mode .journal-companion-section {
   border-color: rgba(191, 76, 61, 0.24);
 }
 
+body.blood-moon-mode .journal-entry-context-grid .journal-companion-section {
+  border-right-color: rgba(191, 76, 61, 0.24);
+}
+
+body.blood-moon-mode .journal-entry-context-grid {
+  border-color: rgba(184, 78, 62, 0.34);
+  background: rgba(12, 3, 5, 0.16);
+}
+
 .journal-panel__header {
   display: grid;
   gap: 0.35rem;
+  min-width: 0;
   padding-inline: 0.6rem;
 }
 
@@ -293,7 +353,7 @@ body.blood-moon-mode .journal-companion-section {
   display: inline-flex;
   align-items: center;
   gap: 0.42rem;
-  font-family: var(--font-ui, "DM Sans", sans-serif);
+  font-family: var(--journal-ui-font);
   font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.16em;
@@ -302,6 +362,14 @@ body.blood-moon-mode .journal-companion-section {
 
 .journal-companion-panel .journal-companion-section:first-child .journal-chamber__eyebrow,
 .journal-field--mood > span {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
+.journal-entry-context-grid .journal-chamber__eyebrow,
+.journal-entry-context-grid .journal-field > span,
+.journal-entry-context-grid .journal-daily-prompt > span {
   width: 100%;
   justify-content: center;
   text-align: center;
@@ -316,6 +384,7 @@ body.blood-moon-mode .journal-chamber__eyebrow {
 .journal-recent-rail h2 {
   color: #3b2415;
   font-size: clamp(1.85rem, 3.2vw, 2.75rem);
+  overflow-wrap: anywhere;
 }
 
 body.blood-moon-mode .journal-panel h2,
@@ -328,6 +397,7 @@ body.blood-moon-mode .journal-recent-rail h2 {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(11rem, 0.32fr);
   gap: 0.9rem;
+  align-items: start;
 }
 
 .journal-field {
@@ -343,7 +413,7 @@ body.blood-moon-mode .journal-recent-rail h2 {
 .journal-daily-prompt span,
 .journal-attached-reading span {
   color: rgba(66, 38, 17, 0.72);
-  font-family: var(--font-ui, "DM Sans", sans-serif);
+  font-family: var(--journal-ui-font);
   font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -403,7 +473,7 @@ body.blood-moon-mode .journal-attached-reading span {
   border-radius: 12px;
   background: rgba(255, 248, 226, 0.58);
   color: #2e1e13;
-  font: 600 0.98rem/1.45 var(--font-ui, "DM Sans", sans-serif);
+  font: 600 0.98rem/1.45 var(--journal-ui-font);
   letter-spacing: 0;
   outline: 0;
   padding: 0.86rem 0.95rem;
@@ -418,34 +488,52 @@ body.blood-moon-mode .journal-attached-reading span {
   position: relative;
 }
 
-.journal-field--mood::after {
-  content: "☺";
-  position: absolute;
-  left: 0.9rem;
-  bottom: 0.84rem;
-  width: 1.65rem;
-  height: 1.65rem;
-  pointer-events: none;
-  color: var(--journal-accent, #b37427);
-  font-family: var(--font-ui, "DM Sans", sans-serif);
-  font-size: 1.48rem;
-  font-weight: 800;
-  line-height: 1;
+.journal-field--mood small {
+  justify-self: center;
+  width: 100%;
   text-align: center;
+}
+
+.journal-field--mood::before {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1;
+  width: 0.48rem;
+  height: 0.48rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  color: var(--journal-accent, #b37427);
+  pointer-events: none;
+  transform: rotate(45deg);
+}
+
+.journal-field--mood::after {
+  content: none;
 }
 
 body.blood-moon-mode .journal-field--mood::after {
   color: #ff5266;
 }
 
+body.blood-moon-mode .journal-field--mood::before {
+  color: #ff5266;
+}
+
 .journal-field--mood select {
-  padding-left: 2.75rem;
+  min-height: 2.55rem;
+  appearance: none;
+  border-radius: 999px;
+  padding-block: 0.52rem;
+  padding-left: 1.1rem;
+  padding-right: 2.45rem;
 }
 
 .journal-field textarea {
   min-height: 7rem;
   color: #2c1c11;
-  font-family: var(--font-body, "Lora", serif);
+  font-family: var(--journal-writing-font);
   font-size: 1.02rem;
   font-weight: 500;
   line-height: 1.75;
@@ -550,6 +638,7 @@ body.blood-moon-mode .journal-field textarea:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;
+  justify-content: center;
   margin: 0;
   border: 0;
   padding: 0;
@@ -573,7 +662,7 @@ body.blood-moon-mode .journal-field textarea:focus-visible {
   background: rgba(255, 248, 226, 0.3);
   color: #3a2515;
   cursor: pointer;
-  font: 800 0.73rem/1 var(--font-ui, "DM Sans", sans-serif);
+  font: 800 0.73rem/1 var(--journal-ui-font);
   letter-spacing: 0.04em;
   padding: 0.55rem 0.72rem;
 }
@@ -638,9 +727,21 @@ body.blood-moon-mode .journal-tag-option:has(input:checked) {
 
 .journal-daily-prompt p,
 .journal-attached-reading p {
+  min-width: 0;
   margin: 0;
   color: #3b2415;
   line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.journal-daily-prompt p {
+  font-family: var(--journal-heading-font);
+  font-size: clamp(1.18rem, 1.8vw, 1.42rem);
+  font-weight: 600;
+}
+
+.journal-attached-reading p {
+  font-family: var(--journal-writing-font);
 }
 
 .journal-daily-prompt p {
@@ -648,6 +749,11 @@ body.blood-moon-mode .journal-tag-option:has(input:checked) {
   border-radius: 12px;
   background: rgba(255, 248, 226, 0.24);
   padding: 0.85rem;
+}
+
+.journal-entry-context-grid .journal-daily-prompt p {
+  min-height: 4.5rem;
+  text-align: center;
 }
 
 body.blood-moon-mode .journal-daily-prompt p,
@@ -819,7 +925,7 @@ body.blood-moon-mode .journal-guided {
 .journal-guided__title {
   display: block;
   color: #3b2415;
-  font-family: var(--font-display, "Cormorant Garamond", serif);
+  font-family: var(--journal-heading-font);
   font-size: 1.25rem;
   font-weight: 700;
 }
@@ -827,13 +933,13 @@ body.blood-moon-mode .journal-guided {
 .journal-guided__title span {
   display: inline;
   color: rgba(66, 38, 17, 0.62);
-  font-family: var(--font-ui, "DM Sans", sans-serif);
+  font-family: var(--journal-ui-font);
   font-size: 0.78rem;
 }
 
 .journal-guided__toggle [data-guided-helper] {
   color: rgba(66, 38, 17, 0.7);
-  font: 700 0.86rem/1.45 var(--font-ui, "DM Sans", sans-serif);
+  font: 700 0.86rem/1.45 var(--journal-ui-font);
 }
 
 body.blood-moon-mode .journal-guided__title,
@@ -872,7 +978,7 @@ body.blood-moon-mode .journal-guided__chevron {
 
 .journal-guided__question label {
   color: #3b2415;
-  font-family: var(--font-ui, "DM Sans", sans-serif);
+  font-family: var(--journal-ui-font);
   font-weight: 800;
 }
 
@@ -889,7 +995,7 @@ body.blood-moon-mode .journal-guided__question label {
   border-radius: 12px;
   background: rgba(255, 248, 226, 0.58);
   color: #2c1c11;
-  font: 500 1rem/1.65 var(--font-body, "Lora", serif);
+  font: 500 1rem/1.65 var(--journal-writing-font);
   outline: 0;
   padding: 0.82rem 0.9rem;
   resize: vertical;
@@ -927,15 +1033,40 @@ body.blood-moon-mode .journal-guided__question textarea:focus-visible {
 
 .journal-entry-form__meta {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
   gap: 0.7rem;
+  width: 100%;
 }
 
 .journal-privacy-note {
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  max-width: 32rem;
+  text-align: center;
+}
+
+.journal-privacy-note p {
+  margin: 0;
+  color: rgba(66, 38, 17, 0.72);
+  font: 700 0.86rem/1.5 var(--journal-ui-font);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.journal-privacy-note__pill {
+  min-height: 2.1rem;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.48rem;
+  border: 1px solid rgba(99, 58, 25, 0.24);
+  border-radius: 999px;
+  background: rgba(255, 248, 226, 0.2);
+  color: rgba(81, 48, 15, 0.84);
+  font: 800 0.72rem/1 var(--journal-ui-font);
+  letter-spacing: 0.08em;
+  padding: 0 0.85rem;
+  text-transform: uppercase;
 }
 
 .journal-privacy-note img {
@@ -949,11 +1080,25 @@ body.blood-moon-mode .journal-privacy-note img {
   filter: invert(65%) sepia(15%) saturate(1250%) hue-rotate(319deg) brightness(94%) contrast(88%);
 }
 
+body.blood-moon-mode .journal-privacy-note p {
+  color: rgba(221, 151, 132, 0.82);
+}
+
+body.blood-moon-mode .journal-privacy-note__pill {
+  border-color: rgba(188, 80, 64, 0.42);
+  background: rgba(14, 4, 5, 0.48);
+  color: #efd2c2;
+}
+
 .journal-entry-form__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.65rem;
-  justify-content: flex-end;
+  justify-content: center;
+}
+
+.journal-entry-form__archive-link {
+  justify-self: end;
 }
 
 .journal-entry-form__actions button,
@@ -969,7 +1114,7 @@ body.blood-moon-mode .journal-privacy-note img {
   background: rgba(255, 248, 226, 0.34);
   color: #51300f;
   cursor: pointer;
-  font: 800 0.76rem/1 var(--font-ui, "DM Sans", sans-serif);
+  font: 800 0.76rem/1 var(--journal-ui-font);
   letter-spacing: 0.09em;
   padding: 0 1.05rem;
   text-decoration: none;
@@ -1003,6 +1148,209 @@ body.blood-moon-mode .journal-privacy-note img {
 .journal-entry-form__actions button[data-journal-clear] {
   background: rgba(255, 248, 226, 0.2);
   color: rgba(81, 48, 15, 0.78);
+}
+
+.journal-form-footer {
+  display: grid;
+  grid-template-columns: minmax(20rem, 1fr) 14rem minmax(20rem, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 2rem);
+  width: 100%;
+  margin-top: clamp(1.25rem, 2.4vw, 1.8rem);
+  padding-bottom: clamp(0.75rem, 1.8vw, 1.25rem);
+}
+
+.journal-form-footer__recent {
+  justify-self: start;
+  display: grid;
+  gap: 0.7rem;
+  width: min(100%, 28.75rem);
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(99, 58, 25, 0.2);
+  border-radius: 14px;
+  background: rgba(255, 248, 226, 0.08);
+  box-shadow: 0 0 0 1px rgba(255, 248, 226, 0.06) inset;
+  padding: 1rem 1.05rem;
+}
+
+.journal-form-footer__recent-header {
+  display: block;
+}
+
+.journal-form-footer__recent h2 {
+  margin: 0;
+  color: #3b2415;
+  font-family: var(--journal-ui-font);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.journal-form-footer__recent-link {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  color: inherit;
+  font: 800 0.72rem/1.2 var(--journal-ui-font);
+  letter-spacing: 0.02em;
+  margin-top: 0.15rem;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18rem;
+}
+
+.journal-form-footer__recent-link .journal-icon {
+  --journal-icon-size: 1.05rem;
+  margin-left: 0.04rem;
+  opacity: 0.9;
+}
+
+.journal-form-footer__recent-list {
+  display: grid;
+}
+
+.journal-form-footer__recent-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: baseline;
+  border-top: 1px solid rgba(99, 58, 25, 0.14);
+  color: inherit;
+  padding-block: 0.46rem;
+  text-decoration: none;
+}
+
+.journal-form-footer__recent-entry:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.journal-form-footer__recent-entry:last-child {
+  padding-bottom: 0;
+}
+
+.journal-form-footer__recent-entry span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--journal-text, #3b2415);
+  font: 600 0.84rem/1.3 var(--journal-writing-font);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.journal-form-footer__recent-entry > .journal-form-footer__recent-title {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.34rem;
+}
+
+.journal-form-footer__recent-entry .journal-form-footer__recent-index {
+  flex: 0 0 auto;
+}
+
+.journal-form-footer__recent-entry .journal-form-footer__recent-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.journal-form-footer__recent-entry time {
+  color: rgba(66, 38, 17, 0.68);
+  font: 700 0.72rem/1 var(--journal-ui-font);
+  white-space: nowrap;
+}
+
+.journal-form-footer__symbol {
+  display: grid;
+  place-items: center;
+  align-self: center;
+  justify-self: center;
+  width: 14rem;
+  min-width: 14rem;
+  min-height: 14rem;
+}
+
+.journal-form-footer__symbol img {
+  width: 13.75rem;
+  height: 13.75rem;
+  object-fit: contain;
+  opacity: 0.78;
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--navbar-glow) 28%, transparent));
+}
+
+.journal-form-footer__symbol-seal {
+  display: none;
+}
+
+.journal-form-footer__actions {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 1.05rem;
+  width: min(100%, 26.25rem);
+  min-width: 0;
+  justify-self: center;
+}
+
+.journal-form-footer__actions .journal-entry-form__meta {
+  width: 100%;
+}
+
+.journal-form-footer__actions .journal-privacy-note {
+  justify-items: start;
+  width: 100%;
+  text-align: left;
+}
+
+body.blood-moon-mode .journal-form-footer__recent {
+  border-color: rgba(184, 78, 62, 0.34);
+  background: rgba(12, 3, 5, 0.16);
+}
+
+body.blood-moon-mode .journal-form-footer__recent-entry {
+  border-top-color: rgba(184, 78, 62, 0.22);
+}
+
+body.blood-moon-mode .journal-form-footer__recent h2,
+body.blood-moon-mode .journal-form-footer__recent-entry span {
+  color: #f7e1d1;
+}
+
+body.blood-moon-mode .journal-form-footer__recent-entry time {
+  color: rgba(235, 194, 176, 0.72);
+}
+
+body.blood-moon-mode .journal-form-footer__symbol img {
+  opacity: 0.68;
+  filter: drop-shadow(0 0 18px rgba(180, 42, 45, 0.28));
+}
+
+body.blood-moon-mode .journal-form-footer__symbol-sun-moon {
+  display: none;
+}
+
+body.blood-moon-mode .journal-form-footer__symbol-seal {
+  display: block;
+  width: 13.5rem;
+  height: 13.5rem;
+  object-fit: contain;
+  opacity: 0.82;
+  filter:
+    drop-shadow(0 0 14px rgba(180, 42, 45, 0.28))
+    drop-shadow(0 0 28px rgba(87, 10, 16, 0.3));
+}
+
+body.blood-moon-mode .journal-reflection-card .journal-chamber__eyebrow::before,
+body.blood-moon-mode .journal-reflection-card .journal-chamber__eyebrow::after {
+  filter:
+    hue-rotate(314deg)
+    saturate(1.45)
+    brightness(1.1)
+    drop-shadow(0 0 7px rgba(226, 72, 84, 0.35));
 }
 
 .journal-guided button.journal-guided__toggle,
@@ -1114,10 +1462,232 @@ body.blood-moon-mode .journal-companion-panel > .journal-chamber__archive-link {
   opacity: 0.66;
 }
 
+.journal-entry-context-grid__check-in .journal-field {
+  justify-items: center;
+  text-align: center;
+}
+
+.journal-entry-context-grid__check-in input {
+  min-height: 4rem;
+}
+
+.journal-entry-context-grid .journal-daily-prompt p,
+body.sun-mode .journal-entry-context-grid .journal-daily-prompt p,
+body.moon-mode .journal-entry-context-grid .journal-daily-prompt p,
+body.blood-moon-mode .journal-entry-context-grid .journal-daily-prompt p {
+  display: grid;
+  max-width: 18rem;
+  min-height: 0;
+  margin: 0 auto;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  place-items: center;
+  text-align: center;
+}
+
+.journal-reflection-card {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.25rem);
+  min-width: 0;
+  border: 1px solid rgba(99, 58, 25, 0.2);
+  border-radius: 16px;
+  background: rgba(255, 248, 226, 0.08);
+  padding: clamp(1rem, 2.4vw, 1.35rem);
+}
+
+body.blood-moon-mode .journal-reflection-card {
+  border-color: rgba(184, 78, 62, 0.34);
+  background: rgba(12, 3, 5, 0.16);
+}
+
+.journal-reflection-card .journal-panel__header {
+  justify-items: center;
+  padding-inline: 0;
+}
+
+.journal-reflection-card .journal-chamber__eyebrow {
+  width: min(100%, 18rem);
+  display: grid;
+  grid-template-columns: auto auto auto;
+  justify-content: center;
+  align-items: center;
+  gap: 0.7rem;
+  text-align: center;
+}
+
+.journal-reflection-card .journal-chamber__eyebrow::before,
+.journal-reflection-card .journal-chamber__eyebrow::after {
+  content: "";
+  width: 3rem;
+  height: 3rem;
+  background: url("../assets/icons/symbols/becoming.png") center / contain no-repeat;
+  opacity: 1;
+  filter:
+    brightness(1.45)
+    saturate(1.12)
+    drop-shadow(0 0 8px rgba(231, 195, 106, 0.48))
+    drop-shadow(0 0 18px color-mix(in srgb, var(--navbar-glow) 38%, transparent));
+}
+
+.journal-field--body > span::before,
+.journal-field--body > span::after {
+  content: "";
+  height: 1px;
+  background: currentColor;
+  opacity: 0.36;
+}
+
+.journal-reflection-card__side {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.journal-title-row > .journal-field:first-child {
+  max-width: 40rem;
+}
+
+.journal-title-row > .journal-field:first-child input {
+  min-height: 2.75rem;
+  padding-block: 0.64rem;
+}
+
+.journal-field--body {
+  gap: 0.7rem;
+}
+
+.journal-field--body > span {
+  width: min(100%, 24rem);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  justify-self: center;
+  align-items: center;
+  gap: 0.8rem;
+  text-align: center;
+}
+
+.journal-guided {
+  align-self: end;
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  padding: 0;
+}
+
+.journal-guided__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.7rem;
+  width: max-content;
+  max-width: 100%;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.journal-guided__toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.journal-guided__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  color: #3b2415;
+  font-family: var(--journal-ui-font);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.journal-guided__title .journal-icon {
+  --journal-icon-size: 1.8rem;
+  margin-right: -0.18rem;
+}
+
+.journal-guided__switch {
+  position: relative;
+  width: 3.3rem;
+  height: 1.72rem;
+  flex: 0 0 auto;
+  border: 1px solid rgba(99, 58, 25, 0.28);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 242, 196, 0.72), rgba(199, 143, 63, 0.42)),
+    rgba(255, 248, 226, 0.34);
+  box-shadow:
+    0 0 0 1px rgba(255, 248, 226, 0.2) inset,
+    0 0 14px rgba(205, 147, 55, 0.14);
+}
+
+.journal-guided__switch::after {
+  content: "";
+  position: absolute;
+  top: 0.2rem;
+  left: 0.22rem;
+  width: 1.22rem;
+  height: 1.22rem;
+  border-radius: 50%;
+  background: currentColor;
+  color: rgba(81, 48, 15, 0.72);
+  transition: transform 160ms ease, color 160ms ease;
+}
+
+.journal-guided__toggle input:checked + .journal-guided__switch::after {
+  color: var(--journal-accent, #b37427);
+  transform: translateX(1.56rem);
+}
+
+.journal-guided__toggle input:checked + .journal-guided__switch {
+  border-color: rgba(180, 125, 49, 0.72);
+  background:
+    linear-gradient(180deg, rgba(232, 189, 96, 0.86), rgba(174, 111, 38, 0.8));
+}
+
+.journal-guided__toggle:focus-within .journal-guided__switch {
+  outline: 2px solid color-mix(in srgb, var(--navbar-hover-text) 72%, transparent);
+  outline-offset: 3px;
+}
+
+.journal-guided__helper {
+  display: block;
+  margin-top: 0.25rem;
+  color: rgba(66, 38, 17, 0.7);
+  font: 700 0.72rem/1.35 var(--journal-ui-font);
+}
+
+body.blood-moon-mode .journal-guided__title,
+body.blood-moon-mode .journal-guided__helper {
+  color: #f6ddcf;
+}
+
+body.blood-moon-mode .journal-guided__switch {
+  border-color: rgba(199, 79, 63, 0.58);
+  background: rgba(14, 4, 5, 0.48);
+}
+
+body.blood-moon-mode .journal-guided__switch::after {
+  color: rgba(235, 194, 176, 0.78);
+}
+
+body.blood-moon-mode .journal-guided__toggle input:checked + .journal-guided__switch::after {
+  color: #ff5266;
+}
+
 .journal-message {
   min-height: 1.25rem;
   color: #6f4518;
-  font-family: var(--font-ui, "DM Sans", sans-serif);
+  font-family: var(--journal-ui-font);
   font-size: 0.9rem;
   font-weight: 800;
 }
@@ -1169,7 +1739,7 @@ body.blood-moon-mode .journal-message.is-success {
 .journal-entry-list-section__copy p {
   margin: 0;
   color: rgba(66, 38, 17, 0.72);
-  font: 700 0.94rem/1.5 var(--font-ui, "DM Sans", sans-serif);
+  font: 700 0.94rem/1.5 var(--journal-ui-font);
 }
 
 .journal-entry-list {
@@ -1275,7 +1845,7 @@ body.blood-moon-mode .journal-entry-card {
   border: 1px solid rgba(99, 58, 25, 0.22);
   border-radius: 999px;
   color: #6f4518;
-  font: 800 0.68rem/1 var(--font-ui, "DM Sans", sans-serif);
+  font: 800 0.68rem/1 var(--journal-ui-font);
   letter-spacing: 0.06em;
   padding: 0.3rem 0.48rem;
   text-transform: uppercase;
@@ -1291,7 +1861,7 @@ body.blood-moon-mode .journal-entry-card__chips span {
 .journal-entry-card__date span,
 .journal-recent-empty {
   color: rgba(255, 255, 255, 0.86);
-  font-family: var(--font-ui, "DM Sans", sans-serif);
+  font-family: var(--journal-ui-font);
   font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.09em;
@@ -1313,7 +1883,7 @@ body.blood-moon-mode .journal-recent-empty {
   -webkit-line-clamp: 2;
   margin: 0;
   color: #fff8e8;
-  font-family: var(--font-display, "Cormorant Garamond", serif);
+  font-family: var(--journal-heading-font);
   font-size: clamp(1.3rem, 2.1vw, 1.65rem);
   line-height: 1.15;
   overflow: hidden;
@@ -1327,6 +1897,7 @@ body.blood-moon-mode .journal-entry-card h3 {
 .journal-entry-card p {
   margin: 0;
   color: rgba(52, 33, 18, 0.78);
+  font-family: var(--journal-writing-font);
   line-height: 1.55;
 }
 
@@ -1431,7 +2002,7 @@ body.blood-moon-mode .journal-guided-modal__dialog {
 .journal-guided-modal__header h2 {
   margin: 0.15rem 0 0;
   color: #3b2415;
-  font-family: var(--font-display, "Cormorant Garamond", serif);
+  font-family: var(--journal-heading-font);
   font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1;
 }
@@ -1443,7 +2014,7 @@ body.blood-moon-mode .journal-guided-modal__header h2 {
 .journal-guided-modal__header p:not(.journal-chamber__eyebrow) {
   margin: 0.45rem 0 0;
   color: rgba(66, 38, 17, 0.7);
-  font: 700 0.95rem/1.55 var(--font-ui, "DM Sans", sans-serif);
+  font: 700 0.95rem/1.55 var(--journal-ui-font);
 }
 
 body.blood-moon-mode .journal-guided-modal__header p:not(.journal-chamber__eyebrow) {
@@ -1509,12 +2080,12 @@ body.sun-mode {
 
 body.moon-mode {
   --journal-card-bg:
-    radial-gradient(circle at 18% 0%, rgba(201, 168, 255, 0.14), transparent 34%),
-    radial-gradient(circle at 86% 100%, rgba(214, 179, 106, 0.12), transparent 38%),
-    linear-gradient(135deg, rgba(38, 30, 58, 0.94), rgba(55, 43, 78, 0.86)),
-    #211a34;
+    radial-gradient(circle at 18% 0%, rgba(151, 112, 218, 0.18), transparent 34%),
+    radial-gradient(circle at 86% 100%, rgba(109, 86, 156, 0.14), transparent 38%),
+    linear-gradient(135deg, rgba(24, 18, 40, 0.98), rgba(37, 29, 58, 0.96)),
+    #171225;
   --journal-card-bg-soft:
-    linear-gradient(145deg, rgba(72, 56, 101, 0.58), rgba(34, 27, 52, 0.72));
+    linear-gradient(145deg, rgba(82, 66, 112, 0.74), rgba(52, 41, 76, 0.78));
   --journal-card-border: rgba(190, 158, 255, 0.34);
   --journal-card-shadow:
     0 0 0 1px rgba(244, 231, 255, 0.08) inset,
@@ -1569,6 +2140,14 @@ body.moon-mode .journal-recent-rail {
   border-color: var(--journal-card-border);
   background: var(--journal-card-bg);
   box-shadow: var(--journal-card-shadow);
+}
+
+body.moon-mode .journal-entry-context-grid,
+body.moon-mode .journal-reflection-card {
+  border-color: rgba(190, 158, 255, 0.28);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(151, 112, 218, 0.12), transparent 38%),
+    linear-gradient(145deg, rgba(34, 26, 54, 0.92), rgba(27, 21, 44, 0.94));
 }
 
 body.sun-mode .journal-panel h2,
@@ -1779,7 +2358,7 @@ body.sun-mode .journal-chamber__archive-link .journal-icon {
   filter: drop-shadow(0 0 5px rgba(217, 164, 77, 0.24));
 }
 
-body.sun-mode .journal-field--mood::after {
+body.sun-mode .journal-field--mood::before {
   color: #111111;
   filter: none;
   opacity: 0.96;
@@ -2092,7 +2671,8 @@ body.sun-mode .journal-entry-card {
 body.moon-mode .journal-entry-card {
   border-color: rgba(190, 158, 255, 0.3);
   --journal-entry-card-image: url("../assets/images/sun&moon-journal-preview.png");
-  background: rgba(34, 27, 52, 0.68);
+  background:
+    linear-gradient(145deg, rgba(91, 72, 126, 0.76), rgba(62, 49, 90, 0.82));
   box-shadow:
     0 0 0 1px rgba(244, 231, 255, 0.07) inset,
     0 16px 34px rgba(3, 2, 10, 0.28);
@@ -2120,14 +2700,215 @@ body.blood-moon-mode .journal-entry-card h3 {
   color: #fff;
 }
 
+body.sun-mode .journal-entry-context-grid .journal-daily-prompt p,
+body.moon-mode .journal-entry-context-grid .journal-daily-prompt p,
+body.blood-moon-mode .journal-entry-context-grid .journal-daily-prompt p {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--journal-text);
+  padding: 0;
+}
+
+body.sun-mode .journal-guided__title,
+body.moon-mode .journal-guided__title {
+  color: var(--journal-muted);
+}
+
+body.sun-mode .journal-privacy-note p,
+body.moon-mode .journal-privacy-note p {
+  color: var(--journal-muted);
+}
+
+body.sun-mode .journal-privacy-note__pill,
+body.moon-mode .journal-privacy-note__pill {
+  border-color: color-mix(in srgb, var(--journal-card-border) 88%, transparent);
+  background: color-mix(in srgb, var(--journal-card-bg-soft) 84%, transparent);
+  color: var(--journal-text);
+}
+
+body.sun-mode .journal-form-footer__recent h2,
+body.sun-mode .journal-form-footer__recent a,
+body.sun-mode .journal-form-footer__recent-entry span,
+body.moon-mode .journal-form-footer__recent h2,
+body.moon-mode .journal-form-footer__recent a,
+body.moon-mode .journal-form-footer__recent-entry span {
+  color: var(--journal-text);
+}
+
+body.sun-mode .journal-form-footer__recent-entry time,
+body.moon-mode .journal-form-footer__recent-entry time {
+  color: var(--journal-muted);
+}
+
+body.sun-mode .journal-form-footer__recent-link {
+  color: var(--journal-accent-strong);
+  text-decoration-color: color-mix(in srgb, var(--journal-accent-strong) 78%, transparent);
+}
+
+body.moon-mode .journal-form-footer__recent {
+  border-color: rgba(190, 158, 255, 0.3);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(151, 112, 218, 0.12), transparent 36%),
+    linear-gradient(145deg, rgba(42, 32, 66, 0.9), rgba(31, 24, 50, 0.94));
+  box-shadow:
+    0 0 0 1px rgba(244, 231, 255, 0.07) inset,
+    0 16px 34px rgba(3, 2, 10, 0.24);
+}
+
+body.moon-mode .journal-form-footer__recent-entry {
+  border-top-color: rgba(221, 204, 255, 0.14);
+}
+
+body.moon-mode .journal-form-footer__recent-link {
+  color: var(--journal-accent);
+  text-decoration-color: color-mix(in srgb, var(--journal-accent) 78%, transparent);
+}
+
+body.blood-moon-mode .journal-form-footer__recent-link {
+  color: #ff5266;
+  text-decoration-color: rgba(226, 72, 84, 0.9);
+}
+
+body.sun-mode .journal-guided__helper,
+body.moon-mode .journal-guided__helper {
+  color: var(--journal-muted);
+}
+
+body.sun-mode .journal-guided,
+body.moon-mode .journal-guided,
+body.blood-moon-mode .journal-guided {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  padding: 0;
+}
+
+body.sun-mode .journal-guided__toggle,
+body.moon-mode .journal-guided__toggle,
+body.blood-moon-mode .journal-guided__toggle {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+body.sun-mode .journal-guided__switch {
+  border-color: rgba(226, 192, 118, 0.64);
+  background:
+    linear-gradient(180deg, rgba(255, 245, 207, 0.94), rgba(220, 170, 76, 0.56));
+}
+
+body.sun-mode .journal-guided__switch::after {
+  color: #b37427;
+}
+
+body.sun-mode .journal-guided__toggle input:checked + .journal-guided__switch {
+  background:
+    linear-gradient(180deg, rgba(232, 189, 96, 0.92), rgba(174, 111, 38, 0.84));
+}
+
+body.moon-mode .journal-guided__switch {
+  border-color: rgba(190, 158, 255, 0.46);
+  background:
+    linear-gradient(180deg, rgba(62, 49, 92, 0.94), rgba(30, 24, 48, 0.9));
+  box-shadow:
+    0 0 0 1px rgba(244, 231, 255, 0.08) inset,
+    0 0 14px rgba(190, 158, 255, 0.16);
+}
+
+body.moon-mode .journal-guided__switch::after {
+  color: #c8a8ff;
+}
+
+body.moon-mode .journal-guided__toggle input:checked + .journal-guided__switch {
+  border-color: rgba(190, 158, 255, 0.72);
+  background:
+    linear-gradient(180deg, rgba(150, 111, 218, 0.9), rgba(83, 54, 142, 0.88));
+}
+
+body.blood-moon-mode .journal-guided__switch {
+  border-color: rgba(199, 79, 63, 0.58);
+  background:
+    linear-gradient(180deg, rgba(56, 14, 17, 0.84), rgba(20, 5, 7, 0.9));
+}
+
+body.blood-moon-mode .journal-guided__switch::after {
+  color: #e0a390;
+}
+
+body.blood-moon-mode .journal-guided__toggle input:checked + .journal-guided__switch {
+  border-color: rgba(226, 95, 74, 0.78);
+  background:
+    linear-gradient(180deg, rgba(125, 29, 31, 0.9), rgba(64, 12, 15, 0.92));
+}
+
 @media (max-width: 980px) {
   .journal-main {
-    width: min(100% - 1.25rem, 760px);
+    width: calc(100vw - 1.25rem);
+    max-width: 760px;
     padding-top: 6.8rem;
   }
 
   .journal-redesign-shell {
     grid-template-columns: 1fr;
+  }
+
+  .journal-entry-context-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .journal-entry-context-grid .journal-daily-prompt {
+    grid-column: 1 / -1;
+  }
+
+  .journal-entry-context-grid .journal-companion-section {
+    border-right: 0;
+    border-bottom: 1px solid rgba(78, 48, 18, 0.2);
+    padding: 0 0 clamp(0.85rem, 2vw, 1rem);
+  }
+
+  body.blood-moon-mode .journal-entry-context-grid .journal-companion-section {
+    border-bottom-color: rgba(191, 76, 61, 0.24);
+  }
+
+  .journal-entry-context-grid .journal-companion-section:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .journal-form-footer {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    justify-items: center;
+    justify-self: center;
+    width: min(100%, calc(100vw - 2.5rem));
+  }
+
+  .journal-form-footer__actions {
+    justify-items: center;
+    justify-self: center;
+    order: 1;
+    width: min(100%, 28.75rem);
+  }
+
+  .journal-form-footer__recent {
+    order: 2;
+    width: 100%;
+  }
+
+  .journal-form-footer__symbol {
+    min-height: 6rem;
+    order: 3;
+  }
+
+  .journal-form-footer__symbol img {
+    width: clamp(6.5rem, 26vw, 8rem);
+  }
+
+  body.blood-moon-mode .journal-form-footer__symbol-seal {
+    width: clamp(6.35rem, 25vw, 7.75rem);
   }
 
   .journal-attached-reading__meta {
@@ -2153,9 +2934,23 @@ body.blood-moon-mode .journal-entry-card h3 {
   }
 }
 
+@media (min-width: 681px) and (max-width: 980px) {
+  .journal-tags {
+    display: grid;
+    grid-template-columns: repeat(5, max-content);
+    justify-content: center;
+  }
+
+  .journal-form-footer__actions .journal-privacy-note {
+    justify-items: center;
+    text-align: center;
+  }
+}
+
 @media (max-width: 680px) {
   .journal-main {
-    width: min(100% - 1rem, 760px);
+    width: calc(100vw - 1rem);
+    max-width: 760px;
     padding-top: 6.4rem;
   }
 
@@ -2179,6 +2974,21 @@ body.blood-moon-mode .journal-entry-card h3 {
     border-radius: 14px;
   }
 
+  .journal-main-panel {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    padding-inline: clamp(0.85rem, 4vw, 1.1rem);
+  }
+
+  body.sun-mode .journal-main-panel,
+  body.moon-mode .journal-main-panel,
+  body.blood-moon-mode .journal-main-panel {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+
   .journal-main-panel::before,
   .journal-main-panel::after {
     display: none;
@@ -2187,6 +2997,51 @@ body.blood-moon-mode .journal-entry-card h3 {
   .journal-title-row,
   .journal-entry-list-section__header {
     grid-template-columns: 1fr;
+  }
+
+  .journal-panel h2 {
+    font-size: 2rem;
+  }
+
+  .journal-entry-context-grid {
+    grid-template-columns: 1fr;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    padding-inline: 0;
+  }
+
+  .journal-reflection-card {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    padding-inline: 0;
+  }
+
+  body.sun-mode .journal-entry-context-grid,
+  body.moon-mode .journal-entry-context-grid,
+  body.blood-moon-mode .journal-entry-context-grid,
+  body.sun-mode .journal-reflection-card,
+  body.moon-mode .journal-reflection-card,
+  body.blood-moon-mode .journal-reflection-card {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .journal-entry-context-grid .journal-daily-prompt {
+    grid-column: auto;
+  }
+
+  .journal-entry-context-grid .journal-companion-section {
+    padding-bottom: clamp(0.85rem, 4vw, 1rem);
+  }
+
+  .journal-entry-context-grid .journal-field--check-in input,
+  .journal-entry-context-grid .journal-field--mood select {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
   }
 
   .journal-entry-list {
@@ -2198,6 +3053,46 @@ body.blood-moon-mode .journal-entry-card h3 {
   .journal-entry-form__actions,
   .journal-guided-modal__actions {
     justify-content: stretch;
+  }
+
+  .journal-privacy-note {
+    max-width: 100%;
+  }
+
+  .journal-form-footer__actions .journal-privacy-note {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .journal-form-footer__recent-header {
+    display: block;
+  }
+
+  .journal-form-footer__recent h2 {
+    font-size: 0.76rem;
+    letter-spacing: 0.14em;
+    line-height: 1.1;
+    overflow-wrap: normal;
+  }
+
+  .journal-form-footer,
+  .journal-form-footer__recent {
+    width: min(100%, calc(100vw - 3rem));
+  }
+
+  .journal-form-footer__recent-entry {
+    grid-template-columns: minmax(0, 1fr) minmax(4.7rem, auto);
+    width: min(100%, calc(100vw - 5rem));
+  }
+
+  .journal-form-footer__recent-entry time {
+    overflow: hidden;
+    text-align: right;
+    text-overflow: clip;
+  }
+
+  .journal-form-footer__recent-link {
+    white-space: normal;
   }
 
   .journal-guided-modal {
@@ -2215,7 +3110,6 @@ body.blood-moon-mode .journal-entry-card h3 {
   }
 
   .journal-entry-form__actions button,
-  .journal-guided button.journal-guided__toggle,
   .journal-guided-modal__actions button,
   .journal-guided-modal__close,
   .journal-chamber__archive-link {
