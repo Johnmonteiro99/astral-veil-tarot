@@ -38,6 +38,7 @@ const recentEntriesWrap = document.querySelector('[data-recent-journal-entries]'
 const formRecentEntriesWrap = document.querySelector('[data-form-recent-journal-entries]');
 const recentTitle = document.querySelector('[data-recent-title]');
 const recentSubtitle = document.querySelector('[data-recent-subtitle]');
+const journalVibeSelect = document.querySelector('[data-journal-vibe-select]');
 
 const sunMoonMoods = ['Calm', 'Hopeful', 'Restless', 'Inspired', 'Heavy', 'Confused', 'Grateful', 'Clear'];
 const bloodMoonMoods = ['Exposed', 'Raw', 'Angry', 'Numb', 'Haunted', 'Unsettled', 'Avoidant', 'Ready'];
@@ -72,6 +73,17 @@ const fallbackBloodMoonQuestions = [
 ];
 const fallbackPromptOfDay = 'What part of today asked to be remembered?';
 const fallbackBloodMoonPromptOfDay = 'What truth feels safe enough to name tonight?';
+const journalVibeStorageKey = 'astralVeilJournalVibe';
+const journalVibeOptions = [
+  { value: 'default', label: 'Default' },
+  { value: 'modern', label: 'Modern' },
+  { value: 'gentle', label: 'Gentle' },
+  { value: 'poetic', label: 'Poetic' },
+  { value: 'handwritten', label: 'Handwritten' },
+  { value: 'velvet', label: 'Velvet' },
+];
+const journalVibeClassPrefix = 'journal-vibe-';
+let currentJournalVibe = 'default';
 
 let activeUser = null;
 let activeProfile = null;
@@ -82,6 +94,69 @@ let questionCursor = 0;
 let promptRequestToken = 0;
 let messageClearTimer = null;
 let insertedGuidedBlock = '';
+
+function normalizeJournalVibe(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function isJournalVibe(value) {
+  const normalized = normalizeJournalVibe(value);
+  return journalVibeOptions.some((option) => option.value === normalized);
+}
+
+function getDefaultJournalVibe() {
+  return 'default';
+}
+
+function getStoredJournalVibe() {
+  try {
+    return normalizeJournalVibe(localStorage.getItem(journalVibeStorageKey)) || getDefaultJournalVibe();
+  } catch {
+    return getDefaultJournalVibe();
+  }
+}
+
+function persistJournalVibe(vibe) {
+  try {
+    localStorage.setItem(journalVibeStorageKey, vibe);
+  } catch {
+    // Storage unavailable in some environments; continue silently.
+  }
+}
+
+function buildJournalVibeOptions() {
+  if (!journalVibeSelect) {
+    return;
+  }
+
+  const current = normalizeJournalVibe(journalVibeSelect.value) || currentJournalVibe;
+  journalVibeSelect.innerHTML = journalVibeOptions
+    .map((option) => `<option value="${option.value}">${option.label}</option>`)
+    .join('');
+  journalVibeSelect.value = isJournalVibe(current) ? current : getDefaultJournalVibe();
+}
+
+function applyJournalVibe(vibe) {
+  const nextVibe = isJournalVibe(vibe) ? normalizeJournalVibe(vibe) : getDefaultJournalVibe();
+
+  journalVibeOptions.forEach((option) => {
+    document.body.classList.remove(`${journalVibeClassPrefix}${option.value}`);
+  });
+  document.body.classList.add(`${journalVibeClassPrefix}${nextVibe}`);
+
+  if (journalVibeSelect) {
+    journalVibeSelect.value = nextVibe;
+  }
+
+  currentJournalVibe = nextVibe;
+  persistJournalVibe(nextVibe);
+}
+
+function initializeJournalVibe() {
+  buildJournalVibeOptions();
+  const storedVibe = getStoredJournalVibe();
+  applyJournalVibe(storedVibe);
+}
 
 function getCurrentReturnPath() {
   return `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -736,7 +811,13 @@ function renderGuidedQuestions() {
   guidedQuestionsWrap.innerHTML = activeQuestions.map((question, index) => `
     <div class="journal-guided__question">
       <label for="guided-answer-${index}">${escapeHtml(question)}</label>
-      <textarea id="guided-answer-${index}" rows="4" data-guided-answer data-guided-question="${escapeHtml(question)}"></textarea>
+      <textarea
+        id="guided-answer-${index}"
+        class="journal-vibe-writing-field"
+        rows="4"
+        data-guided-answer
+        data-guided-question="${escapeHtml(question)}"
+      ></textarea>
     </div>
   `).join('');
   updateReflectionLength();
@@ -957,6 +1038,9 @@ function resetForm() {
   setReflectionValue('');
   closeGuidedModal({ force: true });
   updateReflectionLength();
+  if (journalVibeSelect) {
+    journalVibeSelect.value = currentJournalVibe;
+  }
   journalForm.elements.title.focus();
 }
 
@@ -1120,13 +1204,13 @@ function renderRecentEntries(entries = []) {
     const createdLabel = formatEntryTime(entry.created_at);
 
     return `
-      <a class="journal-entry-card" href="account.html#journal-entries" aria-label="${escapeHtml(`Open journal archive for ${title}`)}">
+      <a class="journal-entry-card journal-vibe-preview-entry" href="account.html#journal-entries" aria-label="${escapeHtml(`Open journal archive for ${title}`)}">
         <span class="journal-entry-card__media" aria-hidden="true"></span>
         <span class="journal-entry-card__date">
-          <time datetime="${escapeHtml(entry.entry_date || '')}">${escapeHtml(formatEntryDate(entry.entry_date))}</time>
-          <span>${escapeHtml(createdLabel)}</span>
+          <time datetime="${escapeHtml(entry.entry_date || '')}" class="journal-vibe-preview-date">${escapeHtml(formatEntryDate(entry.entry_date))}</time>
+          <span class="journal-vibe-preview-date">${escapeHtml(createdLabel)}</span>
         </span>
-        <h3>${escapeHtml(title)}</h3>
+        <h3 class="journal-vibe-preview-title">${escapeHtml(title)}</h3>
       </a>
     `;
   }).join('');
@@ -1145,10 +1229,10 @@ function renderFormRecentEntries(entries = []) {
     });
 
     return `
-      <a class="journal-form-footer__recent-entry" href="account.html#journal-entries" aria-label="${escapeHtml(`Open journal archive for ${title}`)}">
+      <a class="journal-form-footer__recent-entry journal-vibe-preview-entry" href="account.html#journal-entries" aria-label="${escapeHtml(`Open journal archive for ${title}`)}">
         <span class="journal-form-footer__recent-title">
           <span class="journal-form-footer__recent-index">${escapeHtml(toRomanNumeral(index))}.</span>
-          <span class="journal-form-footer__recent-name">${escapeHtml(title)}</span>
+          <span class="journal-form-footer__recent-name journal-vibe-preview-title">${escapeHtml(title)}</span>
         </span>
         <time datetime="${escapeHtml(entry.entry_date || '')}">${escapeHtml(formatEntryDate(entry.entry_date))}</time>
       </a>
@@ -1318,6 +1402,8 @@ async function handleSubmit(event) {
 }
 
 async function initJournalPage() {
+  initializeJournalVibe();
+
   if (!isSupabaseConfigured()) {
     if (loadingState) {
       loadingState.textContent = 'Journal access is not configured for this environment.';
@@ -1364,6 +1450,9 @@ journalForm?.addEventListener('submit', handleSubmit);
 journalForm?.addEventListener('input', updateReflectionLength);
 journalForm?.addEventListener('change', updateReflectionLength);
 reflectionEditor?.addEventListener('input', syncReflectionFromEditor);
+journalVibeSelect?.addEventListener('change', () => {
+  applyJournalVibe(journalVibeSelect.value);
+});
 
 clearButton?.addEventListener('click', () => {
   resetForm();

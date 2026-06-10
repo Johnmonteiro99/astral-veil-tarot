@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Literata:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Marcellus&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@400;500;600;700&family=Literata:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Marcellus&family=Playfair+Display:wght@400;500;600;700&family=Playwrite+USA+Modern&family=Quicksand:wght@400;500;600;700&family=Spectral:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
@@ -169,10 +169,22 @@
                 <p class="journal-chamber__eyebrow">New Reflection</p>
               </div>
 
+            <div class="journal-vibe-row">
+              <label class="journal-field journal-field--vibe">
+                <span id="journal-vibe-label">Journal Vibes</span>
+                <select
+                  name="journal-vibe"
+                  id="journal-vibe-select"
+                  data-journal-vibe-select
+                  aria-labelledby="journal-vibe-label"
+                ></select>
+              </label>
+            </div>
+
             <div class="journal-title-row">
               <label class="journal-field">
                 <span>Title</span>
-                <input type="text" name="title" maxlength="140" autocomplete="off" placeholder="Optional title" />
+                <input type="text" class="journal-vibe-writing-field" name="title" maxlength="140" autocomplete="off" placeholder="Optional title" />
               </label>
               <label class="journal-field">
                 <span>Entry date</span>
@@ -189,14 +201,14 @@
                 <span>Reflection</span>
                 <div class="journal-reflection-editor-wrap">
                   <div
-                    class="journal-reflection-editor"
+                    class="journal-reflection-editor journal-vibe-writing-field"
                     data-reflection-editor
                     contenteditable="plaintext-only"
                     role="textbox"
                     aria-label="Reflection"
                     data-placeholder="Let the page hold what wants to be named."
                   ></div>
-                  <textarea name="body" data-reflection-hidden hidden></textarea>
+                  <textarea name="body" class="journal-vibe-writing-field" data-reflection-hidden hidden></textarea>
                 </div>
               </label>
 

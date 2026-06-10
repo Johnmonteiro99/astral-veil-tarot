@@ -15,6 +15,7 @@
     <style>
       :root {
         color-scheme: dark;
+        --account-sidebar-width: 13.5rem;
         --font-display: "Marcellus", Georgia, serif;
         --font-ui: "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         --body-font: var(--font-ui);
@@ -119,7 +120,7 @@
       .account-layout {
         min-height: 100vh;
         display: grid;
-        grid-template-columns: 13.5rem minmax(0, 1fr);
+        grid-template-columns: var(--account-sidebar-width) minmax(0, 1fr);
       }
 
       .sidebar {
@@ -2064,7 +2065,7 @@
       .journal-entry-view {
         position: fixed;
         inset: 0;
-        z-index: 80;
+        z-index: 9000;
         display: grid;
         place-items: center;
         padding: clamp(1rem, 3vw, 2rem);
@@ -2075,9 +2076,15 @@
       }
 
       .journal-entry-view__backdrop {
-        position: absolute;
-        inset: 0;
+        position: fixed;
+        top: 0;
+        left: var(--account-sidebar-width, 13.5rem);
+        right: 0;
+        bottom: 0;
+        width: auto;
+        height: 100vh;
         min-height: 0;
+        z-index: 9000;
         border: 0;
         background: rgba(3, 4, 12, 0.72);
         box-shadow: none;
@@ -2086,31 +2093,101 @@
       }
 
       .journal-entry-view__dialog {
-        position: relative;
-        z-index: 1;
+        position: fixed;
+        left: calc(var(--account-sidebar-width, 13.5rem) + (100vw - var(--account-sidebar-width, 13.5rem)) / 2);
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9010;
         display: grid;
-        width: min(46rem, 100%);
-        max-height: min(82vh, 52rem);
+        grid-template-rows: auto minmax(0, 1fr);
+        width: min(900px, calc(100vw - var(--account-sidebar-width, 13.5rem) - 48px));
+        max-height: min(88vh, 58rem);
         gap: 1rem;
-        overflow-y: auto;
-        border: 1px solid rgba(228, 189, 118, 0.16);
-        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(93, 52, 23, 0.22);
+        border-radius: 26px 22px 28px 20px;
         background:
-          linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(185, 156, 255, 0.02)),
-          rgba(9, 10, 27, 0.94);
+          linear-gradient(rgba(116, 72, 34, 0.035) 1px, transparent 1px),
+          radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.36), transparent 32%),
+          linear-gradient(135deg, #fff7dc, #f3dfb1 56%, #e8c984);
         box-shadow:
-          0 0 0 1px rgba(255, 255, 255, 0.028) inset,
-          0 30px 80px rgba(0, 0, 0, 0.42);
-        padding: clamp(1rem, 2vw, 1.25rem);
+          0 34px 100px rgba(0, 0, 0, 0.48),
+          0 0 38px rgba(231, 195, 106, 0.22),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.36),
+          inset 0 0 44px rgba(116, 72, 34, 0.12);
+        pointer-events: auto;
+        padding: clamp(1.3rem, 4vw, 1.8rem) clamp(1rem, 3vw, 1.6rem);
+      }
+
+      .journal-entry-view__dialog::before,
+      .journal-entry-view__dialog::after {
+        content: "";
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        height: 22px;
+        border-radius: 999px;
+        background:
+          linear-gradient(90deg, rgba(93, 52, 23, 0.18), rgba(255, 255, 255, 0.24), rgba(93, 52, 23, 0.16)),
+          rgba(97, 56, 27, 0.16);
+        pointer-events: none;
+      }
+
+      .journal-entry-view__dialog::before {
+        top: -10px;
+      }
+
+      .journal-entry-view__dialog::after {
+        bottom: -10px;
+      }
+
+      .journal-entry-view__rod {
+        position: absolute;
+        left: clamp(22px, 6vw, 72px);
+        right: clamp(22px, 6vw, 72px);
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(95, 55, 26, 0.24);
+        box-shadow: 0 0 12px rgba(95, 55, 26, 0.16);
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .journal-entry-view__rod--top {
+        top: 11px;
+      }
+
+      .journal-entry-view__rod--bottom {
+        bottom: 11px;
+      }
+
+      .journal-entry-view__seal {
+        position: absolute;
+        right: clamp(16px, 6vw, 40px);
+        bottom: clamp(14px, 5vw, 34px);
+        width: 48px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle, rgba(255, 255, 255, 0.32) 0 16%, transparent 17%),
+          repeating-conic-gradient(from 12deg, transparent 0 20deg, rgba(255, 255, 255, 0.16) 21deg 24deg),
+          rgba(179, 120, 48, 0.28);
+        box-shadow:
+          0 0 18px rgba(231, 195, 106, 0.2),
+          inset 0 0 0 1px rgba(92, 52, 21, 0.16);
+        pointer-events: none;
+        z-index: 2;
       }
 
       .journal-entry-view__header {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 0.95rem;
-        align-items: center;
+        align-items: start;
+        position: relative;
+        z-index: 3;
         padding-bottom: 0.55rem;
-        border-bottom: 1px solid rgba(228, 189, 118, 0.16);
+        border-bottom: 1px solid rgba(79, 48, 22, 0.22);
       }
 
       .journal-entry-view__meta,
@@ -2121,7 +2198,7 @@
       }
 
       .journal-entry-view__meta {
-        color: rgba(247, 240, 232, 0.66);
+        color: rgba(79, 48, 22, 0.72);
         font-family: var(--font-ui);
         font-size: 0.78rem;
         font-weight: 700;
@@ -2131,12 +2208,13 @@
 
       .journal-entry-view h3 {
         margin-top: 0.3rem;
-        color: var(--gold);
-        font-family: var(--font-display);
-        font-size: clamp(1.45rem, 2.6vw, 1.85rem);
+        color: #342419;
+        font-family: var(--logo-font);
+        font-size: clamp(1.55rem, 3vw, 2rem);
         font-weight: 500;
         line-height: 1.08;
         overflow-wrap: anywhere;
+        text-wrap: balance;
       }
 
       .journal-entry-view__header .card-action {
@@ -2155,7 +2233,8 @@
       .journal-entry-view__chips span {
         border: 1px solid rgba(228, 189, 118, 0.22);
         border-radius: 999px;
-        color: rgba(247, 240, 232, 0.74);
+        background: rgba(255, 255, 255, 0.28);
+        color: rgba(79, 48, 22, 0.86);
         font-family: var(--font-ui);
         font-size: 0.72rem;
         font-weight: 700;
@@ -2165,15 +2244,40 @@
       }
 
       .journal-entry-view__content {
+        position: relative;
+        z-index: 3;
+        min-height: 0;
+        max-height: min(40rem, 58vh);
+        overflow-x: hidden;
+        overflow-y: auto;
         display: grid;
         gap: 0.95rem;
+        padding-right: 0.35rem;
+        color: rgba(47, 35, 25, 0.94);
+        scrollbar-color: rgba(120, 78, 34, 0.52) rgba(255, 255, 255, 0.24);
+      }
+
+      .journal-entry-view__content::-webkit-scrollbar {
+        width: 0.6rem;
+      }
+
+      .journal-entry-view__content::-webkit-scrollbar-track {
+        border-radius: 999px;
+        background: transparent;
+      }
+
+      .journal-entry-view__content::-webkit-scrollbar-thumb {
+        border: 2px solid transparent;
+        border-radius: 999px;
+        background-clip: padding-box;
+        background-color: rgba(120, 78, 34, 0.52);
       }
 
       .journal-entry-view__section {
         display: grid;
         gap: 0.42rem;
-        border-bottom: 1px solid rgba(228, 189, 118, 0.14);
-        padding-bottom: 0.7rem;
+        border-bottom: 1px solid rgba(120, 78, 34, 0.2);
+        padding-bottom: 0.8rem;
       }
 
       .journal-entry-view__section:last-child {
@@ -2182,7 +2286,7 @@
       }
 
       .journal-entry-view__section strong {
-        color: rgba(228, 189, 118, 0.88);
+        color: rgba(104, 69, 30, 0.94);
         font-family: var(--font-ui);
         font-size: 0.78rem;
         letter-spacing: 0.06em;
@@ -2191,36 +2295,53 @@
 
       .journal-entry-view__section p {
         margin: 0;
-        color: rgba(247, 240, 232, 0.82);
-        font-size: 0.95rem;
-        line-height: 1.75;
+        color: rgba(47, 35, 25, 0.94);
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(1.05rem, 2vw, 1.2rem);
+        line-height: 1.72;
         overflow-wrap: anywhere;
         white-space: pre-wrap;
       }
 
       .journal-entry-view__section--reflection strong {
-        color: rgba(228, 189, 118, 0.96);
+        color: rgba(104, 69, 30, 0.94);
       }
 
       .journal-entry-view__section--reflection p {
-        color: rgba(247, 240, 232, 0.9);
+        color: rgba(47, 35, 25, 0.98);
+        font-size: 1.12rem;
+        line-height: 1.85;
+        letter-spacing: 0.01em;
+      }
+
+      .journal-entry-view__section--reflection {
+        background: linear-gradient(150deg, rgba(255, 248, 230, 0.25), transparent);
+        border: 1px solid rgba(104, 69, 30, 0.24);
+        border-radius: 10px;
+        padding: 0.72rem 0.85rem;
       }
 
       .journal-entry-view__guided {
         display: grid;
         gap: 0.72rem;
-        border: 1px solid rgba(228, 189, 118, 0.16);
+        border: 1px solid rgba(104, 69, 30, 0.23);
         border-radius: 12px;
-        background: rgba(228, 189, 118, 0.03);
+        background: linear-gradient(150deg, rgba(255, 248, 230, 0.16), transparent);
         padding: 0.65rem;
       }
 
       .journal-entry-view__guided .journal-entry-view__section strong {
-        color: var(--gold);
+        color: rgba(104, 69, 30, 0.9);
       }
 
       .journal-entry-view__guided .journal-entry-view__section p {
-        color: rgba(247, 240, 232, 0.9);
+        color: rgba(47, 35, 25, 0.9);
+      }
+
+      .journal-entry-view__dialog .card-action {
+        border-color: rgba(79, 48, 22, 0.46);
+        background: rgba(255, 255, 255, 0.22);
+        color: #342419;
       }
 
       .journal-pagination {
@@ -3208,6 +3329,10 @@
       }
 
       @media (max-width: 1023px) {
+        .account-layout {
+          --account-sidebar-width: 0rem;
+        }
+
         .journal-list {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
@@ -4123,6 +4248,9 @@
             <div class="journal-entry-view" data-journal-view hidden aria-live="polite">
               <button class="journal-entry-view__backdrop" type="button" data-journal-view-backdrop aria-label="Close journal entry view"></button>
               <article class="journal-entry-view__dialog" role="dialog" aria-modal="true" aria-labelledby="journal-view-title">
+                  <span class="journal-entry-view__rod journal-entry-view__rod--top" aria-hidden="true"></span>
+                  <span class="journal-entry-view__rod journal-entry-view__rod--bottom" aria-hidden="true"></span>
+                  <span class="journal-entry-view__seal" aria-hidden="true"></span>
                   <div class="journal-entry-view__header">
                     <div>
                       <div class="journal-entry-view__meta" data-journal-view-meta></div>
