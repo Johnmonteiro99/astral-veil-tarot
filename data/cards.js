@@ -1103,6 +1103,31 @@ const bloodMoonCardImages = {
   "the-world": "loodmoon-world.webp"
 };
 
+const moonveilCardImages = {
+  "the-fool": "moonveil_fool.png",
+  "the-magician": "moonveil_magician.png",
+  "the-high-priestess": "moonveil_high_priestess.png",
+  "the-empress": "moonveil_empress.png",
+  "the-emperor": "moonveil_emperor.png",
+  "the-hierophant": "moonveil_hierophant.png",
+  "the-lovers": "moonveil_lovers.png",
+  "the-chariot": "moonveil_chariot.png",
+  strength: "moonveil_strength.png",
+  "the-hermit": "moonveil_hermit.png",
+  "wheel-of-fortune": "moonveil_wheel_of_fortune.png",
+  justice: "moonveil_justice.png",
+  "the-hanged-man": "moonveil_hanged_man.png",
+  death: "moonveil_death.png",
+  temperance: "moonveil_temperance.png",
+  "the-devil": "moonveil_devil.png",
+  "the-tower": "moonveil_tower.png",
+  "the-star": "moonveil_star.png",
+  "the-moon": "moonveil_moon.png",
+  "the-sun": "moonveil_sun.png",
+  judgement: "moonveil_judgement.png",
+  "the-world": "moonveil_world.png"
+};
+
 const bloodMoonDeck = {
   id: "bloodMoon",
   name: "Blood Moon Deck",
@@ -1116,8 +1141,21 @@ const bloodMoonDeck = {
   }))
 };
 
+const moonveilDeck = {
+  id: "moonveil",
+  name: "Moonveil Deck",
+  cards: tarotDeck.map((card) => ({
+    ...card,
+    id: `moonveil-${card.id}`,
+    originalCardId: card.id,
+    image: `assets/images/cards/moonveil/${moonveilCardImages[card.id] || card.image?.split("/").pop()}`,
+    meaning: card.shortMeaning
+  }))
+};
+
 if (typeof window !== "undefined") {
   window.majorArcanaCards = majorArcanaCards;
   window.tarotDeck = tarotDeck;
   window.bloodMoonDeck = bloodMoonDeck;
+  window.moonveilDeck = moonveilDeck;
 }

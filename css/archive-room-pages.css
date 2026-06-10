@@ -1,0 +1,126 @@
+.archive-room-placeholder-page {
+  min-height: calc(100vh - 120px);
+}
+
+.archive-room-placeholder__stage {
+  max-width: min(860px, 100%);
+  margin: 0 auto;
+  padding: clamp(1.2rem, 2.8vw, 2rem) 1rem clamp(2rem, 3vw, 2.8rem);
+}
+
+.archive-room-placeholder__card {
+  margin: 0 auto;
+  width: min(860px, 100%);
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1.2rem, 3vw, 1.9rem);
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--theme-divider-faint) 84%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--theme-glow-secondary) 14%, transparent),
+    color-mix(in srgb, var(--theme-accent-secondary) 7%, transparent)
+  );
+  backdrop-filter: blur(1px);
+  box-shadow: 0 18px 44px color-mix(in srgb, var(--theme-glow-primary) 14%, transparent);
+}
+
+.archive-room-placeholder__kicker {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--theme-text-muted);
+}
+
+.archive-room-placeholder__title {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.15;
+}
+
+.archive-room-placeholder__type {
+  font-size: 0.95rem;
+  color: var(--theme-text-main);
+  opacity: 0.9;
+  margin: 0;
+}
+
+.archive-room-placeholder__copy {
+  margin: 0;
+  color: var(--theme-text-main);
+  opacity: 0.95;
+  line-height: 1.6;
+}
+
+.archive-room-placeholder__copy--not-found {
+  font-style: italic;
+  opacity: 0.88;
+}
+
+.archive-room-placeholder__back {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: fit-content;
+  border: 1px solid color-mix(in srgb, var(--theme-accent-secondary) 44%, transparent);
+  color: var(--theme-text-main);
+  text-decoration: none;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  transition: background 180ms ease, transform 180ms ease, opacity 180ms ease;
+}
+
+.archive-room-placeholder__back:hover,
+.archive-room-placeholder__back:focus-visible {
+  background: color-mix(in srgb, var(--theme-glow-secondary) 24%, transparent);
+  opacity: 0.95;
+}
+
+.archive-room-placeholder__back:active {
+  transform: translateY(1px);
+}
+
+.archive-room-placeholder__meta {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--theme-text-muted);
+}
+
+.noctis-room-page .archive-room-placeholder__card {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, rgba(88, 14, 33, 0.45) 55%, transparent),
+    color-mix(in srgb, rgba(35, 6, 16, 0.62) 66%, transparent)
+  );
+  border-color: color-mix(in srgb, rgba(255, 102, 123, 0.34) 66%, transparent);
+  box-shadow: 0 20px 52px rgba(224, 52, 82, 0.24);
+}
+
+.archive-room-placeholder__keyline {
+  margin: 0;
+  width: 80%;
+  max-width: 420px;
+  height: 1px;
+  border: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--theme-divider-faint) 60%, transparent),
+    transparent
+  );
+}
+
+.archive-room-placeholder__footer-note {
+  margin: 0;
+  color: var(--theme-text-muted);
+  font-size: 0.88rem;
+}
+
+@media (max-width: 767px) {
+  .archive-room-placeholder__card {
+    border-radius: 12px;
+    padding: 1.2rem;
+  }
+}

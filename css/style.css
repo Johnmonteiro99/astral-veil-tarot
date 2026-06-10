@@ -6719,6 +6719,17 @@ body.blood-moon-mode .site-footer__inner {
   }
 }
 
+.site-header > .navbar,
+body.sun-mode .site-header > .navbar,
+body.moon-mode .site-header > .navbar,
+body.blood-moon-mode .site-header > .navbar {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 @media (max-width: 640px) {
   .about-living__content {
     max-width: min(430px, calc(100vw - 44px));

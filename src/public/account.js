@@ -62,6 +62,7 @@ const profileForm = document.querySelector('[data-profile-form]');
 const profileSubmitButton = document.querySelector('[data-profile-submit]');
 const profileStatus = document.querySelector('[data-profile-status]');
 const showProfileTitleToggle = document.querySelector('[data-preference-show-profile-title]');
+const selectedProfileTitleSelect = document.querySelector('[data-preference-selected-profile-title]');
 const preferencesStatus = document.querySelector('[data-preferences-status]');
 const zodiacPreview = document.querySelector('[data-zodiac-preview]');
 const zodiacDates = document.querySelector('[data-zodiac-dates]');
@@ -80,6 +81,8 @@ const journalViewTitle = document.querySelector('[data-journal-view-title]');
 const journalViewChips = document.querySelector('[data-journal-view-chips]');
 const journalViewContent = document.querySelector('[data-journal-view-content]');
 const journalViewCloseButton = document.querySelector('[data-journal-view-close]');
+const journalViewEditButton = document.querySelector('[data-journal-view-edit]');
+const journalViewDeleteButton = document.querySelector('[data-journal-view-delete]');
 const journalViewBackdrop = document.querySelector('[data-journal-view-backdrop]');
 const journalPagination = document.querySelector('[data-journal-pagination]');
 const journalPaginationSummary = document.querySelector('[data-journal-pagination-summary]');
@@ -97,7 +100,7 @@ let journalEntriesCache = [];
 let activeJournalFilter = 'all';
 let editingJournalEntryId = '';
 let activeJournalPage = 1;
-let journalPageSize = 10;
+let journalPageSize = 9;
 let journalTotalEntries = 0;
 let journalFilterDatesLoaded = false;
 let journalFilterDateValues = [];
@@ -124,6 +127,7 @@ const avatarBucketName = 'avatars';
 const defaultProfileBackgroundKey = 'default';
 const defaultProfileBackgroundPath = 'assets/images/unlockables/user-profile-bg.png';
 const journalEntrySelectColumns = 'id, user_id, title, body, check_in, entry_date, mood_key, mood, tags, prompt, guided_answers, mode, source_type, source_reading_id, linked_reading_id, reflection_type, metadata, created_at, updated_at';
+const restrictedWingProfileTitleUnlockKey = 'restricted_wing_title_marked';
 const discoveryActivitySelectColumns = [
   'id',
   'discovery_key',
@@ -347,6 +351,82 @@ function getProfilePreferences(profile) {
     : {};
 }
 
+function hasProfileTitlePreference(profile) {
+  return Object.prototype.hasOwnProperty.call(getProfilePreferences(profile), 'selected_profile_title');
+}
+
+function normalizeProfileTitleValue(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+
+  if (normalized === 'none' || normalized === 'seeker' || normalized === 'marked') {
+    return normalized;
+  }
+
+  return '';
+}
+
+function isMarkedProfileTitleUnlocked() {
+  return Boolean(getUnlockedProfileItem(restrictedWingProfileTitleUnlockKey));
+}
+
+function getProfileTitleFromPreferences(profile) {
+  if (!hasProfileTitlePreference(profile)) {
+    return '';
+  }
+
+  const selected = normalizeProfileTitleValue(getProfilePreferences(profile).selected_profile_title);
+
+  if (selected === 'marked' && !isMarkedProfileTitleUnlocked()) {
+    return '';
+  }
+
+  return selected;
+}
+
+function getLegacyProfileTitleKey(profile) {
+  return getProfileValue(profile, ['equipped_profile_title']) === restrictedWingProfileTitleUnlockKey && isMarkedProfileTitleUnlocked()
+    ? 'marked'
+    : '';
+}
+
+function getStoredProfileTitleForInput(profile) {
+  return getProfileTitleFromPreferences(profile) || getLegacyProfileTitleKey(profile) || 'seeker';
+}
+
+function getProfileTitleChoice(profile) {
+  const selected = getProfileTitleFromPreferences(profile);
+  const stored = selected || getLegacyProfileTitleKey(profile) || 'seeker';
+
+  if (stored === 'marked' && !isMarkedProfileTitleUnlocked()) {
+    return {
+      key: 'seeker',
+      modeKey: 'sun',
+      label: 'Seeker',
+    };
+  }
+
+  if (stored === 'marked') {
+    const unlockedTitle = getUnlockedProfileItem(restrictedWingProfileTitleUnlockKey);
+    const definition = getProfileUnlockDefinition(restrictedWingProfileTitleUnlockKey);
+
+    return {
+      key: 'marked',
+      modeKey: 'bloodmoon',
+      label: unlockedTitle?.label || definition?.label || 'Marked',
+    };
+  }
+
+  if (stored === 'seeker') {
+    return {
+      key: 'seeker',
+      modeKey: 'sun',
+      label: 'Seeker',
+    };
+  }
+
+  return null;
+}
+
 function shouldShowProfileTitle(profile) {
   return getProfilePreferences(profile).show_profile_title !== false;
 }
@@ -355,6 +435,39 @@ function updatePreferenceControls(profile) {
   if (showProfileTitleToggle) {
     showProfileTitleToggle.checked = shouldShowProfileTitle(profile);
   }
+
+  if (!selectedProfileTitleSelect) {
+    return;
+  }
+
+  const selectedTitle = getStoredProfileTitleForInput(profile);
+  const markedOption = selectedProfileTitleSelect.querySelector('[value="marked"]');
+
+  if (!markedOption) {
+    selectedProfileTitleSelect.value = selectedTitle;
+    return;
+  }
+
+  markedOption.hidden = !isMarkedProfileTitleUnlocked();
+
+  if (markedOption.hidden && selectedProfileTitleSelect.value === 'marked') {
+    selectedProfileTitleSelect.value = 'seeker';
+  }
+
+  selectedProfileTitleSelect.value = selectedTitle;
+
+  if (!isMarkedProfileTitleUnlocked() && selectedProfileTitleSelect.value === 'marked') {
+    selectedProfileTitleSelect.value = 'seeker';
+  }
+}
+
+function ensureProfileTitlePreferenceExists(profile) {
+  if (!activeUser || hasProfileTitlePreference(profile)) {
+    return;
+  }
+
+  const nextPreference = getLegacyProfileTitleKey(profile) || 'seeker';
+  void updateProfilePreference('selected_profile_title', nextPreference, false);
 }
 
 function getUnlockedProfileItem(unlockKey) {
@@ -390,22 +503,6 @@ function getEquippedProfileBackground(profile) {
   return null;
 }
 
-function getEquippedProfileTitle(profile) {
-  const titleKey = getProfileValue(profile, ['equipped_profile_title'])
-    || (getUnlockedProfileItem('restricted_wing_title_marked') ? 'restricted_wing_title_marked' : '');
-  const unlockedTitle = getUnlockedProfileItem(titleKey);
-  const definition = getProfileUnlockDefinition(titleKey);
-  const label = unlockedTitle?.label || definition?.label || '';
-
-  return label
-    ? {
-      key: titleKey,
-      label,
-      modeKey: unlockedTitle?.mode_key || definition?.mode_key || '',
-    }
-    : null;
-}
-
 function setProfileHeroBackground(assetPath = defaultProfileBackgroundPath) {
   if (!profileHeroCard) {
     return;
@@ -420,9 +517,10 @@ function updateProfileTitleBadge(profile) {
     return;
   }
 
-  const title = getEquippedProfileTitle(profile);
+  const title = getProfileTitleChoice(profile);
+  const selected = getProfileTitleFromPreferences(profile);
 
-  if (!title || !shouldShowProfileTitle(profile)) {
+  if (!title || !shouldShowProfileTitle(profile) || selected === 'none') {
     profileTitleBadge.hidden = true;
     profileTitleBadge.className = 'profile-title-badge';
     profileTitleLabel.textContent = '';
@@ -430,7 +528,7 @@ function updateProfileTitleBadge(profile) {
   }
 
   profileTitleBadge.hidden = false;
-  profileTitleBadge.className = `profile-title-badge profile-title-badge--${String(title.modeKey || 'bloodmoon').replace(/[^a-z0-9_-]/gi, '')}`;
+  profileTitleBadge.className = `profile-title-badge profile-title-badge--${title.key === 'marked' ? 'marked' : 'seeker'}`;
   profileTitleLabel.textContent = title.label;
 }
 
@@ -646,7 +744,7 @@ async function selectProfileBackground(unlockKey) {
   renderProfileBackgroundOptions();
 }
 
-async function updateProfilePreference(preferenceKey, value) {
+async function updateProfilePreference(preferenceKey, value, showStatus = true) {
   if (!activeUser) {
     return;
   }
@@ -662,7 +760,7 @@ async function updateProfilePreference(preferenceKey, value) {
     [preferenceKey]: value,
   };
 
-  if (preferencesStatus) {
+  if (preferencesStatus && showStatus) {
     preferencesStatus.textContent = 'Saving preference...';
   }
 
@@ -674,7 +772,7 @@ async function updateProfilePreference(preferenceKey, value) {
   if (error) {
     console.warn('[Astral Veil account] Preference could not be saved.', error);
 
-    if (preferencesStatus) {
+    if (preferencesStatus && showStatus) {
       preferencesStatus.textContent = 'We could not save that preference. Please try again.';
     }
 
@@ -688,7 +786,7 @@ async function updateProfilePreference(preferenceKey, value) {
   };
   updateAccountProfileDisplay(activeProfile, activeUser);
 
-  if (preferencesStatus) {
+  if (preferencesStatus && showStatus) {
     preferencesStatus.textContent = 'Preference saved.';
   }
 }
@@ -919,6 +1017,7 @@ function updateAccountProfileDisplay(profile, user) {
   memberSinceValue.textContent = formatDate(memberSince);
   updateHeroProfile(profile, user);
   updateNavbarProfileAvatars(profile, user);
+  ensureProfileTitlePreferenceExists(profile);
   populateProfileForm(profile, user);
   updatePreferenceControls(profile);
 }
@@ -2375,6 +2474,82 @@ function getJournalBodyPreviewSource(entry) {
   return text.slice(0, guidedMarkerMatch.index).trim();
 }
 
+function resolveJournalMode(entry) {
+  const modeCandidates = [
+    entry?.mode,
+    entry?.mode_key,
+    entry?.entry_mode,
+    entry?.reading_mode,
+    entry?.metadata?.mode,
+    entry?.metadata?.mode_key,
+    entry?.metadata?.entry_mode,
+    entry?.metadata?.reading_mode,
+  ];
+
+  const rawMode = modeCandidates.find((value) => typeof value === 'string' && value.trim()) || '';
+  const compactMode = String(rawMode || '').trim().toLowerCase().replace(/[\s_-]/g, '');
+
+  if (!compactMode) {
+    return 'moon';
+  }
+
+  if (compactMode === 'bloodmoon' || compactMode === 'bloodmoonmode' || compactMode.startsWith('blood')) {
+    return 'bloodmoon';
+  }
+
+  if (compactMode.startsWith('sun')) {
+    return 'sun';
+  }
+
+  if (compactMode.startsWith('moon') || compactMode.includes('moon')) {
+    return 'moon';
+  }
+
+  return 'moon';
+}
+
+function getJournalModeClass(entry) {
+  const mode = resolveJournalMode(entry);
+
+  if (mode === 'sun') {
+    return 'sun';
+  }
+
+  if (mode === 'bloodmoon') {
+    return 'bloodmoon';
+  }
+
+  return 'moon';
+}
+
+function getJournalCoverImage(entryOrMode) {
+  const mode = typeof entryOrMode === 'string' ? entryOrMode : getJournalModeClass(entryOrMode);
+
+  if (mode === 'sun') {
+    return 'assets/images/background _images/sun_journal.png';
+  }
+
+  if (mode === 'bloodmoon') {
+    return 'assets/images/background _images/bloodmoon_journal.png';
+  }
+
+  return 'assets/images/background _images/moon_journal.png';
+}
+
+function getJournalModeLabel(entry) {
+  const mode = resolveJournalMode(entry);
+
+  if (mode === 'bloodmoon') {
+    return 'Blood Moon';
+  }
+
+  if (mode === 'sun') {
+    return 'Sun';
+  }
+
+  return 'Moon';
+}
+
 function getJournalPreviewText(entry) {
   const guidedAnswers = getJournalGuidedAnswers(entry?.guided_answers);
   const bodyText = getJournalBodyPreviewSource(entry).replace(/\s+/g, ' ').trim();
@@ -2391,16 +2566,12 @@ function getJournalPreviewText(entry) {
 }
 
 function renderJournalCardBadges(entry) {
-  const mood = entry.mood ? toTitleLabel(entry.mood, '') : entry.mood_key ? toTitleLabel(entry.mood_key, '') : '';
-  const mode = entry.mode ? toTitleLabel(entry.mode, '') : '';
-  const reflectionType = entry.reflection_type ? toTitleLabel(entry.reflection_type, '') : '';
+  const modeLabel = getJournalModeLabel(entry);
   const tags = normalizeJournalTags(entry.tags);
   const visibleTags = tags.slice(0, 3);
   const remainingTagCount = Math.max(0, tags.length - visibleTags.length);
   const badges = [
-    mood ? { label: mood, type: 'mood' } : null,
-    mode ? { label: mode, type: 'mode' } : null,
-    reflectionType ? { label: reflectionType, type: 'type' } : null,
+    modeLabel ? { label: modeLabel, type: 'mode' } : null,
     ...visibleTags.map((tag) => ({ label: toTitleLabel(tag, tag), type: 'tag' })),
     remainingTagCount ? { label: `+${remainingTagCount} more`, type: 'more' } : null,
   ].filter(Boolean);
@@ -2416,6 +2587,21 @@ function renderJournalCardBadges(entry) {
   `;
 }
 
+function getJournalArchiveMarker(entry) {
+  const entryDate = parseEntryDate(entry?.entry_date) || (entry?.created_at ? new Date(entry.created_at) : null);
+
+  if (!entryDate || Number.isNaN(entryDate.getTime())) {
+    return { month: '—', day: '—' };
+  }
+
+  const month = entryDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase().replace('.', '');
+
+  return {
+    month,
+    day: String(entryDate.getDate()).padStart(2, '0'),
+  };
+}
+
 function hideJournalEntryView() {
   if (!journalView) {
     return;
@@ -2423,12 +2609,18 @@ function hideJournalEntryView() {
 
   journalView.hidden = true;
   document.body.classList.remove('journal-modal-open');
+  if (journalViewEditButton) {
+    journalViewEditButton.removeAttribute('data-journal-view-edit');
+  }
+  if (journalViewDeleteButton) {
+    journalViewDeleteButton.removeAttribute('data-journal-view-delete');
+  }
   journalViewMeta?.replaceChildren();
   journalViewChips?.replaceChildren();
   journalViewContent?.replaceChildren();
 }
 
-function appendJournalViewSection(label, value) {
+function appendJournalViewSection(label, value, extraClass = '') {
   const text = String(value || '').trim();
 
   if (!text || !journalViewContent) {
@@ -2439,7 +2631,9 @@ function appendJournalViewSection(label, value) {
   const sectionLabel = document.createElement('strong');
   const paragraph = document.createElement('p');
 
-  section.className = 'journal-entry-view__section';
+  section.className = extraClass
+    ? `journal-entry-view__section journal-entry-view__section--${extraClass}`
+    : 'journal-entry-view__section';
   sectionLabel.textContent = label;
   paragraph.textContent = text;
   section.append(sectionLabel, paragraph);
@@ -2518,7 +2712,7 @@ function showJournalEntryView(entry) {
   appendJournalViewSection('Attached Reading', getJournalAttachedReadingSummary(entry));
   appendJournalViewSection('Check-in', entry.check_in);
   appendJournalViewSection('Prompt', entry.prompt || entry.metadata?.prompt);
-  appendJournalViewSection('Reflection', getJournalBodyPreviewSource(entry));
+  appendJournalViewSection('Reflection', getJournalBodyPreviewSource(entry), 'reflection');
 
   if (guidedAnswers.length) {
     const guidedWrapper = document.createElement('div');
@@ -2540,6 +2734,12 @@ function showJournalEntryView(entry) {
 
   if (!journalViewContent.children.length) {
     appendJournalViewSection('Entry', 'No details yet.');
+  }
+  if (journalViewEditButton) {
+    journalViewEditButton.dataset.journalViewEdit = entry.id;
+  }
+  if (journalViewDeleteButton) {
+    journalViewDeleteButton.dataset.journalViewDelete = entry.id;
   }
 
   resetJournalForm();
@@ -2778,27 +2978,21 @@ function renderJournalEntries() {
     return;
   }
 
-  journalList.innerHTML = entries
+      journalList.innerHTML = entries
     .map((entry) => {
-      const updatedLabel = entry.updated_at && entry.updated_at !== entry.created_at
-        ? `Updated ${formatDateTime(entry.updated_at)}`
-        : `Created ${formatDateTime(entry.created_at)}`;
+      const modeClass = getJournalModeClass(entry);
+      const coverImage = getJournalCoverImage(modeClass);
 
       return `
-        <article class="journal-entry-card">
-          <div class="journal-entry-card__copy">
-            <div class="journal-entry-card__meta">
-              <span>${escapeHtml(formatEntryDate(entry.entry_date))}</span>
-              <span>${escapeHtml(updatedLabel)}</span>
-            </div>
+        <article class="journal-entry-card journal-entry-card--${escapeHtml(modeClass)}">
+          <img class="journal-entry-card__cover" src="${coverImage}" alt="" loading="lazy" onerror="this.onerror=null; this.src='assets/images/background _images/moon_journal.png'">
+          <div class="journal-entry-card__overlay" aria-hidden="true"></div>
+          <div class="journal-entry-card__content">
+            <p class="journal-entry-card__meta">${escapeHtml(formatEntryDate(entry.entry_date))}</p>
             <h3>${escapeHtml(entry.title || 'Untitled Entry')}</h3>
-            ${renderJournalCardBadges(entry)}
-            <p class="journal-entry-card__preview">${escapeHtml(getJournalPreviewText(entry))}</p>
-          </div>
-          <div class="journal-entry-card__actions">
-            <button class="card-action" type="button" data-journal-view-entry="${escapeHtml(entry.id)}">View</button>
-            <button class="card-action" type="button" data-journal-edit="${escapeHtml(entry.id)}">Edit</button>
-            <button class="card-action" type="button" data-journal-delete="${escapeHtml(entry.id)}">Delete</button>
+            <div class="journal-entry-card__actions">
+              <button class="journal-entry-card__action" type="button" data-journal-view-entry="${escapeHtml(entry.id)}">View</button>
+            </div>
           </div>
         </article>
       `;
@@ -3453,6 +3647,21 @@ showProfileTitleToggle?.addEventListener('change', () => {
   updateProfilePreference('show_profile_title', showProfileTitleToggle.checked);
 });
 
+selectedProfileTitleSelect?.addEventListener('change', () => {
+  if (!selectedProfileTitleSelect) {
+    return;
+  }
+
+  const selectedValue = normalizeProfileTitleValue(selectedProfileTitleSelect.value);
+
+  if (selectedValue === 'marked' && !isMarkedProfileTitleUnlocked()) {
+    selectedProfileTitleSelect.value = getStoredProfileTitleForInput(activeProfile);
+    return;
+  }
+
+  updateProfilePreference('selected_profile_title', selectedValue || 'seeker');
+});
+
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && profileBackgroundModal && !profileBackgroundModal.hidden) {
     closeProfileBackgroundModal();
@@ -3578,6 +3787,32 @@ journalCancelButton?.addEventListener('click', () => {
 
 journalViewCloseButton?.addEventListener('click', () => {
   hideJournalEntryView();
+});
+
+journalViewEditButton?.addEventListener('click', () => {
+  if (!journalViewEditButton?.dataset?.journalViewEdit) {
+    setJournalStatus('We could not find that journal entry to edit.', 'error');
+    return;
+  }
+
+  const entry = journalEntriesCache.find((item) => item.id === journalViewEditButton.dataset.journalViewEdit);
+
+  if (!entry) {
+    setJournalStatus('We could not find that journal entry. Please refresh and try again.', 'error');
+    return;
+  }
+
+  hideJournalEntryView();
+  showJournalForm(entry);
+});
+
+journalViewDeleteButton?.addEventListener('click', async () => {
+  if (!journalViewDeleteButton?.dataset?.journalViewDelete) {
+    setJournalStatus('We could not find that journal entry to delete.', 'error');
+    return;
+  }
+
+  await removeJournalEntry(journalViewDeleteButton.dataset.journalViewDelete, journalViewDeleteButton);
 });
 
 journalViewBackdrop?.addEventListener('click', () => {
@@ -3743,6 +3978,62 @@ journalForm?.addEventListener('submit', async (event) => {
   await loadJournalEntries({ force: true });
 });
 
+async function removeJournalEntry(entryId, actionButton = null) {
+  const entry = journalEntriesCache.find((item) => item.id === entryId);
+
+  if (!entry) {
+    setJournalStatus('We could not find that journal entry. Please refresh and try again.', 'error');
+    return;
+  }
+
+  const shouldDelete = window.confirm(`Delete "${entry.title || 'this journal entry'}"?`);
+
+  if (!shouldDelete) {
+    return;
+  }
+
+  if (!activeUser) {
+    setJournalStatus('Please log in before deleting a journal entry.', 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setJournalStatus('Journal deletion is not available in this environment.', 'error');
+    return;
+  }
+
+  if (actionButton) {
+    actionButton.disabled = true;
+  }
+
+  setJournalStatus('Deleting journal entry...');
+
+  const { error } = await supabase
+    .from('user_journal_entries')
+    .delete()
+    .eq('id', entryId)
+    .eq('user_id', activeUser.id);
+
+  if (actionButton) {
+    actionButton.disabled = false;
+  }
+
+  if (error) {
+    console.error('Journal entry delete failed:', error);
+    setJournalStatus('We could not delete your journal entry. Please try again.', 'error');
+    return;
+  }
+
+  journalEntriesCache = journalEntriesCache.filter((item) => item.id !== entryId);
+  resetJournalForm();
+  hideJournalEntryView();
+  setJournalStatus('Journal entry deleted.', 'success');
+  await loadJournalCount();
+  await loadJournalEntries({ force: true });
+}
+
 journalList?.addEventListener('click', async (event) => {
   const viewButton = event.target.closest('[data-journal-view-entry]');
   const editButton = event.target.closest('[data-journal-edit]');
@@ -3776,55 +4067,7 @@ journalList?.addEventListener('click', async (event) => {
     return;
   }
 
-  const entryId = deleteButton.dataset.journalDelete;
-  const entry = journalEntriesCache.find((item) => item.id === entryId);
-
-  if (!entry) {
-    setJournalStatus('We could not find that journal entry. Please refresh and try again.', 'error');
-    return;
-  }
-
-  const shouldDelete = window.confirm(`Delete "${entry.title || 'this journal entry'}"?`);
-
-  if (!shouldDelete) {
-    return;
-  }
-
-  if (!activeUser) {
-    setJournalStatus('Please log in before deleting a journal entry.', 'error');
-    return;
-  }
-
-  const supabase = getSupabaseClient();
-
-  if (!supabase) {
-    setJournalStatus('Journal deletion is not available in this environment.', 'error');
-    return;
-  }
-
-  deleteButton.disabled = true;
-  setJournalStatus('Deleting journal entry...');
-
-  const { error } = await supabase
-    .from('user_journal_entries')
-    .delete()
-    .eq('id', entryId)
-    .eq('user_id', activeUser.id);
-
-  deleteButton.disabled = false;
-
-  if (error) {
-    console.error('Journal entry delete failed:', error);
-    setJournalStatus('We could not delete your journal entry. Please try again.', 'error');
-    return;
-  }
-
-  journalEntriesCache = journalEntriesCache.filter((item) => item.id !== entryId);
-  resetJournalForm();
-  hideJournalEntryView();
-  setJournalStatus('Journal entry deleted.', 'success');
-  await loadJournalCount();
-  await loadJournalEntries({ force: true });
+  await removeJournalEntry(deleteButton.dataset.journalDelete, deleteButton);
 });
 
 readingFilterControls?.addEventListener('click', (event) => {

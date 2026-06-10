@@ -155,9 +155,13 @@ function updateLumenArchiveNav(isVisible) {
   const existingDesktopLink = document.querySelector("[data-lumen-archive-nav-link]");
   const existingMobileLink = document.querySelector("[data-lumen-archive-mobile-nav-link]");
   const footerLinks = document.querySelectorAll("[data-lumen-archive-footer-link]");
+  const archiveFooterLinks = document.querySelectorAll("[data-archive-footer-link]");
 
   footerLinks.forEach((link) => {
     link.hidden = !isVisible;
+  });
+  archiveFooterLinks.forEach((link) => {
+    link.hidden = isVisible;
   });
 
   if (!isVisible) {
@@ -270,7 +274,7 @@ function updateBloodMoonControl(isActive) {
   control.title = "Seal the Veil";
   control.innerHTML = `
     <img class="blood-moon-nav-control__sigil" src="assets/icons/symbols/seal-button-transparent.png" alt="" aria-hidden="true" width="512" height="512" />
-    <span class="blood-moon-nav-control__label">Seal</span>
+    <span class="blood-moon-nav-control__label">bloodmoon</span>
   `;
 
   if (themeToggle) {

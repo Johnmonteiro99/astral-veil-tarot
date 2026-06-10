@@ -19,6 +19,8 @@ const tagWrap = document.querySelector('[data-journal-tags]');
 const guidedHelper = document.querySelector('[data-guided-helper]');
 const guidedToggle = document.querySelector('[data-guided-toggle]');
 const guidedSection = document.querySelector('[data-guided-section]');
+const reflectionEditor = document.querySelector('[data-reflection-editor]');
+const reflectionHiddenField = document.querySelector('[data-reflection-hidden]');
 const guidedModal = document.querySelector('[data-guided-modal]');
 const guidedModalDialog = guidedModal?.querySelector('.journal-guided-modal__dialog');
 const guidedModalBackdrop = document.querySelector('[data-guided-modal-backdrop]');
@@ -253,7 +255,9 @@ function applyThemeCopy() {
   }
 
   if (guidedHelper) {
-    guidedHelper.textContent = 'Add guided questions to your reflection.';
+    guidedHelper.textContent = bloodMoon
+      ? 'Need a shadow to follow? The Archive can place deeper questions into your reflection.'
+      : 'Need a starting point? The Archive can place a few questions into your reflection.';
   }
 
   if (guidedToggle) {
@@ -427,7 +431,85 @@ function getDraftGuidedAnswers() {
 }
 
 function getReflectionField() {
-  return journalForm?.elements.body || null;
+  return reflectionHiddenField || null;
+}
+
+function isGuidedQuestionLine(value) {
+  return /^\s*[IVXLCM]+\.\s+/.test(String(value || '').trim());
+}
+
+function renderGuidedReflectionDisplay(value) {
+  if (!reflectionEditor) {
+    return;
+  }
+
+  if (!String(value).trim()) {
+    reflectionEditor.innerHTML = '';
+    return;
+  }
+
+  const lines = String(value || '').split('\n');
+  let inGuidedQuestionSection = false;
+  const rendered = lines
+    .map((line, index) => {
+      const escaped = escapeHtml(line);
+      if (!escaped) {
+        return '<span>&nbsp;</span>';
+      }
+
+      const trimmedLine = line.trim();
+      if (/^(Shadow|Guided) Reflection$/i.test(trimmedLine)) {
+        inGuidedQuestionSection = true;
+        return escaped;
+      }
+
+      if (!inGuidedQuestionSection) {
+        return escaped;
+      }
+
+      if (trimmedLine === '') {
+        return '<span>&nbsp;</span>';
+      }
+
+      if (/^Answer:\s*$/i.test(trimmedLine)) {
+        return escaped;
+      }
+
+      const nextLine = lines[index + 1] || '';
+      const nextIsAnswer = /^Answer:\s*$/i.test(String(nextLine).trim());
+
+      return isGuidedQuestionLine(line) && inGuidedQuestionSection && nextIsAnswer
+        ? `<span class="journal-reflection__question-line">${escaped}</span>`
+        : escaped;
+    })
+    .join('<br>');
+
+  reflectionEditor.innerHTML = rendered;
+}
+
+function setReflectionValue(value, refreshDisplay = true) {
+  const nextValue = String(value || '');
+
+  if (reflectionHiddenField) {
+    reflectionHiddenField.value = nextValue;
+  }
+
+  if (refreshDisplay) {
+    renderGuidedReflectionDisplay(nextValue);
+  }
+}
+
+function syncReflectionFromEditor() {
+  if (!reflectionEditor || !reflectionHiddenField) {
+    return;
+  }
+
+  reflectionHiddenField.value = reflectionEditor.textContent || '';
+  updateReflectionLength();
+}
+
+function getReflectionEditor() {
+  return reflectionEditor || null;
 }
 
 function getReflectionLengthLabel() {
@@ -763,7 +845,7 @@ function removeInsertedGuidedBlock() {
     return true;
   }
 
-  const currentValue = String(bodyField.value || '');
+  const currentValue = String(bodyField?.value || '');
   const trimmedBlock = insertedGuidedBlock.trim();
   const patterns = [
     insertedGuidedBlock,
@@ -779,7 +861,7 @@ function removeInsertedGuidedBlock() {
     return false;
   }
 
-  bodyField.value = currentValue.slice(0, currentValue.length - match.length).trimEnd();
+  setReflectionValue(currentValue.slice(0, currentValue.length - match.length).trimEnd(), true);
   insertedGuidedBlock = '';
   updateReflectionLength();
   return true;
@@ -804,12 +886,12 @@ async function addGuidedQuestionsToReflection() {
 
   removeInsertedGuidedBlock();
 
-  const existingBody = String(bodyField.value || '').trimEnd();
+  const existingBody = String(bodyField?.value || '').trimEnd();
   insertedGuidedBlock = formatGuidedQuestionBlock(activeQuestions);
-  bodyField.value = existingBody ? `${existingBody}\n\n${insertedGuidedBlock}` : insertedGuidedBlock;
+  setReflectionValue(existingBody ? `${existingBody}\n\n${insertedGuidedBlock}` : insertedGuidedBlock, true);
   updateReflectionLength();
   setMessage('Guided questions added to your reflection.', 'success');
-  bodyField.focus();
+  getReflectionEditor()?.focus();
 }
 
 async function handleGuidedToggleChange() {
@@ -833,20 +915,20 @@ function addGuidedAnswersToReflection() {
     return;
   }
 
-  const bodyField = journalForm?.elements.body;
+  const bodyField = getReflectionField();
 
   if (!bodyField) {
     return;
   }
 
-  const existingBody = String(bodyField.value || '').trimEnd();
+  const existingBody = String(bodyField?.value || '').trimEnd();
   const guidedText = formatGuidedReflectionText(answers);
-  bodyField.value = existingBody ? `${existingBody}\n\n${guidedText}` : guidedText;
+  setReflectionValue(existingBody ? `${existingBody}\n\n${guidedText}` : guidedText, true);
   confirmedGuidedAnswers = answers;
   closeGuidedModal({ force: true });
   updateReflectionLength();
   setMessage('Guided reflection added.', 'success');
-  bodyField.focus();
+  getReflectionEditor()?.focus();
 }
 
 function resetForm() {
@@ -872,6 +954,7 @@ function resetForm() {
     guidedToggle.disabled = false;
     guidedToggle.checked = false;
   }
+  setReflectionValue('');
   closeGuidedModal({ force: true });
   updateReflectionLength();
   journalForm.elements.title.focus();
@@ -1280,6 +1363,7 @@ async function initJournalPage() {
 journalForm?.addEventListener('submit', handleSubmit);
 journalForm?.addEventListener('input', updateReflectionLength);
 journalForm?.addEventListener('change', updateReflectionLength);
+reflectionEditor?.addEventListener('input', syncReflectionFromEditor);
 
 clearButton?.addEventListener('click', () => {
   resetForm();

@@ -5,6 +5,13 @@ const archiveRoomHub = document.querySelector("[data-archive-room-hub]");
 const archiveRoomGrid = document.querySelector("[data-archive-room-grid]");
 const archiveRoomView = document.querySelector("[data-archive-room-view]");
 const archiveRoomToast = document.querySelector("[data-archive-room-toast]");
+const isNoctisRoomPage = window.location.pathname.split("/").pop() === "noctis-room.html";
+const noctisRoomPage = document.querySelector("[data-noctis-room-shell]");
+const noctisRoomTitle = document.querySelector("[data-noctis-room-title]");
+const noctisRoomType = document.querySelector("[data-noctis-room-type]");
+const noctisRoomCopy = document.querySelector("[data-noctis-room-copy]");
+const noctisRoomContent = document.querySelector("[data-noctis-room-content]");
+const noctisRoomBack = document.querySelector("[data-noctis-room-back]");
 const ARCHIVE_ARTWORK_WIDTH = 1050;
 const ARCHIVE_ARTWORK_HEIGHT = 1400;
 const ARCHIVE_ARTIFACT_SIZE = 900;
@@ -620,10 +627,10 @@ async function saveRoomProgress(roomKey, { status = "open", unlockMethod = "room
 
 function trackArchiveRoomVisit(room, metadata = {}) {
   if (!room) {
-    return;
+    return Promise.resolve();
   }
 
-  import("../src/public/progression.js")
+  return import("../src/public/progression.js")
     .then(({ trackRoomVisit }) => trackRoomVisit({
       roomKey: room.id,
       roomName: room.title,
@@ -836,6 +843,115 @@ function isRoomLocked(room) {
   return Boolean(room?.isLocked);
 }
 
+function getNoctisRoomFromQuery() {
+  const roomKey = new URLSearchParams(window.location.search).get("room") || "";
+
+  return getRoomById(roomKey.trim().toLowerCase()) || null;
+}
+
+function renderNoctisRoomNotFound() {
+  if (noctisRoomType) {
+    noctisRoomType.textContent = "Noctis Archive";
+  }
+
+  if (noctisRoomTitle) {
+    noctisRoomTitle.textContent = "Room Not Found";
+  }
+
+  if (noctisRoomCopy) {
+    noctisRoomCopy.classList.add("archive-room-placeholder__copy--not-found");
+    noctisRoomCopy.textContent = "Choose a valid chamber from the Noctis Archive and return to begin.";
+  }
+
+  if (noctisRoomBack) {
+    noctisRoomBack.textContent = "Return to Noctis Archive";
+    noctisRoomBack.setAttribute("href", "archive.html");
+  }
+
+  if (noctisRoomContent) {
+    noctisRoomContent.innerHTML = "";
+  }
+}
+
+function getNoctisRoomLockedMessage(room) {
+  if (room?.id === "restricted-wing" && shouldShowGuestRestrictedWingPrompt()) {
+    return "The keys have answered, but this door is not yet fully yours. Sign in and bind your discovery to continue.";
+  }
+
+  return getRoomLockedMessage(room);
+}
+
+function renderNoctisRoomLockedPanel(room) {
+  const extraAction = room?.id === "restricted-wing" && shouldShowGuestRestrictedWingPrompt()
+    ? `
+      <div class="restricted-wing-ritual__actions">
+        <a class="restricted-wing-ritual__button" href="${escapeHtml(getRestrictedWingAuthHref("signup"))}">Create Free Account</a>
+        <a class="restricted-wing-ritual__button restricted-wing-ritual__button--secondary" href="${escapeHtml(getRestrictedWingAuthHref("login"))}">Log In</a>
+      </div>
+    `
+    : "";
+
+  return `
+    <section class="archive-room-panel archive-room-panel--desk">
+      <div class="archive-room-placeholder">
+        <p class="archive-entry__stamp">${escapeHtml(room?.subtitle || "Noctis Archive")}</p>
+        <h3>${escapeHtml(room?.title || "Room Locked")}</h3>
+        <p>${escapeHtml(getNoctisRoomLockedMessage(room))}</p>
+        ${extraAction}
+      </div>
+    </section>
+  `;
+}
+
+function renderNoctisRoomByQuery() {
+  if (!isNoctisRoomPage || !noctisRoomPage) {
+    return;
+  }
+
+  const room = getNoctisRoomFromQuery();
+
+  if (!noctisRoomType || !noctisRoomTitle || !noctisRoomCopy || !noctisRoomBack || !noctisRoomContent) {
+    return;
+  }
+
+  if (!room) {
+    renderNoctisRoomNotFound();
+    return;
+  }
+
+  noctisRoomType.textContent = "Noctis Archive";
+  noctisRoomTitle.textContent = room.title;
+  noctisRoomCopy.classList.remove("archive-room-placeholder__copy--not-found");
+  noctisRoomCopy.textContent = room.intro || room.description || "The chamber has awakened.";
+  noctisRoomBack.textContent = "Return to Noctis Archive";
+  noctisRoomBack.setAttribute("href", "archive.html");
+
+  selectedArchiveRoomId = room.id;
+  enteredArchiveRoomId = room.id;
+  activeArchiveShelfEntryId = "";
+
+  if (openVisualRecordId && !getOpenVisualRecord()) {
+    openVisualRecordId = "";
+  }
+
+  if (openRecoveredObjectId && !getSelectedRecoveredObject(getRecoveredObjects())) {
+    openRecoveredObjectId = "";
+  }
+
+  const roomMarkup = isRoomLocked(room)
+    ? renderNoctisRoomLockedPanel(room)
+    : (renderRoomContent(room) || renderNoctisRoomLockedPanel(room));
+
+  noctisRoomContent.innerHTML = `
+    ${roomMarkup}
+    ${renderRecoveredObjects()}
+    ${renderArchiveLorePanel()}
+    ${renderVisualRecordModal()}
+  `;
+
+  document.body.classList.toggle("is-visual-record-modal-open", Boolean(getOpenVisualRecord()));
+}
+
 // The Restricted Wing remains sealed until all four elemental keys are recovered,
 // but the visible copy keeps that requirement obscure.
 function getRoomLockedMessage(room) {
@@ -1021,6 +1137,11 @@ function renderRoomThumbnail(room, index, selectedRoomId) {
 
 // Controls the chamber selector: top rail, featured chamber image, info boxes, and action buttons.
 function renderArchiveRooms() {
+  if (isNoctisRoomPage) {
+    renderNoctisRoomByQuery();
+    return;
+  }
+
   if (!archiveRoomGrid) {
     return;
   }
@@ -1787,12 +1908,11 @@ async function enterArchiveRoom(roomId) {
       selected_from: "archive_chamber_viewer"
     }
   });
-  trackArchiveRoomVisit(room, {
+  await trackArchiveRoomVisit(room, {
     selected_from: "archive_chamber_viewer"
   });
 
-  renderArchiveRooms();
-  focusEnteredChamber(room);
+  window.location.assign(`noctis-room.html?room=${encodeURIComponent(room.id)}`);
 }
 
 // Clears the hash and restores the chamber selector hub.
@@ -1847,7 +1967,7 @@ async function syncRoomFromHash() {
       return;
     }
 
-    trackArchiveRoomVisit(room, {
+    await trackArchiveRoomVisit(room, {
       selected_from: "hash_route",
       revealed_state: "unlocked_not_revealed"
     });
@@ -1868,7 +1988,7 @@ async function syncRoomFromHash() {
       selected_from: "hash_route"
     }
   });
-  trackArchiveRoomVisit(room, {
+  await trackArchiveRoomVisit(room, {
     selected_from: "hash_route"
   });
   renderArchiveRooms();
@@ -1893,6 +2013,12 @@ function handleArchiveBloodMoonChange(event) {
 async function initializeArchive() {
   await loadArtifactProgress();
   await saveUnlockedArtifactGatedRooms();
+
+  if (isNoctisRoomPage) {
+    renderNoctisRoomByQuery();
+    return;
+  }
+
   renderArchiveRooms();
   renderArchiveAccessState();
   await syncRoomFromHash();
@@ -2086,4 +2212,6 @@ document.addEventListener("submit", (event) => {
 });
 
 window.addEventListener("astralVeilBloodMoonChange", handleArchiveBloodMoonChange);
-window.addEventListener("hashchange", syncRoomFromHash);
+if (!isNoctisRoomPage) {
+  window.addEventListener("hashchange", syncRoomFromHash);
+}

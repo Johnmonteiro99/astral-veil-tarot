@@ -80,7 +80,7 @@
         <ul class="navbar__links">
           <li><a class="navbar__link" href="index.html">Readings</a></li>
           <li><a class="navbar__link" href="readers.html">Veilwalkers</a></li>
-          <li><a class="navbar__link" href="deck.html">Deck</a></li>
+          <li><a class="navbar__link" href="deck.html">DECKS</a></li>
           <li><a class="navbar__link" href="journal.html">Journal</a></li>
           <li><a class="navbar__link" href="about.html">About</a></li>
         </ul>
@@ -114,7 +114,7 @@
         <div class="navbar__mobile-menu" id="mobile-navigation" aria-hidden="true">
           <a class="navbar__mobile-link" href="index.html">Readings</a>
           <a class="navbar__mobile-link" href="readers.html">Veilwalkers</a>
-          <a class="navbar__mobile-link" href="deck.html">Deck</a>
+          <a class="navbar__mobile-link" href="deck.html">DECKS</a>
           <a class="navbar__mobile-link" href="journal.html">Journal</a>
           <a class="navbar__mobile-link" href="about.html">About</a>
         </div>
@@ -164,10 +164,10 @@
             </section>
           </div>
 
-          <section class="journal-reflection-card">
-            <div class="journal-panel__header">
-              <p class="journal-chamber__eyebrow">New Reflection</p>
-            </div>
+            <section class="journal-reflection-card">
+              <div class="journal-panel__header">
+                <p class="journal-chamber__eyebrow">New Reflection</p>
+              </div>
 
             <div class="journal-title-row">
               <label class="journal-field">
@@ -180,25 +180,51 @@
               </label>
             </div>
 
-            <section class="journal-guided" data-guided-section>
-              <label class="journal-guided__toggle">
-                <span class="journal-guided__title">
-                  <span class="journal-icon journal-icon--spark" aria-hidden="true"></span>
-                  Guided Reflection
-                </span>
-                <input type="checkbox" data-guided-toggle />
-                <span class="journal-guided__switch" aria-hidden="true"></span>
-              </label>
-            </section>
-
             <fieldset class="journal-tags" data-journal-tags>
               <legend>Quick Tags</legend>
             </fieldset>
 
-            <label class="journal-field journal-field--body">
-              <span>Reflection</span>
-              <textarea name="body" rows="14" placeholder="Let the page hold what wants to be named."></textarea>
-            </label>
+              <div class="journal-reflection-card__entry-row">
+              <label class="journal-field journal-field--body">
+                <span>Reflection</span>
+                <div class="journal-reflection-editor-wrap">
+                  <div
+                    class="journal-reflection-editor"
+                    data-reflection-editor
+                    contenteditable="plaintext-only"
+                    role="textbox"
+                    aria-label="Reflection"
+                    data-placeholder="Let the page hold what wants to be named."
+                  ></div>
+                  <textarea name="body" data-reflection-hidden hidden></textarea>
+                </div>
+              </label>
+
+              <div class="journal-reflection-card__side">
+                <section class="journal-guided" data-guided-section>
+                  <label class="journal-guided__toggle">
+                    <span class="journal-guided__title">
+                      <span class="journal-icon journal-icon--spark" aria-hidden="true"></span>
+                      Guided Reflection
+                    </span>
+                    <input type="checkbox" data-guided-toggle />
+                    <span class="journal-guided__switch" aria-hidden="true"></span>
+                  </label>
+                  <span class="journal-guided__helper" data-guided-helper aria-live="polite"></span>
+                </section>
+
+                <div class="journal-entry-form__actions journal-reflection-card__actions">
+                  <button type="submit" data-journal-save>
+                    <span class="journal-icon journal-icon--clarity" aria-hidden="true"></span>
+                    Save Entry
+                  </button>
+                  <button type="button" data-journal-clear>
+                    <span class="journal-icon journal-icon--clear" aria-hidden="true"></span>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
           </section>
 
           <section class="journal-form-footer" aria-label="Journal actions and recent entries">
@@ -231,16 +257,6 @@
                 </div>
               </div>
 
-              <div class="journal-entry-form__actions">
-                <button type="submit" data-journal-save>
-                  <span class="journal-icon journal-icon--clarity" aria-hidden="true"></span>
-                  Save Entry
-                </button>
-                <button type="button" data-journal-clear>
-                  <span class="journal-icon journal-icon--clear" aria-hidden="true"></span>
-                  Clear
-                </button>
-              </div>
             </div>
           </section>
 
@@ -293,12 +309,20 @@
 
     <p class="journal-auth-state" data-journal-auth-loading role="status">Opening your journal...</p>
 
-    <footer class="site-footer">
-      <button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details">
-        <span>Open the Archive Seal</span>
-      </button>
+    <footer class="site-footer" data-footer-drawer>
+      <div class="site-footer__shell">
+        <div class="site-footer__compact">
+          <p class="site-footer__mark">Astral Veil™</p>
+          <p class="site-footer__tagline">Between fate and imagination</p>
+          <div class="site-footer__actions">
+            <button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details">
+              <span data-footer-toggle-label>Explore</span>
+              <span class="site-footer__chevron" aria-hidden="true">⌄</span>
+            </button>
+            <button class="site-footer__share" type="button" data-share-astral-veil>Share</button>
+          </div>
+        </div>
 
-      <div class="site-footer__panel">
         <div class="site-footer__inner" id="site-footer-details" hidden>
           <div class="site-footer__brand">
             <h2>Astral Veil™</h2>
@@ -310,10 +334,11 @@
             <p class="site-footer__label">Explore</p>
             <a href="index.html">Home</a>
             <a href="readers.html">Veilwalkers</a>
-            <a href="deck.html">Deck</a>
+            <a href="deck.html">DECKS</a>
             <a href="journal.html">Journal</a>
             <a href="about.html">About</a>
             <a href="lumen-archive.html" data-lumen-archive-footer-link>Lumen Archive</a>
+            <a href="archive.html" data-archive-footer-link hidden>Noctis Archive</a>
           </nav>
 
           <div class="site-footer__creator">

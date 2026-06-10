@@ -5,63 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Meet the Veilwalkers of Astral Veil, each carrying their own energy, secrets, and connection to the astral veil."
+      content="Noctis Archive room placeholder page."
     />
-    <title>Veilwalkers | Astral Veil</title>
+    <title>Noctis Room | Astral Veil</title>
     <link rel="icon" type="image/png" href="favicon.png" />
-    <link rel="preload" as="image" href="assets/images/readers/phase1/aries-phase1.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="assets/images/noctis-header.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
-    <link rel="stylesheet" href="css/scroll-reader.css" />
-    <link rel="stylesheet" href="css/readers.css" />
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YVLLXXW0QJ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-YVLLXXW0QJ');
-    </script>
+    <link rel="stylesheet" href="css/archive-room-pages.css" />
+    <link rel="stylesheet" href="css/archive.css" />
   </head>
-  <body class="sun-mode">
+  <body class="sun-mode noctis-room-page">
     <script>
       (function () {
-        var themeStorageKey = "dailyTarotTheme";
-        var bloodMoonStorageKey = "astralVeilBloodMoonActive";
-        var testBloodMoonStorageKey = "astralVeilTestBloodMoonActive";
-        var params = new URLSearchParams(window.location.search);
-        var queryBloodMoon = params.get("bloodMoon") || params.get("testBloodMoon");
-        var isBloodMoonQuery = queryBloodMoon === "" || /^(1|true|yes|on|active)$/i.test(queryBloodMoon || "");
-        var hasBloodMoonOverride = params.has("bloodMoon") || params.has("testBloodMoon");
-        var isBloodMoon = hasBloodMoonOverride ? isBloodMoonQuery : false;
-        var storedTheme = "";
-
-        try {
-          isBloodMoon = hasBloodMoonOverride ? isBloodMoon : isBloodMoon ||
-            sessionStorage.getItem(bloodMoonStorageKey) === "true" ||
-            localStorage.getItem(bloodMoonStorageKey) === "true" ||
-            sessionStorage.getItem(testBloodMoonStorageKey) === "true" ||
-            localStorage.getItem(testBloodMoonStorageKey) === "true";
-          storedTheme = localStorage.getItem(themeStorageKey) || "";
-        } catch (error) {
-          storedTheme = "";
-        }
-
-        var mode = storedTheme === "moon" || storedTheme === "sun"
-          ? storedTheme
-          : new Date().getHours() >= 6 && new Date().getHours() < 18 ? "sun" : "moon";
-
         document.body.classList.remove("sun-mode", "moon-mode", "blood-moon-mode");
-        document.body.classList.add(isBloodMoon ? "blood-moon-mode" : mode + "-mode");
+        document.body.classList.add("blood-moon-mode");
       })();
     </script>
+
     <header class="site-header">
       <nav class="navbar" aria-label="Primary navigation">
         <a class="navbar__brand" href="index.html" aria-label="Astral Veil home">
@@ -146,37 +113,19 @@
       </svg>
     </div>
 
-    <main class="tarot-stage readers-stage">
-      <section class="page-shell readers-page" aria-labelledby="readers-title">
-        <section class="veilwalker-selector-hero" aria-labelledby="readers-title">
-          <div class="readers-hero-letter">
-            <div class="readers-hero-letter__copy">
-              <p class="reading-section__eyebrow">Readers, witnesses, and fragments</p>
-              <h1 id="readers-title">The Veilwalkers</h1>
-              <p class="page-hero__subtitle">They walk between what is seen and what remembers.</p>
-              <p>
-                Each Veilwalker carries a sign, an element, and a hidden transformation. Their readings are not predictions alone. They are doorways into memory, shadow, instinct, and the truths waiting beyond the Veil.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section class="veilwalker-selector" aria-label="Featured Veilwalker selector">
-          <div class="veilwalker-selector__featured" data-readers-page-list></div>
-          <div class="veilwalker-selector__dots" data-reader-selector-dots aria-label="Veilwalker position"></div>
-          <div class="veilwalker-selector__zodiac" data-zodiac-selector aria-label="Choose a zodiac Veilwalker"></div>
-        </section>
-
-        <div class="veilwalker-selector__closing" aria-label="Veilwalker reminder">
-          <div class="veilwalker-selector__closing-copy veilwalker-selector__closing-copy--standard">
-            <p>They do not predict your fate</p>
-            <p>They help you remember what was always yours</p>
-          </div>
-          <div class="veilwalker-selector__closing-copy veilwalker-selector__closing-copy--blood">
-            <p>They do not predict what comes.</p>
-            <p>They uncover what has been buried in you all along.</p>
-          </div>
-        </div>
+    <main class="tarot-stage archive-room-placeholder-page">
+      <section class="archive-room-placeholder__stage" aria-labelledby="noctis-room-title">
+        <article class="archive-room-placeholder__card" data-noctis-room-shell>
+          <p class="archive-room-placeholder__kicker" data-noctis-room-type>Noctis Archive</p>
+          <h1 id="noctis-room-title" class="archive-room-placeholder__title" data-noctis-room-title>Room Not Found</h1>
+          <p class="archive-room-placeholder__meta">Choose a chamber from the Noctis Archive.</p>
+          <hr class="archive-room-placeholder__keyline" />
+          <p class="archive-room-placeholder__copy" data-noctis-room-copy>
+            Choose a valid chamber from the Noctis Archive and return to begin.
+          </p>
+          <a class="archive-room-placeholder__back" href="archive.html" data-noctis-room-back>Return to Noctis Archive</a>
+          <section data-noctis-room-content aria-live="polite"></section>
+        </article>
       </section>
     </main>
 
@@ -197,27 +146,22 @@
         <div class="site-footer__inner" id="site-footer-details" hidden>
           <div class="site-footer__brand">
             <h2>Astral Veil™</h2>
-            <p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p>
+            <p>Cinematic tarot reading and reflective archive experiences.</p>
             <p class="site-footer__poem">✦ Between fate and imagination ✦</p>
           </div>
-
           <nav class="site-footer__nav" aria-label="Footer navigation">
             <p class="site-footer__label">Explore</p>
             <a href="index.html">Home</a>
             <a href="readers.html">Veilwalkers</a>
             <a href="deck.html">DECKS</a>
             <a href="about.html">About</a>
-            <a href="lumen-archive.html" data-lumen-archive-footer-link>Lumen Archive</a>
           </nav>
-
           <div class="site-footer__creator">
             <p class="site-footer__label">Creator</p>
             <p>Crafted by João Monteiro</p>
             <p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p>
             <p>Designer • Developer • Worldbuilder</p>
-            <p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p>
           </div>
-
           <p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p>
         </div>
 
@@ -225,26 +169,25 @@
       </div>
     </footer>
 
-    <div class="reader-lightbox" data-reader-lightbox aria-hidden="true">
-      <button class="reader-lightbox__backdrop" type="button" data-close-lightbox aria-label="Close reader image"></button>
-      <div class="reader-lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="reader-lightbox-title">
-        <button class="reader-lightbox__close" type="button" data-close-lightbox aria-label="Close reader image">
-          <span class="close-circle-icon" aria-hidden="true"></span>
-        </button>
-        <img class="reader-lightbox__image" alt="" data-lightbox-image data-expandable-image role="button" tabindex="0" aria-label="Expand reader image" />
-        <div class="reader-lightbox__content">
-          <h2 id="reader-lightbox-title" data-lightbox-name></h2>
-          <p data-lightbox-energy></p>
-        </div>
-      </div>
-    </div>
-
-    <script src="data/readers.js"></script>
     <script src="data/events.js"></script>
     <script src="js/events.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/scroll-reader.js"></script>
-    <script src="js/readers.js"></script>
+    <script src="data/archiveSections.js"></script>
+    <script src="js/archive.js"></script>
+    <script>
+      (function () {
+        document.body.classList.remove("sun-mode", "moon-mode");
+        document.body.classList.add("blood-moon-mode", "noctis-room-page");
+
+        const themeToggle = document.querySelector("[data-theme-toggle]");
+
+        if (themeToggle) {
+          themeToggle.disabled = true;
+          themeToggle.setAttribute("aria-label", "Theme is fixed to Blood Moon in this room");
+          themeToggle.setAttribute("aria-pressed", "true");
+        }
+      })();
+    </script>
     <script type="module" src="src/public/public-auth-nav.js"></script>
   </body>
 </html>

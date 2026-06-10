@@ -25,15 +25,15 @@ const deckLibraryFilters = ["All", "Lumen", "Blood Moon", "Event Decks", "Member
 const deckLibrarySections = [
   {
     id: "free",
-    title: "Free Decks"
+    title: "Gifted Decks"
   },
   {
     id: "unlockable",
-    title: "Unlockable Decks"
+    title: "Veiled Decks"
   },
   {
     id: "purchasable",
-    title: "Purchasable Decks"
+    title: "Vaulted Decks"
   }
 ];
 
@@ -62,6 +62,10 @@ function canViewBloodMoonDeck() {
   return isDeckUserAuthenticated() || isDeckEventActive("bloodMoon") || document.body.classList.contains("blood-moon-mode");
 }
 
+function isAuthLockedCollection(collection) {
+  return collection?.accessType === "requiresAuth";
+}
+
 // Central lock check for free, event, purchased, premium, and coming-soon collections.
 function isCollectionLocked(collection) {
   if (!collection) {
@@ -70,6 +74,10 @@ function isCollectionLocked(collection) {
 
   if (isBloodMoonCollection(collection)) {
     return !canViewBloodMoonDeck();
+  }
+
+  if (isAuthLockedCollection(collection)) {
+    return !isDeckUserAuthenticated();
   }
 
   if (collection.accessType === "event") {
@@ -151,6 +159,10 @@ function getCollectionTheme(collection) {
 function getCollectionStatus(collection) {
   if (isBloodMoonCollection(collection) && canViewBloodMoonDeck() && isDeckUserAuthenticated() && !isDeckEventActive("bloodMoon")) {
     return "Account Unlocked";
+  }
+
+  if (isAuthLockedCollection(collection) && !isDeckUserAuthenticated()) {
+    return collection.lockedStatus || "Locked";
   }
 
   return isCollectionLocked(collection)
@@ -476,25 +488,30 @@ function moveDeckFilter(direction) {
 
 function renderDeckCollectionCard(collection) {
   const isLocked = isCollectionLocked(collection);
+  const isAuthLocked = isAuthLockedCollection(collection) && isLocked;
   const canOpenLockedPrompt = isBloodMoonCollection(collection);
   const status = getCollectionStatus(collection);
   const actionLabel = getCollectionActionLabel(collection);
   const category = getCollectionCategory(collection);
   const theme = getCollectionTheme(collection);
+  const description = isAuthLocked && collection?.lockedMessage
+    ? `${collection.lockedMessage}`
+    : collection?.subtitle || "";
+  const previewImage = collection?.previewImage || collection?.coverImage;
 
   return `
-    <article class="deck-collection-card deck-collection-card--${escapeHtml(theme)}${isLocked ? " is-locked" : ""}" data-deck-card data-deck-category="${escapeHtml(category)}" data-view-deck="${escapeHtml(collection.id)}" aria-disabled="${isLocked}">
+      <article class="deck-collection-card deck-collection-card--${escapeHtml(theme)}${isLocked ? " is-locked" : ""}" data-deck-card data-deck-category="${escapeHtml(category)}" data-view-deck="${escapeHtml(collection.id)}" aria-disabled="${isLocked}">
       <span class="deck-collection-card__badge">${escapeHtml(status)}</span>
       <div class="deck-collection-card__preview" aria-hidden="true">
-        <img src="${escapeHtml(collection.coverImage)}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" />
+        <img src="${escapeHtml(previewImage)}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" />
       </div>
       <div class="deck-collection-card__content">
         <p class="deck-collection-card__category">${escapeHtml(category)}</p>
         <h2>${escapeHtml(collection.title)}</h2>
-        <p>${escapeHtml(collection.subtitle)}</p>
+        <p>${escapeHtml(description)}</p>
       </div>
       <div class="deck-collection-card__actions">
-        <button class="deck-collection-card__action" type="button" data-view-deck="${escapeHtml(collection.id)}" ${isLocked && !canOpenLockedPrompt ? "disabled" : ""}>
+        <button class="deck-collection-card__action" type="button" data-view-deck="${escapeHtml(collection.id)}" ${isLocked && !canOpenLockedPrompt && !isAuthLocked ? "disabled" : ""}>
           ${escapeHtml(actionLabel)}
         </button>
       </div>
@@ -839,6 +856,11 @@ if (deckView) {
           activeCollectionId = collection.id;
           activeCardIndex = 0;
           renderBloodMoonLockedPrompt();
+          return;
+        }
+
+        if (isAuthLockedCollection(collection)) {
+          window.location.href = getDeckAuthUrl(collection.authMode || "signup");
           return;
         }
 

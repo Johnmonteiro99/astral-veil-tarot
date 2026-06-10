@@ -466,7 +466,8 @@ body.blood-moon-mode .journal-attached-reading span {
 
 .journal-field input,
 .journal-field select,
-.journal-field textarea {
+.journal-field textarea,
+.journal-reflection-editor {
   width: 100%;
   min-width: 0;
   border: 1px solid rgba(99, 58, 25, 0.26);
@@ -538,12 +539,42 @@ body.blood-moon-mode .journal-field--mood::before {
   font-weight: 500;
   line-height: 1.75;
   resize: vertical;
+  background-color: transparent;
+}
+
+.journal-reflection-editor {
+  min-height: 7rem;
+  color: #2c1c11;
+  font-family: var(--journal-writing-font);
+  font-size: 1.02rem;
+  font-weight: 500;
+  line-height: 1.75;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  resize: vertical;
+  background-color: transparent;
+}
+
+.journal-reflection-editor:empty::before {
+  content: attr(data-placeholder);
+  display: block;
+  color: color-mix(in srgb, var(--journal-text, #2c1c11) 56%, transparent);
+  pointer-events: none;
 }
 
 .journal-field--body textarea {
-  height: clamp(15rem, 28vh, 17.5rem);
-  max-height: 18.75rem;
-  min-height: 15rem;
+  height: clamp(13rem, 24vh, 15rem);
+  max-height: 15rem;
+  min-height: 13rem;
+  line-height: inherit;
+}
+
+.journal-reflection-editor {
+  height: clamp(13rem, 24vh, 15rem);
+  max-height: 15rem;
+  min-height: 13rem;
+  line-height: inherit;
 }
 
 body.sun-mode .journal-field--body textarea {
@@ -558,15 +589,18 @@ body.blood-moon-mode .journal-field--body textarea {
   scrollbar-color: rgba(226, 72, 84, 0.78) rgba(22, 5, 8, 0.82);
 }
 
-.journal-field--body textarea::-webkit-scrollbar {
+.journal-field--body textarea::-webkit-scrollbar,
+.journal-reflection-editor::-webkit-scrollbar {
   width: 0.62rem;
 }
 
-.journal-field--body textarea::-webkit-scrollbar-track {
+.journal-field--body textarea::-webkit-scrollbar-track,
+.journal-reflection-editor::-webkit-scrollbar-track {
   border-radius: 999px;
 }
 
-.journal-field--body textarea::-webkit-scrollbar-thumb {
+.journal-field--body textarea::-webkit-scrollbar-thumb,
+.journal-reflection-editor::-webkit-scrollbar-thumb {
   border: 2px solid transparent;
   border-radius: 999px;
   background-clip: padding-box;
@@ -580,11 +614,27 @@ body.sun-mode .journal-field--body textarea::-webkit-scrollbar-thumb {
   background-color: rgba(167, 105, 36, 0.82);
 }
 
+body.sun-mode .journal-reflection-editor::-webkit-scrollbar-track {
+  background: rgba(255, 238, 193, 0.42);
+}
+
+body.sun-mode .journal-reflection-editor::-webkit-scrollbar-thumb {
+  background-color: rgba(167, 105, 36, 0.82);
+}
+
 body.moon-mode .journal-field--body textarea::-webkit-scrollbar-track {
   background: rgba(30, 24, 46, 0.72);
 }
 
 body.moon-mode .journal-field--body textarea::-webkit-scrollbar-thumb {
+  background-color: rgba(200, 168, 255, 0.76);
+}
+
+body.moon-mode .journal-reflection-editor::-webkit-scrollbar-track {
+  background: rgba(30, 24, 46, 0.72);
+}
+
+body.moon-mode .journal-reflection-editor::-webkit-scrollbar-thumb {
   background-color: rgba(200, 168, 255, 0.76);
 }
 
@@ -596,9 +646,18 @@ body.blood-moon-mode .journal-field--body textarea::-webkit-scrollbar-thumb {
   background-color: rgba(226, 72, 84, 0.78);
 }
 
+body.blood-moon-mode .journal-reflection-editor::-webkit-scrollbar-track {
+  background: rgba(22, 5, 8, 0.82);
+}
+
+body.blood-moon-mode .journal-reflection-editor::-webkit-scrollbar-thumb {
+  background-color: rgba(226, 72, 84, 0.78);
+}
+
 body.blood-moon-mode .journal-field input,
 body.blood-moon-mode .journal-field select,
-body.blood-moon-mode .journal-field textarea {
+body.blood-moon-mode .journal-field textarea,
+body.blood-moon-mode .journal-reflection-editor {
   border-color: rgba(184, 78, 62, 0.4);
   background:
     linear-gradient(180deg, rgba(19, 5, 7, 0.76), rgba(10, 2, 4, 0.72)),
@@ -611,6 +670,10 @@ body.blood-moon-mode .journal-field textarea {
 
 body.blood-moon-mode .journal-field input::placeholder,
 body.blood-moon-mode .journal-field textarea::placeholder {
+  color: rgba(220, 166, 145, 0.6);
+}
+
+body.blood-moon-mode .journal-reflection-editor:empty::before {
   color: rgba(220, 166, 145, 0.6);
 }
 
@@ -627,7 +690,8 @@ body.blood-moon-mode .journal-field select {
 
 body.blood-moon-mode .journal-field input:focus-visible,
 body.blood-moon-mode .journal-field select:focus-visible,
-body.blood-moon-mode .journal-field textarea:focus-visible {
+body.blood-moon-mode .journal-field textarea:focus-visible,
+body.blood-moon-mode .journal-reflection-editor:focus-visible {
   border-color: rgba(218, 93, 75, 0.78);
   box-shadow:
     0 0 0 3px rgba(180, 42, 45, 0.22),
@@ -745,10 +809,11 @@ body.blood-moon-mode .journal-tag-option:has(input:checked) {
 }
 
 .journal-daily-prompt p {
-  border: 1px solid rgba(99, 58, 25, 0.22);
-  border-radius: 12px;
-  background: rgba(255, 248, 226, 0.24);
-  padding: 0.85rem;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
 }
 
 .journal-entry-context-grid .journal-daily-prompt p {
@@ -1489,6 +1554,11 @@ body.blood-moon-mode .journal-entry-context-grid .journal-daily-prompt p {
 
 .journal-reflection-card {
   display: grid;
+  grid-template-areas:
+    "header header"
+    "title title"
+    "tags tags"
+    "entry entry";
   gap: clamp(1rem, 2vw, 1.25rem);
   min-width: 0;
   border: 1px solid rgba(99, 58, 25, 0.2);
@@ -1504,7 +1574,9 @@ body.blood-moon-mode .journal-reflection-card {
 
 .journal-reflection-card .journal-panel__header {
   justify-items: center;
+  grid-area: header;
   padding-inline: 0;
+  justify-self: stretch;
 }
 
 .journal-reflection-card .journal-chamber__eyebrow {
@@ -1543,10 +1615,38 @@ body.blood-moon-mode .journal-reflection-card {
   display: grid;
   gap: 0.75rem;
   min-width: 0;
+  justify-self: end;
+  align-self: stretch;
+  align-content: end;
+  width: 100%;
+}
+
+.journal-reflection-card__actions {
+  margin-top: auto;
+  display: grid;
+  gap: 0.6rem;
+  width: 100%;
+  justify-self: stretch;
+}
+
+.journal-reflection-card__actions button {
+  width: 100%;
+}
+
+.journal-reflection-card__entry-row {
+  grid-area: entry;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(11rem, 17vw, 13rem);
+  gap: clamp(1rem, 2vw, 1.25rem);
+  align-items: stretch;
 }
 
 .journal-title-row > .journal-field:first-child {
   max-width: 40rem;
+}
+
+.journal-title-row {
+  grid-area: title;
 }
 
 .journal-title-row > .journal-field:first-child input {
@@ -1556,6 +1656,11 @@ body.blood-moon-mode .journal-reflection-card {
 
 .journal-field--body {
   gap: 0.7rem;
+  grid-area: auto;
+}
+
+.journal-tags {
+  grid-area: tags;
 }
 
 .journal-field--body > span {
@@ -1569,13 +1674,14 @@ body.blood-moon-mode .journal-reflection-card {
 }
 
 .journal-guided {
-  align-self: end;
+  align-self: start;
   justify-self: start;
   border: 0;
   background: transparent;
   box-shadow: none;
   overflow: visible;
   padding: 0;
+  width: 100%;
 }
 
 .journal-guided__toggle {
@@ -1666,9 +1772,29 @@ body.blood-moon-mode .journal-reflection-card {
   font: 700 0.72rem/1.35 var(--journal-ui-font);
 }
 
+.journal-reflection__question-line {
+  color: #2a2a1e;
+}
+
+body.sun-mode .journal-reflection__question-line {
+  color: #a9c6a9;
+}
+
+body.moon-mode .journal-reflection__question-line {
+  color: #d0b9ff;
+}
+
+body.blood-moon-mode .journal-reflection__question-line {
+  color: #ff758d;
+}
+
 body.blood-moon-mode .journal-guided__title,
 body.blood-moon-mode .journal-guided__helper {
   color: #f6ddcf;
+}
+
+body.journal-page.sun-mode .journal-reflection__question-line {
+  color: #9fbca0;
 }
 
 body.blood-moon-mode .journal-guided__switch {
@@ -2197,14 +2323,21 @@ body.moon-mode .journal-recent-empty {
 body.sun-mode .journal-field input,
 body.sun-mode .journal-field select,
 body.sun-mode .journal-field textarea,
+body.sun-mode .journal-reflection-editor,
 body.sun-mode .journal-guided__question textarea,
 body.moon-mode .journal-field input,
 body.moon-mode .journal-field select,
 body.moon-mode .journal-field textarea,
+body.moon-mode .journal-reflection-editor,
 body.moon-mode .journal-guided__question textarea {
   border-color: var(--journal-input-border);
   background: var(--journal-input-bg);
   color: var(--journal-text);
+}
+
+body.sun-mode .journal-reflection-editor:empty::before,
+body.moon-mode .journal-reflection-editor:empty::before {
+  color: color-mix(in srgb, var(--journal-muted) 72%, transparent);
 }
 
 body.sun-mode .journal-field input::placeholder,
@@ -2223,10 +2356,12 @@ body.moon-mode .journal-field select {
 body.sun-mode .journal-field input:focus-visible,
 body.sun-mode .journal-field select:focus-visible,
 body.sun-mode .journal-field textarea:focus-visible,
+body.sun-mode .journal-reflection-editor:focus-visible,
 body.sun-mode .journal-guided__question textarea:focus-visible,
 body.moon-mode .journal-field input:focus-visible,
 body.moon-mode .journal-field select:focus-visible,
 body.moon-mode .journal-field textarea:focus-visible,
+body.moon-mode .journal-reflection-editor:focus-visible,
 body.moon-mode .journal-guided__question textarea:focus-visible {
   border-color: color-mix(in srgb, var(--journal-accent) 76%, white);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--journal-accent) 22%, transparent);
@@ -2359,7 +2494,7 @@ body.sun-mode .journal-chamber__archive-link .journal-icon {
 }
 
 body.sun-mode .journal-field--mood::before {
-  color: #111111;
+  color: #ffffff;
   filter: none;
   opacity: 0.96;
 }
@@ -2844,7 +2979,239 @@ body.blood-moon-mode .journal-guided__toggle input:checked + .journal-guided__sw
     linear-gradient(180deg, rgba(125, 29, 31, 0.9), rgba(64, 12, 15, 0.92));
 }
 
+body.journal-page.sun-mode {
+  --journal-card-bg-soft:
+    linear-gradient(145deg, rgba(42, 63, 55, 0.7), rgba(25, 39, 35, 0.78));
+  --journal-card-border: rgba(145, 174, 145, 0.28);
+  --journal-input-bg:
+    linear-gradient(180deg, rgba(42, 63, 55, 0.92), rgba(31, 45, 40, 0.94));
+  --journal-input-border: rgba(145, 174, 145, 0.35);
+  --journal-text: #f4ecd8;
+  --journal-muted: rgba(244, 236, 216, 0.72);
+  --journal-accent: #91ae91;
+  --journal-accent-strong: #d8cda5;
+  --journal-button-bg:
+    linear-gradient(180deg, rgba(78, 119, 96, 0.95), rgba(40, 78, 66, 0.95));
+  --journal-button-text: #fff3d7;
+  --journal-chip-bg: rgba(34, 53, 47, 0.72);
+  --journal-chip-border: rgba(145, 174, 145, 0.3);
+  --journal-chip-selected-bg:
+    linear-gradient(180deg, rgba(80, 116, 94, 0.9), rgba(42, 80, 66, 0.92));
+  --journal-chip-selected-text: #fff3d7;
+}
+
+body.journal-page.sun-mode .journal-entry-context-grid,
+body.journal-page.sun-mode .journal-reflection-card,
+body.journal-page.sun-mode .journal-form-footer__recent {
+  border-color: rgba(145, 174, 145, 0.24);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(118, 150, 124, 0.12), transparent 38%),
+    linear-gradient(145deg, rgba(27, 48, 43, 0.54), rgba(21, 36, 33, 0.58));
+  box-shadow:
+    0 0 0 1px rgba(244, 236, 216, 0.06) inset,
+    0 16px 34px rgba(3, 16, 13, 0.18);
+}
+
+body.journal-page.sun-mode .journal-field input,
+body.journal-page.sun-mode .journal-field select,
+body.journal-page.sun-mode .journal-field textarea,
+body.journal-page.sun-mode .journal-reflection-editor,
+body.journal-page.sun-mode .journal-guided__question textarea {
+  border-color: rgba(145, 174, 145, 0.35);
+  background: linear-gradient(180deg, rgba(42, 63, 55, 0.92), rgba(31, 45, 40, 0.94));
+  box-shadow:
+    0 0 0 1px rgba(244, 236, 216, 0.05) inset,
+    0 10px 20px rgba(5, 18, 15, 0.16) inset,
+    0 0 12px rgba(91, 150, 126, 0.1);
+  color: #f4ecd8;
+  color-scheme: dark;
+}
+
+body.journal-page.sun-mode .journal-field textarea,
+body.journal-page.sun-mode .journal-reflection-editor,
+body.journal-page.sun-mode .journal-guided__question textarea {
+  color: #f4ecd8;
+}
+
+body.journal-page.sun-mode .journal-field input::placeholder,
+body.journal-page.sun-mode .journal-field textarea::placeholder,
+body.journal-page.sun-mode .journal-reflection-editor:empty::before,
+body.journal-page.sun-mode .journal-guided__question textarea::placeholder {
+  color: rgba(244, 236, 216, 0.58);
+}
+
+body.journal-page.sun-mode .journal-field input:focus-visible,
+body.journal-page.sun-mode .journal-field select:focus-visible,
+body.journal-page.sun-mode .journal-field textarea:focus-visible,
+body.journal-page.sun-mode .journal-reflection-editor:focus-visible,
+body.journal-page.sun-mode .journal-guided__question textarea:focus-visible {
+  border-color: rgba(181, 211, 176, 0.55);
+  box-shadow:
+    0 0 0 1px rgba(244, 236, 216, 0.08) inset,
+    0 0 0 3px rgba(91, 150, 126, 0.16),
+    0 0 22px rgba(91, 150, 126, 0.14);
+}
+
+body.journal-page.sun-mode .journal-daily-prompt p,
+body.journal-page.sun-mode .journal-guided button.journal-guided__toggle,
+body.journal-page.sun-mode .journal-guided button.journal-guided__toggle:hover,
+body.journal-page.sun-mode .journal-guided button.journal-guided__toggle:focus-visible,
+body.journal-page.sun-mode .journal-guided__question,
+body.journal-page.sun-mode .journal-privacy-note__pill {
+  border-color: rgba(145, 174, 145, 0.3);
+  background:
+    linear-gradient(180deg, rgba(42, 63, 55, 0.78), rgba(31, 45, 40, 0.82));
+  box-shadow:
+    0 0 0 1px rgba(244, 236, 216, 0.05) inset,
+    0 0 16px rgba(91, 150, 126, 0.08);
+  color: #f4ecd8;
+}
+
+body.journal-page.sun-mode .journal-tag-option {
+  border-color: rgba(145, 174, 145, 0.3);
+  background: rgba(34, 53, 47, 0.72);
+  color: #f4ecd8;
+}
+
+body.journal-page.sun-mode .journal-tag-option:has(input:checked) {
+  border-color: rgba(179, 204, 156, 0.42);
+  background:
+    linear-gradient(180deg, rgba(80, 116, 94, 0.9), rgba(42, 80, 66, 0.92));
+  box-shadow:
+    0 0 0 1px rgba(244, 236, 216, 0.08) inset,
+    0 0 18px rgba(91, 150, 126, 0.16);
+  color: #fff3d7;
+}
+
+body.journal-page.sun-mode .journal-entry-form__actions button[data-journal-save],
+body.journal-page.sun-mode .journal-guided-modal__actions button[data-guided-add],
+body.journal-page.sun-mode .journal-companion-panel > .journal-chamber__archive-link {
+  border-color: rgba(179, 204, 156, 0.42);
+  background:
+    linear-gradient(180deg, rgba(78, 119, 96, 0.95), rgba(40, 78, 66, 0.95));
+  box-shadow:
+    0 0 0 1px rgba(244, 236, 216, 0.08) inset,
+    0 0 22px rgba(91, 150, 126, 0.16);
+  color: #fff3d7;
+}
+
+body.journal-page.sun-mode .journal-entry-form__actions button[data-journal-clear],
+body.journal-page.sun-mode .journal-guided-modal__actions button,
+body.journal-page.sun-mode .journal-guided-modal__close,
+body.journal-page.sun-mode .journal-chamber__archive-link {
+  border-color: rgba(145, 174, 145, 0.32);
+  background:
+    linear-gradient(180deg, rgba(42, 63, 55, 0.72), rgba(31, 45, 40, 0.76));
+  box-shadow: 0 0 0 1px rgba(244, 236, 216, 0.05) inset;
+  color: #f4ecd8;
+}
+
+body.journal-page.sun-mode .journal-entry-form__actions button:hover,
+body.journal-page.sun-mode .journal-entry-form__actions button:focus-visible,
+body.journal-page.sun-mode .journal-guided-modal__actions button:hover,
+body.journal-page.sun-mode .journal-guided-modal__actions button:focus-visible,
+body.journal-page.sun-mode .journal-guided-modal__close:hover,
+body.journal-page.sun-mode .journal-guided-modal__close:focus-visible,
+body.journal-page.sun-mode .journal-chamber__archive-link:hover,
+body.journal-page.sun-mode .journal-chamber__archive-link:focus-visible {
+  border-color: rgba(181, 211, 176, 0.5);
+  box-shadow:
+    0 0 0 1px rgba(244, 236, 216, 0.08) inset,
+    0 0 20px rgba(91, 150, 126, 0.16);
+}
+
+body.journal-page.sun-mode .journal-guided__switch {
+  border-color: rgba(145, 174, 145, 0.44);
+  background:
+    linear-gradient(180deg, rgba(42, 63, 55, 0.94), rgba(31, 45, 40, 0.96));
+}
+
+body.journal-page.sun-mode .journal-guided__switch::after {
+  color: #d8cda5;
+}
+
+body.journal-page.sun-mode .journal-guided__toggle input:checked + .journal-guided__switch {
+  background:
+    linear-gradient(180deg, rgba(78, 119, 96, 0.95), rgba(40, 78, 66, 0.95));
+}
+
+body.journal-page.sun-mode .journal-entry-form__actions button[data-journal-save] .journal-icon,
+body.journal-page.sun-mode .journal-guided-modal__actions button[data-guided-add] .journal-icon,
+body.journal-page.sun-mode .journal-tag-option:has(input:checked) .journal-icon,
+body.journal-page.sun-mode .journal-companion-panel > .journal-chamber__archive-link .journal-icon {
+  color: #fff3d7;
+  opacity: 0.9;
+  filter: none;
+}
+
+body.journal-page.sun-mode .journal-field input[type="date"]::-webkit-calendar-picker-indicator,
+body.journal-page.sun-mode .journal-privacy-note img {
+  filter:
+    brightness(0)
+    saturate(1)
+    invert(91%)
+    sepia(12%)
+    saturate(360%)
+    hue-rotate(18deg);
+  opacity: 0.86;
+}
+
+body.journal-page.sun-mode .journal-form-footer__recent-link {
+  color: #d8cda5;
+  text-decoration-color: rgba(216, 205, 165, 0.58);
+}
+
+body.journal-page.sun-mode .journal-entry-list {
+  scrollbar-color: rgba(145, 174, 145, 0.46) rgba(31, 45, 40, 0.54);
+}
+
+body.journal-page.sun-mode .journal-entry-list::-webkit-scrollbar-thumb {
+  background: rgba(145, 174, 145, 0.46);
+}
+
+body.journal-page.sun-mode .journal-field--body textarea::-webkit-scrollbar-track {
+  background: rgba(31, 45, 40, 0.72);
+}
+
+body.journal-page.sun-mode .journal-field--body textarea::-webkit-scrollbar-thumb {
+  background: rgba(145, 174, 145, 0.46);
+}
+
+@media (min-width: 681px) {
+  .journal-main-panel,
+  body.sun-mode .journal-main-panel,
+  body.moon-mode .journal-main-panel,
+  body.blood-moon-mode .journal-main-panel {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .journal-main-panel::before,
+  .journal-main-panel::after {
+    display: none;
+  }
+}
+
 @media (max-width: 980px) {
+  .journal-reflection-card {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "title"
+      "tags"
+      "entry";
+  }
+
+  .journal-reflection-card__entry-row {
+    grid-template-columns: 1fr;
+  }
+
+  .journal-reflection-card__side {
+    justify-self: stretch;
+  }
+
   .journal-main {
     width: calc(100vw - 1.25rem);
     max-width: 760px;
@@ -3029,6 +3396,18 @@ body.blood-moon-mode .journal-guided__toggle input:checked + .journal-guided__sw
     box-shadow: none;
   }
 
+  body.journal-page.sun-mode .journal-entry-context-grid,
+  body.journal-page.sun-mode .journal-reflection-card,
+  body.journal-page.sun-mode .journal-form-footer__recent,
+  body.journal-page.sun-mode .journal-daily-prompt p,
+  body.journal-page.sun-mode .journal-guided button.journal-guided__toggle,
+  body.journal-page.sun-mode .journal-guided button.journal-guided__toggle:hover,
+  body.journal-page.sun-mode .journal-guided button.journal-guided__toggle:focus-visible {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
   .journal-entry-context-grid .journal-daily-prompt {
     grid-column: auto;
   }
@@ -3042,6 +3421,37 @@ body.blood-moon-mode .journal-guided__toggle input:checked + .journal-guided__sw
     border-color: transparent;
     background: transparent;
     box-shadow: none;
+  }
+
+  body.journal-page.sun-mode .journal-entry-context-grid .journal-field--check-in input,
+  body.journal-page.sun-mode .journal-entry-context-grid .journal-field--mood select {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  body.journal-page.sun-mode .journal-entry-context-grid .journal-field--check-in input {
+    border-color: rgba(145, 174, 145, 0.35);
+    background: linear-gradient(180deg, rgba(42, 63, 55, 0.92), rgba(31, 45, 40, 0.94));
+    box-shadow:
+      0 0 0 1px rgba(244, 236, 216, 0.05) inset,
+      0 10px 20px rgba(5, 18, 15, 0.16) inset,
+      0 0 12px rgba(91, 150, 126, 0.1);
+  }
+
+  body.journal-page.sun-mode .journal-entry-context-grid .journal-field--mood select {
+    border: 1px solid rgba(145, 174, 145, 0.35);
+    background: linear-gradient(180deg, rgba(42, 63, 55, 0.92), rgba(31, 45, 40, 0.94));
+    box-shadow:
+      0 0 0 1px rgba(244, 236, 216, 0.05) inset,
+      0 10px 20px rgba(5, 18, 15, 0.16) inset,
+      0 0 12px rgba(91, 150, 126, 0.1);
+    border-radius: 999px;
+    padding-right: 2.45rem;
+  }
+
+  body.journal-page.sun-mode .journal-field--mood::before {
+    color: #fff;
   }
 
   .journal-entry-list {
@@ -3116,13 +3526,21 @@ body.blood-moon-mode .journal-guided__toggle input:checked + .journal-guided__sw
     width: 100%;
   }
 
-  .journal-field textarea {
-    min-height: 7rem;
-  }
+.journal-field textarea {
+  min-height: 7rem;
+}
 
-  .journal-field--body textarea {
-    height: clamp(13.75rem, 36vh, 16.25rem);
-    max-height: 16.25rem;
-    min-height: 13.75rem;
-  }
+.journal-field--body textarea {
+  height: clamp(12rem, 33vh, 14.5rem);
+  max-height: 14.5rem;
+  min-height: 12rem;
+}
+}
+
+body.journal-page .journal-daily-prompt p {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
 }

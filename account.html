@@ -882,20 +882,46 @@
         width: fit-content;
         max-width: 100%;
         margin-top: 0.82rem;
-        border: 1px solid rgba(255, 90, 104, 0.46);
+        border: 1px solid rgba(181, 197, 219, 0.45);
         border-radius: 11px;
         background:
-          linear-gradient(135deg, rgba(92, 8, 18, 0.92), rgba(20, 3, 9, 0.96)),
-          rgba(9, 4, 9, 0.92);
-        color: #ff5a68;
+          linear-gradient(135deg, rgba(46, 57, 88, 0.9), rgba(24, 32, 57, 0.92)),
+          rgba(9, 13, 22, 0.94);
+        color: #d9deef;
         font-family: var(--font-ui);
         font-size: 0.76rem;
         font-weight: 900;
         line-height: 1.1;
         letter-spacing: 0.14em;
         padding: 0.48rem 0.78rem;
-        text-shadow: 0 0 8px rgba(255, 44, 67, 0.3);
+        text-shadow: 0 0 8px rgba(206, 219, 255, 0.28);
         text-transform: uppercase;
+        box-shadow:
+          0 0 0 1px rgba(255, 139, 149, 0.045) inset,
+          0 0 14px rgba(255, 40, 64, 0.16),
+          0 10px 22px rgba(0, 0, 0, 0.2);
+      }
+
+      .profile-title-badge--seeker {
+        border-color: rgba(169, 190, 212, 0.46);
+        background:
+          linear-gradient(135deg, rgba(52, 72, 94, 0.92), rgba(28, 42, 59, 0.94)),
+          rgba(9, 13, 22, 0.95);
+        color: #d9e0f0;
+        text-shadow: 0 0 8px rgba(186, 205, 228, 0.3);
+        box-shadow:
+          0 0 0 1px rgba(196, 212, 230, 0.06) inset,
+          0 0 12px rgba(173, 201, 236, 0.16),
+          0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .profile-title-badge--marked {
+        border: 1px solid rgba(255, 90, 104, 0.46);
+        background:
+          linear-gradient(135deg, rgba(92, 8, 18, 0.92), rgba(20, 3, 9, 0.96)),
+          rgba(9, 4, 9, 0.92);
+        color: #ff5a68;
+        text-shadow: 0 0 8px rgba(255, 44, 67, 0.3);
         box-shadow:
           0 0 0 1px rgba(255, 139, 149, 0.045) inset,
           0 0 14px rgba(255, 40, 64, 0.16),
@@ -1887,95 +1913,148 @@
 
       .journal-list {
         display: grid;
-        gap: 0.85rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin: 0.55rem 0;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+        overflow: visible;
+      }
+
+      .journal-list:empty {
+        margin: 0;
       }
 
       .journal-entry-card {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 1rem;
-        align-items: start;
-        border: 1px solid rgba(228, 189, 118, 0.18);
+        position: relative;
+        aspect-ratio: 9 / 14;
+        overflow: hidden;
         border-radius: 12px;
-        background:
-          linear-gradient(135deg, rgba(228, 189, 118, 0.052), rgba(185, 156, 255, 0.04)),
-          rgba(7, 8, 20, 0.42);
-        box-shadow:
-          0 0 0 1px rgba(255, 255, 255, 0.025) inset,
-          0 14px 34px rgba(0, 0, 0, 0.16);
-        padding: clamp(1rem, 2vw, 1.15rem);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 1px 0 1px rgba(255, 255, 255, 0.02), 0 20px 42px rgba(0, 0, 0, 0.38);
+        padding: 0;
+        background: #040611;
       }
 
-      .journal-entry-card__copy {
+      .journal-entry-card__cover {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        z-index: 0;
+        object-fit: cover;
+        object-position: center top;
+        opacity: 0.96;
+      }
+
+      .journal-entry-card__overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background: linear-gradient(180deg, rgba(5, 8, 14, 0), rgba(5, 8, 14, 0.75) 45%, rgba(5, 8, 14, 0.94));
+      }
+
+      .journal-entry-card > * {
+        position: relative;
+      }
+
+      .journal-entry-card--sun {
+        border-color: rgba(173, 194, 158, 0.34);
+        box-shadow: 0 1px 0 1px rgba(173, 194, 158, 0.12), 0 20px 36px rgba(0, 0, 0, 0.28);
+      }
+
+      .journal-entry-card--moon {
+        border-color: rgba(152, 175, 240, 0.26);
+      }
+
+      .journal-entry-card--bloodmoon {
+        border-color: rgba(189, 102, 102, 0.3);
+      }
+
+      .journal-entry-card__content {
+        position: absolute;
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+        z-index: 2;
         display: grid;
-        gap: 0.52rem;
-        min-width: 0;
-      }
-
-      .journal-entry-card h3 {
-        color: var(--gold);
-        font-family: var(--font-display);
-        font-size: clamp(1.25rem, 2.1vw, 1.6rem);
-        font-weight: 400;
-        line-height: 1.12;
-        overflow-wrap: anywhere;
+        justify-items: center;
+        gap: 0.45rem;
+        width: auto;
+        padding: 0;
+        color: rgba(247, 240, 232, 0.95);
+        text-align: center;
       }
 
       .journal-entry-card__meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.45rem;
-        color: rgba(247, 240, 232, 0.68);
-        font-family: var(--font-ui);
-        font-size: 0.78rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-      }
-
-      .journal-entry-card__chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.38rem;
-      }
-
-      .journal-entry-card__chips span {
-        border: 1px solid rgba(185, 156, 255, 0.2);
-        border-radius: 999px;
-        color: rgba(247, 240, 232, 0.72);
-        font-family: var(--font-ui);
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        padding: 0.22rem 0.5rem;
-        text-transform: uppercase;
-      }
-
-      .journal-entry-card__chip--mood,
-      .journal-entry-card__chip--mode,
-      .journal-entry-card__chip--type {
-        border-color: rgba(228, 189, 118, 0.24);
-        color: rgba(228, 189, 118, 0.86);
-      }
-
-      .journal-entry-card__preview {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
         margin: 0;
-        color: rgba(247, 240, 232, 0.78);
-        font-size: 0.94rem;
-        line-height: 1.6;
-        overflow: hidden;
+        color: rgba(247, 240, 232, 0.73);
+        font-family: var(--font-ui);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .journal-entry-card h3 {
+        margin: 0;
+        max-width: 100%;
+        color: var(--text);
+        font-family: var(--font-display);
+        font-size: clamp(1.05rem, 1.9vw, 1.25rem);
+        font-weight: 400;
+        line-height: 1.18;
+        letter-spacing: 0.01em;
         overflow-wrap: anywhere;
       }
 
       .journal-entry-card__actions {
         display: flex;
-        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
         gap: 0.5rem;
-        justify-content: flex-end;
-        align-self: end;
+      }
+
+      .journal-entry-card__action {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(10, 11, 26, 0.48);
+        color: rgba(247, 240, 232, 0.9);
+        min-height: 2.5rem;
+        font-size: 0.8rem;
+        font-family: var(--font-ui);
+        letter-spacing: 0.08em;
+        padding-inline: 0.95rem;
+      }
+
+      .journal-entry-card__action:hover,
+      .journal-entry-card__action:focus-visible {
+        border-color: rgba(255, 255, 255, 0.5);
+        color: var(--text);
+      }
+
+      .journal-entry-card--sun .journal-entry-card__action {
+        background: linear-gradient(180deg, rgba(78, 119, 96, 0.95), rgba(40, 78, 66, 0.95));
+        border-color: rgba(179, 204, 156, 0.42);
+        color: #fff3d7;
+      }
+
+      .journal-entry-card--moon .journal-entry-card__action {
+        background: linear-gradient(180deg, rgba(64, 93, 164, 0.95), rgba(33, 52, 108, 0.95));
+        border-color: rgba(169, 188, 233, 0.38);
+        color: rgba(236, 243, 255, 0.95);
+      }
+
+      .journal-entry-card--bloodmoon .journal-entry-card__action {
+        background: linear-gradient(180deg, rgba(146, 18, 42, 0.95), rgba(70, 7, 20, 0.98));
+        border-color: rgba(255, 72, 105, 0.55);
+        color: #fff4f4;
+        box-shadow: 0 0 18px rgba(180, 18, 48, 0.28);
       }
 
       body.journal-modal-open {
@@ -2012,13 +2091,13 @@
         display: grid;
         width: min(46rem, 100%);
         max-height: min(82vh, 52rem);
-        gap: 0.9rem;
+        gap: 1rem;
         overflow-y: auto;
-        border: 1px solid rgba(228, 189, 118, 0.2);
-        border-radius: 14px;
+        border: 1px solid rgba(228, 189, 118, 0.16);
+        border-radius: 16px;
         background:
-          linear-gradient(145deg, rgba(228, 189, 118, 0.075), rgba(185, 156, 255, 0.045)),
-          rgba(7, 8, 20, 0.94);
+          linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(185, 156, 255, 0.02)),
+          rgba(9, 10, 27, 0.94);
         box-shadow:
           0 0 0 1px rgba(255, 255, 255, 0.028) inset,
           0 30px 80px rgba(0, 0, 0, 0.42);
@@ -2028,8 +2107,10 @@
       .journal-entry-view__header {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 1rem;
-        align-items: start;
+        gap: 0.95rem;
+        align-items: center;
+        padding-bottom: 0.55rem;
+        border-bottom: 1px solid rgba(228, 189, 118, 0.16);
       }
 
       .journal-entry-view__meta,
@@ -2052,14 +2133,27 @@
         margin-top: 0.3rem;
         color: var(--gold);
         font-family: var(--font-display);
-        font-size: clamp(1.45rem, 2.6vw, 2rem);
-        font-weight: 400;
+        font-size: clamp(1.45rem, 2.6vw, 1.85rem);
+        font-weight: 500;
         line-height: 1.08;
         overflow-wrap: anywhere;
       }
 
+      .journal-entry-view__header .card-action {
+        border-color: rgba(228, 189, 118, 0.34);
+        background: rgba(10, 11, 26, 0.4);
+        color: rgba(247, 240, 232, 0.86);
+      }
+
+      .journal-entry-view__actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.45rem;
+      }
+
       .journal-entry-view__chips span {
-        border: 1px solid rgba(185, 156, 255, 0.2);
+        border: 1px solid rgba(228, 189, 118, 0.22);
         border-radius: 999px;
         color: rgba(247, 240, 232, 0.74);
         font-family: var(--font-ui);
@@ -2072,12 +2166,19 @@
 
       .journal-entry-view__content {
         display: grid;
-        gap: 0.9rem;
+        gap: 0.95rem;
       }
 
       .journal-entry-view__section {
         display: grid;
-        gap: 0.35rem;
+        gap: 0.42rem;
+        border-bottom: 1px solid rgba(228, 189, 118, 0.14);
+        padding-bottom: 0.7rem;
+      }
+
+      .journal-entry-view__section:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
       }
 
       .journal-entry-view__section strong {
@@ -2091,15 +2192,27 @@
       .journal-entry-view__section p {
         margin: 0;
         color: rgba(247, 240, 232, 0.82);
-        font-size: 0.98rem;
-        line-height: 1.68;
+        font-size: 0.95rem;
+        line-height: 1.75;
         overflow-wrap: anywhere;
         white-space: pre-wrap;
+      }
+
+      .journal-entry-view__section--reflection strong {
+        color: rgba(228, 189, 118, 0.96);
+      }
+
+      .journal-entry-view__section--reflection p {
+        color: rgba(247, 240, 232, 0.9);
       }
 
       .journal-entry-view__guided {
         display: grid;
         gap: 0.72rem;
+        border: 1px solid rgba(228, 189, 118, 0.16);
+        border-radius: 12px;
+        background: rgba(228, 189, 118, 0.03);
+        padding: 0.65rem;
       }
 
       .journal-entry-view__guided .journal-entry-view__section strong {
@@ -2107,7 +2220,7 @@
       }
 
       .journal-entry-view__guided .journal-entry-view__section p {
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(247, 240, 232, 0.9);
       }
 
       .journal-pagination {
@@ -2116,6 +2229,7 @@
         gap: 0.75rem;
         align-items: center;
         justify-content: space-between;
+        margin-top: 0.85rem;
         border: 1px solid rgba(228, 189, 118, 0.16);
         border-radius: 12px;
         background: rgba(7, 8, 20, 0.38);
@@ -2192,7 +2306,7 @@
         font-weight: 400;
       }
 
-      .settings-card__body {
+      .settings-layout {
         width: 100%;
         display: grid;
         grid-template-columns: minmax(0, 1.08fr) minmax(13rem, 0.9fr);
@@ -2200,10 +2314,10 @@
         gap: clamp(1.1rem, 3vw, 2rem);
       }
 
-      .settings-card__controls {
+      .settings-subcard {
         display: grid;
+        width: 100%;
         gap: 0.9rem;
-        justify-items: center;
         min-width: 0;
         border: 1px solid rgba(228, 189, 118, 0.16);
         border-radius: 16px;
@@ -2217,8 +2331,15 @@
         padding: clamp(0.9rem, 2vw, 1.15rem);
       }
 
+      .settings-subcard--zodiac {
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+      }
+
       .profile-form__rows {
-        width: min(100%, 420px);
         display: grid;
         gap: 0;
       }
@@ -2231,8 +2352,21 @@
         text-align: center;
       }
 
+      .account-section.panel[data-account-section="journal-entries"] {
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        backdrop-filter: none;
+      }
+
       .profile-field + .profile-field {
         border-top: 1px solid rgba(228, 189, 118, 0.11);
+      }
+
+      .profile-title-option.preference-option {
+        border-top: 1px solid rgba(228, 189, 118, 0.11);
+        margin-top: 0.15rem;
       }
 
       .profile-field p {
@@ -2409,77 +2543,48 @@
       }
 
       .preferences-card {
-        width: min(100%, 420px);
+        width: 100%;
+        display: grid;
+        gap: 0.8rem;
+        justify-items: stretch;
         border: 1px solid rgba(185, 156, 255, 0.2);
         border-radius: 14px;
         background: rgba(7, 8, 20, 0.36);
-        overflow: hidden;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+          0 12px 34px rgba(0, 0, 0, 0.16),
+          0 0 18px rgba(185, 156, 255, 0.05);
+        padding: 0.82rem 0.95rem 0.95rem;
       }
 
-      .preferences-card summary {
-        min-height: 3.75rem;
+      .preferences-card__heading {
         display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        align-items: center;
-        gap: 1rem;
-        cursor: pointer;
-        list-style: none;
-        padding: 0.8rem 0.9rem;
+        justify-items: center;
+        gap: 0.2rem;
         text-align: center;
-      }
-
-      .preferences-card summary::-webkit-details-marker {
-        display: none;
+        padding: 0 0.2rem 0.35rem;
       }
 
       .preferences-card h3 {
+        margin: 0;
         color: var(--gold);
         font-family: var(--font-display);
         font-size: clamp(1.16rem, 2vw, 1.35rem);
         font-weight: 400;
       }
 
+      .preferences-card__heading p {
+        margin: 0;
+        font-size: 0.85rem;
+      }
+
+      .preferences-card--advanced {
+        min-width: 0;
+        justify-self: stretch;
+      }
+
       .preferences-card p {
         margin: 0.2rem 0 0;
-      }
-
-      .preferences-toggle-text {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.45rem;
-        color: var(--violet);
-        font-family: var(--font-ui);
-        font-size: 0.76rem;
-        font-weight: 700;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-      }
-
-      .preferences-toggle-text::after {
-        width: 0.58rem;
-        height: 0.58rem;
-        border-right: 1px solid currentColor;
-        border-bottom: 1px solid currentColor;
-        content: "";
-        transform: translateY(-0.12rem) rotate(45deg);
-        transition: transform 160ms ease;
-      }
-
-      .preferences-card[open] .preferences-toggle-text {
-        color: var(--gold);
-      }
-
-      .preferences-card[open] .preferences-toggle-text::after {
-        transform: translateY(0.12rem) rotate(225deg);
-      }
-
-      .preferences-card[open] .preferences-toggle-text::before {
-        content: "Close ";
-      }
-
-      .preferences-card:not([open]) .preferences-toggle-text::before {
-        content: "Open ";
       }
 
       .preferences-options {
@@ -2576,7 +2681,12 @@
 
       .saved-readings {
         display: grid;
-        gap: 0;
+        gap: 0.72rem;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
       }
 
       .reading-archive {
@@ -2599,7 +2709,12 @@
       }
 
       .reading-archive__list-card {
-        gap: 1rem;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        margin: 0;
       }
 
       .saved-readings__state {
@@ -2664,13 +2779,13 @@
           linear-gradient(90deg, rgba(var(--reading-accent-rgb), 0.105), transparent 46%),
           rgba(7, 8, 20, 0.42);
         box-shadow:
-          0 10px 30px rgba(0, 0, 0, 0.14),
-          0 0 28px var(--reading-glow);
+          0 0 14px rgba(0, 0, 0, 0.08),
+          0 0 18px var(--reading-glow);
         padding: clamp(1rem, 2vw, 1.25rem);
       }
 
       .saved-reading-card + .saved-reading-card {
-        margin-top: -1px;
+        margin-top: 0;
       }
 
       .saved-reading-card.is-blood-moon,
@@ -3093,6 +3208,10 @@
       }
 
       @media (max-width: 1023px) {
+        .journal-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         .account-layout {
           align-content: start;
           grid-auto-rows: max-content;
@@ -3317,13 +3436,13 @@
 
         .hero-card,
         .panel-grid,
-        .settings-card__body,
+        .settings-layout,
         .birthday-field,
         .preference-option {
           grid-template-columns: 1fr;
         }
 
-        .settings-card__body {
+        .settings-layout {
           gap: 1rem;
         }
 
@@ -3385,6 +3504,10 @@
       }
 
       @media (max-width: 520px) {
+        .journal-list {
+          grid-template-columns: 1fr;
+        }
+
         .topbar {
           min-height: auto;
           padding: 1rem;
@@ -3533,21 +3656,26 @@
         }
 
         .journal-form__grid,
-        .journal-entry-card,
         .journal-entry-view__header {
           grid-template-columns: 1fr;
         }
 
-        .journal-form__actions,
-        .journal-entry-card__actions,
-        .journal-entry-view__header .card-action {
+        .journal-form__actions {
           justify-content: stretch;
         }
 
+        .journal-entry-card__actions {
+          justify-content: center;
+        }
+
         .journal-form__actions button,
-        .journal-entry-card__actions button,
+        .journal-entry-card__action,
         .journal-entry-view__header .card-action {
           flex: 1 1 9rem;
+        }
+
+        .journal-entry-card__actions button {
+          width: 100%;
         }
 
         .journal-entry-view__dialog {
@@ -3881,15 +4009,13 @@
                   </div>
                 </div>
               </div>
-              <div class="panel reading-archive__list-card">
-                <div class="saved-readings" data-saved-readings-list>
-                  <p class="saved-readings__state">Loading saved readings...</p>
-                </div>
-                <footer class="reading-pagination" data-reading-pagination hidden>
-                  <span class="reading-pagination__summary" data-reading-pagination-summary>Showing 0-0 of 0 readings</span>
-                  <div class="reading-pagination__controls" data-reading-pagination-controls aria-label="Reading archive pages"></div>
-                </footer>
+              <div class="saved-readings" data-saved-readings-list>
+                <p class="saved-readings__state">Loading saved readings...</p>
               </div>
+              <footer class="reading-pagination" data-reading-pagination hidden>
+                <span class="reading-pagination__summary" data-reading-pagination-summary>Showing 0-0 of 0 readings</span>
+                <div class="reading-pagination__controls" data-reading-pagination-controls aria-label="Reading archive pages"></div>
+              </footer>
             </section>
 
             <section class="account-section panel" data-account-section="journal-entries" hidden aria-label="Journal Entries">
@@ -3997,28 +4123,32 @@
             <div class="journal-entry-view" data-journal-view hidden aria-live="polite">
               <button class="journal-entry-view__backdrop" type="button" data-journal-view-backdrop aria-label="Close journal entry view"></button>
               <article class="journal-entry-view__dialog" role="dialog" aria-modal="true" aria-labelledby="journal-view-title">
-                <div class="journal-entry-view__header">
-                  <div>
-                    <div class="journal-entry-view__meta" data-journal-view-meta></div>
-                    <h3 id="journal-view-title" data-journal-view-title>Journal entry</h3>
+                  <div class="journal-entry-view__header">
+                    <div>
+                      <div class="journal-entry-view__meta" data-journal-view-meta></div>
+                      <h3 id="journal-view-title" data-journal-view-title>Journal entry</h3>
+                    </div>
+                    <div class="journal-entry-view__actions">
+                      <button class="card-action" type="button" data-journal-view-delete>Delete</button>
+                      <button class="card-action" type="button" data-journal-view-edit>Edit</button>
+                      <button class="card-action" type="button" data-journal-view-close>Close</button>
+                    </div>
                   </div>
-                  <button class="card-action" type="button" data-journal-view-close>Close</button>
-                </div>
                 <div class="journal-entry-view__chips" data-journal-view-chips></div>
                 <div class="journal-entry-view__content" data-journal-view-content></div>
               </article>
             </div>
 
             <section class="account-section panel settings-section" data-account-section="account-settings" hidden aria-label="Account Settings">
-                <div class="settings-card">
-                  <div class="settings-card__header">
+              <div class="settings-card">
+                <div class="settings-card__header">
                   <p class="section-title">Account Settings</p>
                   <h2>Edit your profile</h2>
                   <p>Manage how your Archive remembers you.</p>
                 </div>
 
-                <div class="settings-card__body">
-                  <div class="settings-card__controls">
+                <div class="settings-layout">
+                  <section class="settings-subcard">
                     <form class="profile-form" data-profile-form>
                       <div class="profile-form__rows">
                         <label class="profile-field">
@@ -4033,28 +4163,11 @@
                           <input name="birth_month" type="hidden" />
                           <input name="birth_day" type="hidden" />
                         </div>
-                      </div>
 
-                      <div class="profile-form__actions">
-                        <button type="submit" data-profile-submit>Save Profile</button>
-                        <p class="profile-form__status" data-profile-status role="status" aria-live="polite"></p>
-                      </div>
-                    </form>
-
-                    <details class="preferences-card">
-                      <summary>
-                        <div>
-                          <h3>Preferences</h3>
-                          <p>Reading and archive preferences.</p>
-                        </div>
-                        <span class="preferences-toggle-text">Preferences</span>
-                      </summary>
-
-                      <div class="preferences-options" aria-label="Future preference options">
                         <div class="preference-option">
                           <div>
                             <span class="preference-option__label">Show Profile Title</span>
-                            <p>Display your earned title beneath your name.</p>
+                            <p>Display your profile title on your overview.</p>
                           </div>
                           <label class="switch" aria-label="Show profile title">
                             <input type="checkbox" data-preference-show-profile-title checked />
@@ -4062,65 +4175,92 @@
                           </label>
                         </div>
 
-                        <div class="preference-option">
-                          <div>
-                            <span class="preference-option__label">Allow Reversed Cards</span>
-                            <p>Include reversed card meanings in readings.</p>
-                          </div>
-                          <label class="switch" aria-label="Allow reversed cards">
-                            <input type="checkbox" />
-                            <span aria-hidden="true"></span>
-                          </label>
-                        </div>
-
-                        <div class="preference-option">
-                          <div>
-                            <span class="preference-option__label">Save Readings Prompt</span>
-                            <p>Remind me to save readings after a spread.</p>
-                          </div>
-                          <label class="switch" aria-label="Save readings prompt">
-                            <input type="checkbox" checked />
-                            <span aria-hidden="true"></span>
-                          </label>
-                        </div>
-
-                        <div class="preference-option">
-                          <div>
-                            <span class="preference-option__label">Reduce Motion</span>
-                            <p>Soften animations and visual movement.</p>
-                          </div>
-                          <label class="switch" aria-label="Reduce motion">
-                            <input type="checkbox" />
-                            <span aria-hidden="true"></span>
-                          </label>
-                        </div>
-
-                        <label class="preference-option">
+                        <label class="preference-option profile-title-option">
                           <span>
-                            <span class="preference-option__label">Default Reading Mode</span>
-                            <p>Choose which standard mode appears first.</p>
+                            <span class="preference-option__label">Select Title</span>
+                            <p>Choose the title shown on your overview.</p>
                           </span>
-                          <select class="preference-select" aria-label="Default reading mode">
-                            <option>Last Used</option>
-                            <option>Sun</option>
-                            <option>Moon</option>
+                          <select class="preference-select" aria-label="Select profile title" data-preference-selected-profile-title>
+                            <option value="none">None</option>
+                            <option value="seeker">Seeker</option>
+                            <option value="marked">Marked</option>
                           </select>
                         </label>
-                        <p class="preferences-status" data-preferences-status role="status" aria-live="polite"></p>
                       </div>
-                    </details>
-                  </div>
 
-                  <div class="profile-preview" aria-live="polite">
-                    <span class="profile-preview__icon" aria-hidden="true">
-                      <img data-settings-zodiac-image alt="" hidden />
-                    </span>
-                    <div class="profile-preview__copy">
-                      <strong data-zodiac-preview>Enter your birthday to reveal your zodiac.</strong>
-                      <p class="profile-preview__dates" data-zodiac-dates></p>
+                      <div class="profile-form__actions">
+                        <button type="submit" data-profile-submit>Save Profile</button>
+                        <p class="profile-form__status" data-profile-status role="status" aria-live="polite"></p>
+                      </div>
+                    </form>
+                  </section>
+
+                  <section class="settings-subcard settings-subcard--zodiac">
+                    <div class="profile-preview" aria-live="polite">
+                      <span class="profile-preview__icon" aria-hidden="true">
+                        <img data-settings-zodiac-image alt="" hidden />
+                      </span>
+                      <div class="profile-preview__copy">
+                        <strong data-zodiac-preview>Enter your birthday to reveal your zodiac.</strong>
+                        <p class="profile-preview__dates" data-zodiac-dates></p>
+                      </div>
                     </div>
-                  </div>
+                  </section>
                 </div>
+
+                <section class="preferences-card preferences-card--advanced" aria-label="Advanced preferences">
+                  <div class="preferences-card__heading">
+                    <h3>Advanced Preferences</h3>
+                    <p>Reading and archive preferences.</p>
+                  </div>
+                  <div class="preferences-options" aria-label="Future preference options">
+                    <div class="preference-option">
+                      <div>
+                        <span class="preference-option__label">Allow Reversed Cards</span>
+                        <p>Include reversed card meanings in readings.</p>
+                      </div>
+                      <label class="switch" aria-label="Allow reversed cards">
+                        <input type="checkbox" />
+                        <span aria-hidden="true"></span>
+                      </label>
+                    </div>
+
+                    <div class="preference-option">
+                      <div>
+                        <span class="preference-option__label">Save Readings Prompt</span>
+                        <p>Remind me to save readings after a spread.</p>
+                      </div>
+                      <label class="switch" aria-label="Save readings prompt">
+                        <input type="checkbox" checked />
+                        <span aria-hidden="true"></span>
+                      </label>
+                    </div>
+
+                    <div class="preference-option">
+                      <div>
+                        <span class="preference-option__label">Reduce Motion</span>
+                        <p>Soften animations and visual movement.</p>
+                      </div>
+                      <label class="switch" aria-label="Reduce motion">
+                        <input type="checkbox" />
+                        <span aria-hidden="true"></span>
+                      </label>
+                    </div>
+
+                    <label class="preference-option">
+                      <span>
+                        <span class="preference-option__label">Default Reading Mode</span>
+                        <p>Choose which standard mode appears first.</p>
+                      </span>
+                      <select class="preference-select" aria-label="Default reading mode">
+                        <option>Last Used</option>
+                        <option>Sun</option>
+                        <option>Moon</option>
+                      </select>
+                    </label>
+                    <p class="preferences-status" data-preferences-status role="status" aria-live="polite"></p>
+                  </div>
+                </section>
               </div>
             </section>
 

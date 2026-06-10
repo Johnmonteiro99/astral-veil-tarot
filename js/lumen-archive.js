@@ -328,6 +328,11 @@ const lumenNameFields = document.querySelector("[data-lumen-name-fields]");
 const lumenNameInput = document.querySelector("[data-lumen-name-input]");
 const lumenNameMessage = document.querySelector("[data-lumen-name-message]");
 const lumenNameReset = document.querySelector("[data-lumen-name-reset]");
+const isLumenRoomPage = window.location.pathname.split("/").pop() === "lumen-room.html";
+const lumenRoomTitle = document.querySelector("[data-lumen-room-title]");
+const lumenRoomSubtitle = document.querySelector("[data-lumen-room-subtitle]");
+const lumenRoomCopy = document.querySelector("[data-lumen-room-copy]");
+const lumenRoomBack = document.querySelector("[data-lumen-room-back]");
 const lumenNameStorageKey = "astralVeilLumenName";
 const lumenWelcomeStorageKey = "astralVeilLumenWelcomeMessage";
 const lumenSelectorOrderIds = ["sanctuary-of-breath", "rooted-grove", "reflection-pool", "garden-of-renewal", "hall-of-mirrors"];
@@ -402,6 +407,21 @@ function getLumenSanctuaryInitial(sanctuary) {
     .replace(/^the\s+/i, "")
     .trim()
     .slice(0, 1);
+}
+
+function getLumenSanctuaryBySelector(value) {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+
+  const normalized = String(value);
+  const index = Number.parseInt(normalized, 10);
+
+  if (Number.isInteger(index) && index >= 0 && index < lumenSanctuaries.length) {
+    return lumenSanctuaries[index];
+  }
+
+  return lumenSanctuaries.find((sanctuary) => sanctuary.id === normalized) || null;
 }
 
 function getLumenSanctuarySelectorIcon(sanctuary) {
@@ -876,19 +896,30 @@ function renderLumenInterior() {
 }
 
 function enterLumenSanctuary() {
-  activeLumenInteriorIndex = activeLumenSanctuaryIndex;
-  chooseInitialLumenReflectionIndex(activeLumenInteriorIndex);
-  renderLumenInterior();
-  trackLumenSanctuaryVisit(lumenSanctuaries[activeLumenInteriorIndex]);
-  lumenInterior?.scrollIntoView({ behavior: getLumenScrollBehavior(), block: "start" });
-}
+  const sanctuary = getLumenSanctuaryBySelector(activeLumenSanctuaryIndex);
 
-function trackLumenSanctuaryVisit(sanctuary) {
   if (!sanctuary) {
     return;
   }
 
-  import("../src/public/progression.js")
+  const roomUrl = `lumen-room.html?room=${encodeURIComponent(sanctuary.id)}`;
+  const visitPromise = trackLumenSanctuaryVisit(sanctuary);
+  const fallbackNavigate = () => window.location.assign(roomUrl);
+
+  if (visitPromise?.then) {
+    visitPromise.finally(fallbackNavigate);
+    return;
+  }
+
+  fallbackNavigate();
+}
+
+function trackLumenSanctuaryVisit(sanctuary) {
+  if (!sanctuary) {
+    return Promise.resolve();
+  }
+
+  return import("../src/public/progression.js")
     .then(({ trackRoomVisit }) => trackRoomVisit({
       roomKey: sanctuary.id,
       roomName: sanctuary.title,
@@ -907,7 +938,79 @@ function trackLumenSanctuaryVisit(sanctuary) {
     });
 }
 
+function getLumenRoomFromQuery() {
+  const roomKey = new URLSearchParams(window.location.search).get("room") || "";
+
+  return getLumenSanctuaryBySelector(roomKey.trim().toLowerCase()) || null;
+}
+
+function renderLumenRoomNotFound() {
+  if (lumenRoomTitle) {
+    lumenRoomTitle.textContent = "Room Not Found";
+  }
+
+  if (lumenRoomSubtitle) {
+    lumenRoomSubtitle.textContent = "No matching Lumen sanctuary was found.";
+  }
+
+  if (lumenRoomCopy) {
+    lumenRoomCopy.textContent = "Choose a valid room from the Lumen Archive and return to begin.";
+  }
+
+  if (lumenRoomBack) {
+    lumenRoomBack.textContent = "Return to Lumen Archive";
+    lumenRoomBack.setAttribute("href", "lumen-archive.html");
+  }
+
+  if (lumenInterior) {
+    lumenInterior.innerHTML = "";
+    lumenInterior.hidden = true;
+  }
+}
+
+function initializeLumenRoomPage() {
+  const room = getLumenRoomFromQuery();
+
+  if (!room) {
+    renderLumenRoomNotFound();
+    return;
+  }
+
+  const sanctuaryIndex = lumenSanctuaries.indexOf(room);
+
+  if (sanctuaryIndex < 0) {
+    renderLumenRoomNotFound();
+    return;
+  }
+
+  if (lumenRoomTitle) {
+    lumenRoomTitle.textContent = room.title;
+  }
+
+  if (lumenRoomSubtitle) {
+    lumenRoomSubtitle.textContent = "Lumen Archive Sanctuary";
+  }
+
+  if (lumenRoomCopy) {
+    lumenRoomCopy.textContent = room.previewPurpose || "Stand in this room and let the Archive reveal its reflections.";
+  }
+
+  if (lumenRoomBack) {
+    lumenRoomBack.textContent = "Return to Sanctuaries";
+    lumenRoomBack.setAttribute("href", "lumen-archive.html");
+  }
+
+  activeLumenInteriorIndex = sanctuaryIndex;
+  chooseInitialLumenReflectionIndex(activeLumenInteriorIndex);
+  renderLumenInterior();
+}
+
 function returnToLumenSanctuaries() {
+  if (isLumenRoomPage) {
+    window.location.assign("lumen-archive.html");
+    return;
+  }
+
   activeLumenInteriorIndex = null;
 
   if (lumenInterior) {
@@ -916,6 +1019,50 @@ function returnToLumenSanctuaries() {
   }
 
   lumenViewer?.scrollIntoView({ behavior: getLumenScrollBehavior(), block: "start" });
+}
+
+if (isLumenRoomPage) {
+  initializeLumenRoomPage();
+
+  document.addEventListener("click", (event) => {
+    const scrollButton = event.target.closest("[data-lumen-open-scroll]");
+    const reflectionButton = event.target.closest("[data-lumen-draw-reflection]");
+    const sanctuaryReturn = event.target.closest("[data-lumen-return-sanctuaries]");
+    const imageOpen = event.target.closest("[data-lumen-image-open]");
+
+    if (scrollButton) {
+      openLumenSanctuaryScroll(Number(scrollButton.dataset.lumenOpenScroll), scrollButton);
+      return;
+    }
+
+    if (reflectionButton) {
+      chooseLumenReflectionIndex(Number(reflectionButton.dataset.lumenDrawReflection));
+      renderLumenInterior();
+      return;
+    }
+
+    if (sanctuaryReturn) {
+      returnToLumenSanctuaries();
+      return;
+    }
+
+    if (imageOpen) {
+      openLumenImageLightbox(
+        imageOpen.dataset.lumenImageSrc,
+        imageOpen.dataset.lumenImageAlt,
+        imageOpen.dataset.lumenImageTitle,
+        imageOpen
+      );
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && lumenImageLightbox?.classList.contains("is-open")) {
+      closeLumenImageLightbox();
+    }
+  });
+} else {
+  activeLumenInteriorIndex = null;
 }
 
 function openLumenSanctuaryScroll(index, trigger) {
@@ -1138,8 +1285,10 @@ if (lumenRail && lumenViewer) {
     }
 
     if (sanctuaryEnter) {
-      if (sanctuaryEnter.dataset.lumenEnterIndex) {
-        activeLumenSanctuaryIndex = Number(sanctuaryEnter.dataset.lumenEnterIndex);
+      const selectedSanctuary = getLumenSanctuaryBySelector(sanctuaryEnter.dataset.lumenEnterIndex);
+
+      if (selectedSanctuary) {
+        activeLumenSanctuaryIndex = lumenSanctuaries.indexOf(selectedSanctuary);
         renderLumenRail();
         updateLumenPortalActiveClasses();
       }
