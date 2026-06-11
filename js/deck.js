@@ -498,9 +498,13 @@ function renderDeckCollectionCard(collection) {
     ? `${collection.lockedMessage}`
     : collection?.subtitle || "";
   const previewImage = collection?.previewImage || collection?.coverImage;
+  const tileBackgroundImage = collection?.backgroundImage || collection?.coverImage || "";
+  const tileBackgroundStyle = tileBackgroundImage
+    ? `style='--deck-collection-cover: url("${tileBackgroundImage}")'`
+    : "";
 
   return `
-      <article class="deck-collection-card deck-collection-card--${escapeHtml(theme)}${isLocked ? " is-locked" : ""}" data-deck-card data-deck-category="${escapeHtml(category)}" data-view-deck="${escapeHtml(collection.id)}" aria-disabled="${isLocked}">
+      <article class="deck-collection-card deck-collection-card--${escapeHtml(theme)}${isLocked ? " is-locked" : ""}" ${tileBackgroundStyle} data-deck-card data-deck-category="${escapeHtml(category)}" data-view-deck="${escapeHtml(collection.id)}" aria-disabled="${isLocked}">
       <span class="deck-collection-card__badge">${escapeHtml(status)}</span>
       <div class="deck-collection-card__preview" aria-hidden="true">
         <img src="${escapeHtml(previewImage)}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" />
@@ -526,6 +530,13 @@ function getFilteredDeckCollections() {
 
   if (activeDeckFilter === "All") {
     return deckCollections;
+  }
+
+  if (activeDeckFilter === "Lore") {
+    return deckCollections.filter((collection) => {
+      const category = getCollectionCategory(collection);
+      return category === "Lore" || category === "Blood Moon";
+    });
   }
 
   return deckCollections.filter((collection) => getCollectionCategory(collection) === activeDeckFilter);
@@ -679,10 +690,14 @@ function renderDeckGallery(collectionId) {
 
   preloadAdjacentCards(collectionCards, activeCardIndex);
 
+  const deckHeroTitle = collection?.viewTitle || collection?.title || collection?.name || collection?.eyebrow || "The Astral Deck";
+  const deckHeroDescription =
+    collection?.viewDescription || collection?.detailDescription || collection?.description || collection?.subtitle || "";
+
   updateDeckHero({
     eyebrow: collection.eyebrow,
-    title: collection.viewTitle,
-    description: collection.viewDescription
+    title: deckHeroTitle,
+    description: deckHeroDescription
   });
   setDeckRitualFeatureVisible(false);
 

@@ -955,7 +955,7 @@ function getBaseCardId(card) {
 
 function getCardUprightMeaning(card) {
   const bloodMoon = card?.bloodMoon || {};
-  const isBloodMoonCard = Boolean(card?.isBloodMoonCard || card?.originalCardId);
+  const isBloodMoonCard = Boolean(card?.isBloodMoonCard);
 
   if (isBloodMoonCard) {
     const upright = bloodMoon.upright || {};
@@ -1047,7 +1047,7 @@ function withOrientationMeanings(card) {
 function getCardReversedMeaning(card) {
   const baseCard = majorArcanaCards.find((item) => item.id === getBaseCardId(card));
   const sourceCard = card?.reversed ? card : baseCard || card;
-  const isBloodMoonCard = Boolean(card?.isBloodMoonCard || card?.originalCardId);
+  const isBloodMoonCard = Boolean(card?.isBloodMoonCard);
 
   if (isBloodMoonCard) {
     return sourceCard?.bloodMoon?.reversed || createBloodMoonReversedMeaning(sourceCard || card);
@@ -1128,6 +1128,31 @@ const moonveilCardImages = {
   "the-world": "moonveil_world.png"
 };
 
+const dreamboundCardImages = {
+  "the-fool": "dreams_fool.png",
+  "the-magician": "dreams_magician.png",
+  "the-high-priestess": "dreams_high_priestess.png",
+  "the-empress": "dreams_empress.png",
+  "the-emperor": "dreams_emperor.png",
+  "the-hierophant": "dreams_hierophant.png",
+  "the-lovers": "dreams_lovers.png",
+  "the-chariot": "dreams_chariot.png",
+  strength: "dreams_strength.png",
+  "the-hermit": "dreams_hermit.png",
+  "wheel-of-fortune": "dreams_wheel_of_fortune.png",
+  justice: "dreams_justice.png",
+  "the-hanged-man": "dreams_hanged_man.png",
+  death: "dreams_death.png",
+  temperance: "dreams_temperance.png",
+  "the-devil": "dreams_devil.png",
+  "the-tower": "dreams_tower.png",
+  "the-star": "dreams_star.png",
+  "the-moon": "dreams_moon.png",
+  "the-sun": "dreams_sun.png",
+  judgement: "dreams_judgement.png",
+  "the-world": "dreams_world.png"
+};
+
 const bloodMoonDeck = {
   id: "bloodMoon",
   name: "Blood Moon Deck",
@@ -1153,9 +1178,21 @@ const moonveilDeck = {
   }))
 };
 
+const dreamboundDeck = {
+  id: "dreambound",
+  name: "Dreambound Arcana",
+  cards: tarotDeck.map((card) => ({
+    ...card,
+    id: `dreambound-${card.id}`,
+    originalCardId: card.id,
+    image: `assets/images/cards/dreamy/${dreamboundCardImages[card.id] || "dreams_card_back.png"}`
+  }))
+};
+
 if (typeof window !== "undefined") {
   window.majorArcanaCards = majorArcanaCards;
   window.tarotDeck = tarotDeck;
   window.bloodMoonDeck = bloodMoonDeck;
   window.moonveilDeck = moonveilDeck;
+  window.dreamboundDeck = dreamboundDeck;
 }
