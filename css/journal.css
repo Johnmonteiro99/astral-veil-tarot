@@ -1009,6 +1009,36 @@ body.blood-moon-mode .journal-daily-prompt p {
   font-weight: 700;
 }
 
+body.blood-moon-mode .journal-attached-reading {
+  background:
+    linear-gradient(150deg, rgba(35, 0, 8, 0.72), rgba(20, 5, 7, 0.82)),
+    #140607;
+  border-color: rgba(255, 95, 95, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(255, 191, 159, 0.1) inset,
+    0 12px 28px rgba(0, 0, 0, 0.44),
+    0 0 22px rgba(167, 35, 40, 0.18);
+  color: #f8e6dc;
+}
+
+body.blood-moon-mode .journal-attached-reading__header span,
+body.blood-moon-mode .journal-attached-reading__cards-group > span,
+body.blood-moon-mode .journal-attached-reading dt {
+  color: #ffb6a6;
+}
+
+body.blood-moon-mode .journal-attached-reading__header p,
+body.blood-moon-mode .journal-attached-reading dd,
+body.blood-moon-mode .journal-attached-reading p,
+body.blood-moon-mode .journal-attached-reading__cards,
+body.blood-moon-mode .journal-attached-reading__positions dd {
+  color: #fff1e8;
+}
+
+body.blood-moon-mode .journal-attached-reading__header p {
+  color: #ffd08a;
+}
+
 .journal-guided {
   display: grid;
   gap: 0;

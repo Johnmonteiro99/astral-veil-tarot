@@ -25,6 +25,8 @@ const spreadButtons = document.querySelectorAll("[data-spread]");
 const readerNavButtons = document.querySelectorAll("[data-reader-nav]");
 const newReadingButton = document.querySelector("[data-new-reading]");
 const cardList = document.getElementById("deck-area");
+const readingSpreadPanel = document.querySelector(".spread-selection-panel");
+const readingThreadSection = document.querySelector("[data-reading-thread-section]");
 const readingStatus = document.querySelector("[data-reading-status]");
 const readingResultsSection = document.querySelector("[data-reading-results-section]");
 const readingReveals = document.querySelector("[data-reading-reveals]");
@@ -99,6 +101,57 @@ let activeRevealedCardIndex = -1;
 let readingSectionScrollTimeout = null;
 let isRenderingReading = false;
 let bloodMoonTimeout = null;
+let readingFlowStage = "reader";
+let activeReadingMode = null;
+
+function setReadingFlowStage(stage, { scrollToStart = false } = {}) {
+  readingFlowStage = stage;
+
+  const isReaderStage = stage === "reader";
+  const isSpreadStage = stage === "spread";
+  const isReadingStage = stage === "reading";
+
+  if (isSpreadStage || isReadingStage) {
+    activeReadingMode = getCurrentModeKey();
+  } else {
+    activeReadingMode = null;
+  }
+
+  if (readerSelection) {
+    readerSelection.classList.toggle("is-minimized", !isReaderStage);
+  }
+
+  document.body.classList.toggle("is-reading-stage-active", !isReaderStage);
+
+  if (readingStage) {
+    readingStage.classList.toggle("hidden", isReaderStage);
+  }
+
+  if (readingSpreadPanel) {
+    readingSpreadPanel.classList.toggle("hidden", !isSpreadStage);
+  }
+
+  if (readingResultsSection) {
+    readingResultsSection.classList.toggle("hidden", !isReadingStage);
+  }
+
+  if (isSpreadStage) {
+    readingStatus.textContent = "Choose a spread to shuffle your cards.";
+  }
+
+  if (scrollToStart) {
+    const startSection = isReaderStage
+      ? readerSelection
+    : isSpreadStage
+        ? readingStage
+        : readingResultsSection;
+
+    startSection?.scrollIntoView({
+      behavior: getReadingScrollBehavior(),
+      block: "start",
+    });
+  }
+}
 
 function getReadingScrollBehavior() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
@@ -519,9 +572,11 @@ function renderCombinedReading() {
 
   return `
     <article class="combined-reading${isBloodMoonReadingActive() ? " combined-reading--blood-moon" : ""}">
-      <p class="reading-viewer__eyebrow">${escapeHtml(activeSpread?.combinedLabel || "Combined Message")}</p>
-      <h3>${escapeHtml(combinedReading.title)}</h3>
-      ${intro ? `<p class="combined-reading__intro">${escapeHtml(intro)}</p>` : ""}
+      <div class="reading-thread-header">
+        <p class="reading-viewer__eyebrow">${escapeHtml(activeSpread?.combinedLabel || "Combined Message")}</p>
+        <h3>${escapeHtml(combinedReading.title)}</h3>
+        ${intro ? `<p class="combined-reading__intro reading-thread-intro">${escapeHtml(intro)}</p>` : ""}
+      </div>
       ${threadBlocks}
       <div class="combined-reading__final">
         <span>Thread Summary</span>
@@ -577,6 +632,25 @@ function getCurrentModeKey() {
   }
 
   return "default";
+}
+
+function shouldResetReadingForModeTransition(nextModeKey) {
+  if (!selectedReader || readingFlowStage === "reader") {
+    return false;
+  }
+
+  if (!activeReadingMode) {
+    return true;
+  }
+
+  return activeReadingMode !== nextModeKey;
+}
+
+function resetReadingForModeTransition({ scrollToSelection = true } = {}) {
+  clearCurrentReading();
+  clearStoredSelectedReaderValue();
+  clearSelectedReaderState({ scrollToSelection });
+  activeReadingMode = null;
 }
 
 function getCompletedReadingCards() {
@@ -763,14 +837,13 @@ function selectReader(readerId) {
     : "Choose a spread to shuffle your cards.";
   cardList.innerHTML = "";
   readingReveals.innerHTML = "";
-  readingResultsSection.classList.add("hidden");
+  if (readingThreadSection) {
+    readingThreadSection.innerHTML = "";
+    readingThreadSection.classList.add("hidden");
+  }
   activeRevealedCardIndex = -1;
 
-  readerSelection.classList.add("is-minimized");
-  document.body.classList.add("is-reading-stage-active");
-  readingStage.classList.remove("hidden");
-  readingStage.classList.add("fade-slide-in");
-  readingStage.scrollIntoView({ behavior: "smooth", block: "start" });
+  setReadingFlowStage("spread", { scrollToStart: true });
 }
 
 // Readers shown in the selector can differ from all known readers when event-only profiles are gated.
@@ -1471,7 +1544,7 @@ function selectSpread(cardCount) {
   try {
     selectedCardCount = cardCount;
 
-    spreadButtons.forEach((button) => {
+  spreadButtons.forEach((button) => {
       button.classList.toggle("is-active", Number(button.dataset.spread) === cardCount);
     });
 
@@ -1479,10 +1552,13 @@ function selectSpread(cardCount) {
     revealedCards = [];
     activeRevealedCardIndex = -1;
     readingReveals.innerHTML = "";
-    readingResultsSection.classList.remove("hidden");
+    if (readingThreadSection) {
+      readingThreadSection.innerHTML = "";
+      readingThreadSection.classList.add("hidden");
+    }
+    setReadingFlowStage("reading", { scrollToStart: true });
     renderReadingCards(currentReadingCards);
     readingStatus.textContent = `${selectedReader.name} has drawn ${cardCount} cards. Click each card in Your Reading to reveal its message.`;
-    scheduleReadingSectionScroll();
   } catch (error) {
     isRenderingReading = false;
     throw error;
@@ -1660,17 +1736,6 @@ function scrollToActiveReadingDetail() {
   });
 }
 
-function scrollToReadingThread() {
-  window.requestAnimationFrame(() => {
-    const thread = readingReveals?.querySelector(".combined-reading");
-
-    (thread || readingReveals)?.scrollIntoView({
-      behavior: getReadingScrollBehavior(),
-      block: "start",
-    });
-  });
-}
-
 function revealNextReadingCard() {
   const nextCardIndex = getNextUnrevealedCardIndex();
   const nextCardButton = cardList?.querySelector(`[data-card-index="${nextCardIndex}"]`);
@@ -1767,22 +1832,23 @@ function renderReadingResults() {
     ? activeCard.energy
     : "neutral";
   const showViewerControls = revealedCards.length > 1;
-  const showClosingActions = areAllReadingCardsRevealed();
+  const showRevealActions = readingFlowStage === "reading";
+  const hasRevealedAllCards = areAllReadingCardsRevealed();
   const progressText =
-    areAllReadingCardsRevealed()
+    hasRevealedAllCards
       ? "Your full spread has been revealed."
       : `${revealedCards.length} of ${currentReadingCards.length} cards revealed.`;
-  const guidedAction = areAllReadingCardsRevealed()
-    ? {
-        label: "View The Thread Between Them",
-        action: "thread",
-        helper: "All cards have been revealed."
-      }
-    : {
-        label: "Reveal Next Card",
-        action: "next",
-        helper: `${revealedCards.length} of ${currentReadingCards.length} revealed`
-      };
+  const guidedAction = showRevealActions
+    ? hasRevealedAllCards
+      ? {
+          helper: "All cards have been revealed."
+        }
+      : {
+          label: "Reveal Next Card",
+          action: "next",
+          helper: `${revealedCards.length} of ${currentReadingCards.length} revealed`
+        }
+    : null;
   const activePositionLabel = getCardPositionLabel(activeCard, activeRevealedCardIndex);
   const cardName = getCardDisplayName(activeCard);
   const cardTitle = getCardDisplayName(activeCard, { includeOrientation: true });
@@ -1790,7 +1856,6 @@ function renderReadingResults() {
   const reversedClass = isCardReversed(activeCard) ? " is-reversed" : "";
 
   readingStatus.textContent = progressText;
-  readingResultsSection.classList.remove("hidden");
   syncReadingCardStates();
   centerActiveReadingCardOnMobile();
   readingReveals.innerHTML = `
@@ -1838,35 +1903,84 @@ function renderReadingResults() {
 
       </div>
     </article>
-    <div class="reading-viewer__guided-action">
-      <div class="reading-ornament" aria-hidden="true">
-        <span></span>
-        <i>✦</i>
-        <span></span>
-      </div>
-      <p>${escapeHtml(guidedAction.helper)}</p>
-      <button class="primary-action" type="button" ${guidedAction.action === "next" ? "data-reveal-next-card" : "data-view-reading-thread"}>
-        ${escapeHtml(guidedAction.label)}
-      </button>
-    </div>
-    ${renderCombinedReading()}
-    ${renderFireKeyCluePanel()}
     ${
-      showClosingActions
+      showRevealActions
         ? `
-          <div class="reading-actions reading-actions-secondary reading-closing-actions" aria-label="Reading actions">
-            <button class="reader-nav-button reading-actions__button" type="button" data-reset-reading>
-              New Reading
-            </button>
-            <button class="reader-nav-button reading-actions__button" type="button" data-change-reader>
-              Change Reader
-            </button>
+          <div class="reading-viewer__guided-action">
+            <div class="reading-ornament" aria-hidden="true">
+              <span></span>
+              <i>✦</i>
+              <span></span>
+            </div>
+            <p>${escapeHtml(guidedAction.helper)}</p>
+            ${
+              hasRevealedAllCards
+                ? ""
+                : `<button class="primary-action" type="button" data-reveal-next-card>${escapeHtml(guidedAction.label)}</button>`
+            }
           </div>
         `
         : ""
     }
   `;
+
+  if (hasRevealedAllCards) {
+    renderReadingThreadView();
+  }
+
   dispatchCompletedReadingEvent();
+}
+
+function handleReadingStageActionClick(event) {
+  const navButton = event.target.closest("[data-reading-viewer-nav]");
+  const revealNextButton = event.target.closest("[data-reveal-next-card]");
+  const resetButton = event.target.closest("[data-reset-reading]");
+  const changeReaderButton = event.target.closest("[data-change-reader]");
+
+  if (navButton) {
+    moveReadingViewer(navButton.dataset.readingViewerNav);
+    return;
+  }
+
+  if (revealNextButton) {
+    revealNextReadingCard();
+    return;
+  }
+
+  if (resetButton) {
+    startNewReading();
+    return;
+  }
+
+  if (changeReaderButton) {
+    resetToGuideSelection();
+  }
+}
+
+function renderReadingThreadView() {
+  if (!readingThreadSection) {
+    return;
+  }
+
+  if (!areAllReadingCardsRevealed()) {
+    readingThreadSection.classList.add("hidden");
+    readingThreadSection.innerHTML = "";
+    return;
+  }
+
+  readingThreadSection.innerHTML = `
+    ${renderCombinedReading()}
+    ${renderFireKeyCluePanel()}
+    <div class="reading-final-actions" aria-label="Reading actions">
+      <div class="reading-final-actions__row">
+        <button class="primary-action reading-actions__button reading-final-actions__button" type="button" data-reset-reading>
+          New Reading
+        </button>
+        <div data-reading-save-actions></div>
+      </div>
+    </div>
+  `;
+  readingThreadSection.classList.remove("hidden");
 }
 
 function scheduleReadingSectionScroll() {
@@ -1904,31 +2018,11 @@ function moveReadingViewer(direction) {
 
 // Result-panel actions are delegated because the viewer re-renders as cards are revealed.
 if (readingReveals) {
-  readingReveals.addEventListener("click", (event) => {
-    const navButton = event.target.closest("[data-reading-viewer-nav]");
-    const revealNextButton = event.target.closest("[data-reveal-next-card]");
-    const viewThreadButton = event.target.closest("[data-view-reading-thread]");
-    const resetButton = event.target.closest("[data-reset-reading]");
-    const changeReaderButton = event.target.closest("[data-change-reader]");
+  readingReveals.addEventListener("click", handleReadingStageActionClick);
+}
 
-    if (navButton) {
-      moveReadingViewer(navButton.dataset.readingViewerNav);
-    }
-
-    if (revealNextButton) {
-      revealNextReadingCard();
-      return;
-    }
-
-    if (viewThreadButton) {
-      scrollToReadingThread();
-      return;
-    }
-
-    if (resetButton || changeReaderButton) {
-      startNewReading();
-    }
-  });
+if (readingThreadSection) {
+  readingThreadSection.addEventListener("click", handleReadingStageActionClick);
 }
 
 // Clears spread/card state while preserving the selected reader unless the caller resets that too.
@@ -1943,16 +2037,27 @@ function clearCurrentReading() {
   activeRevealedCardIndex = -1;
   cardList.innerHTML = "";
   readingReveals.innerHTML = "";
-  readingResultsSection.classList.add("hidden");
+  if (readingThreadSection) {
+    readingThreadSection.innerHTML = "";
+    readingThreadSection.classList.add("hidden");
+  }
   readingStatus.textContent = "Choose a spread to shuffle your cards.";
 
   spreadButtons.forEach((button) => {
     button.classList.remove("is-active");
   });
+
+  activeReadingMode = null;
 }
 
 function startNewReading() {
-  resetToGuideSelection();
+  clearCurrentReading();
+  if (!selectedReader) {
+    resetToGuideSelection();
+    return;
+  }
+
+  setReadingFlowStage("spread", { scrollToStart: true });
 }
 
 // Restores the reader selection screen and clears active reader presentation details.
@@ -1969,11 +2074,9 @@ function clearSelectedReaderState({ scrollToSelection = false } = {}) {
   activeReaderQuote.textContent = "";
   resetActiveBloodMoonQuote();
   readerIntroduction.innerHTML = "";
-  document.body.classList.remove("is-reading-stage-active");
   if (readerSelectionConfirmation) {
     readerSelectionConfirmation.innerHTML = "";
   }
-  readingStage.classList.add("hidden");
   readerSelection.classList.remove("is-minimized");
 
   document.querySelectorAll(".reader-card").forEach((card) => {
@@ -1987,8 +2090,11 @@ function clearSelectedReaderState({ scrollToSelection = false } = {}) {
   renderFeaturedReader();
 
   if (scrollToSelection) {
-    readerSelection.scrollIntoView({ behavior: "smooth", block: "start" });
+    setReadingFlowStage("reader", { scrollToStart: true });
+    return;
   }
+
+  setReadingFlowStage("reader");
 }
 
 function resetToGuideSelection() {
@@ -1998,6 +2104,7 @@ function resetToGuideSelection() {
 }
 
 renderReaders();
+setReadingFlowStage("reader", { scrollToStart: false });
 selectInitialReaderFromHandoff();
 
 // When Blood Moon changes, reader availability and deck/card art can change, so refresh visible UI.
@@ -2011,13 +2118,11 @@ window.addEventListener("astralVeilBloodMoonChange", (event) => {
   updateReadingHeroCopy();
   renderReaders();
 
-  if (!isBloodMoonModeActive) {
-    clearCurrentReading();
+  const nextModeKey = isBloodMoonModeActive ? "bloodmoon" : getCurrentModeKey();
 
-    if (selectedReader?.requiresBloodMoon || selectedReader?.isBloodMoon) {
-      clearSelectedReaderState();
-      return;
-    }
+  if (shouldResetReadingForModeTransition(nextModeKey)) {
+    resetReadingForModeTransition({ scrollToSelection: true });
+    return;
   }
 
   if (selectedReader) {
@@ -2128,6 +2233,10 @@ if (newReadingButton) {
 
 if (cardList) {
   cardList.addEventListener("click", (event) => {
+    if (readingFlowStage !== "reading") {
+      return;
+    }
+
     const cardButton = event.target.closest(".tarot-card");
 
     if (cardButton) {

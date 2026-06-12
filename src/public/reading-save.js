@@ -28,6 +28,32 @@ async function getCachedCurrentUser() {
 }
 
 function getSaveContainer() {
+  const threadSection = document.querySelector('[data-reading-thread-section]');
+  if (threadSection) {
+    const saveActionRow = threadSection.querySelector('[data-reading-save-actions]');
+
+    if (!saveActionRow) {
+      return null;
+    }
+
+    let container = saveActionRow.querySelector('[data-reading-save-panel]');
+
+    if (!container) {
+      const legacyContainer = threadSection.querySelector('[data-reading-save-panel]');
+
+      if (legacyContainer) {
+        legacyContainer.remove();
+      }
+
+      container = document.createElement('aside');
+      container.className = 'reading-save-panel';
+      container.dataset.readingSavePanel = '';
+      saveActionRow.append(container);
+    }
+
+    return container;
+  }
+
   const reveals = document.querySelector('[data-reading-reveals]');
 
   if (!reveals) {
@@ -66,7 +92,7 @@ function renderSaveButton(container, readingKey) {
       <button class="primary-action reading-actions__button reading-save-panel__button" type="button" data-save-reading ${isSaved || isSaving ? 'disabled' : ''}>
         ${isSaved ? 'Reading Saved' : isSaving ? 'Saving...' : 'Save Reading'}
       </button>
-      <button class="primary-action reading-actions__button reading-save-panel__button reading-save-panel__button--reflect" type="button" data-reflect-reading ${isSaving ? 'disabled' : ''}>
+      <button class="primary-action reading-actions__button reading-save-panel__button" type="button" data-reflect-reading ${isSaving ? 'disabled' : ''}>
         ${reflectLabel}
       </button>
     </div>
