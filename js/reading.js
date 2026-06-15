@@ -28,6 +28,8 @@ const cardList = document.getElementById("deck-area");
 const readingSpreadPanel = document.querySelector(".spread-selection-panel");
 const readingThreadSection = document.querySelector("[data-reading-thread-section]");
 const readingStatus = document.querySelector("[data-reading-status]");
+const deckStatus = document.querySelector("[data-deck-status]");
+const deckOptions = document.querySelector("[data-deck-options]");
 const readingResultsSection = document.querySelector("[data-reading-results-section]");
 const readingReveals = document.querySelector("[data-reading-reveals]");
 const cardEnergyTypes = [
@@ -91,6 +93,8 @@ let featuredReaderIndex = 0;
 let readerSelectionPreview = { readerId: null, modeKey: null, message: "" };
 let readerSelectionMessageCursor = {};
 let activeBloodMoonQuote = { readerId: null, quote: "" };
+let activeReaderIntroLine = { key: null, line: "" };
+let activeReaderIntroRequestId = 0;
 let readerCarouselTouchStartX = 0;
 let readerCarouselTouchStartY = 0;
 let lastReaderCarouselWheelAt = 0;
@@ -103,15 +107,69 @@ let isRenderingReading = false;
 let bloodMoonTimeout = null;
 let readingFlowStage = "reader";
 let activeReadingMode = null;
+let selectedDeckId = "lumen";
+let currentAccountUser = null;
+let hasCheckedAccountUser = false;
+
+const readingDecks = [
+  {
+    id: "lumen",
+    title: "Lumen Arcana",
+    label: "Core Collection",
+    description: "Original lightwork art and meanings.",
+    access: "public",
+    compatibleModes: ["sun", "moon"],
+    meaningSet: "lumen",
+    imageSet: "lumen",
+    previewImage: "assets/images/cards/original/card-back.webp",
+    cards: () => tarotDeck
+  },
+  {
+    id: "dreambound",
+    title: "Dreambound Arcana",
+    label: "Public Deck",
+    description: "Dreamlike art with original meanings.",
+    access: "public",
+    compatibleModes: ["sun", "moon", "bloodMoon"],
+    meaningSet: "lumen",
+    imageSet: "dreambound",
+    previewImage: "assets/images/cards/dreamy/dreams_card_back.png",
+    cards: () => dreamboundDeck.cards
+  },
+  {
+    id: "moonveil",
+    title: "Moonveil Deck",
+    label: "Account Deck",
+    description: "Moonlit art with original meanings.",
+    access: "auth",
+    compatibleModes: ["sun", "moon", "bloodMoon"],
+    meaningSet: "lumen",
+    imageSet: "moonveil",
+    previewImage: "assets/images/cards/moonveil/moonveil_card_back.png",
+    cards: () => moonveilDeck.cards
+  },
+  {
+    id: "bloodMoon",
+    title: "Blood Moon Arcana",
+    label: "Blood Moon",
+    description: "Crimson art and Blood Moon meanings.",
+    access: "bloodMoon",
+    compatibleModes: ["bloodMoon"],
+    meaningSet: "bloodMoon",
+    imageSet: "bloodMoon",
+    previewImage: "assets/images/cards/blood-moon/bloodmoon-card-back.webp",
+    cards: () => bloodMoonDeck.cards
+  }
+];
 
 function setReadingFlowStage(stage, { scrollToStart = false } = {}) {
   readingFlowStage = stage;
 
   const isReaderStage = stage === "reader";
-  const isSpreadStage = stage === "spread";
+  const isSetupStage = stage === "setup";
   const isReadingStage = stage === "reading";
 
-  if (isSpreadStage || isReadingStage) {
+  if (isSetupStage || isReadingStage) {
     activeReadingMode = getCurrentModeKey();
   } else {
     activeReadingMode = null;
@@ -122,27 +180,30 @@ function setReadingFlowStage(stage, { scrollToStart = false } = {}) {
   }
 
   document.body.classList.toggle("is-reading-stage-active", !isReaderStage);
+  document.body.classList.toggle("is-active-reading-results", isReadingStage);
 
   if (readingStage) {
-    readingStage.classList.toggle("hidden", isReaderStage);
+    readingStage.classList.toggle("hidden", !isSetupStage);
   }
 
   if (readingSpreadPanel) {
-    readingSpreadPanel.classList.toggle("hidden", !isSpreadStage);
+    readingSpreadPanel.classList.toggle("hidden", !isSetupStage);
   }
 
   if (readingResultsSection) {
     readingResultsSection.classList.toggle("hidden", !isReadingStage);
   }
 
-  if (isSpreadStage) {
-    readingStatus.textContent = "Choose a spread to shuffle your cards.";
+  if (isSetupStage) {
+    ensureSelectedDeckIsAvailable();
+    renderDeckOptions();
+    readingStatus.textContent = "Choose a deck and spread to shuffle your cards.";
   }
 
   if (scrollToStart) {
     const startSection = isReaderStage
       ? readerSelection
-    : isSpreadStage
+      : isSetupStage
         ? readingStage
         : readingResultsSection;
 
@@ -211,19 +272,184 @@ function isBloodMoonReadingActive() {
   return isBloodMoonActive();
 }
 
-// Readings use the Blood Moon deck only while the event state is active.
-function getActiveDeck() {
-  if (window.AstralVeilBloodMoon?.getActiveDeck) {
-    const activeDeck = window.AstralVeilBloodMoon.getActiveDeck();
+function getDeckModeKey() {
+  return isBloodMoonReadingActive() ? "bloodMoon" : getCurrentModeKey();
+}
 
-    return activeDeck.length ? activeDeck : tarotDeck;
+function getDeckConfig(deckId) {
+  return readingDecks.find((deck) => deck.id === deckId) || null;
+}
+
+function isDeckCompatible(deck, modeKey = getDeckModeKey()) {
+  return Boolean(deck?.compatibleModes?.includes(modeKey));
+}
+
+function isDeckAccessible(deck) {
+  if (!deck) {
+    return false;
   }
 
-  return tarotDeck;
+  if (deck.access === "public") {
+    return true;
+  }
+
+  if (deck.access === "auth") {
+    return Boolean(currentAccountUser);
+  }
+
+  if (deck.access === "bloodMoon") {
+    return isBloodMoonReadingActive();
+  }
+
+  return false;
+}
+
+function getAvailableReadingDecks() {
+  const modeKey = getDeckModeKey();
+  const availableDecks = readingDecks.filter((deck) => isDeckCompatible(deck, modeKey));
+
+  if (modeKey === "bloodMoon") {
+    const bloodMoonDeckOrder = ["bloodMoon", "dreambound", "moonveil"];
+
+    return [...availableDecks].sort(
+      (firstDeck, secondDeck) => bloodMoonDeckOrder.indexOf(firstDeck.id) - bloodMoonDeckOrder.indexOf(secondDeck.id)
+    );
+  }
+
+  return availableDecks;
+}
+
+function getSelectableReadingDecks() {
+  return getAvailableReadingDecks().filter(isDeckAccessible);
+}
+
+function getDefaultAvailableDeckId() {
+  if (isBloodMoonReadingActive()) {
+    const bloodMoonDeck = getDeckConfig("bloodMoon");
+
+    if (isDeckCompatible(bloodMoonDeck) && isDeckAccessible(bloodMoonDeck)) {
+      return bloodMoonDeck.id;
+    }
+  }
+
+  return getSelectableReadingDecks()[0]?.id || getAvailableReadingDecks()[0]?.id || "lumen";
+}
+
+function ensureSelectedDeckIsAvailable() {
+  const selectedDeck = getDeckConfig(selectedDeckId);
+
+  if (isDeckCompatible(selectedDeck) && isDeckAccessible(selectedDeck)) {
+    return selectedDeck;
+  }
+
+  selectedDeckId = getDefaultAvailableDeckId();
+  return getDeckConfig(selectedDeckId);
+}
+
+function getActiveDeckConfig() {
+  return ensureSelectedDeckIsAvailable();
+}
+
+function getDeckLockedReason(deck) {
+  if (!isDeckCompatible(deck)) {
+    return "Unavailable in this mode";
+  }
+
+  if (deck.access === "auth" && !currentAccountUser) {
+    return "Sign in to unlock";
+  }
+
+  if (deck.access === "bloodMoon" && !isBloodMoonReadingActive()) {
+    return "Blood Moon only";
+  }
+
+  return "";
+}
+
+function renderDeckOptions() {
+  if (!deckOptions) {
+    return;
+  }
+
+  const modeDecks = getAvailableReadingDecks();
+
+  deckOptions.dataset.deckCount = String(modeDecks.length);
+
+  deckOptions.innerHTML = modeDecks
+    .map((deck) => {
+      const isSelected = deck.id === selectedDeckId;
+      const isAccessible = isDeckAccessible(deck);
+      const lockedReason = getDeckLockedReason(deck);
+      const themeClass = deck.imageSet || deck.id;
+
+      return `
+        <article
+          class="deck-selection-card deck-selection-card--${escapeHtml(themeClass)}${isSelected ? " is-selected" : ""}${isAccessible ? "" : " is-locked"}"
+          role="listitem"
+          aria-current="${isSelected ? "true" : "false"}"
+          aria-disabled="${isAccessible ? "false" : "true"}"
+        >
+          <div class="deck-selection-card__surface">
+            <div class="deck-selection-card__topline">
+              <span class="deck-selection-card__badge">${escapeHtml(isAccessible ? deck.label : lockedReason)}</span>
+            </div>
+            <div class="deck-selection-card__preview">
+              <img src="${escapeHtml(deck.previewImage)}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+            </div>
+            <div class="deck-selection-card__content">
+              <h3>${escapeHtml(deck.title)}</h3>
+              <p>${escapeHtml(deck.description)}</p>
+            </div>
+            <div class="deck-selection-card__actions">
+              <button class="primary-action deck-selection-card__button" type="button" data-deck-id="${escapeHtml(deck.id)}" ${isAccessible ? "" : "disabled"}>
+                ${isSelected ? "Selected" : "Choose Deck"}
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  if (deckStatus) {
+    const activeDeck = getActiveDeckConfig();
+    deckStatus.textContent = activeDeck
+      ? `${activeDeck.title} selected.`
+      : "Choose an available deck before selecting a spread.";
+  }
+}
+
+async function hydrateAccountDeckAccess() {
+  if (hasCheckedAccountUser) {
+    return;
+  }
+
+  hasCheckedAccountUser = true;
+
+  try {
+    const { getCurrentUser } = await import("../src/services/auth.js");
+    const { user } = await getCurrentUser();
+
+    currentAccountUser = user || null;
+  } catch (error) {
+    currentAccountUser = null;
+  }
+
+  ensureSelectedDeckIsAvailable();
+  renderDeckOptions();
+}
+
+function getActiveDeck() {
+  const activeDeck = getActiveDeckConfig();
+  const cards = activeDeck?.cards?.();
+
+  return Array.isArray(cards) && cards.length ? cards : tarotDeck;
 }
 
 function getActiveCardBackImage() {
-  return isBloodMoonReadingActive() ? BLOOD_MOON_CARD_BACK_IMAGE : CARD_BACK_IMAGE;
+  const activeDeck = getActiveDeckConfig();
+
+  return activeDeck?.previewImage || (isBloodMoonReadingActive() ? BLOOD_MOON_CARD_BACK_IMAGE : CARD_BACK_IMAGE);
 }
 
 function escapeHtml(value) {
@@ -316,7 +542,7 @@ function updateReadingHeroCopy() {
 }
 
 function isBloodMoonCard(card) {
-  return Boolean(card?.isBloodMoonCard || card?.originalCardId);
+  return Boolean(card?.isBloodMoonCard);
 }
 
 function isCardReversed(card) {
@@ -549,7 +775,7 @@ function renderSharedThemesNote(advice) {
 
 // Builds the "Thread Between the Cards" panel from the cards revealed so far.
 function renderCombinedReading() {
-  if (typeof generateCombinedReading !== "function" || !revealedCards.length) {
+  if (selectedCardCount < 2 || typeof generateCombinedReading !== "function" || !revealedCards.length) {
     return "";
   }
 
@@ -601,6 +827,22 @@ function getCompletedReadingSummary() {
     return { title: "", resultSummary: "", advice: "", extraMessages: [] };
   }
 
+  if (selectedCardCount < 2) {
+    const card = revealedCards[0];
+    const orientationMeaning = card && typeof getCardReadingMeaning === "function"
+      ? getCardReadingMeaning(card)
+      : null;
+
+    return {
+      title: "Daily Reflection",
+      resultSummary: [orientationMeaning?.summary || card?.shortMeaning, orientationMeaning?.meaning || card?.summary]
+        .filter(Boolean)
+        .join("\n\n"),
+      advice: orientationMeaning?.reflection || card?.reflectionQuestion || "",
+      extraMessages: []
+    };
+  }
+
   const combinedReading = generateCombinedReading(revealedCards, {
     isBloodMoon: isBloodMoonReadingActive(),
     spread: getActiveSpread()
@@ -620,7 +862,7 @@ function getCompletedReadingSummary() {
 
 function getCurrentModeKey() {
   if (isBloodMoonReadingActive()) {
-    return "bloodmoon";
+    return "bloodMoon";
   }
 
   if (document.body.classList.contains("sun-mode")) {
@@ -631,7 +873,7 @@ function getCurrentModeKey() {
     return "moon";
   }
 
-  return "default";
+  return "sun";
 }
 
 function shouldResetReadingForModeTransition(nextModeKey) {
@@ -651,6 +893,21 @@ function resetReadingForModeTransition({ scrollToSelection = true } = {}) {
   clearStoredSelectedReaderValue();
   clearSelectedReaderState({ scrollToSelection });
   activeReadingMode = null;
+}
+
+function resetActiveReadingForThemeTransition(nextModeKey) {
+  if (readingFlowStage !== "reading" || !activeReadingMode || activeReadingMode === nextModeKey) {
+    return;
+  }
+
+  clearCurrentReading();
+  activeReadingMode = nextModeKey;
+
+  if (selectedReader) {
+    setReadingFlowStage("setup", { scrollToStart: true });
+  } else {
+    setReadingFlowStage("reader", { scrollToStart: true });
+  }
 }
 
 function getCompletedReadingCards() {
@@ -690,6 +947,9 @@ function getCompletedReadingPayload() {
     reader_key: selectedReader?.id || "",
     reader_name: selectedReader?.name || "",
     mode_key: modeKey,
+    readingMode: modeKey,
+    deck_id: selectedDeckId,
+    deck_name: getActiveDeckConfig()?.title || "",
     spread_type: spreadType,
     card_count: selectedCardCount,
     cards,
@@ -699,6 +959,13 @@ function getCompletedReadingPayload() {
       ai_generated: false,
       requires_credits: false,
       mode: modeKey,
+      readingMode: modeKey,
+      deck: {
+        id: selectedDeckId,
+        title: getActiveDeckConfig()?.title || "",
+        meaning_set: getActiveDeckConfig()?.meaningSet || "",
+        image_set: getActiveDeckConfig()?.imageSet || "",
+      },
       spread: {
         key: spreadType,
         card_count: selectedCardCount,
@@ -832,9 +1099,11 @@ function selectReader(readerId) {
   }
 
   updateActiveReader();
+  ensureSelectedDeckIsAvailable();
+  renderDeckOptions();
   readingStatus.textContent = readerId === "mystery"
     ? selectedReader.revealMessage || "Fate stirs... a reader answers from beyond the known path."
-    : "Choose a spread to shuffle your cards.";
+    : "Choose a deck and spread to shuffle your cards.";
   cardList.innerHTML = "";
   readingReveals.innerHTML = "";
   if (readingThreadSection) {
@@ -843,7 +1112,7 @@ function selectReader(readerId) {
   }
   activeRevealedCardIndex = -1;
 
-  setReadingFlowStage("spread", { scrollToStart: true });
+  setReadingFlowStage("setup", { scrollToStart: true });
 }
 
 // Readers shown in the selector can differ from all known readers when event-only profiles are gated.
@@ -978,7 +1247,24 @@ function resetActiveBloodMoonQuote() {
   activeBloodMoonQuote = { readerId: null, quote: "" };
 }
 
-function getActiveReaderQuote(reader, { forceNew = false } = {}) {
+function getReaderIntroLineModeKey() {
+  return isBloodMoonReadingActive() ? "bloodMoon" : getCurrentModeKey();
+}
+
+function getReaderIntroLineKey(reader) {
+  if (!reader) {
+    return "";
+  }
+
+  const readerLines = window.AstralVeilReaderLines;
+  const readerLineId = typeof readerLines?.getReaderLineId === "function"
+    ? readerLines.getReaderLineId(reader)
+    : reader.id || reader.name || "";
+
+  return `${readerLineId}:${getReaderIntroLineModeKey()}`;
+}
+
+function getStaticActiveReaderQuote(reader, { forceNew = false } = {}) {
   if (!reader) {
     return "";
   }
@@ -1001,6 +1287,114 @@ function getActiveReaderQuote(reader, { forceNew = false } = {}) {
   }
 
   return activeBloodMoonQuote.quote;
+}
+
+function getActiveReaderQuote(reader, { forceNew = false } = {}) {
+  const introLineKey = getReaderIntroLineKey(reader);
+
+  if (activeReaderIntroLine.key === introLineKey && activeReaderIntroLine.line) {
+    return activeReaderIntroLine.line;
+  }
+
+  return getStaticActiveReaderQuote(reader, { forceNew });
+}
+
+function isErenAstraReader(reader) {
+  const readerName = String(reader?.name || "").toLowerCase();
+
+  return reader?.id === "gemini" || (readerName.includes("eren") && readerName.includes("astra"));
+}
+
+function getReaderQuoteLines(reader, quote) {
+  const normalizedQuote = String(quote || "").trim();
+
+  if (!normalizedQuote) {
+    return [];
+  }
+
+  if (!isErenAstraReader(reader)) {
+    return [normalizedQuote];
+  }
+
+  const explicitLines = normalizedQuote
+    .split(/\r?\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (explicitLines.length > 1) {
+    return explicitLines;
+  }
+
+  const speakerMatches = [...normalizedQuote.matchAll(/\b(Eren|Astra)\s*[:\-—]\s*/gi)];
+
+  if (speakerMatches.length < 2) {
+    return [normalizedQuote];
+  }
+
+  return speakerMatches
+    .map((match, index) => normalizedQuote.slice(match.index, speakerMatches[index + 1]?.index).trim())
+    .filter(Boolean);
+}
+
+function renderActiveReaderQuote(reader, quote) {
+  if (!activeReaderQuote) {
+    return;
+  }
+
+  const quoteLines = getReaderQuoteLines(reader, quote);
+  activeReaderQuote.classList.toggle("active-reader-header__quote--split", quoteLines.length > 1);
+  activeReaderQuote.textContent = "";
+
+  if (!quoteLines.length) {
+    return;
+  }
+
+  quoteLines.forEach((line) => {
+    const lineElement = document.createElement("span");
+    lineElement.className = "active-reader-header__quote-line";
+    lineElement.textContent = line;
+    activeReaderQuote.append(lineElement);
+  });
+}
+
+async function hydrateActiveReaderIntroLine(reader) {
+  const readerLines = window.AstralVeilReaderLines;
+
+  if (!reader || typeof readerLines?.getReaderIntroLine !== "function") {
+    return;
+  }
+
+  const introLineKey = getReaderIntroLineKey(reader);
+  const requestId = activeReaderIntroRequestId + 1;
+  activeReaderIntroRequestId = requestId;
+
+  if (activeReaderIntroLine.key !== introLineKey) {
+    activeReaderIntroLine = { key: introLineKey, line: "" };
+  }
+
+  try {
+    const line = await readerLines.getReaderIntroLine({
+      reader,
+      mode: getReaderIntroLineModeKey()
+    });
+
+    if (requestId !== activeReaderIntroRequestId || getReaderIntroLineKey(reader) !== introLineKey) {
+      return;
+    }
+
+    if (!line) {
+      return;
+    }
+
+    activeReaderIntroLine = { key: introLineKey, line };
+
+    if (activeReaderQuote) {
+      renderActiveReaderQuote(reader, line);
+    }
+
+  } catch (error) {
+    console.warn("Unable to apply reader intro line.", error);
+  }
 }
 
 function clearReaderSelectionPreview() {
@@ -1438,7 +1832,7 @@ function updateActiveReader() {
     : "Before We Begin";
   const preparationText = isBloodMoonReadingActive()
     ? "Do not ask unless you are ready to hear what your shadow has been saying all along."
-    : "Take a breath and focus on the energy surrounding your question. Let your thoughts settle, trust your intuition, and choose the spread that feels right for you. Select 3, 5, or 7 cards to begin your reading.";
+    : "Take a breath and focus on the energy surrounding your question. Let your thoughts settle, trust your intuition, choose a deck, and select the spread that feels right for you.";
 
   document.querySelectorAll(".reader-card").forEach((card) => {
     const isMysterySelection =
@@ -1452,16 +1846,19 @@ function updateActiveReader() {
   });
 
   renderFeaturedReader();
+  ensureSelectedDeckIsAvailable();
+  renderDeckOptions();
 
   updateReaderSelectionConfirmation(selectedReaderIndex === -1 ? "mystery" : selectedReader.id);
 
   activeReaderImage.src = readerPresentation.image;
   activeReaderImage.alt = readerPresentation.name;
   activeReaderImage.dataset.imagePreviewTitle = readerPresentation.name;
-  activeReaderImage.dataset.imagePreviewCaption = getActiveReaderQuote(readerPresentation);
+  activeReaderImage.dataset.imagePreviewCaption = getStaticActiveReaderQuote(readerPresentation);
   activeReaderName.textContent = readerPresentation.name;
   activeReaderRole.textContent = getReaderRole(readerPresentation);
-  activeReaderQuote.textContent = getActiveReaderQuote(readerPresentation);
+  renderActiveReaderQuote(readerPresentation, getActiveReaderQuote(readerPresentation));
+  hydrateActiveReaderIntroLine(readerPresentation);
   readerIntroduction.innerHTML = `
     <p class="reading-section__eyebrow">${preparationTitle}</p>
     <p>${preparationText}</p>
@@ -1469,21 +1866,42 @@ function updateActiveReader() {
 }
 
 function updateSpreadOptionCopy() {
+  const defaultLabels = {
+    1: "Daily Glimpse",
+    3: "Focused",
+    5: "Deeper",
+    7: "Ritual",
+  };
   const defaultDescriptions = {
+    1: "A single message for today",
     3: "A focused glimpse",
     5: "A deeper path",
     7: "A full ritual",
   };
+  const bloodMoonLabels = {
+    1: "Daily Glimpse",
+    3: "3 Cards",
+    5: "5 Cards",
+    7: "7 Cards",
+  };
   const bloodMoonDescriptions = {
+    1: "One exposed truth",
     3: "First wound",
     5: "Hidden pattern",
     7: "Whole fracture",
   };
+  const labels = isBloodMoonReadingActive() ? bloodMoonLabels : defaultLabels;
   const descriptions = isBloodMoonReadingActive() ? bloodMoonDescriptions : defaultDescriptions;
 
   spreadButtons.forEach((button) => {
+    const label = labels[button.dataset.spread];
     const description = descriptions[button.dataset.spread];
+    const labelElement = button.querySelector("strong");
     const descriptionElement = button.querySelector("small");
+
+    if (labelElement && label) {
+      labelElement.textContent = label;
+    }
 
     if (descriptionElement && description) {
       descriptionElement.textContent = description;
@@ -1523,7 +1941,7 @@ function moveReader(direction) {
 
     readingStatus.textContent = currentReadingCards.length
       ? `${selectedReader.name} is now reading this spread.`
-      : "Choose a spread to shuffle your cards.";
+      : "Choose a deck and spread to shuffle your cards.";
 
     readerPortraitFrame.classList.remove(slideClass);
   }, 180);
@@ -1536,6 +1954,14 @@ function moveReader(direction) {
 // Creates a new reading: chooses cards, assigns orientation, and renders the facedown spread.
 function selectSpread(cardCount) {
   if (isRenderingReading) {
+    return;
+  }
+
+  const activeDeck = getActiveDeckConfig();
+
+  if (!activeDeck || !isDeckAccessible(activeDeck)) {
+    readingStatus.textContent = "Choose an available deck before starting your reading.";
+    renderDeckOptions();
     return;
   }
 
@@ -1558,7 +1984,7 @@ function selectSpread(cardCount) {
     }
     setReadingFlowStage("reading", { scrollToStart: true });
     renderReadingCards(currentReadingCards);
-    readingStatus.textContent = `${selectedReader.name} has drawn ${cardCount} cards. Click each card in Your Reading to reveal its message.`;
+    readingStatus.textContent = `${selectedReader.name} has drawn ${cardCount} ${cardCount === 1 ? "card" : "cards"} from ${activeDeck.title}. Click ${cardCount === 1 ? "the card" : "each card"} in Your Reading to reveal its message.`;
   } catch (error) {
     isRenderingReading = false;
     throw error;
@@ -1626,6 +2052,7 @@ function getRandomCards(cardCount) {
 function renderReadingCards(cards) {
   cardList.classList.remove("hidden");
   cardList.innerHTML = "";
+  cardList.dataset.cardCount = String(cards.length);
   const cardBackImage = getActiveCardBackImage();
 
   cardList.innerHTML = cards
@@ -1836,12 +2263,16 @@ function renderReadingResults() {
   const hasRevealedAllCards = areAllReadingCardsRevealed();
   const progressText =
     hasRevealedAllCards
-      ? "Your full spread has been revealed."
+      ? currentReadingCards.length === 1
+        ? "1 of 1 revealed. Your Daily Glimpse is open."
+        : "Your full spread has been revealed."
       : `${revealedCards.length} of ${currentReadingCards.length} cards revealed.`;
   const guidedAction = showRevealActions
     ? hasRevealedAllCards
       ? {
-          helper: "All cards have been revealed."
+          helper: currentReadingCards.length === 1
+            ? "Your Daily Glimpse has been revealed."
+            : "All cards have been revealed."
         }
       : {
           label: "Reveal Next Card",
@@ -1957,6 +2388,19 @@ function handleReadingStageActionClick(event) {
   }
 }
 
+function renderFinalReadingActions() {
+  return `
+    <div class="reading-final-actions" aria-label="Reading actions">
+      <div class="reading-final-actions__row">
+        <button class="primary-action reading-actions__button reading-final-actions__button" type="button" data-reset-reading>
+          New Reading
+        </button>
+        <div data-reading-save-actions></div>
+      </div>
+    </div>
+  `;
+}
+
 function renderReadingThreadView() {
   if (!readingThreadSection) {
     return;
@@ -1968,18 +2412,15 @@ function renderReadingThreadView() {
     return;
   }
 
-  readingThreadSection.innerHTML = `
-    ${renderCombinedReading()}
-    ${renderFireKeyCluePanel()}
-    <div class="reading-final-actions" aria-label="Reading actions">
-      <div class="reading-final-actions__row">
-        <button class="primary-action reading-actions__button reading-final-actions__button" type="button" data-reset-reading>
-          New Reading
-        </button>
-        <div data-reading-save-actions></div>
-      </div>
-    </div>
-  `;
+  const isSingleCardReading = currentReadingCards.length === 1;
+
+  readingThreadSection.innerHTML = isSingleCardReading
+    ? renderFinalReadingActions()
+    : `
+      ${renderCombinedReading()}
+      ${renderFireKeyCluePanel()}
+      ${renderFinalReadingActions()}
+    `;
   readingThreadSection.classList.remove("hidden");
 }
 
@@ -2041,7 +2482,7 @@ function clearCurrentReading() {
     readingThreadSection.innerHTML = "";
     readingThreadSection.classList.add("hidden");
   }
-  readingStatus.textContent = "Choose a spread to shuffle your cards.";
+  readingStatus.textContent = "Choose a deck and spread to shuffle your cards.";
 
   spreadButtons.forEach((button) => {
     button.classList.remove("is-active");
@@ -2057,7 +2498,7 @@ function startNewReading() {
     return;
   }
 
-  setReadingFlowStage("spread", { scrollToStart: true });
+  setReadingFlowStage("setup", { scrollToStart: true });
 }
 
 // Restores the reader selection screen and clears active reader presentation details.
@@ -2073,6 +2514,8 @@ function clearSelectedReaderState({ scrollToSelection = false } = {}) {
   activeReaderRole.textContent = "";
   activeReaderQuote.textContent = "";
   resetActiveBloodMoonQuote();
+  activeReaderIntroLine = { key: null, line: "" };
+  activeReaderIntroRequestId += 1;
   readerIntroduction.innerHTML = "";
   if (readerSelectionConfirmation) {
     readerSelectionConfirmation.innerHTML = "";
@@ -2105,6 +2548,7 @@ function resetToGuideSelection() {
 
 renderReaders();
 setReadingFlowStage("reader", { scrollToStart: false });
+hydrateAccountDeckAccess();
 selectInitialReaderFromHandoff();
 
 // When Blood Moon changes, reader availability and deck/card art can change, so refresh visible UI.
@@ -2118,7 +2562,7 @@ window.addEventListener("astralVeilBloodMoonChange", (event) => {
   updateReadingHeroCopy();
   renderReaders();
 
-  const nextModeKey = isBloodMoonModeActive ? "bloodmoon" : getCurrentModeKey();
+  const nextModeKey = isBloodMoonModeActive ? "bloodMoon" : getCurrentModeKey();
 
   if (shouldResetReadingForModeTransition(nextModeKey)) {
     resetReadingForModeTransition({ scrollToSelection: true });
@@ -2126,8 +2570,17 @@ window.addEventListener("astralVeilBloodMoonChange", (event) => {
   }
 
   if (selectedReader) {
+    ensureSelectedDeckIsAvailable();
     updateActiveReader();
   }
+});
+
+window.addEventListener("astralveil:reader-lines-ready", () => {
+  if (!selectedReader) {
+    return;
+  }
+
+  hydrateActiveReaderIntroLine(getReaderPresentation(selectedReader));
 });
 
 window.addEventListener("astralVeilBloodMoonActivationMessage", (event) => {
@@ -2221,6 +2674,27 @@ spreadButtons.forEach((button) => {
   });
 });
 
+if (deckOptions) {
+  deckOptions.addEventListener("click", (event) => {
+    const deckButton = event.target.closest("[data-deck-id]");
+
+    if (!deckButton) {
+      return;
+    }
+
+    const deck = getDeckConfig(deckButton.dataset.deckId);
+
+    if (!deck || !isDeckCompatible(deck) || !isDeckAccessible(deck)) {
+      renderDeckOptions();
+      return;
+    }
+
+    selectedDeckId = deck.id;
+    renderDeckOptions();
+    readingStatus.textContent = `${deck.title} selected. Choose a spread to begin.`;
+  });
+}
+
 readerNavButtons.forEach((button) => {
   button.addEventListener("click", () => {
     moveReader(button.dataset.readerNav);
@@ -2230,6 +2704,16 @@ readerNavButtons.forEach((button) => {
 if (newReadingButton) {
   newReadingButton.addEventListener("click", startNewReading);
 }
+
+document.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
+  window.setTimeout(() => {
+    const nextModeKey = getCurrentModeKey();
+
+    resetActiveReadingForThemeTransition(nextModeKey);
+    ensureSelectedDeckIsAvailable();
+    renderDeckOptions();
+  }, 0);
+});
 
 if (cardList) {
   cardList.addEventListener("click", (event) => {

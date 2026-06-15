@@ -687,6 +687,10 @@
         overflow: hidden;
       }
 
+      body.account-deletion-modal-open {
+        overflow: hidden;
+      }
+
       .profile-background-modal__dialog {
         position: relative;
         z-index: 1;
@@ -706,6 +710,77 @@
           0 26px 80px rgba(0, 0, 0, 0.42),
           0 0 42px rgba(255, 40, 64, 0.1);
         padding: clamp(1rem, 3vw, 1.5rem);
+      }
+
+      .account-deletion-modal__dialog {
+        width: min(100%, 38rem);
+      }
+
+      .account-deletion-modal__copy {
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      .account-deletion-modal__copy p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .account-deletion-form {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .account-deletion-form__field {
+        display: grid;
+        gap: 0.42rem;
+      }
+
+      .account-deletion-form__field span {
+        color: var(--gold);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      .account-deletion-form__field input,
+      .account-deletion-form__field textarea {
+        width: 100%;
+        border: 1px solid rgba(228, 189, 118, 0.2);
+        border-radius: 8px;
+        background: rgba(3, 4, 12, 0.55);
+        color: var(--text);
+        font: 600 0.98rem/1.45 var(--font-ui);
+        padding: 0.72rem 0.85rem;
+      }
+
+      .account-deletion-form__field input {
+        min-height: 2.75rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .account-deletion-form__field textarea {
+        min-height: 7rem;
+        resize: vertical;
+      }
+
+      .account-deletion-form__status {
+        min-height: 1.4rem;
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .account-deletion-form__status.is-error {
+        color: var(--error);
+      }
+
+      .account-deletion-form__status.is-success {
+        color: #aee6c0;
       }
 
       .profile-background-modal__header {
@@ -1495,6 +1570,17 @@
         letter-spacing: 0.08em;
         padding: 0.28rem 0.55rem;
         text-transform: uppercase;
+      }
+
+      button.security-status {
+        min-height: 2.2rem;
+        cursor: pointer;
+      }
+
+      button.security-status:hover,
+      button.security-status:focus-visible {
+        border-color: rgba(255, 182, 182, 0.56);
+        color: var(--text);
       }
 
       .security-row__chevron {
@@ -2458,6 +2544,127 @@
         background: transparent;
         box-shadow: none;
         padding: 0;
+      }
+
+      .contact-section {
+        justify-items: center;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+      }
+
+      .contact-card {
+        width: min(100%, 820px);
+        display: grid;
+        gap: clamp(1.05rem, 2.2vw, 1.4rem);
+        border: 1px solid rgba(228, 189, 118, 0.17);
+        border-radius: 18px;
+        background:
+          radial-gradient(circle at 14% 8%, rgba(228, 189, 118, 0.09), transparent 18rem),
+          linear-gradient(135deg, rgba(228, 189, 118, 0.06), rgba(185, 156, 255, 0.045)),
+          rgba(7, 8, 20, 0.38);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.025) inset,
+          0 18px 42px rgba(0, 0, 0, 0.18),
+          0 0 34px rgba(185, 156, 255, 0.07);
+        padding: clamp(1rem, 3vw, 1.4rem);
+      }
+
+      .contact-card__header {
+        display: grid;
+        gap: 0.34rem;
+        max-width: 42rem;
+      }
+
+      .contact-card__header h2 {
+        margin: 0;
+        color: var(--gold);
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 4vw, 3.15rem);
+        font-weight: 400;
+        line-height: 0.98;
+      }
+
+      .contact-card__header p:not(.section-title) {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .contact-form {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .contact-form__grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .contact-field {
+        display: grid;
+        gap: 0.42rem;
+      }
+
+      .contact-field span {
+        color: var(--gold);
+        font-family: var(--font-ui);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.13em;
+        line-height: 1.25;
+        text-transform: uppercase;
+      }
+
+      .contact-field input,
+      .contact-field select,
+      .contact-field textarea {
+        width: 100%;
+        min-height: 2.75rem;
+        border: 1px solid rgba(228, 189, 118, 0.2);
+        border-radius: 8px;
+        background: rgba(3, 4, 12, 0.5);
+        color: var(--text);
+        font: 600 0.98rem/1.45 var(--font-ui);
+        padding: 0.72rem 0.85rem;
+      }
+
+      .contact-field textarea {
+        min-height: 11.5rem;
+        resize: vertical;
+      }
+
+      .contact-field input:focus-visible,
+      .contact-field select:focus-visible,
+      .contact-field textarea:focus-visible {
+        border-color: rgba(228, 189, 118, 0.58);
+        outline: 0;
+        box-shadow: 0 0 0 3px rgba(228, 189, 118, 0.12);
+      }
+
+      .contact-form__actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1rem;
+      }
+
+      .contact-form__status {
+        min-height: 1.4rem;
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .contact-form__status.is-success {
+        color: #aee6c0;
+      }
+
+      .contact-form__status.is-error {
+        color: var(--error);
       }
 
       .profile-form__rows {
@@ -3562,6 +3769,7 @@
         .hero-card,
         .panel-grid,
         .settings-layout,
+        .contact-form__grid,
         .birthday-field,
         .preference-option {
           grid-template-columns: 1fr;
@@ -3978,11 +4186,10 @@
           </button>
         </nav>
         <div class="sidebar-actions">
-          <!-- TODO: replace this placeholder with a mailto link when the public contact address is finalized. -->
-          <a class="nav-link" href="#">
+          <button class="nav-link" type="button" data-account-section-target="contact-us">
             <img class="nav-icon" src="assets/icons/symbols/contact-us.svg" alt="" aria-hidden="true" />
             Contact Us
-          </a>
+          </button>
           <a class="nav-link nav-link--back" href="index.html">
             <img class="nav-icon" src="assets/icons/symbols/arrow-long-left.svg" alt="" aria-hidden="true" />
             Back to Astral Veil
@@ -4442,10 +4649,10 @@
                       <img src="assets/icons/symbols/security.svg" alt="" />
                     </span>
                     <div class="security-row__copy">
-                      <h3>Delete Account Request</h3>
-                      <p>Request account removal when this tool becomes available.</p>
+                      <h3>Request Account Deletion</h3>
+                      <p>Deactivate your archive and send a deletion request to the Astral Veil admin.</p>
                     </div>
-                    <span class="security-status">Coming soon</span>
+                    <button class="security-status" type="button" data-account-deletion-open>Request</button>
                     <span class="security-row__chevron" aria-hidden="true"></span>
                   </li>
                 </ul>
@@ -4454,10 +4661,91 @@
               </div>
             </section>
 
+            <section class="account-section panel contact-section" data-account-section="contact-us" hidden aria-label="Contact Us">
+              <div class="contact-card">
+                <div class="contact-card__header">
+                  <p class="section-title">Contact Us</p>
+                  <h2>Contact the Veilkeepers</h2>
+                  <p>Have a question, issue, or something strange to report? Send a message below and we’ll get back to you when the stars settle.</p>
+                </div>
+
+                <form class="contact-form" data-contact-form>
+                  <div class="contact-form__grid">
+                    <label class="contact-field">
+                      <span>Topic</span>
+                      <select name="topic" required data-contact-topic>
+                        <option value="">Choose a topic</option>
+                        <option value="Account Help">Account Help</option>
+                        <option value="Reading Issue">Reading Issue</option>
+                        <option value="Journal Issue">Journal Issue</option>
+                        <option value="Decks & Unlocks">Decks &amp; Unlocks</option>
+                        <option value="Billing / Subscription">Billing / Subscription</option>
+                        <option value="Bug Report">Bug Report</option>
+                        <option value="Feature Suggestion">Feature Suggestion</option>
+                        <option value="General Question">General Question</option>
+                        <option value="Report a Problem">Report a Problem</option>
+                      </select>
+                    </label>
+
+                    <label class="contact-field">
+                      <span>Email</span>
+                      <input name="user_email" type="email" autocomplete="email" maxlength="254" required data-contact-email />
+                    </label>
+                  </div>
+
+                  <label class="contact-field">
+                    <span>Subject</span>
+                    <input name="subject" type="text" autocomplete="off" maxlength="160" required data-contact-subject />
+                  </label>
+
+                  <label class="contact-field">
+                    <span>Message</span>
+                    <textarea name="message" rows="8" maxlength="5000" required data-contact-message></textarea>
+                  </label>
+
+                  <div class="contact-form__actions">
+                    <button type="submit" data-contact-submit>Send Message</button>
+                    <p class="contact-form__status" data-contact-status role="status" aria-live="polite"></p>
+                  </div>
+                </form>
+              </div>
+            </section>
+
             <p class="account-footer">The Veil remembers what time forgets.</p>
           </section>
         </main>
       </div>
+    </div>
+
+    <div class="avatar-modal saved-reading-modal" data-account-deletion-modal hidden>
+      <button class="avatar-modal__backdrop saved-reading-modal__backdrop" type="button" data-account-deletion-cancel aria-label="Cancel account deletion request"></button>
+      <article class="saved-reading-modal__dialog account-deletion-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="account-deletion-modal-title">
+        <header class="saved-reading-modal__header">
+          <h3 id="account-deletion-modal-title">Request Account Deletion</h3>
+          <button class="saved-reading-modal__close" type="button" data-account-deletion-cancel aria-label="Close account deletion request">
+            <span class="avatar-modal__close-icon" aria-hidden="true"></span>
+          </button>
+        </header>
+        <div class="saved-reading-modal__content account-deletion-modal__copy">
+          <p>This will deactivate your Astral Veil account access and send a deletion request to the admin. Your archive will remain pending review until the request is completed.</p>
+          <p>Type DELETE to continue.</p>
+          <form class="account-deletion-form" id="account-deletion-form" data-account-deletion-form>
+            <label class="account-deletion-form__field">
+              <span>Confirmation</span>
+              <input name="confirmation" type="text" autocomplete="off" maxlength="6" data-account-deletion-confirmation required />
+            </label>
+            <label class="account-deletion-form__field">
+              <span>Reason Optional</span>
+              <textarea name="reason" rows="5" maxlength="1000" data-account-deletion-reason></textarea>
+            </label>
+            <p class="account-deletion-form__status" data-account-deletion-status role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <footer class="saved-reading-modal__footer">
+          <button class="card-action" type="button" data-account-deletion-cancel>Cancel</button>
+          <button class="card-action" type="submit" form="account-deletion-form" data-account-deletion-submit>Request Deletion</button>
+        </footer>
+      </article>
     </div>
 
     <div class="avatar-modal saved-reading-modal" data-saved-reading-modal hidden>

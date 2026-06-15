@@ -230,10 +230,10 @@ function getPromptModeFilters() {
   }
 
   if (mode === 'sun') {
-    return ['lumen', 'sun'];
+    return ['sun', 'lumen', 'all'];
   }
 
-  return ['lumen', 'moon'];
+  return ['moon', 'lumen', 'all'];
 }
 
 function normalizePromptValue(value, fallback = '') {
@@ -675,28 +675,65 @@ function getRotatedPromptTexts(promptTexts, count = 3) {
   return selected;
 }
 
+function getRandomizedPromptTexts(promptTexts, count = 3) {
+  const uniquePrompts = [...new Set(promptTexts.map((text) => String(text || '').trim()).filter(Boolean))];
+
+  for (let index = uniquePrompts.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    const currentPrompt = uniquePrompts[index];
+
+    uniquePrompts[index] = uniquePrompts[randomIndex];
+    uniquePrompts[randomIndex] = currentPrompt;
+  }
+
+  return uniquePrompts.slice(0, count);
+}
+
+function appendRandomPromptTexts(targetPrompts, rows, count = 3) {
+  if (targetPrompts.length >= count) {
+    return targetPrompts;
+  }
+
+  const existingPrompts = new Set(targetPrompts.map((prompt) => String(prompt || '').trim()));
+  const nextPrompts = getRandomizedPromptTexts(getPromptRowsText(rows), count);
+
+  nextPrompts.forEach((prompt) => {
+    if (targetPrompts.length < count && prompt && !existingPrompts.has(prompt)) {
+      targetPrompts.push(prompt);
+      existingPrompts.add(prompt);
+    }
+  });
+
+  return targetPrompts;
+}
+
 function getPromptRowsText(rows) {
   return (rows || [])
     .map((prompt) => prompt?.prompt_text)
     .filter(Boolean);
 }
 
-async function fetchPromptRows({ promptType, mood }) {
+async function fetchPromptRows({ promptType, mood, includeAllMoods = false }) {
   const supabase = getSupabaseClient();
 
   if (!supabase) {
     return [];
   }
 
-  const { data, error } = await supabase
+  let query = supabase
     .from('journal_prompts')
     .select('prompt_text, prompt_type, mode, mood, sort_order, created_at')
     .eq('is_active', true)
     .eq('prompt_type', promptType)
     .in('mode', getPromptModeFilters())
-    .in('mood', mood && mood !== 'any' ? [mood, 'any'] : ['any'])
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: true });
+
+  if (!includeAllMoods) {
+    query = query.in('mood', mood && mood !== 'any' ? [mood, 'any'] : ['any']);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('Journal prompt load failed:', error);
@@ -736,19 +773,25 @@ function getPromptFallbackRows(promptType) {
 
 async function getPromptsForCurrentContext(promptType) {
   const selectedMood = getSelectedMoodKey();
-  const rows = await fetchPromptRows({ promptType, mood: selectedMood });
-  const usableRows = rows.length ? rows : getPromptFallbackRows(promptType);
-  const moodSpecificRows = selectedMood === 'any'
-    ? []
-    : usableRows.filter((prompt) => normalizePromptValue(prompt.mood, 'any') === selectedMood);
-  const fallbackRows = usableRows.filter((prompt) => normalizePromptValue(prompt.mood, 'any') === 'any');
-  const promptTexts = [
-    ...getPromptRowsText(moodSpecificRows),
-    ...getPromptRowsText(fallbackRows),
-    ...getFallbackQuestions(),
-  ];
+  const rows = await fetchPromptRows({ promptType, mood: selectedMood, includeAllMoods: true });
+  const fallbackRows = getPromptFallbackRows(promptType);
+  const usableRows = rows.length ? rows : fallbackRows;
+  const selectedPrompts = [];
 
-  return getRotatedPromptTexts(promptTexts, 3);
+  if (selectedMood === 'any') {
+    appendRandomPromptTexts(selectedPrompts, usableRows, 3);
+  } else {
+    const moodSpecificRows = usableRows.filter((prompt) => normalizePromptValue(prompt.mood, 'any') === selectedMood);
+    const anyMoodRows = usableRows.filter((prompt) => normalizePromptValue(prompt.mood, 'any') === 'any');
+
+    appendRandomPromptTexts(selectedPrompts, moodSpecificRows, 3);
+    appendRandomPromptTexts(selectedPrompts, anyMoodRows, 3);
+    appendRandomPromptTexts(selectedPrompts, usableRows, 3);
+  }
+
+  appendRandomPromptTexts(selectedPrompts, fallbackRows, 3);
+
+  return selectedPrompts.slice(0, 3);
 }
 
 async function loadPromptOfDay() {

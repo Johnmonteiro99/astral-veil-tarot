@@ -22,7 +22,12 @@ let selectedArchiveRoomId = "entry-desk";
 let enteredArchiveRoomId = "";
 let activeArchiveShelfEntryId = "";
 let archiveCodeFeedback = "";
+let archiveCodeFeedbackTone = "";
+let archiveCodeFeedbackTimeout = null;
 let openRecoveredObjectId = "";
+let isRecoveredItemsModalOpen = false;
+let isArchiveNoticesModalOpen = false;
+let archiveNoticesModalPage = 0;
 let openVisualRecordId = "";
 let restrictedWingRitualOpen = false;
 let restrictedWingGuestPromptOpen = false;
@@ -31,7 +36,9 @@ let visualRecordTouchStartX = 0;
 let visualRecordTouchStartY = 0;
 let galleryTouchStartX = 0;
 let galleryTouchStartY = 0;
-let archiveCodeFeedbackMode = "";
+let selectedVeilwalkerWhispers = [];
+let selectedArchiveEchoes = [];
+let openEntryDeskWhisperId = "";
 
 const archiveKeyStorageKey = "astralVeilNoctisElementalKeys";
 const archiveKeySessionStorageKey = "astralVeilNoctisElementalKeysSession";
@@ -75,6 +82,150 @@ const archiveCodeFailureMessages = [
   "The desk remains silent.",
   "The lock does not recognize that word.",
   "Nothing beneath the ink moves."
+];
+const archiveNoticeFallbacks = [
+  {
+    id: "blood-moon-height",
+    title: "Blood Moon Active",
+    message: "The Blood Moon is at its height. Deeper chambers stir.",
+    tone: "blood"
+  },
+  {
+    id: "archive-listening",
+    title: "Archive Listening",
+    message: "Recovered phrases may unlock what ordinary doors cannot.",
+    tone: "default"
+  },
+  {
+    id: "sign-in",
+    title: "Sign In",
+    message: "Sign in to preserve what the Archive reveals.",
+    tone: "default"
+  }
+];
+const archiveNoticeEmptyUserItems = [
+  {
+    id: "no-recovered-objects",
+    title: "No Recovered Objects",
+    message: "No recovered objects have answered yet.",
+    tone: "default"
+  },
+  {
+    id: "desk-listening",
+    title: "Entry Desk",
+    message: "The Entry Desk is listening for the first phrase.",
+    tone: "blood"
+  },
+  {
+    id: "keys-before-understanding",
+    title: "Archive Hint",
+    message: "Some keys are found before they are understood.",
+    tone: "default"
+  }
+];
+const artifactNoticeMap = {
+  water: {
+    title: "Memory of the Deep",
+    message: "The water memory has been recovered.",
+    tone: "water"
+  },
+  air: {
+    title: "Breath Relic",
+    message: "The breath relic now answers to you.",
+    tone: "air"
+  },
+  fire: {
+    title: "Ember Key",
+    message: "The ember key has been recovered.",
+    tone: "fire"
+  },
+  earth: {
+    title: "Rootstone Key",
+    message: "The rootstone key has been recovered.",
+    tone: "earth"
+  }
+};
+const veilwalkerWhispers = [
+  {
+    id: "zephyra-plain-sight",
+    speaker: "Zephyra",
+    message: "You look lost. What you seek is not hidden. It stands in plain sight. Your eyes simply have not learned how to see it yet.",
+    type: "hint"
+  },
+  {
+    id: "zephyra-unready-eyes",
+    speaker: "Zephyra",
+    message: "What you seek was never truly hidden. It only lives where unready eyes refuse to look.",
+    type: "hint"
+  },
+  {
+    id: "lyssara-silence",
+    speaker: "Lyssara",
+    message: "Some doors open when you stop asking where the key is and remember where the silence first answered you.",
+    type: "lore"
+  },
+  {
+    id: "ari-phrase-returning",
+    speaker: "Ari",
+    message: "A phrase that returns to you is rarely only a phrase. Some words come back because they were never finished speaking.",
+    type: "echo"
+  },
+  {
+    id: "zephyra-not-demanding",
+    speaker: "Zephyra",
+    message: "Some doors open only after you stop demanding they explain themselves.",
+    type: "warning"
+  },
+  {
+    id: "archive-quieter-eyes",
+    speaker: "The Archive",
+    message: "The Archive does not hide everything. Some truths simply wait for quieter eyes.",
+    type: "echo"
+  },
+  {
+    id: "lyssara-visit",
+    speaker: "Lyssara",
+    message: "If you are searching for what unlocks the dark, begin with what still reflects you.",
+    type: "hint"
+  }
+];
+const archiveEchoes = [
+  {
+    id: "phrase-stirred",
+    title: "Recovered Phrase",
+    message: "A recovered phrase stirred beneath the desk.",
+    type: "activity"
+  },
+  {
+    id: "sealed-path-listening",
+    title: "Sealed Path",
+    message: "One sealed path is listening.",
+    type: "activity"
+  },
+  {
+    id: "hidden-title-waits",
+    title: "Hidden Title",
+    message: "A hidden title waits for the right name.",
+    type: "unlock"
+  },
+  {
+    id: "restricted-wing-progress",
+    title: "Restricted Wing",
+    message: "The Restricted Wing remains aware of your progress.",
+    type: "progress"
+  },
+  {
+    id: "artifact-recognized",
+    title: "Recovered Object",
+    message: "An object you recovered has been recognized by the Entry Desk.",
+    type: "artifact"
+  },
+  {
+    id: "deck-beneath-veil",
+    title: "Hidden Deck",
+    message: "A deck beneath the Veil waits for the phrase that names it.",
+    type: "deck"
+  }
 ];
 const elementalKeyDisplayOrder = ["air", "water", "earth", "fire"];
 
@@ -915,8 +1066,25 @@ function renderNoctisRoomByQuery() {
   }
 
   if (!room) {
+    document.body.classList.remove("entry-desk-page", "shelves-page");
+    isRecoveredItemsModalOpen = false;
+    isArchiveNoticesModalOpen = false;
+    archiveNoticesModalPage = 0;
+    openEntryDeskWhisperId = "";
+    resetEntryDeskActivityCards();
+    updateEntryDeskModalOpenState();
     renderNoctisRoomNotFound();
     return;
+  }
+
+  document.body.classList.toggle("entry-desk-page", room.id === "entry-desk");
+  document.body.classList.toggle("shelves-page", room.id === "shelves");
+  if (room.id !== "entry-desk") {
+    isRecoveredItemsModalOpen = false;
+    isArchiveNoticesModalOpen = false;
+    archiveNoticesModalPage = 0;
+    openEntryDeskWhisperId = "";
+    resetEntryDeskActivityCards();
   }
 
   noctisRoomType.textContent = "Noctis Archive";
@@ -941,15 +1109,17 @@ function renderNoctisRoomByQuery() {
   const roomMarkup = isRoomLocked(room)
     ? renderNoctisRoomLockedPanel(room)
     : (renderRoomContent(room) || renderNoctisRoomLockedPanel(room));
+  const shouldRenderRoomAppendices = room.id !== "entry-desk" && room.id !== "shelves";
 
   noctisRoomContent.innerHTML = `
     ${roomMarkup}
-    ${renderRecoveredObjects()}
-    ${renderArchiveLorePanel()}
+    ${shouldRenderRoomAppendices ? renderRecoveredObjects() : ""}
+    ${shouldRenderRoomAppendices ? renderArchiveLorePanel() : ""}
     ${renderVisualRecordModal()}
   `;
 
   document.body.classList.toggle("is-visual-record-modal-open", Boolean(getOpenVisualRecord()));
+  updateEntryDeskModalOpenState();
 }
 
 // The Restricted Wing remains sealed until all four elemental keys are recovered,
@@ -1027,6 +1197,20 @@ function renderArchiveAccessState() {
   if (archiveFooterLink) {
     archiveFooterLink.hidden = !isUnlocked;
   }
+}
+
+function updateEntryDeskModalOpenState() {
+  const isEntryDeskActive = document.body.classList.contains("entry-desk-page");
+  const hasOpenEntryDeskModal = Boolean(
+    isEntryDeskActive &&
+    (
+      openEntryDeskWhisperId ||
+      isArchiveNoticesModalOpen ||
+      isRecoveredItemsModalOpen
+    )
+  );
+
+  document.body.classList.toggle("modal-open", hasOpenEntryDeskModal);
 }
 
 ////////////////////////////////////////////////////
@@ -1150,6 +1334,7 @@ function renderArchiveRooms() {
   const selectedRoom = getSelectedArchiveRoom();
 
   if (!rooms.length || !selectedRoom) {
+    document.body.classList.remove("entry-desk-page", "shelves-page");
     archiveRoomGrid.innerHTML = "";
     return;
   }
@@ -1159,45 +1344,58 @@ function renderArchiveRooms() {
   const actionLabel = getLockedRoomActionLabel(selectedRoom);
   const selectedRoomLocked = isRoomLocked(selectedRoom);
   const selectedRoomStatus = getRoomStatus(selectedRoom);
+  const isEntryDeskInteriorOpen = selectedRoom.id === "entry-desk" && enteredArchiveRoomId === "entry-desk";
+
+  if (!isEntryDeskInteriorOpen) {
+    isRecoveredItemsModalOpen = false;
+    isArchiveNoticesModalOpen = false;
+    archiveNoticesModalPage = 0;
+    openEntryDeskWhisperId = "";
+    resetEntryDeskActivityCards();
+  }
+
+  document.body.classList.toggle("entry-desk-page", isEntryDeskInteriorOpen);
 
   archiveRoomGrid.innerHTML = `
-    <div class="archive-chamber-viewer" data-selected-room="${escapeHtml(selectedRoom.id)}">
-      <div class="archive-chamber-thumbnail-rail" aria-label="Select a chamber">
-        ${rooms.map((room, index) => renderRoomThumbnail(room, index, selectedRoom.id)).join("")}
-      </div>
+    <div class="archive-chamber-viewer${isEntryDeskInteriorOpen ? " archive-chamber-viewer--entry-desk" : ""}" data-selected-room="${escapeHtml(selectedRoom.id)}">
+      ${isEntryDeskInteriorOpen ? "" : `
+        <div class="archive-chamber-thumbnail-rail" aria-label="Select a chamber">
+          ${rooms.map((room, index) => renderRoomThumbnail(room, index, selectedRoom.id)).join("")}
+        </div>
 
-      <section class="archive-chamber-stage" aria-live="polite">
-        <div class="archive-chamber-content">
-          <p class="archive-chamber-counter">${selectedIndex + 1} of ${rooms.length}</p>
-          <h2>${escapeHtml(selectedRoom.title)}</h2>
-          <p class="archive-chamber-subtitle">${escapeHtml(getRoomSubtitle(selectedRoom))}</p>
-          <p class="archive-chamber-description">${escapeHtml(selectedRoom.description)}</p>
-          <ul class="archive-chamber-tags" aria-label="Chamber tags">
-            ${renderRoomTags(selectedRoom)}
-          </ul>
-          <div class="archive-chamber-info-grid">
-            ${renderRoomInfoBox("Status", selectedRoomStatus)}
-            ${renderRoomInfoBox("Contains", details.contains)}
-            ${renderRoomInfoBox("Access Notes", selectedRoomLocked ? getRoomLockedMessage(selectedRoom) : details.accessNotes)}
-            ${renderRoomInfoBox("Archive Hint", details.archiveHint)}
+        <section class="archive-chamber-stage" aria-live="polite">
+          <div class="archive-chamber-content">
+            <p class="archive-chamber-counter">${selectedIndex + 1} of ${rooms.length}</p>
+            <h2>${escapeHtml(selectedRoom.title)}</h2>
+            <p class="archive-chamber-subtitle">${escapeHtml(getRoomSubtitle(selectedRoom))}</p>
+            <p class="archive-chamber-description">${escapeHtml(selectedRoom.description)}</p>
+            <ul class="archive-chamber-tags" aria-label="Chamber tags">
+              ${renderRoomTags(selectedRoom)}
+            </ul>
+            <div class="archive-chamber-info-grid">
+              ${renderRoomInfoBox("Status", selectedRoomStatus)}
+              ${renderRoomInfoBox("Contains", details.contains)}
+              ${renderRoomInfoBox("Access Notes", selectedRoomLocked ? getRoomLockedMessage(selectedRoom) : details.accessNotes)}
+              ${renderRoomInfoBox("Archive Hint", details.archiveHint)}
+            </div>
           </div>
-        </div>
 
-        ${renderFeaturedRoomImage(selectedRoom)}
+          ${renderFeaturedRoomImage(selectedRoom)}
 
-        <div class="archive-chamber-actions">
-          <button type="button" data-chamber-nav="previous">‹ Previous</button>
-          <button class="archive-chamber-enter${selectedRoomLocked ? " is-locked" : ""}" type="button" data-room-enter="${escapeHtml(selectedRoom.id)}">
-            ${escapeHtml(actionLabel)}
-          </button>
-          <button type="button" data-chamber-nav="next">Next ›</button>
-        </div>
-      </section>
+          <div class="archive-chamber-actions">
+            <button type="button" data-chamber-nav="previous">‹ Previous</button>
+            <button class="archive-chamber-enter${selectedRoomLocked ? " is-locked" : ""}" type="button" data-room-enter="${escapeHtml(selectedRoom.id)}">
+              ${escapeHtml(actionLabel)}
+            </button>
+            <button type="button" data-chamber-nav="next">Next ›</button>
+          </div>
+        </section>
+      `}
       ${renderSelectedChamberContent(selectedRoom)}
-      <div class="archive-recovery-stack">
+      ${isEntryDeskInteriorOpen ? "" : `<div class="archive-recovery-stack">
         ${renderRecoveredObjects()}
-      </div>
-      ${renderArchiveLorePanel()}
+      </div>`}
+      ${isEntryDeskInteriorOpen ? "" : renderArchiveLorePanel()}
       ${renderVisualRecordModal()}
       ${renderRestrictedWingRitualOverlay()}
       ${renderRestrictedWingGuestPromptOverlay()}
@@ -1217,6 +1415,7 @@ function renderArchiveRooms() {
     "is-restricted-wing-ritual-open",
     restrictedWingRitualOpen || restrictedWingGuestPromptOpen
   );
+  updateEntryDeskModalOpenState();
 }
 
 // Small toast for locked-room attempts; it avoids changing hash or leaving the selector.
@@ -1242,7 +1441,276 @@ function showRoomToast(message) {
 
 // Entry Desk is where recovered words are submitted back to the archive.
 function renderEntryDeskRoom(room) {
-  return renderArchiveCodePanel();
+  return `
+    <div class="entry-desk-page-shell">
+      <div class="entry-desk-page-heading">
+        <h1>Noctis Archive</h1>
+      </div>
+      <section class="entry-desk-grid">
+        ${renderEntryDeskHero(room)}
+        ${renderArchiveCodePanel()}
+        ${renderRecoveredObjects()}
+        ${renderEntryDeskActivityGrid()}
+        ${renderEntryDeskOmen()}
+      </section>
+    </div>
+  `;
+}
+
+function renderEntryDeskHero(room) {
+  const entryDeskHeroImage = "assets/images/noctis/entry_desk_bg.png";
+
+  return `
+    <section class="entry-desk-hero" aria-labelledby="entry-desk-title">
+      <img class="entry-desk-hero__image" src="${escapeHtml(entryDeskHeroImage)}" alt="" width="1024" height="1536" loading="eager" decoding="async" />
+      <div class="entry-desk-hero__overlay" aria-hidden="true"></div>
+      <div class="entry-desk-hero__content">
+        <a class="entry-desk-return" href="archive.html">
+          <img src="assets/icons/symbols/arrow-long-left.svg" alt="" aria-hidden="true" width="18" height="18" loading="eager" decoding="async" />
+          <span>Return to Noctis Archive</span>
+        </a>
+        <h2 id="entry-desk-title">The Entry Desk</h2>
+        <p class="entry-desk-subtitle">Every discovery begins with a whisper.<br />The Archive listens-and decides what it will reveal.</p>
+      </div>
+    </section>
+  `;
+}
+
+function renderEntryDeskRevealSection() {
+  const revealTypes = [
+    ["☾", "Hidden Decks", "Sealed behind phrases and discoveries."],
+    ["♛", "Profile Titles", "Marks earned through hidden paths."],
+    ["⌂", "Secret Rooms", "Chambers that answer only when permitted."],
+    ["✦", "Artifacts", "Objects recovered through rituals and codes."],
+    ["◍", "Fragments", "Pieces of memory scattered through the Archive."],
+    ["✧", "Archive Secrets", "Lore that reveals itself to careful eyes."],
+    ["♁", "Veilwalker Whispers", "Messages and hints left by those who move through the Veil.", true]
+  ];
+
+  return `
+    <section class="entry-desk-reveal-section" aria-labelledby="entry-desk-reveal-title">
+      <div class="entry-desk-section-heading entry-desk-reveal-header">
+        <p class="entry-desk-kicker">Possible Revelations</p>
+        <h3 id="entry-desk-reveal-title">What the Archive May Hold</h3>
+        <p>Whispers can unlock more than doors. Some reveal what was always waiting beneath the surface.</p>
+      </div>
+      <div class="entry-desk-reveal-grid">
+        ${revealTypes.map(([symbol, title, description, isFeatured]) => `
+          <article class="entry-desk-reveal-card${isFeatured ? " featured" : ""}">
+            <span aria-hidden="true">${escapeHtml(symbol)}</span>
+            <h4>${escapeHtml(title)}</h4>
+            <p>${escapeHtml(description)}</p>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function getRandomItems(items, count = 3) {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  const pool = [...items];
+  const selected = [];
+
+  while (pool.length && selected.length < count) {
+    const index = Math.floor(Math.random() * pool.length);
+    selected.push(pool.splice(index, 1)[0]);
+  }
+
+  return selected;
+}
+
+function initEntryDeskActivityCards() {
+  selectedVeilwalkerWhispers = getRandomItems(veilwalkerWhispers, 3);
+  selectedArchiveEchoes = getRandomItems(archiveEchoes, 3);
+}
+
+function ensureEntryDeskActivityCards() {
+  if (
+    selectedVeilwalkerWhispers.length ||
+    selectedArchiveEchoes.length
+  ) {
+    return;
+  }
+
+  initEntryDeskActivityCards();
+}
+
+function resetEntryDeskActivityCards() {
+  selectedVeilwalkerWhispers = [];
+  selectedArchiveEchoes = [];
+}
+
+function getEntryDeskArchiveNotices() {
+  if (!isLoggedInArchiveUser()) {
+    return archiveNoticeFallbacks;
+  }
+
+  const unlockedKeys = getUnlockedElementalKeys();
+
+  if (!unlockedKeys.length) {
+    return archiveNoticeEmptyUserItems;
+  }
+
+  const orderedArtifactKeys = ["water", "air", "fire", "earth"];
+  const notices = orderedArtifactKeys
+    .filter((keyId) => unlockedKeys.includes(keyId))
+    .map((keyId) => ({
+      id: `artifact-${keyId}`,
+      ...artifactNoticeMap[keyId]
+    }));
+
+  if (areAllElementalKeysRecovered()) {
+    notices.push({
+      id: "restricted-wing-open",
+      title: "Restricted Wing",
+      message: "Four recovered objects answered at once. The Restricted Wing is open.",
+      tone: "blood"
+    });
+  }
+
+  return notices;
+}
+
+function renderEntryDeskActivityGrid() {
+  ensureEntryDeskActivityCards();
+  const archiveNoticesForEntryDesk = getEntryDeskArchiveNotices();
+
+  return `
+    <section class="entry-desk-activity-grid" aria-label="Archive activity">
+      ${renderEntryDeskActivityCard("Archive Notices", archiveNoticesForEntryDesk, "notice")}
+      ${renderEntryDeskActivityCard("Veilwalker Whispers", selectedVeilwalkerWhispers, "whisper")}
+      ${renderEntryDeskActivityCard("Archive Echoes", selectedArchiveEchoes, "echo")}
+      ${renderArchiveNoticesModal(archiveNoticesForEntryDesk)}
+      ${renderEntryDeskWhisperModal()}
+    </section>
+  `;
+}
+
+function renderEntryDeskActivityItem(item, variant) {
+  if (variant === "whisper") {
+    const avatarText = (item.speaker || "Archive").trim().charAt(0).toUpperCase() || "A";
+
+    return `
+      <article class="entry-desk-whisper-row" data-whisper-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="${escapeHtml(`Open whisper from ${item.speaker || "The Archive"}`)}">
+        <span class="entry-desk-whisper-avatar" aria-hidden="true">${escapeHtml(avatarText)}</span>
+        <div>
+          <p class="entry-desk-whisper-message">"${escapeHtml(item.message)}"</p>
+          <p class="entry-desk-whisper-speaker">${escapeHtml(item.speaker || "The Archive")}</p>
+        </div>
+      </article>
+    `;
+  }
+
+  const dotTone = variant === "echo" ? "blood" : item.tone || "default";
+
+  return `
+    <article class="entry-desk-feed-item">
+      <span class="entry-desk-feed-dot dot-${escapeHtml(dotTone)}" aria-hidden="true"></span>
+      <div>
+        <h4>${escapeHtml(item.title || "Archive Entry")}</h4>
+        <p>${escapeHtml(item.message || "")}</p>
+      </div>
+    </article>
+  `;
+}
+
+function renderEntryDeskActivityCard(title, items, variant) {
+  const iconMap = {
+    notice: "assets/icons/symbols/memory_fragment1.svg",
+    whisper: "assets/icons/symbols/shadow-bloodmoon.svg",
+    echo: "assets/icons/symbols/bloodmoon_star.svg"
+  };
+  const iconSrc = iconMap[variant] || iconMap.notice;
+  const visibleItems = variant === "notice" ? items.slice(0, 3) : items;
+  const noticeButton = variant === "notice"
+    ? `
+      <button class="entry-desk-view-notices-btn" type="button" data-view-all-archive-notices>
+        <span>View all notices</span>
+        <img src="assets/icons/symbols/arrow-long-right.svg" alt="" aria-hidden="true" width="18" height="18" loading="lazy" decoding="async" />
+      </button>
+    `
+    : "";
+
+  return `
+    <article class="entry-desk-activity-card">
+      <h3>
+        <img src="${escapeHtml(iconSrc)}" alt="" aria-hidden="true" width="22" height="22" loading="lazy" decoding="async" />
+        <span>${escapeHtml(title)}</span>
+      </h3>
+      <div class="${variant === "whisper" ? "entry-desk-whisper-list" : `entry-desk-feed-list entry-desk-feed-list--${escapeHtml(variant)}`}">
+        ${visibleItems.map((item) => renderEntryDeskActivityItem(item, variant)).join("")}
+      </div>
+      ${variant === "whisper" ? `<p class="entry-desk-whisper-hint">Click a whisper to hear it fully.</p>` : ""}
+      ${noticeButton}
+    </article>
+  `;
+}
+
+function renderEntryDeskWhisperModal() {
+  const whisper = selectedVeilwalkerWhispers.find((item) => item.id === openEntryDeskWhisperId);
+
+  if (!whisper) {
+    return "";
+  }
+
+  return `
+    <div class="entry-desk-whisper-modal" role="presentation">
+      <div class="entry-desk-whisper-modal-backdrop" data-close-whisper-modal></div>
+      <article class="entry-desk-whisper-dialog" role="dialog" aria-modal="true" aria-labelledby="entryDeskWhisperTitle">
+        <button class="entry-desk-whisper-close" type="button" data-close-whisper-modal aria-label="Close whisper">×</button>
+        <p class="entry-desk-modal-kicker">${escapeHtml(whisper.type || "Veilwalker Whisper")}</p>
+        <h2 id="entryDeskWhisperTitle">${escapeHtml(whisper.speaker || "The Archive")}</h2>
+        <p class="entry-desk-whisper-full-message">"${escapeHtml(whisper.message)}"</p>
+      </article>
+    </div>
+  `;
+}
+
+function renderArchiveNoticesModal(notices) {
+  if (!isArchiveNoticesModalOpen) {
+    return "";
+  }
+
+  const pageSize = 10;
+  const totalPages = Math.max(1, Math.ceil(notices.length / pageSize));
+  const safePage = Math.min(Math.max(archiveNoticesModalPage, 0), totalPages - 1);
+  const pageItems = notices.slice(safePage * pageSize, safePage * pageSize + pageSize);
+
+  archiveNoticesModalPage = safePage;
+
+  return `
+    <div class="entry-desk-notices-modal" role="presentation">
+      <article class="entry-desk-notices-dialog" role="dialog" aria-modal="true" aria-labelledby="entry-desk-notices-title">
+        <button class="entry-desk-modal-close" type="button" data-archive-notices-close aria-label="Close archive notices">Close</button>
+        <div class="entry-desk-notices-dialog__header">
+          <p>Blood Moon Activity</p>
+          <h4 id="entry-desk-notices-title">Archive Notices</h4>
+        </div>
+        <div class="entry-desk-feed-list entry-desk-notices-dialog__list">
+          ${pageItems.map((item) => renderEntryDeskActivityItem(item, "notice")).join("")}
+        </div>
+        <div class="entry-desk-notices-dialog__pager">
+          <button type="button" data-archive-notices-page="previous" ${safePage === 0 ? "disabled" : ""}>Previous</button>
+          <span>Page ${safePage + 1} of ${totalPages}</span>
+          <button type="button" data-archive-notices-page="next" ${safePage >= totalPages - 1 ? "disabled" : ""}>Next</button>
+        </div>
+      </article>
+    </div>
+  `;
+}
+
+function renderEntryDeskOmen() {
+  return `
+    <p class="entry-desk-omen">
+      <span aria-hidden="true"></span>
+      You do not enter the Archive. The Archive allows you to proceed.
+      <span aria-hidden="true"></span>
+    </p>
+  `;
 }
 
 function getRecoveredObjects() {
@@ -1271,9 +1739,11 @@ function renderRecoveredObjectIcon(object) {
   return `<span aria-hidden="true">${escapeHtml(object.name?.charAt(0) || "K")}</span>`;
 }
 
-function renderRecoveredObjectCard(object) {
+function renderRecoveredObjectCard(object, isRecovered = true) {
+  const dataAttribute = isRecovered ? `data-recovered-object="${escapeHtml(object.id)}"` : "";
+
   return `
-    <button class="archive-recovered-object-card ${escapeHtml(object.accentClass || "")}" type="button" data-recovered-object="${escapeHtml(object.id)}" aria-label="${escapeHtml(`Open ${object.title} recovered artifact details`)}">
+    <button class="archive-recovered-object-card ${escapeHtml(object.accentClass || "")}${isRecovered ? " is-recovered" : " is-locked"}" type="button" ${dataAttribute} ${isRecovered ? "" : "disabled"} aria-label="${escapeHtml(isRecovered ? `Open ${object.title} recovered artifact details` : `${object.title} not yet recovered`)}">
       <span class="archive-recovered-object-card__icon">
         ${renderRecoveredObjectIcon(object)}
       </span>
@@ -1322,9 +1792,45 @@ function renderRecoveredObjectDetail(object) {
   `;
 }
 
+function renderRecoveredItemsModal() {
+  if (!isRecoveredItemsModalOpen) {
+    return "";
+  }
+
+  const unlockedKeys = getUnlockedElementalKeys();
+
+  return `
+    <div class="archive-recovered-items-modal" role="presentation">
+      <article class="archive-recovered-items-dialog" role="dialog" aria-modal="true" aria-labelledby="recovered-items-title">
+        <button class="archive-recovered-object-modal__close" type="button" data-recovered-items-close aria-label="Close recovered items list">Close</button>
+        <div class="archive-recovered-items-dialog__header">
+          <p>Archive Inventory</p>
+          <h4 id="recovered-items-title">Recovered Items</h4>
+        </div>
+        <div class="archive-recovered-items-list">
+          ${elementalKeys.map((object) => {
+            const isRecovered = unlockedKeys.includes(object.id);
+
+            return `
+              <article class="archive-recovered-items-list__row ${escapeHtml(object.accentClass || "")}${isRecovered ? " is-recovered" : " is-locked"}">
+                <span class="archive-recovered-items-list__icon">${renderRecoveredObjectIcon(object)}</span>
+                <span>
+                  <strong>${escapeHtml(object.title)}</strong>
+                  <em>${escapeHtml(object.type || "Recovered Finding")} • ${escapeHtml(isRecovered ? "Recovered" : "Locked")}</em>
+                </span>
+              </article>
+            `;
+          }).join("")}
+        </div>
+      </article>
+    </div>
+  `;
+}
+
 // The recovered-object display presents each elemental key as an inspectable
 // archive artifact while the underlying key progress remains available to locks.
 function renderRecoveredObjects() {
+  const unlockedKeys = getUnlockedElementalKeys();
   const recoveredObjects = getRecoveredObjects();
   const selectedObject = getSelectedRecoveredObject(recoveredObjects);
 
@@ -1333,42 +1839,34 @@ function renderRecoveredObjects() {
   }
 
   return `
-    <section class="archive-recovered-objects" aria-label="Recovered objects">
-      <div class="archive-section-copy">
-        <span aria-hidden="true">✣</span>
-        <h3>Recovered Objects</h3>
-        <p>Items pulled from the spaces between memory and forgetting.</p>
+    <section class="archive-recovered-objects entry-desk-findings-section" aria-labelledby="entry-desk-findings-title">
+      <div class="archive-section-copy entry-desk-section-heading">
+        <h3 id="entry-desk-findings-title">Recovered Findings</h3>
+        <p>Things pulled from the spaces between memory and forgetting.</p>
       </div>
-      ${recoveredObjects.length ? `
-        <div class="archive-recovered-inventory">
-          <div class="archive-recovered-object-strip" aria-label="Recovered artifact inventory">
-            ${recoveredObjects.map((object) => renderRecoveredObjectCard(object)).join("")}
-          </div>
+      <div class="archive-recovered-inventory">
+        <div class="archive-recovered-object-strip" aria-label="Recovered findings inventory">
+          ${elementalKeys.map((object) => renderRecoveredObjectCard(object, unlockedKeys.includes(object.id))).join("")}
         </div>
-      ` : `<p class="archive-empty-state">No recovered objects yet.</p>`}
+      </div>
+      <button class="archive-view-recovered-items-btn" type="button" data-view-all-recovered-items>
+        <span>View all recovered items</span>
+        <img src="assets/icons/symbols/arrow-long-right.svg" alt="" aria-hidden="true" width="18" height="18" loading="lazy" decoding="async" />
+      </button>
+      ${recoveredObjects.length ? "" : `<p class="archive-empty-state">No findings recovered yet. The desk is still listening.</p>`}
       ${selectedObject ? renderRecoveredObjectDetail(selectedObject) : ""}
+      ${renderRecoveredItemsModal()}
       <div class="archive-recovered-objects__art" aria-hidden="true"></div>
     </section>
   `;
 }
 
 function renderArchiveCodePanel() {
-  const feedbackMarkup = archiveCodeFeedbackMode === "guest-artifact"
-    ? `
-      ${escapeHtml(archiveCodeFeedback)}
-      <span class="archive-code-panel__actions">
-        <a href="auth.html?returnTo=archive.html%23entry-desk">Log In / Sign Up</a>
-        <button type="button" data-archive-continue>Continue Exploring</button>
-      </span>
-    `
-    : escapeHtml(archiveCodeFeedback || "No whispers heard yet.");
-
   return `
-    <form class="archive-code-panel" data-archive-code-form>
-      <div class="archive-section-copy">
-        <span aria-hidden="true">☼</span>
-        <h3>Recovered Code</h3>
-        <p>Some locks answer only to words recovered elsewhere.</p>
+    <form class="archive-code-panel entry-desk-code-section" data-archive-code-form>
+      <div class="archive-section-copy entry-desk-section-heading">
+        <h3>ENTER AN ARCHIVE CODE</h3>
+        <p>Speak a phrase. Recall a name. Offer a truth. Some locks answer only to words recovered elsewhere.</p>
       </div>
       <div class="archive-code-entry">
         <label class="archive-code-panel__field">
@@ -1377,15 +1875,9 @@ function renderArchiveCodePanel() {
         </label>
         <button type="submit">Whisper the Code</button>
       </div>
-      <section class="archive-code-whispers" aria-label="Code whispers">
-        <div class="archive-code-whispers__copy">
-          <h4>Code Whispers</h4>
-          <p class="archive-code-panel__feedback" data-archive-code-feedback aria-live="polite">
-            ${feedbackMarkup}
-          </p>
-        </div>
-        <div class="archive-code-whispers__emblem" aria-hidden="true"></div>
-      </section>
+      <p class="archive-code-panel__feedback archive-code-toast archive-code-toast--${escapeHtml(archiveCodeFeedbackTone || "info")}" data-archive-code-feedback aria-live="polite" ${archiveCodeFeedback ? "" : "hidden"}>
+        ${escapeHtml(archiveCodeFeedback)}
+      </p>
     </form>
   `;
 }
@@ -1425,33 +1917,52 @@ function renderShelvesRoom(room) {
       description: "Pages whose ink shifts when the Archive is no longer watched."
     }
   ];
+  const featuredEntry = archiveShelfEntries[0];
 
   return `
-    <div class="archive-room-panel archive-room-panel--shelves">
-      <div class="archive-room-placeholder">
-        <p class="archive-entry__stamp">Shelf Viewer</p>
-        <h3>Recovered Writings</h3>
-        <p>Journals, manuscripts, letters, and unstable texts gather here as they are recovered.</p>
-      </div>
-      <div class="archive-shelf-entry-list" aria-label="Recovered shelf entries">
-        ${archiveShelfEntries.map((entry) => `
-          <article class="archive-shelf-entry-card archive-shelf-entry-card--featured">
-            <span class="archive-shelf-entry-card__mark" aria-hidden="true"></span>
-            <span>${escapeHtml(entry.label)}</span>
-            <h3>${escapeHtml(entry.title)}</h3>
-            <p>${escapeHtml(entry.author)}</p>
-            <button type="button" data-open-archive-journal="${escapeHtml(entry.id)}">Read Fragment</button>
-          </article>
-        `).join("")}
-      </div>
-      <div class="archive-room-rail archive-room-rail--shelf-categories" aria-label="Recovered writing categories">
-        ${shelfCategories.map((category) => `
-          <article class="archive-room-rail__slot archive-room-rail__slot--${escapeHtml(category.id)}">
-            <span>${escapeHtml(category.title)}</span>
-            <p>${escapeHtml(category.description)}</p>
-          </article>
-        `).join("")}
-      </div>
+    <div class="shelves-page-shell">
+      <section class="shelves-grid">
+        <section class="shelves-hero" aria-labelledby="shelves-title">
+          <div class="shelves-hero-content">
+            <a class="shelves-back-link" href="archive.html">Return to Noctis Archive</a>
+            <p class="archive-entry__stamp">Noctis Archive</p>
+            <h2 id="shelves-title">The Shelves</h2>
+            <p>The shelves hold what the Archive refused to forget.</p>
+          </div>
+        </section>
+
+        ${featuredEntry ? `
+          <section class="shelves-recovered-feature" aria-labelledby="shelves-feature-title">
+            <div>
+              <p class="archive-entry__stamp">${escapeHtml(featuredEntry.label)}</p>
+              <h3 id="shelves-feature-title">${escapeHtml(featuredEntry.title)}</h3>
+              <p>${escapeHtml(featuredEntry.author)}</p>
+            </div>
+            <button type="button" data-open-archive-journal="${escapeHtml(featuredEntry.id)}">Read Fragment</button>
+          </section>
+        ` : ""}
+
+        <section class="shelves-category-grid" aria-label="Recovered writing categories">
+          ${shelfCategories.map((category) => `
+            <article class="shelves-category-card shelves-category-card--${escapeHtml(category.id)}">
+              <span>${escapeHtml(category.title)}</span>
+              <p>${escapeHtml(category.description)}</p>
+            </article>
+          `).join("")}
+        </section>
+
+        <section class="shelves-cipher-board" aria-labelledby="shelves-cipher-title">
+          <p class="archive-entry__stamp">Cipher Board</p>
+          <h3 id="shelves-cipher-title">Codes Waiting for a Key</h3>
+          <p>Norse markings, cryptic substitutions, recovered symbols, and incomplete translations will gather here as the Archive learns how to read them.</p>
+        </section>
+
+        <section class="shelves-map-fragments" aria-labelledby="shelves-map-title">
+          <p class="archive-entry__stamp">Map Fragments</p>
+          <h3 id="shelves-map-title">Pieces of the Route</h3>
+          <p>Torn pages, letter pieces, navigation clues, and half-remembered diagrams wait for the path they belong to.</p>
+        </section>
+      </section>
     </div>
   `;
 }
@@ -1703,6 +2214,28 @@ function normalizeArchiveCode(value) {
     .trim();
 }
 
+function renderCurrentArchiveSurface() {
+  if (isNoctisRoomPage) {
+    renderNoctisRoomByQuery();
+    return;
+  }
+
+  renderArchiveRooms();
+}
+
+function showArchiveCodeFeedback(message, tone = "info") {
+  window.clearTimeout(archiveCodeFeedbackTimeout);
+  archiveCodeFeedback = message;
+  archiveCodeFeedbackTone = tone;
+  renderCurrentArchiveSurface();
+
+  archiveCodeFeedbackTimeout = window.setTimeout(() => {
+    archiveCodeFeedback = "";
+    archiveCodeFeedbackTone = "";
+    renderCurrentArchiveSurface();
+  }, 2600);
+}
+
 async function handleArchiveCodeSubmit(form) {
   const formData = new FormData(form);
   const submittedCode = normalizeArchiveCode(formData.get("archive-code"));
@@ -1711,66 +2244,40 @@ async function handleArchiveCodeSubmit(form) {
   );
 
   if (!matchedKeyId) {
-    archiveCodeFeedbackMode = "";
-    archiveCodeFeedback = archiveCodeFailureMessages[Math.floor(Math.random() * archiveCodeFailureMessages.length)];
-    renderArchiveRooms();
+    showArchiveCodeFeedback("The Archive denies your whisper.", "error");
     return;
   }
 
   if (!artifactProgressState.isLoaded) {
-    archiveCodeFeedbackMode = "";
-    archiveCodeFeedback = "The archive is still checking what has been recovered. Try again in a moment.";
-    renderArchiveRooms();
+    showArchiveCodeFeedback("The Archive is still listening. Try again in a moment.", "error");
     return;
   }
 
   if (isElementalKeyUnlocked(matchedKeyId)) {
-    archiveCodeFeedbackMode = "";
-    archiveCodeFeedback = artifactProgressState.user
-      ? "Artifact already saved to your Archive."
-      : archiveKeyFeedback[matchedKeyId]?.alreadyUnlocked || "The archive has already answered.";
-    renderArchiveRooms();
+    showArchiveCodeFeedback("The Archive heard your whisper.", "success");
     return;
   }
 
   const saveResult = await saveUnlockedElementalKey(matchedKeyId);
 
   if (saveResult.status === "error") {
-    archiveCodeFeedbackMode = "";
-    archiveCodeFeedback = "The artifact surfaced, but could not be saved. Please try again.";
-    renderArchiveRooms();
+    showArchiveCodeFeedback("The Archive could not hold that whisper. Try again.", "error");
     return;
   }
 
   if (saveResult.status === "duplicate") {
-    archiveCodeFeedbackMode = "";
-    archiveCodeFeedback = artifactProgressState.user
-      ? "Artifact already saved to your Archive."
-      : archiveKeyFeedback[matchedKeyId]?.alreadyUnlocked || "The archive has already answered.";
-    renderArchiveRooms();
+    showArchiveCodeFeedback("The Archive heard your whisper.", "success");
     return;
   }
-
-  archiveCodeFeedbackMode = saveResult.status === "session" ? "guest-artifact" : "";
-  archiveCodeFeedback = saveResult.status === "session"
-    ? `${archiveKeyFeedback[matchedKeyId]?.unlocked || "Something has surfaced."} Artifact discovered. Log in to bind this relic to your Archive and continue deeper into the Veil.`
-    : `${archiveKeyFeedback[matchedKeyId]?.unlocked || "Something has surfaced."} Artifact saved to your Archive.`;
 
   if (
     saveResult.previousKeys.length < elementalKeys.length &&
     areAllElementalKeysRecovered()
   ) {
     await saveUnlockedArtifactGatedRooms();
-    if (saveResult.status === "session") {
-      archiveCodeFeedbackMode = "guest-artifact";
-      archiveCodeFeedback = "The fourth relic answers for now. Artifact discovered. Log in to bind your relics to your Archive and continue deeper into the Veil.";
-    } else {
-      archiveCodeFeedbackMode = "";
-      archiveCodeFeedback = "The fourth relic answers. Somewhere in the Archive, the Restricted Wing unlocks. Artifact saved to your Archive.";
-    }
   }
 
-  renderArchiveRooms();
+  showArchiveCodeFeedback("The Archive heard your whisper.", "success");
 }
 
 function openArchiveShelfEntry(entryId, trigger) {
@@ -1929,6 +2436,7 @@ function returnToRoomHub({ updateHash = true, scroll = true } = {}) {
   archiveRoomView.innerHTML = "";
   archiveRoomHub.hidden = false;
   enteredArchiveRoomId = "";
+  document.body.classList.remove("entry-desk-page");
   restrictedWingRitualOpen = false;
   restrictedWingGuestPromptOpen = false;
   renderArchiveRooms();
@@ -2028,18 +2536,10 @@ initializeArchive();
 
 // Delegated archive actions cover room entry, room back buttons, thumbnail selection, and chamber nav.
 document.addEventListener("click", (event) => {
-  const continueButton = event.target.closest("[data-archive-continue]");
   const roomButton = event.target.closest("[data-room-id], [data-room-enter]");
   const backButton = event.target.closest("[data-room-back]");
   const restrictedWingRitualClose = event.target.closest("[data-restricted-wing-ritual-close]");
   const restrictedWingGuestClose = event.target.closest("[data-restricted-wing-guest-close]");
-
-  if (continueButton) {
-    archiveCodeFeedback = "";
-    archiveCodeFeedbackMode = "";
-    renderArchiveRooms();
-    return;
-  }
 
   if (backButton) {
     returnToRoomHub();
@@ -2064,9 +2564,18 @@ document.addEventListener("click", (event) => {
   const journalButton = event.target.closest("[data-open-archive-journal]");
   const roomSelectionButton = event.target.closest("[data-select-room]");
   const chamberNavButton = event.target.closest("[data-chamber-nav]");
+  const viewRecoveredItemsButton = event.target.closest("[data-view-all-recovered-items]");
+  const viewArchiveNoticesButton = event.target.closest("[data-view-all-archive-notices]");
+  const archiveNoticesClose = event.target.closest("[data-archive-notices-close]");
+  const archiveNoticesPageButton = event.target.closest("[data-archive-notices-page]");
+  const archiveNoticesOverlay = event.target.classList?.contains("entry-desk-notices-modal");
+  const whisperRow = event.target.closest("[data-whisper-id]");
+  const whisperClose = event.target.closest("[data-close-whisper-modal]");
   const recoveredObjectButton = event.target.closest("[data-recovered-object]");
   const recoveredObjectCloseButton = event.target.closest(".archive-recovered-object-modal__close");
   const recoveredObjectOverlay = event.target.classList?.contains("archive-recovered-object-modal");
+  const recoveredItemsClose = event.target.closest("[data-recovered-items-close]");
+  const recoveredItemsOverlay = event.target.classList?.contains("archive-recovered-items-modal");
   const visualRecordButton = event.target.closest("[data-visual-record]");
   const visualRecordClose = event.target.closest("[data-visual-record-close]");
   const visualRecordNav = event.target.closest("[data-visual-record-nav]");
@@ -2079,13 +2588,61 @@ document.addEventListener("click", (event) => {
 
   if (recoveredObjectCloseButton || recoveredObjectOverlay) {
     openRecoveredObjectId = "";
-    renderArchiveRooms();
+    isRecoveredItemsModalOpen = false;
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (recoveredItemsClose || recoveredItemsOverlay) {
+    isRecoveredItemsModalOpen = false;
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (archiveNoticesClose || archiveNoticesOverlay) {
+    isArchiveNoticesModalOpen = false;
+    archiveNoticesModalPage = 0;
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (archiveNoticesPageButton) {
+    const direction = archiveNoticesPageButton.dataset.archiveNoticesPage;
+    archiveNoticesModalPage += direction === "next" ? 1 : -1;
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (viewArchiveNoticesButton) {
+    isArchiveNoticesModalOpen = true;
+    archiveNoticesModalPage = 0;
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (whisperClose) {
+    openEntryDeskWhisperId = "";
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (whisperRow) {
+    openEntryDeskWhisperId = whisperRow.dataset.whisperId || "";
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (viewRecoveredItemsButton) {
+    isRecoveredItemsModalOpen = true;
+    openRecoveredObjectId = "";
+    renderCurrentArchiveSurface();
     return;
   }
 
   if (recoveredObjectButton) {
     openRecoveredObjectId = recoveredObjectButton.dataset.recoveredObject;
-    renderArchiveRooms();
+    isRecoveredItemsModalOpen = false;
+    renderCurrentArchiveSurface();
     return;
   }
 
@@ -2122,6 +2679,30 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
+  const whisperRow = event.target.closest?.("[data-whisper-id]");
+
+  if (whisperRow && (event.key === "Enter" || event.key === " ")) {
+    event.preventDefault();
+    openEntryDeskWhisperId = whisperRow.dataset.whisperId || "";
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (event.key === "Escape" && openEntryDeskWhisperId) {
+    event.preventDefault();
+    openEntryDeskWhisperId = "";
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (event.key === "Escape" && isArchiveNoticesModalOpen) {
+    event.preventDefault();
+    isArchiveNoticesModalOpen = false;
+    archiveNoticesModalPage = 0;
+    renderCurrentArchiveSurface();
+    return;
+  }
+
   if (event.key === "Escape" && restrictedWingGuestPromptOpen) {
     event.preventDefault();
     closeRestrictedWingGuestPrompt();

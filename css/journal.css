@@ -1742,12 +1742,12 @@ body.blood-moon-mode .journal-reflection-card {
   min-width: 0;
   justify-self: end;
   align-self: stretch;
-  align-content: end;
+  align-content: start;
   width: 100%;
 }
 
 .journal-reflection-card__actions {
-  margin-top: auto;
+  margin-top: 0.35rem;
   display: grid;
   gap: 0.6rem;
   width: 100%;
@@ -1892,9 +1892,9 @@ body.blood-moon-mode .journal-reflection-card {
 
 .journal-guided__helper {
   display: block;
-  margin-top: 0.25rem;
+  margin-top: 0.45rem;
   color: rgba(66, 38, 17, 0.7);
-  font: 700 0.72rem/1.35 var(--journal-ui-font);
+  font: 700 clamp(0.82rem, 0.95vw, 0.9rem)/1.38 var(--journal-ui-font);
 }
 
 .journal-reflection__question-line {

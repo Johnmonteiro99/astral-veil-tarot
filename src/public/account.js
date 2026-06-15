@@ -88,6 +88,21 @@ const journalPagination = document.querySelector('[data-journal-pagination]');
 const journalPaginationSummary = document.querySelector('[data-journal-pagination-summary]');
 const journalPaginationControls = document.querySelector('[data-journal-pagination-controls]');
 const journalFilterControls = document.querySelector('[data-journal-filter-controls]');
+const contactForm = document.querySelector('[data-contact-form]');
+const contactTopicSelect = document.querySelector('[data-contact-topic]');
+const contactEmailInput = document.querySelector('[data-contact-email]');
+const contactSubjectInput = document.querySelector('[data-contact-subject]');
+const contactMessageInput = document.querySelector('[data-contact-message]');
+const contactSubmitButton = document.querySelector('[data-contact-submit]');
+const contactStatus = document.querySelector('[data-contact-status]');
+const accountDeletionOpenButton = document.querySelector('[data-account-deletion-open]');
+const accountDeletionModal = document.querySelector('[data-account-deletion-modal]');
+const accountDeletionForm = document.querySelector('[data-account-deletion-form]');
+const accountDeletionCancelButtons = Array.from(document.querySelectorAll('[data-account-deletion-cancel]'));
+const accountDeletionConfirmationInput = document.querySelector('[data-account-deletion-confirmation]');
+const accountDeletionReasonInput = document.querySelector('[data-account-deletion-reason]');
+const accountDeletionSubmitButton = document.querySelector('[data-account-deletion-submit]');
+const accountDeletionStatus = document.querySelector('[data-account-deletion-status]');
 
 let savedReadingsLoaded = false;
 let savedReadingsCache = [];
@@ -122,6 +137,7 @@ let activeProfileUnlocks = [];
 let avatarStatusClearTimer = null;
 let profileStatusClearTimer = null;
 let journalStatusClearTimer = null;
+let hasContactSubjectBeenEdited = false;
 
 const avatarBucketName = 'avatars';
 const defaultProfileBackgroundKey = 'default';
@@ -142,6 +158,10 @@ const discoveryActivitySelectColumns = [
   'discovered_at',
 ].join(', ');
 const savedReadingsPageSize = 10;
+const contactEmailMaxLength = 254;
+const contactSubjectMaxLength = 160;
+const contactMessageMaxLength = 5000;
+const accountDeletionReasonMaxLength = 1000;
 const maxAvatarInputFileSize = 8 * 1024 * 1024;
 const targetAvatarUploadSize = 2 * 1024 * 1024;
 const maxAvatarImageSide = 800;
@@ -991,6 +1011,71 @@ function populateProfileForm(profile, user) {
   setProfileStatus('');
 }
 
+function setContactStatus(message = '', type = '') {
+  if (!contactStatus) {
+    return;
+  }
+
+  contactStatus.textContent = message;
+  contactStatus.classList.toggle('is-success', type === 'success');
+  contactStatus.classList.toggle('is-error', type === 'error');
+}
+
+function getContactSubjectForTopic(topic) {
+  return topic ? `[Astral Veil] ${topic}` : '';
+}
+
+function populateContactEmail(user) {
+  if (!contactEmailInput || contactEmailInput.value.trim()) {
+    return;
+  }
+
+  contactEmailInput.value = user?.email || '';
+}
+
+function applyContactTopicSubject() {
+  if (!contactTopicSelect || !contactSubjectInput) {
+    return;
+  }
+
+  if (hasContactSubjectBeenEdited && contactSubjectInput.value.trim()) {
+    return;
+  }
+
+  contactSubjectInput.value = getContactSubjectForTopic(contactTopicSelect.value);
+}
+
+function setAccountDeletionStatus(message = '', type = '') {
+  if (!accountDeletionStatus) {
+    return;
+  }
+
+  accountDeletionStatus.textContent = message;
+  accountDeletionStatus.classList.toggle('is-success', type === 'success');
+  accountDeletionStatus.classList.toggle('is-error', type === 'error');
+}
+
+function setAccountDeletionModalOpen(isOpen) {
+  if (!accountDeletionModal) {
+    return;
+  }
+
+  accountDeletionModal.hidden = !isOpen;
+  document.body.classList.toggle('account-deletion-modal-open', isOpen);
+
+  if (!isOpen) {
+    accountDeletionForm?.reset();
+    setAccountDeletionStatus('');
+    return;
+  }
+
+  accountDeletionConfirmationInput?.focus({ preventScroll: true });
+}
+
+function redirectToSignedOutNotice(notice = 'account_deletion_requested') {
+  window.location.replace(`auth.html?notice=${encodeURIComponent(notice)}`);
+}
+
 async function fetchCurrentProfile(supabase, userId) {
   if (!supabase || !userId) {
     return { profile: null, error: null };
@@ -1019,6 +1104,7 @@ function updateAccountProfileDisplay(profile, user) {
   updateNavbarProfileAvatars(profile, user);
   ensureProfileTitlePreferenceExists(profile);
   populateProfileForm(profile, user);
+  populateContactEmail(user);
   updatePreferenceControls(profile);
 }
 
@@ -3365,6 +3451,10 @@ function showAccountSection(sectionName) {
   if (sectionName === 'journal-entries') {
     loadJournalEntries();
   }
+
+  if (sectionName === 'contact-us') {
+    populateContactEmail(activeUser);
+  }
 }
 
 function showHashAccountSection() {
@@ -3398,6 +3488,13 @@ async function loadAccount() {
 
   activeUser = user;
   activeProfile = profile || {};
+  const accountStatus = getProfileValue(activeProfile, ['account_status']) || 'active';
+
+  if (accountStatus !== 'active') {
+    await signOut();
+    redirectToSignedOutNotice('account_pending_deletion');
+    return;
+  }
 
   const { isAdmin } = await isCurrentUserAdmin();
 
@@ -3443,6 +3540,138 @@ async function handleLogout(event) {
 
 logoutButtons.forEach((button) => {
   button.addEventListener('click', handleLogout);
+});
+
+contactTopicSelect?.addEventListener('change', () => {
+  applyContactTopicSubject();
+});
+
+contactSubjectInput?.addEventListener('input', () => {
+  hasContactSubjectBeenEdited = true;
+});
+
+contactForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setContactStatus('Contact messages are not available in this environment.', 'error');
+    return;
+  }
+
+  const formData = new FormData(contactForm);
+  const topic = String(formData.get('topic') || '').trim();
+  const userEmail = String(formData.get('user_email') || '').trim();
+  const subject = String(formData.get('subject') || '').trim();
+  const message = String(formData.get('message') || '').trim();
+
+  if (!topic || !userEmail || !subject || !message) {
+    setContactStatus('Choose a topic and fill in your email, subject, and message.', 'error');
+    return;
+  }
+
+  if (userEmail.length > contactEmailMaxLength) {
+    setContactStatus('Use an email address under 254 characters.', 'error');
+    return;
+  }
+
+  if (subject.length > contactSubjectMaxLength) {
+    setContactStatus('Use a subject under 160 characters.', 'error');
+    return;
+  }
+
+  if (message.length > contactMessageMaxLength) {
+    setContactStatus('Please keep your message under 5,000 characters.', 'error');
+    return;
+  }
+
+  if (contactSubmitButton) {
+    contactSubmitButton.disabled = true;
+  }
+  setContactStatus('Sending your message...');
+
+  const { error } = await supabase
+    .from('contact_messages')
+    .insert({
+      user_id: activeUser?.id || null,
+      user_email: userEmail,
+      topic,
+      subject,
+      message,
+    });
+
+  if (contactSubmitButton) {
+    contactSubmitButton.disabled = false;
+  }
+
+  if (error) {
+    console.error('Contact message submit failed:', error);
+    setContactStatus('We could not send your message. Please try again in a moment.', 'error');
+    return;
+  }
+
+  if (contactMessageInput) {
+    contactMessageInput.value = '';
+  }
+
+  setContactStatus('Your message has been sent. We’ll get back to you soon.', 'success');
+});
+
+accountDeletionOpenButton?.addEventListener('click', () => {
+  setAccountDeletionModalOpen(true);
+});
+
+accountDeletionCancelButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    setAccountDeletionModalOpen(false);
+  });
+});
+
+accountDeletionForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const confirmation = String(accountDeletionConfirmationInput?.value || '').trim();
+  const reason = String(accountDeletionReasonInput?.value || '').trim();
+  const supabase = getSupabaseClient();
+
+  if (confirmation !== 'DELETE') {
+    setAccountDeletionStatus('Type DELETE to continue.', 'error');
+    return;
+  }
+
+  if (reason.length > accountDeletionReasonMaxLength) {
+    setAccountDeletionStatus('Please keep your reason under 1,000 characters.', 'error');
+    return;
+  }
+
+  if (!activeUser || !supabase) {
+    setAccountDeletionStatus('Account deletion requests are not available right now.', 'error');
+    return;
+  }
+
+  if (accountDeletionSubmitButton) {
+    accountDeletionSubmitButton.disabled = true;
+  }
+  setAccountDeletionStatus('Sending deletion request...');
+
+  const { error } = await supabase.rpc('request_account_deletion', {
+    p_user_email: activeUser.email || '',
+    p_reason: reason || null,
+  });
+
+  if (error) {
+    if (accountDeletionSubmitButton) {
+      accountDeletionSubmitButton.disabled = false;
+    }
+    console.error('Account deletion request failed:', error);
+    setAccountDeletionStatus('We could not send your deletion request. Please try again in a moment.', 'error');
+    return;
+  }
+
+  setAccountDeletionStatus('Deletion request sent. Signing you out...', 'success');
+  await signOut();
+  redirectToSignedOutNotice('account_deletion_requested');
 });
 
 sectionButtons.forEach((button) => {

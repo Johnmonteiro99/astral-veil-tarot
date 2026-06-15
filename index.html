@@ -294,34 +294,69 @@
             </div>
           </div>
 
-          <div class="spread-selection-panel">
-            <div class="spread-selection-panel__heading">
-              <p class="reading-section__eyebrow">Spread Selection</p>
-              <h2>Choose Your Spread</h2>
-            </div>
-
+          <div class="spread-selection-panel" data-setup-panel>
             <div class="reader-introduction" data-reader-introduction></div>
 
-            <div class="reading-controls" role="group" aria-label="Choose a tarot spread">
-              <button class="spread-option" type="button" data-spread="3">
-                <span>3</span>
-                <strong>3 Cards</strong>
-                <small>A focused glimpse</small>
-              </button>
-              <button class="spread-option" type="button" data-spread="5">
-                <span>5</span>
-                <strong>5 Cards</strong>
-                <small>A deeper path</small>
-              </button>
-              <button class="spread-option" type="button" data-spread="7">
-                <span>7</span>
-                <strong>7 Cards</strong>
-                <small>A full ritual</small>
-              </button>
-            </div>
+            <section class="deck-selection-panel" aria-labelledby="deck-selection-title" data-deck-selection-panel>
+              <div class="spread-selection-panel__heading">
+                <p class="reading-section__eyebrow">Deck Selection</p>
+                <h2 id="deck-selection-title">Choose Your Deck</h2>
+              </div>
+              <div class="deck-selection-carousel" role="list" aria-label="Choose a tarot deck" data-deck-options></div>
+            </section>
 
-            <div id="reading-status" class="reading-results reading-results--prompt" data-reading-status>
-              Choose a spread to shuffle your cards.
+            <section class="spread-choice-panel" aria-labelledby="spread-selection-title">
+              <div class="spread-selection-panel__heading">
+                <p class="reading-section__eyebrow">Spread Selection</p>
+                <h2 id="spread-selection-title">Choose Your Spread</h2>
+              </div>
+              <p class="spread-choice-panel__subtitle">Choose a single card for today, or go deeper with 3, 5, or 7 cards.</p>
+
+              <div class="spread-segmented-selector">
+                <div class="spread-group">
+                  <div class="spread-group__heading">
+                    <h3>Daily Reading</h3>
+                    <p>A single message for today.</p>
+                  </div>
+                  <div class="reading-controls reading-controls--daily" role="group" aria-label="Choose a daily tarot spread">
+                    <button class="spread-option spread-segment" type="button" data-spread="1">
+                      <span>1</span>
+                      <strong>Daily Glimpse</strong>
+                      <small>1 Card</small>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="spread-group">
+                  <div class="spread-group__heading">
+                    <h3>Deeper Readings</h3>
+                  </div>
+                  <div class="reading-controls" role="group" aria-label="Choose a deeper tarot spread">
+                    <button class="spread-option spread-segment" type="button" data-spread="3">
+                      <span>3</span>
+                      <strong>Focused</strong>
+                      <small>A focused glimpse</small>
+                    </button>
+                    <button class="spread-option spread-segment" type="button" data-spread="5">
+                      <span>5</span>
+                      <strong>Deeper</strong>
+                      <small>A deeper path</small>
+                    </button>
+                    <button class="spread-option spread-segment" type="button" data-spread="7">
+                      <span>7</span>
+                      <strong>Ritual</strong>
+                      <small>A full ritual</small>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="reading-status-shell">
+              <p class="reading-status-shell__note" data-deck-status aria-live="polite"></p>
+              <div id="reading-status" class="reading-results reading-results--prompt" data-reading-status>
+                Choose a deck and spread to shuffle your cards.
+              </div>
             </div>
           </div>
         </section>
@@ -396,6 +431,7 @@
     <script src="js/events.js"></script>
     <script src="js/app.js"></script>
     <script src="js/reading.js"></script>
+    <script type="module" src="src/public/reader-lines.js"></script>
     <script type="module" src="src/public/reading-save.js"></script>
     <script type="module" src="src/public/public-auth-nav.js"></script>
   </body>

@@ -752,6 +752,18 @@
           0 0 34px rgba(166, 15, 29, 0.32);
       }
 
+      .section-card--compact-filter {
+        min-height: 0;
+        align-content: start;
+        gap: 0.65rem;
+        padding: 0.95rem 1rem;
+      }
+
+      .section-card--compact-filter .admin-form,
+      .section-card--compact-filter .admin-form__grid {
+        gap: 0.7rem;
+      }
+
       .section-card__top {
         display: grid;
         gap: 1rem;
@@ -1091,10 +1103,84 @@
         min-width: 6.4rem;
       }
 
+      .character-lines-table {
+        min-width: 94rem;
+        table-layout: fixed;
+      }
+
+      .character-lines-table col:nth-child(1) {
+        width: 12%;
+      }
+
+      .character-lines-table col:nth-child(2),
+      .character-lines-table col:nth-child(5),
+      .character-lines-table col:nth-child(6),
+      .character-lines-table col:nth-child(7) {
+        width: 9%;
+      }
+
+      .character-lines-table col:nth-child(3),
+      .character-lines-table col:nth-child(4),
+      .character-lines-table col:nth-child(9) {
+        width: 8%;
+      }
+
+      .character-lines-table col:nth-child(8) {
+        width: 24%;
+      }
+
+      .character-lines-table col:nth-child(10) {
+        width: 13%;
+      }
+
+      .character-lines-table td {
+        vertical-align: top;
+      }
+
+      .character-lines-table__line {
+        color: var(--text);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.4;
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-break: normal;
+        hyphens: auto;
+      }
+
+      .character-lines-table__meta {
+        color: var(--quiet);
+        font-size: 0.88rem;
+        overflow-wrap: anywhere;
+      }
+
+      .character-lines-table .admin-action-group {
+        min-width: 0;
+        justify-content: flex-start;
+      }
+
+      .character-lines-table .admin-action-group .admin-row-action {
+        flex: 1 1 6.4rem;
+        min-width: 6.4rem;
+      }
+
       .admin-row-action {
         min-height: 2.25rem;
         padding: 0 0.8rem;
         white-space: nowrap;
+      }
+
+      .admin-row-select {
+        width: 100%;
+        min-width: 8rem;
+        min-height: 2.25rem;
+        border: 1px solid rgba(228, 189, 118, 0.22);
+        border-radius: 999px;
+        background: rgba(7, 8, 20, 0.72);
+        color: var(--text);
+        font: 700 0.72rem/1.2 var(--font-ui);
+        padding: 0.35rem 0.7rem;
       }
 
       .admin-action-group {
@@ -1689,18 +1775,21 @@
           text-transform: uppercase;
         }
 
-        .journal-prompts-table tr {
+        .journal-prompts-table tr,
+        .character-lines-table tr {
           padding: 1rem;
           background:
             linear-gradient(180deg, rgba(42, 8, 11, 0.38), rgba(6, 1, 2, 0.72)),
             rgba(5, 1, 2, 0.58);
         }
 
-        .journal-prompts-table td {
+        .journal-prompts-table td,
+        .character-lines-table td {
           grid-template-columns: minmax(5.8rem, 0.32fr) minmax(0, 1fr);
         }
 
-        .journal-prompts-table__prompt {
+        .journal-prompts-table__prompt,
+        .character-lines-table__line {
           display: block;
           padding-bottom: 0.65rem;
           border-bottom: 1px solid rgba(179, 28, 35, 0.18);
@@ -1708,15 +1797,18 @@
           line-height: 1.45;
         }
 
-        .journal-prompts-table__prompt::before {
+        .journal-prompts-table__prompt::before,
+        .character-lines-table__line::before {
           margin-bottom: 0.35rem;
         }
 
-        .journal-prompts-table .admin-action-group {
+        .journal-prompts-table .admin-action-group,
+        .character-lines-table .admin-action-group {
           justify-content: stretch;
         }
 
-        .journal-prompts-table .admin-action-group .admin-row-action {
+        .journal-prompts-table .admin-action-group .admin-row-action,
+        .character-lines-table .admin-action-group .admin-row-action {
           flex: 1 1 8rem;
           min-width: min(8rem, 100%);
         }
@@ -1787,6 +1879,12 @@
           </a>
           <a href="#journal-prompts" data-admin-view-link="journal-prompts">
             <span>Journal Prompts</span>
+          </a>
+          <a href="#character-lines" data-admin-view-link="character-lines">
+            <span>Character Lines</span>
+          </a>
+          <a href="#contact-messages" data-admin-view-link="contact-messages">
+            <span>Contact Messages</span>
           </a>
           <a href="#archive-rooms" data-admin-view-link="archive-rooms">
             <span>Archive Rooms</span>
@@ -1916,6 +2014,44 @@
                   <div class="section-card__meta">
                     <span class="card-status">Read-only preview</span>
                     <span class="count-pill" data-count-table="archive_rooms">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="character-lines-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="character-lines"
+                  aria-label="Open Character Lines admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/comment.svg')" aria-hidden="true"></span>
+                    <h3>Character Lines</h3>
+                    <p>Manage reader dialogue lines for readings, decks, rooms, artifacts, and future modes.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">CRUD enabled</span>
+                    <span class="count-pill" data-count-table="reader_lines">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="contact-messages-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="contact-messages"
+                  aria-label="Open Contact Messages admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/contact-us.svg')" aria-hidden="true"></span>
+                    <h3>Contact Messages</h3>
+                    <p>Review user support inquiries, update status, and keep internal notes.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">Review enabled</span>
+                    <span class="count-pill" data-count-table="contact_messages">Count: Checking...</span>
                   </div>
                 </article>
 
@@ -2341,6 +2477,311 @@
                     </select>
                   </label>
                   <div class="admin-pagination__controls" data-journal-prompts-pagination-controls aria-label="Journal prompt pages"></div>
+                </footer>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="character-lines" aria-labelledby="character-lines-title" data-admin-view="character-lines" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Reader dialogue management</p>
+                  <h2 id="character-lines-title">Character Lines</h2>
+                  <p>Manage reader and character dialogue lines for reading intros, deck intros, rooms, artifacts, fragments, and future modes.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-character-line-new>New Line</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-character-line-form-panel aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Line editor</p>
+                    <h3 data-character-line-form-title>New Line</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-character-line-form-cancel hidden>Cancel Edit</button>
+                </div>
+                <p class="admin-state" data-character-line-form-state hidden></p>
+                <form class="admin-form" data-character-line-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="character-line-reader-id">Reader ID *</label>
+                      <input id="character-line-reader-id" name="reader_id" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-reader-name">Reader Name *</label>
+                      <input id="character-line-reader-name" name="reader_name" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-mode">Mode *</label>
+                      <select id="character-line-mode" name="mode" required>
+                        <option value="sun">sun</option>
+                        <option value="moon">moon</option>
+                        <option value="bloodMoon">bloodMoon</option>
+                        <option value="blueMoon">blueMoon</option>
+                        <option value="all" selected>all</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-context">Context *</label>
+                      <select id="character-line-context" name="context" required>
+                        <option value="reading_intro" selected>reading_intro</option>
+                        <option value="post_reading">post_reading</option>
+                        <option value="deck_intro">deck_intro</option>
+                        <option value="room_encounter">room_encounter</option>
+                        <option value="room_unlock">room_unlock</option>
+                        <option value="artifact_hint">artifact_hint</option>
+                        <option value="memory_fragment">memory_fragment</option>
+                        <option value="restricted_wing">restricted_wing</option>
+                        <option value="journal_prompt">journal_prompt</option>
+                        <option value="custom">custom</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-tone">Tone</label>
+                      <input id="character-line-tone" name="tone" type="text" autocomplete="off" placeholder="gentle, eerie, playful, etc." />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-deck-id">Deck ID</label>
+                      <input id="character-line-deck-id" name="deck_id" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-room-id">Room ID</label>
+                      <input id="character-line-room-id" name="room_id" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-sort-order">Sort Order</label>
+                      <input id="character-line-sort-order" name="sort_order" type="number" step="1" inputmode="numeric" placeholder="Auto" aria-describedby="character-line-sort-help" />
+                      <p class="admin-form__hint" id="character-line-sort-help">Leave blank to place this line at the end of its group.</p>
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="is_active" type="checkbox" checked />
+                      <span>Active</span>
+                    </label>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="character-line-text">Line Text *</label>
+                      <textarea id="character-line-text" name="line_text" rows="6" required></textarea>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-character-line-form-submit>Save Line</button>
+                    <button type="button" data-character-line-form-cancel-secondary hidden>Cancel Edit</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="section-card">
+                <div class="admin-form">
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="character-line-filter-reader">Filter by reader</label>
+                      <input id="character-line-filter-reader" data-character-line-filter="reader" type="text" autocomplete="off" placeholder="Reader ID or name" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-filter-mode">Filter by mode</label>
+                      <select id="character-line-filter-mode" data-character-line-filter="mode">
+                        <option value="__all">All Modes</option>
+                        <option value="sun">sun</option>
+                        <option value="moon">moon</option>
+                        <option value="bloodMoon">bloodMoon</option>
+                        <option value="blueMoon">blueMoon</option>
+                        <option value="all">all</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-filter-context">Filter by context</label>
+                      <select id="character-line-filter-context" data-character-line-filter="context">
+                        <option value="__all">All Contexts</option>
+                        <option value="reading_intro">reading_intro</option>
+                        <option value="post_reading">post_reading</option>
+                        <option value="deck_intro">deck_intro</option>
+                        <option value="room_encounter">room_encounter</option>
+                        <option value="room_unlock">room_unlock</option>
+                        <option value="artifact_hint">artifact_hint</option>
+                        <option value="memory_fragment">memory_fragment</option>
+                        <option value="restricted_wing">restricted_wing</option>
+                        <option value="journal_prompt">journal_prompt</option>
+                        <option value="custom">custom</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-filter-active">Filter by active status</label>
+                      <select id="character-line-filter-active" data-character-line-filter="active">
+                        <option value="__all">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Character Lines table">
+                <p class="admin-state" data-character-lines-state>Loading character lines...</p>
+                <div class="admin-table-scroll" data-character-lines-table-wrap hidden>
+                  <table class="admin-table character-lines-table">
+                    <colgroup>
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th scope="col">Reader</th>
+                        <th scope="col">Reader ID</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Context</th>
+                        <th scope="col">Tone</th>
+                        <th scope="col">Deck</th>
+                        <th scope="col">Room</th>
+                        <th scope="col">Line Preview</th>
+                        <th scope="col">Status / Order</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-character-lines-table-body></tbody>
+                  </table>
+                </div>
+                <footer class="admin-pagination" data-character-lines-pagination hidden>
+                  <span class="admin-pagination__summary" data-character-lines-pagination-summary>Showing 0-0 of 0 lines</span>
+                  <label class="admin-pagination__size" for="character-lines-page-size">
+                    Per page
+                    <select id="character-lines-page-size" data-character-lines-page-size>
+                      <option value="10" selected>10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                    </select>
+                  </label>
+                  <div class="admin-pagination__controls" data-character-lines-pagination-controls aria-label="Character line pages"></div>
+                </footer>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="contact-messages" aria-labelledby="contact-messages-title" data-admin-view="contact-messages" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Support inbox</p>
+                  <h2 id="contact-messages-title">Contact Messages</h2>
+                  <p>Review account support inquiries submitted from the Account page and track their status.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-contact-message-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Message detail</p>
+                    <h3 data-contact-message-detail-title>Selected Message</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-contact-message-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-contact-message-detail-meta></div>
+                <div class="admin-detail__field-grid" data-contact-message-detail-fields></div>
+                <div class="admin-detail__body" data-contact-message-detail-body></div>
+                <form class="admin-form" data-contact-message-notes-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="contact-message-detail-status">Status</label>
+                      <select id="contact-message-detail-status" name="status" data-contact-message-detail-status>
+                        <option value="new">new</option>
+                        <option value="in_review">in_review</option>
+                        <option value="resolved">resolved</option>
+                        <option value="archived">archived</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="contact-message-admin-notes">Admin Notes</label>
+                      <textarea id="contact-message-admin-notes" name="admin_notes" rows="5" data-contact-message-admin-notes></textarea>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-contact-message-notes-submit>Save Status &amp; Notes</button>
+                  </div>
+                </form>
+                <p class="admin-state" data-contact-message-detail-state hidden></p>
+              </section>
+
+              <section class="section-card section-card--compact-filter">
+                <div class="admin-form">
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="contact-message-filter-status">Filter by status</label>
+                      <select id="contact-message-filter-status" data-contact-message-filter="status">
+                        <option value="__all">All Statuses</option>
+                        <option value="new">new</option>
+                        <option value="in_review">in_review</option>
+                        <option value="resolved">resolved</option>
+                        <option value="archived">archived</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="contact-message-filter-topic">Filter by topic</label>
+                      <select id="contact-message-filter-topic" data-contact-message-filter="topic">
+                        <option value="__all">All Topics</option>
+                        <option value="Account Help">Account Help</option>
+                        <option value="Reading Issue">Reading Issue</option>
+                        <option value="Journal Issue">Journal Issue</option>
+                        <option value="Decks & Unlocks">Decks &amp; Unlocks</option>
+                        <option value="Bug Report">Bug Report</option>
+                        <option value="Feature Suggestion">Feature Suggestion</option>
+                        <option value="Billing / Subscription">Billing / Subscription</option>
+                        <option value="General Question">General Question</option>
+                        <option value="Report a Problem">Report a Problem</option>
+                        <option value="Delete Account Request">Delete Account Request</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Contact Messages table">
+                <p class="admin-state" data-contact-messages-state>Loading contact messages...</p>
+                <div class="admin-table-scroll" data-contact-messages-table-wrap hidden>
+                  <table class="admin-table contact-messages-table">
+                    <colgroup>
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th scope="col">Created</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Topic</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Message Preview</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-contact-messages-table-body></tbody>
+                  </table>
+                </div>
+                <footer class="admin-pagination" data-contact-messages-pagination hidden>
+                  <span class="admin-pagination__summary" data-contact-messages-pagination-summary>Showing 0-0 of 0 messages</span>
+                  <label class="admin-pagination__size" for="contact-messages-page-size">
+                    Per page
+                    <select id="contact-messages-page-size" data-contact-messages-page-size>
+                      <option value="10" selected>10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                    </select>
+                  </label>
+                  <div class="admin-pagination__controls" data-contact-messages-pagination-controls aria-label="Contact message pages"></div>
                 </footer>
               </section>
             </section>

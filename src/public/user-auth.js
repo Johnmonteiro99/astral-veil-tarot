@@ -95,6 +95,20 @@ function setMessage(text, type = '') {
   message.hidden = !text;
 }
 
+function getAuthNoticeMessage() {
+  const notice = new URLSearchParams(window.location.search).get('notice');
+
+  if (notice === 'account_deletion_requested') {
+    return 'Your deletion request has been sent. Your Astral Veil account access is now pending review.';
+  }
+
+  if (notice === 'account_pending_deletion') {
+    return 'This Astral Veil account is pending deletion review. Please contact support if this was unexpected.';
+  }
+
+  return '';
+}
+
 function setMode(nextMode) {
   authMode = nextMode === 'signup' ? 'signup' : 'login';
   const isSignup = authMode === 'signup';
@@ -184,7 +198,11 @@ if (!isSupabaseConfigured()) {
   const initialAuthMode = new URLSearchParams(window.location.search).get('mode') === 'signup'
     ? 'signup'
     : 'login';
+  const noticeMessage = getAuthNoticeMessage();
 
   setMode(initialAuthMode);
+  if (noticeMessage) {
+    setMessage(noticeMessage, 'success');
+  }
   redirectIfSignedIn();
 }

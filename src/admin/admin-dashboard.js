@@ -4,11 +4,27 @@ import { requireAdmin, signOut } from '../services/auth.js';
 const countTables = [
   'journals',
   'journal_prompts',
+  'reader_lines',
+  'contact_messages',
   'archive_rooms',
   'artifacts',
   'memory_fragments',
   'veilwalkers',
   'veilwalker_notes',
+];
+
+const characterLineModes = ['sun', 'moon', 'bloodMoon', 'blueMoon', 'all'];
+const characterLineContexts = [
+  'reading_intro',
+  'post_reading',
+  'deck_intro',
+  'room_encounter',
+  'room_unlock',
+  'artifact_hint',
+  'memory_fragment',
+  'restricted_wing',
+  'journal_prompt',
+  'custom',
 ];
 
 const accessMessage = document.querySelector('[data-access-message]');
@@ -60,6 +76,40 @@ const journalPromptFormState = document.querySelector('[data-journal-prompt-form
 const journalPromptFormSubmitButton = document.querySelector('[data-journal-prompt-form-submit]');
 const journalPromptFormCancelButtons = document.querySelectorAll('[data-journal-prompt-form-cancel], [data-journal-prompt-form-cancel-secondary]');
 const journalPromptFilters = Array.from(document.querySelectorAll('[data-journal-prompt-filter]'));
+const characterLinesState = document.querySelector('[data-character-lines-state]');
+const characterLinesTableWrap = document.querySelector('[data-character-lines-table-wrap]');
+const characterLinesTableBody = document.querySelector('[data-character-lines-table-body]');
+const characterLinesPagination = document.querySelector('[data-character-lines-pagination]');
+const characterLinesPaginationSummary = document.querySelector('[data-character-lines-pagination-summary]');
+const characterLinesPaginationControls = document.querySelector('[data-character-lines-pagination-controls]');
+const characterLinesPageSizeSelect = document.querySelector('[data-character-lines-page-size]');
+const characterLineNewButton = document.querySelector('[data-character-line-new]');
+const characterLineFormPanel = document.querySelector('[data-character-line-form-panel]');
+const characterLineForm = document.querySelector('[data-character-line-form]');
+const characterLineFormTitle = document.querySelector('[data-character-line-form-title]');
+const characterLineFormState = document.querySelector('[data-character-line-form-state]');
+const characterLineFormSubmitButton = document.querySelector('[data-character-line-form-submit]');
+const characterLineFormCancelButtons = document.querySelectorAll('[data-character-line-form-cancel], [data-character-line-form-cancel-secondary]');
+const characterLineFilters = Array.from(document.querySelectorAll('[data-character-line-filter]'));
+const contactMessagesState = document.querySelector('[data-contact-messages-state]');
+const contactMessagesTableWrap = document.querySelector('[data-contact-messages-table-wrap]');
+const contactMessagesTableBody = document.querySelector('[data-contact-messages-table-body]');
+const contactMessagesPagination = document.querySelector('[data-contact-messages-pagination]');
+const contactMessagesPaginationSummary = document.querySelector('[data-contact-messages-pagination-summary]');
+const contactMessagesPaginationControls = document.querySelector('[data-contact-messages-pagination-controls]');
+const contactMessagesPageSizeSelect = document.querySelector('[data-contact-messages-page-size]');
+const contactMessageFilters = Array.from(document.querySelectorAll('[data-contact-message-filter]'));
+const contactMessageDetail = document.querySelector('[data-contact-message-detail]');
+const contactMessageDetailTitle = document.querySelector('[data-contact-message-detail-title]');
+const contactMessageDetailMeta = document.querySelector('[data-contact-message-detail-meta]');
+const contactMessageDetailFields = document.querySelector('[data-contact-message-detail-fields]');
+const contactMessageDetailBody = document.querySelector('[data-contact-message-detail-body]');
+const contactMessageDetailCloseButton = document.querySelector('[data-contact-message-detail-close]');
+const contactMessageNotesForm = document.querySelector('[data-contact-message-notes-form]');
+const contactMessageDetailStatus = document.querySelector('[data-contact-message-detail-status]');
+const contactMessageAdminNotes = document.querySelector('[data-contact-message-admin-notes]');
+const contactMessageNotesSubmitButton = document.querySelector('[data-contact-message-notes-submit]');
+const contactMessageDetailState = document.querySelector('[data-contact-message-detail-state]');
 const archiveRoomsState = document.querySelector('[data-archive-rooms-state]');
 const archiveRoomsTableWrap = document.querySelector('[data-archive-rooms-table-wrap]');
 const archiveRoomsTableBody = document.querySelector('[data-archive-rooms-table-body]');
@@ -265,6 +315,18 @@ let editingJournalPromptId = null;
 let journalPromptsCurrentPage = 1;
 let journalPromptsPageSize = 10;
 let journalPromptsTotalCount = 0;
+let characterLinesLoaded = false;
+let characterLineRows = [];
+let editingCharacterLineId = null;
+let characterLinesCurrentPage = 1;
+let characterLinesPageSize = 10;
+let characterLinesTotalCount = 0;
+let contactMessagesLoaded = false;
+let contactMessageRows = [];
+let contactMessagesCurrentPage = 1;
+let contactMessagesPageSize = 10;
+let contactMessagesTotalCount = 0;
+let activeContactMessageId = null;
 let archiveRoomsLoaded = false;
 let archiveRoomRows = [];
 let editingArchiveRoomId = null;
@@ -494,6 +556,100 @@ function getJournalPromptActiveBoolean(row) {
 
 function getJournalPromptActiveState(row) {
   return getJournalPromptActiveBoolean(row) ? 'Active' : 'Inactive';
+}
+
+function getCharacterLineId(row) {
+  return getFirstValue(row, ['id']);
+}
+
+function getCharacterLineReaderId(row) {
+  return formatValue(getFirstValue(row, ['reader_id']));
+}
+
+function getCharacterLineReaderName(row) {
+  return formatValue(getFirstValue(row, ['reader_name']), 'Unnamed reader');
+}
+
+function getCharacterLineMode(row) {
+  return formatValue(getFirstValue(row, ['mode']), 'all');
+}
+
+function getCharacterLineContext(row) {
+  return formatValue(getFirstValue(row, ['context']), 'custom');
+}
+
+function getCharacterLineText(row) {
+  return formatValue(getFirstValue(row, ['line_text', 'text', 'body']), 'Untitled line');
+}
+
+function getCharacterLinePreview(row) {
+  return formatCompactValue(getCharacterLineText(row), 'Untitled line');
+}
+
+function getCharacterLineTone(row) {
+  return formatValue(getFirstValue(row, ['tone']));
+}
+
+function getCharacterLineDeckId(row) {
+  return formatValue(getFirstValue(row, ['deck_id']));
+}
+
+function getCharacterLineRoomId(row) {
+  return formatValue(getFirstValue(row, ['room_id']));
+}
+
+function getCharacterLineSortOrder(row) {
+  return formatValue(getFirstValue(row, ['sort_order']));
+}
+
+function getCharacterLineActiveBoolean(row) {
+  const activeValue = getFirstValue(row, ['is_active', 'active', 'enabled']);
+
+  if (typeof activeValue === 'boolean') {
+    return activeValue;
+  }
+
+  return String(activeValue || '').toLowerCase() === 'true';
+}
+
+function getCharacterLineActiveState(row) {
+  return getCharacterLineActiveBoolean(row) ? 'Active' : 'Inactive';
+}
+
+function getContactMessageId(row) {
+  return getFirstValue(row, ['id']);
+}
+
+function getContactMessageCreatedAt(row) {
+  return formatDate(getFirstValue(row, ['created_at']));
+}
+
+function getContactMessageEmail(row) {
+  return formatValue(getFirstValue(row, ['user_email', 'email']), 'Unknown email');
+}
+
+function getContactMessageTopic(row) {
+  return formatValue(getFirstValue(row, ['topic']), 'General Question');
+}
+
+function getContactMessageSubject(row) {
+  return formatValue(getFirstValue(row, ['subject']), 'Untitled message');
+}
+
+function getContactMessageText(row) {
+  return formatValue(getFirstValue(row, ['message', 'body', 'content']), 'No message provided.');
+}
+
+function getContactMessagePreview(row) {
+  return formatCompactValue(getContactMessageText(row), 'No message provided.');
+}
+
+function getContactMessageStatus(row) {
+  return formatValue(getFirstValue(row, ['status']), 'new');
+}
+
+function getContactMessageAdminNotes(row) {
+  return formatValue(getFirstValue(row, ['admin_notes']), '');
 }
 
 function getArchiveRoomTitle(row) {
@@ -1080,6 +1236,42 @@ function hideJournalPromptFormState() {
   journalPromptFormState.className = 'admin-state';
 }
 
+function setCharacterLinesState(message, state = '') {
+  characterLinesState.textContent = message;
+  characterLinesState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  characterLinesState.hidden = false;
+}
+
+function setCharacterLineFormState(message, state = '') {
+  characterLineFormState.textContent = message;
+  characterLineFormState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  characterLineFormState.hidden = false;
+}
+
+function hideCharacterLineFormState() {
+  characterLineFormState.hidden = true;
+  characterLineFormState.textContent = '';
+  characterLineFormState.className = 'admin-state';
+}
+
+function setContactMessagesState(message, state = '') {
+  contactMessagesState.textContent = message;
+  contactMessagesState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  contactMessagesState.hidden = false;
+}
+
+function setContactMessageDetailState(message, state = '') {
+  contactMessageDetailState.textContent = message;
+  contactMessageDetailState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  contactMessageDetailState.hidden = false;
+}
+
+function hideContactMessageDetailState() {
+  contactMessageDetailState.hidden = true;
+  contactMessageDetailState.textContent = '';
+  contactMessageDetailState.className = 'admin-state';
+}
+
 function setArchiveRoomsState(message, state = '') {
   archiveRoomsState.textContent = message;
   archiveRoomsState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
@@ -1228,6 +1420,25 @@ function hideJournalPromptForm() {
   setJournalPromptFormCancelVisible(false);
 }
 
+function setCharacterLineFormCancelVisible(isVisible) {
+  characterLineFormCancelButtons.forEach((button) => {
+    button.hidden = !isVisible;
+  });
+}
+
+function hideCharacterLineForm() {
+  editingCharacterLineId = null;
+  characterLineForm.reset();
+  characterLineForm.elements.mode.value = 'all';
+  characterLineForm.elements.context.value = 'reading_intro';
+  characterLineForm.elements.is_active.checked = true;
+  hideCharacterLineFormState();
+  characterLineFormTitle.textContent = 'New Line';
+  characterLineFormSubmitButton.disabled = false;
+  characterLineFormSubmitButton.textContent = 'Save Line';
+  setCharacterLineFormCancelVisible(false);
+}
+
 function hideArchiveRoomDetail() {
   archiveRoomDetail.hidden = true;
 }
@@ -1328,6 +1539,18 @@ function appendJournalPromptBadgeCell(rowElement, label, value, badgeClassName =
 
   cell.dataset.label = label;
   cell.className = 'journal-prompts-table__meta';
+  badge.className = `admin-badge${badgeClassName ? ` ${badgeClassName}` : ''}`;
+  badge.textContent = value || '--';
+  cell.append(badge);
+  rowElement.append(cell);
+}
+
+function appendCharacterLineBadgeCell(rowElement, label, value, badgeClassName = '') {
+  const cell = document.createElement('td');
+  const badge = document.createElement('span');
+
+  cell.dataset.label = label;
+  cell.className = 'character-lines-table__meta';
   badge.className = `admin-badge${badgeClassName ? ` ${badgeClassName}` : ''}`;
   badge.textContent = value || '--';
   cell.append(badge);
@@ -1545,6 +1768,345 @@ function renderJournalPromptRows(rows = journalPromptRows) {
   journalPromptsState.hidden = true;
   journalPromptsTableWrap.hidden = false;
   renderJournalPromptsPagination();
+}
+
+function getCharacterLineFilterValue(filterName) {
+  const field = characterLineFilters.find((filter) => filter.dataset.characterLineFilter === filterName);
+
+  return field?.value || '__all';
+}
+
+function applyCharacterLineFilters(query) {
+  const readerFilter = String(getCharacterLineFilterValue('reader') || '').trim();
+  const modeFilter = getCharacterLineFilterValue('mode');
+  const contextFilter = getCharacterLineFilterValue('context');
+  const activeFilter = getCharacterLineFilterValue('active');
+
+  let nextQuery = query;
+
+  if (readerFilter && readerFilter !== '__all') {
+    const safeReaderFilter = readerFilter.replace(/[,()]/g, '');
+    nextQuery = nextQuery.or(`reader_id.ilike.%${safeReaderFilter}%,reader_name.ilike.%${safeReaderFilter}%`);
+  }
+
+  if (modeFilter !== '__all') {
+    nextQuery = nextQuery.eq('mode', modeFilter);
+  }
+
+  if (contextFilter !== '__all') {
+    nextQuery = nextQuery.eq('context', contextFilter);
+  }
+
+  if (activeFilter === 'active') {
+    nextQuery = nextQuery.eq('is_active', true);
+  }
+
+  if (activeFilter === 'inactive') {
+    nextQuery = nextQuery.eq('is_active', false);
+  }
+
+  return nextQuery;
+}
+
+function getCharacterLinesTotalPages() {
+  return Math.max(1, Math.ceil(characterLinesTotalCount / characterLinesPageSize));
+}
+
+function getCharacterLinesPageNumbers() {
+  const totalPages = getCharacterLinesTotalPages();
+  const maxButtons = 7;
+  const halfWindow = Math.floor(maxButtons / 2);
+  let start = Math.max(1, characterLinesCurrentPage - halfWindow);
+  const end = Math.min(totalPages, start + maxButtons - 1);
+
+  start = Math.max(1, end - maxButtons + 1);
+
+  return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+}
+
+function renderCharacterLinesPagination() {
+  const totalPages = getCharacterLinesTotalPages();
+  const hasLines = characterLinesTotalCount > 0;
+
+  if (!characterLinesPagination || !characterLinesPaginationControls || !characterLinesPaginationSummary) {
+    return;
+  }
+
+  characterLinesPagination.hidden = !hasLines;
+  characterLinesPaginationControls.replaceChildren();
+
+  if (!hasLines) {
+    characterLinesPaginationSummary.textContent = 'Showing 0-0 of 0 lines';
+    return;
+  }
+
+  const from = (characterLinesCurrentPage - 1) * characterLinesPageSize + 1;
+  const to = Math.min(from + characterLineRows.length - 1, characterLinesTotalCount);
+  const previousButton = document.createElement('button');
+  const nextButton = document.createElement('button');
+
+  characterLinesPaginationSummary.textContent = `Showing ${from}-${to} of ${characterLinesTotalCount} lines`;
+
+  previousButton.className = 'admin-pagination__button';
+  previousButton.type = 'button';
+  previousButton.textContent = 'Previous';
+  previousButton.disabled = characterLinesCurrentPage <= 1;
+  previousButton.addEventListener('click', () => {
+    if (characterLinesCurrentPage > 1) {
+      characterLinesCurrentPage -= 1;
+      loadCharacterLines();
+    }
+  });
+  characterLinesPaginationControls.append(previousButton);
+
+  getCharacterLinesPageNumbers().forEach((pageNumber) => {
+    const pageButton = document.createElement('button');
+
+    pageButton.className = `admin-pagination__button${pageNumber === characterLinesCurrentPage ? ' is-active' : ''}`;
+    pageButton.type = 'button';
+    pageButton.textContent = String(pageNumber);
+    pageButton.setAttribute('aria-label', `Page ${pageNumber}`);
+    pageButton.setAttribute('aria-current', pageNumber === characterLinesCurrentPage ? 'page' : 'false');
+    pageButton.disabled = pageNumber === characterLinesCurrentPage;
+    pageButton.addEventListener('click', () => {
+      characterLinesCurrentPage = pageNumber;
+      loadCharacterLines();
+    });
+    characterLinesPaginationControls.append(pageButton);
+  });
+
+  nextButton.className = 'admin-pagination__button';
+  nextButton.type = 'button';
+  nextButton.textContent = 'Next';
+  nextButton.disabled = characterLinesCurrentPage >= totalPages;
+  nextButton.addEventListener('click', () => {
+    if (characterLinesCurrentPage < totalPages) {
+      characterLinesCurrentPage += 1;
+      loadCharacterLines();
+    }
+  });
+  characterLinesPaginationControls.append(nextButton);
+}
+
+function renderCharacterLineRows(rows = characterLineRows) {
+  characterLinesTableBody.replaceChildren();
+
+  if (!rows.length) {
+    setCharacterLinesState('No character lines found for these filters.');
+    characterLinesTableWrap.hidden = true;
+    renderCharacterLinesPagination();
+    return;
+  }
+
+  rows.forEach((row) => {
+    const tableRow = document.createElement('tr');
+    const actionCell = document.createElement('td');
+    const statusCell = document.createElement('td');
+    const statusStack = document.createElement('div');
+    const activeBadge = document.createElement('span');
+    const orderMeta = document.createElement('span');
+    const actionGroup = document.createElement('div');
+    const editButton = document.createElement('button');
+    const activeButton = document.createElement('button');
+
+    appendTextCell(tableRow, 'Reader', getCharacterLineReaderName(row), 'admin-table__title');
+    appendTextCell(tableRow, 'Reader ID', getCharacterLineReaderId(row), 'character-lines-table__meta');
+    appendCharacterLineBadgeCell(tableRow, 'Mode', getCharacterLineMode(row), 'admin-badge--mode');
+    appendTextCell(tableRow, 'Context', getCharacterLineContext(row), 'character-lines-table__meta');
+    appendTextCell(tableRow, 'Tone', getCharacterLineTone(row), 'character-lines-table__meta');
+    appendTextCell(tableRow, 'Deck', getCharacterLineDeckId(row), 'character-lines-table__meta');
+    appendTextCell(tableRow, 'Room', getCharacterLineRoomId(row), 'character-lines-table__meta');
+    appendTextCell(tableRow, 'Line Preview', getCharacterLinePreview(row), 'character-lines-table__line');
+
+    statusCell.dataset.label = 'Status / Order';
+    statusCell.className = 'character-lines-table__meta';
+    statusStack.className = 'admin-action-group';
+    activeBadge.className = `admin-badge${getCharacterLineActiveBoolean(row) ? ' admin-badge--active' : ' admin-badge--inactive'}`;
+    activeBadge.textContent = getCharacterLineActiveState(row);
+    orderMeta.textContent = `Order: ${getCharacterLineSortOrder(row)}`;
+    statusStack.append(activeBadge, orderMeta);
+    statusCell.append(statusStack);
+    tableRow.append(statusCell);
+
+    editButton.className = 'admin-row-action';
+    editButton.type = 'button';
+    editButton.textContent = 'Edit';
+    editButton.addEventListener('click', () => showCharacterLineForm(row));
+
+    activeButton.className = 'admin-row-action';
+    activeButton.type = 'button';
+    activeButton.textContent = getCharacterLineActiveBoolean(row) ? 'Deactivate' : 'Activate';
+    activeButton.addEventListener('click', () => toggleCharacterLineActive(row, activeButton));
+
+    actionGroup.className = 'admin-action-group';
+    actionCell.dataset.label = 'Action';
+    actionGroup.append(editButton, activeButton);
+    actionCell.append(actionGroup);
+    tableRow.append(actionCell);
+    characterLinesTableBody.append(tableRow);
+  });
+
+  characterLinesState.hidden = true;
+  characterLinesTableWrap.hidden = false;
+  renderCharacterLinesPagination();
+}
+
+function getContactMessageFilterValue(filterName) {
+  const field = contactMessageFilters.find((filter) => filter.dataset.contactMessageFilter === filterName);
+
+  return field?.value || '__all';
+}
+
+function applyContactMessageFilters(query) {
+  const statusFilter = getContactMessageFilterValue('status');
+  const topicFilter = getContactMessageFilterValue('topic');
+  let nextQuery = query;
+
+  if (statusFilter !== '__all') {
+    nextQuery = nextQuery.eq('status', statusFilter);
+  }
+
+  if (topicFilter !== '__all') {
+    nextQuery = nextQuery.eq('topic', topicFilter);
+  }
+
+  return nextQuery;
+}
+
+function getContactMessagesTotalPages() {
+  return Math.max(1, Math.ceil(contactMessagesTotalCount / contactMessagesPageSize));
+}
+
+function getContactMessagesPageNumbers() {
+  const totalPages = getContactMessagesTotalPages();
+  const maxButtons = 7;
+  const halfWindow = Math.floor(maxButtons / 2);
+  let start = Math.max(1, contactMessagesCurrentPage - halfWindow);
+  const end = Math.min(totalPages, start + maxButtons - 1);
+
+  start = Math.max(1, end - maxButtons + 1);
+
+  return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+}
+
+function renderContactMessagesPagination() {
+  const totalPages = getContactMessagesTotalPages();
+  const hasMessages = contactMessagesTotalCount > 0;
+
+  if (!contactMessagesPagination || !contactMessagesPaginationControls || !contactMessagesPaginationSummary) {
+    return;
+  }
+
+  contactMessagesPagination.hidden = !hasMessages;
+  contactMessagesPaginationControls.replaceChildren();
+
+  if (!hasMessages) {
+    contactMessagesPaginationSummary.textContent = 'Showing 0-0 of 0 messages';
+    return;
+  }
+
+  const from = (contactMessagesCurrentPage - 1) * contactMessagesPageSize + 1;
+  const to = Math.min(from + contactMessageRows.length - 1, contactMessagesTotalCount);
+  const previousButton = document.createElement('button');
+  const nextButton = document.createElement('button');
+
+  contactMessagesPaginationSummary.textContent = `Showing ${from}-${to} of ${contactMessagesTotalCount} messages`;
+
+  previousButton.className = 'admin-pagination__button';
+  previousButton.type = 'button';
+  previousButton.textContent = 'Previous';
+  previousButton.disabled = contactMessagesCurrentPage <= 1;
+  previousButton.addEventListener('click', () => {
+    if (contactMessagesCurrentPage > 1) {
+      contactMessagesCurrentPage -= 1;
+      loadContactMessages();
+    }
+  });
+  contactMessagesPaginationControls.append(previousButton);
+
+  getContactMessagesPageNumbers().forEach((pageNumber) => {
+    const pageButton = document.createElement('button');
+
+    pageButton.className = `admin-pagination__button${pageNumber === contactMessagesCurrentPage ? ' is-active' : ''}`;
+    pageButton.type = 'button';
+    pageButton.textContent = String(pageNumber);
+    pageButton.setAttribute('aria-label', `Page ${pageNumber}`);
+    pageButton.setAttribute('aria-current', pageNumber === contactMessagesCurrentPage ? 'page' : 'false');
+    pageButton.disabled = pageNumber === contactMessagesCurrentPage;
+    pageButton.addEventListener('click', () => {
+      contactMessagesCurrentPage = pageNumber;
+      loadContactMessages();
+    });
+    contactMessagesPaginationControls.append(pageButton);
+  });
+
+  nextButton.className = 'admin-pagination__button';
+  nextButton.type = 'button';
+  nextButton.textContent = 'Next';
+  nextButton.disabled = contactMessagesCurrentPage >= totalPages;
+  nextButton.addEventListener('click', () => {
+    if (contactMessagesCurrentPage < totalPages) {
+      contactMessagesCurrentPage += 1;
+      loadContactMessages();
+    }
+  });
+  contactMessagesPaginationControls.append(nextButton);
+}
+
+function renderContactMessageRows(rows = contactMessageRows) {
+  contactMessagesTableBody.replaceChildren();
+
+  if (!rows.length) {
+    setContactMessagesState('No contact messages found for these filters.');
+    contactMessagesTableWrap.hidden = true;
+    renderContactMessagesPagination();
+    return;
+  }
+
+  rows.forEach((row, index) => {
+    const tableRow = document.createElement('tr');
+    const statusCell = document.createElement('td');
+    const statusSelect = document.createElement('select');
+    const actionCell = document.createElement('td');
+    const actionGroup = document.createElement('div');
+    const viewButton = document.createElement('button');
+
+    appendTextCell(tableRow, 'Created', getContactMessageCreatedAt(row), 'contact-messages-table__meta');
+    appendTextCell(tableRow, 'Email', getContactMessageEmail(row), 'admin-table__title');
+    appendTextCell(tableRow, 'Topic', getContactMessageTopic(row), 'contact-messages-table__meta');
+    appendTextCell(tableRow, 'Subject', getContactMessageSubject(row), 'contact-messages-table__subject');
+    appendTextCell(tableRow, 'Message Preview', getContactMessagePreview(row), 'contact-messages-table__message');
+
+    statusCell.dataset.label = 'Status';
+    statusSelect.className = 'admin-row-select';
+    statusSelect.setAttribute('aria-label', `Update status for ${getContactMessageSubject(row)}`);
+    ['new', 'in_review', 'resolved', 'archived'].forEach((status) => {
+      const option = document.createElement('option');
+      option.value = status;
+      option.textContent = status;
+      option.selected = getContactMessageStatus(row) === status;
+      statusSelect.append(option);
+    });
+    statusSelect.addEventListener('change', () => updateContactMessageStatus(row, statusSelect.value, statusSelect));
+    statusCell.append(statusSelect);
+    tableRow.append(statusCell);
+
+    viewButton.className = 'admin-row-action';
+    viewButton.type = 'button';
+    viewButton.textContent = 'View';
+    viewButton.addEventListener('click', () => showContactMessageDetail(index));
+
+    actionGroup.className = 'admin-action-group';
+    actionCell.dataset.label = 'Action';
+    actionGroup.append(viewButton);
+    actionCell.append(actionGroup);
+    tableRow.append(actionCell);
+    contactMessagesTableBody.append(tableRow);
+  });
+
+  contactMessagesState.hidden = true;
+  contactMessagesTableWrap.hidden = false;
+  renderContactMessagesPagination();
 }
 
 function appendDetailField(container, label, value) {
@@ -1958,6 +2520,367 @@ async function toggleJournalPromptActive(row, button) {
   }
 
   await refreshJournalPrompts(nextActiveState ? 'Journal prompt activated.' : 'Journal prompt deactivated.');
+}
+
+function setCharacterLineFormValue(fieldName, value) {
+  const field = characterLineForm.elements[fieldName];
+
+  if (!field) {
+    return;
+  }
+
+  if (field.type === 'checkbox') {
+    field.checked = Boolean(value);
+    return;
+  }
+
+  field.value = value && value !== '--' ? value : '';
+}
+
+function showCharacterLineForm(row = null) {
+  hideCharacterLineFormState();
+
+  if (row) {
+    editingCharacterLineId = getCharacterLineId(row);
+    characterLineFormTitle.textContent = 'Edit Line';
+    characterLineFormSubmitButton.textContent = 'Save Line';
+    setCharacterLineFormCancelVisible(true);
+    setCharacterLineFormValue('reader_id', getCharacterLineReaderId(row));
+    setCharacterLineFormValue('reader_name', getCharacterLineReaderName(row));
+    setCharacterLineFormValue('mode', getCharacterLineMode(row));
+    setCharacterLineFormValue('context', getCharacterLineContext(row));
+    setCharacterLineFormValue('line_text', getCharacterLineText(row));
+    setCharacterLineFormValue('tone', getCharacterLineTone(row));
+    setCharacterLineFormValue('deck_id', getCharacterLineDeckId(row));
+    setCharacterLineFormValue('room_id', getCharacterLineRoomId(row));
+    setCharacterLineFormValue('sort_order', getCharacterLineSortOrder(row));
+    setCharacterLineFormValue('is_active', getCharacterLineActiveBoolean(row));
+  } else {
+    hideCharacterLineForm();
+  }
+
+  characterLineFormPanel.hidden = false;
+  characterLineForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function getCharacterLineFormPayload() {
+  const formData = new FormData(characterLineForm);
+  const sortOrderValue = String(formData.get('sort_order') || '').trim();
+  const payload = {
+    reader_id: String(formData.get('reader_id') || '').trim(),
+    reader_name: String(formData.get('reader_name') || '').trim(),
+    mode: String(formData.get('mode') || 'all').trim() || 'all',
+    context: String(formData.get('context') || 'reading_intro').trim() || 'reading_intro',
+    line_text: String(formData.get('line_text') || '').trim(),
+    tone: String(formData.get('tone') || '').trim() || null,
+    deck_id: String(formData.get('deck_id') || '').trim() || null,
+    room_id: String(formData.get('room_id') || '').trim() || null,
+    is_active: formData.has('is_active'),
+  };
+
+  if (sortOrderValue !== '') {
+    const sortOrder = Number(sortOrderValue);
+
+    if (!Number.isNaN(sortOrder)) {
+      payload.sort_order = sortOrder;
+    }
+  }
+
+  return payload;
+}
+
+async function getNextCharacterLineSortOrder(supabase, payload) {
+  let query = supabase
+    .from('reader_lines')
+    .select('sort_order')
+    .eq('reader_id', payload.reader_id)
+    .eq('mode', payload.mode)
+    .eq('context', payload.context)
+    .not('sort_order', 'is', null)
+    .order('sort_order', { ascending: false })
+    .limit(1);
+
+  query = payload.deck_id ? query.eq('deck_id', payload.deck_id) : query.is('deck_id', null);
+  query = payload.room_id ? query.eq('room_id', payload.room_id) : query.is('room_id', null);
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Character line sort order lookup failed:', error);
+    throw error;
+  }
+
+  const maxSortOrder = Number(data?.[0]?.sort_order);
+
+  return Number.isFinite(maxSortOrder) ? maxSortOrder + 1 : 1;
+}
+
+function validateCharacterLinePayload(payload) {
+  const missingFields = [];
+
+  if (!payload.reader_id) {
+    missingFields.push('reader id');
+  }
+
+  if (!payload.reader_name) {
+    missingFields.push('reader name');
+  }
+
+  if (!characterLineModes.includes(payload.mode)) {
+    missingFields.push('valid mode');
+  }
+
+  if (!characterLineContexts.includes(payload.context)) {
+    missingFields.push('valid context');
+  }
+
+  if (!payload.line_text) {
+    missingFields.push('line text');
+  }
+
+  return missingFields;
+}
+
+async function refreshCharacterLines(message = '') {
+  characterLinesLoaded = false;
+  await loadCharacterLines();
+
+  if (message) {
+    setCharacterLinesState(message, 'success');
+  }
+}
+
+async function handleCharacterLineFormSubmit(event) {
+  event.preventDefault();
+
+  const payload = getCharacterLineFormPayload();
+  const missingFields = validateCharacterLinePayload(payload);
+
+  if (missingFields.length) {
+    setCharacterLineFormState(`Please fill in required fields: ${missingFields.join(', ')}.`, 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setCharacterLineFormState('Character lines cannot be saved because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  characterLineFormSubmitButton.disabled = true;
+  setCharacterLineFormState(editingCharacterLineId ? 'Saving line changes...' : 'Creating line...');
+
+  if (!editingCharacterLineId && !Object.prototype.hasOwnProperty.call(payload, 'sort_order')) {
+    try {
+      payload.sort_order = await getNextCharacterLineSortOrder(supabase, payload);
+    } catch {
+      characterLineFormSubmitButton.disabled = false;
+      setCharacterLineFormState('Character line could not be sorted automatically. Please try again or enter a sort order.', 'error');
+      return;
+    }
+  }
+
+  const query = editingCharacterLineId
+    ? supabase.from('reader_lines').update(payload).eq('id', editingCharacterLineId).select('*').single()
+    : supabase.from('reader_lines').insert(payload).select('*').single();
+
+  const { error } = await query;
+
+  if (error) {
+    characterLineFormSubmitButton.disabled = false;
+    setCharacterLineFormState(`Character line could not be saved. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  const successMessage = editingCharacterLineId ? 'Character line updated successfully.' : 'Character line created successfully.';
+  hideCharacterLineForm();
+  await refreshCharacterLines(successMessage);
+}
+
+async function toggleCharacterLineActive(row, button) {
+  const lineId = getCharacterLineId(row);
+  const supabase = getSupabaseClient();
+
+  if (!lineId) {
+    setCharacterLinesState('This character line cannot be updated because it is missing an id.', 'error');
+    return;
+  }
+
+  if (!supabase) {
+    setCharacterLinesState('Character lines cannot be updated because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  const nextActiveState = !getCharacterLineActiveBoolean(row);
+  const { error } = await supabase
+    .from('reader_lines')
+    .update({ is_active: nextActiveState })
+    .eq('id', lineId)
+    .select('id')
+    .single();
+
+  if (error) {
+    button.disabled = false;
+    setCharacterLinesState(`Character line status could not be updated. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  await refreshCharacterLines(nextActiveState ? 'Character line activated.' : 'Character line deactivated.');
+}
+
+function hideContactMessageDetail() {
+  activeContactMessageId = null;
+  contactMessageDetail.hidden = true;
+  hideContactMessageDetailState();
+}
+
+function showContactMessageDetail(indexOrRow) {
+  const row = typeof indexOrRow === 'number' ? contactMessageRows[indexOrRow] : indexOrRow;
+
+  if (!row) {
+    return;
+  }
+
+  activeContactMessageId = getContactMessageId(row);
+  contactMessageDetailTitle.textContent = getContactMessageSubject(row);
+  contactMessageDetailMeta.replaceChildren();
+  contactMessageDetailFields.replaceChildren();
+  contactMessageDetailBody.textContent = getContactMessageText(row);
+  hideContactMessageDetailState();
+
+  appendDetailChip(contactMessageDetailMeta, 'Status', getContactMessageStatus(row));
+  appendDetailChip(contactMessageDetailMeta, 'Topic', getContactMessageTopic(row));
+  appendDetailChip(contactMessageDetailMeta, 'Email', getContactMessageEmail(row));
+  appendDetailField(contactMessageDetailFields, 'Created', getContactMessageCreatedAt(row));
+  appendDetailField(contactMessageDetailFields, 'Email', getContactMessageEmail(row));
+  appendDetailField(contactMessageDetailFields, 'Topic', getContactMessageTopic(row));
+  appendDetailField(contactMessageDetailFields, 'Status', getContactMessageStatus(row));
+  appendDetailField(contactMessageDetailFields, 'User ID', formatValue(getFirstValue(row, ['user_id'])));
+  appendDetailField(contactMessageDetailFields, 'Message ID', formatValue(getContactMessageId(row)));
+
+  if (contactMessageDetailStatus) {
+    contactMessageDetailStatus.value = getContactMessageStatus(row);
+  }
+
+  if (contactMessageAdminNotes) {
+    const notes = getContactMessageAdminNotes(row);
+    contactMessageAdminNotes.value = notes === '--' ? '' : notes;
+  }
+
+  contactMessageDetail.hidden = false;
+  contactMessageDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function refreshContactMessages(message = '') {
+  contactMessagesLoaded = false;
+  await loadContactMessages();
+
+  if (message) {
+    setContactMessagesState(message, 'success');
+  }
+}
+
+async function refreshContactMessagesAfterUpdate(updatedRow = null, message = '') {
+  const shouldKeepDetailOpen = Boolean(activeContactMessageId);
+
+  await refreshContactMessages(message);
+
+  if (!shouldKeepDetailOpen) {
+    return;
+  }
+
+  const refreshedRow = contactMessageRows.find((row) => getContactMessageId(row) === activeContactMessageId) || updatedRow;
+
+  if (refreshedRow) {
+    showContactMessageDetail(refreshedRow);
+  }
+}
+
+async function updateContactMessageStatus(row, nextStatus, field) {
+  const messageId = getContactMessageId(row);
+  const previousStatus = getContactMessageStatus(row);
+  const supabase = getSupabaseClient();
+
+  if (!messageId || !supabase) {
+    setContactMessagesState('Contact message status cannot be updated right now.', 'error');
+    if (field) {
+      field.value = previousStatus;
+    }
+    return;
+  }
+
+  if (field) {
+    field.disabled = true;
+  }
+
+  const payload = {
+    status: nextStatus,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .update(payload)
+    .eq('id', messageId)
+    .select('*')
+    .single();
+
+  if (field) {
+    field.disabled = false;
+  }
+
+  if (error) {
+    if (field) {
+      field.value = previousStatus;
+    }
+    setContactMessagesState(`Contact message status could not be updated. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  await refreshContactMessagesAfterUpdate(data, 'Contact message status updated.');
+}
+
+async function handleContactMessageNotesSubmit(event) {
+  event.preventDefault();
+
+  const supabase = getSupabaseClient();
+
+  if (!activeContactMessageId || !supabase) {
+    setContactMessageDetailState('Contact message cannot be updated right now.', 'error');
+    return;
+  }
+
+  const payload = {
+    status: contactMessageDetailStatus?.value || 'new',
+    admin_notes: String(contactMessageAdminNotes?.value || '').trim() || null,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (contactMessageNotesSubmitButton) {
+    contactMessageNotesSubmitButton.disabled = true;
+  }
+  setContactMessageDetailState('Saving contact message...');
+
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .update(payload)
+    .eq('id', activeContactMessageId)
+    .select('*')
+    .single();
+
+  if (contactMessageNotesSubmitButton) {
+    contactMessageNotesSubmitButton.disabled = false;
+  }
+
+  if (error) {
+    setContactMessageDetailState(`Contact message could not be updated. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  setContactMessageDetailState('Contact message updated.', 'success');
+  await refreshContactMessagesAfterUpdate(data);
 }
 
 function renderArchiveRoomRows(rows) {
@@ -4329,6 +5252,101 @@ async function loadJournalPrompts() {
   renderJournalPromptRows();
 }
 
+async function loadCharacterLines() {
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setCharacterLinesState('Character lines are unavailable because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  const from = (characterLinesCurrentPage - 1) * characterLinesPageSize;
+  const to = from + characterLinesPageSize - 1;
+
+  setCharacterLinesState('Loading character lines...');
+  characterLinesTableWrap.hidden = true;
+  if (characterLinesPagination) {
+    characterLinesPagination.hidden = true;
+  }
+
+  let query = supabase
+    .from('reader_lines')
+    .select('*', { count: 'exact' })
+    .order('reader_name', { ascending: true })
+    .order('reader_id', { ascending: true })
+    .order('mode', { ascending: true })
+    .order('context', { ascending: true })
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
+  query = applyCharacterLineFilters(query);
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    setCharacterLinesState(`Character lines could not be loaded. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  characterLineRows = Array.isArray(data) ? data : [];
+  characterLinesTotalCount = Number(count || 0);
+  characterLinesLoaded = true;
+
+  if (!characterLineRows.length && characterLinesTotalCount > 0 && characterLinesCurrentPage > getCharacterLinesTotalPages()) {
+    characterLinesCurrentPage = getCharacterLinesTotalPages();
+    await loadCharacterLines();
+    return;
+  }
+
+  renderCharacterLineRows();
+}
+
+async function loadContactMessages() {
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setContactMessagesState('Contact messages are unavailable because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  const from = (contactMessagesCurrentPage - 1) * contactMessagesPageSize;
+  const to = from + contactMessagesPageSize - 1;
+
+  setContactMessagesState('Loading contact messages...');
+  contactMessagesTableWrap.hidden = true;
+  if (contactMessagesPagination) {
+    contactMessagesPagination.hidden = true;
+  }
+
+  let query = supabase
+    .from('contact_messages')
+    .select('*', { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
+  query = applyContactMessageFilters(query);
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    setContactMessagesState(`Contact messages could not be loaded. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  contactMessageRows = Array.isArray(data) ? data : [];
+  contactMessagesTotalCount = Number(count || 0);
+  contactMessagesLoaded = true;
+
+  if (!contactMessageRows.length && contactMessagesTotalCount > 0 && contactMessagesCurrentPage > getContactMessagesTotalPages()) {
+    contactMessagesCurrentPage = getContactMessagesTotalPages();
+    await loadContactMessages();
+    return;
+  }
+
+  renderContactMessageRows();
+}
+
 async function loadArchiveRooms() {
   if (archiveRoomsLoaded) {
     return;
@@ -4820,7 +5838,7 @@ function bindNavToggle() {
 }
 
 function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
-  const availableViews = ['overview', 'journals', 'journal-prompts', 'archive-rooms', 'artifacts', 'memory-fragments', 'veilwalkers', 'veilwalker-notes', 'user-progress', 'app-settings'];
+  const availableViews = ['overview', 'journals', 'journal-prompts', 'character-lines', 'contact-messages', 'archive-rooms', 'artifacts', 'memory-fragments', 'veilwalkers', 'veilwalker-notes', 'user-progress', 'app-settings'];
   const normalizedViewName = availableViews.includes(viewName) ? viewName : 'overview';
 
   adminViews.forEach((view) => {
@@ -4841,6 +5859,14 @@ function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
 
   if (normalizedViewName === 'journal-prompts') {
     loadJournalPrompts();
+  }
+
+  if (normalizedViewName === 'character-lines') {
+    loadCharacterLines();
+  }
+
+  if (normalizedViewName === 'contact-messages') {
+    loadContactMessages();
   }
 
   if (normalizedViewName === 'archive-rooms') {
@@ -4918,6 +5944,41 @@ function bindViewLinks() {
     journalPromptsCurrentPage = 1;
     journalPromptsLoaded = false;
     loadJournalPrompts();
+  });
+  characterLineNewButton.addEventListener('click', () => showCharacterLineForm());
+  characterLineForm.addEventListener('submit', handleCharacterLineFormSubmit);
+  characterLineFormCancelButtons.forEach((button) => {
+    button.addEventListener('click', hideCharacterLineForm);
+  });
+  characterLineFilters.forEach((filter) => {
+    const eventName = filter.matches('input') ? 'input' : 'change';
+
+    filter.addEventListener(eventName, () => {
+      characterLinesCurrentPage = 1;
+      characterLinesLoaded = false;
+      loadCharacterLines();
+    });
+  });
+  characterLinesPageSizeSelect?.addEventListener('change', () => {
+    characterLinesPageSize = Number(characterLinesPageSizeSelect.value) || 10;
+    characterLinesCurrentPage = 1;
+    characterLinesLoaded = false;
+    loadCharacterLines();
+  });
+  contactMessageDetailCloseButton?.addEventListener('click', hideContactMessageDetail);
+  contactMessageNotesForm?.addEventListener('submit', handleContactMessageNotesSubmit);
+  contactMessageFilters.forEach((filter) => {
+    filter.addEventListener('change', () => {
+      contactMessagesCurrentPage = 1;
+      contactMessagesLoaded = false;
+      loadContactMessages();
+    });
+  });
+  contactMessagesPageSizeSelect?.addEventListener('change', () => {
+    contactMessagesPageSize = Number(contactMessagesPageSizeSelect.value) || 10;
+    contactMessagesCurrentPage = 1;
+    contactMessagesLoaded = false;
+    loadContactMessages();
   });
   archiveRoomDetailCloseButton.addEventListener('click', hideArchiveRoomDetail);
   archiveRoomNewButton.addEventListener('click', () => showArchiveRoomForm());

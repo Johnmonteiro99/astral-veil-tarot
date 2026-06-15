@@ -9,14 +9,15 @@
     />
     <title>The Lumen Archive | Astral Veil</title>
     <link rel="icon" type="image/png" href="favicon.png" />
-    <link rel="preload" as="image" href="assets/images/concepts-ideas/lumen-sun-title-section.webp" fetchpriority="high" />
-    <link rel="preload" as="image" href="assets/images/dawn-of-atrium.webp" />
+    <link rel="preload" as="image" href="assets/images/lumen_archive_rooms/dawn_atium.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="assets/images/lumen_archive_rooms/reflection_pool.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Quicksand:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
     <link rel="stylesheet" href="css/lumen-archive.css" />
@@ -31,7 +32,7 @@
       gtag('config', 'G-YVLLXXW0QJ');
     </script>
   </head>
-  <body class="sun-mode lumen-archivree-page">
+  <body class="sun-mode lumen-archive-page">
     <script>
       (function () {
         var themeStorageKey = "dailyTarotTheme";
@@ -92,7 +93,7 @@
           <span class="theme-orb-toggle__label theme-orb-toggle__label--sun">Sun</span>
           <span class="theme-orb-toggle__icon-wrap" aria-hidden="true">
             <img
-              src="assets/icons/symbols/sun-moon-toggle-transparent.png"
+              src="assets/icons/symbols/sun-moon-transparent.png"
               alt=""
               class="theme-orb-toggle__icon"
               width="512"
@@ -148,147 +149,192 @@
     </div>
 
     <main class="tarot-stage">
-      <section class="lumen-archive" aria-labelledby="lumen-archive-title">
-        <header class="lumen-hero" aria-labelledby="lumen-archive-title">
-          <div class="lumen-hero__inner">
-            <div class="lumen-hero__eyebrow-row">
-              <span aria-hidden="true"></span>
-              <p>LIGHTWORK INDEX</p>
-              <span aria-hidden="true"></span>
-            </div>
-
-            <div class="lumen-hero__content">
-              <div class="lumen-hero__text">
-                <p class="lumen-hero__small-title">THE</p>
-                <h1 id="lumen-archive-title">LUMEN ARCHIVE</h1>
-                <div class="lumen-hero__divider" aria-hidden="true"></div>
-                <h2>
-                  Not every truth arrives as a wound.<br />
-                  Some arrive as <span class="lumen-hero__accent">light</span>.
-                </h2>
-                <div class="lumen-hero__divider lumen-hero__divider--small" aria-hidden="true"></div>
-                <p>
-                  The Lumen Archive is a sanctuary for reflection, clarity, healing, and the truths that help the self return whole. Explore gentle wisdom, lightwork teachings, and the knowledge that illuminates your becoming.
-                </p>
-              </div>
-            </div>
-
-            <div class="lumen-hero__features" aria-label="Lumen Archive themes">
-              <div class="lumen-hero-feature">
-                <span class="lumen-hero-feature__icon" aria-hidden="true">
-                  <svg viewBox="0 0 64 64" focusable="false">
-                    <circle cx="32" cy="20" r="8" />
-                    <path d="M18 52c3-11 8-17 14-17s11 6 14 17" />
-                    <path d="M24 39c2 4 5 6 8 6s6-2 8-6" />
-                  </svg>
-                </span>
-                <strong>REFLECTION</strong>
-                <small>Look within.</small>
-              </div>
-              <div class="lumen-hero-feature">
-                <span class="lumen-hero-feature__icon" aria-hidden="true">
-                  <svg viewBox="0 0 64 64" focusable="false">
-                    <path d="M43 9c-10 3-17 12-17 23 0 10 6 19 15 23A24 24 0 1 1 43 9z" />
-                    <path d="M45 21l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" />
-                  </svg>
-                </span>
-                <strong>CLARITY</strong>
-                <small>See clearly.</small>
-              </div>
-              <div class="lumen-hero-feature">
-                <span class="lumen-hero-feature__icon" aria-hidden="true">
-                  <svg viewBox="0 0 64 64" focusable="false">
-                    <path d="M32 47c-11-6-15-16-12-30 8 4 12 12 12 30z" />
-                    <path d="M32 47c11-6 15-16 12-30-8 4-12 12-12 30z" />
-                    <path d="M18 42c7 8 21 8 28 0" />
-                    <path d="M32 18v30" />
-                  </svg>
-                </span>
-                <strong>HEALING</strong>
-                <small>Restore softly.</small>
-              </div>
-              <div class="lumen-hero-feature">
-                <span class="lumen-hero-feature__icon" aria-hidden="true">
-                  <svg viewBox="0 0 64 64" focusable="false">
-                    <path d="M32 8l6 17 18 7-18 7-6 17-6-17-18-7 18-7z" />
-                    <path d="M49 9l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" />
-                  </svg>
-                </span>
-                <strong>TRUTH</strong>
-                <small>Remember fully.</small>
-              </div>
-            </div>
-
-            <p class="lumen-hero__quote">
-              <span class="lumen-hero__quote-text">
-                You are not here to collect more knowledge&mdash;you are here to <span class="lumen-hero__accent">remember</span> what already lives within you.
-              </span>
-            </p>
-          </div>
-        </header>
-
-        <section class="lumen-atrium" aria-labelledby="lumen-atrium-title">
-          <figure class="lumen-atrium__image">
+      <section class="lumen-dashboard lumen-dashboard--aligned" aria-labelledby="lumen-archive-title" data-lumen-dashboard>
+        <aside class="lumen-room-sidebar" aria-label="Lumen Archive room navigation">
+          <div class="lumen-room-sidebar__heading lumen-sidebar-header lumen-sidebar-header-area">
             <img
-              src="assets/images/dawn-of-atrium.webp"
-              alt="The Dawn Atrium"
-              width="1024"
-              height="1536"
+              class="lumen-sidebar-mark"
+              src="assets/icons/symbols/astral-veil-icon-logo-transparent.png"
+              alt=""
+              aria-hidden="true"
+              width="512"
+              height="512"
               loading="eager"
               decoding="async"
-              fetchpriority="high"
-              onerror="this.closest('.lumen-atrium__image').classList.add('is-missing'); this.remove();"
             />
-            <figcaption aria-hidden="true"><span>D</span></figcaption>
-          </figure>
-
-          <div class="lumen-atrium__content">
-            <p class="lumen-featured-counter">Arrival Room</p>
-            <h2 id="lumen-atrium-title">The Dawn Atrium</h2>
-            <div class="lumen-atrium__letter">
-              <p>Welcome.</p>
-              <p>If you have found your way here, then something in you is ready to be met with light.</p>
-              <span class="lumen-atrium__divider" aria-hidden="true"></span>
-              <p>The Lumen Archive is a sanctuary for quiet return - a place for reflection, healing, truth, and the kind of self-discovery that does not ask you to break yourself apart in order to grow.</p>
-              <p>Each room within it offers a different form of care: some reflect, some steady, some renew, and some reveal.</p>
-              <span class="lumen-atrium__divider" aria-hidden="true"></span>
-              <p>You are not expected to arrive here complete.<br />You are only asked to arrive willing.</p>
-              <span class="lumen-atrium__divider" aria-hidden="true"></span>
-              <p>When your spirit knows where to begin, choose a sanctuary below.</p>
-            </div>
-
+            <h2 id="lumen-archive-title">Lumen Archive</h2>
+            <p>Five rooms. Five truths.<br />One you.</p>
           </div>
 
-          <section class="lumen-name-entry" aria-label="Name entry">
-            <form class="lumen-name-form lumen-name-entry__card" data-lumen-name-form>
-              <div class="lumen-name-entry__ornament" aria-hidden="true">✦</div>
-              <div class="lumen-name-form__fields" data-lumen-name-fields>
-                <label class="lumen-name-entry__eyebrow" for="lumen-name-input">What name should the light remember?</label>
-                <p class="lumen-name-form__hint lumen-name-entry__helper">
-                  Your name becomes a thread in the celestial weave, remembered in light, whispered in stars.
-                </p>
-                <div class="lumen-name-form__row lumen-name-entry__form">
-                  <input id="lumen-name-input" type="text" name="lumen-name" placeholder="Your name..." autocomplete="name" data-lumen-name-input />
-                  <button type="submit">Let the Light Know</button>
+          <nav class="lumen-room-nav lumen-sidebar-nav-area" aria-label="Lumen rooms" data-lumen-dashboard-nav></nav>
+
+          <blockquote class="lumen-room-quote lumen-sidebar-quote lumen-sidebar-quote-area">
+            <p>You are not here to be perfect. You are here to remember.</p>
+          </blockquote>
+        </aside>
+
+        <div class="lumen-room-main" aria-live="polite">
+          <section class="lumen-arrival-room" data-lumen-arrival-room hidden>
+            <article class="lumen-arrival-hero lumen-arrival-hero-card" data-lumen-arrival-hero>
+              <img class="lumen-room-hero-img lumen-arrival-hero-img" src="assets/images/lumen_archive_rooms/dawn_atium.png" alt="Dawn Atrium" data-lumen-arrival-hero-img />
+              <span class="lumen-room-hero-overlay" aria-hidden="true"></span>
+              <div class="lumen-arrival-hero-content">
+                <p class="lumen-room-panel__label">Lumen Archive</p>
+                <h2>Dawn Atrium</h2>
+                <p class="lumen-arrival-subtitle">Where the Archive first learns your name.</p>
+              </div>
+            </article>
+
+            <section class="lumen-arrival-welcome-panel">
+              <h2 class="lumen-arrival-welcome" data-lumen-arrival-welcome></h2>
+              <p class="lumen-arrival-poetic">
+                No one enters the Lumen Archive already perfect, and no one is asked to.
+                Bring the unfinished parts, the quiet questions, and the light still learning its own shape.
+                The work ahead is not a test of worth, but a beautiful return to what has always been waiting within you.
+              </p>
+              <blockquote class="lumen-arrival-marcus-quote">
+                <p>“Everything we hear is an opinion, not a fact. Everything we see is a perspective, not the truth.”</p>
+                <cite>Marcus Aurelius, Meditations</cite>
+              </blockquote>
+
+            </section>
+
+            <section class="lumen-arrival-intro-grid lumen-arrival-intro-carousel" aria-label="Dawn Atrium guidance" data-lumen-arrival-intro-carousel>
+              <div class="lumen-arrival-intro-track" data-lumen-arrival-intro-track>
+                <div class="lumen-arrival-intro-slide">
+                  <article class="lumen-arrival-panel">
+                    <p class="lumen-room-panel__label">What this place is</p>
+                    <p>The Lumen Archive is not a place for perfect answers. It is a sanctuary for reflection, healing, renewal, grounding, and integration.</p>
+                  </article>
+                </div>
+                <div class="lumen-arrival-intro-slide">
+                  <article class="lumen-arrival-panel">
+                    <p class="lumen-room-panel__label">How to walk the rooms</p>
+                    <p>Each room offers a different kind of remembering. Some ask you to soften. Some ask you to breathe. Some ask you to grow slowly.</p>
+                  </article>
+                </div>
+                <div class="lumen-arrival-intro-slide">
+                  <article class="lumen-arrival-panel">
+                    <p class="lumen-room-panel__label">What the Archive remembers</p>
+                    <p>None of these rooms ask you to become someone else. They invite the self already here to return with gentleness.</p>
+                  </article>
                 </div>
               </div>
-              <p class="lumen-name-form__message" data-lumen-name-message aria-live="polite"></p>
-              <button class="lumen-name-form__change" type="button" data-lumen-name-reset hidden>Speak Another Name</button>
-            </form>
+
+              <div class="lumen-arrival-intro-controls" aria-label="Dawn Atrium guidance carousel controls">
+                <button class="lumen-arrival-intro-prev" type="button" aria-label="Previous intro card" data-lumen-arrival-intro-prev>‹</button>
+                <div class="lumen-arrival-intro-dots" aria-hidden="true" data-lumen-arrival-intro-dots>
+                  <span class="is-active"></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <button class="lumen-arrival-intro-next" type="button" aria-label="Next intro card" data-lumen-arrival-intro-next>›</button>
+              </div>
+            </section>
+
           </section>
-        </section>
 
-        <section class="lumen-sanctuary" aria-labelledby="lumen-sanctuary-title">
-          <div class="lumen-sanctuary__heading">
-            <h2 id="lumen-sanctuary-title">Choose Your Lightwork</h2>
-            <p class="lumen-sanctuary__subheading">What is asking for light today?</p>
-            <p>Choose the kind of care your spirit is ready to begin.</p>
+          <div class="lumen-sanctuary-dashboard-layout" data-lumen-sanctuary-dashboard-layout>
+            <section class="lumen-room-hero-card" data-lumen-dashboard-hero>
+              <img class="lumen-room-hero-img" alt="" data-lumen-dashboard-hero-img />
+              <span class="lumen-room-hero-overlay" aria-hidden="true"></span>
+              <div class="lumen-room-hero-card__content">
+                <h2 data-lumen-dashboard-title></h2>
+                <p class="lumen-room-hero-card__element" data-lumen-dashboard-element></p>
+                <p class="lumen-room-hero-card__line" data-lumen-dashboard-line></p>
+              </div>
+            </section>
+
+            <section class="lumen-room-content-grid lumen-room-content-grid--compact lumen-room-core lumen-sanctuary-card-carousel" aria-label="Active room guidance" data-lumen-sanctuary-card-carousel>
+              <div class="lumen-sanctuary-card-track" data-lumen-sanctuary-card-track>
+                <div class="lumen-sanctuary-slide">
+                  <article class="lumen-room-panel lumen-purpose-card lumen-guidance-purpose">
+                    <p class="lumen-room-panel__label lumen-panel-kicker">Room Purpose</p>
+                    <h3 data-lumen-dashboard-purpose-title></h3>
+                    <p data-lumen-dashboard-purpose></p>
+                    <p class="lumen-purpose-note" data-lumen-dashboard-ritual></p>
+                    <a class="lumen-action-btn lumen-journal-btn" href="journal.html">
+                      <span>Write in Journal</span>
+                      <img src="assets/icons/symbols/feather-pen.svg" alt="" aria-hidden="true" />
+                    </a>
+                  </article>
+                </div>
+
+                <div class="lumen-sanctuary-slide">
+                  <article class="lumen-room-panel lumen-questions-card lumen-guidance-questions">
+                    <p class="lumen-room-panel__label lumen-panel-kicker">Reflection Questions</p>
+                    <article class="lumen-single-question-card" aria-live="polite">
+                      <span class="lumen-question-icon" aria-hidden="true">✦</span>
+                      <p class="lumen-single-question-text" data-lumen-dashboard-question-text></p>
+                    </article>
+                    <button class="lumen-action-btn lumen-question-cycle-btn" type="button" data-lumen-question-cycle>
+                      <span>Let the Room Ask Again</span>
+                    </button>
+                  </article>
+                </div>
+
+                <div class="lumen-sanctuary-slide">
+                  <article class="lumen-room-panel seal-panel lumen-room-seal-card">
+                    <img class="lumen-room-seal-bg" alt="" aria-hidden="true" data-lumen-dashboard-seal-img />
+                    <span class="lumen-room-seal-overlay" aria-hidden="true"></span>
+                    <div class="lumen-room-seal-content">
+                      <h3 data-lumen-dashboard-seal-title></h3>
+                      <p data-lumen-dashboard-seal-description></p>
+                      <button class="lumen-action-btn lumen-unseal-scroll-btn" type="button" data-lumen-dashboard-unseal-scroll>
+                        <span>Unseal Scroll</span>
+                      </button>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+              <div class="lumen-sanctuary-carousel-controls" aria-label="Sanctuary card carousel controls">
+                <button class="lumen-sanctuary-carousel-prev" type="button" aria-label="Previous sanctuary card" data-lumen-sanctuary-card-prev>‹</button>
+                <div class="lumen-sanctuary-carousel-dots" aria-hidden="true" data-lumen-sanctuary-card-dots>
+                  <span class="is-active"></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <button class="lumen-sanctuary-carousel-next" type="button" aria-label="Next sanctuary card" data-lumen-sanctuary-card-next>›</button>
+              </div>
+            </section>
+
+            <section class="lumen-other-rooms" aria-labelledby="lumen-other-rooms-title">
+              <div class="lumen-other-rooms__heading">
+                <span aria-hidden="true"></span>
+                <h2 id="lumen-other-rooms-title">Explore the Other Rooms</h2>
+                <span aria-hidden="true"></span>
+              </div>
+              <div class="lumen-other-rooms__grid" data-lumen-dashboard-previews></div>
+              <div class="lumen-other-rooms__mobile-controls" aria-label="Explore rooms carousel controls">
+                <button type="button" data-lumen-preview-nav="prev" aria-label="Previous room">
+                  <img src="assets/icons/symbols/arrow-short-left.svg" alt="" aria-hidden="true" />
+                </button>
+                <span class="lumen-other-rooms__indicators" data-lumen-preview-indicators aria-hidden="true"></span>
+                <button type="button" data-lumen-preview-nav="next" aria-label="Next room">
+                  <img src="assets/icons/symbols/arrow-short-right.svg" alt="" aria-hidden="true" />
+                </button>
+              </div>
+            </section>
           </div>
+        </div>
 
-          <div class="lumen-sanctuary__rail" data-lumen-sanctuary-rail aria-label="Choose a Lumen Archive sanctuary"></div>
-
-          <section class="lumen-sanctuary-viewer" data-lumen-sanctuary-viewer aria-live="polite"></section>
-          <section class="lumen-sanctuary-interior" data-lumen-sanctuary-interior hidden aria-live="polite"></section>
+        <section class="lumen-arrival-previews lumen-arrival-explore" aria-labelledby="lumen-arrival-previews-title" data-lumen-arrival-explore-panel hidden>
+          <div class="lumen-other-rooms__heading">
+            <span aria-hidden="true"></span>
+            <h2 id="lumen-arrival-previews-title">Explore the Other Rooms</h2>
+            <span aria-hidden="true"></span>
+          </div>
+          <div class="lumen-other-rooms__grid" data-lumen-arrival-previews></div>
+          <div class="lumen-other-rooms__mobile-controls" aria-label="Explore rooms carousel controls">
+            <button type="button" data-lumen-preview-nav="prev" aria-label="Previous room">
+              <img src="assets/icons/symbols/arrow-short-left.svg" alt="" aria-hidden="true" />
+            </button>
+            <span class="lumen-other-rooms__indicators" data-lumen-preview-indicators aria-hidden="true"></span>
+            <button type="button" data-lumen-preview-nav="next" aria-label="Next room">
+              <img src="assets/icons/symbols/arrow-short-right.svg" alt="" aria-hidden="true" />
+            </button>
+          </div>
         </section>
       </section>
     </main>
