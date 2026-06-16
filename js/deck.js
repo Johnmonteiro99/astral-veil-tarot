@@ -59,7 +59,13 @@ function isDeckUserAuthenticated() {
 }
 
 function canViewBloodMoonDeck() {
-  return isDeckUserAuthenticated() || isDeckEventActive("bloodMoon") || document.body.classList.contains("blood-moon-mode");
+  return window.AstralVeilBloodMoonAccess
+    ? window.AstralVeilBloodMoonAccess.hasBloodMoonAccess({
+        user: deckAuthState.user,
+        allowAuthenticatedUser: true,
+        requiredUnlocks: ["bloodMoonDeck", "blood_moon_deck", "bloodMoon", "blood_moon"]
+      })
+    : isDeckUserAuthenticated() || isDeckEventActive("bloodMoon") || document.body.classList.contains("blood-moon-mode");
 }
 
 function isAuthLockedCollection(collection) {

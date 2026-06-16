@@ -301,6 +301,10 @@ function notifyBloodMoonStateChange(isActive) {
 
 // Reads Blood Moon state through the event helper, with localStorage fallback for older pages.
 function isBloodMoonActive() {
+  if (window.AstralVeilBloodMoonAccess) {
+    return window.AstralVeilBloodMoonAccess.isBloodMoonActive();
+  }
+
   if (window.AstralVeilEvents) {
     return window.AstralVeilEvents.isEventActive(bloodMoonEventId);
   }

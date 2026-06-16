@@ -31,7 +31,7 @@
       gtag('config', 'G-YVLLXXW0QJ');
     </script>
   </head>
-  <body class="sun-mode">
+  <body class="sun-mode" data-requires-bloodmoon="true">
     <script>
       (function () {
         var themeStorageKey = "dailyTarotTheme";
@@ -62,6 +62,13 @@
         document.body.classList.remove("sun-mode", "moon-mode", "blood-moon-mode");
         document.body.classList.add(isBloodMoon ? "blood-moon-mode" : mode + "-mode");
       })();
+    </script>
+    <script src="js/bloodmoon-access.js"></script>
+    <script>
+      window.requireBloodMoonAccess({
+        fallback: "gate",
+        redirectTo: "index.html"
+      });
     </script>
     <header class="site-header">
       <nav class="navbar" aria-label="Primary navigation">

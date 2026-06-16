@@ -2,6 +2,151 @@
   min-height: calc(100vh - 120px);
 }
 
+.noctis-room-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  min-height: 68px;
+  display: grid;
+  grid-template-columns: minmax(210px, 260px) minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: clamp(1.5rem, 3vw, 3rem);
+  padding: 0 clamp(1rem, 4vw, 3rem);
+  border-bottom: 1px solid rgba(255, 65, 90, 0.16);
+  color: #fff1d6;
+  background:
+    radial-gradient(circle at 50% 100%, rgba(255, 35, 77, 0.16), transparent 30%),
+    linear-gradient(180deg, rgba(8, 0, 4, 0.9), rgba(8, 0, 4, 0.58));
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(14px) saturate(126%);
+  -webkit-backdrop-filter: blur(14px) saturate(126%);
+}
+
+.noctis-room-brand,
+.noctis-room-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.noctis-room-brand {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  min-width: 210px;
+  font-family: "Marcellus", "Cormorant Garamond", serif;
+  font-size: clamp(0.92rem, 1.2vw, 1.08rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow: 0 0 18px rgba(255, 35, 77, 0.24);
+}
+
+.noctis-room-brand__arrow {
+  color: #ff3f62;
+  font-family: "DM Sans", sans-serif;
+  font-size: 1.875rem;
+  line-height: 0;
+  text-shadow: 0 0 12px rgba(255, 35, 77, 0.72);
+}
+
+.noctis-room-links {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: clamp(1.2rem, 2vw, 2rem);
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.noctis-room-links::-webkit-scrollbar {
+  display: none;
+}
+
+.noctis-room-links::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -0.5rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 35, 77, 0.64), transparent);
+  box-shadow: 0 0 14px rgba(255, 35, 77, 0.34);
+  pointer-events: none;
+}
+
+.noctis-room-menu-toggle {
+  display: none;
+}
+
+.noctis-room-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-height: 44px;
+  border: 0;
+  padding: 0.78rem 0;
+  background: transparent;
+  color: rgba(255, 238, 220, 0.78);
+  font: 700 0.72rem/1 "DM Sans", sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 180ms ease, opacity 180ms ease, text-shadow 180ms ease;
+}
+
+.noctis-room-link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0.18rem;
+  width: 0;
+  height: 2px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #ff3f62;
+  box-shadow:
+    0 0 14px rgba(255, 35, 77, 0.72),
+    0 0 28px rgba(255, 35, 77, 0.26);
+  transition: width 180ms ease;
+}
+
+.noctis-room-link:hover,
+.noctis-room-link:focus-visible,
+.noctis-room-link.is-active,
+.noctis-room-link.active,
+.noctis-room-link[aria-current="page"] {
+  color: #fff6e6;
+  text-shadow: 0 0 14px rgba(255, 35, 77, 0.5);
+}
+
+.noctis-room-link:hover::after,
+.noctis-room-link:focus-visible::after,
+.noctis-room-link.is-active::after,
+.noctis-room-link.active::after,
+.noctis-room-link[aria-current="page"]::after {
+  width: min(100%, 3rem);
+}
+
+.noctis-room-link.is-locked {
+  color: rgba(255, 238, 220, 0.38);
+  cursor: not-allowed;
+}
+
+.noctis-room-link.is-locked::after {
+  background: rgba(255, 65, 90, 0.32);
+  box-shadow: none;
+}
+
 .archive-room-placeholder__stage {
   max-width: min(860px, 100%);
   margin: 0 auto;
@@ -118,7 +263,126 @@
   font-size: 0.88rem;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1099px) {
+  .noctis-room-navbar {
+    position: sticky;
+    display: flex;
+    justify-content: space-between;
+    min-height: 64px;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background:
+      radial-gradient(circle at 90% 0%, rgba(255, 35, 77, 0.14), transparent 34%),
+      linear-gradient(180deg, rgba(8, 0, 4, 0.94), rgba(8, 0, 4, 0.72));
+    overflow: visible;
+  }
+
+  .noctis-room-brand {
+    min-width: 0;
+    font-size: 0.95rem;
+    letter-spacing: 0.12em;
+  }
+
+  .noctis-room-menu-toggle {
+    display: grid;
+    place-items: center;
+    gap: 4px;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    border: 1px solid rgba(255, 80, 105, 0.42);
+    border-radius: 14px;
+    padding: 0.65rem;
+    background: rgba(22, 0, 8, 0.78);
+    cursor: pointer;
+    box-shadow:
+      inset 0 0 14px rgba(255, 70, 96, 0.08),
+      0 0 20px rgba(255, 40, 75, 0.12);
+  }
+
+  .noctis-room-menu-toggle span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    border-radius: 999px;
+    background: #fff1d6;
+    box-shadow: 0 0 8px rgba(255, 70, 96, 0.35);
+  }
+
+  .noctis-room-navbar.is-open .noctis-room-menu-toggle {
+    border-color: rgba(255, 116, 126, 0.62);
+    box-shadow:
+      inset 0 0 14px rgba(255, 70, 96, 0.12),
+      0 0 24px rgba(255, 40, 75, 0.2);
+  }
+
+  .noctis-room-links {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 1rem;
+    right: 1rem;
+    z-index: 1001;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    min-width: 0;
+    max-height: calc(100vh - 88px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid rgba(255, 80, 105, 0.24);
+    border-radius: 20px;
+    padding: 0.85rem;
+    background:
+      radial-gradient(circle at 80% 0%, rgba(255, 55, 85, 0.18), transparent 34%),
+      linear-gradient(135deg, rgba(22, 0, 8, 0.98), rgba(5, 0, 4, 0.98));
+    box-shadow:
+      0 24px 80px rgba(0, 0, 0, 0.48),
+      0 0 32px rgba(255, 35, 70, 0.14);
+  }
+
+  .noctis-room-navbar.is-open .noctis-room-links {
+    display: flex;
+  }
+
+  .noctis-room-links::after {
+    display: none;
+  }
+
+  .noctis-room-link {
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 42px;
+    border-radius: 14px;
+    padding: 0.85rem 0.9rem;
+    white-space: normal;
+    text-align: left;
+  }
+
+  .noctis-room-link::after {
+    left: 0.9rem;
+    bottom: 0.35rem;
+    transform: none;
+  }
+
+  .noctis-room-link:hover,
+  .noctis-room-link:focus-visible,
+  .noctis-room-link.is-active {
+    background: rgba(255, 65, 90, 0.08);
+  }
+
+  .noctis-room-link:hover::after,
+  .noctis-room-link:focus-visible::after,
+  .noctis-room-link.is-active::after,
+  .noctis-room-link.active::after,
+  .noctis-room-link[aria-current="page"]::after {
+    width: 42px;
+  }
+
+  .noctis-room-link.is-locked {
+    opacity: 0.52;
+  }
+
   .archive-room-placeholder__card {
     border-radius: 12px;
     padding: 1.2rem;
