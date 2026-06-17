@@ -47,7 +47,10 @@ let shelvesDocumentsError = "";
 let shelvesSearchQuery = "";
 let shelvesActiveFilter = "all";
 let shelvesActiveIndex = 0;
-let openShelvesDocumentId = "";
+let openShelvesReadDocumentId = "";
+let openShelvesDetailsDocumentId = "";
+let openShelvesAidModalId = "";
+let shelvesAidPageIndex = 0;
 
 const archiveKeyStorageKey = "astralVeilNoctisElementalKeys";
 const archiveKeySessionStorageKey = "astralVeilNoctisElementalKeysSession";
@@ -363,6 +366,7 @@ const archiveShelfEntries = [
     title: "The Tide That Moves Within",
     label: "Recovered Journal Fragment",
     author: "Attributed to Zephyra Noctis",
+    shelfMark: "J-SC-ZN-01",
     body: [
       "I used to think water was soft because it yielded.",
       "I was wrong.",
@@ -421,57 +425,73 @@ const shelvesFilterOptions = [
 
 const shelvesBrowseCards = [
   {
+    id: "journals",
     title: "Recovered Journals",
     description: "Personal journals and recovered diary fragments.",
-    filter: "journals"
+    filter: "journals",
+    activeFilter: "journals"
   },
   {
+    id: "manuscripts",
     title: "Manuscripts",
     description: "Scholarly works, occult treatises, and unknown authorial texts.",
-    filter: "manuscripts"
+    filter: "manuscripts",
+    activeFilter: "manuscripts"
   },
   {
+    id: "letters",
     title: "Letters",
     description: "Correspondence, messages, and sealed letters.",
-    filter: "letters"
+    filter: "letters",
+    activeFilter: "letters"
   },
   {
+    id: "cryptic_codes",
     title: "Cipher Shelf",
     description: "Encoded texts, cryptograms, and unresolved ciphers.",
-    filter: "cryptic-codes"
+    filter: "cryptic_codes",
+    activeFilter: "cryptic-codes"
   },
   {
+    id: "unstable_texts",
     title: "Unstable Texts",
     description: "Writings corrupted by ink shifts, time, or unknown influence.",
-    filter: "fragments"
+    filter: "unstable_texts",
+    activeFilter: "fragments"
   },
   {
+    id: "veil_lore",
     title: "Veil Lore",
     description: "Fragments dealing with the Veil, its watchers, and beyond.",
-    filter: "the-veil"
+    filter: "veil_lore",
+    activeFilter: "the-veil"
   }
 ];
 
 const shelvesFindingAids = [
   {
+    id: "shelf-index",
     title: "Shelf Index",
     description: "Browse by shelf mark and classification.",
     action: "Open Index",
     image: "assets/images/noctis/shelf_index.png"
   },
   {
+    id: "code-ledger",
     title: "Code Ledger",
     description: "Track cipher keys, coded phrases, and recovered symbols.",
     action: "Open Ledger",
     image: "assets/images/noctis/code_ledger.png"
   },
   {
+    id: "cross-references",
     title: "Cross-References",
     description: "Find connections between documents, authors, rooms, and events.",
     action: "Explore",
     image: "assets/images/noctis/cross_reference.png"
   },
   {
+    id: "recent-discoveries",
     title: "Recent Discoveries",
     description: "The latest records and pieces recovered from the Archive.",
     action: "View New",
@@ -1269,6 +1289,10 @@ function renderNoctisRoomNavbar(currentRoomId = "") {
   initNoctisRoomNavbar();
 }
 
+function shouldRenderRoomAppendices(roomId) {
+  return !["entry-desk", "shelves", "gallery", "restricted-wing"].includes(roomId);
+}
+
 function closeNoctisRoomNavbarMenu() {
   if (!noctisRoomNavbar) {
     return;
@@ -1390,6 +1414,9 @@ function renderNoctisRoomByQuery() {
     openEntryDeskWhisperId = "";
     resetEntryDeskActivityCards();
   }
+  if (room.id !== "shelves") {
+    closeShelvesModals();
+  }
 
   noctisRoomType.textContent = "Noctis Archive";
   noctisRoomTitle.textContent = room.title;
@@ -1443,12 +1470,12 @@ function renderNoctisRoomByQuery() {
   const roomMarkup = isRoomLocked(room)
     ? renderNoctisRoomLockedPanel(room)
     : (renderRoomContent(room) || renderNoctisRoomLockedPanel(room));
-  const shouldRenderRoomAppendices = room.id !== "entry-desk" && room.id !== "shelves" && room.id !== "restricted-wing";
+  const renderRoomAppendices = shouldRenderRoomAppendices(room.id);
 
   noctisRoomContent.innerHTML = `
     ${roomMarkup}
-    ${shouldRenderRoomAppendices ? renderRecoveredObjects() : ""}
-    ${shouldRenderRoomAppendices ? renderArchiveLorePanel() : ""}
+    ${renderRoomAppendices ? renderRecoveredObjects() : ""}
+    ${renderRoomAppendices ? renderArchiveLorePanel() : ""}
     ${renderVisualRecordModal()}
   `;
 
@@ -1535,6 +1562,7 @@ function renderArchiveAccessState() {
 
 function updateEntryDeskModalOpenState() {
   const isEntryDeskActive = document.body.classList.contains("entry-desk-page");
+  const isShelvesActive = document.body.classList.contains("shelves-page");
   const hasOpenEntryDeskModal = Boolean(
     isEntryDeskActive &&
     (
@@ -1542,7 +1570,15 @@ function updateEntryDeskModalOpenState() {
       isArchiveNoticesModalOpen
     )
   );
-  const hasOpenArchiveModal = hasOpenEntryDeskModal || isRecoveredItemsModalOpen;
+  const hasOpenShelvesModal = Boolean(
+    isShelvesActive &&
+    (
+      openShelvesReadDocumentId ||
+      openShelvesDetailsDocumentId ||
+      openShelvesAidModalId
+    )
+  );
+  const hasOpenArchiveModal = hasOpenEntryDeskModal || isRecoveredItemsModalOpen || hasOpenShelvesModal;
 
   document.body.classList.toggle("modal-open", hasOpenArchiveModal);
 }
@@ -1725,10 +1761,10 @@ function renderArchiveRooms() {
         </section>
       `}
       ${renderSelectedChamberContent(selectedRoom)}
-      ${isEntryDeskInteriorOpen ? "" : `<div class="archive-recovery-stack">
+      ${isEntryDeskInteriorOpen || !shouldRenderRoomAppendices(selectedRoom.id) ? "" : `<div class="archive-recovery-stack">
         ${renderRecoveredObjects()}
       </div>`}
-      ${isEntryDeskInteriorOpen ? "" : renderArchiveLorePanel()}
+      ${isEntryDeskInteriorOpen || !shouldRenderRoomAppendices(selectedRoom.id) ? "" : renderArchiveLorePanel()}
       ${renderVisualRecordModal()}
       ${renderRestrictedWingRitualOverlay()}
       ${renderRestrictedWingGuestPromptOverlay()}
@@ -2068,6 +2104,10 @@ function getRecoveredObjects() {
   return elementalKeys.filter((key) => unlockedKeys.includes(key.id));
 }
 
+function getVisibleRecoveredObjects() {
+  return isLoggedInArchiveUser() ? getRecoveredObjects() : [];
+}
+
 function getObjectAlignment(object) {
   return Array.isArray(object.alignment) ? object.alignment.filter(Boolean) : [];
 }
@@ -2090,14 +2130,18 @@ function renderRecoveredObjectIcon(object) {
 
 function renderRecoveredObjectCard(object, isRecovered = true) {
   const dataAttribute = isRecovered ? `data-recovered-object="${escapeHtml(object.id)}"` : "";
+  const cardTitle = isRecovered ? object.title : "Sealed Finding";
+  const cardLabel = isRecovered
+    ? `Open ${object.title} recovered artifact details`
+    : "Sealed finding not yet recovered";
 
   return `
-    <button class="archive-recovered-object-card ${escapeHtml(object.accentClass || "")}${isRecovered ? " is-recovered" : " is-locked"}" type="button" ${dataAttribute} ${isRecovered ? "" : "disabled"} aria-label="${escapeHtml(isRecovered ? `Open ${object.title} recovered artifact details` : `${object.title} not yet recovered`)}">
+    <button class="archive-recovered-object-card ${escapeHtml(isRecovered ? object.accentClass || "" : "")}${isRecovered ? " is-recovered" : " is-locked"}" type="button" ${dataAttribute} ${isRecovered ? "" : "disabled"} aria-label="${escapeHtml(cardLabel)}">
       <span class="archive-recovered-object-card__icon">
-        ${renderRecoveredObjectIcon(object)}
+        ${isRecovered ? renderRecoveredObjectIcon(object) : `<span aria-hidden="true">?</span>`}
       </span>
       <span class="archive-recovered-object-card__copy">
-        <strong>${escapeHtml(object.title)}</strong>
+        <strong>${escapeHtml(cardTitle)}</strong>
       </span>
     </button>
   `;
@@ -2146,7 +2190,7 @@ function renderRecoveredItemsModal() {
     return "";
   }
 
-  const unlockedKeys = getUnlockedElementalKeys();
+  const recoveredObjects = getVisibleRecoveredObjects();
 
   return `
     <div class="archive-recovered-items-modal" role="presentation">
@@ -2157,21 +2201,31 @@ function renderRecoveredItemsModal() {
           <h4 id="recovered-items-title">Recovered Items</h4>
         </div>
         <div class="archive-recovered-items-list">
-          ${elementalKeys.map((object) => {
-            const isRecovered = unlockedKeys.includes(object.id);
-
-            return `
-              <article class="archive-recovered-items-list__row ${escapeHtml(object.accentClass || "")}${isRecovered ? " is-recovered" : " is-locked"}">
-                <span class="archive-recovered-items-list__icon">${renderRecoveredObjectIcon(object)}</span>
-                <span>
-                  <strong>${escapeHtml(object.title)}</strong>
-                  <em>${escapeHtml(object.type || "Recovered Finding")} • ${escapeHtml(isRecovered ? "Recovered" : "Locked")}</em>
-                </span>
-              </article>
-            `;
-          }).join("")}
+          ${recoveredObjects.map((object) => `
+            <article class="archive-recovered-items-list__row ${escapeHtml(object.accentClass || "")} is-recovered">
+              <span class="archive-recovered-items-list__icon">${renderRecoveredObjectIcon(object)}</span>
+              <span>
+                <strong>${escapeHtml(object.title)}</strong>
+                <em>${escapeHtml(object.type || "Recovered Finding")} - Recovered</em>
+              </span>
+            </article>
+          `).join("") || renderRecoveredFindingsEmptyState()}
         </div>
       </article>
+    </div>
+  `;
+}
+
+function renderRecoveredFindingsEmptyState() {
+  return `
+    <div class="noctis-findings-empty">
+      <p class="noctis-card-kicker">Recovered Findings</p>
+      <h3>Nothing has answered yet.</h3>
+      <p>
+        The desk is not empty. It is withholding.
+        Somewhere in the Archive, keys, relics, and memories are waiting for the hand that remembers how to find them.
+      </p>
+      <p class="noctis-findings-hint">Recover a whisper. Return with proof.</p>
     </div>
   `;
 }
@@ -2179,12 +2233,12 @@ function renderRecoveredItemsModal() {
 // The recovered-object display presents each elemental key as an inspectable
 // archive artifact while the underlying key progress remains available to locks.
 function renderRecoveredObjects() {
-  const unlockedKeys = getUnlockedElementalKeys();
-  const recoveredObjects = getRecoveredObjects();
+  const recoveredObjects = getVisibleRecoveredObjects();
   const selectedObject = getSelectedRecoveredObject(recoveredObjects);
 
   if (openRecoveredObjectId && !selectedObject) {
     openRecoveredObjectId = "";
+    isRecoveredItemsModalOpen = false;
   }
 
   return `
@@ -2195,14 +2249,13 @@ function renderRecoveredObjects() {
       </div>
       <div class="archive-recovered-inventory">
         <div class="archive-recovered-object-strip" aria-label="Recovered findings inventory">
-          ${elementalKeys.map((object) => renderRecoveredObjectCard(object, unlockedKeys.includes(object.id))).join("")}
+          ${recoveredObjects.map((object) => renderRecoveredObjectCard(object)).join("") || renderRecoveredFindingsEmptyState()}
         </div>
       </div>
-      <button class="archive-view-recovered-items-btn" type="button" data-view-all-recovered-items>
+      ${recoveredObjects.length ? `<button class="archive-view-recovered-items-btn" type="button" data-view-all-recovered-items>
         <span>View all recovered items</span>
         <img src="assets/icons/symbols/arrow-long-right.svg" alt="" aria-hidden="true" width="18" height="18" loading="lazy" decoding="async" />
-      </button>
-      ${recoveredObjects.length ? "" : `<p class="archive-empty-state">No findings recovered yet. The desk is still listening.</p>`}
+      </button>` : ""}
       ${selectedObject ? renderRecoveredObjectDetail(selectedObject) : ""}
       ${renderRecoveredItemsModal()}
       <div class="archive-recovered-objects__art" aria-hidden="true"></div>
@@ -2254,7 +2307,7 @@ function getFallbackNoctisDocuments() {
     title: entry.title,
     subtitle: entry.label,
     author: entry.author,
-    document_type: "Journal Fragment",
+    document_type: "journal_fragment",
     category: "journals",
     summary: "The sea is not distant. It is memory. It pulls at the edge of the self, where names dissolve and the Veil grows thin.",
     excerpt: "The sea is not distant. It is memory. It pulls at the edge of the self, where names dissolve and the Veil grows thin.",
@@ -2264,7 +2317,7 @@ function getFallbackNoctisDocuments() {
     unlock_requirement: "public",
     is_published: true,
     is_featured: index === 0,
-    shelf_mark: "JRN-ZN-07",
+    shelf_mark: entry.shelfMark || "J-SC-ZN-01",
     cover_image: "assets/images/noctis/recovered-code.png",
     created_at: "2026-06-01T00:00:00.000Z"
   }));
@@ -2311,10 +2364,134 @@ function getDocumentExcerpt(document) {
   return document?.excerpt || document?.summary || getDocumentBodyText(document).slice(0, 220);
 }
 
+function formatShelvesLabel(value, fallback = "Unclassified") {
+  const normalized = String(value || fallback)
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return normalized.replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function getShelvesDocumentStatus(document) {
+  return isNoctisDocumentLocked(document) ? "Sealed" : "Open";
+}
+
+function getShelvesDocumentUnlockLabel(document) {
+  return isNoctisDocumentLocked(document)
+    ? document?.unlock_requirement || "Additional access required"
+    : "Public";
+}
+
+function closeShelvesModals() {
+  openShelvesReadDocumentId = "";
+  openShelvesDetailsDocumentId = "";
+  openShelvesAidModalId = "";
+  shelvesAidPageIndex = 0;
+}
+
+function openShelvesReadModal(documentId) {
+  openShelvesReadDocumentId = documentId || "";
+  openShelvesDetailsDocumentId = "";
+  openShelvesAidModalId = "";
+  shelvesAidPageIndex = 0;
+  renderCurrentArchiveSurface();
+}
+
+function openShelvesDetailsModal(documentId) {
+  openShelvesDetailsDocumentId = documentId || "";
+  openShelvesReadDocumentId = "";
+  openShelvesAidModalId = "";
+  shelvesAidPageIndex = 0;
+  renderCurrentArchiveSurface();
+}
+
+function openShelvesAidModal(aidId) {
+  openShelvesAidModalId = aidId || "";
+  openShelvesReadDocumentId = "";
+  openShelvesDetailsDocumentId = "";
+  shelvesAidPageIndex = 0;
+  renderCurrentArchiveSurface();
+}
+
 function isNoctisDocumentLocked(document) {
   const requirement = String(document?.unlock_requirement || "public").trim().toLowerCase();
 
   return Boolean(requirement && !["public", "none", "open", "free"].includes(requirement));
+}
+
+function normalizeShelvesMatchValue(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[-\s]+/g, "_");
+}
+
+function isCountableShelvesDocument(document) {
+  return document?.is_published !== false && !isNoctisDocumentLocked(document);
+}
+
+function shelvesListIncludes(value, expected) {
+  const expectedValue = normalizeShelvesMatchValue(expected);
+
+  return normalizeDocumentListField(value).some((item) => normalizeShelvesMatchValue(item) === expectedValue);
+}
+
+function documentMatchesShelvesBrowseCard(document, cardOrId) {
+  const card = typeof cardOrId === "string"
+    ? shelvesBrowseCards.find((item) => item.id === cardOrId || item.filter === cardOrId)
+    : cardOrId;
+
+  if (!card) {
+    return false;
+  }
+
+  const category = normalizeShelvesMatchValue(document?.category);
+  const documentType = normalizeShelvesMatchValue(document?.document_type);
+
+  if (card.id === "journals") {
+    return category === "journals" || documentType === "journal_fragment";
+  }
+
+  if (card.id === "manuscripts") {
+    return category === "manuscripts" || documentType === "manuscript";
+  }
+
+  if (card.id === "letters") {
+    return category === "letters" || documentType === "letter";
+  }
+
+  if (card.id === "cryptic_codes") {
+    return category === "cryptic_codes" || documentType === "cipher";
+  }
+
+  if (card.id === "unstable_texts") {
+    return category === "unstable_texts" || documentType === "unstable_text";
+  }
+
+  if (card.id === "veil_lore") {
+    return category === "veil_lore"
+      || shelvesListIncludes(document?.themes, "The Veil")
+      || shelvesListIncludes(document?.tags, "veil");
+  }
+
+  return false;
+}
+
+function getShelvesBrowseCardCount(card) {
+  return getShelvesDocuments()
+    .filter(isCountableShelvesDocument)
+    .filter((document) => documentMatchesShelvesBrowseCard(document, card))
+    .length;
+}
+
+function formatShelvesDocumentCount(count) {
+  return `${count} ${count === 1 ? "document" : "documents"}`;
+}
+
+function isShelvesFilterChipActive(filterId) {
+  return shelvesActiveFilter === filterId
+    || shelvesBrowseCards.some((card) => card.filter === shelvesActiveFilter && card.activeFilter === filterId);
 }
 
 function getDocumentSearchText(document) {
@@ -2334,6 +2511,12 @@ function getDocumentSearchText(document) {
 function documentMatchesShelvesFilter(document, filterId = shelvesActiveFilter) {
   if (!filterId || filterId === "all") {
     return true;
+  }
+
+  const browseCard = shelvesBrowseCards.find((card) => card.filter === filterId || card.id === filterId);
+
+  if (browseCard) {
+    return documentMatchesShelvesBrowseCard(document, browseCard);
   }
 
   const values = [
@@ -2424,7 +2607,7 @@ function renderShelvesSearch() {
             <div class="shelves-filter-scroll">
               <div class="shelves-filter-list shelves-filter-row" data-shelves-filter-row aria-label="Shelves filter links">
                 ${shelvesFilterOptions.map((filter) => `
-                  <button class="shelves-filter-chip${shelvesActiveFilter === filter.id ? " is-active" : ""}" type="button" data-shelves-filter="${escapeHtml(filter.id)}" aria-pressed="${shelvesActiveFilter === filter.id ? "true" : "false"}">
+                  <button class="shelves-filter-chip${isShelvesFilterChipActive(filter.id) ? " is-active" : ""}" type="button" data-shelves-filter="${escapeHtml(filter.id)}" aria-pressed="${isShelvesFilterChipActive(filter.id) ? "true" : "false"}">
                     ${escapeHtml(filter.label)}
                   </button>
                 `).join("")}
@@ -2478,21 +2661,21 @@ function renderShelvesReadingDesk(document, documents) {
 
   return `
     <section class="shelves-reading-desk${locked ? " is-locked" : ""}" aria-labelledby="shelves-reading-title">
-      <div class="shelves-reading-desk__copy">
+      <div class="shelves-reading-desk__copy shelves-reading-content">
         <p class="archive-entry__stamp">Reading Desk</p>
         <p class="shelves-reading-desk__label">${shelvesSearchQuery ? "Search Result" : "Featured Fragment"}</p>
         <h3 id="shelves-reading-title" class="shelves-reading-title">${escapeHtml(document.title || "Untitled Document")}</h3>
         <p class="shelves-reading-desk__author">${escapeHtml(document.author || "Unknown Hand")}</p>
-        <p>${escapeHtml(previewText)}</p>
-        <div class="shelves-reading-desk__actions">
-          <button type="button" class="shelves-btn shelves-read-btn" data-open-shelves-document="${escapeHtml(getDocumentId(document))}">${locked ? "View Seal" : "Read Fragment"}</button>
-          <button type="button" class="shelves-btn shelves-details-btn" data-open-shelves-document="${escapeHtml(getDocumentId(document))}">View Details</button>
+        <p class="shelves-reading-excerpt">${escapeHtml(previewText)}</p>
+        <div class="shelves-reading-desk__actions shelves-reading-actions">
+          <button type="button" class="shelves-btn shelves-read-btn shelves-read-fragment-btn" data-action="read-fragment" data-shelves-document-id="${escapeHtml(getDocumentId(document))}">${locked ? "View Seal" : "Read Fragment"}</button>
+          <button type="button" class="shelves-btn shelves-details-btn shelves-view-details-btn" data-action="view-details" data-shelves-document-id="${escapeHtml(getDocumentId(document))}">View Details</button>
         </div>
       </div>
       <figure class="shelves-reading-desk__art" aria-hidden="true">
         <img src="${escapeHtml(document.cover_image || "assets/images/noctis/recovered-code.png")}" alt="" width="900" height="600" loading="lazy" decoding="async" />
       </figure>
-      <div class="shelves-reading-desk__controls" aria-label="Browse current document results">
+      <div class="shelves-reading-desk__controls shelves-reading-controls" aria-label="Browse current document results">
         <button type="button" data-shelves-nav="previous" ${documents.length <= 1 ? "disabled" : ""}>Previous</button>
         <span>${documents.length ? `${currentIndex + 1} of ${documents.length}` : "0 of 0"}</span>
         <button type="button" data-shelves-nav="next" ${documents.length <= 1 ? "disabled" : ""}>Next</button>
@@ -2506,16 +2689,21 @@ function renderShelvesBrowseCards() {
     <section class="shelves-browse-section" aria-labelledby="shelves-browse-title">
       <p class="archive-entry__stamp" id="shelves-browse-title">Browse the Archive</p>
       <div class="shelves-category-grid" aria-label="Browse the Archive category links">
-        ${shelvesBrowseCards.map((card) => `
-          <button class="shelves-category-card" type="button" data-shelves-browse="${escapeHtml(card.filter)}">
+        ${shelvesBrowseCards.map((card) => {
+          const count = getShelvesBrowseCardCount(card);
+          const isActive = shelvesActiveFilter === card.filter;
+
+          return `
+          <button class="shelves-category-card${isActive ? " is-active" : ""}" type="button" data-shelves-browse="${escapeHtml(card.filter)}" aria-pressed="${isActive ? "true" : "false"}">
             <span>${escapeHtml(card.title)}</span>
             <p>${escapeHtml(card.description)}</p>
             <div class="shelves-category-card__footer">
               <span class="shelves-category-card__divider" aria-hidden="true"></span>
-              <span class="shelves-category-card__count">0 documents</span>
+              <span class="shelves-category-card__count${count ? "" : " is-empty"}">${escapeHtml(formatShelvesDocumentCount(count))}</span>
             </div>
           </button>
-        `).join("")}
+        `;
+        }).join("")}
       </div>
     </section>
   `;
@@ -2531,22 +2719,180 @@ function renderShelvesFindingAids() {
             <button
               class="shelves-aid-image-card"
               type="button"
+              data-aid-action="${escapeHtml(card.id)}"
               aria-label="${escapeHtml(card.title)}. ${escapeHtml(card.description)}"
             >
               <img
                 src="${escapeHtml(card.image)}"
-                alt=""
-                aria-hidden="true"
+                alt="${escapeHtml(card.title)}"
                 loading="lazy"
                 decoding="async"
               />
             </button>
-            <button type="button" class="shelves-aid-cta">${escapeHtml(card.action)} <span class="shelves-aid-arrow" aria-hidden="true"></span></button>
+            <button type="button" class="shelves-aid-cta" data-aid-action="${escapeHtml(card.id)}">${escapeHtml(card.action)} <span class="shelves-aid-arrow" aria-hidden="true"></span></button>
           </article>
         `).join("")}
       </div>
     </section>
   `;
+}
+
+function getShelvesAidDocuments() {
+  return getShelvesDocuments().filter(isCountableShelvesDocument);
+}
+
+function formatShelvesDate(value) {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+}
+
+function renderShelvesAidListItem(document, { mode = "index" } = {}) {
+  const shelfMark = document.shelf_mark || "Unmarked";
+  const typeLabel = formatShelvesLabel(document.document_type || document.category, "Unclassified");
+  const author = document.author || "Unknown Hand";
+  const dateLabel = formatShelvesDate(document.created_at);
+  const metaParts = [typeLabel, author];
+
+  if (mode === "recent" && dateLabel) {
+    metaParts.push(dateLabel);
+  }
+
+  return `
+    <button class="shelves-aid-list-item" type="button" data-shelves-aid-document="${escapeHtml(getDocumentId(document))}">
+      <span class="shelves-aid-mark">${escapeHtml(mode === "recent" ? dateLabel || shelfMark : shelfMark)}</span>
+      <span>
+        <span class="shelves-aid-title">${escapeHtml(document.title || "Untitled Document")}</span>
+        <span class="shelves-aid-meta">${escapeHtml(metaParts.join(" · "))}</span>
+      </span>
+    </button>
+  `;
+}
+
+function renderShelvesAidDialog({ title, description, body = "", footer = "", list = "" }) {
+  return `
+    <div class="shelves-aid-modal" role="presentation">
+      <button class="shelves-aid-backdrop" type="button" data-close-shelves-aid aria-label="Close ${escapeHtml(title)}"></button>
+      <article class="shelves-aid-dialog" role="dialog" aria-modal="true" aria-labelledby="shelves-aid-title">
+        <button class="shelves-aid-close" type="button" data-close-shelves-aid aria-label="Return from ${escapeHtml(title)}">Return</button>
+        <h2 id="shelves-aid-title">${escapeHtml(title)}</h2>
+        <p>${escapeHtml(description)}</p>
+        ${body}
+        ${list}
+        ${footer ? `<p class="shelves-aid-footer">${escapeHtml(footer)}</p>` : ""}
+      </article>
+    </div>
+  `;
+}
+
+function renderShelfIndexModal() {
+  const pageSize = 10;
+  const documents = getShelvesAidDocuments()
+    .slice()
+    .sort((first, second) => {
+      const firstMark = String(first.shelf_mark || "").trim();
+      const secondMark = String(second.shelf_mark || "").trim();
+
+      if (firstMark && !secondMark) return -1;
+      if (!firstMark && secondMark) return 1;
+
+      return firstMark.localeCompare(secondMark) || String(first.title || "").localeCompare(String(second.title || ""));
+    });
+  const totalPages = Math.max(1, Math.ceil(documents.length / pageSize));
+  shelvesAidPageIndex = Math.min(Math.max(0, shelvesAidPageIndex), totalPages - 1);
+  const pageDocuments = documents.slice(shelvesAidPageIndex * pageSize, (shelvesAidPageIndex + 1) * pageSize);
+  const pagination = documents.length > pageSize
+    ? `
+      <div class="shelves-aid-pagination" aria-label="Shelf Index pages">
+        <button type="button" data-shelves-aid-page="previous" ${shelvesAidPageIndex <= 0 ? "disabled" : ""}>Previous</button>
+        <span>Page ${shelvesAidPageIndex + 1} of ${totalPages}</span>
+        <button type="button" data-shelves-aid-page="next" ${shelvesAidPageIndex >= totalPages - 1 ? "disabled" : ""}>Next</button>
+      </div>
+    `
+    : "";
+
+  const list = documents.length
+    ? `<div class="shelves-aid-list">${pageDocuments.map((document) => renderShelvesAidListItem(document)).join("")}</div>${pagination}`
+    : `
+      <div class="shelves-aid-empty">
+        <strong>No shelf marks have answered yet.</strong>
+        <p>The Archive has not released enough records to build an index.</p>
+      </div>
+    `;
+
+  return renderShelvesAidDialog({
+    title: "Shelf Index",
+    description: "Browse the Archive by shelf mark and classification.",
+    list
+  });
+}
+
+function renderRecentDiscoveriesModal() {
+  const documents = getShelvesAidDocuments()
+    .slice()
+    .sort((first, second) => new Date(second.created_at || 0).getTime() - new Date(first.created_at || 0).getTime())
+    .slice(0, 8);
+
+  const list = documents.length
+    ? `<div class="shelves-aid-list">${documents.map((document) => renderShelvesAidListItem(document, { mode: "recent" })).join("")}</div>`
+    : `
+      <div class="shelves-aid-empty">
+        <strong>Nothing recent has surfaced.</strong>
+        <p>The Archive is quiet, but not empty.</p>
+      </div>
+    `;
+
+  return renderShelvesAidDialog({
+    title: "Recent Discoveries",
+    description: "The latest records and pieces recovered from the Archive.",
+    list
+  });
+}
+
+function renderDormantAidModal(aidId) {
+  if (aidId === "code-ledger") {
+    return renderShelvesAidDialog({
+      title: "Code Ledger",
+      description: "The Code Ledger is still being assembled.",
+      body: "<p>Recovered phrases, cipher keys, and broken symbols will gather here as the Archive expands.</p>",
+      footer: "Some locks are waiting for their language."
+    });
+  }
+
+  return renderShelvesAidDialog({
+    title: "Cross-References",
+    description: "No threads have tightened yet.",
+    body: "<p>As more records are recovered, this ledger will reveal connections between documents, authors, rooms, and events.</p>",
+    footer: "The Archive remembers relationships before it reveals them."
+  });
+}
+
+function renderShelvesAidModal() {
+  if (openShelvesAidModalId === "shelf-index") {
+    return renderShelfIndexModal();
+  }
+
+  if (openShelvesAidModalId === "recent-discoveries") {
+    return renderRecentDiscoveriesModal();
+  }
+
+  if (openShelvesAidModalId === "code-ledger" || openShelvesAidModalId === "cross-references") {
+    return renderDormantAidModal(openShelvesAidModalId);
+  }
+
+  return "";
 }
 
 function renderShelvesCompactDocumentRow(document) {
@@ -2595,38 +2941,72 @@ function renderShelvesBottomSections() {
   `;
 }
 
-function renderShelvesDocumentModal() {
-  const document = getShelvesDocumentById(openShelvesDocumentId);
+function renderReadFragmentModal() {
+  const document = getShelvesDocumentById(openShelvesReadDocumentId);
 
   if (!document) {
     return "";
   }
 
   const locked = isNoctisDocumentLocked(document);
-  const tags = normalizeDocumentListField(document.tags);
-  const themes = normalizeDocumentListField(document.themes);
+  const typeLabel = formatShelvesLabel(document.document_type || document.subtitle, "Journal Fragment");
+  const bodyMarkup = locked
+    ? `<p>This document is sealed. ${escapeHtml(document.unlock_requirement || "Additional access is required.")}</p>`
+    : getDocumentBodyText(document).split(/\n{2,}/).filter(Boolean).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("") || `<p>${escapeHtml(getDocumentExcerpt(document))}</p>`;
 
   return `
-    <div class="shelves-document-modal" role="presentation">
-      <article class="shelves-document-dialog" role="dialog" aria-modal="true" aria-labelledby="shelves-document-title">
-        <button class="shelves-document-dialog__close" type="button" data-close-shelves-document aria-label="Return from document">Return</button>
-        <p class="archive-entry__stamp">${escapeHtml(document.document_type || "Recovered Document")}</p>
-        <h3 id="shelves-document-title">${escapeHtml(document.title || "Untitled Document")}</h3>
-        ${document.subtitle ? `<p class="shelves-document-dialog__subtitle">${escapeHtml(document.subtitle)}</p>` : ""}
-        <dl class="shelves-document-meta">
-          <div><dt>Author</dt><dd>${escapeHtml(document.author || "Unknown Hand")}</dd></div>
-          <div><dt>Category</dt><dd>${escapeHtml(document.category || "Unclassified")}</dd></div>
-          <div><dt>Shelf Mark</dt><dd>${escapeHtml(document.shelf_mark || "Unmarked")}</dd></div>
-          <div><dt>Status</dt><dd>${escapeHtml(locked ? "Sealed" : "Open")}</dd></div>
-          <div><dt>Unlock</dt><dd>${escapeHtml(locked ? document.unlock_requirement || "Additional access required" : "Public")}</dd></div>
-        </dl>
-        ${themes.length ? `<p class="shelves-document-chips">${themes.map((theme) => `<span>${escapeHtml(theme)}</span>`).join("")}</p>` : ""}
-        ${tags.length ? `<p class="shelves-document-chips">${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</p>` : ""}
-        <div class="shelves-document-body">
-          ${locked
-            ? `<p>This document is sealed. ${escapeHtml(document.unlock_requirement || "Additional access is required.")}</p>`
-            : getDocumentBodyText(document).split(/\n{2,}/).filter(Boolean).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("") || `<p>${escapeHtml(getDocumentExcerpt(document))}</p>`}
+    <div class="shelves-read-modal" role="presentation">
+      <button class="shelves-modal-backdrop" type="button" data-close-shelves-modal aria-label="Close reading fragment"></button>
+      <article class="shelves-read-dialog" role="dialog" aria-modal="true" aria-labelledby="shelves-read-title">
+        <button class="shelves-modal-close" type="button" data-close-shelves-modal aria-label="Return from reading fragment">Return</button>
+        <p class="shelves-modal-kicker">${escapeHtml(typeLabel)}</p>
+        <h2 class="shelves-read-title" id="shelves-read-title">${escapeHtml(document.title || "Untitled Document")}</h2>
+        <p class="shelves-read-author">${escapeHtml(document.author || "Unknown Hand")}</p>
+        <div class="shelves-read-body">
+          ${bodyMarkup}
         </div>
+        <p class="shelves-read-footer">Recovered from The Shelves &middot; ${escapeHtml(document.shelf_mark || "Unmarked")}</p>
+      </article>
+    </div>
+  `;
+}
+
+function renderDocumentDetailsModal() {
+  const document = getShelvesDocumentById(openShelvesDetailsDocumentId);
+
+  if (!document) {
+    return "";
+  }
+
+  const tags = normalizeDocumentListField(document.tags);
+  const themes = normalizeDocumentListField(document.themes);
+  const metadata = [
+    ["Type", formatShelvesLabel(document.document_type || document.subtitle, "Recovered Document")],
+    ["Author", document.author || "Unknown Hand"],
+    ["Category", formatShelvesLabel(document.category, "Unclassified")],
+    ["Shelf Mark", document.shelf_mark || "Unmarked"],
+    ["Status", getShelvesDocumentStatus(document)],
+    ["Unlock", getShelvesDocumentUnlockLabel(document)],
+    ["Themes", themes.join(", ") || "Unlisted"],
+    ["Tags", tags.join(", ") || "Unlisted"]
+  ];
+
+  return `
+    <div class="shelves-details-modal" role="presentation">
+      <button class="shelves-modal-backdrop" type="button" data-close-shelves-modal aria-label="Close archive record"></button>
+      <article class="shelves-details-dialog" role="dialog" aria-modal="true" aria-labelledby="shelves-details-title">
+        <button class="shelves-modal-close" type="button" data-close-shelves-modal aria-label="Return from archive record">Return</button>
+        <p class="shelves-modal-kicker">Archive Record</p>
+        <h2 class="shelves-details-title" id="shelves-details-title">${escapeHtml(document.title || "Untitled Document")}</h2>
+        <dl class="shelves-details-grid">
+          ${metadata.map(([label, value]) => `
+            <div>
+              <dt>${escapeHtml(label)}</dt>
+              <dd>${escapeHtml(value)}</dd>
+            </div>
+          `).join("")}
+        </dl>
+        <p class="shelves-details-summary">${escapeHtml(getDocumentExcerpt(document))}</p>
       </article>
     </div>
   `;
@@ -2640,6 +3020,18 @@ function renderShelvesRoom() {
     shelvesActiveIndex = 0;
   }
 
+  if (openShelvesReadDocumentId && !getShelvesDocumentById(openShelvesReadDocumentId)) {
+    openShelvesReadDocumentId = "";
+  }
+
+  if (openShelvesDetailsDocumentId && !getShelvesDocumentById(openShelvesDetailsDocumentId)) {
+    openShelvesDetailsDocumentId = "";
+  }
+
+  if (openShelvesAidModalId && !shelvesFindingAids.some((card) => card.id === openShelvesAidModalId)) {
+    openShelvesAidModalId = "";
+  }
+
   return `
     <div class="shelves-page-shell">
       <section class="shelves-grid">
@@ -2650,7 +3042,9 @@ function renderShelvesRoom() {
         ${renderShelvesFindingAids()}
         ${renderShelvesBottomSections()}
         <p class="shelves-closing-quote">“Knowledge does not belong to the light. It waits in the stacks.”<br />— Zephyra Noctis</p>
-        ${renderShelvesDocumentModal()}
+        ${renderReadFragmentModal()}
+        ${renderDocumentDetailsModal()}
+        ${renderShelvesAidModal()}
       </section>
     </div>
   `;
@@ -3304,9 +3698,12 @@ document.addEventListener("click", (event) => {
   const shelvesFilterNavButton = event.target.closest("[data-shelves-filter-nav]");
   const shelvesBrowseButton = event.target.closest("[data-shelves-browse]");
   const shelvesNavButton = event.target.closest("[data-shelves-nav]");
-  const shelvesDocumentButton = event.target.closest("[data-open-shelves-document]");
-  const shelvesDocumentClose = event.target.closest("[data-close-shelves-document]");
-  const shelvesDocumentOverlay = event.target.classList?.contains("shelves-document-modal");
+  const shelvesActionButton = event.target.closest("[data-action][data-shelves-document-id]");
+  const shelvesModalClose = event.target.closest("[data-close-shelves-modal]");
+  const shelvesAidActionButton = event.target.closest("[data-aid-action]");
+  const shelvesAidClose = event.target.closest("[data-close-shelves-aid]");
+  const shelvesAidDocumentButton = event.target.closest("[data-shelves-aid-document]");
+  const shelvesAidPageButton = event.target.closest("[data-shelves-aid-page]");
 
   if (noctisLockedRoomButton) {
     showRoomToast(noctisLockedRoomButton.dataset.lockedMessage || "The chamber does not answer yet.");
@@ -3316,7 +3713,7 @@ document.addEventListener("click", (event) => {
   if (shelvesFilterButton) {
     shelvesActiveFilter = shelvesFilterButton.dataset.shelvesFilter || "all";
     shelvesActiveIndex = 0;
-    openShelvesDocumentId = "";
+    closeShelvesModals();
     renderCurrentArchiveSurface();
     return;
   }
@@ -3339,7 +3736,7 @@ document.addEventListener("click", (event) => {
     shelvesActiveFilter = shelvesBrowseButton.dataset.shelvesBrowse || "all";
     shelvesSearchQuery = "";
     shelvesActiveIndex = 0;
-    openShelvesDocumentId = "";
+    closeShelvesModals();
     renderCurrentArchiveSurface();
     return;
   }
@@ -3352,21 +3749,49 @@ document.addEventListener("click", (event) => {
       shelvesActiveIndex = direction === "previous"
         ? (shelvesActiveIndex - 1 + documents.length) % documents.length
         : (shelvesActiveIndex + 1) % documents.length;
-      openShelvesDocumentId = "";
+      closeShelvesModals();
       renderCurrentArchiveSurface();
     }
 
     return;
   }
 
-  if (shelvesDocumentButton) {
-    openShelvesDocumentId = shelvesDocumentButton.dataset.openShelvesDocument || "";
+  if (shelvesActionButton) {
+    const documentId = shelvesActionButton.dataset.shelvesDocumentId || "";
+
+    if (shelvesActionButton.dataset.action === "view-details") {
+      openShelvesDetailsModal(documentId);
+    } else {
+      openShelvesReadModal(documentId);
+    }
+
+    return;
+  }
+
+  if (shelvesModalClose) {
+    closeShelvesModals();
     renderCurrentArchiveSurface();
     return;
   }
 
-  if (shelvesDocumentClose || shelvesDocumentOverlay) {
-    openShelvesDocumentId = "";
+  if (shelvesAidActionButton) {
+    openShelvesAidModal(shelvesAidActionButton.dataset.aidAction || "");
+    return;
+  }
+
+  if (shelvesAidDocumentButton) {
+    openShelvesDetailsModal(shelvesAidDocumentButton.dataset.shelvesAidDocument || "");
+    return;
+  }
+
+  if (shelvesAidPageButton) {
+    shelvesAidPageIndex += shelvesAidPageButton.dataset.shelvesAidPage === "previous" ? -1 : 1;
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (shelvesAidClose) {
+    closeShelvesModals();
     renderCurrentArchiveSurface();
     return;
   }
@@ -3483,7 +3908,7 @@ document.addEventListener("input", (event) => {
 
   shelvesSearchQuery = shelvesSearchInput.value;
   shelvesActiveIndex = 0;
-  openShelvesDocumentId = "";
+  closeShelvesModals();
   renderShelvesSurfaceWithSearchFocus(shelvesSearchInput.selectionStart, shelvesSearchInput.selectionEnd);
 });
 
@@ -3522,9 +3947,9 @@ document.addEventListener("keydown", (event) => {
     return;
   }
 
-  if (event.key === "Escape" && openShelvesDocumentId) {
+  if (event.key === "Escape" && (openShelvesReadDocumentId || openShelvesDetailsDocumentId || openShelvesAidModalId)) {
     event.preventDefault();
-    openShelvesDocumentId = "";
+    closeShelvesModals();
     renderCurrentArchiveSurface();
     return;
   }
