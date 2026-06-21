@@ -37,6 +37,45 @@ let visualRecordTouchStartX = 0;
 let visualRecordTouchStartY = 0;
 let galleryTouchStartX = 0;
 let galleryTouchStartY = 0;
+let galleryActiveFilter = "All Records";
+let galleryActiveSort = "Newest";
+let galleryRecordSetIndex = 0;
+let galleryRecords = [];
+let galleryRecordsLoaded = false;
+let galleryRecordsLoading = false;
+let galleryRecordsError = "";
+let galleryRecordsUseFallback = false;
+let openGalleryRecordId = "";
+let galleryFeaturedIndex = 0;
+let openGalleryUtilityModal = "";
+const galleryRecentlyViewedRecords = [];
+const galleryMarkedRecordIds = new Set();
+const galleryUserState = {
+  isLoaded: false,
+  isLoading: false,
+  user: null,
+  supabase: null,
+  recentRows: [],
+  markedRows: [],
+  recentMeta: new Map(),
+  markedMeta: new Map(),
+  error: ""
+};
+const galleryVisualTrailState = {
+  isLoaded: false,
+  isLoading: false,
+  trails: [],
+  trail: null,
+  selectedTrailId: "",
+  trailPageIndex: 0,
+  fragments: [],
+  fragmentsByTrailId: new Map(),
+  recoveredRows: [],
+  recoveredRowsByTrailId: new Map(),
+  recoveredIds: new Set(),
+  recoveredIdsByTrailId: new Map(),
+  error: ""
+};
 let selectedVeilwalkerWhispers = [];
 let selectedArchiveEchoes = [];
 let openEntryDeskWhisperId = "";
@@ -50,7 +89,25 @@ let shelvesActiveIndex = 0;
 let openShelvesReadDocumentId = "";
 let openShelvesDetailsDocumentId = "";
 let openShelvesAidModalId = "";
+let isShelvesNotableModalOpen = false;
+let isShelvesResearchModalOpen = false;
+let isShelvesRecentModalOpen = false;
 let shelvesAidPageIndex = 0;
+let shelvesNotablePageIndex = 0;
+let shelvesActiveResearchTrailId = "";
+let shelvesRecentlyReadEntries = new Map();
+const shelvesRecentlyReadStorageKey = "astralVeilNoctisShelvesRecentlyReadSession";
+const shelvesSavedDocumentsState = {
+  isLoaded: false,
+  isLoading: false,
+  user: null,
+  supabase: null,
+  savedIds: new Set(),
+  savedAt: new Map(),
+  pendingIds: new Set(),
+  notice: "",
+  error: ""
+};
 
 const archiveKeyStorageKey = "astralVeilNoctisElementalKeys";
 const archiveKeySessionStorageKey = "astralVeilNoctisElementalKeysSession";
@@ -501,16 +558,70 @@ const shelvesFindingAids = [
 
 const shelvesResearchTrails = [
   {
+    id: "blood-moon",
     title: "Blood Moon",
-    description: "Writings and records tied to the crimson cycle."
+    description: "Writings and records tied to the crimson cycle.",
+    terms: ["blood moon", "blood_moon", "bloodmoon", "crimson cycle", "crimson"]
   },
   {
+    id: "the-veil",
     title: "The Veil",
-    description: "Studies of the barrier, the in-between, and beyond."
+    description: "Studies of the barrier, the in-between, and beyond.",
+    terms: ["the veil", "veil", "barrier", "in-between", "in between", "beyond"]
   },
   {
+    id: "astral-lore",
     title: "Astral Lore",
-    description: "Fragments concerning the stars, realms, and others."
+    description: "Fragments concerning the stars, realms, and others.",
+    terms: ["astral lore", "astral", "stars", "star", "realms", "realm", "others"]
+  },
+  {
+    id: "blue-moon",
+    title: "Blue Moon",
+    description: "Records touched by rare lunar crossings and quiet thresholds.",
+    terms: ["blue moon", "blue_moon", "bluemoon", "rare moon", "threshold"]
+  },
+  {
+    id: "zephyra-noctis",
+    title: "Zephyra Noctis",
+    description: "Documents connected to Zephyra's hand, voice, or legacy.",
+    terms: ["zephyra noctis", "zephyra"]
+  },
+  {
+    id: "memory",
+    title: "Memory",
+    description: "Fragments concerned with remembrance, forgetting, and return.",
+    terms: ["memory", "memories", "remember", "remembrance", "forgetting", "forgotten"]
+  },
+  {
+    id: "tides",
+    title: "Tides",
+    description: "Writings drawn toward water, currents, and inward voyages.",
+    terms: ["tides", "tide", "water", "sea", "ocean", "current"]
+  },
+  {
+    id: "codes",
+    title: "Codes",
+    description: "Ciphered phrases, symbols, keys, and unresolved patterns.",
+    terms: ["codes", "code", "cipher", "ciphers", "symbol", "symbols", "key"]
+  },
+  {
+    id: "maps",
+    title: "Maps",
+    description: "Routes, drawers, charts, and records of hidden places.",
+    terms: ["maps", "map", "drawer", "route", "routes", "chart", "charts"]
+  },
+  {
+    id: "recovered-journals",
+    title: "Recovered Journals",
+    description: "Personal fragments and diary leaves recovered from the stacks.",
+    terms: ["recovered journal", "journal", "journals", "diary", "fragment"]
+  },
+  {
+    id: "unknown-hands",
+    title: "Unknown Hands",
+    description: "Records whose authorship is obscured, disputed, or missing.",
+    terms: ["unknown hand", "unknown hands", "unknown author", "unattributed", "anonymous"]
   }
 ];
 
@@ -559,6 +670,301 @@ const galleryVisualRecords = [
     width: 1400,
     height: 1052,
     caption: "The Archive has recovered the image, but not its name."
+  }
+];
+
+const galleryCategoryPlaceholders = [
+  ["All Records"],
+  ["Portraits"],
+  ["Places"],
+  ["Symbols"],
+  ["Maps"],
+  ["Anomalies"],
+  ["Unknown Records"],
+  ["Recovered"]
+];
+
+const galleryStatsPlaceholders = [
+  ["128", "Total Records"],
+  ["43", "Fragments Missing"],
+  ["17", "Sealed"],
+  ["9", "Refuse to Name"]
+];
+
+const galleryQuickLinks = [
+  ["Featured Images", "Curated by the Archive", "6"],
+  ["Newly Recovered", "Latest additions", "8"],
+  ["Blood Moon Records", "Touched by the cycle", "10"]
+];
+
+const GALLERY_RECORDS_PER_SET = 10;
+const gallerySortOptions = ["Newest", "Oldest", "A-Z", "Recovered First", "Unknown First"];
+
+const galleryRecordPlaceholders = [
+  {
+    id: "glr-prt-017",
+    title: "Sealed Portrait No. 17",
+    category: "Portraits",
+    image: "assets/images/noctis/visual-records/trio-study.webp",
+    marked: true,
+    recovered: true,
+    variant: "portrait"
+  },
+  {
+    id: "glr-sym-004",
+    title: "Astral Seal / Symbol Record",
+    category: "Symbols",
+    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    marked: true,
+    recovered: true,
+    variant: "square"
+  },
+  {
+    id: "glr-plc-009",
+    title: "Watcher Estate Landscape",
+    category: "Places",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
+    recovered: true,
+    variant: "wide"
+  },
+  {
+    id: "glr-unk-001",
+    title: "Unknown Visual Record 01",
+    category: "Unknown Records",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
+    sealed: true,
+    fragments: "2 / 4 fragments recovered",
+    progress: 50,
+    variant: "fragment"
+  },
+  {
+    id: "glr-anm-004",
+    title: "Blood Moon Eclipse",
+    category: "Anomalies",
+    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    recovered: true
+  },
+  {
+    id: "glr-sym-008",
+    title: "Winged Statue / Watcher Record",
+    category: "Symbols",
+    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    variant: "tall"
+  },
+  {
+    id: "glr-prt-022",
+    title: "Red Veiled Portrait",
+    category: "Portraits",
+    image: "assets/images/noctis/visual-records/trio-study.webp",
+    marked: true,
+    recovered: true,
+    variant: "featured-small"
+  },
+  {
+    id: "glr-anm-012",
+    title: "Chalice / Impossible Reflection",
+    category: "Anomalies",
+    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    recovered: true
+  },
+  {
+    id: "glr-map-003",
+    title: "Map / Diagram Record",
+    category: "Maps",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
+    variant: "featured-small"
+  },
+  {
+    id: "glr-sym-017",
+    title: "Red Sigil / Seal Record",
+    category: "Symbols",
+    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    marked: true,
+    variant: "square"
+  },
+  {
+    id: "glr-prt-031",
+    title: "Portrait of the Veiled Scribe",
+    category: "Portraits",
+    image: "assets/images/noctis/visual-records/trio-study.webp",
+    recovered: true,
+    variant: "portrait"
+  },
+  {
+    id: "glr-plc-014",
+    title: "The Observatory Before Rain",
+    category: "Places",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
+    variant: "square"
+  },
+  {
+    id: "glr-anm-019",
+    title: "Doorway in the Red Sky",
+    category: "Anomalies",
+    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    marked: true,
+    variant: "wide"
+  },
+  {
+    id: "glr-unk-007",
+    title: "Unknown Visual Record 07",
+    category: "Unknown Records",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
+    sealed: true,
+    fragments: "1 / 5 fragments recovered",
+    progress: 20,
+    variant: "fragment"
+  },
+  {
+    id: "glr-map-011",
+    title: "Cartographer's Warning",
+    category: "Maps",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
+    recovered: true
+  },
+  {
+    id: "glr-sym-025",
+    title: "Aster Gate Marking",
+    category: "Symbols",
+    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    variant: "tall"
+  },
+  {
+    id: "glr-prt-038",
+    title: "The Watcher Who Blinked",
+    category: "Portraits",
+    image: "assets/images/noctis/visual-records/trio-study.webp",
+    marked: true,
+    variant: "featured-small"
+  },
+  {
+    id: "glr-plc-021",
+    title: "Lost Stair Beneath the Gallery",
+    category: "Places",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
+    recovered: true
+  },
+  {
+    id: "glr-anm-030",
+    title: "The Moon Appears Twice",
+    category: "Anomalies",
+    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    variant: "featured-small"
+  },
+  {
+    id: "glr-sym-033",
+    title: "Red Archive Diagram",
+    category: "Symbols",
+    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    recovered: true,
+    variant: "square"
+  },
+  {
+    id: "glr-map-018",
+    title: "Map of the Sealed Coast",
+    category: "Maps",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
+    marked: true,
+    variant: "portrait"
+  },
+  {
+    id: "glr-unk-013",
+    title: "Unknown Visual Record 13",
+    category: "Unknown Records",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
+    sealed: true,
+    fragments: "3 / 6 fragments recovered",
+    progress: 50,
+    variant: "square"
+  },
+  {
+    id: "glr-plc-027",
+    title: "Courtyard of Red Lanterns",
+    category: "Places",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
+    recovered: true,
+    variant: "wide"
+  },
+  {
+    id: "glr-anm-044",
+    title: "Static Figure at the Horizon",
+    category: "Anomalies",
+    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    variant: "fragment"
+  },
+  {
+    id: "glr-prt-046",
+    title: "Mirror Portrait Fragment",
+    category: "Portraits",
+    image: "assets/images/noctis/visual-records/trio-study.webp",
+    recovered: true
+  },
+  {
+    id: "glr-sym-052",
+    title: "Sixfold Blood Star",
+    category: "Symbols",
+    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    marked: true,
+    variant: "tall"
+  },
+  {
+    id: "glr-map-029",
+    title: "Unlabeled Vault Map",
+    category: "Maps",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
+    variant: "featured-small"
+  },
+  {
+    id: "glr-plc-035",
+    title: "The Watcher's Estate",
+    category: "Places",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
+    recovered: true
+  },
+  {
+    id: "glr-unk-021",
+    title: "Unknown Visual Record 21",
+    category: "Unknown Records",
+    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    sealed: true,
+    fragments: "0 / 4 fragments recovered",
+    progress: 8,
+    variant: "featured-small"
+  },
+  {
+    id: "glr-sym-061",
+    title: "Seal of the Returning Moon",
+    category: "Symbols",
+    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    recovered: true,
+    variant: "square"
+  }
+];
+
+const galleryBottomSections = [
+  {
+    title: "Recently Viewed",
+    rows: [
+      ["The Watchers at Veilfall", "Viewed just now"],
+      ["She Who Remembers", "Viewed 12 min ago"],
+      ["The Hollow Before Dawn", "Viewed 1 hour ago"]
+    ]
+  },
+  {
+    title: "Marked Records",
+    rows: [
+      ["The Astrolabe of Noctis", "Marked yesterday"],
+      ["Bound in Silence", "Marked 3 days ago"],
+      ["The Whispering Vial", "Marked 5 days ago"]
+    ]
+  },
+  {
+    title: "Visual Trails",
+    rows: [
+      ["The Blood Cycle", "7 records"],
+      ["The Veil's Edge", "5 records"],
+      ["The Forgotten Keepers", "9 records"]
+    ]
   }
 ];
 
@@ -890,6 +1296,367 @@ async function loadShelvesDocuments() {
     if (isNoctisRoomPage && getNoctisRoomFromQuery()?.id === "shelves") {
       renderNoctisRoomByQuery();
     }
+  }
+}
+
+function getGalleryRecordCategoryLabel(record) {
+  const type = normalizeGalleryValue(record?.record_type || record?.recordType || record?.category || "");
+  const status = normalizeGalleryValue(record?.status || "");
+
+  if (status === "recovered" || recordHasGalleryTag(record, "recovered")) {
+    return "Recovered";
+  }
+
+  if (status === "unknown" || status === "unnamed" || recordHasGalleryTag(record, "unknown records")) {
+    return "Unknown Records";
+  }
+
+  if (type === "portrait" || recordHasGalleryTag(record, "portrait") || recordHasGalleryTag(record, "portraits")) {
+    return "Portraits";
+  }
+
+  if (type === "place" || type === "location" || recordHasGalleryTag(record, "place") || recordHasGalleryTag(record, "places")) {
+    return "Places";
+  }
+
+  if (type === "symbol" || type === "seal" || recordHasGalleryTag(record, "symbol") || recordHasGalleryTag(record, "symbols")) {
+    return "Symbols";
+  }
+
+  if (type === "map" || recordHasGalleryTag(record, "map") || recordHasGalleryTag(record, "maps")) {
+    return "Maps";
+  }
+
+  if (type === "anomaly" || recordHasGalleryTag(record, "anomaly") || recordHasGalleryTag(record, "anomalies")) {
+    return "Anomalies";
+  }
+
+  return "All Records";
+}
+
+function formatGalleryRecordType(record) {
+  const type = String(record?.record_type || record?.recordType || record?.category || "Visual Record")
+    .replaceAll("_", " ")
+    .replaceAll("-", " ")
+    .trim();
+
+  return type
+    ? type.replace(/\b\w/g, (letter) => letter.toUpperCase())
+    : "Visual Record";
+}
+
+function normalizeGalleryRecord(row, index = 0) {
+  const image = row?.preview_image_url || row?.full_image_url || "";
+  const type = String(row?.record_type || "").toLowerCase();
+  const status = normalizeGalleryValue(row?.status || "");
+
+  return {
+    ...row,
+    id: row?.id || row?.slug || `gallery-record-${index + 1}`,
+    title: row?.title || row?.unknown_title || "Unknown Visual Record",
+    category: getGalleryRecordCategoryLabel(row),
+    image,
+    fullImage: row?.full_image_url || image,
+    previewImage: row?.preview_image_url || image,
+    recordType: row?.record_type || "visual_record",
+    record_type: row?.record_type || "visual_record",
+    origin: row?.origin || "Noctis Archive",
+    status: row?.status || "available",
+    relatedRoom: row?.related_room || "The Gallery",
+    related_room: row?.related_room || "The Gallery",
+    slug: row?.slug || "",
+    tags: Array.isArray(row?.tags) ? row.tags : [],
+    themes: Array.isArray(row?.themes) ? row.themes : [],
+    recovered: status === "recovered" || recordHasGalleryTag(row, "recovered"),
+    sealed: Boolean(row?.is_fragmented) || status === "unknown",
+    marked: Boolean(row?.is_featured),
+    variant: type === "portrait"
+      ? "portrait"
+      : type === "map" || type === "symbol"
+        ? "square"
+        : type === "anomaly"
+          ? "fragment"
+          : ""
+  };
+}
+
+function getGalleryImageErrorHandler(imageUrl) {
+  return `console.warn('Gallery image failed to load:', '${escapeHtml(imageUrl)}')`;
+}
+
+function getVisualTrailImageErrorHandler(imageUrl) {
+  return `console.warn('Visual trail image failed to load:', '${escapeHtml(imageUrl)}');this.closest('.gallery-trail-restored')?.classList.add('is-image-missing');`;
+}
+
+async function fetchGalleryRecordsFromSupabase(supabase) {
+  const selectedFields = [
+    "id",
+    "title",
+    "slug",
+    "description",
+    "lore_note",
+    "record_type",
+    "origin",
+    "status",
+    "preview_image_url",
+    "full_image_url",
+    "is_featured",
+    "is_active",
+    "sort_order",
+    "tags",
+    "themes",
+    "related_room",
+    "created_at"
+  ].join(",");
+  const result = await supabase
+    .from("gallery_records")
+    .select(selectedFields)
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+
+  if (result.error) {
+    console.warn("Gallery records failed to load:", {
+      message: result.error?.message,
+      details: result.error?.details,
+      hint: result.error?.hint,
+      code: result.error?.code,
+      error: result.error
+    });
+    console.warn("[Astral Veil archive] gallery_records query failed.", {
+      table: "gallery_records",
+      selectedFields,
+      filter: "is_active = true",
+      order: "sort_order asc",
+      error: result.error
+    });
+  }
+
+  return result;
+}
+
+async function loadGalleryRecords() {
+  if (galleryRecordsLoaded || galleryRecordsLoading) {
+    if (galleryRecordsLoaded && !galleryUserState.isLoaded && !galleryUserState.isLoading) {
+      await loadGalleryUserInteractions();
+
+      if (isNoctisRoomPage && getNoctisRoomFromQuery()?.id === "gallery") {
+        renderNoctisRoomByQuery();
+      }
+    }
+
+    return;
+  }
+
+  galleryRecordsLoading = true;
+  galleryRecordsError = "";
+
+  try {
+    const { getSupabaseClient, isSupabaseConfigured } = await import("../src/services/supabase-client.js");
+
+    if (!isSupabaseConfigured()) {
+      galleryRecordsError = "Gallery records are using local fallback images.";
+      galleryRecordsUseFallback = true;
+      return;
+    }
+
+    const supabase = getSupabaseClient();
+    const { data, error } = await fetchGalleryRecordsFromSupabase(supabase);
+
+    if (error) {
+      throw error;
+    }
+
+    galleryRecords = Array.isArray(data)
+      ? data.map((record, index) => normalizeGalleryRecord(record, index))
+      : [];
+    galleryRecordsUseFallback = false;
+    galleryRecordsError = galleryRecords.length ? "" : "No visual records answered from the dark.";
+    console.info("Gallery records loaded:", galleryRecords.length, galleryRecords.map((record) => ({
+      title: record.title,
+      record_type: record.record_type,
+      status: record.status,
+      tags: record.tags,
+      themes: record.themes
+    })));
+  } catch (error) {
+    console.warn("Gallery records failed to load:", {
+      message: error?.message,
+      details: error?.details,
+      hint: error?.hint,
+      code: error?.code,
+      error
+    });
+    console.warn("[Astral Veil archive] Gallery records could not be loaded. Falling back to local records.", {
+      table: "gallery_records",
+      likelyCauses: "Check table existence, selected columns, RLS public SELECT policy for is_active records, and seed data.",
+      error
+    });
+    galleryRecords = [];
+    galleryRecordsUseFallback = true;
+    galleryRecordsError = "Gallery records could not be loaded. Showing local fallback records.";
+  } finally {
+    galleryRecordsLoaded = true;
+    galleryRecordsLoading = false;
+    await loadGalleryUserInteractions();
+
+    if (isNoctisRoomPage && getNoctisRoomFromQuery()?.id === "gallery") {
+      galleryRecordSetIndex = 0;
+      renderNoctisRoomByQuery();
+    }
+  }
+}
+
+async function loadShelvesSavedDocuments({ force = false } = {}) {
+  if (shelvesSavedDocumentsState.isLoading || (shelvesSavedDocumentsState.isLoaded && !force)) {
+    return;
+  }
+
+  shelvesSavedDocumentsState.user = artifactProgressState.user;
+  shelvesSavedDocumentsState.supabase = artifactProgressState.supabase;
+  shelvesSavedDocumentsState.notice = "";
+  shelvesSavedDocumentsState.error = "";
+
+  if (!shelvesSavedDocumentsState.user || !shelvesSavedDocumentsState.supabase) {
+    shelvesSavedDocumentsState.savedIds = new Set();
+    shelvesSavedDocumentsState.savedAt = new Map();
+    shelvesSavedDocumentsState.isLoaded = true;
+    return;
+  }
+
+  shelvesSavedDocumentsState.isLoading = true;
+
+  try {
+    const { data, error } = await shelvesSavedDocumentsState.supabase
+      .from("user_noctis_saved_documents")
+      .select("document_id, created_at")
+      .eq("user_id", shelvesSavedDocumentsState.user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    const rows = Array.isArray(data) ? data : [];
+    shelvesSavedDocumentsState.savedIds = new Set(rows.map((row) => String(row.document_id)));
+    shelvesSavedDocumentsState.savedAt = new Map(rows.map((row) => [String(row.document_id), row.created_at]));
+    shelvesSavedDocumentsState.isLoaded = true;
+  } catch (error) {
+    console.warn("[Astral Veil archive] Saved Noctis documents could not be loaded.", error);
+    shelvesSavedDocumentsState.savedIds = new Set();
+    shelvesSavedDocumentsState.savedAt = new Map();
+    shelvesSavedDocumentsState.error = "Saved documents could not be loaded.";
+    shelvesSavedDocumentsState.isLoaded = true;
+  } finally {
+    shelvesSavedDocumentsState.isLoading = false;
+
+    if (isNoctisRoomPage && getNoctisRoomFromQuery()?.id === "shelves") {
+      renderNoctisRoomByQuery();
+    }
+  }
+}
+
+function isShelvesDocumentSaved(document) {
+  return Boolean(document?.id && shelvesSavedDocumentsState.savedIds.has(String(document.id)));
+}
+
+function setShelvesSavedNotice(message, tone = "info") {
+  shelvesSavedDocumentsState.notice = message ? { message, tone } : "";
+}
+
+async function saveShelvesDocument(documentId) {
+  const document = getShelvesDocumentById(documentId);
+
+  if (!document) {
+    return;
+  }
+
+  if (!shelvesSavedDocumentsState.user || !shelvesSavedDocumentsState.supabase) {
+    setShelvesSavedNotice("Sign in to save documents to your Notable Documents.", "info");
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (!document.id) {
+    setShelvesSavedNotice("This local fallback record cannot be saved yet.", "error");
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  const databaseDocumentId = String(document.id);
+
+  if (shelvesSavedDocumentsState.savedIds.has(databaseDocumentId)) {
+    setShelvesSavedNotice("Already saved to Notable Documents.", "success");
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  shelvesSavedDocumentsState.pendingIds.add(databaseDocumentId);
+  setShelvesSavedNotice("");
+  renderCurrentArchiveSurface();
+
+  try {
+    const { error } = await shelvesSavedDocumentsState.supabase
+      .from("user_noctis_saved_documents")
+      .insert({
+        user_id: shelvesSavedDocumentsState.user.id,
+        document_id: databaseDocumentId
+      });
+
+    if (error && error.code !== "23505") {
+      throw error;
+    }
+
+    shelvesSavedDocumentsState.savedIds.add(databaseDocumentId);
+    shelvesSavedDocumentsState.savedAt.set(databaseDocumentId, new Date().toISOString());
+    setShelvesSavedNotice("Saved to Notable Documents.", "success");
+  } catch (error) {
+    console.warn("[Astral Veil archive] Noctis document could not be saved.", error);
+    setShelvesSavedNotice("This document could not be saved. Try again in a moment.", "error");
+  } finally {
+    shelvesSavedDocumentsState.pendingIds.delete(databaseDocumentId);
+    renderCurrentArchiveSurface();
+  }
+}
+
+async function unsaveShelvesDocument(documentId) {
+  const document = getShelvesDocumentById(documentId);
+
+  if (!document?.id || !shelvesSavedDocumentsState.user || !shelvesSavedDocumentsState.supabase) {
+    setShelvesSavedNotice("Sign in to manage Notable Documents.", "info");
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  const databaseDocumentId = String(document.id);
+
+  if (!shelvesSavedDocumentsState.savedIds.has(databaseDocumentId)) {
+    return;
+  }
+
+  shelvesSavedDocumentsState.pendingIds.add(databaseDocumentId);
+  setShelvesSavedNotice("");
+  renderCurrentArchiveSurface();
+
+  try {
+    const { error } = await shelvesSavedDocumentsState.supabase
+      .from("user_noctis_saved_documents")
+      .delete()
+      .eq("user_id", shelvesSavedDocumentsState.user.id)
+      .eq("document_id", databaseDocumentId);
+
+    if (error) {
+      throw error;
+    }
+
+    shelvesSavedDocumentsState.savedIds.delete(databaseDocumentId);
+    shelvesSavedDocumentsState.savedAt.delete(databaseDocumentId);
+    setShelvesSavedNotice("Removed from Notable Documents.", "success");
+  } catch (error) {
+    console.warn("[Astral Veil archive] Noctis document could not be removed.", error);
+    setShelvesSavedNotice("This document could not be removed. Try again in a moment.", "error");
+  } finally {
+    shelvesSavedDocumentsState.pendingIds.delete(databaseDocumentId);
+    renderCurrentArchiveSurface();
   }
 }
 
@@ -1417,6 +2184,9 @@ function renderNoctisRoomByQuery() {
   if (room.id !== "shelves") {
     closeShelvesModals();
   }
+  if (room.id !== "gallery") {
+    closeGalleryModals();
+  }
 
   noctisRoomType.textContent = "Noctis Archive";
   noctisRoomTitle.textContent = room.title;
@@ -1428,6 +2198,11 @@ function renderNoctisRoomByQuery() {
 
   if (room.id === "shelves") {
     loadShelvesDocuments();
+    loadShelvesSavedDocuments();
+  }
+
+  if (room.id === "gallery") {
+    loadGalleryRecords();
   }
 
   selectedArchiveRoomId = room.id;
@@ -1575,10 +2350,18 @@ function updateEntryDeskModalOpenState() {
     (
       openShelvesReadDocumentId ||
       openShelvesDetailsDocumentId ||
-      openShelvesAidModalId
+      openShelvesAidModalId ||
+      isShelvesNotableModalOpen ||
+      isShelvesResearchModalOpen ||
+      isShelvesRecentModalOpen
     )
   );
-  const hasOpenArchiveModal = hasOpenEntryDeskModal || isRecoveredItemsModalOpen || hasOpenShelvesModal;
+  const hasOpenArchiveModal = Boolean(
+    hasOpenEntryDeskModal ||
+    openRecoveredObjectId ||
+    isRecoveredItemsModalOpen ||
+    hasOpenShelvesModal
+  );
 
   document.body.classList.toggle("modal-open", hasOpenArchiveModal);
 }
@@ -1761,10 +2544,7 @@ function renderArchiveRooms() {
         </section>
       `}
       ${renderSelectedChamberContent(selectedRoom)}
-      ${isEntryDeskInteriorOpen || !shouldRenderRoomAppendices(selectedRoom.id) ? "" : `<div class="archive-recovery-stack">
-        ${renderRecoveredObjects()}
-      </div>`}
-      ${isEntryDeskInteriorOpen || !shouldRenderRoomAppendices(selectedRoom.id) ? "" : renderArchiveLorePanel()}
+      ${enteredArchiveRoomId ? "" : renderArchiveLandingCards()}
       ${renderVisualRecordModal()}
       ${renderRestrictedWingRitualOverlay()}
       ${renderRestrictedWingGuestPromptOverlay()}
@@ -1812,9 +2592,6 @@ function showRoomToast(message) {
 function renderEntryDeskRoom(room) {
   return `
     <div class="entry-desk-page-shell">
-      <div class="entry-desk-page-heading">
-        <h1>Noctis Archive</h1>
-      </div>
       <section class="entry-desk-grid">
         ${renderEntryDeskHero(room)}
         ${renderArchiveCodePanel()}
@@ -2284,11 +3061,48 @@ function renderArchiveCodePanel() {
   `;
 }
 
+function renderArchiveLandingRecoveredObjects() {
+  const recoveredObjects = getVisibleRecoveredObjects();
+  const selectedObject = getSelectedRecoveredObject(recoveredObjects);
+
+  return `
+    <section class="archive-recovered-objects archive-landing-recovered-objects" aria-labelledby="archive-landing-recovered-title">
+      <div class="archive-section-copy">
+        <h3 id="archive-landing-recovered-title">Recovered Objects</h3>
+        <p>Items pulled from the spaces between memory and forgetting.</p>
+      </div>
+      ${recoveredObjects.length ? `
+        <div class="archive-recovered-inventory archive-landing-recovered-objects__inventory">
+          <div class="archive-recovered-object-strip" aria-label="Recovered objects inventory">
+            ${recoveredObjects.map((object) => renderRecoveredObjectCard(object)).join("")}
+          </div>
+        </div>
+        <button class="archive-view-recovered-items-btn" type="button" data-view-all-recovered-items>
+          <span>View all recovered items</span>
+          <img src="assets/icons/symbols/arrow-long-right.svg" alt="" aria-hidden="true" width="18" height="18" loading="lazy" decoding="async" />
+        </button>
+      ` : `<p class="archive-empty-state archive-landing-recovered-objects__empty">No recovered objects yet.</p>`}
+      ${selectedObject ? renderRecoveredObjectDetail(selectedObject) : ""}
+      ${renderRecoveredItemsModal()}
+      <div class="archive-recovered-objects__art" aria-hidden="true"></div>
+    </section>
+  `;
+}
+
+function renderArchiveLandingCards() {
+  return `
+    <div class="archive-landing-cards" aria-label="Noctis Archive recovered objects and memory">
+      ${renderArchiveLandingRecoveredObjects()}
+      ${renderArchiveLorePanel()}
+    </div>
+  `;
+}
+
 function renderArchiveLorePanel() {
   return `
     <section class="archive-remembers-panel" aria-label="The Archive remembers">
       <div>
-        <p>The Archive Remembers</p>
+        <p>THE ARCHIVE REMEMBERS</p>
         <span>During the Blood Moon, sealed doors breathe.</span>
         <span>What you seek is also seeking you.</span>
       </div>
@@ -2383,18 +3197,125 @@ function getShelvesDocumentUnlockLabel(document) {
     : "Public";
 }
 
+function loadShelvesRecentlyReadEntries() {
+  try {
+    const rawEntries = JSON.parse(window.sessionStorage?.getItem(getShelvesRecentlyReadStorageKey()) || "[]");
+    const entries = Array.isArray(rawEntries) ? rawEntries : [];
+
+    shelvesRecentlyReadEntries = new Map(
+      entries
+        .filter((entry) => entry?.documentId)
+        .map((entry) => [
+          String(entry.documentId),
+          {
+            documentId: String(entry.documentId),
+            lastReadAt: entry.lastReadAt || new Date().toISOString(),
+            readCount: Number(entry.readCount) || 1
+          }
+        ])
+    );
+  } catch (error) {
+    shelvesRecentlyReadEntries = new Map();
+  }
+}
+
+function persistShelvesRecentlyReadEntries() {
+  try {
+    const entries = [...shelvesRecentlyReadEntries.values()]
+      .sort((first, second) => Date.parse(second.lastReadAt || 0) - Date.parse(first.lastReadAt || 0))
+      .slice(0, 30);
+
+    shelvesRecentlyReadEntries = new Map(entries.map((entry) => [entry.documentId, entry]));
+    window.sessionStorage?.setItem(getShelvesRecentlyReadStorageKey(), JSON.stringify(entries));
+  } catch (error) {
+    // Recently Read is allowed to be session-only; storage failure should not block reading.
+  }
+}
+
+function getShelvesRecentlyReadStorageKey() {
+  return `${shelvesRecentlyReadStorageKey}:${artifactProgressState.user?.id || "guest"}`;
+}
+
+function getCleanShelvesAuthor(document) {
+  return String(document?.author || "Unknown Hand")
+    .replace(/^attributed\s+to\s+/i, "")
+    .trim() || "Unknown Hand";
+}
+
+function getShelvesDocumentTypeLabel(document) {
+  return formatShelvesLabel(document?.document_type || document?.category, "Document");
+}
+
+function formatShelvesRecentTimestamp(value) {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  }).format(date);
+}
+
+function recordShelvesDocumentRead(documentId) {
+  const document = getShelvesDocumentById(documentId);
+
+  if (!document) {
+    return;
+  }
+
+  const id = getDocumentId(document);
+  const previous = shelvesRecentlyReadEntries.get(id);
+
+  shelvesRecentlyReadEntries.set(id, {
+    documentId: id,
+    lastReadAt: new Date().toISOString(),
+    readCount: previous ? previous.readCount + 1 : 1
+  });
+  persistShelvesRecentlyReadEntries();
+}
+
+function getShelvesRecentlyReadDocuments(limit = 3) {
+  return [...shelvesRecentlyReadEntries.values()]
+    .sort((first, second) => Date.parse(second.lastReadAt || 0) - Date.parse(first.lastReadAt || 0))
+    .map((entry) => ({
+      entry,
+      document: getShelvesDocumentById(entry.documentId)
+    }))
+    .filter((item) => item.document)
+    .slice(0, limit);
+}
+
 function closeShelvesModals() {
   openShelvesReadDocumentId = "";
   openShelvesDetailsDocumentId = "";
   openShelvesAidModalId = "";
+  isShelvesNotableModalOpen = false;
+  isShelvesResearchModalOpen = false;
+  isShelvesRecentModalOpen = false;
   shelvesAidPageIndex = 0;
+  shelvesNotablePageIndex = 0;
 }
 
 function openShelvesReadModal(documentId) {
+  setShelvesSavedNotice("");
+  recordShelvesDocumentRead(documentId);
   openShelvesReadDocumentId = documentId || "";
   openShelvesDetailsDocumentId = "";
   openShelvesAidModalId = "";
+  isShelvesNotableModalOpen = false;
+  isShelvesResearchModalOpen = false;
+  isShelvesRecentModalOpen = false;
   shelvesAidPageIndex = 0;
+  shelvesNotablePageIndex = 0;
   renderCurrentArchiveSurface();
 }
 
@@ -2402,7 +3323,11 @@ function openShelvesDetailsModal(documentId) {
   openShelvesDetailsDocumentId = documentId || "";
   openShelvesReadDocumentId = "";
   openShelvesAidModalId = "";
+  isShelvesNotableModalOpen = false;
+  isShelvesResearchModalOpen = false;
+  isShelvesRecentModalOpen = false;
   shelvesAidPageIndex = 0;
+  shelvesNotablePageIndex = 0;
   renderCurrentArchiveSurface();
 }
 
@@ -2410,7 +3335,55 @@ function openShelvesAidModal(aidId) {
   openShelvesAidModalId = aidId || "";
   openShelvesReadDocumentId = "";
   openShelvesDetailsDocumentId = "";
+  isShelvesNotableModalOpen = false;
+  isShelvesResearchModalOpen = false;
+  isShelvesRecentModalOpen = false;
   shelvesAidPageIndex = 0;
+  shelvesNotablePageIndex = 0;
+  renderCurrentArchiveSurface();
+}
+
+function openShelvesRecentModal() {
+  if (!getShelvesRecentlyReadDocuments(10).length) {
+    return;
+  }
+
+  isShelvesRecentModalOpen = true;
+  openShelvesReadDocumentId = "";
+  openShelvesDetailsDocumentId = "";
+  openShelvesAidModalId = "";
+  isShelvesNotableModalOpen = false;
+  isShelvesResearchModalOpen = false;
+  shelvesAidPageIndex = 0;
+  shelvesNotablePageIndex = 0;
+  renderCurrentArchiveSurface();
+}
+
+function openShelvesNotableModal() {
+  if (!getSavedShelvesDocuments().length) {
+    return;
+  }
+
+  isShelvesNotableModalOpen = true;
+  isShelvesResearchModalOpen = false;
+  isShelvesRecentModalOpen = false;
+  openShelvesReadDocumentId = "";
+  openShelvesDetailsDocumentId = "";
+  openShelvesAidModalId = "";
+  shelvesAidPageIndex = 0;
+  shelvesNotablePageIndex = 0;
+  renderCurrentArchiveSurface();
+}
+
+function openShelvesResearchModal() {
+  isShelvesResearchModalOpen = true;
+  openShelvesReadDocumentId = "";
+  openShelvesDetailsDocumentId = "";
+  openShelvesAidModalId = "";
+  isShelvesNotableModalOpen = false;
+  isShelvesRecentModalOpen = false;
+  shelvesAidPageIndex = 0;
+  shelvesNotablePageIndex = 0;
   renderCurrentArchiveSurface();
 }
 
@@ -2508,6 +3481,57 @@ function getDocumentSearchText(document) {
   ].filter(Boolean).join(" ").toLowerCase();
 }
 
+function getShelvesResearchTrailById(trailId) {
+  return shelvesResearchTrails.find((trail) => trail.id === trailId) || null;
+}
+
+function documentMatchesShelvesResearchTrail(document, trailOrId) {
+  const trail = typeof trailOrId === "string" ? getShelvesResearchTrailById(trailOrId) : trailOrId;
+
+  if (!trail) {
+    return false;
+  }
+
+  const searchableText = getDocumentSearchText(document);
+  const normalizedCategory = normalizeShelvesMatchValue(document?.category);
+  const normalizedType = normalizeShelvesMatchValue(document?.document_type);
+
+  if (trail.id === "recovered-journals" && (normalizedCategory === "journals" || normalizedType === "journal_fragment")) {
+    return true;
+  }
+
+  return (trail.terms || [trail.title]).some((term) => searchableText.includes(String(term || "").toLowerCase()));
+}
+
+function getShelvesResearchTrailCount(trail) {
+  return getShelvesDocuments()
+    .filter(isCountableShelvesDocument)
+    .filter((document) => documentMatchesShelvesResearchTrail(document, trail))
+    .length;
+}
+
+function applyShelvesResearchTrail(trailId) {
+  const trail = getShelvesResearchTrailById(trailId);
+
+  if (!trail) {
+    return;
+  }
+
+  shelvesActiveResearchTrailId = trail.id;
+  shelvesSearchQuery = trail.title;
+  shelvesActiveFilter = "all";
+  shelvesActiveIndex = 0;
+  closeShelvesModals();
+  renderCurrentArchiveSurface();
+
+  window.requestAnimationFrame(() => {
+    document.querySelector(".shelves-search-panel")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  });
+}
+
 function documentMatchesShelvesFilter(document, filterId = shelvesActiveFilter) {
   if (!filterId || filterId === "all") {
     return true;
@@ -2545,6 +3569,10 @@ function getShelvesResultSet() {
   const query = shelvesSearchQuery.trim().toLowerCase();
 
   return getShelvesDocuments().filter((document) => {
+    if (shelvesActiveResearchTrailId) {
+      return documentMatchesShelvesResearchTrail(document, shelvesActiveResearchTrailId);
+    }
+
     if (!documentMatchesShelvesFilter(document)) {
       return false;
     }
@@ -2562,7 +3590,7 @@ function getFeaturedShelvesDocument(documents = getShelvesResultSet()) {
     return null;
   }
 
-  if (shelvesSearchQuery || shelvesActiveFilter !== "all") {
+  if (shelvesSearchQuery || shelvesActiveFilter !== "all" || shelvesActiveResearchTrailId) {
     return documents[Math.min(shelvesActiveIndex, documents.length - 1)] || documents[0];
   }
 
@@ -2904,39 +3932,265 @@ function renderShelvesCompactDocumentRow(document) {
   `;
 }
 
-function renderShelvesBottomSections() {
-  const documents = getShelvesDocuments();
-  const recent = [...documents]
-    .sort((first, second) => Date.parse(second.created_at || 0) - Date.parse(first.created_at || 0))
-    .slice(0, 3);
-  const notable = documents.filter((document) => document.is_featured).slice(0, 3);
-  const notableDocuments = notable.length ? notable : documents.slice(0, 3);
+function renderShelvesRecentlyReadEmptyState() {
+  return `
+    <div class="shelves-recent-empty">
+      <strong>No documents read yet.</strong>
+      <span>Open a fragment and it will appear here.</span>
+    </div>
+  `;
+}
+
+function renderShelvesRecentlyReadRow({ document, entry }, { showDetails = false } = {}) {
+  const documentId = getDocumentId(document);
+  const meta = `${getCleanShelvesAuthor(document)} · ${getShelvesDocumentTypeLabel(document)}`;
+  const detailParts = [
+    document.shelf_mark || "",
+    showDetails ? formatShelvesRecentTimestamp(entry.lastReadAt) : ""
+  ].filter(Boolean);
 
   return `
+    <button class="shelves-recent-row" type="button" data-shelves-recent-open="${escapeHtml(documentId)}">
+      <span class="shelves-recent-row__marker" aria-hidden="true"></span>
+      <span class="shelves-recent-row__copy">
+        <strong>${escapeHtml(document.title || "Untitled Document")}</strong>
+        <span>${escapeHtml(meta)}</span>
+        ${detailParts.length ? `<em>${escapeHtml(detailParts.join(" · "))}</em>` : ""}
+      </span>
+    </button>
+  `;
+}
+
+function renderShelvesRecentlyReadPanel() {
+  const recentItems = getShelvesRecentlyReadDocuments(3);
+
+  return `
+    <article class="shelves-bottom-panel shelves-recently-read-panel">
+      <div class="shelves-panel-heading shelves-recently-read-header">
+        <h3>Recently Read</h3>
+        ${recentItems.length ? `<button class="shelves-recent-view-all" type="button" data-shelves-recent-view-all>View All</button>` : ""}
+      </div>
+      <div class="shelves-recent-list">
+        ${recentItems.length ? recentItems.map((item) => renderShelvesRecentlyReadRow(item)).join("") : renderShelvesRecentlyReadEmptyState()}
+      </div>
+    </article>
+  `;
+}
+
+function renderShelvesRecentlyReadModal() {
+  if (!isShelvesRecentModalOpen) {
+    return "";
+  }
+
+  const recentItems = getShelvesRecentlyReadDocuments(10);
+
+  return `
+    <div class="shelves-recent-modal" role="presentation">
+      <button class="shelves-recent-modal__backdrop" type="button" data-close-shelves-recent-modal aria-label="Close Recently Read"></button>
+      <article class="shelves-recent-dialog" role="dialog" aria-modal="true" aria-labelledby="shelves-recent-modal-title">
+        <button class="shelves-recent-modal__close" type="button" data-close-shelves-recent-modal aria-label="Close Recently Read">Close</button>
+        <div class="shelves-recent-dialog__header">
+          <p>The last fragments you opened in the Shelves.</p>
+          <h2 id="shelves-recent-modal-title">Recently Read</h2>
+        </div>
+        <div class="shelves-recent-dialog__list">
+          ${recentItems.length ? recentItems.map((item) => renderShelvesRecentlyReadRow(item, { showDetails: true })).join("") : renderShelvesRecentlyReadEmptyState()}
+        </div>
+      </article>
+    </div>
+  `;
+}
+
+function getSavedShelvesDocuments() {
+  return getShelvesDocuments()
+    .filter((document) => document?.id && shelvesSavedDocumentsState.savedIds.has(String(document.id)))
+    .sort((first, second) => {
+      const firstSavedAt = Date.parse(shelvesSavedDocumentsState.savedAt.get(String(first.id)) || 0);
+      const secondSavedAt = Date.parse(shelvesSavedDocumentsState.savedAt.get(String(second.id)) || 0);
+
+      return secondSavedAt - firstSavedAt;
+    });
+}
+
+function isShelvesDocumentSavePending(document) {
+  return Boolean(document?.id && shelvesSavedDocumentsState.pendingIds.has(String(document.id)));
+}
+
+function renderShelvesSavedNotice() {
+  const notice = shelvesSavedDocumentsState.notice;
+
+  if (!notice?.message) {
+    return "";
+  }
+
+  return `<p class="shelves-saved-documents-notice shelves-saved-documents-notice--${escapeHtml(notice.tone || "info")}" role="status">${escapeHtml(notice.message)}</p>`;
+}
+
+function renderShelvesNotableEmptyState() {
+  return `
+    <div class="shelves-notable-empty">
+      <strong>No documents saved yet.</strong>
+      <span>Read a fragment and save it here to return later.</span>
+    </div>
+  `;
+}
+
+function renderShelvesSavedDocumentRow(document) {
+  const documentId = getDocumentId(document);
+  const typeLabel = formatShelvesLabel(document.document_type || document.category, "Document");
+  const metaParts = [
+    document.author || "Unknown Hand",
+    typeLabel
+  ].filter(Boolean);
+  const pending = isShelvesDocumentSavePending(document);
+
+  return `
+    <article class="shelves-notable-row">
+      <button class="shelves-notable-row__main" type="button" data-shelves-notable-open="${escapeHtml(documentId)}">
+        ${document.cover_image ? `
+          <span class="shelves-notable-row__thumb" aria-hidden="true">
+            <img src="${escapeHtml(document.cover_image)}" alt="" loading="lazy" decoding="async" />
+          </span>
+        ` : `<span class="shelves-notable-row__mark" aria-hidden="true">§</span>`}
+        <span class="shelves-notable-row__copy">
+          <strong>${escapeHtml(document.title || "Untitled Document")}</strong>
+          <span>${escapeHtml(metaParts.join(" · "))}</span>
+          ${document.shelf_mark ? `<em>${escapeHtml(document.shelf_mark)}</em>` : ""}
+        </span>
+      </button>
+      <button class="shelves-notable-row__remove" type="button" data-shelves-unsave-document="${escapeHtml(documentId)}" aria-label="${escapeHtml(`Remove ${document.title || "document"} from Notable Documents`)}" ${pending ? "disabled" : ""}>
+        ${pending ? "Removing" : "Remove"}
+      </button>
+    </article>
+  `;
+}
+
+function renderShelvesNotableDocumentsPanel() {
+  const savedDocuments = getSavedShelvesDocuments();
+  const visibleDocuments = savedDocuments.slice(0, 3);
+  const body = shelvesSavedDocumentsState.isLoading
+    ? `<div class="shelves-notable-empty"><strong>Gathering saved documents...</strong></div>`
+    : savedDocuments.length
+      ? visibleDocuments.map(renderShelvesSavedDocumentRow).join("")
+      : renderShelvesNotableEmptyState();
+
+  return `
+    <article class="shelves-bottom-panel shelves-notable-documents-panel">
+      <div class="shelves-panel-heading shelves-notable-header">
+        <h3>Notable Documents</h3>
+        ${savedDocuments.length ? `<button class="shelves-notable-view-all" type="button" data-shelves-notable-view-all>View All</button>` : ""}
+      </div>
+      ${shelvesSavedDocumentsState.error ? `<p class="shelves-saved-documents-error">${escapeHtml(shelvesSavedDocumentsState.error)}</p>` : ""}
+      <div class="shelves-notable-list">
+        ${body}
+      </div>
+      ${renderShelvesSavedNotice()}
+    </article>
+  `;
+}
+
+function renderShelvesNotableModal() {
+  if (!isShelvesNotableModalOpen) {
+    return "";
+  }
+
+  const savedDocuments = getSavedShelvesDocuments();
+  const pageSize = 10;
+  const totalPages = Math.max(1, Math.ceil(savedDocuments.length / pageSize));
+  shelvesNotablePageIndex = Math.min(Math.max(0, shelvesNotablePageIndex), totalPages - 1);
+  const pageDocuments = savedDocuments.slice(shelvesNotablePageIndex * pageSize, (shelvesNotablePageIndex + 1) * pageSize);
+  const pagination = savedDocuments.length > pageSize
+    ? `
+      <div class="shelves-notable-pagination" aria-label="Notable Documents pages">
+        <button type="button" data-shelves-notable-page="previous" ${shelvesNotablePageIndex <= 0 ? "disabled" : ""}>Previous</button>
+        <span>Page ${shelvesNotablePageIndex + 1} of ${totalPages}</span>
+        <button type="button" data-shelves-notable-page="next" ${shelvesNotablePageIndex >= totalPages - 1 ? "disabled" : ""}>Next</button>
+      </div>
+    `
+    : "";
+  const body = savedDocuments.length
+    ? pageDocuments.map(renderShelvesSavedDocumentRow).join("")
+    : renderShelvesNotableEmptyState();
+
+  return `
+    <div class="shelves-notable-modal" role="presentation">
+      <button class="shelves-notable-modal__backdrop" type="button" data-close-shelves-notable-modal aria-label="Close Notable Documents"></button>
+      <article class="shelves-notable-dialog" role="dialog" aria-modal="true" aria-labelledby="shelves-notable-modal-title">
+        <button class="shelves-notable-modal__close" type="button" data-close-shelves-notable-modal aria-label="Close Notable Documents">Close</button>
+        <div class="shelves-notable-dialog__header">
+          <p>Saved fragments and writings you marked for return.</p>
+          <h2 id="shelves-notable-modal-title">Notable Documents</h2>
+        </div>
+        <div class="shelves-notable-dialog__list">
+          ${body}
+        </div>
+        ${pagination}
+        ${renderShelvesSavedNotice()}
+      </article>
+    </div>
+  `;
+}
+
+function renderShelvesResearchTrailRow(trail, { showCount = false } = {}) {
+  const isActive = shelvesActiveResearchTrailId === trail.id;
+  const count = showCount ? getShelvesResearchTrailCount(trail) : null;
+  const countLabel = showCount ? formatShelvesDocumentCount(count) : "";
+
+  return `
+    <button class="shelves-research-trail-row${isActive ? " is-active" : ""}" type="button" data-shelves-research-trail="${escapeHtml(trail.id)}" aria-pressed="${isActive ? "true" : "false"}">
+      <span class="shelves-research-trail-row__dot" aria-hidden="true"></span>
+      <span class="shelves-research-trail-row__copy">
+        <strong>${escapeHtml(trail.title)}</strong>
+        <span>${escapeHtml(showCount && countLabel ? `${trail.description} · ${countLabel}` : trail.description)}</span>
+      </span>
+    </button>
+  `;
+}
+
+function renderShelvesResearchTrailsPanel() {
+  const defaultTrails = shelvesResearchTrails.slice(0, 3);
+
+  return `
+    <article class="shelves-bottom-panel shelves-research-trails">
+      <div class="shelves-panel-heading shelves-research-trails__header">
+        <h3>Research Trails</h3>
+        <button class="shelves-research-trails__action" type="button" data-shelves-research-explore-all>Explore All</button>
+      </div>
+      <div class="shelves-research-trails__list">
+        ${defaultTrails.map((trail) => renderShelvesResearchTrailRow(trail)).join("")}
+      </div>
+    </article>
+  `;
+}
+
+function renderShelvesResearchTrailsModal() {
+  if (!isShelvesResearchModalOpen) {
+    return "";
+  }
+
+  return `
+    <div class="shelves-research-modal" role="presentation">
+      <button class="shelves-research-modal__backdrop" type="button" data-close-shelves-research-modal aria-label="Close Research Trails"></button>
+      <article class="shelves-research-dialog" role="dialog" aria-modal="true" aria-labelledby="shelves-research-modal-title">
+        <button class="shelves-research-modal__close" type="button" data-close-shelves-research-modal aria-label="Close Research Trails">Close</button>
+        <div class="shelves-research-dialog__header">
+          <p>Curated topic paths through the shelves.</p>
+          <h2 id="shelves-research-modal-title">Research Trails</h2>
+        </div>
+        <div class="shelves-research-dialog__list">
+          ${shelvesResearchTrails.map((trail) => renderShelvesResearchTrailRow(trail, { showCount: true })).join("")}
+        </div>
+      </article>
+    </div>
+  `;
+}
+
+function renderShelvesBottomSections() {
+  return `
     <section class="shelves-bottom-grid" aria-label="Shelves document summaries">
-      <article class="shelves-bottom-panel">
-        <div class="shelves-panel-heading">
-          <h3>Recently Recovered</h3>
-        </div>
-        ${(recent.length ? recent : getFallbackNoctisDocuments()).slice(0, 3).map(renderShelvesCompactDocumentRow).join("")}
-      </article>
-      <article class="shelves-bottom-panel">
-        <div class="shelves-panel-heading">
-          <h3>Notable Documents</h3>
-        </div>
-        ${notableDocuments.map(renderShelvesCompactDocumentRow).join("")}
-      </article>
-      <article class="shelves-bottom-panel shelves-research-trails">
-        <div class="shelves-panel-heading">
-          <h3>Research Trails</h3>
-        </div>
-        ${shelvesResearchTrails.map((trail) => `
-          <section>
-            <strong>${escapeHtml(trail.title)}</strong>
-            <p>${escapeHtml(trail.description)}</p>
-          </section>
-        `).join("")}
-      </article>
+      ${renderShelvesRecentlyReadPanel()}
+      ${renderShelvesNotableDocumentsPanel()}
+      ${renderShelvesResearchTrailsPanel()}
     </section>
   `;
 }
@@ -2953,6 +4207,14 @@ function renderReadFragmentModal() {
   const bodyMarkup = locked
     ? `<p>This document is sealed. ${escapeHtml(document.unlock_requirement || "Additional access is required.")}</p>`
     : getDocumentBodyText(document).split(/\n{2,}/).filter(Boolean).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("") || `<p>${escapeHtml(getDocumentExcerpt(document))}</p>`;
+  const saved = isShelvesDocumentSaved(document);
+  const pending = isShelvesDocumentSavePending(document);
+  const saveAction = saved ? "unsave" : "save";
+  const saveLabel = pending
+    ? (saved ? "Removing..." : "Saving...")
+    : saved
+      ? "Remove from Notable Documents"
+      : "Save to Notable Documents";
 
   return `
     <div class="shelves-read-modal" role="presentation">
@@ -2964,6 +4226,18 @@ function renderReadFragmentModal() {
         <p class="shelves-read-author">${escapeHtml(document.author || "Unknown Hand")}</p>
         <div class="shelves-read-body">
           ${bodyMarkup}
+        </div>
+        <div class="shelves-read-save-footer">
+          <button
+            class="shelves-save-document-btn${saved ? " is-saved" : ""}"
+            type="button"
+            data-shelves-${escapeHtml(saveAction)}-document="${escapeHtml(getDocumentId(document))}"
+            ${pending ? "disabled" : ""}
+            aria-pressed="${saved ? "true" : "false"}"
+          >
+            ${escapeHtml(saveLabel)}
+          </button>
+          ${renderShelvesSavedNotice()}
         </div>
         <p class="shelves-read-footer">Recovered from The Shelves &middot; ${escapeHtml(document.shelf_mark || "Unmarked")}</p>
       </article>
@@ -3045,6 +4319,9 @@ function renderShelvesRoom() {
         ${renderReadFragmentModal()}
         ${renderDocumentDetailsModal()}
         ${renderShelvesAidModal()}
+        ${renderShelvesRecentlyReadModal()}
+        ${renderShelvesNotableModal()}
+        ${renderShelvesResearchTrailsModal()}
       </section>
     </div>
   `;
@@ -3157,6 +4434,1482 @@ function renderVisualRecordModal() {
   `;
 }
 
+function renderGalleryCategoryRows() {
+  return galleryCategoryPlaceholders.slice(0, 5).map(([label]) => {
+    const isActive = galleryActiveFilter === label;
+
+    return `
+    <button class="gallery-filter-chip${isActive ? " is-active" : ""}" type="button" data-gallery-filter="${escapeHtml(label)}" aria-pressed="${isActive ? "true" : "false"}">
+      <span class="gallery-category-row__icon" aria-hidden="true"></span>
+      <span>${escapeHtml(label)}</span>
+    </button>
+  `;
+  }).join("");
+}
+
+function renderGalleryMoreFilters() {
+  return galleryCategoryPlaceholders.slice(5).map(([label]) => {
+    const isActive = galleryActiveFilter === label;
+
+    return `
+    <button class="gallery-filter-more__item${isActive ? " is-active" : ""}" type="button" role="menuitem" data-gallery-filter="${escapeHtml(label)}" aria-pressed="${isActive ? "true" : "false"}">
+      <span class="gallery-category-row__icon" aria-hidden="true"></span>
+      <span>${escapeHtml(label)}</span>
+    </button>
+  `;
+  }).join("");
+}
+
+function mergeGallerySourceRecords(records, extraRecords = []) {
+  const seen = new Set();
+
+  return [...records, ...extraRecords].filter((record) => {
+    const id = String(record?.id || record?.slug || "");
+
+    if (!id || seen.has(id)) {
+      return false;
+    }
+
+    seen.add(id);
+    return true;
+  });
+}
+
+function getCompletedGalleryVisualTrailRecords() {
+  if (!galleryUserState.user) {
+    return [];
+  }
+
+  return galleryVisualTrailState.trails
+    .filter((trail) => {
+      if (!trail?.id || !trail.full_image_url) {
+        return false;
+      }
+
+      const fragments = galleryVisualTrailState.fragmentsByTrailId.get(String(trail.id)) || [];
+      const recoveredIds = galleryVisualTrailState.recoveredIdsByTrailId.get(String(trail.id)) || new Set();
+      const total = Number(trail.total_fragments || fragments.length || 4);
+
+      return recoveredIds.size >= total;
+    })
+    .map((trail) => ({
+      id: `visual-trail-${trail.id}`,
+      slug: trail.slug || `visual-trail-${trail.id}`,
+      title: trail.title || "Restored Visual Trail",
+      description: trail.description || "",
+      lore_note: trail.lore_note || trail.description || "",
+      category: "Unknown Records",
+      image: trail.preview_image_url || trail.full_image_url,
+      previewImage: trail.preview_image_url || trail.full_image_url,
+      preview_image_url: trail.preview_image_url || trail.full_image_url,
+      fullImage: trail.full_image_url,
+      full_image_url: trail.full_image_url,
+      recordType: "unknown",
+      record_type: "unknown",
+      status: "recovered",
+      origin: "Visual Trail",
+      relatedRoom: "The Gallery",
+      related_room: "The Gallery",
+      is_active: true,
+      is_featured: false,
+      tags: ["Unknown Records", "Recovered", "Visual Trail"],
+      themes: ["Visual Trail"],
+      display_layout: "standard",
+      recovered: true,
+      sealed: false,
+      marked: false,
+      variant: "standard",
+      isVirtualTrailRecord: true
+    }));
+}
+
+function syncSelectedGalleryVisualTrail(trailId = galleryVisualTrailState.selectedTrailId) {
+  const selectedTrail = galleryVisualTrailState.trails.find((trail) => String(trail.id) === String(trailId))
+    || galleryVisualTrailState.trails[0]
+    || null;
+
+  galleryVisualTrailState.trail = selectedTrail;
+  galleryVisualTrailState.selectedTrailId = selectedTrail?.id || "";
+  galleryVisualTrailState.fragments = selectedTrail
+    ? galleryVisualTrailState.fragmentsByTrailId.get(String(selectedTrail.id)) || []
+    : [];
+  galleryVisualTrailState.recoveredRows = selectedTrail
+    ? galleryVisualTrailState.recoveredRowsByTrailId.get(String(selectedTrail.id)) || []
+    : [];
+  galleryVisualTrailState.recoveredIds = selectedTrail
+    ? galleryVisualTrailState.recoveredIdsByTrailId.get(String(selectedTrail.id)) || new Set()
+    : new Set();
+}
+
+function getGallerySourceRecords() {
+  const completedTrailRecords = getCompletedGalleryVisualTrailRecords();
+
+  if (galleryRecords.length) {
+    return mergeGallerySourceRecords(galleryRecords, completedTrailRecords);
+  }
+
+  if (galleryRecordsUseFallback && galleryRecordsLoaded) {
+    return mergeGallerySourceRecords(galleryRecordPlaceholders, completedTrailRecords);
+  }
+
+  if (!galleryRecordsLoaded && !galleryRecordsLoading) {
+    return mergeGallerySourceRecords(galleryRecordPlaceholders, completedTrailRecords);
+  }
+
+  return completedTrailRecords;
+}
+
+function getGalleryAllBrowsableRecords() {
+  const sourceRecords = getGallerySourceRecords();
+  const records = sourceRecords.length ? sourceRecords : galleryRecordPlaceholders;
+  const seen = new Set();
+
+  return records.filter((record) => {
+    const id = String(record?.id || record?.slug || "");
+
+    if (!id || seen.has(id)) {
+      return false;
+    }
+
+    seen.add(id);
+    return true;
+  });
+}
+
+function getGalleryRecordById(recordId) {
+  const id = String(recordId || "");
+
+  return getGalleryAllBrowsableRecords().find((record) => String(record.id || record.slug) === id) || null;
+}
+
+function updateGalleryModalOpenState() {
+  document.body.classList.toggle("is-gallery-record-modal-open", Boolean(openGalleryRecordId || openGalleryUtilityModal));
+}
+
+function isGallerySupabaseRecordId(recordId) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(recordId || ""));
+}
+
+function resetGalleryUserState() {
+  galleryUserState.isLoaded = false;
+  galleryUserState.isLoading = false;
+  galleryUserState.user = null;
+  galleryUserState.supabase = null;
+  galleryUserState.recentRows = [];
+  galleryUserState.markedRows = [];
+  galleryUserState.recentMeta = new Map();
+  galleryUserState.markedMeta = new Map();
+  galleryUserState.error = "";
+  galleryMarkedRecordIds.clear();
+}
+
+function getGalleryInteractionRecord(row) {
+  return row?.gallery_records || row?.record || null;
+}
+
+function normalizeGalleryInteractionRows(rows, timestampKey) {
+  return (Array.isArray(rows) ? rows : [])
+    .map((row) => {
+      const record = getGalleryInteractionRecord(row);
+
+      if (!record?.id) {
+        return null;
+      }
+
+      return {
+        row,
+        record: normalizeGalleryRecord(record, 0),
+        timestamp: row?.[timestampKey] || row?.created_at || ""
+      };
+    })
+    .filter(Boolean);
+}
+
+function normalizeGalleryMarkedRows(markedRows, recordRows) {
+  const recordsById = new Map((Array.isArray(recordRows) ? recordRows : [])
+    .filter((record) => record?.id && record.is_active !== false)
+    .map((record) => [String(record.id), normalizeGalleryRecord(record, 0)]));
+
+  return (Array.isArray(markedRows) ? markedRows : [])
+    .map((row) => {
+      const record = recordsById.get(String(row?.record_id || ""));
+
+      if (!record) {
+        return null;
+      }
+
+      return {
+        row,
+        record,
+        timestamp: row?.marked_at || row?.created_at || ""
+      };
+    })
+    .filter(Boolean);
+}
+
+async function loadUserGalleryMarkedRecords(supabase, user) {
+  const { data: markedData, error: markedError } = await supabase
+    .from("user_gallery_marked_records")
+    .select("record_id,marked_at,created_at")
+    .eq("user_id", user.id)
+    .order("marked_at", { ascending: false })
+    .limit(10);
+
+  if (markedError) {
+    console.warn("Marked gallery records failed to load:", {
+      message: markedError?.message,
+      details: markedError?.details,
+      hint: markedError?.hint,
+      code: markedError?.code,
+      error: markedError
+    });
+    return [];
+  }
+
+  const recordIds = [...new Set((markedData || []).map((row) => row.record_id).filter(Boolean))];
+
+  if (!recordIds.length) {
+    return [];
+  }
+
+  const { data: recordData, error: recordError } = await supabase
+    .from("gallery_records")
+    .select("*")
+    .in("id", recordIds)
+    .eq("is_active", true);
+
+  if (recordError) {
+    console.warn("Marked gallery records failed to load:", {
+      message: recordError?.message,
+      details: recordError?.details,
+      hint: recordError?.hint,
+      code: recordError?.code,
+      error: recordError
+    });
+    return [];
+  }
+
+  return normalizeGalleryMarkedRows(markedData, recordData);
+}
+
+function syncGalleryMarkedIdsFromUserRows() {
+  galleryMarkedRecordIds.clear();
+  galleryUserState.markedMeta = new Map();
+  galleryUserState.markedRows.forEach((entry) => {
+    const id = String(entry.record?.id || "");
+
+    if (id) {
+      galleryMarkedRecordIds.add(id);
+      galleryUserState.markedMeta.set(id, entry);
+    }
+  });
+}
+
+function syncGalleryRecentMetaFromUserRows() {
+  galleryUserState.recentMeta = new Map();
+  galleryUserState.recentRows.forEach((entry) => {
+    const id = String(entry.record?.id || "");
+
+    if (id) {
+      galleryUserState.recentMeta.set(id, entry);
+    }
+  });
+}
+
+function resetGalleryVisualTrailState() {
+  galleryVisualTrailState.isLoaded = false;
+  galleryVisualTrailState.isLoading = false;
+  galleryVisualTrailState.trails = [];
+  galleryVisualTrailState.trail = null;
+  galleryVisualTrailState.selectedTrailId = "";
+  galleryVisualTrailState.trailPageIndex = 0;
+  galleryVisualTrailState.fragments = [];
+  galleryVisualTrailState.fragmentsByTrailId = new Map();
+  galleryVisualTrailState.recoveredRows = [];
+  galleryVisualTrailState.recoveredRowsByTrailId = new Map();
+  galleryVisualTrailState.recoveredIds = new Set();
+  galleryVisualTrailState.recoveredIdsByTrailId = new Map();
+  galleryVisualTrailState.error = "";
+}
+
+async function loadGalleryVisualTrail(supabase, user = null) {
+  if (!supabase) {
+    resetGalleryVisualTrailState();
+    galleryVisualTrailState.isLoaded = true;
+    return;
+  }
+
+  galleryVisualTrailState.isLoading = true;
+  galleryVisualTrailState.error = "";
+
+  try {
+    const { data: trailData, error: trailError } = await supabase
+      .from("visual_trails")
+      .select("*")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
+
+    if (trailError) {
+      throw trailError;
+    }
+
+    const trails = Array.isArray(trailData) ? trailData : [];
+
+    if (!trails.length) {
+      galleryVisualTrailState.trails = [];
+      galleryVisualTrailState.fragmentsByTrailId = new Map();
+      galleryVisualTrailState.recoveredRowsByTrailId = new Map();
+      galleryVisualTrailState.recoveredIdsByTrailId = new Map();
+      syncSelectedGalleryVisualTrail("");
+      galleryVisualTrailState.isLoaded = true;
+      return;
+    }
+
+    const trailIds = trails.map((trail) => trail.id).filter(Boolean);
+    const { data: fragmentData, error: fragmentError } = await supabase
+      .from("visual_trail_fragments")
+      .select("*")
+      .in("trail_id", trailIds)
+      .order("fragment_number", { ascending: true });
+
+    if (fragmentError) {
+      throw fragmentError;
+    }
+
+    let recoveredRows = [];
+
+    if (user?.id) {
+      const { data: recoveredData, error: recoveredError } = await supabase
+        .from("user_visual_trail_fragments")
+        .select("trail_id,fragment_id,recovered_at,created_at")
+        .eq("user_id", user.id)
+        .in("trail_id", trailIds)
+        .order("recovered_at", { ascending: true });
+
+      if (recoveredError) {
+        throw recoveredError;
+      }
+
+      recoveredRows = Array.isArray(recoveredData) ? recoveredData : [];
+    }
+
+    const fragmentsByTrailId = new Map();
+    const recoveredRowsByTrailId = new Map();
+    const recoveredIdsByTrailId = new Map();
+
+    trails.forEach((trail) => {
+      fragmentsByTrailId.set(String(trail.id), []);
+      recoveredRowsByTrailId.set(String(trail.id), []);
+      recoveredIdsByTrailId.set(String(trail.id), new Set());
+    });
+
+    (Array.isArray(fragmentData) ? fragmentData : []).forEach((fragment) => {
+      const trailId = String(fragment.trail_id || "");
+      fragmentsByTrailId.get(trailId)?.push(fragment);
+    });
+
+    recoveredRows.forEach((row) => {
+      const trailId = String(row.trail_id || "");
+      const fragmentId = String(row.fragment_id || "");
+
+      recoveredRowsByTrailId.get(trailId)?.push(row);
+
+      if (fragmentId) {
+        recoveredIdsByTrailId.get(trailId)?.add(fragmentId);
+      }
+    });
+
+    galleryVisualTrailState.trails = trails;
+    galleryVisualTrailState.fragmentsByTrailId = fragmentsByTrailId;
+    galleryVisualTrailState.recoveredRowsByTrailId = recoveredRowsByTrailId;
+    galleryVisualTrailState.recoveredIdsByTrailId = recoveredIdsByTrailId;
+    syncSelectedGalleryVisualTrail(galleryVisualTrailState.selectedTrailId || trails[0]?.id || "");
+    galleryVisualTrailState.isLoaded = true;
+  } catch (error) {
+    console.warn("Visual trail could not be loaded:", {
+      message: error?.message,
+      details: error?.details,
+      hint: error?.hint,
+      code: error?.code,
+      error
+    });
+    galleryVisualTrailState.error = error?.message || "Visual Trails could not be loaded.";
+    galleryVisualTrailState.trails = [];
+    galleryVisualTrailState.fragmentsByTrailId = new Map();
+    galleryVisualTrailState.recoveredRowsByTrailId = new Map();
+    galleryVisualTrailState.recoveredIdsByTrailId = new Map();
+    syncSelectedGalleryVisualTrail("");
+    galleryVisualTrailState.isLoaded = true;
+  } finally {
+    galleryVisualTrailState.isLoading = false;
+  }
+}
+
+async function loadGalleryUserInteractions() {
+  if (galleryUserState.isLoaded || galleryUserState.isLoading) {
+    return;
+  }
+
+  galleryUserState.isLoading = true;
+  galleryUserState.error = "";
+
+  try {
+    const [{ getCurrentUser }, { getSupabaseClient, isSupabaseConfigured }] = await Promise.all([
+      import("../src/services/auth.js"),
+      import("../src/services/supabase-client.js")
+    ]);
+
+    if (!isSupabaseConfigured()) {
+      resetGalleryUserState();
+      resetGalleryVisualTrailState();
+      galleryUserState.isLoaded = true;
+      galleryVisualTrailState.isLoaded = true;
+      return;
+    }
+
+    const supabase = getSupabaseClient();
+    const { user, error: userError } = await getCurrentUser();
+
+    if (userError || !user) {
+      resetGalleryUserState();
+      galleryUserState.supabase = supabase;
+      galleryUserState.isLoaded = true;
+      await loadGalleryVisualTrail(supabase, null);
+      return;
+    }
+
+    const [{ data: recentData, error: recentError }, markedRows] = await Promise.all([
+      supabase
+        .from("user_gallery_recent_records")
+        .select("record_id,last_viewed_at,view_count,created_at,gallery_records(*)")
+        .eq("user_id", user.id)
+        .order("last_viewed_at", { ascending: false })
+        .limit(10),
+      loadUserGalleryMarkedRecords(supabase, user)
+    ]);
+
+    if (recentError) {
+      console.warn("[Astral Veil archive] Gallery recent records could not be loaded.", recentError);
+    }
+
+    galleryUserState.user = user;
+    galleryUserState.supabase = supabase;
+    galleryUserState.recentRows = recentError ? [] : normalizeGalleryInteractionRows(recentData, "last_viewed_at");
+    galleryUserState.markedRows = markedRows;
+    syncGalleryRecentMetaFromUserRows();
+    syncGalleryMarkedIdsFromUserRows();
+    galleryUserState.isLoaded = true;
+    await loadGalleryVisualTrail(supabase, user);
+  } catch (error) {
+    console.warn("[Astral Veil archive] Gallery user interactions could not be loaded.", error);
+    resetGalleryUserState();
+    resetGalleryVisualTrailState();
+    galleryUserState.isLoaded = true;
+    galleryVisualTrailState.isLoaded = true;
+    galleryUserState.error = error?.message || "Gallery user records could not be loaded.";
+  } finally {
+    galleryUserState.isLoading = false;
+  }
+}
+
+async function refreshGalleryUserInteractions() {
+  galleryUserState.isLoaded = false;
+  await loadGalleryUserInteractions();
+}
+
+function addGalleryRecentlyViewedRecord(record) {
+  if (!record?.id) {
+    return;
+  }
+
+  const existingIndex = galleryRecentlyViewedRecords.findIndex((viewedRecord) => viewedRecord.id === record.id);
+
+  if (existingIndex >= 0) {
+    galleryRecentlyViewedRecords.splice(existingIndex, 1);
+  }
+
+  galleryRecentlyViewedRecords.unshift(record);
+  galleryRecentlyViewedRecords.splice(10);
+}
+
+async function recordGalleryRecentlyViewed(record) {
+  if (!record?.id) {
+    return;
+  }
+
+  if (!galleryUserState.user || !galleryUserState.supabase || !isGallerySupabaseRecordId(record.id)) {
+    addGalleryRecentlyViewedRecord(record);
+    return;
+  }
+
+  let existingViewCount = Number(galleryUserState.recentMeta.get(String(record.id))?.row?.view_count || 0);
+
+  if (!existingViewCount) {
+    const { data, error } = await galleryUserState.supabase
+      .from("user_gallery_recent_records")
+      .select("view_count")
+      .eq("user_id", galleryUserState.user.id)
+      .eq("record_id", record.id)
+      .maybeSingle();
+
+    if (error) {
+      console.warn("[Astral Veil archive] Gallery recent record count could not be checked.", error);
+    } else {
+      existingViewCount = Number(data?.view_count || 0);
+    }
+  }
+
+  const now = new Date().toISOString();
+  const payload = {
+    user_id: galleryUserState.user.id,
+    record_id: record.id,
+    last_viewed_at: now,
+    view_count: existingViewCount + 1
+  };
+
+  const { error } = await galleryUserState.supabase
+    .from("user_gallery_recent_records")
+    .upsert(payload, { onConflict: "user_id,record_id" });
+
+  if (error) {
+    console.warn("[Astral Veil archive] Gallery recent record could not be saved.", error);
+    return;
+  }
+
+  await refreshGalleryUserInteractions();
+  renderArchiveRooms();
+}
+
+function openGalleryRecordModal(recordId) {
+  const record = getGalleryRecordById(recordId);
+
+  if (!record) {
+    return;
+  }
+
+  openGalleryRecordId = record.id;
+  openGalleryUtilityModal = "";
+  recordGalleryRecentlyViewed(record);
+  updateGalleryModalOpenState();
+  renderArchiveRooms();
+}
+
+function closeGalleryModals() {
+  openGalleryRecordId = "";
+  openGalleryUtilityModal = "";
+  updateGalleryModalOpenState();
+}
+
+function showGalleryMarkedErrorMessage() {
+  openGalleryRecordId = "";
+  openGalleryUtilityModal = "marked-error";
+  updateGalleryModalOpenState();
+  renderArchiveRooms();
+}
+
+function showGallerySignInMessage() {
+  openGalleryRecordId = "";
+  openGalleryUtilityModal = "sign-in";
+  updateGalleryModalOpenState();
+  renderArchiveRooms();
+}
+
+function logGalleryMarkedRecordError(error, context = {}) {
+  console.warn("Gallery record could not be marked:", {
+    message: error?.message,
+    details: error?.details,
+    hint: error?.hint,
+    code: error?.code,
+    error,
+    ...context
+  });
+}
+
+function getGalleryFeaturedRecords() {
+  const records = getGalleryAllBrowsableRecords();
+  const featuredRecords = records.filter((record) => record.is_featured);
+
+  return featuredRecords.length ? featuredRecords : records.slice(0, 1);
+}
+
+function getCurrentGalleryFeaturedRecord() {
+  const featuredRecords = getGalleryFeaturedRecords();
+
+  if (!featuredRecords.length) {
+    return galleryRecordPlaceholders[2] || null;
+  }
+
+  galleryFeaturedIndex = ((galleryFeaturedIndex % featuredRecords.length) + featuredRecords.length) % featuredRecords.length;
+  return featuredRecords[galleryFeaturedIndex];
+}
+
+function moveGalleryFeaturedRecord(direction) {
+  const featuredRecords = getGalleryFeaturedRecords();
+
+  if (featuredRecords.length <= 1) {
+    return;
+  }
+
+  galleryFeaturedIndex = direction === "previous"
+    ? (galleryFeaturedIndex - 1 + featuredRecords.length) % featuredRecords.length
+    : (galleryFeaturedIndex + 1) % featuredRecords.length;
+  renderArchiveRooms();
+}
+
+function selectGalleryFeaturedRecord(index) {
+  const featuredRecords = getGalleryFeaturedRecords();
+
+  if (index < 0 || index >= featuredRecords.length) {
+    return;
+  }
+
+  galleryFeaturedIndex = index;
+  renderArchiveRooms();
+}
+
+async function toggleGalleryMarkedRecord(recordId) {
+  const id = String(recordId || "");
+  const record = getGalleryRecordById(id);
+
+  if (!id) {
+    return;
+  }
+
+  let supabase = galleryUserState.supabase;
+
+  if (!supabase) {
+    try {
+      const { getSupabaseClient, isSupabaseConfigured } = await import("../src/services/supabase-client.js");
+      supabase = isSupabaseConfigured() ? getSupabaseClient() : null;
+    } catch (error) {
+      logGalleryMarkedRecordError(error, { action: "getSupabaseClient" });
+    }
+  }
+
+  if (!supabase) {
+    showGallerySignInMessage();
+    return;
+  }
+
+  const { data: authData, error: authError } = await supabase.auth.getUser();
+  const user = authData?.user || null;
+
+  if (authError || !user?.id) {
+    if (authError) {
+      logGalleryMarkedRecordError(authError, { action: "getUser" });
+    }
+
+    showGallerySignInMessage();
+    return;
+  }
+
+  galleryUserState.user = user;
+  galleryUserState.supabase = supabase;
+  const recordIdToSave = record?.id || "";
+
+  if (!recordIdToSave || !isGallerySupabaseRecordId(recordIdToSave)) {
+    console.warn("Cannot mark gallery record without Supabase record id", record);
+    return;
+  }
+
+  if (galleryMarkedRecordIds.has(recordIdToSave)) {
+    const { error } = await supabase
+      .from("user_gallery_marked_records")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("record_id", recordIdToSave);
+
+    if (error) {
+      logGalleryMarkedRecordError(error, { action: "delete", record_id: recordIdToSave });
+      showGalleryMarkedErrorMessage();
+      return;
+    }
+  } else {
+    const { error } = await supabase
+      .from("user_gallery_marked_records")
+      .insert({
+        user_id: user.id,
+        record_id: recordIdToSave
+      });
+
+    if (error) {
+      logGalleryMarkedRecordError(error, { action: "insert", record_id: recordIdToSave });
+      showGalleryMarkedErrorMessage();
+      return;
+    }
+  }
+
+  await refreshGalleryUserInteractions();
+  renderArchiveRooms();
+}
+
+async function recoverNextGalleryTrailFragment() {
+  const supabase = galleryUserState.supabase;
+  const trail = galleryVisualTrailState.trail;
+  const nextFragment = galleryVisualTrailState.fragments.find((fragment) => !galleryVisualTrailState.recoveredIds.has(String(fragment.id || "")));
+
+  if (!supabase) {
+    showGallerySignInMessage();
+    return;
+  }
+
+  const { data: authData, error: authError } = await supabase.auth.getUser();
+  const user = authData?.user || null;
+
+  if (authError || !user?.id) {
+    if (authError) {
+      console.warn("Visual trail fragment could not be recovered:", {
+        message: authError?.message,
+        details: authError?.details,
+        hint: authError?.hint,
+        code: authError?.code,
+        error: authError,
+        action: "getUser"
+      });
+    }
+
+    showGallerySignInMessage();
+    return;
+  }
+
+  if (!trail?.id || !nextFragment?.id) {
+    return;
+  }
+
+  const { error } = await supabase
+    .from("user_visual_trail_fragments")
+    .insert({
+      user_id: user.id,
+      trail_id: trail.id,
+      fragment_id: nextFragment.id
+    });
+
+  if (error) {
+    if (error.code === "23505") {
+      galleryUserState.user = user;
+      await loadGalleryVisualTrail(supabase, user);
+      openGalleryUtilityModal = "trail-detail";
+      updateGalleryModalOpenState();
+      renderArchiveRooms();
+      return;
+    }
+
+    console.warn("Visual trail fragment could not be recovered:", {
+      message: error?.message,
+      details: error?.details,
+      hint: error?.hint,
+      code: error?.code,
+      error
+    });
+    galleryVisualTrailState.error = "Visual fragment could not be recovered.";
+    renderArchiveRooms();
+    return;
+  }
+
+  galleryUserState.user = user;
+  await loadGalleryVisualTrail(supabase, user);
+  openGalleryUtilityModal = "trail-detail";
+  updateGalleryModalOpenState();
+  renderArchiveRooms();
+}
+
+function normalizeGalleryValue(value) {
+  return String(value ?? "")
+    .toLowerCase()
+    .trim()
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ");
+}
+
+function getGalleryRecordTaxonomyValues(record) {
+  const taxonomyValues = [];
+
+  if (Array.isArray(record?.tags)) {
+    taxonomyValues.push(...record.tags);
+  }
+
+  if (Array.isArray(record?.themes)) {
+    taxonomyValues.push(...record.themes);
+  }
+
+  return taxonomyValues.map(normalizeGalleryValue).filter(Boolean);
+}
+
+function recordHasGalleryTag(record, expected) {
+  const normalizedExpected = normalizeGalleryValue(expected);
+
+  if (!normalizedExpected) {
+    return false;
+  }
+
+  return getGalleryRecordTaxonomyValues(record).some((value) => (
+    value === normalizedExpected
+    || value.endsWith(` ${normalizedExpected}`)
+    || normalizedExpected.endsWith(` ${value}`)
+  ));
+}
+
+function galleryRecordMatchesFilter(record, filter) {
+  const activeFilter = normalizeGalleryValue(filter);
+  const recordType = normalizeGalleryValue(record?.record_type || record?.recordType || "");
+  const category = normalizeGalleryValue(record?.category || "");
+  const status = normalizeGalleryValue(record?.status || "");
+
+  if (!activeFilter || activeFilter === "all" || activeFilter === "all records") {
+    return true;
+  }
+
+  if (activeFilter === "portraits") {
+    return recordType === "portrait"
+      || category === "portraits"
+      || recordHasGalleryTag(record, "portrait")
+      || recordHasGalleryTag(record, "portraits");
+  }
+
+  if (activeFilter === "places") {
+    return ["place", "location"].includes(recordType)
+      || category === "places"
+      || recordHasGalleryTag(record, "place")
+      || recordHasGalleryTag(record, "places")
+      || recordHasGalleryTag(record, "location");
+  }
+
+  if (activeFilter === "symbols") {
+    return ["symbol", "seal"].includes(recordType)
+      || category === "symbols"
+      || recordHasGalleryTag(record, "symbol")
+      || recordHasGalleryTag(record, "symbols")
+      || recordHasGalleryTag(record, "seal");
+  }
+
+  if (activeFilter === "maps") {
+    return recordType === "map"
+      || category === "maps"
+      || recordHasGalleryTag(record, "map")
+      || recordHasGalleryTag(record, "maps");
+  }
+
+  if (activeFilter === "anomalies") {
+    return recordType === "anomaly"
+      || category === "anomalies"
+      || recordHasGalleryTag(record, "anomaly")
+      || recordHasGalleryTag(record, "anomalies")
+      || recordHasGalleryTag(record, "phenomena")
+      || recordHasGalleryTag(record, "rift")
+      || recordHasGalleryTag(record, "veil");
+  }
+
+  if (activeFilter === "unknown records") {
+    return recordType === "unknown"
+      || ["unknown", "unnamed"].includes(status)
+      || category === "unknown records"
+      || recordHasGalleryTag(record, "unknown records")
+      || recordHasGalleryTag(record, "unknown");
+  }
+
+  if (activeFilter === "recovered") {
+    return recordType === "recovered"
+      || status === "recovered"
+      || record?.recovered === true
+      || category === "recovered"
+      || recordHasGalleryTag(record, "recovered");
+  }
+
+  return true;
+}
+
+function getGalleryFilteredRecords() {
+  const sourceRecords = getGallerySourceRecords();
+  const filteredRecords = sourceRecords.filter((record) => galleryRecordMatchesFilter(record, galleryActiveFilter));
+
+  console.info("Gallery filter applied:", {
+    activeFilter: galleryActiveFilter,
+    beforeCount: sourceRecords.length,
+    afterCount: filteredRecords.length
+  });
+
+  return filteredRecords;
+}
+
+function getGallerySortedRecords(records) {
+  const sourceIndexById = new Map(getGallerySourceRecords().map((record, index) => [
+    String(record?.id || record?.slug || ""),
+    index
+  ]));
+  const indexedRecords = records.map((record) => ({
+    record,
+    originalIndex: sourceIndexById.get(String(record?.id || record?.slug || "")) ?? 0
+  }));
+
+  if (galleryActiveSort === "Oldest") {
+    return indexedRecords.reverse().map(({ record }) => record);
+  }
+
+  if (galleryActiveSort === "A-Z") {
+    return indexedRecords
+      .sort((first, second) => first.record.title.localeCompare(second.record.title) || first.originalIndex - second.originalIndex)
+      .map(({ record }) => record);
+  }
+
+  if (galleryActiveSort === "Recovered First") {
+    return indexedRecords
+      .sort((first, second) => Number(Boolean(second.record.recovered)) - Number(Boolean(first.record.recovered)) || first.originalIndex - second.originalIndex)
+      .map(({ record }) => record);
+  }
+
+  if (galleryActiveSort === "Unknown First") {
+    return indexedRecords
+      .sort((first, second) => Number(second.record.category === "Unknown Records") - Number(first.record.category === "Unknown Records") || first.originalIndex - second.originalIndex)
+      .map(({ record }) => record);
+  }
+
+  return indexedRecords.map(({ record }) => record);
+}
+
+function getGalleryResultSet() {
+  return getGallerySortedRecords(getGalleryFilteredRecords());
+}
+
+function getGalleryPaginationState() {
+  const records = getGalleryResultSet();
+  const totalSets = Math.max(1, Math.ceil(records.length / GALLERY_RECORDS_PER_SET));
+
+  galleryRecordSetIndex = Math.min(Math.max(galleryRecordSetIndex, 0), totalSets - 1);
+
+  const start = galleryRecordSetIndex * GALLERY_RECORDS_PER_SET;
+  const visibleRecords = records.slice(start, start + GALLERY_RECORDS_PER_SET);
+
+  return {
+    currentSet: galleryRecordSetIndex + 1,
+    totalSets,
+    visibleRecords,
+    canGoPrevious: galleryRecordSetIndex > 0,
+    canGoNext: galleryRecordSetIndex < totalSets - 1
+  };
+}
+
+function renderGallerySortOptions() {
+  return gallerySortOptions.map((option) => `
+    <option value="${escapeHtml(option)}"${galleryActiveSort === option ? " selected" : ""}>${escapeHtml(option)}</option>
+  `).join("");
+}
+
+function renderGalleryRecordPagination(pagination) {
+  return `
+    <div class="gallery-records-pagination" aria-label="Visual record sets">
+      <button type="button" data-gallery-record-set="previous" aria-label="Previous visual record set"${pagination.canGoPrevious ? "" : " disabled"}></button>
+      <span>Set ${pagination.currentSet} of ${pagination.totalSets}</span>
+      <button type="button" data-gallery-record-set="next" aria-label="Next visual record set"${pagination.canGoNext ? "" : " disabled"}></button>
+    </div>
+  `;
+}
+
+function renderGalleryRecordsState(pagination) {
+  if (galleryRecordsLoading && !galleryRecordsLoaded) {
+    return `<p class="gallery-records-state">Recovering visual records...</p>`;
+  }
+
+  if (!pagination.visibleRecords.length) {
+    return `<p class="gallery-records-state">No visual records answered from the dark.</p>`;
+  }
+
+  if (galleryRecordsError && galleryRecordsLoaded && !galleryRecords.length) {
+    return `<p class="gallery-records-state">${escapeHtml(galleryRecordsError)}</p>`;
+  }
+
+  return "";
+}
+
+function renderGalleryFeaturedRecord(featuredRecord) {
+  const featuredRecords = getGalleryFeaturedRecords();
+  const image = featuredRecord?.previewImage || featuredRecord?.preview_image_url || featuredRecord?.fullImage || featuredRecord?.full_image_url || featuredRecord?.image || "assets/images/noctis/visual-records/castle-black.webp";
+  const title = featuredRecord?.title || "Sealed Landscape";
+  const note = featuredRecord?.lore_note || featuredRecord?.description || "The Archive has recovered this visual record, but its meaning remains uncertain.";
+  const relatedRoom = featuredRecord?.relatedRoom || featuredRecord?.related_room || "";
+  const origin = featuredRecord?.origin || "";
+  const safeRecordId = featuredRecord?.id || featuredRecord?.slug || "";
+  const hasMultipleFeaturedRecords = featuredRecords.length > 1;
+
+  return `
+    <article class="gallery-featured-card" aria-label="${escapeHtml(`Featured visual record: ${title}`)}">
+      <header class="gallery-featured-card__header">
+        <p class="gallery-featured-card__label" id="gallery-featured-title">Featured Visual Record</p>
+        <div class="gallery-featured-card__controls" aria-label="Featured visual record controls">
+          <button class="gallery-featured-card__nav gallery-featured-card__nav--previous" type="button" data-gallery-featured-nav="previous" aria-label="Previous featured visual record"${hasMultipleFeaturedRecords ? "" : " disabled"}></button>
+          <button class="gallery-featured-card__nav gallery-featured-card__nav--next" type="button" data-gallery-featured-nav="next" aria-label="Next featured visual record"${hasMultipleFeaturedRecords ? "" : " disabled"}></button>
+        </div>
+      </header>
+      <div class="gallery-featured-card__visual">
+        <div class="gallery-featured-card__image">
+          <button class="gallery-featured-card__open" type="button" data-gallery-open-record="${escapeHtml(safeRecordId)}" aria-label="${escapeHtml(`Open ${title}`)}">
+            <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" decoding="async" onerror="${getGalleryImageErrorHandler(image)}" />
+          </button>
+        </div>
+        <div class="gallery-featured-card__dots" aria-label="Featured visual record position">
+          ${featuredRecords.map((record, index) => `
+            <button class="${index === galleryFeaturedIndex ? "is-active" : ""}" type="button" data-gallery-featured-dot="${index}" aria-label="${escapeHtml(`Show featured visual record ${index + 1}`)}"${featuredRecords.length <= 1 ? " disabled" : ""}></button>
+          `).join("")}
+        </div>
+      </div>
+      <aside class="gallery-featured-card__meta" aria-label="Featured visual record lore note">
+        <div class="gallery-featured-card__summary">
+          <span>Lore Note</span>
+          <strong>${escapeHtml(title)}</strong>
+          <p>${escapeHtml(note)}</p>
+          ${relatedRoom ? `<small>Recovered near: ${escapeHtml(relatedRoom)}</small>` : ""}
+          ${origin ? `<small>Origin: ${escapeHtml(origin)}</small>` : ""}
+        </div>
+        <button type="button" data-gallery-open-record="${escapeHtml(safeRecordId)}">View Record</button>
+      </aside>
+    </article>
+  `;
+}
+
+function renderGalleryStats() {
+  return galleryStatsPlaceholders.map(([value, label]) => `
+    <div class="gallery-stat">
+      <strong>${escapeHtml(value)}</strong>
+      <span>${escapeHtml(label)}</span>
+    </div>
+  `).join("");
+}
+
+function renderGalleryQuickLinks() {
+  return galleryQuickLinks.map(([title, subtitle, count]) => `
+    <button class="gallery-quick-link" type="button">
+      <span class="gallery-quick-link__mark" aria-hidden="true"></span>
+      <span>
+        <strong>${escapeHtml(title)}</strong>
+        <em>${escapeHtml(subtitle)}</em>
+      </span>
+      <small>${escapeHtml(count)}</small>
+    </button>
+  `).join("");
+}
+
+function renderGalleryRecordPlaceholder(record) {
+  const recordId = record?.id || record?.slug || "";
+  const gridImage = record.fullImage || record.full_image_url || record.image || record.previewImage || record.preview_image_url || "";
+  const canMarkRecord = !record?.isVirtualTrailRecord;
+
+  return `
+    <article class="gallery-record-card${record.sealed ? " is-sealed" : ""}${record.variant ? ` gallery-record-card--${escapeHtml(record.variant)}` : ""}" aria-label="${escapeHtml(`${record.title}, ${record.category}`)}">
+      <button class="gallery-record-card__open" type="button" data-gallery-open-record="${escapeHtml(recordId)}" aria-label="${escapeHtml(`Open ${record.title}`)}">
+      <span class="gallery-record-card__image">
+        ${gridImage ? `<img src="${escapeHtml(gridImage)}" alt="${escapeHtml(record.title)}" loading="eager" decoding="async" onerror="${getGalleryImageErrorHandler(gridImage)}" />` : ""}
+      </span>
+      </button>
+      ${canMarkRecord ? `<button class="gallery-record-card__mark${galleryMarkedRecordIds.has(recordId) ? " is-marked" : ""}" type="button" data-gallery-mark-record="${escapeHtml(recordId)}" aria-label="${escapeHtml(`${galleryMarkedRecordIds.has(recordId) ? "Unmark" : "Mark"} ${record.title}`)}"></button>` : ""}
+    </article>
+  `;
+}
+
+function getGalleryInteractionTimeLabel(value, fallback = "") {
+  const timestamp = new Date(value || "");
+
+  if (Number.isNaN(timestamp.getTime())) {
+    return fallback;
+  }
+
+  const diffMs = Date.now() - timestamp.getTime();
+  const minute = 60 * 1000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+
+  if (diffMs < minute) {
+    return "Just now";
+  }
+
+  if (diffMs < hour) {
+    return `${Math.max(1, Math.floor(diffMs / minute))}m ago`;
+  }
+
+  if (diffMs < day) {
+    return `${Math.max(1, Math.floor(diffMs / hour))}h ago`;
+  }
+
+  return `${Math.max(1, Math.floor(diffMs / day))}d ago`;
+}
+
+function getGalleryRecentDisplayRows(limit = 3) {
+  if (galleryUserState.user) {
+    return galleryUserState.recentRows.slice(0, limit).map((entry) => ({
+      record: entry.record,
+      subtext: getGalleryInteractionTimeLabel(entry.row?.last_viewed_at, entry.record?.slug || "Viewed")
+    }));
+  }
+
+  return galleryRecentlyViewedRecords.slice(0, limit).map((record) => ({
+    record,
+    subtext: record.slug || record.category || "Viewed"
+  }));
+}
+
+function getGalleryMarkedDisplayRows(limit = 3) {
+  if (!galleryUserState.user) {
+    return [];
+  }
+
+  return galleryUserState.markedRows.slice(0, limit).map((entry) => ({
+    record: entry.record,
+    subtext: getGalleryInteractionTimeLabel(entry.row?.marked_at, entry.record?.slug || "Marked")
+  }));
+}
+
+function getGalleryVisualTrailProgress(trail = galleryVisualTrailState.trail) {
+  const trailId = String(trail?.id || "");
+  const fragments = galleryVisualTrailState.fragmentsByTrailId.get(trailId) || [];
+  const recoveredIds = galleryUserState.user
+    ? galleryVisualTrailState.recoveredIdsByTrailId.get(trailId) || new Set()
+    : new Set();
+  const total = Number(trail?.total_fragments || fragments.length || 4);
+  const recovered = recoveredIds.size;
+
+  return {
+    recovered,
+    total: Math.max(1, total),
+    percent: Math.min(100, Math.round((recovered / Math.max(1, total)) * 100))
+  };
+}
+
+function getGalleryVisualTrailDisplayFragments(trail = galleryVisualTrailState.trail) {
+  const progress = getGalleryVisualTrailProgress(trail);
+  const fragments = [...(galleryVisualTrailState.fragmentsByTrailId.get(String(trail?.id || "")) || [])].slice(0, progress.total);
+
+  while (fragments.length < progress.total) {
+    const fragmentNumber = fragments.length + 1;
+    fragments.push({
+      id: `missing-fragment-${fragmentNumber}`,
+      fragment_number: fragmentNumber,
+      title: `Fragment ${fragmentNumber}`,
+      hint_text: ""
+    });
+  }
+
+  return fragments;
+}
+
+function getGalleryVisualTrailStatus(progress) {
+  if (progress.recovered >= progress.total) {
+    return "Restored";
+  }
+
+  if (progress.recovered > 0) {
+    return "Recovering";
+  }
+
+  return "Not started";
+}
+
+function renderGalleryVisualTrailDots(recoveredCount, totalFragments) {
+  const total = Math.max(1, Number(totalFragments || 4));
+  const visibleTotal = Math.min(total, 8);
+  const recovered = Math.max(0, Number(recoveredCount || 0));
+  const dots = Array.from({ length: visibleTotal }, (_, index) => `
+    <span class="${index < recovered ? "is-recovered" : ""}" aria-hidden="true"></span>
+  `).join("");
+
+  return `
+    <span class="gallery-trail-dots" role="img" aria-label="${escapeHtml(`${Math.min(recovered, total)} of ${total} fragments recovered`)}">
+      ${dots}${total > visibleTotal ? `<em aria-hidden="true">+${total - visibleTotal}</em>` : ""}
+    </span>
+  `;
+}
+
+function renderGalleryVisualTrailRow(trail, { asListItem = false } = {}) {
+  const progress = getGalleryVisualTrailProgress(trail);
+  const status = getGalleryVisualTrailStatus(progress);
+  const note = trail?.description || trail?.lore_note || "Recovered images are restored one fragment at a time.";
+  const isComplete = progress.recovered >= progress.total;
+  const image = isComplete ? trail?.preview_image_url || trail?.full_image_url || "" : "";
+  const thumbState = isComplete ? "is-restored" : "is-locked";
+
+  return `
+    <button class="gallery-trail-row${asListItem ? " gallery-trail-row--list" : " gallery-trail-row--summary"}" type="button" data-gallery-open-trail="${escapeHtml(trail?.id || "")}">
+      ${asListItem ? "" : `<span class="gallery-trail-row__thumb ${thumbState}" aria-hidden="true">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" decoding="async" onerror="${getVisualTrailImageErrorHandler(image)}" />` : ""}</span>`}
+      <span class="gallery-trail-row__main">
+        <span class="gallery-trail-row__copy">
+          <strong>${escapeHtml(trail?.title || "Visual Trail")}</strong>
+          ${asListItem ? `<em>${escapeHtml(note)}</em>` : ""}
+        </span>
+        <span class="gallery-trail-row__progress">
+          ${renderGalleryVisualTrailDots(progress.recovered, progress.total)}
+          <small>${progress.recovered} / ${progress.total} recovered</small>
+        </span>
+      </span>
+      ${asListItem ? `<span class="gallery-trail-row__status">${escapeHtml(status)}</span>` : ""}
+    </button>
+  `;
+}
+
+function renderGalleryMiniRecordRow(item, { includeUnmark = false } = {}) {
+  const record = item?.record || item;
+  const subtext = item?.subtext || record?.slug || record?.category || "The Gallery";
+  const image = record?.previewImage || record?.preview_image_url || record?.image || record?.fullImage || record?.full_image_url || "";
+  const recordId = record?.id || record?.slug || "";
+
+  return `
+    <div class="gallery-mini-row-wrap">
+      <button class="gallery-mini-row" type="button" data-gallery-open-record="${escapeHtml(recordId)}">
+        <span class="gallery-mini-thumb" aria-hidden="true">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" decoding="async" onerror="${getGalleryImageErrorHandler(image)}" />` : ""}</span>
+        <span>
+          <strong>${escapeHtml(record?.title || "Unknown Visual Record")}</strong>
+          <em>${escapeHtml(subtext)}</em>
+        </span>
+      </button>
+      ${includeUnmark ? `<button class="gallery-mini-row__remove" type="button" data-gallery-unmark-record="${escapeHtml(recordId)}" aria-label="${escapeHtml(`Unmark ${record?.title || "Gallery record"}`)}">Remove</button>` : ""}
+    </div>
+  `;
+}
+
+function renderGalleryVisualTrailSummary() {
+  const trails = galleryVisualTrailState.trails.slice(0, 3);
+
+  if (galleryVisualTrailState.isLoading) {
+    return `<p class="gallery-bottom-empty">Visual Trails are answering...</p>`;
+  }
+
+  if (!trails.length) {
+    return `<p class="gallery-bottom-empty">${escapeHtml(galleryVisualTrailState.error || "Visual Trails are still being indexed by the Archive.")}</p>`;
+  }
+
+  return `
+    ${trails.map((trail) => renderGalleryVisualTrailRow(trail)).join("")}
+    ${galleryUserState.user ? "" : `<p class="gallery-bottom-empty">Sign in to recover visual fragments.</p>`}
+  `;
+}
+
+function renderGalleryBottomSection(section) {
+  const sectionKey = section.title.toLowerCase().includes("recent")
+    ? "recent"
+    : section.title.toLowerCase().includes("marked")
+      ? "marked"
+      : "trails";
+  const recentRows = getGalleryRecentDisplayRows(3);
+  const markedRows = getGalleryMarkedDisplayRows(3);
+  const dynamicRows = sectionKey === "recent"
+    ? recentRows
+    : sectionKey === "marked"
+      ? markedRows
+      : [];
+  const emptyMessage = sectionKey === "recent"
+    ? "Recently Viewed records will appear here as you explore the Gallery."
+    : sectionKey === "marked"
+      ? "Marked Records will appear here when you save Gallery images."
+      : "Visual Trails are still being indexed by the Archive.";
+
+  return `
+    <section class="gallery-bottom-card">
+      <div class="gallery-card-heading">
+        <h3>${escapeHtml(section.title)}</h3>
+        <button type="button" data-gallery-bottom-action="${escapeHtml(sectionKey)}">${sectionKey === "trails" ? "Explore trails" : "View all"}</button>
+      </div>
+      <div class="gallery-mini-list">
+        ${sectionKey === "trails"
+          ? renderGalleryVisualTrailSummary()
+          : dynamicRows.length
+          ? dynamicRows.map((item) => renderGalleryMiniRecordRow(item)).join("")
+          : `<p class="gallery-bottom-empty">${escapeHtml(emptyMessage)}</p>`}
+      </div>
+    </section>
+  `;
+}
+
+function renderGalleryRecordModal() {
+  const record = getGalleryRecordById(openGalleryRecordId);
+
+  if (!record) {
+    return "";
+  }
+
+  const image = record.fullImage || record.full_image_url || record.previewImage || record.preview_image_url || record.image || "";
+  const title = record.title || "Unknown Visual Record";
+
+  return `
+    <div class="gallery-record-modal gallery-record-modal--viewer is-open" role="presentation">
+      <button class="gallery-record-modal__backdrop" type="button" data-gallery-modal-close aria-label="Close visual record"></button>
+      <article class="gallery-record-modal__dialog" role="dialog" aria-modal="true" aria-label="Expanded visual record">
+        <button class="gallery-record-modal__close" type="button" data-gallery-modal-close aria-label="Close visual record">×</button>
+        <figure class="gallery-record-modal__figure">
+          ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="eager" decoding="async" onerror="${getGalleryImageErrorHandler(image)}" />` : ""}
+        </figure>
+      </article>
+    </div>
+  `;
+}
+
+function renderGalleryVisualTrailModalContent() {
+  const trail = galleryVisualTrailState.trail;
+  const fragments = getGalleryVisualTrailDisplayFragments(trail);
+  const progress = getGalleryVisualTrailProgress(trail);
+  const isComplete = galleryUserState.user && progress.recovered >= progress.total;
+  const note = trail?.lore_note || trail?.description || "The Archive is still assembling this visual trail.";
+
+  if (!trail) {
+    return `
+      <p class="gallery-record-modal__eyebrow">Visual Trails</p>
+      <h2 id="gallery-utility-modal-title">Visual Trails</h2>
+      <p>${escapeHtml(galleryVisualTrailState.error || "Visual Trails are still being indexed by the Archive.")}</p>
+    `;
+  }
+
+  return `
+    <p class="gallery-record-modal__eyebrow">Visual Trail</p>
+    <h2 id="gallery-utility-modal-title">${escapeHtml(trail.title || "Visual Trail")}</h2>
+    <p>${escapeHtml(note)}</p>
+    <div class="gallery-trail-modal-progress">
+      <span>${progress.recovered} / ${progress.total} fragments recovered</span>
+      <div class="gallery-trail-progress" aria-hidden="true">
+        <span style="width: ${progress.percent}%"></span>
+      </div>
+    </div>
+    <div class="gallery-trail-fragment-grid" aria-label="Visual trail fragments">
+      ${fragments.map((fragment) => {
+        const isRecovered = galleryVisualTrailState.recoveredIds.has(String(fragment.id || ""));
+        return `
+          <figure class="gallery-trail-fragment${isRecovered ? " is-recovered" : " is-locked"}">
+            ${isRecovered
+              ? `<img src="${escapeHtml(fragment.fragment_image_url)}" alt="${escapeHtml(fragment.title || `Fragment ${fragment.fragment_number}`)}" loading="lazy" decoding="async" onerror="${getVisualTrailImageErrorHandler(fragment.fragment_image_url)}" />`
+              : `<span>Fragment locked</span>${fragment.hint_text ? `<small>${escapeHtml(fragment.hint_text)}</small>` : ""}`}
+          </figure>
+        `;
+      }).join("")}
+    </div>
+    ${isComplete && trail.full_image_url ? `
+      <figure class="gallery-trail-restored">
+        <img src="${escapeHtml(trail.full_image_url)}" alt="${escapeHtml(trail.title || "Restored visual trail")}" loading="lazy" decoding="async" onerror="${getVisualTrailImageErrorHandler(trail.full_image_url)}" />
+        <figcaption>Image restored.</figcaption>
+        <p>Restored image could not be loaded.</p>
+      </figure>
+    ` : isComplete ? `<p class="gallery-bottom-empty">Restored image could not be loaded.</p>` : ""}
+    ${galleryVisualTrailState.error ? `<p class="gallery-bottom-empty">${escapeHtml(galleryVisualTrailState.error)}</p>` : ""}
+    ${galleryUserState.user
+      ? progress.recovered < progress.total
+        ? `<button class="gallery-trail-recover-button" type="button" data-gallery-recover-trail-fragment>Recover next fragment</button>`
+        : ""
+      : `<p class="gallery-bottom-empty">Sign in to recover visual fragments.</p>`}
+  `;
+}
+
+function renderGalleryVisualTrailListModalContent() {
+  const trails = galleryVisualTrailState.trails;
+
+  if (galleryVisualTrailState.isLoading) {
+    return `
+      <p class="gallery-record-modal__eyebrow">Visual Trails</p>
+      <h2 id="gallery-utility-modal-title">Visual Trails</h2>
+      <p>Visual Trails are answering...</p>
+    `;
+  }
+
+  if (!trails.length) {
+    return `
+      <p class="gallery-record-modal__eyebrow">Visual Trails</p>
+      <h2 id="gallery-utility-modal-title">Visual Trails</h2>
+      <p>${escapeHtml(galleryVisualTrailState.error || "Visual Trails are still being indexed by the Archive.")}</p>
+    `;
+  }
+
+  const trailsPerPage = 10;
+  const totalPages = Math.max(1, Math.ceil(trails.length / trailsPerPage));
+  galleryVisualTrailState.trailPageIndex = Math.min(Math.max(galleryVisualTrailState.trailPageIndex, 0), totalPages - 1);
+  const start = galleryVisualTrailState.trailPageIndex * trailsPerPage;
+  const visibleTrails = trails.slice(start, start + trailsPerPage);
+
+  return `
+    <p class="gallery-record-modal__eyebrow">Visual Trails</p>
+    <h2 id="gallery-utility-modal-title">Visual Trails</h2>
+    <p>Recovered images are restored one fragment at a time.</p>
+    ${galleryUserState.user ? "" : `<p class="gallery-bottom-empty">Sign in to recover visual fragments.</p>`}
+    <div class="gallery-trail-list">
+      ${visibleTrails.map((trail) => renderGalleryVisualTrailRow(trail, { asListItem: true })).join("")}
+    </div>
+    ${totalPages > 1 ? `
+      <div class="gallery-records-pagination gallery-trail-list-pagination" aria-label="Visual Trail pages">
+        <button type="button" data-gallery-trails-page="previous" aria-label="Previous visual trails page"${galleryVisualTrailState.trailPageIndex > 0 ? "" : " disabled"}></button>
+        <span>Page ${galleryVisualTrailState.trailPageIndex + 1} of ${totalPages}</span>
+        <button type="button" data-gallery-trails-page="next" aria-label="Next visual trails page"${galleryVisualTrailState.trailPageIndex < totalPages - 1 ? "" : " disabled"}></button>
+      </div>
+    ` : ""}
+  `;
+}
+
+function renderGalleryUtilityModal() {
+  if (!openGalleryUtilityModal) {
+    return "";
+  }
+
+  if (openGalleryUtilityModal === "trails" || openGalleryUtilityModal === "trail-detail") {
+    const isTrailDetail = openGalleryUtilityModal === "trail-detail";
+    return `
+      <div class="gallery-record-modal gallery-record-modal--utility is-open" role="presentation">
+        <button class="gallery-record-modal__backdrop" type="button" data-gallery-modal-close aria-label="Close Visual Trails"></button>
+        <article class="gallery-record-modal__dialog gallery-record-modal__dialog--trail" role="dialog" aria-modal="true" aria-labelledby="gallery-utility-modal-title">
+          <button class="gallery-record-modal__close" type="button" data-gallery-modal-close aria-label="Close Visual Trails">Close</button>
+          <div class="gallery-record-modal__body">
+            ${isTrailDetail ? renderGalleryVisualTrailModalContent() : renderGalleryVisualTrailListModalContent()}
+          </div>
+        </article>
+      </div>
+    `;
+  }
+
+  const recentRecords = getGalleryRecentDisplayRows(10);
+  const markedRecords = getGalleryMarkedDisplayRows(10);
+  const modalCopy = {
+    recent: {
+      title: "Recently Viewed",
+      message: "Recently Viewed records will appear here as you explore the Gallery.",
+      records: recentRecords,
+      includeUnmark: false
+    },
+    marked: {
+      title: "Marked Records",
+      message: "Marked Records will appear here when you save Gallery images.",
+      records: markedRecords,
+      includeUnmark: true
+    },
+    trails: {
+      title: "Visual Trails",
+      message: "Visual Trails are still being indexed by the Archive.",
+      records: [],
+      includeUnmark: false
+    },
+    "sign-in": {
+      title: "Sign In Required",
+      message: "Sign in to mark Gallery records.",
+      records: [],
+      includeUnmark: false
+    },
+    "marked-error": {
+      title: "Marked Records",
+      message: "Marked record could not be saved. Please try again.",
+      records: [],
+      includeUnmark: false
+    }
+  }[openGalleryUtilityModal] || {
+    title: "The Gallery",
+    message: "The Archive is still indexing this wing.",
+    records: [],
+    includeUnmark: false
+  };
+
+  return `
+    <div class="gallery-record-modal gallery-record-modal--utility is-open" role="presentation">
+      <button class="gallery-record-modal__backdrop" type="button" data-gallery-modal-close aria-label="Close Gallery message"></button>
+      <article class="gallery-record-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="gallery-utility-modal-title">
+        <button class="gallery-record-modal__close" type="button" data-gallery-modal-close aria-label="Close Gallery message">Close</button>
+        <div class="gallery-record-modal__body">
+          <p class="gallery-record-modal__eyebrow">Noctis Gallery</p>
+          <h2 id="gallery-utility-modal-title">${escapeHtml(modalCopy.title)}</h2>
+          <p>${escapeHtml(modalCopy.message)}</p>
+          ${modalCopy.records.length ? `<div class="gallery-modal-record-list">${modalCopy.records.map((item) => renderGalleryMiniRecordRow(item, { includeUnmark: modalCopy.includeUnmark })).join("")}</div>` : ""}
+        </div>
+      </article>
+    </div>
+  `;
+}
+
 function renderRestrictedWingRitualOverlay() {
   if (!restrictedWingRitualOpen) {
     return "";
@@ -3222,14 +5975,70 @@ function renderRestrictedWingGuestPromptOverlay() {
 
 // Gallery renders recovered visual records from the Noctis visual archive.
 function renderGalleryRoom(room) {
+  const galleryPagination = getGalleryPaginationState();
+  const featuredRecord = getCurrentGalleryFeaturedRecord();
+
   return `
-    <div class="archive-room-panel archive-room-panel--gallery">
-      <div class="archive-gallery-header">
-        <p class="archive-entry__stamp">Gallery</p>
-        <h3>Recovered Visual Records</h3>
-        <p>The Archive offers one image at a time. Names fail here first.</p>
+    <div class="gallery-page-shell">
+      <section class="gallery-hero" aria-labelledby="gallery-title">
+        <div class="gallery-hero__copy">
+          <h1 id="gallery-title">The Gallery</h1>
+          <p>Recovered visual records, sealed portraits, and images the Archive refuses to name.</p>
+          <em>Some truths arrive without language.</em>
+        </div>
+      </section>
+
+      <main class="gallery-main" aria-label="Gallery records">
+        <section class="gallery-featured-record" aria-labelledby="gallery-featured-title">
+          ${renderGalleryFeaturedRecord(featuredRecord)}
+        </section>
+
+        <section class="gallery-filter-section" aria-label="Gallery filters">
+          <div class="gallery-filter-section__filters">
+            <div class="gallery-filter-track" data-gallery-filter-track>
+              ${renderGalleryCategoryRows()}
+            </div>
+          </div>
+          <div class="gallery-filter-actions">
+            <div class="gallery-filter-more">
+              <button class="gallery-filter-more__button" type="button" data-gallery-more-filters aria-expanded="false" aria-haspopup="true">
+                More Filters
+              </button>
+              <div class="gallery-filter-more__menu" role="menu">
+                ${renderGalleryMoreFilters()}
+              </div>
+            </div>
+            <label class="gallery-sort-control">
+              <span>Sort:</span>
+              <select aria-label="Sort visual records" data-gallery-sort>
+                ${renderGallerySortOptions()}
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="gallery-records-section" aria-labelledby="gallery-records-title">
+          <div class="gallery-records-header">
+            <h2 id="gallery-records-title">Visual Records</h2>
+          </div>
+          ${renderGalleryRecordsState(galleryPagination)}
+          <div class="gallery-record-grid">
+            ${galleryPagination.visibleRecords.map(renderGalleryRecordPlaceholder).join("")}
+          </div>
+          ${galleryPagination.visibleRecords.length ? renderGalleryRecordPagination(galleryPagination) : ""}
+        </section>
+      </main>
+
+      <div class="gallery-bottom-grid">
+        ${galleryBottomSections.map(renderGalleryBottomSection).join("")}
       </div>
-      ${renderGalleryRecordViewer()}
+
+      <figure class="gallery-quote-strip">
+        <blockquote>&ldquo;Some images show the world. Others show what was never meant to be seen.&rdquo;</blockquote>
+        <figcaption>— Zephyra Noctis</figcaption>
+      </figure>
+      ${renderGalleryRecordModal()}
+      ${renderGalleryUtilityModal()}
     </div>
   `;
 }
@@ -3633,6 +6442,7 @@ function handleArchiveBloodMoonChange(event) {
 
 async function initializeArchive() {
   await loadArtifactProgress();
+  loadShelvesRecentlyReadEntries();
   await saveUnlockedArtifactGatedRooms();
 
   if (isNoctisRoomPage) {
@@ -3694,6 +6504,19 @@ document.addEventListener("click", (event) => {
   const visualRecordClose = event.target.closest("[data-visual-record-close]");
   const visualRecordNav = event.target.closest("[data-visual-record-nav]");
   const galleryRecordNav = event.target.closest("[data-gallery-record-nav]");
+  const galleryRecordSetButton = event.target.closest("[data-gallery-record-set]");
+  const galleryOpenRecordButton = event.target.closest("[data-gallery-open-record]");
+  const galleryModalClose = event.target.closest("[data-gallery-modal-close]");
+  const galleryFeaturedNavButton = event.target.closest("[data-gallery-featured-nav]");
+  const galleryFeaturedDotButton = event.target.closest("[data-gallery-featured-dot]");
+  const galleryMarkRecordButton = event.target.closest("[data-gallery-mark-record]");
+  const galleryUnmarkRecordButton = event.target.closest("[data-gallery-unmark-record]");
+  const galleryBottomActionButton = event.target.closest("[data-gallery-bottom-action]");
+  const galleryOpenTrailButton = event.target.closest("[data-gallery-open-trail]");
+  const galleryTrailsPageButton = event.target.closest("[data-gallery-trails-page]");
+  const galleryRecoverTrailButton = event.target.closest("[data-gallery-recover-trail-fragment]");
+  const galleryMoreFiltersButton = event.target.closest("[data-gallery-more-filters]");
+  const galleryFilterChip = event.target.closest("[data-gallery-filter]");
   const shelvesFilterButton = event.target.closest("[data-shelves-filter]");
   const shelvesFilterNavButton = event.target.closest("[data-shelves-filter-nav]");
   const shelvesBrowseButton = event.target.closest("[data-shelves-browse]");
@@ -3704,6 +6527,18 @@ document.addEventListener("click", (event) => {
   const shelvesAidClose = event.target.closest("[data-close-shelves-aid]");
   const shelvesAidDocumentButton = event.target.closest("[data-shelves-aid-document]");
   const shelvesAidPageButton = event.target.closest("[data-shelves-aid-page]");
+  const shelvesSaveDocumentButton = event.target.closest("[data-shelves-save-document]");
+  const shelvesUnsaveDocumentButton = event.target.closest("[data-shelves-unsave-document]");
+  const shelvesNotableDocumentButton = event.target.closest("[data-shelves-notable-open]");
+  const shelvesNotableViewAllButton = event.target.closest("[data-shelves-notable-view-all]");
+  const shelvesNotableClose = event.target.closest("[data-close-shelves-notable-modal]");
+  const shelvesNotablePageButton = event.target.closest("[data-shelves-notable-page]");
+  const shelvesResearchTrailButton = event.target.closest("[data-shelves-research-trail]");
+  const shelvesResearchExploreAllButton = event.target.closest("[data-shelves-research-explore-all]");
+  const shelvesResearchClose = event.target.closest("[data-close-shelves-research-modal]");
+  const shelvesRecentOpenButton = event.target.closest("[data-shelves-recent-open]");
+  const shelvesRecentViewAllButton = event.target.closest("[data-shelves-recent-view-all]");
+  const shelvesRecentClose = event.target.closest("[data-close-shelves-recent-modal]");
 
   if (noctisLockedRoomButton) {
     showRoomToast(noctisLockedRoomButton.dataset.lockedMessage || "The chamber does not answer yet.");
@@ -3712,6 +6547,7 @@ document.addEventListener("click", (event) => {
 
   if (shelvesFilterButton) {
     shelvesActiveFilter = shelvesFilterButton.dataset.shelvesFilter || "all";
+    shelvesActiveResearchTrailId = "";
     shelvesActiveIndex = 0;
     closeShelvesModals();
     renderCurrentArchiveSurface();
@@ -3735,6 +6571,7 @@ document.addEventListener("click", (event) => {
   if (shelvesBrowseButton) {
     shelvesActiveFilter = shelvesBrowseButton.dataset.shelvesBrowse || "all";
     shelvesSearchQuery = "";
+    shelvesActiveResearchTrailId = "";
     shelvesActiveIndex = 0;
     closeShelvesModals();
     renderCurrentArchiveSurface();
@@ -3771,6 +6608,71 @@ document.addEventListener("click", (event) => {
   if (shelvesModalClose) {
     closeShelvesModals();
     renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (shelvesRecentClose) {
+    isShelvesRecentModalOpen = false;
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (shelvesRecentViewAllButton) {
+    openShelvesRecentModal();
+    return;
+  }
+
+  if (shelvesRecentOpenButton) {
+    openShelvesReadModal(shelvesRecentOpenButton.dataset.shelvesRecentOpen || "");
+    return;
+  }
+
+  if (shelvesNotableClose) {
+    isShelvesNotableModalOpen = false;
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (shelvesNotableViewAllButton) {
+    openShelvesNotableModal();
+    return;
+  }
+
+  if (shelvesNotablePageButton) {
+    shelvesNotablePageIndex += shelvesNotablePageButton.dataset.shelvesNotablePage === "previous" ? -1 : 1;
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (shelvesResearchClose) {
+    isShelvesResearchModalOpen = false;
+    renderCurrentArchiveSurface();
+    return;
+  }
+
+  if (shelvesResearchExploreAllButton) {
+    openShelvesResearchModal();
+    return;
+  }
+
+  if (shelvesResearchTrailButton) {
+    applyShelvesResearchTrail(shelvesResearchTrailButton.dataset.shelvesResearchTrail || "");
+    return;
+  }
+
+  if (shelvesSaveDocumentButton) {
+    saveShelvesDocument(shelvesSaveDocumentButton.dataset.shelvesSaveDocument || "");
+    return;
+  }
+
+  if (shelvesUnsaveDocumentButton) {
+    event.stopPropagation();
+    unsaveShelvesDocument(shelvesUnsaveDocumentButton.dataset.shelvesUnsaveDocument || "");
+    return;
+  }
+
+  if (shelvesNotableDocumentButton) {
+    openShelvesReadModal(shelvesNotableDocumentButton.dataset.shelvesNotableOpen || "");
     return;
   }
 
@@ -3889,6 +6791,116 @@ document.addEventListener("click", (event) => {
     return;
   }
 
+  if (galleryModalClose) {
+    closeGalleryModals();
+    renderArchiveRooms();
+    return;
+  }
+
+  if (galleryMarkRecordButton) {
+    event.stopPropagation();
+    toggleGalleryMarkedRecord(galleryMarkRecordButton.dataset.galleryMarkRecord);
+    return;
+  }
+
+  if (galleryUnmarkRecordButton) {
+    event.stopPropagation();
+    toggleGalleryMarkedRecord(galleryUnmarkRecordButton.dataset.galleryUnmarkRecord);
+    return;
+  }
+
+  if (galleryOpenRecordButton) {
+    openGalleryRecordModal(galleryOpenRecordButton.dataset.galleryOpenRecord);
+    return;
+  }
+
+  if (galleryFeaturedNavButton) {
+    moveGalleryFeaturedRecord(galleryFeaturedNavButton.dataset.galleryFeaturedNav);
+    return;
+  }
+
+  if (galleryFeaturedDotButton) {
+    selectGalleryFeaturedRecord(Number(galleryFeaturedDotButton.dataset.galleryFeaturedDot));
+    return;
+  }
+
+  if (galleryBottomActionButton) {
+    openGalleryUtilityModal = galleryBottomActionButton.dataset.galleryBottomAction || "trails";
+    openGalleryRecordId = "";
+    updateGalleryModalOpenState();
+    renderArchiveRooms();
+    return;
+  }
+
+  if (galleryOpenTrailButton) {
+    syncSelectedGalleryVisualTrail(galleryOpenTrailButton.dataset.galleryOpenTrail || "");
+    openGalleryUtilityModal = "trail-detail";
+    openGalleryRecordId = "";
+    updateGalleryModalOpenState();
+    renderArchiveRooms();
+    return;
+  }
+
+  if (galleryTrailsPageButton) {
+    const direction = galleryTrailsPageButton.dataset.galleryTrailsPage;
+    const totalPages = Math.max(1, Math.ceil(galleryVisualTrailState.trails.length / 10));
+
+    if (direction === "previous") {
+      galleryVisualTrailState.trailPageIndex = Math.max(0, galleryVisualTrailState.trailPageIndex - 1);
+    } else if (direction === "next") {
+      galleryVisualTrailState.trailPageIndex = Math.min(totalPages - 1, galleryVisualTrailState.trailPageIndex + 1);
+    }
+
+    renderArchiveRooms();
+    return;
+  }
+
+  if (galleryRecoverTrailButton) {
+    recoverNextGalleryTrailFragment();
+    return;
+  }
+
+  if (galleryRecordSetButton) {
+    const pagination = getGalleryPaginationState();
+    const direction = galleryRecordSetButton.dataset.galleryRecordSet;
+
+    if (direction === "previous" && pagination.canGoPrevious) {
+      galleryRecordSetIndex -= 1;
+    } else if (direction === "next" && pagination.canGoNext) {
+      galleryRecordSetIndex += 1;
+    }
+
+    renderArchiveRooms();
+    return;
+  }
+
+  if (galleryMoreFiltersButton) {
+    const filterMore = galleryMoreFiltersButton.closest(".gallery-filter-more");
+    const isOpen = !filterMore?.classList.contains("is-open");
+    document.querySelectorAll(".gallery-filter-more.is-open").forEach((menu) => {
+      menu.classList.remove("is-open");
+      menu.querySelector("[data-gallery-more-filters]")?.setAttribute("aria-expanded", "false");
+    });
+    filterMore?.classList.toggle("is-open", isOpen);
+    galleryMoreFiltersButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    return;
+  }
+
+  if (galleryFilterChip) {
+    galleryActiveFilter = galleryFilterChip.dataset.galleryFilter || "All Records";
+    galleryRecordSetIndex = 0;
+    const filterMore = galleryFilterChip.closest(".gallery-filter-more");
+    filterMore?.classList.remove("is-open");
+    filterMore?.querySelector("[data-gallery-more-filters]")?.setAttribute("aria-expanded", "false");
+    renderArchiveRooms();
+    return;
+  }
+
+  document.querySelectorAll(".gallery-filter-more.is-open").forEach((menu) => {
+    menu.classList.remove("is-open");
+    menu.querySelector("[data-gallery-more-filters]")?.setAttribute("aria-expanded", "false");
+  });
+
   if (roomSelectionButton) {
     selectArchiveRoom(roomSelectionButton.dataset.selectRoom);
     return;
@@ -3907,13 +6919,33 @@ document.addEventListener("input", (event) => {
   }
 
   shelvesSearchQuery = shelvesSearchInput.value;
+  shelvesActiveResearchTrailId = "";
   shelvesActiveIndex = 0;
   closeShelvesModals();
   renderShelvesSurfaceWithSearchFocus(shelvesSearchInput.selectionStart, shelvesSearchInput.selectionEnd);
 });
 
+document.addEventListener("change", (event) => {
+  const gallerySortSelect = event.target.closest?.("[data-gallery-sort]");
+
+  if (!gallerySortSelect) {
+    return;
+  }
+
+  galleryActiveSort = gallerySortOptions.includes(gallerySortSelect.value) ? gallerySortSelect.value : "Newest";
+  galleryRecordSetIndex = 0;
+  renderArchiveRooms();
+});
+
 document.addEventListener("keydown", (event) => {
   const whisperRow = event.target.closest?.("[data-whisper-id]");
+
+  if (event.key === "Escape" && (openGalleryRecordId || openGalleryUtilityModal)) {
+    event.preventDefault();
+    closeGalleryModals();
+    renderArchiveRooms();
+    return;
+  }
 
   if (whisperRow && (event.key === "Enter" || event.key === " ")) {
     event.preventDefault();
@@ -3947,7 +6979,7 @@ document.addEventListener("keydown", (event) => {
     return;
   }
 
-  if (event.key === "Escape" && (openShelvesReadDocumentId || openShelvesDetailsDocumentId || openShelvesAidModalId)) {
+  if (event.key === "Escape" && (openShelvesReadDocumentId || openShelvesDetailsDocumentId || openShelvesAidModalId || isShelvesNotableModalOpen || isShelvesResearchModalOpen || isShelvesRecentModalOpen)) {
     event.preventDefault();
     closeShelvesModals();
     renderCurrentArchiveSurface();

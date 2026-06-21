@@ -134,6 +134,17 @@
         opacity: 0.7;
       }
 
+      .admin-primary-action {
+        border-color: rgba(255, 106, 47, 0.82);
+        background:
+          linear-gradient(180deg, rgba(210, 31, 50, 0.48), rgba(122, 16, 22, 0.76)),
+          rgba(122, 16, 22, 0.42);
+        color: #fff0df;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+          0 0 24px rgba(210, 31, 50, 0.28);
+      }
+
       a {
         color: inherit;
         text-decoration: none;
@@ -1001,6 +1012,113 @@
         color: var(--quiet);
       }
 
+      .admin-table__thumbnail {
+        width: 5.25rem;
+      }
+
+      .admin-table__thumbnail img {
+        display: block;
+        width: 4.2rem;
+        height: 3.1rem;
+        object-fit: cover;
+        border: 1px solid rgba(179, 28, 35, 0.32);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.7);
+      }
+
+      .admin-table__thumbnail-placeholder {
+        display: grid;
+        width: 4.2rem;
+        height: 3.1rem;
+        place-items: center;
+        border: 1px solid rgba(179, 28, 35, 0.24);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.72);
+        color: rgba(255, 216, 194, 0.48);
+        font: 700 0.72rem/1 Rajdhani, system-ui, sans-serif;
+        text-transform: uppercase;
+      }
+
+      .gallery-record-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+
+      .gallery-record-stat {
+        display: grid;
+        gap: 0.18rem;
+        min-height: 4.7rem;
+        align-content: center;
+        padding: 0.8rem 1rem;
+        border: 1px solid rgba(179, 28, 35, 0.24);
+        border-radius: 8px;
+        background: rgba(12, 3, 4, 0.42);
+      }
+
+      .gallery-record-stat span {
+        color: var(--quiet);
+        font: 700 0.76rem/1.1 Rajdhani, system-ui, sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .gallery-record-stat strong {
+        color: #fff0df;
+        font: 400 1.55rem/1 Marcellus, Georgia, serif;
+      }
+
+      .gallery-record-feature-button {
+        display: inline-grid;
+        width: 2.35rem;
+        min-width: 2.35rem;
+        height: 2.35rem;
+        min-height: 2.35rem;
+        place-items: center;
+        padding: 0;
+        border-color: rgba(228, 189, 118, 0.24);
+        border-radius: 999px;
+        background: rgba(7, 8, 20, 0.72);
+        color: rgba(255, 216, 194, 0.58);
+        font-size: 1.05rem;
+        line-height: 1;
+      }
+
+      .gallery-record-feature-button.is-active {
+        border-color: rgba(255, 206, 122, 0.78);
+        background:
+          radial-gradient(circle at 50% 35%, rgba(255, 206, 122, 0.22), transparent 58%),
+          rgba(77, 7, 12, 0.68);
+        color: #ffd16f;
+        box-shadow:
+          0 0 0 1px rgba(255, 206, 122, 0.16) inset,
+          0 0 18px rgba(210, 31, 50, 0.24),
+          0 0 16px rgba(255, 206, 122, 0.16);
+      }
+
+      .gallery-record-feature-button:disabled {
+        opacity: 0.58;
+        cursor: wait;
+      }
+
+      .admin-form__preview {
+        align-content: start;
+      }
+
+      .admin-form__preview img {
+        width: min(100%, 16rem);
+        max-height: 10rem;
+        object-fit: cover;
+        border: 1px solid rgba(179, 28, 35, 0.32);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.7);
+      }
+
+      .admin-form__preview img[hidden],
+      .admin-form__preview a[hidden] {
+        display: none;
+      }
+
       .journal-prompts-table {
         min-width: 76rem;
         table-layout: fixed;
@@ -1694,6 +1812,10 @@
           grid-template-columns: 1fr;
         }
 
+        .gallery-record-stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         .admin-section-header,
         .admin-detail__header,
         .admin-detail__field-grid {
@@ -1889,6 +2011,9 @@
           <a href="#archive-rooms" data-admin-view-link="archive-rooms">
             <span>Archive Rooms</span>
           </a>
+          <a href="#gallery-records" data-admin-view-link="gallery-records">
+            <span>Gallery Records</span>
+          </a>
           <a href="#artifacts" data-admin-view-link="artifacts">
             <span>Artifacts</span>
           </a>
@@ -2071,6 +2196,25 @@
                   <div class="section-card__meta">
                     <span class="card-status">Read-only preview</span>
                     <span class="count-pill" data-count-table="artifacts">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="gallery-records-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="gallery-records"
+                  aria-label="Open Gallery Records admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/images.svg')" aria-hidden="true"></span>
+                    <h3>Gallery Records</h3>
+                    <p>Upload and manage Noctis Gallery images, lore notes, featured status, and visibility.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">CRUD enabled</span>
+                    <span class="count-pill" data-count-table="gallery_records">Count: Checking...</span>
                   </div>
                 </article>
 
@@ -2929,6 +3073,264 @@
                 <div class="admin-detail__meta" data-archive-room-detail-meta></div>
                 <div class="admin-detail__field-grid" data-archive-room-detail-fields></div>
                 <div class="admin-detail__body" data-archive-room-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="gallery-records" aria-labelledby="gallery-records-title" data-admin-view="gallery-records" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Gallery management</p>
+                  <h2 id="gallery-records-title">Gallery Records</h2>
+                  <p>Upload Noctis Gallery images, edit record metadata, and control public visibility or Featured Visual Record placement.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button class="admin-primary-action" type="button" data-gallery-record-new>Upload Gallery Record</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="gallery-record-stats" aria-label="Gallery Records summary">
+                <article class="gallery-record-stat">
+                  <span>Total Records</span>
+                  <strong data-gallery-record-stat="total">0</strong>
+                </article>
+                <article class="gallery-record-stat">
+                  <span>Active</span>
+                  <strong data-gallery-record-stat="active">0</strong>
+                </article>
+                <article class="gallery-record-stat">
+                  <span>Featured</span>
+                  <strong data-gallery-record-stat="featured">0</strong>
+                </article>
+                <article class="gallery-record-stat">
+                  <span>Inactive</span>
+                  <strong data-gallery-record-stat="inactive">0</strong>
+                </article>
+              </section>
+
+              <section class="section-card admin-detail" data-gallery-record-form-panel hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Gallery record editor</p>
+                    <h3 data-gallery-record-form-title>New Gallery Record</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-gallery-record-form-cancel>Cancel</button>
+                </div>
+                <p class="admin-state" data-gallery-record-form-state hidden></p>
+                <form class="admin-form" data-gallery-record-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="gallery-record-title">Title *</label>
+                      <input id="gallery-record-title" name="title" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-slug">Slug *</label>
+                      <input id="gallery-record-slug" name="slug" type="text" autocomplete="off" />
+                      <p class="admin-form__hint">Leave blank on create to generate from title.</p>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-unknown-title">Unknown Title</label>
+                      <input id="gallery-record-unknown-title" name="unknown_title" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-type">Record Type *</label>
+                      <select id="gallery-record-type" name="record_type" required>
+                        <option value="portrait">portrait</option>
+                        <option value="place">place</option>
+                        <option value="symbol">symbol</option>
+                        <option value="map">map</option>
+                        <option value="anomaly">anomaly</option>
+                        <option value="unknown">unknown</option>
+                        <option value="recovered">recovered</option>
+                        <option value="featured">featured</option>
+                        <option value="fragmented_record">fragmented_record</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-status">Status *</label>
+                      <select id="gallery-record-status" name="status" required>
+                        <option value="available">available</option>
+                        <option value="recovered">recovered</option>
+                        <option value="unknown">unknown</option>
+                        <option value="unnamed">unnamed</option>
+                        <option value="fragmented">fragmented</option>
+                        <option value="sealed">sealed</option>
+                        <option value="hidden">hidden</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-folder">Upload Folder</label>
+                      <select id="gallery-record-folder" name="upload_folder">
+                        <option value="featured">featured</option>
+                        <option value="portraits">portraits</option>
+                        <option value="places">places</option>
+                        <option value="symbols">symbols</option>
+                        <option value="maps">maps</option>
+                        <option value="anomalies">anomalies</option>
+                        <option value="unknown">unknown</option>
+                        <option value="recovered">recovered</option>
+                        <option value="fragments">fragments</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-origin">Origin</label>
+                      <input id="gallery-record-origin" name="origin" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-related-room">Related Room</label>
+                      <input id="gallery-record-related-room" name="related_room" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-sort">Sort Order</label>
+                      <input id="gallery-record-sort" name="sort_order" type="number" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-required-fragments">Required Fragments</label>
+                      <input id="gallery-record-required-fragments" name="required_fragments" type="number" min="0" step="1" inputmode="numeric" />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="is_featured" type="checkbox" />
+                      <span>Featured Visual Record</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_active" type="checkbox" />
+                      <span>Active</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_fragmented" type="checkbox" />
+                      <span>Fragmented</span>
+                    </label>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-document-id">Related Document ID</label>
+                      <input id="gallery-record-document-id" name="related_document_id" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-description">Description</label>
+                      <textarea id="gallery-record-description" name="description" rows="4"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-lore-note">Lore Note</label>
+                      <textarea id="gallery-record-lore-note" name="lore_note" rows="4"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-tags">Tags</label>
+                      <input id="gallery-record-tags" name="tags" type="text" autocomplete="off" placeholder="Portraits, Noctis, Blood Moon" />
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-themes">Themes</label>
+                      <input id="gallery-record-themes" name="themes" type="text" autocomplete="off" placeholder="portrait, candlelight, witness" />
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-image-file">Image Upload</label>
+                      <input id="gallery-record-image-file" name="image_file" type="file" accept="image/*" />
+                      <p class="admin-form__hint">Uploads to the Supabase Storage bucket <code>gallery-records</code>. The same URL is saved for preview and full image.</p>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-preview-url">Preview Image URL</label>
+                      <input id="gallery-record-preview-url" name="preview_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-full-url">Full Image URL</label>
+                      <input id="gallery-record-full-url" name="full_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide admin-form__preview">
+                      <label>Image Preview</label>
+                      <img alt="Selected Gallery record preview" data-gallery-record-preview-image hidden />
+                      <a href="#" target="_blank" rel="noreferrer" data-gallery-record-preview-link hidden>Open image</a>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-gallery-record-form-submit>Save Gallery Record</button>
+                    <button type="button" data-gallery-record-form-cancel-secondary>Cancel</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="section-card section-card--compact-filter">
+                <div class="admin-form">
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="gallery-record-filter-search">Search gallery records</label>
+                      <input id="gallery-record-filter-search" data-gallery-record-filter="search" type="search" autocomplete="off" placeholder="Search gallery records..." />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-filter-type">Filter by type</label>
+                      <select id="gallery-record-filter-type" data-gallery-record-filter="type">
+                        <option value="__all">All Types</option>
+                        <option value="portrait">portrait</option>
+                        <option value="place">place</option>
+                        <option value="symbol">symbol</option>
+                        <option value="map">map</option>
+                        <option value="anomaly">anomaly</option>
+                        <option value="unknown">unknown</option>
+                        <option value="recovered">recovered</option>
+                        <option value="featured">featured</option>
+                        <option value="fragmented_record">fragmented_record</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-filter-status">Filter by status</label>
+                      <select id="gallery-record-filter-status" data-gallery-record-filter="status">
+                        <option value="__all">All Statuses</option>
+                        <option value="available">available</option>
+                        <option value="recovered">recovered</option>
+                        <option value="unknown">unknown</option>
+                        <option value="unnamed">unnamed</option>
+                        <option value="fragmented">fragmented</option>
+                        <option value="sealed">sealed</option>
+                        <option value="hidden">hidden</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-filter-visibility">Filter by visibility</label>
+                      <select id="gallery-record-filter-visibility" data-gallery-record-filter="visibility">
+                        <option value="__all">All Records</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="featured">Featured</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Gallery Records table">
+                <p class="admin-state" data-gallery-records-state>Loading gallery records...</p>
+                <div class="admin-table-scroll" data-gallery-records-table-wrap hidden>
+                  <table class="admin-table gallery-records-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Preview</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Featured</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Sort</th>
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody data-gallery-records-table-body></tbody>
+                  </table>
+                </div>
+                <footer class="admin-pagination" data-gallery-records-pagination hidden>
+                  <span class="admin-pagination__summary" data-gallery-records-pagination-summary>Showing 0-0 of 0 records</span>
+                  <div class="admin-pagination__controls" data-gallery-records-pagination-controls aria-label="Gallery record pages"></div>
+                </footer>
+              </section>
+
+              <section class="section-card admin-detail" data-gallery-record-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Gallery record detail</p>
+                    <h3 data-gallery-record-detail-title>Selected Gallery Record</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-gallery-record-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-gallery-record-detail-meta></div>
+                <div class="admin-detail__field-grid" data-gallery-record-detail-fields></div>
+                <div class="admin-image-previews" data-gallery-record-detail-images></div>
+                <div class="admin-detail__body" data-gallery-record-detail-body></div>
               </section>
             </section>
 

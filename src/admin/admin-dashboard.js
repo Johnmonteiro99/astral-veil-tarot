@@ -7,6 +7,7 @@ const countTables = [
   'reader_lines',
   'contact_messages',
   'archive_rooms',
+  'gallery_records',
   'artifacts',
   'memory_fragments',
   'veilwalkers',
@@ -26,6 +27,8 @@ const characterLineContexts = [
   'journal_prompt',
   'custom',
 ];
+const galleryStorageBucket = 'gallery-records';
+const galleryUploadFolders = ['featured', 'portraits', 'places', 'symbols', 'maps', 'anomalies', 'unknown', 'recovered', 'fragments'];
 
 const accessMessage = document.querySelector('[data-access-message]');
 const loginLink = document.querySelector('[data-login-link]');
@@ -126,6 +129,35 @@ const archiveRoomFormTitle = document.querySelector('[data-archive-room-form-tit
 const archiveRoomFormState = document.querySelector('[data-archive-room-form-state]');
 const archiveRoomFormSubmitButton = document.querySelector('[data-archive-room-form-submit]');
 const archiveRoomFormCancelButtons = document.querySelectorAll('[data-archive-room-form-cancel], [data-archive-room-form-cancel-secondary]');
+const galleryRecordsState = document.querySelector('[data-gallery-records-state]');
+const galleryRecordsTableWrap = document.querySelector('[data-gallery-records-table-wrap]');
+const galleryRecordsTableBody = document.querySelector('[data-gallery-records-table-body]');
+const galleryRecordsPagination = document.querySelector('[data-gallery-records-pagination]');
+const galleryRecordsPaginationSummary = document.querySelector('[data-gallery-records-pagination-summary]');
+const galleryRecordsPaginationControls = document.querySelector('[data-gallery-records-pagination-controls]');
+const galleryRecordFilters = Array.from(document.querySelectorAll('[data-gallery-record-filter]'));
+const galleryRecordStats = {
+  total: document.querySelector('[data-gallery-record-stat="total"]'),
+  active: document.querySelector('[data-gallery-record-stat="active"]'),
+  featured: document.querySelector('[data-gallery-record-stat="featured"]'),
+  inactive: document.querySelector('[data-gallery-record-stat="inactive"]'),
+};
+const galleryRecordDetail = document.querySelector('[data-gallery-record-detail]');
+const galleryRecordDetailTitle = document.querySelector('[data-gallery-record-detail-title]');
+const galleryRecordDetailMeta = document.querySelector('[data-gallery-record-detail-meta]');
+const galleryRecordDetailFields = document.querySelector('[data-gallery-record-detail-fields]');
+const galleryRecordDetailImages = document.querySelector('[data-gallery-record-detail-images]');
+const galleryRecordDetailBody = document.querySelector('[data-gallery-record-detail-body]');
+const galleryRecordDetailCloseButton = document.querySelector('[data-gallery-record-detail-close]');
+const galleryRecordNewButton = document.querySelector('[data-gallery-record-new]');
+const galleryRecordFormPanel = document.querySelector('[data-gallery-record-form-panel]');
+const galleryRecordForm = document.querySelector('[data-gallery-record-form]');
+const galleryRecordFormTitle = document.querySelector('[data-gallery-record-form-title]');
+const galleryRecordFormState = document.querySelector('[data-gallery-record-form-state]');
+const galleryRecordFormSubmitButton = document.querySelector('[data-gallery-record-form-submit]');
+const galleryRecordFormCancelButtons = document.querySelectorAll('[data-gallery-record-form-cancel], [data-gallery-record-form-cancel-secondary]');
+const galleryRecordPreviewImage = document.querySelector('[data-gallery-record-preview-image]');
+const galleryRecordPreviewLink = document.querySelector('[data-gallery-record-preview-link]');
 const artifactsState = document.querySelector('[data-artifacts-state]');
 const artifactsTableWrap = document.querySelector('[data-artifacts-table-wrap]');
 const artifactsTableBody = document.querySelector('[data-artifacts-table-body]');
@@ -330,6 +362,12 @@ let activeContactMessageId = null;
 let archiveRoomsLoaded = false;
 let archiveRoomRows = [];
 let editingArchiveRoomId = null;
+let galleryRecordsLoaded = false;
+let galleryRecordRows = [];
+let filteredGalleryRecordRows = [];
+let editingGalleryRecordId = null;
+let galleryRecordsCurrentPage = 1;
+const galleryRecordsPageSize = 10;
 let artifactsLoaded = false;
 let artifactRows = [];
 let editingArtifactId = null;
@@ -735,6 +773,74 @@ function getArchiveRoomSortOrder(row) {
 
 function getArchiveRoomMetadata(row) {
   return getFirstValue(row, ['metadata', 'meta', 'settings']);
+}
+
+function getGalleryRecordTitle(row) {
+  return formatValue(getFirstValue(row, ['title', 'unknown_title']), 'Untitled gallery record');
+}
+
+function getGalleryRecordId(row) {
+  return getFirstValue(row, ['id']);
+}
+
+function getGalleryRecordSlug(row) {
+  return formatValue(getFirstValue(row, ['slug']));
+}
+
+function getGalleryRecordType(row) {
+  return formatValue(getFirstValue(row, ['record_type']));
+}
+
+function getGalleryRecordStatus(row) {
+  return formatValue(getFirstValue(row, ['status']));
+}
+
+function getGalleryRecordDescription(row) {
+  return formatValue(getFirstValue(row, ['description']));
+}
+
+function getGalleryRecordLoreNote(row) {
+  return formatValue(getFirstValue(row, ['lore_note']));
+}
+
+function getGalleryRecordImageUrl(row) {
+  return formatValue(getFirstValue(row, ['preview_image_url', 'full_image_url']));
+}
+
+function getGalleryRecordFullImageUrl(row) {
+  return formatValue(getFirstValue(row, ['full_image_url', 'preview_image_url']));
+}
+
+function getGalleryRecordFeaturedBoolean(row) {
+  const featuredValue = getFirstValue(row, ['is_featured']);
+
+  if (typeof featuredValue === 'boolean') {
+    return featuredValue;
+  }
+
+  return String(featuredValue || '').toLowerCase() === 'true';
+}
+
+function getGalleryRecordActiveBoolean(row) {
+  const activeValue = getFirstValue(row, ['is_active']);
+
+  if (typeof activeValue === 'boolean') {
+    return activeValue;
+  }
+
+  return String(activeValue || '').toLowerCase() === 'true';
+}
+
+function getGalleryRecordFeaturedState(row) {
+  return getGalleryRecordFeaturedBoolean(row) ? 'Yes' : 'No';
+}
+
+function getGalleryRecordActiveState(row) {
+  return getGalleryRecordActiveBoolean(row) ? 'Yes' : 'No';
+}
+
+function getGalleryRecordSortOrder(row) {
+  return formatValue(getFirstValue(row, ['sort_order']));
 }
 
 function getArtifactTitle(row) {
@@ -1290,6 +1396,24 @@ function hideArchiveRoomFormState() {
   archiveRoomFormState.className = 'admin-state';
 }
 
+function setGalleryRecordsState(message, state = '') {
+  galleryRecordsState.textContent = message;
+  galleryRecordsState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  galleryRecordsState.hidden = false;
+}
+
+function setGalleryRecordFormState(message, state = '') {
+  galleryRecordFormState.textContent = message;
+  galleryRecordFormState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  galleryRecordFormState.hidden = false;
+}
+
+function hideGalleryRecordFormState() {
+  galleryRecordFormState.hidden = true;
+  galleryRecordFormState.textContent = '';
+  galleryRecordFormState.className = 'admin-state';
+}
+
 function setArtifactsState(message, state = '') {
   artifactsState.textContent = message;
   artifactsState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
@@ -1452,6 +1576,50 @@ function hideArchiveRoomForm() {
   archiveRoomFormSubmitButton.textContent = 'Save Archive Room';
 }
 
+function hideGalleryRecordDetail() {
+  galleryRecordDetail.hidden = true;
+}
+
+function updateGalleryRecordPreview(url = '') {
+  const imageUrl = String(url || '').trim();
+
+  if (!galleryRecordPreviewImage || !galleryRecordPreviewLink) {
+    return;
+  }
+
+  galleryRecordPreviewImage.hidden = !imageUrl;
+  galleryRecordPreviewLink.hidden = !imageUrl;
+
+  if (!imageUrl) {
+    galleryRecordPreviewImage.removeAttribute('src');
+    galleryRecordPreviewLink.removeAttribute('href');
+    return;
+  }
+
+  galleryRecordPreviewImage.src = imageUrl;
+  galleryRecordPreviewLink.href = imageUrl;
+}
+
+function hideGalleryRecordForm() {
+  editingGalleryRecordId = null;
+  galleryRecordForm.reset();
+  galleryRecordForm.elements.slug.dataset.manual = 'false';
+  galleryRecordForm.elements.record_type.value = 'portrait';
+  galleryRecordForm.elements.status.value = 'available';
+  galleryRecordForm.elements.upload_folder.value = 'portraits';
+  galleryRecordForm.elements.origin.value = 'Noctis Archive';
+  galleryRecordForm.elements.related_room.value = 'The Gallery';
+  galleryRecordForm.elements.required_fragments.value = '0';
+  galleryRecordForm.elements.is_active.checked = true;
+  galleryRecordForm.elements.is_featured.checked = false;
+  galleryRecordForm.elements.is_fragmented.checked = false;
+  updateGalleryRecordPreview('');
+  hideGalleryRecordFormState();
+  galleryRecordFormPanel.hidden = true;
+  galleryRecordFormSubmitButton.disabled = false;
+  galleryRecordFormSubmitButton.textContent = 'Save Gallery Record';
+}
+
 function hideArtifactDetail() {
   artifactDetail.hidden = true;
 }
@@ -1533,6 +1701,36 @@ function appendTextCell(rowElement, label, value, className = '') {
   rowElement.append(cell);
 }
 
+function appendImageCell(rowElement, label, imageUrl, altText = '') {
+  const cell = document.createElement('td');
+  const url = String(imageUrl || '').trim();
+  const appendPlaceholder = () => {
+    const placeholder = document.createElement('span');
+
+    placeholder.className = 'admin-table__thumbnail-placeholder';
+    placeholder.textContent = 'Image';
+    cell.replaceChildren(placeholder);
+  };
+
+  cell.dataset.label = label;
+  cell.className = 'admin-table__thumbnail';
+
+  if (url && url !== '--') {
+    const image = document.createElement('img');
+
+    image.src = url;
+    image.alt = altText;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    image.addEventListener('error', appendPlaceholder, { once: true });
+    cell.append(image);
+  } else {
+    appendPlaceholder();
+  }
+
+  rowElement.append(cell);
+}
+
 function appendJournalPromptBadgeCell(rowElement, label, value, badgeClassName = '') {
   const cell = document.createElement('td');
   const badge = document.createElement('span');
@@ -1560,7 +1758,7 @@ function appendCharacterLineBadgeCell(rowElement, label, value, badgeClassName =
 function renderJournalRows(rows) {
   journalsTableBody.replaceChildren();
 
-  rows.forEach((row, index) => {
+  rows.forEach((row) => {
     const tableRow = document.createElement('tr');
     const actionCell = document.createElement('td');
     const actionGroup = document.createElement('div');
@@ -3176,6 +3374,705 @@ async function toggleArchiveRoomActive(row, button) {
   }
 
   await refreshArchiveRooms(nextActiveState ? 'Archive room activated.' : 'Archive room deactivated.');
+}
+
+function createAdminImagePreview(label, imageUrl) {
+  const url = String(imageUrl || '').trim();
+
+  if (!url || url === '--') {
+    return null;
+  }
+
+  const preview = document.createElement('div');
+  const labelElement = document.createElement('span');
+  const image = document.createElement('img');
+  const link = document.createElement('a');
+
+  preview.className = 'admin-image-preview';
+  labelElement.textContent = label;
+  image.src = url;
+  image.alt = label;
+  image.loading = 'lazy';
+  image.decoding = 'async';
+  link.href = url;
+  link.target = '_blank';
+  link.rel = 'noreferrer';
+  link.textContent = url;
+  preview.append(labelElement, image, link);
+
+  return preview;
+}
+
+function toKebabCase(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/['"]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function parseAdminList(value) {
+  return String(value || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function formatAdminList(value) {
+  return Array.isArray(value) ? value.join(', ') : '';
+}
+
+function normalizeGalleryAdminValue(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, ' ');
+}
+
+function getGalleryRecordFilterValue(filterName) {
+  const field = galleryRecordFilters.find((filter) => filter.dataset.galleryRecordFilter === filterName);
+  return field ? String(field.value || '').trim() : '__all';
+}
+
+function getGalleryRecordSearchText(row) {
+  return [
+    getGalleryRecordTitle(row),
+    getGalleryRecordSlug(row),
+    getGalleryRecordType(row),
+    getGalleryRecordStatus(row),
+    formatAdminList(row.tags),
+    formatAdminList(row.themes),
+  ]
+    .map(normalizeGalleryAdminValue)
+    .join(' ');
+}
+
+function matchesGalleryRecordFilters(row) {
+  const search = normalizeGalleryAdminValue(getGalleryRecordFilterValue('search'));
+  const type = getGalleryRecordFilterValue('type');
+  const status = getGalleryRecordFilterValue('status');
+  const visibility = getGalleryRecordFilterValue('visibility');
+
+  if (search && !getGalleryRecordSearchText(row).includes(search)) {
+    return false;
+  }
+
+  if (type !== '__all' && normalizeGalleryAdminValue(getGalleryRecordType(row)) !== normalizeGalleryAdminValue(type)) {
+    return false;
+  }
+
+  if (status !== '__all' && normalizeGalleryAdminValue(getGalleryRecordStatus(row)) !== normalizeGalleryAdminValue(status)) {
+    return false;
+  }
+
+  if (visibility === 'active' && !getGalleryRecordActiveBoolean(row)) {
+    return false;
+  }
+
+  if (visibility === 'inactive' && getGalleryRecordActiveBoolean(row)) {
+    return false;
+  }
+
+  if (visibility === 'featured' && !getGalleryRecordFeaturedBoolean(row)) {
+    return false;
+  }
+
+  return true;
+}
+
+function updateGalleryRecordStats() {
+  const total = galleryRecordRows.length;
+  const active = galleryRecordRows.filter(getGalleryRecordActiveBoolean).length;
+  const featured = galleryRecordRows.filter(getGalleryRecordFeaturedBoolean).length;
+  const inactive = total - active;
+
+  if (galleryRecordStats.total) {
+    galleryRecordStats.total.textContent = String(total);
+  }
+
+  if (galleryRecordStats.active) {
+    galleryRecordStats.active.textContent = String(active);
+  }
+
+  if (galleryRecordStats.featured) {
+    galleryRecordStats.featured.textContent = String(featured);
+  }
+
+  if (galleryRecordStats.inactive) {
+    galleryRecordStats.inactive.textContent = String(inactive);
+  }
+}
+
+function applyGalleryRecordFilters({ resetPage = true } = {}) {
+  filteredGalleryRecordRows = galleryRecordRows.filter(matchesGalleryRecordFilters);
+
+  if (resetPage) {
+    galleryRecordsCurrentPage = 1;
+  }
+}
+
+function setGalleryRecordFormValue(fieldName, value) {
+  const field = galleryRecordForm.elements[fieldName];
+
+  if (!field) {
+    return;
+  }
+
+  if (field.type === 'checkbox') {
+    field.checked = Boolean(value);
+    return;
+  }
+
+  field.value = value && value !== '--' ? value : '';
+}
+
+function showGalleryRecordForm(row = null) {
+  hideGalleryRecordDetail();
+  hideGalleryRecordFormState();
+  galleryRecordForm.reset();
+
+  if (row) {
+    editingGalleryRecordId = getGalleryRecordId(row);
+    galleryRecordForm.elements.slug.dataset.manual = 'true';
+    galleryRecordFormTitle.textContent = 'Edit Gallery Record';
+    galleryRecordFormSubmitButton.textContent = 'Save Changes';
+    setGalleryRecordFormValue('title', row.title || '');
+    setGalleryRecordFormValue('slug', row.slug || '');
+    setGalleryRecordFormValue('unknown_title', row.unknown_title || '');
+    setGalleryRecordFormValue('record_type', row.record_type || 'portrait');
+    setGalleryRecordFormValue('status', row.status || 'available');
+    setGalleryRecordFormValue('origin', row.origin || 'Noctis Archive');
+    setGalleryRecordFormValue('related_room', row.related_room || 'The Gallery');
+    setGalleryRecordFormValue('sort_order', row.sort_order ?? '');
+    setGalleryRecordFormValue('required_fragments', row.required_fragments ?? 0);
+    setGalleryRecordFormValue('description', row.description || '');
+    setGalleryRecordFormValue('lore_note', row.lore_note || '');
+    setGalleryRecordFormValue('tags', formatAdminList(row.tags));
+    setGalleryRecordFormValue('themes', formatAdminList(row.themes));
+    setGalleryRecordFormValue('preview_image_url', row.preview_image_url || '');
+    setGalleryRecordFormValue('full_image_url', row.full_image_url || '');
+    setGalleryRecordFormValue('related_document_id', row.related_document_id || '');
+    setGalleryRecordFormValue('is_featured', getGalleryRecordFeaturedBoolean(row));
+    setGalleryRecordFormValue('is_active', getGalleryRecordActiveBoolean(row));
+    setGalleryRecordFormValue('is_fragmented', Boolean(row.is_fragmented));
+    setGalleryRecordFormValue('upload_folder', inferGalleryUploadFolder(row));
+    updateGalleryRecordPreview(getGalleryRecordImageUrl(row));
+  } else {
+    editingGalleryRecordId = null;
+    galleryRecordForm.elements.slug.dataset.manual = 'false';
+    galleryRecordFormTitle.textContent = 'New Gallery Record';
+    galleryRecordFormSubmitButton.textContent = 'Create Gallery Record';
+    galleryRecordForm.elements.record_type.value = 'portrait';
+    galleryRecordForm.elements.status.value = 'available';
+    galleryRecordForm.elements.upload_folder.value = 'portraits';
+    galleryRecordForm.elements.origin.value = 'Noctis Archive';
+    galleryRecordForm.elements.related_room.value = 'The Gallery';
+    galleryRecordForm.elements.required_fragments.value = '0';
+    galleryRecordForm.elements.is_active.checked = true;
+    galleryRecordForm.elements.is_featured.checked = false;
+    galleryRecordForm.elements.is_fragmented.checked = false;
+    updateGalleryRecordPreview('');
+  }
+
+  galleryRecordFormPanel.hidden = false;
+  galleryRecordForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function inferGalleryUploadFolder(row) {
+  const imageUrl = String(row?.preview_image_url || row?.full_image_url || '');
+  const folder = galleryUploadFolders.find((folderName) => imageUrl.includes(`/${folderName}/`));
+
+  if (folder) {
+    return folder;
+  }
+
+  const type = String(row?.record_type || '').toLowerCase();
+
+  if (type === 'portrait') {
+    return 'portraits';
+  }
+
+  if (type === 'place') {
+    return 'places';
+  }
+
+  if (type === 'symbol') {
+    return 'symbols';
+  }
+
+  if (type === 'map') {
+    return 'maps';
+  }
+
+  if (type === 'anomaly') {
+    return 'anomalies';
+  }
+
+  if (galleryUploadFolders.includes(type)) {
+    return type;
+  }
+
+  return 'featured';
+}
+
+function getGalleryRecordFormPayload() {
+  const formData = new FormData(galleryRecordForm);
+  const title = String(formData.get('title') || '').trim();
+  const slug = toKebabCase(formData.get('slug') || title);
+  const sortOrderValue = String(formData.get('sort_order') || '').trim();
+  const requiredFragmentsValue = String(formData.get('required_fragments') || '').trim();
+  const payload = {
+    title,
+    slug,
+    unknown_title: String(formData.get('unknown_title') || '').trim() || null,
+    description: String(formData.get('description') || '').trim() || null,
+    lore_note: String(formData.get('lore_note') || '').trim() || null,
+    record_type: String(formData.get('record_type') || 'portrait').trim() || 'portrait',
+    origin: String(formData.get('origin') || 'Noctis Archive').trim() || 'Noctis Archive',
+    status: String(formData.get('status') || 'available').trim() || 'available',
+    preview_image_url: String(formData.get('preview_image_url') || '').trim() || null,
+    full_image_url: String(formData.get('full_image_url') || '').trim() || null,
+    required_fragments: 0,
+    is_fragmented: formData.has('is_fragmented'),
+    is_featured: formData.has('is_featured'),
+    is_active: formData.has('is_active'),
+    tags: parseAdminList(formData.get('tags')),
+    themes: parseAdminList(formData.get('themes')),
+    related_room: String(formData.get('related_room') || 'The Gallery').trim() || null,
+    related_document_id: String(formData.get('related_document_id') || '').trim() || null,
+  };
+
+  if (sortOrderValue !== '') {
+    const sortOrder = Number(sortOrderValue);
+
+    if (!Number.isNaN(sortOrder)) {
+      payload.sort_order = sortOrder;
+    }
+  }
+
+  if (requiredFragmentsValue !== '') {
+    const requiredFragments = Number(requiredFragmentsValue);
+
+    if (!Number.isNaN(requiredFragments)) {
+      payload.required_fragments = requiredFragments;
+    }
+  }
+
+  return { payload, file: formData.get('image_file'), uploadFolder: String(formData.get('upload_folder') || 'featured').trim() };
+}
+
+function validateGalleryRecordPayload(payload, file) {
+  const missingFields = [];
+
+  if (!payload.title) {
+    missingFields.push('title');
+  }
+
+  if (!payload.slug) {
+    missingFields.push('slug');
+  }
+
+  if (!payload.record_type) {
+    missingFields.push('record_type');
+  }
+
+  if (!payload.status) {
+    missingFields.push('status');
+  }
+
+  if (file && file.size && !file.type.startsWith('image/')) {
+    missingFields.push('image file must be an image');
+  }
+
+  return missingFields;
+}
+
+function getGalleryRecordUploadPath({ folder, slug, title, file }) {
+  const safeFolder = galleryUploadFolders.includes(folder) ? folder : 'featured';
+  const extension = String(file.name || '').split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
+  const baseName = toKebabCase(slug || title || 'gallery-record') || 'gallery-record';
+
+  return `${safeFolder}/${baseName}-${Date.now()}.${extension}`;
+}
+
+async function uploadGalleryRecordImage(supabase, { file, folder, slug, title }) {
+  if (!file || !file.size) {
+    return '';
+  }
+
+  if (!file.type.startsWith('image/')) {
+    throw new Error('Selected file must be an image.');
+  }
+
+  const uploadPath = getGalleryRecordUploadPath({ folder, slug, title, file });
+  const { error } = await supabase.storage
+    .from(galleryStorageBucket)
+    .upload(uploadPath, file, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: file.type,
+    });
+
+  if (error) {
+    throw error;
+  }
+
+  const { data } = supabase.storage
+    .from(galleryStorageBucket)
+    .getPublicUrl(uploadPath);
+
+  return data?.publicUrl || '';
+}
+
+async function galleryRecordSlugExists(supabase, slug) {
+  const { data, error } = await supabase
+    .from('gallery_records')
+    .select('id')
+    .eq('slug', slug)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    return { exists: false, error };
+  }
+
+  return { exists: Boolean(data), error: null };
+}
+
+async function refreshGalleryRecords(message = '') {
+  galleryRecordsLoaded = false;
+  hideGalleryRecordDetail();
+  await loadGalleryRecords();
+
+  if (message) {
+    setGalleryRecordsState(message, 'success');
+  }
+}
+
+function getGalleryRecordsTotalPages() {
+  return Math.max(1, Math.ceil(filteredGalleryRecordRows.length / galleryRecordsPageSize));
+}
+
+function getGalleryRecordPageNumbers() {
+  const totalPages = getGalleryRecordsTotalPages();
+  const maxButtons = 7;
+  const halfWindow = Math.floor(maxButtons / 2);
+  let start = Math.max(1, galleryRecordsCurrentPage - halfWindow);
+  const end = Math.min(totalPages, start + maxButtons - 1);
+
+  start = Math.max(1, end - maxButtons + 1);
+
+  return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+}
+
+function getPaginatedGalleryRecordRows() {
+  const start = (galleryRecordsCurrentPage - 1) * galleryRecordsPageSize;
+  return filteredGalleryRecordRows.slice(start, start + galleryRecordsPageSize);
+}
+
+function renderGalleryRecordsPagination() {
+  const totalPages = getGalleryRecordsTotalPages();
+  const hasRecords = filteredGalleryRecordRows.length > 0;
+
+  if (!galleryRecordsPagination || !galleryRecordsPaginationControls || !galleryRecordsPaginationSummary) {
+    return;
+  }
+
+  galleryRecordsPagination.hidden = !hasRecords;
+  galleryRecordsPaginationControls.replaceChildren();
+
+  if (!hasRecords) {
+    galleryRecordsPaginationSummary.textContent = 'Showing 0-0 of 0 records';
+    return;
+  }
+
+  const from = (galleryRecordsCurrentPage - 1) * galleryRecordsPageSize + 1;
+  const to = Math.min(from + getPaginatedGalleryRecordRows().length - 1, filteredGalleryRecordRows.length);
+  const previousButton = document.createElement('button');
+  const nextButton = document.createElement('button');
+
+  galleryRecordsPaginationSummary.textContent = `Showing ${from}-${to} of ${filteredGalleryRecordRows.length} records`;
+
+  previousButton.className = 'admin-pagination__button';
+  previousButton.type = 'button';
+  previousButton.textContent = 'Previous';
+  previousButton.disabled = galleryRecordsCurrentPage <= 1;
+  previousButton.addEventListener('click', () => {
+    if (galleryRecordsCurrentPage > 1) {
+      galleryRecordsCurrentPage -= 1;
+      renderGalleryRecordRows();
+    }
+  });
+  galleryRecordsPaginationControls.append(previousButton);
+
+  getGalleryRecordPageNumbers().forEach((pageNumber) => {
+    const pageButton = document.createElement('button');
+
+    pageButton.className = `admin-pagination__button${pageNumber === galleryRecordsCurrentPage ? ' is-active' : ''}`;
+    pageButton.type = 'button';
+    pageButton.textContent = String(pageNumber);
+    pageButton.setAttribute('aria-label', `Page ${pageNumber}`);
+    pageButton.setAttribute('aria-current', pageNumber === galleryRecordsCurrentPage ? 'page' : 'false');
+    pageButton.disabled = pageNumber === galleryRecordsCurrentPage;
+    pageButton.addEventListener('click', () => {
+      galleryRecordsCurrentPage = pageNumber;
+      renderGalleryRecordRows();
+    });
+    galleryRecordsPaginationControls.append(pageButton);
+  });
+
+  nextButton.className = 'admin-pagination__button';
+  nextButton.type = 'button';
+  nextButton.textContent = 'Next';
+  nextButton.disabled = galleryRecordsCurrentPage >= totalPages;
+  nextButton.addEventListener('click', () => {
+    if (galleryRecordsCurrentPage < totalPages) {
+      galleryRecordsCurrentPage += 1;
+      renderGalleryRecordRows();
+    }
+  });
+  galleryRecordsPaginationControls.append(nextButton);
+}
+
+function renderGalleryRecordRows(rows = getPaginatedGalleryRecordRows()) {
+  galleryRecordsTableBody.replaceChildren();
+
+  if (galleryRecordsCurrentPage > getGalleryRecordsTotalPages()) {
+    galleryRecordsCurrentPage = getGalleryRecordsTotalPages();
+    rows = getPaginatedGalleryRecordRows();
+  }
+
+  if (!rows.length) {
+    setGalleryRecordsState(galleryRecordRows.length ? 'No Gallery records match these filters.' : 'No Gallery records found.');
+    galleryRecordsTableWrap.hidden = true;
+    renderGalleryRecordsPagination();
+    return;
+  }
+
+  galleryRecordsState.hidden = true;
+  galleryRecordsTableWrap.hidden = false;
+
+  rows.forEach((row) => {
+    const tableRow = document.createElement('tr');
+    const featuredCell = document.createElement('td');
+    const actionCell = document.createElement('td');
+    const actionGroup = document.createElement('div');
+    const viewButton = document.createElement('button');
+    const editButton = document.createElement('button');
+    const featuredButton = document.createElement('button');
+    const activeButton = document.createElement('button');
+
+    appendImageCell(tableRow, 'Preview', getGalleryRecordImageUrl(row), getGalleryRecordTitle(row));
+    appendTextCell(tableRow, 'Title', getGalleryRecordTitle(row), 'admin-table__title');
+    appendTextCell(tableRow, 'Type', getGalleryRecordType(row));
+    appendTextCell(tableRow, 'Status', getGalleryRecordStatus(row));
+
+    featuredCell.dataset.label = 'Featured';
+    featuredButton.className = `gallery-record-feature-button${getGalleryRecordFeaturedBoolean(row) ? ' is-active' : ''}`;
+    featuredButton.type = 'button';
+    featuredButton.textContent = getGalleryRecordFeaturedBoolean(row) ? '★' : '☆';
+    featuredButton.setAttribute('aria-label', getGalleryRecordFeaturedBoolean(row) ? 'Remove from featured' : 'Mark as featured');
+    featuredButton.title = getGalleryRecordFeaturedBoolean(row) ? 'Remove from featured' : 'Mark as featured';
+    featuredButton.addEventListener('click', () => toggleGalleryRecordFeatured(row, featuredButton));
+    featuredCell.append(featuredButton);
+    tableRow.append(featuredCell);
+
+    appendTextCell(tableRow, 'Active', getGalleryRecordActiveState(row));
+    appendTextCell(tableRow, 'Sort', getGalleryRecordSortOrder(row));
+
+    viewButton.className = 'admin-row-action';
+    viewButton.type = 'button';
+    viewButton.textContent = 'View';
+    viewButton.addEventListener('click', () => showGalleryRecordDetail(row));
+
+    editButton.className = 'admin-row-action';
+    editButton.type = 'button';
+    editButton.textContent = 'Edit';
+    editButton.addEventListener('click', () => showGalleryRecordForm(row));
+
+    activeButton.className = 'admin-row-action';
+    activeButton.type = 'button';
+    activeButton.textContent = getGalleryRecordActiveBoolean(row) ? 'Deactivate' : 'Activate';
+    activeButton.addEventListener('click', () => toggleGalleryRecordActive(row, activeButton));
+
+    actionGroup.className = 'admin-action-group';
+    actionCell.dataset.label = 'Actions';
+    actionGroup.append(viewButton, editButton, activeButton);
+    actionCell.append(actionGroup);
+    tableRow.append(actionCell);
+    galleryRecordsTableBody.append(tableRow);
+  });
+
+  renderGalleryRecordsPagination();
+}
+
+function showGalleryRecordDetail(row) {
+  if (!row) {
+    return;
+  }
+
+  galleryRecordDetailTitle.textContent = getGalleryRecordTitle(row);
+  galleryRecordDetailMeta.replaceChildren();
+  galleryRecordDetailFields.replaceChildren();
+  galleryRecordDetailImages.replaceChildren();
+  galleryRecordDetailBody.textContent = getGalleryRecordLoreNote(row) !== '--'
+    ? getGalleryRecordLoreNote(row)
+    : getGalleryRecordDescription(row);
+
+  appendDetailChip(galleryRecordDetailMeta, 'Type', getGalleryRecordType(row));
+  appendDetailChip(galleryRecordDetailMeta, 'Status', getGalleryRecordStatus(row));
+  appendDetailChip(galleryRecordDetailMeta, 'Featured', getGalleryRecordFeaturedState(row));
+  appendDetailChip(galleryRecordDetailMeta, 'Active', getGalleryRecordActiveState(row));
+  appendDetailField(galleryRecordDetailFields, 'Slug', getGalleryRecordSlug(row));
+  appendDetailField(galleryRecordDetailFields, 'Unknown Title', formatValue(row.unknown_title));
+  appendDetailField(galleryRecordDetailFields, 'Origin', formatValue(row.origin));
+  appendDetailField(galleryRecordDetailFields, 'Related Room', formatValue(row.related_room));
+  appendDetailField(galleryRecordDetailFields, 'Sort Order', getGalleryRecordSortOrder(row));
+  appendDetailField(galleryRecordDetailFields, 'Required Fragments', formatValue(row.required_fragments));
+  appendDetailField(galleryRecordDetailFields, 'Fragmented', row.is_fragmented ? 'Yes' : 'No');
+  appendDetailField(galleryRecordDetailFields, 'Tags', formatAdminList(row.tags) || '--');
+  appendDetailField(galleryRecordDetailFields, 'Themes', formatAdminList(row.themes) || '--');
+  appendDetailField(galleryRecordDetailFields, 'Related Document ID', formatValue(row.related_document_id));
+  appendDetailField(galleryRecordDetailFields, 'Created', formatDate(row.created_at));
+  appendDetailField(galleryRecordDetailFields, 'Updated', formatDate(row.updated_at));
+
+  [createAdminImagePreview('Preview Image', row.preview_image_url), createAdminImagePreview('Full Image', row.full_image_url)]
+    .filter(Boolean)
+    .forEach((preview) => galleryRecordDetailImages.append(preview));
+
+  galleryRecordDetail.hidden = false;
+  galleryRecordDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function handleGalleryRecordFormSubmit(event) {
+  event.preventDefault();
+
+  const { payload, file, uploadFolder } = getGalleryRecordFormPayload();
+  const missingFields = validateGalleryRecordPayload(payload, file);
+
+  if (missingFields.length) {
+    setGalleryRecordFormState(`Please fill in required fields: ${missingFields.join(', ')}.`, 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setGalleryRecordFormState('Gallery records cannot be saved because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  galleryRecordFormSubmitButton.disabled = true;
+  setGalleryRecordFormState(file && file.size ? 'Uploading image and saving gallery record...' : 'Saving gallery record...');
+
+  if (!editingGalleryRecordId) {
+    const { exists, error } = await galleryRecordSlugExists(supabase, payload.slug);
+
+    if (error) {
+      galleryRecordFormSubmitButton.disabled = false;
+      setGalleryRecordFormState(`Gallery slug could not be checked. ${error.message || 'Please try again later.'}`, 'error');
+      return;
+    }
+
+    if (exists) {
+      galleryRecordFormSubmitButton.disabled = false;
+      setGalleryRecordFormState('A Gallery record with this slug already exists.', 'error');
+      return;
+    }
+  }
+
+  try {
+    const uploadedUrl = await uploadGalleryRecordImage(supabase, {
+      file,
+      folder: uploadFolder,
+      slug: payload.slug,
+      title: payload.title,
+    });
+
+    if (uploadedUrl) {
+      payload.preview_image_url = uploadedUrl;
+      payload.full_image_url = uploadedUrl;
+    }
+
+    if (!payload.preview_image_url && payload.full_image_url) {
+      payload.preview_image_url = payload.full_image_url;
+    }
+
+    if (!payload.full_image_url && payload.preview_image_url) {
+      payload.full_image_url = payload.preview_image_url;
+    }
+
+    const query = editingGalleryRecordId
+      ? supabase.from('gallery_records').update(payload).eq('id', editingGalleryRecordId).select('*').single()
+      : supabase.from('gallery_records').insert(payload).select('*').single();
+    const { error } = await query;
+
+    if (error) {
+      throw error;
+    }
+
+    const successMessage = editingGalleryRecordId ? 'Gallery record updated successfully.' : 'Gallery record created successfully.';
+    hideGalleryRecordForm();
+    await refreshGalleryRecords(successMessage);
+  } catch (error) {
+    galleryRecordFormSubmitButton.disabled = false;
+    setGalleryRecordFormState(`Gallery record could not be saved. ${error.message || 'Please try again later.'}`, 'error');
+  }
+}
+
+async function toggleGalleryRecordFeatured(row, button) {
+  const recordId = getGalleryRecordId(row);
+  const supabase = getSupabaseClient();
+
+  if (!recordId || !supabase) {
+    setGalleryRecordsState('Featured state cannot be updated for this record.', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  const nextFeaturedState = !getGalleryRecordFeaturedBoolean(row);
+  const { error } = await supabase
+    .from('gallery_records')
+    .update({ is_featured: nextFeaturedState, updated_at: new Date().toISOString() })
+    .eq('id', recordId)
+    .select('id')
+    .single();
+
+  if (error) {
+    button.disabled = false;
+    setGalleryRecordsState(`Featured state could not be updated. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  await refreshGalleryRecords(nextFeaturedState ? 'Gallery record marked as featured.' : 'Gallery record removed from featured.');
+}
+
+async function toggleGalleryRecordActive(row, button) {
+  const recordId = getGalleryRecordId(row);
+  const supabase = getSupabaseClient();
+
+  if (!recordId || !supabase) {
+    setGalleryRecordsState('Active state cannot be updated for this record.', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  const nextActiveState = !getGalleryRecordActiveBoolean(row);
+  const { error } = await supabase
+    .from('gallery_records')
+    .update({ is_active: nextActiveState, updated_at: new Date().toISOString() })
+    .eq('id', recordId)
+    .select('id')
+    .single();
+
+  if (error) {
+    button.disabled = false;
+    setGalleryRecordsState(`Active state could not be updated. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  await refreshGalleryRecords(nextActiveState ? 'Gallery record activated.' : 'Gallery record deactivated.');
 }
 
 function renderArtifactRows(rows) {
@@ -5400,6 +6297,59 @@ async function loadArchiveRooms() {
   archiveRoomsTableWrap.hidden = false;
 }
 
+async function loadGalleryRecords() {
+  if (galleryRecordsLoaded) {
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setGalleryRecordsState('Gallery records are unavailable because the archive connection is not configured.', 'error');
+    if (galleryRecordsPagination) {
+      galleryRecordsPagination.hidden = true;
+    }
+    return;
+  }
+
+  setGalleryRecordsState('Loading gallery records...');
+  galleryRecordsTableWrap.hidden = true;
+  if (galleryRecordsPagination) {
+    galleryRecordsPagination.hidden = true;
+  }
+  hideGalleryRecordDetail();
+  hideGalleryRecordForm();
+
+  const { data, error } = await supabase
+    .from('gallery_records')
+    .select('*')
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false })
+    .limit(200);
+
+  if (error) {
+    setGalleryRecordsState(`Gallery records could not be loaded. ${error.message || 'Please try again later.'}`, 'error');
+    if (galleryRecordsPagination) {
+      galleryRecordsPagination.hidden = true;
+    }
+    return;
+  }
+
+  galleryRecordRows = Array.isArray(data) ? data : [];
+  updateGalleryRecordStats();
+  applyGalleryRecordFilters({ resetPage: false });
+  galleryRecordsLoaded = true;
+
+  if (!galleryRecordRows.length) {
+    setGalleryRecordsState('No Gallery records found.');
+    renderGalleryRecordsPagination();
+    return;
+  }
+
+  galleryRecordsCurrentPage = Math.min(galleryRecordsCurrentPage, getGalleryRecordsTotalPages());
+  renderGalleryRecordRows();
+}
+
 async function loadArtifacts() {
   if (artifactsLoaded) {
     return;
@@ -5838,7 +6788,7 @@ function bindNavToggle() {
 }
 
 function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
-  const availableViews = ['overview', 'journals', 'journal-prompts', 'character-lines', 'contact-messages', 'archive-rooms', 'artifacts', 'memory-fragments', 'veilwalkers', 'veilwalker-notes', 'user-progress', 'app-settings'];
+  const availableViews = ['overview', 'journals', 'journal-prompts', 'character-lines', 'contact-messages', 'archive-rooms', 'gallery-records', 'artifacts', 'memory-fragments', 'veilwalkers', 'veilwalker-notes', 'user-progress', 'app-settings'];
   const normalizedViewName = availableViews.includes(viewName) ? viewName : 'overview';
 
   adminViews.forEach((view) => {
@@ -5871,6 +6821,10 @@ function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
 
   if (normalizedViewName === 'archive-rooms') {
     loadArchiveRooms();
+  }
+
+  if (normalizedViewName === 'gallery-records') {
+    loadGalleryRecords();
   }
 
   if (normalizedViewName === 'artifacts') {
@@ -5985,6 +6939,50 @@ function bindViewLinks() {
   archiveRoomForm.addEventListener('submit', handleArchiveRoomFormSubmit);
   archiveRoomFormCancelButtons.forEach((button) => {
     button.addEventListener('click', hideArchiveRoomForm);
+  });
+  galleryRecordDetailCloseButton.addEventListener('click', hideGalleryRecordDetail);
+  galleryRecordNewButton.addEventListener('click', () => showGalleryRecordForm());
+  galleryRecordForm.addEventListener('submit', handleGalleryRecordFormSubmit);
+  galleryRecordFormCancelButtons.forEach((button) => {
+    button.addEventListener('click', hideGalleryRecordForm);
+  });
+  galleryRecordFilters.forEach((filter) => {
+    const eventName = filter.matches('input') ? 'input' : 'change';
+
+    filter.addEventListener(eventName, () => {
+      applyGalleryRecordFilters();
+      renderGalleryRecordRows();
+    });
+  });
+  galleryRecordForm.elements.title.addEventListener('input', () => {
+    if (!editingGalleryRecordId && galleryRecordForm.elements.slug.dataset.manual !== 'true') {
+      galleryRecordForm.elements.slug.value = toKebabCase(galleryRecordForm.elements.title.value);
+    }
+  });
+  galleryRecordForm.elements.slug.addEventListener('input', () => {
+    galleryRecordForm.elements.slug.dataset.manual = String(galleryRecordForm.elements.slug.value || '').trim() ? 'true' : 'false';
+  });
+  galleryRecordForm.elements.preview_image_url.addEventListener('input', () => {
+    updateGalleryRecordPreview(galleryRecordForm.elements.preview_image_url.value || galleryRecordForm.elements.full_image_url.value);
+  });
+  galleryRecordForm.elements.full_image_url.addEventListener('input', () => {
+    updateGalleryRecordPreview(galleryRecordForm.elements.preview_image_url.value || galleryRecordForm.elements.full_image_url.value);
+  });
+  galleryRecordForm.elements.image_file.addEventListener('change', () => {
+    const [file] = galleryRecordForm.elements.image_file.files || [];
+
+    if (!file) {
+      updateGalleryRecordPreview(galleryRecordForm.elements.preview_image_url.value || galleryRecordForm.elements.full_image_url.value);
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setGalleryRecordFormState('Selected file must be an image.', 'error');
+      galleryRecordForm.elements.image_file.value = '';
+      return;
+    }
+
+    updateGalleryRecordPreview(URL.createObjectURL(file));
   });
   artifactDetailCloseButton.addEventListener('click', hideArtifactDetail);
   artifactNewButton.addEventListener('click', () => showArtifactForm());

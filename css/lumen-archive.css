@@ -952,6 +952,168 @@ body.lumen-archive-page .tarot-stage {
   margin-top: 0.2rem;
 }
 
+.lumen-arrival-intro-grid .lumen-arrival-panel,
+.lumen-room-content-grid .lumen-room-panel {
+  --lumen-vertical-card-line: rgba(178, 222, 255, 0.7);
+  --lumen-vertical-card-line-strong: rgba(224, 242, 255, 0.94);
+  --lumen-vertical-card-glow: rgba(95, 175, 255, 0.22);
+  --lumen-vertical-card-glow-strong: rgba(95, 175, 255, 0.38);
+  --lumen-vertical-card-ambient: rgba(110, 184, 255, 0);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transition:
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 260ms ease;
+}
+
+body.sun-mode .lumen-arrival-intro-grid .lumen-arrival-panel,
+body.sun-mode .lumen-room-content-grid .lumen-room-panel {
+  --lumen-vertical-card-line: rgba(245, 220, 163, 0.66);
+  --lumen-vertical-card-line-strong: rgba(255, 238, 190, 0.92);
+  --lumen-vertical-card-glow: rgba(120, 190, 255, 0.16);
+  --lumen-vertical-card-glow-strong: rgba(245, 220, 163, 0.34);
+}
+
+body.moon-mode .lumen-arrival-intro-grid .lumen-arrival-panel,
+body.moon-mode .lumen-room-content-grid .lumen-room-panel {
+  --lumen-vertical-card-line: rgba(174, 218, 255, 0.74);
+  --lumen-vertical-card-line-strong: rgba(220, 241, 255, 0.96);
+  --lumen-vertical-card-glow: rgba(95, 175, 255, 0.24);
+  --lumen-vertical-card-glow-strong: rgba(95, 175, 255, 0.42);
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel > *,
+.lumen-room-content-grid .lumen-room-panel > * {
+  position: relative;
+  z-index: 2;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel::before,
+.lumen-arrival-intro-grid .lumen-arrival-panel::after,
+.lumen-room-content-grid .lumen-room-panel::before,
+.lumen-room-content-grid .lumen-room-panel::after {
+  content: "";
+  position: absolute;
+  top: 13%;
+  bottom: 13%;
+  z-index: 3;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--lumen-vertical-card-line),
+    transparent
+  );
+  box-shadow: 0 0 12px var(--lumen-vertical-card-glow);
+  opacity: 0.92;
+  pointer-events: none;
+  transition:
+    background 260ms ease,
+    box-shadow 260ms ease,
+    opacity 260ms ease,
+    filter 260ms ease;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel::before,
+.lumen-room-content-grid .lumen-room-panel::before {
+  left: 0;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel::after,
+.lumen-room-content-grid .lumen-room-panel::after {
+  right: 0;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel:hover,
+.lumen-arrival-intro-grid .lumen-arrival-panel:focus-within,
+.lumen-room-content-grid .lumen-room-panel:hover,
+.lumen-room-content-grid .lumen-room-panel:focus-within {
+  transform: translateY(-6px) scale(1.01);
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 12px 28px var(--lumen-vertical-card-glow-strong));
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel:hover::before,
+.lumen-arrival-intro-grid .lumen-arrival-panel:hover::after,
+.lumen-arrival-intro-grid .lumen-arrival-panel:focus-within::before,
+.lumen-arrival-intro-grid .lumen-arrival-panel:focus-within::after,
+.lumen-room-content-grid .lumen-room-panel:hover::before,
+.lumen-room-content-grid .lumen-room-panel:hover::after,
+.lumen-room-content-grid .lumen-room-panel:focus-within::before,
+.lumen-room-content-grid .lumen-room-panel:focus-within::after {
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--lumen-vertical-card-line-strong),
+    transparent
+  );
+  box-shadow: 0 0 18px var(--lumen-vertical-card-glow-strong);
+  filter: drop-shadow(0 0 8px var(--lumen-vertical-card-glow-strong));
+  opacity: 1;
+}
+
+.lumen-room-content-grid .lumen-room-seal-card {
+  border-radius: 10px;
+  background: rgba(5, 10, 28, 0.78);
+  box-shadow:
+    inset 0 0 24px rgba(95, 175, 255, 0.08),
+    0 0 26px rgba(70, 150, 255, 0.11),
+    0 22px 60px rgba(0, 0, 0, 0.28);
+}
+
+.lumen-room-content-grid .lumen-room-seal-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  mix-blend-mode: normal;
+  object-fit: cover;
+  object-position: center top;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.lumen-room-content-grid .lumen-room-seal-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(3, 7, 18, 0.04), rgba(3, 7, 18, 0.52) 48%, rgba(3, 7, 18, 0.92) 78%),
+    linear-gradient(90deg, rgba(3, 7, 18, 0.28), rgba(3, 7, 18, 0.08), rgba(3, 7, 18, 0.28));
+}
+
+.lumen-room-content-grid .lumen-room-seal-content {
+  position: relative;
+  z-index: 2;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel .lumen-room-panel__label,
+.lumen-room-content-grid .lumen-room-panel .lumen-room-panel__label {
+  position: relative;
+  display: inline-grid;
+  justify-self: center;
+  gap: 0.45rem;
+  text-align: center;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel .lumen-room-panel__label::after,
+.lumen-room-content-grid .lumen-room-panel .lumen-room-panel__label::after {
+  content: "";
+  width: min(74px, 100%);
+  height: 1px;
+  justify-self: center;
+  background: linear-gradient(90deg, transparent, var(--lumen-vertical-card-line), transparent);
+  box-shadow: 0 0 10px var(--lumen-vertical-card-glow);
+}
+
 .lumen-other-rooms,
 .lumen-arrival-previews {
   display: grid;
@@ -1743,6 +1905,116 @@ body.lumen-archive-page .tarot-stage {
     height: 28px;
     object-fit: contain;
     filter: brightness(0) saturate(100%) invert(77%) sepia(75%) saturate(1325%) hue-rotate(166deg) brightness(103%) contrast(104%);
+  }
+}
+
+@media (max-width: 1199px) {
+  .lumen-arrival-intro-carousel,
+  .lumen-room-content-grid.lumen-sanctuary-card-carousel,
+  .lumen-room-content-grid--compact.lumen-sanctuary-card-carousel,
+  .lumen-room-core.lumen-sanctuary-card-carousel {
+    overflow: visible;
+    width: 100%;
+  }
+
+  .lumen-arrival-intro-track,
+  .lumen-sanctuary-card-track {
+    display: flex;
+    gap: clamp(1rem, 3vw, 1.35rem);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    padding: 0 0 0.7rem;
+    scroll-padding-inline: 0;
+    scroll-snap-type: x mandatory;
+    scrollbar-color: rgba(108, 213, 255, 0.88) rgba(9, 24, 54, 0.62);
+    scrollbar-width: thin;
+    transform: none !important;
+    transition: none;
+    will-change: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .lumen-arrival-intro-track::-webkit-scrollbar,
+  .lumen-sanctuary-card-track::-webkit-scrollbar {
+    display: block;
+    height: 8px;
+  }
+
+  .lumen-arrival-intro-track::-webkit-scrollbar-track,
+  .lumen-sanctuary-card-track::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(7, 18, 42, 0.34), rgba(16, 45, 85, 0.72), rgba(7, 18, 42, 0.34));
+    box-shadow: inset 0 0 8px rgba(95, 175, 255, 0.12);
+  }
+
+  .lumen-arrival-intro-track::-webkit-scrollbar-thumb,
+  .lumen-sanctuary-card-track::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(91, 187, 255, 0.9), rgba(178, 235, 255, 0.98));
+    box-shadow:
+      0 0 10px rgba(96, 204, 255, 0.46),
+      inset 0 0 6px rgba(255, 255, 255, 0.22);
+  }
+
+  .lumen-arrival-intro-track::-webkit-scrollbar-thumb:hover,
+  .lumen-sanctuary-card-track::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, rgba(121, 213, 255, 0.96), rgba(218, 248, 255, 1));
+    box-shadow:
+      0 0 14px rgba(110, 222, 255, 0.62),
+      inset 0 0 6px rgba(255, 255, 255, 0.28);
+  }
+
+  .lumen-arrival-intro-slide,
+  .lumen-sanctuary-slide {
+    flex: 0 0 clamp(320px, 42vw, 380px);
+    width: auto;
+    min-width: 0;
+    padding: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .lumen-arrival-intro-slide + .lumen-arrival-intro-slide,
+  .lumen-sanctuary-slide + .lumen-sanctuary-slide {
+    margin-top: 0;
+  }
+
+  .lumen-arrival-intro-slide > article,
+  .lumen-arrival-intro-slide > .lumen-arrival-info-card,
+  .lumen-sanctuary-slide > .lumen-room-panel,
+  .lumen-sanctuary-slide > .lumen-guidance-panel,
+  .lumen-sanctuary-slide > .lumen-room-seal-card {
+    width: 100%;
+    min-height: 330px;
+    margin: 0;
+  }
+
+  .lumen-arrival-intro-controls,
+  .lumen-sanctuary-carousel-controls {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .lumen-arrival-intro-track,
+  .lumen-sanctuary-card-track {
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+    scroll-padding-inline: 0;
+  }
+
+  .lumen-arrival-intro-slide,
+  .lumen-sanctuary-slide {
+    flex-basis: min(88vw, 340px);
+  }
+
+  .lumen-arrival-intro-slide > article,
+  .lumen-arrival-intro-slide > .lumen-arrival-info-card,
+  .lumen-sanctuary-slide > .lumen-room-panel,
+  .lumen-sanctuary-slide > .lumen-guidance-panel,
+  .lumen-sanctuary-slide > .lumen-room-seal-card {
+    min-height: 330px;
   }
 }
 
@@ -2614,9 +2886,27 @@ body.blood-moon-mode .lumen-name-form {
   .lumen-name-entry__card,
   .lumen-name-entry__form input,
   .lumen-name-entry__form button,
-  .lumen-name-entry__ornament {
+  .lumen-name-entry__ornament,
+  .lumen-arrival-intro-grid .lumen-arrival-panel,
+  .lumen-room-content-grid .lumen-room-panel,
+  .lumen-arrival-intro-grid .lumen-arrival-panel::before,
+  .lumen-arrival-intro-grid .lumen-arrival-panel::after,
+  .lumen-room-content-grid .lumen-room-panel::before,
+  .lumen-room-content-grid .lumen-room-panel::after,
+  body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn,
+  body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn::before {
     animation: none;
     transition: none;
+  }
+
+  .lumen-arrival-intro-grid .lumen-arrival-panel:hover,
+  .lumen-arrival-intro-grid .lumen-arrival-panel:focus-within,
+  .lumen-room-content-grid .lumen-room-panel:hover,
+  .lumen-room-content-grid .lumen-room-panel:focus-within,
+  body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:hover,
+  body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible,
+  body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:active {
+    transform: none;
   }
 }
 
@@ -5399,6 +5689,102 @@ body.lumen-archive-page .lumen-journal-btn img {
   width: 16px;
   height: 16px;
   object-fit: contain;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 42px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.68rem 1.18rem;
+  color: #fff8ea;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(104, 185, 255, 0.24), transparent 44%),
+    linear-gradient(135deg, rgba(37, 85, 135, 0.95), rgba(15, 42, 78, 0.95) 56%, rgba(8, 20, 48, 0.94));
+  box-shadow:
+    0 0 14px rgba(80, 170, 255, 0.22),
+    0 8px 24px rgba(30, 80, 140, 0.16),
+    inset 0 1px 0 rgba(175, 222, 255, 0.12),
+    inset 0 -10px 22px rgba(5, 15, 34, 0.16);
+  font-size: 0.82rem;
+  letter-spacing: 0.055em;
+  line-height: 1.15;
+  text-shadow: 0 1px 8px rgba(4, 14, 32, 0.42);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    background 220ms ease,
+    filter 220ms ease;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(120deg, transparent 18%, rgba(95, 190, 255, 0.18) 42%, transparent 68%);
+  opacity: 0;
+  transform: translateX(-28%);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible {
+  border: 0;
+  outline: none;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(112, 198, 255, 0.3), transparent 44%),
+    linear-gradient(135deg, rgba(43, 105, 164, 0.97), rgba(17, 52, 94, 0.95) 56%, rgba(9, 24, 54, 0.95));
+  box-shadow:
+    0 0 24px rgba(110, 190, 255, 0.35),
+    0 10px 26px rgba(30, 90, 150, 0.18),
+    inset 0 1px 0 rgba(180, 228, 255, 0.14),
+    inset 0 -10px 24px rgba(5, 15, 34, 0.14);
+  filter: saturate(1.06);
+  transform: translateY(-2px);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:hover::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible::before {
+  opacity: 1;
+  transform: translateX(18%);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible {
+  box-shadow:
+    0 0 0 3px rgba(80, 170, 255, 0.14),
+    0 0 0 5px rgba(108, 213, 255, 0.24),
+    0 0 28px rgba(110, 190, 255, 0.34),
+    inset 0 1px 0 rgba(180, 228, 255, 0.14);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:active {
+  transform: translateY(0);
+  box-shadow:
+    0 0 14px rgba(80, 170, 255, 0.2),
+    inset 0 1px 0 rgba(175, 222, 255, 0.1),
+    inset 0 8px 18px rgba(5, 15, 34, 0.18);
+}
+
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-action-btn {
+  min-height: 42px;
+  padding: 0.68rem 1.18rem;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-question-cycle-btn {
+  white-space: nowrap;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn img {
+  filter:
+    brightness(1.45)
+    sepia(0.22)
+    saturate(1.2)
+    drop-shadow(0 0 8px rgba(245, 220, 163, 0.42));
 }
 
 body.lumen-archive-page .lumen-room-hero-card h2 {
