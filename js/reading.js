@@ -110,6 +110,13 @@ let activeReadingMode = null;
 let selectedDeckId = "lumen";
 let currentAccountUser = null;
 let hasCheckedAccountUser = false;
+let readingPreferences = {
+  allow_reversed_cards: false,
+  save_readings_prompt: true,
+  reduce_motion: false,
+  default_reading_mode: "last_used"
+};
+let readingPreferencesReadyPromise = null;
 
 const readingDecks = [
   {
@@ -215,7 +222,11 @@ function setReadingFlowStage(stage, { scrollToStart = false } = {}) {
 }
 
 function getReadingScrollBehavior() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    document.documentElement.dataset.reduceMotion === "true" ||
+    document.body.classList.contains("reduce-motion")
+    ? "auto"
+    : "smooth";
 }
 
 ////////////////////////////////////////////////////
@@ -270,6 +281,79 @@ function applyBloodMoonState() {
 
 function isBloodMoonReadingActive() {
   return isBloodMoonActive();
+}
+
+function normalizeReadingPreferences(preferences = {}) {
+  const defaultReadingMode = String(preferences.default_reading_mode || "").trim().toLowerCase();
+
+  return {
+    allow_reversed_cards: preferences.allow_reversed_cards === true,
+    save_readings_prompt: preferences.save_readings_prompt !== false,
+    reduce_motion: preferences.reduce_motion === true,
+    default_reading_mode: ["sun", "moon", "last_used"].includes(defaultReadingMode)
+      ? defaultReadingMode
+      : "last_used"
+  };
+}
+
+function applyReadingPreferences(preferences = {}) {
+  readingPreferences = normalizeReadingPreferences(preferences);
+  document.body.classList.toggle("reduce-motion", readingPreferences.reduce_motion);
+  document.documentElement.dataset.reduceMotion = readingPreferences.reduce_motion ? "true" : "false";
+}
+
+function applyDefaultReadingModePreference() {
+  const preferredMode = readingPreferences.default_reading_mode;
+
+  if (!["sun", "moon"].includes(preferredMode) || isBloodMoonReadingActive()) {
+    return;
+  }
+
+  if (readingFlowStage !== "reader" && readingFlowStage !== "setup") {
+    return;
+  }
+
+  try {
+    localStorage.setItem("dailyTarotTheme", preferredMode);
+  } catch {
+    // Theme persistence is best-effort; the body class still applies for this session.
+  }
+
+  if (typeof setTheme === "function") {
+    setTheme(preferredMode);
+    return;
+  }
+
+  document.body.classList.toggle("sun-mode", preferredMode === "sun");
+  document.body.classList.toggle("moon-mode", preferredMode === "moon");
+  document.body.classList.remove("blood-moon-mode");
+}
+
+function initializeReadingPreferences() {
+  const preferencesModuleUrl = new URL("src/public/user-preferences.js", document.baseURI).href;
+
+  readingPreferencesReadyPromise = import(preferencesModuleUrl)
+    .then((module) => module.loadCurrentUserPreferences())
+    .then((preferences) => {
+      applyReadingPreferences(preferences);
+      applyDefaultReadingModePreference();
+      ensureSelectedDeckIsAvailable();
+      renderDeckOptions();
+      updateReadingHeroCopy();
+      if (selectedReader) {
+        updateActiveReader();
+      } else {
+        renderReaders();
+      }
+      return readingPreferences;
+    })
+    .catch((error) => {
+      console.warn("[Astral Veil reading] User preferences could not be loaded.", error);
+      applyReadingPreferences(readingPreferences);
+      return readingPreferences;
+    });
+
+  return readingPreferencesReadyPromise;
 }
 
 function getDeckModeKey() {
@@ -564,7 +648,9 @@ function getCardDisplayName(card, { includeOrientation = false } = {}) {
 
 // Orientation is assigned exactly once when cards are drawn, then stored on the reading card object.
 function prepareReadingCard(card) {
-  const orientation = Math.random() < 0.5 ? "upright" : "reversed";
+  const orientation = readingPreferences.allow_reversed_cards && Math.random() < 0.5
+    ? "reversed"
+    : "upright";
 
   return {
     ...card,
@@ -1952,9 +2038,15 @@ function moveReader(direction) {
 ////////////////////////////////////////////////////
 
 // Creates a new reading: chooses cards, assigns orientation, and renders the facedown spread.
-function selectSpread(cardCount) {
+async function selectSpread(cardCount) {
   if (isRenderingReading) {
     return;
+  }
+
+  isRenderingReading = true;
+
+  if (readingPreferencesReadyPromise) {
+    await readingPreferencesReadyPromise;
   }
 
   const activeDeck = getActiveDeckConfig();
@@ -1962,10 +2054,9 @@ function selectSpread(cardCount) {
   if (!activeDeck || !isDeckAccessible(activeDeck)) {
     readingStatus.textContent = "Choose an available deck before starting your reading.";
     renderDeckOptions();
+    isRenderingReading = false;
     return;
   }
-
-  isRenderingReading = true;
 
   try {
     selectedCardCount = cardCount;
@@ -2435,7 +2526,7 @@ function scheduleReadingSectionScroll() {
     }
 
     readingSection.scrollIntoView({
-      behavior: "smooth",
+      behavior: getReadingScrollBehavior(),
       block: "start",
     });
   }, readingSectionScrollDelay);
@@ -2546,6 +2637,7 @@ function resetToGuideSelection() {
   clearSelectedReaderState({ scrollToSelection: true });
 }
 
+initializeReadingPreferences();
 renderReaders();
 setReadingFlowStage("reader", { scrollToStart: false });
 hydrateAccountDeckAccess();

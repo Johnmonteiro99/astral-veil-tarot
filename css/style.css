@@ -1511,6 +1511,37 @@ body.moon-mode .theme-orb-toggle__icon-wrap::before {
   }
 }
 
+html[data-reduce-motion="true"],
+body.reduce-motion {
+  scroll-behavior: auto !important;
+}
+
+html[data-reduce-motion="true"] *,
+html[data-reduce-motion="true"] *::before,
+html[data-reduce-motion="true"] *::after,
+body.reduce-motion *,
+body.reduce-motion *::before,
+body.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.001ms !important;
+}
+
+body.reduce-motion .starfield,
+body.reduce-motion .mystic-mist,
+body.reduce-motion .moon-particles,
+body.reduce-motion .celestial-wash,
+body.reduce-motion .lunar-orb,
+body.reduce-motion .logo-eye,
+body.reduce-motion .card-image,
+body.reduce-motion .tarot-card__inner,
+body.reduce-motion .reader-portrait-frame,
+body.reduce-motion .deck-selection-card {
+  animation: none !important;
+  transition: opacity 120ms ease, border-color 120ms ease, box-shadow 120ms ease !important;
+}
+
 .theme-toggle:hover,
 .theme-toggle:focus-visible {
   transform: translateY(-1px);
@@ -10098,11 +10129,13 @@ body.blood-moon-mode .combined-reading__thread-card:active {
 .reading-final-actions__row {
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
-  gap: 1rem;
+  align-items: center;
+  gap: 0.75rem;
   max-width: 900px;
   margin: 0 auto;
+  text-align: center;
 }
 
 .reading-final-actions__button,
@@ -10217,8 +10250,7 @@ body.blood-moon-mode .combined-reading__thread-card:active {
   }
 
   .reading-final-actions__row {
-    flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     max-width: 420px;
     width: 100%;
     gap: 12px;
@@ -10236,8 +10268,8 @@ body.blood-moon-mode .combined-reading__thread-card:active {
   }
 
   .reading-save-panel__button {
-    width: 100%;
-    max-width: none;
+    width: min(100%, 290px);
+    max-width: 290px;
     min-width: 0;
     height: auto;
     min-height: 48px;
@@ -10245,8 +10277,8 @@ body.blood-moon-mode .combined-reading__thread-card:active {
   }
 
   .reading-final-actions__button {
-    width: 100%;
-    max-width: none;
+    width: min(100%, 290px);
+    max-width: 290px;
     min-width: 0;
     height: auto;
     min-height: 48px;

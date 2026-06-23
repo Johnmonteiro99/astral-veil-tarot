@@ -6,6 +6,11 @@ import {
   restrictedWingProfileRewardKeys,
 } from './profile-unlocks.js';
 import { getUserProgressStats } from './progression.js';
+import {
+  applyReduceMotionPreference,
+  normalizeUserPreferences,
+  userPreferenceDefaults,
+} from './user-preferences.js';
 
 const loadingPanel = document.querySelector('[data-account-loading]');
 const accountPanel = document.querySelector('[data-account-panel]');
@@ -63,6 +68,10 @@ const profileSubmitButton = document.querySelector('[data-profile-submit]');
 const profileStatus = document.querySelector('[data-profile-status]');
 const showProfileTitleToggle = document.querySelector('[data-preference-show-profile-title]');
 const selectedProfileTitleSelect = document.querySelector('[data-preference-selected-profile-title]');
+const allowReversedCardsToggle = document.querySelector('[data-preference-allow-reversed-cards]');
+const saveReadingsPromptToggle = document.querySelector('[data-preference-save-readings-prompt]');
+const reduceMotionToggle = document.querySelector('[data-preference-reduce-motion]');
+const defaultReadingModeSelect = document.querySelector('[data-preference-default-reading-mode]');
 const preferencesStatus = document.querySelector('[data-preferences-status]');
 const zodiacPreview = document.querySelector('[data-zodiac-preview]');
 const zodiacDates = document.querySelector('[data-zodiac-dates]');
@@ -137,6 +146,8 @@ let activeProfileUnlocks = [];
 let avatarStatusClearTimer = null;
 let profileStatusClearTimer = null;
 let journalStatusClearTimer = null;
+let preferencesStatusClearTimer = null;
+let preferencesSaveQueue = Promise.resolve();
 let hasContactSubjectBeenEdited = false;
 
 const avatarBucketName = 'avatars';
@@ -451,10 +462,37 @@ function shouldShowProfileTitle(profile) {
   return getProfilePreferences(profile).show_profile_title !== false;
 }
 
+function getAdvancedUserPreferences(profile) {
+  return normalizeUserPreferences({
+    ...userPreferenceDefaults,
+    ...getProfilePreferences(profile),
+  });
+}
+
 function updatePreferenceControls(profile) {
   if (showProfileTitleToggle) {
     showProfileTitleToggle.checked = shouldShowProfileTitle(profile);
   }
+
+  const advancedPreferences = getAdvancedUserPreferences(profile);
+
+  if (allowReversedCardsToggle) {
+    allowReversedCardsToggle.checked = advancedPreferences.allow_reversed_cards;
+  }
+
+  if (saveReadingsPromptToggle) {
+    saveReadingsPromptToggle.checked = advancedPreferences.save_readings_prompt;
+  }
+
+  if (reduceMotionToggle) {
+    reduceMotionToggle.checked = advancedPreferences.reduce_motion;
+  }
+
+  if (defaultReadingModeSelect) {
+    defaultReadingModeSelect.value = advancedPreferences.default_reading_mode;
+  }
+
+  applyReduceMotionPreference(advancedPreferences);
 
   if (!selectedProfileTitleSelect) {
     return;
@@ -781,7 +819,12 @@ async function updateProfilePreference(preferenceKey, value, showStatus = true) 
   };
 
   if (preferencesStatus && showStatus) {
+    if (preferencesStatusClearTimer) {
+      window.clearTimeout(preferencesStatusClearTimer);
+      preferencesStatusClearTimer = null;
+    }
     preferencesStatus.textContent = 'Saving preference...';
+    preferencesStatus.classList.remove('is-error', 'is-success');
   }
 
   const { error } = await supabase
@@ -794,6 +837,8 @@ async function updateProfilePreference(preferenceKey, value, showStatus = true) 
 
     if (preferencesStatus && showStatus) {
       preferencesStatus.textContent = 'We could not save that preference. Please try again.';
+      preferencesStatus.classList.add('is-error');
+      preferencesStatus.classList.remove('is-success');
     }
 
     updatePreferenceControls(activeProfile);
@@ -808,6 +853,13 @@ async function updateProfilePreference(preferenceKey, value, showStatus = true) 
 
   if (preferencesStatus && showStatus) {
     preferencesStatus.textContent = 'Preference saved.';
+    preferencesStatus.classList.add('is-success');
+    preferencesStatus.classList.remove('is-error');
+    preferencesStatusClearTimer = window.setTimeout(() => {
+      preferencesStatus.textContent = '';
+      preferencesStatus.classList.remove('is-success');
+      preferencesStatusClearTimer = null;
+    }, 2400);
   }
 }
 
@@ -3889,6 +3941,48 @@ selectedProfileTitleSelect?.addEventListener('change', () => {
   }
 
   updateProfilePreference('selected_profile_title', selectedValue || 'seeker');
+});
+
+async function saveAdvancedPreference(control, preferenceKey, value) {
+  if (!control) {
+    return;
+  }
+
+  control.disabled = true;
+  preferencesSaveQueue = preferencesSaveQueue
+    .catch(() => undefined)
+    .then(() => updateProfilePreference(preferenceKey, value));
+
+  try {
+    await preferencesSaveQueue;
+  } finally {
+    control.disabled = false;
+  }
+}
+
+allowReversedCardsToggle?.addEventListener('change', () => {
+  saveAdvancedPreference(allowReversedCardsToggle, 'allow_reversed_cards', allowReversedCardsToggle.checked);
+});
+
+saveReadingsPromptToggle?.addEventListener('change', () => {
+  saveAdvancedPreference(saveReadingsPromptToggle, 'save_readings_prompt', saveReadingsPromptToggle.checked);
+});
+
+reduceMotionToggle?.addEventListener('change', () => {
+  applyReduceMotionPreference({
+    ...getAdvancedUserPreferences(activeProfile),
+    reduce_motion: reduceMotionToggle.checked,
+  });
+  saveAdvancedPreference(reduceMotionToggle, 'reduce_motion', reduceMotionToggle.checked);
+});
+
+defaultReadingModeSelect?.addEventListener('change', () => {
+  const nextMode = normalizeUserPreferences({
+    default_reading_mode: defaultReadingModeSelect.value,
+  }).default_reading_mode;
+
+  defaultReadingModeSelect.value = nextMode;
+  saveAdvancedPreference(defaultReadingModeSelect, 'default_reading_mode', nextMode);
 });
 
 document.addEventListener('keydown', (event) => {

@@ -67,6 +67,23 @@
         opacity: 0.35;
       }
 
+      html[data-reduce-motion="true"],
+      body.reduce-motion {
+        scroll-behavior: auto !important;
+      }
+
+      html[data-reduce-motion="true"] *,
+      html[data-reduce-motion="true"] *::before,
+      html[data-reduce-motion="true"] *::after,
+      body.reduce-motion *,
+      body.reduce-motion *::before,
+      body.reduce-motion *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+
       button,
       .text-link {
         min-height: 2.75rem;
@@ -2950,6 +2967,14 @@
         text-align: center;
       }
 
+      .preferences-status.is-error {
+        color: var(--error);
+      }
+
+      .preferences-status.is-success {
+        color: #bfe8c7;
+      }
+
       .switch {
         position: relative;
         width: 3rem;
@@ -4555,7 +4580,7 @@
                         <p>Include reversed card meanings in readings.</p>
                       </div>
                       <label class="switch" aria-label="Allow reversed cards">
-                        <input type="checkbox" />
+                        <input type="checkbox" data-preference-allow-reversed-cards />
                         <span aria-hidden="true"></span>
                       </label>
                     </div>
@@ -4566,7 +4591,7 @@
                         <p>Remind me to save readings after a spread.</p>
                       </div>
                       <label class="switch" aria-label="Save readings prompt">
-                        <input type="checkbox" checked />
+                        <input type="checkbox" data-preference-save-readings-prompt checked />
                         <span aria-hidden="true"></span>
                       </label>
                     </div>
@@ -4577,7 +4602,7 @@
                         <p>Soften animations and visual movement.</p>
                       </div>
                       <label class="switch" aria-label="Reduce motion">
-                        <input type="checkbox" />
+                        <input type="checkbox" data-preference-reduce-motion />
                         <span aria-hidden="true"></span>
                       </label>
                     </div>
@@ -4587,10 +4612,10 @@
                         <span class="preference-option__label">Default Reading Mode</span>
                         <p>Choose which standard mode appears first.</p>
                       </span>
-                      <select class="preference-select" aria-label="Default reading mode">
-                        <option>Last Used</option>
-                        <option>Sun</option>
-                        <option>Moon</option>
+                      <select class="preference-select" aria-label="Default reading mode" data-preference-default-reading-mode>
+                        <option value="last_used">Last Used</option>
+                        <option value="sun">Sun</option>
+                        <option value="moon">Moon</option>
                       </select>
                     </label>
                     <p class="preferences-status" data-preferences-status role="status" aria-live="polite"></p>

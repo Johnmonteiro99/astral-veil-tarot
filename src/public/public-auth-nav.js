@@ -1,5 +1,6 @@
 import { getCurrentUserWithProfile } from '../services/auth.js';
 import { isSupabaseConfigured } from '../services/supabase-client.js';
+import { loadCurrentUserPreferences } from './user-preferences.js';
 
 const returnToStorageKey = 'astralVeilReturnTo';
 const publicAuthNavCacheKey = 'astralVeilPublicAuthNav';
@@ -240,6 +241,7 @@ async function initPublicAuthNav() {
   const cached = getCachedPublicAuthNav();
 
   renderPublicAuthNav({ cached, loading: true });
+  void loadCurrentUserPreferences();
 
   if (!isSupabaseConfigured()) {
     renderPublicAuthNav({ user: null, profile: null });

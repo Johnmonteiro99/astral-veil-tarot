@@ -2196,6 +2196,177 @@ body.blood-moon-mode .journal-entry-card p {
   text-align: center;
 }
 
+body.journal-locked {
+  overflow: hidden;
+}
+
+body.journal-locked .journal-main {
+  filter: blur(5px);
+  opacity: 0.46;
+  pointer-events: none;
+  user-select: none;
+}
+
+.journal-lock-modal[hidden] {
+  display: none;
+}
+
+.journal-lock-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+.journal-lock-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 18%, color-mix(in srgb, var(--navbar-glow) 18%, transparent), transparent 36%),
+    rgba(10, 6, 3, 0.58);
+  backdrop-filter: blur(7px);
+}
+
+.journal-lock-modal__dialog {
+  position: relative;
+  width: min(640px, 100%);
+  max-height: min(86vh, 680px);
+  display: grid;
+  gap: 0.95rem;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--navbar-border) 74%, transparent);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255, 247, 219, 0.2), transparent 34%),
+    linear-gradient(135deg, rgba(239, 214, 157, 0.98), rgba(198, 160, 96, 0.9)),
+    color-mix(in srgb, var(--navbar-bg) 30%, #f1dcae);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+    0 30px 90px rgba(0, 0, 0, 0.44),
+    0 0 34px color-mix(in srgb, var(--navbar-glow) 22%, transparent);
+  color: #392719;
+  padding: clamp(1.2rem, 4vw, 2rem);
+  text-align: center;
+}
+
+.journal-lock-modal__dialog h2 {
+  margin: 0;
+  color: #3b2415;
+  font-family: var(--journal-heading-font);
+  font-size: clamp(2.2rem, 5vw, 3.45rem);
+  line-height: 0.98;
+}
+
+.journal-lock-modal__dialog p:not(.journal-chamber__eyebrow) {
+  width: min(100%, 520px);
+  justify-self: center;
+  margin: 0;
+  color: rgba(66, 38, 17, 0.74);
+  font: 700 clamp(0.94rem, 2vw, 1.02rem)/1.65 var(--journal-ui-font);
+}
+
+body.sun-mode .journal-lock-modal .journal-chamber__eyebrow,
+body.moon-mode .journal-lock-modal .journal-chamber__eyebrow {
+  color: rgba(66, 38, 17, 0.74);
+}
+
+.journal-lock-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 0.25rem;
+}
+
+.journal-lock-modal__button {
+  min-height: 2.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(99, 58, 25, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 248, 226, 0.34);
+  color: #51300f;
+  font: 800 0.76rem/1 var(--journal-ui-font);
+  letter-spacing: 0.09em;
+  padding: 0 1.15rem;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.journal-lock-modal__button:hover,
+.journal-lock-modal__button:focus-visible {
+  border-color: color-mix(in srgb, var(--navbar-hover-text) 74%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--navbar-glow) 22%, transparent);
+  outline: 0;
+}
+
+.journal-lock-modal__button--primary {
+  border-color: rgba(104, 61, 16, 0.52);
+  background:
+    linear-gradient(180deg, rgba(232, 189, 96, 0.96), rgba(174, 111, 38, 0.9));
+  box-shadow:
+    0 0 0 1px rgba(255, 248, 226, 0.34) inset,
+    0 0 22px rgba(205, 147, 55, 0.24);
+  color: #2c1b0e;
+}
+
+.journal-lock-modal__button--secondary {
+  background: rgba(255, 248, 226, 0.2);
+  color: rgba(81, 48, 15, 0.78);
+}
+
+body.blood-moon-mode .journal-lock-modal__backdrop {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(157, 31, 39, 0.24), transparent 36%),
+    rgba(5, 1, 2, 0.72);
+}
+
+body.blood-moon-mode .journal-lock-modal__dialog {
+  border-color: rgba(174, 65, 52, 0.7);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(181, 45, 43, 0.2), transparent 35%),
+    radial-gradient(circle at 82% 100%, rgba(88, 13, 19, 0.24), transparent 36%),
+    linear-gradient(135deg, rgba(33, 12, 13, 0.99), rgba(55, 15, 18, 0.96) 52%, rgba(18, 5, 7, 0.99)),
+    #140607;
+  box-shadow:
+    0 0 0 1px rgba(255, 191, 159, 0.08) inset,
+    0 30px 90px rgba(0, 0, 0, 0.58),
+    0 0 34px rgba(157, 31, 39, 0.28);
+  color: #f6ddcf;
+}
+
+body.blood-moon-mode .journal-lock-modal__dialog h2 {
+  color: #f7e1d1;
+}
+
+body.blood-moon-mode .journal-lock-modal__dialog p:not(.journal-chamber__eyebrow) {
+  color: rgba(235, 194, 176, 0.8);
+}
+
+body.blood-moon-mode .journal-lock-modal__button {
+  border-color: rgba(188, 80, 64, 0.48);
+  background: rgba(14, 4, 5, 0.58);
+  color: #efd2c2;
+}
+
+body.blood-moon-mode .journal-lock-modal__button--primary {
+  border-color: rgba(226, 95, 74, 0.8);
+  background:
+    linear-gradient(180deg, rgba(125, 29, 31, 0.92), rgba(64, 12, 15, 0.94));
+  box-shadow:
+    0 0 0 1px rgba(255, 206, 178, 0.12) inset,
+    0 0 22px rgba(177, 38, 44, 0.24);
+  color: #fff0e5;
+}
+
+body.blood-moon-mode .journal-lock-modal__button--secondary {
+  color: rgba(235, 194, 176, 0.78);
+}
+
 .journal-guided-modal[hidden] {
   display: none;
 }
@@ -3671,6 +3842,25 @@ body.journal-page.sun-mode .journal-reflection-editor::-webkit-scrollbar-thumb {
   .journal-guided-modal {
     align-items: end;
     padding: 0.75rem;
+  }
+
+  .journal-lock-modal {
+    align-items: end;
+    padding: 0.75rem;
+  }
+
+  .journal-lock-modal__dialog {
+    max-height: 90vh;
+    border-radius: 14px;
+  }
+
+  .journal-lock-modal__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .journal-lock-modal__button {
+    width: 100%;
   }
 
   .journal-guided-modal__dialog {

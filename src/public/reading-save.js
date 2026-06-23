@@ -1,5 +1,6 @@
 import { getCurrentUser } from '../services/auth.js';
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
+import { loadCurrentUserPreferences } from './user-preferences.js';
 
 const FREE_SAVED_READING_LIMIT = 25;
 
@@ -188,6 +189,13 @@ async function renderReadingSavePanel() {
 
   if (!user) {
     renderLoginPrompt(container);
+    return;
+  }
+
+  const preferences = await loadCurrentUserPreferences();
+
+  if (preferences.save_readings_prompt === false) {
+    container.innerHTML = '';
     return;
   }
 

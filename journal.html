@@ -290,6 +290,32 @@
       </section>
     </main>
 
+    <div class="journal-lock-modal" data-journal-lock-modal hidden>
+      <div class="journal-lock-modal__backdrop" aria-hidden="true"></div>
+      <section
+        class="journal-lock-modal__dialog"
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="journal-lock-title"
+        aria-describedby="journal-lock-copy journal-lock-copy-secondary"
+      >
+        <p class="journal-chamber__eyebrow" data-journal-lock-eyebrow>Private Journal</p>
+        <h2 id="journal-lock-title" data-journal-lock-title>Your Journal Awaits</h2>
+        <p id="journal-lock-copy" data-journal-lock-copy>
+          The Astral Veil Journal is a private space for reflection, readings, moods, and moments you want to return to.
+        </p>
+        <p id="journal-lock-copy-secondary" data-journal-lock-copy-secondary>
+          To keep your entries safe and connected to your account, you’ll need to log in or create an account before writing.
+        </p>
+        <div class="journal-lock-modal__actions">
+          <a class="journal-lock-modal__button journal-lock-modal__button--primary" href="auth.html" data-journal-lock-login>Log In</a>
+          <a class="journal-lock-modal__button" href="auth.html?mode=signup" data-journal-lock-signup>Create Account</a>
+          <a class="journal-lock-modal__button journal-lock-modal__button--secondary" href="index.html" data-journal-lock-return>Return to Astral Veil</a>
+        </div>
+      </section>
+    </div>
+
     <div class="journal-guided-modal" data-guided-modal hidden>
       <div class="journal-guided-modal__backdrop" data-guided-modal-backdrop></div>
       <section

@@ -39,6 +39,15 @@ const formRecentEntriesWrap = document.querySelector('[data-form-recent-journal-
 const recentTitle = document.querySelector('[data-recent-title]');
 const recentSubtitle = document.querySelector('[data-recent-subtitle]');
 const journalVibeSelect = document.querySelector('[data-journal-vibe-select]');
+const journalLockModal = document.querySelector('[data-journal-lock-modal]');
+const journalLockDialog = journalLockModal?.querySelector('.journal-lock-modal__dialog');
+const journalLockEyebrow = document.querySelector('[data-journal-lock-eyebrow]');
+const journalLockTitle = document.querySelector('[data-journal-lock-title]');
+const journalLockCopy = document.querySelector('[data-journal-lock-copy]');
+const journalLockCopySecondary = document.querySelector('[data-journal-lock-copy-secondary]');
+const journalLockLogin = document.querySelector('[data-journal-lock-login]');
+const journalLockSignup = document.querySelector('[data-journal-lock-signup]');
+const journalLockReturn = document.querySelector('[data-journal-lock-return]');
 
 const sunMoonMoods = ['Calm', 'Hopeful', 'Restless', 'Inspired', 'Heavy', 'Confused', 'Grateful', 'Clear'];
 const bloodMoonMoods = ['Exposed', 'Raw', 'Angry', 'Numb', 'Haunted', 'Unsettled', 'Avoidant', 'Ready'];
@@ -172,6 +181,18 @@ function redirectToLogin() {
   }
 
   window.location.replace(`auth.html?returnTo=${encodeURIComponent(returnTo)}`);
+}
+
+function getJournalAuthUrl(mode = 'login') {
+  const params = new URLSearchParams({
+    returnTo: getCurrentReturnPath(),
+  });
+
+  if (mode === 'signup') {
+    params.set('mode', 'signup');
+  }
+
+  return `auth.html?${params.toString()}`;
 }
 
 function isBloodMoonMode() {
@@ -355,6 +376,140 @@ function applyThemeCopy() {
       ? 'What has already been recorded.'
       : 'A few echoes from your private archive.';
   }
+}
+
+function setJournalFieldsLocked(isLocked) {
+  const fields = journalForm
+    ? Array.from(journalForm.querySelectorAll('input, select, textarea, button'))
+    : [];
+
+  fields.forEach((field) => {
+    field.disabled = isLocked;
+  });
+
+  const editor = getReflectionEditor();
+  if (editor) {
+    editor.contentEditable = isLocked ? 'false' : 'plaintext-only';
+    editor.setAttribute('aria-readonly', String(isLocked));
+    editor.tabIndex = isLocked ? -1 : 0;
+  }
+
+  shell?.querySelectorAll('a[href]').forEach((link) => {
+    if (isLocked) {
+      link.dataset.previousTabindex = link.getAttribute('tabindex') || '';
+      link.tabIndex = -1;
+      return;
+    }
+
+    const previousTabindex = link.dataset.previousTabindex;
+    if (previousTabindex) {
+      link.setAttribute('tabindex', previousTabindex);
+    } else {
+      link.removeAttribute('tabindex');
+    }
+    delete link.dataset.previousTabindex;
+  });
+}
+
+function getJournalLockFocusableElements() {
+  if (!journalLockModal || journalLockModal.hidden) {
+    return [];
+  }
+
+  return Array.from(journalLockModal.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+    .filter((element) => !element.hasAttribute('disabled'));
+}
+
+function focusJournalLockModal() {
+  const firstFocusable = getJournalLockFocusableElements()[0];
+
+  if (firstFocusable) {
+    firstFocusable.focus();
+    return;
+  }
+
+  journalLockDialog?.focus();
+}
+
+function getJournalLockCopy() {
+  if (isBloodMoonMode()) {
+    return {
+      eyebrow: 'Private Journal',
+      title: 'The Journal Is Sealed',
+      copy: 'Blood Moon reflections are not meant to drift unguarded.',
+      copySecondary: 'Create an account or log in to keep your shadows, readings, and recovered truths bound safely to you.',
+      returnLabel: 'Return to the Veil',
+    };
+  }
+
+  return {
+    eyebrow: 'Private Journal',
+    title: 'Your Journal Awaits',
+    copy: 'The Astral Veil Journal is a private space for reflection, readings, moods, and moments you want to return to.',
+    copySecondary: 'To keep your entries safe and connected to your account, you’ll need to log in or create an account before writing.',
+    returnLabel: 'Return to Astral Veil',
+  };
+}
+
+function renderJournalLockModal() {
+  if (!journalLockModal) {
+    return;
+  }
+
+  const copy = getJournalLockCopy();
+
+  if (journalLockEyebrow) {
+    journalLockEyebrow.textContent = copy.eyebrow;
+  }
+  if (journalLockTitle) {
+    journalLockTitle.textContent = copy.title;
+  }
+  if (journalLockCopy) {
+    journalLockCopy.textContent = copy.copy;
+  }
+  if (journalLockCopySecondary) {
+    journalLockCopySecondary.textContent = copy.copySecondary;
+  }
+  if (journalLockLogin) {
+    journalLockLogin.href = getJournalAuthUrl('login');
+  }
+  if (journalLockSignup) {
+    journalLockSignup.href = getJournalAuthUrl('signup');
+  }
+  if (journalLockReturn) {
+    journalLockReturn.href = 'index.html';
+    journalLockReturn.textContent = copy.returnLabel;
+  }
+
+  journalLockModal.hidden = false;
+}
+
+function lockJournalForSignedOutUser() {
+  activeUser = null;
+  activeProfile = {};
+
+  applyThemeCopy();
+  renderMoodOptions();
+  renderTags();
+  setJournalFieldsLocked(true);
+
+  if (journalForm?.elements.entry_date) {
+    journalForm.elements.entry_date.value = getTodayInputValue();
+  }
+  updateReflectionLength();
+  renderRecentEntries([]);
+  renderFormRecentEntries([]);
+
+  if (loadingState) {
+    loadingState.hidden = true;
+  }
+  if (shell) {
+    shell.hidden = false;
+  }
+
+  document.body.classList.add('journal-locked');
+  renderJournalLockModal();
+  window.requestAnimationFrame(focusJournalLockModal);
 }
 
 function renderMoodOptions() {
@@ -1465,7 +1620,7 @@ async function initJournalPage() {
   }
 
   if (!user) {
-    redirectToLogin();
+    lockJournalForSignedOutUser();
     return;
   }
 
@@ -1524,6 +1679,38 @@ guidedCancelButtons.forEach((button) => {
 });
 guidedModalBackdrop?.addEventListener('click', () => closeGuidedModal());
 document.addEventListener('keydown', (event) => {
+  if (document.body.classList.contains('journal-locked')) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      focusJournalLockModal();
+      return;
+    }
+
+    if (event.key === 'Tab') {
+      const focusableElements = getJournalLockFocusableElements();
+
+      if (!focusableElements.length) {
+        event.preventDefault();
+        journalLockDialog?.focus();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+        return;
+      }
+
+      if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    }
+  }
+
   if (event.key === 'Escape' && guidedModal && !guidedModal.hidden) {
     closeGuidedModal();
   }
