@@ -704,7 +704,9 @@
         overflow: hidden;
       }
 
-      body.account-deletion-modal-open {
+      body.change-password-modal-open,
+      body.account-deletion-modal-open,
+      body.privacy-controls-modal-open {
         overflow: hidden;
       }
 
@@ -733,27 +735,89 @@
         width: min(100%, 38rem);
       }
 
-      .account-deletion-modal__copy {
+      .change-password-modal__dialog {
+        width: min(100%, 38rem);
+      }
+
+      .privacy-controls-modal__dialog {
+        width: min(100%, 42rem);
+      }
+
+      .change-password-modal__copy,
+      .account-deletion-modal__copy,
+      .privacy-controls-modal__copy {
         display: grid;
         gap: 0.85rem;
       }
 
-      .account-deletion-modal__copy p {
+      .change-password-modal__copy p,
+      .account-deletion-modal__copy p,
+      .privacy-controls-modal__copy p {
         margin: 0;
         color: var(--muted);
         line-height: 1.65;
       }
 
+      .privacy-cleanup-list {
+        display: grid;
+        gap: 0.75rem;
+        margin: 0.3rem 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .privacy-cleanup-action {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 1rem;
+        border: 1px solid rgba(228, 189, 118, 0.16);
+        border-radius: 12px;
+        background: rgba(3, 4, 12, 0.34);
+        padding: 0.9rem;
+      }
+
+      .privacy-cleanup-action h4 {
+        margin: 0 0 0.22rem;
+        color: var(--gold);
+        font-family: var(--font-display);
+        font-size: 1.05rem;
+        font-weight: 400;
+      }
+
+      .privacy-cleanup-action p {
+        font-size: 0.9rem;
+      }
+
+      .privacy-controls-status {
+        min-height: 1.4rem;
+        margin: 0.2rem 0 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .privacy-controls-status.is-error {
+        color: var(--error);
+      }
+
+      .privacy-controls-status.is-success {
+        color: #aee6c0;
+      }
+
+      .change-password-form,
       .account-deletion-form {
         display: grid;
         gap: 1rem;
       }
 
+      .change-password-form__field,
       .account-deletion-form__field {
         display: grid;
         gap: 0.42rem;
       }
 
+      .change-password-form__field span,
       .account-deletion-form__field span {
         color: var(--gold);
         font-size: 0.72rem;
@@ -762,6 +826,7 @@
         text-transform: uppercase;
       }
 
+      .change-password-form__field input,
       .account-deletion-form__field input,
       .account-deletion-form__field textarea {
         width: 100%;
@@ -771,6 +836,10 @@
         color: var(--text);
         font: 600 0.98rem/1.45 var(--font-ui);
         padding: 0.72rem 0.85rem;
+      }
+
+      .change-password-form__field input {
+        min-height: 2.75rem;
       }
 
       .account-deletion-form__field input {
@@ -784,6 +853,7 @@
         resize: vertical;
       }
 
+      .change-password-form__status,
       .account-deletion-form__status {
         min-height: 1.4rem;
         margin: 0;
@@ -792,10 +862,12 @@
         line-height: 1.45;
       }
 
+      .change-password-form__status.is-error,
       .account-deletion-form__status.is-error {
         color: var(--error);
       }
 
+      .change-password-form__status.is-success,
       .account-deletion-form__status.is-success {
         color: #aee6c0;
       }
@@ -1571,6 +1643,15 @@
         line-height: 1.45;
       }
 
+      .security-row__meta {
+        display: block;
+        margin-top: 0.35rem;
+        color: rgba(247, 240, 232, 0.76);
+        font-size: 0.82rem;
+        line-height: 1.45;
+        word-break: break-word;
+      }
+
       .security-row--danger .security-row__copy h3 {
         color: #f0b7b7;
       }
@@ -1617,6 +1698,14 @@
         line-height: 1.5;
         padding-top: 0.9rem;
         text-align: center;
+      }
+
+      .security-center__note.is-error {
+        color: var(--error);
+      }
+
+      .security-center__note.is-success {
+        color: #aee6c0;
       }
 
       .journal-preview {
@@ -3825,6 +3914,10 @@
           display: none;
         }
 
+        .privacy-cleanup-action {
+          grid-template-columns: 1fr;
+        }
+
         .journey-row {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
@@ -4629,60 +4722,61 @@
                 <div class="security-center__header">
                   <p class="section-title">Privacy &amp; Security</p>
                   <h2>Protect your Archive</h2>
-                  <p>Security tools for your account will appear here as the Archive grows.</p>
+                  <p>Manage sign-in access, account identity, and the personal traces your Archive keeps.</p>
                 </div>
 
-                <ul class="security-list" aria-label="Security tools preview">
-                  <li class="security-row">
-                    <span class="security-row__icon" aria-hidden="true">
-                      <img src="assets/icons/symbols/lock.svg" alt="" />
-                    </span>
-                    <div class="security-row__copy">
-                      <h3>Change Password</h3>
-                      <p>Update your password and protect your sign-in.</p>
-                    </div>
-                    <span class="security-status">Coming soon</span>
+	                <ul class="security-list" aria-label="Security tools">
+	                  <li class="security-row">
+	                    <span class="security-row__icon" aria-hidden="true">
+	                      <img src="assets/icons/symbols/lock.svg" alt="" />
+	                    </span>
+	                    <div class="security-row__copy">
+	                      <h3>Change Password</h3>
+	                      <p>Update your password securely from your account.</p>
+	                    </div>
+	                    <button class="security-status" type="button" data-password-reset-send>Change Password</button>
+	                    <span class="security-row__chevron" aria-hidden="true"></span>
+	                  </li>
+
+	                  <li class="security-row">
+	                    <span class="security-row__icon" aria-hidden="true">
+	                      <img src="assets/icons/symbols/email.svg" alt="" />
+	                    </span>
+	                    <div class="security-row__copy">
+	                      <h3>Account Email</h3>
+	                      <p>Your sign-in email is shown below. Email changes and session tools are coming in a future update.</p>
+	                      <span class="security-row__meta" data-security-account-email>Loading email...</span>
+	                    </div>
+                    <span class="security-status">Current</span>
                     <span class="security-row__chevron" aria-hidden="true"></span>
                   </li>
 
-                  <li class="security-row">
-                    <span class="security-row__icon" aria-hidden="true">
-                      <img src="assets/icons/symbols/email.svg" alt="" />
-                    </span>
-                    <div class="security-row__copy">
-                      <h3>Email &amp; Sessions</h3>
-                      <p>Review account email and future active sessions.</p>
-                    </div>
-                    <span class="security-status">Coming soon</span>
+	                  <li class="security-row">
+	                    <span class="security-row__icon" aria-hidden="true">
+	                      <img src="assets/icons/symbols/privacy.svg" alt="" />
+	                    </span>
+	                    <div class="security-row__copy">
+	                      <h3>Privacy Controls</h3>
+	                      <p>Clear saved Gallery activity tied to your account.</p>
+	                    </div>
+                    <button class="security-status" type="button" data-privacy-controls-open>Manage</button>
                     <span class="security-row__chevron" aria-hidden="true"></span>
                   </li>
 
-                  <li class="security-row">
-                    <span class="security-row__icon" aria-hidden="true">
-                      <img src="assets/icons/symbols/privacy.svg" alt="" />
-                    </span>
-                    <div class="security-row__copy">
-                      <h3>Privacy Controls</h3>
-                      <p>Choose what your Archive remembers and displays.</p>
-                    </div>
-                    <span class="security-status">Coming soon</span>
-                    <span class="security-row__chevron" aria-hidden="true"></span>
-                  </li>
-
-                  <li class="security-row security-row--danger">
-                    <span class="security-row__icon" aria-hidden="true">
-                      <img src="assets/icons/symbols/security.svg" alt="" />
-                    </span>
-                    <div class="security-row__copy">
-                      <h3>Request Account Deletion</h3>
-                      <p>Deactivate your archive and send a deletion request to the Astral Veil admin.</p>
-                    </div>
+	                  <li class="security-row security-row--danger">
+	                    <span class="security-row__icon" aria-hidden="true">
+	                      <img src="assets/icons/symbols/security.svg" alt="" />
+	                    </span>
+	                    <div class="security-row__copy">
+	                      <h3>Request Account Deletion</h3>
+	                      <p>Send a request to deactivate and review deletion of your account data.</p>
+	                    </div>
                     <button class="security-status" type="button" data-account-deletion-open>Request</button>
                     <span class="security-row__chevron" aria-hidden="true"></span>
                   </li>
                 </ul>
 
-                <p class="security-center__note">Your account details remain private to your Archive.</p>
+	                <p class="security-center__note" data-security-status role="status" aria-live="polite">Your account details remain private and connected only to your Archive.</p>
               </div>
             </section>
 
@@ -4742,6 +4836,37 @@
       </div>
     </div>
 
+    <div class="avatar-modal saved-reading-modal" data-change-password-modal hidden>
+      <button class="avatar-modal__backdrop saved-reading-modal__backdrop" type="button" data-change-password-cancel aria-label="Cancel password change"></button>
+      <article class="saved-reading-modal__dialog change-password-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="change-password-modal-title">
+        <header class="saved-reading-modal__header">
+          <h3 id="change-password-modal-title">Change Password</h3>
+          <button class="saved-reading-modal__close" type="button" data-change-password-cancel aria-label="Close password change">
+            <span class="avatar-modal__close-icon" aria-hidden="true"></span>
+          </button>
+        </header>
+        <div class="saved-reading-modal__content change-password-modal__copy">
+          <p>Choose a new password for your Astral Veil account.</p>
+          <form class="change-password-form" id="change-password-form" data-change-password-form>
+            <label class="change-password-form__field">
+              <span>New Password</span>
+              <input name="new_password" type="password" autocomplete="new-password" minlength="8" required data-change-password-new />
+            </label>
+            <label class="change-password-form__field">
+              <span>Confirm New Password</span>
+              <input name="confirm_password" type="password" autocomplete="new-password" minlength="8" required data-change-password-confirm />
+            </label>
+            <p class="change-password-form__status" data-change-password-status role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <footer class="saved-reading-modal__footer">
+          <button class="card-action" type="button" data-change-password-cancel>Cancel</button>
+          <button class="card-action" type="button" data-change-password-security-email hidden>Send Security Email</button>
+          <button class="card-action" type="submit" form="change-password-form" data-change-password-submit>Update Password</button>
+        </footer>
+      </article>
+    </div>
+
     <div class="avatar-modal saved-reading-modal" data-account-deletion-modal hidden>
       <button class="avatar-modal__backdrop saved-reading-modal__backdrop" type="button" data-account-deletion-cancel aria-label="Cancel account deletion request"></button>
       <article class="saved-reading-modal__dialog account-deletion-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="account-deletion-modal-title">
@@ -4752,8 +4877,9 @@
           </button>
         </header>
         <div class="saved-reading-modal__content account-deletion-modal__copy">
-          <p>This will deactivate your Astral Veil account access and send a deletion request to the admin. Your archive will remain pending review until the request is completed.</p>
-          <p>Type DELETE to continue.</p>
+          <p>This sends an account deletion request to the Astral Veil admin team for review. It does not instantly erase your account data.</p>
+          <p>After the request is sent, your account may be marked pending review and you will be signed out while the request is handled.</p>
+          <p>Type DELETE to send the request.</p>
           <form class="account-deletion-form" id="account-deletion-form" data-account-deletion-form>
             <label class="account-deletion-form__field">
               <span>Confirmation</span>
@@ -4769,6 +4895,41 @@
         <footer class="saved-reading-modal__footer">
           <button class="card-action" type="button" data-account-deletion-cancel>Cancel</button>
           <button class="card-action" type="submit" form="account-deletion-form" data-account-deletion-submit>Request Deletion</button>
+        </footer>
+      </article>
+    </div>
+
+    <div class="avatar-modal saved-reading-modal" data-privacy-controls-modal hidden>
+      <button class="avatar-modal__backdrop saved-reading-modal__backdrop" type="button" data-privacy-controls-close aria-label="Close privacy controls"></button>
+      <article class="saved-reading-modal__dialog privacy-controls-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="privacy-controls-modal-title">
+        <header class="saved-reading-modal__header">
+          <h3 id="privacy-controls-modal-title">Privacy Controls</h3>
+          <button class="saved-reading-modal__close" type="button" data-privacy-controls-close aria-label="Close privacy controls">
+            <span class="avatar-modal__close-icon" aria-hidden="true"></span>
+          </button>
+        </header>
+        <div class="saved-reading-modal__content privacy-controls-modal__copy">
+          <p>Clear Gallery interaction records connected to your account. These actions only remove your personal rows from existing Gallery tables.</p>
+          <ul class="privacy-cleanup-list" aria-label="User data cleanup actions">
+            <li class="privacy-cleanup-action">
+              <div>
+                <h4>Clear Recently Viewed Gallery Records</h4>
+                <p>Remove your recent Gallery view history from this account.</p>
+              </div>
+              <button class="card-action" type="button" data-privacy-cleanup="recent">Clear Recent</button>
+            </li>
+            <li class="privacy-cleanup-action">
+              <div>
+                <h4>Clear Marked Gallery Records</h4>
+                <p>Remove records you marked in the Gallery from this account.</p>
+              </div>
+              <button class="card-action" type="button" data-privacy-cleanup="marked">Clear Marked</button>
+            </li>
+          </ul>
+          <p class="privacy-controls-status" data-privacy-controls-status role="status" aria-live="polite"></p>
+        </div>
+        <footer class="saved-reading-modal__footer">
+          <button class="card-action" type="button" data-privacy-controls-close>Close</button>
         </footer>
       </article>
     </div>

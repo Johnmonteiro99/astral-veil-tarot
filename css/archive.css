@@ -9475,6 +9475,25 @@ body.shelves-page .shelves-reading-desk {
   line-height: 1.1;
 }
 
+.gallery-trail-modal-subtitle,
+.gallery-trail-modal-description {
+  margin: 0;
+}
+
+.gallery-trail-modal-subtitle {
+  max-width: 56ch;
+  color: rgba(255, 229, 215, 0.78);
+  font-family: var(--archive-manuscript-font);
+  font-size: clamp(1rem, 2.2vw, 1.18rem);
+  line-height: 1.35;
+}
+
+.gallery-trail-modal-description {
+  max-width: 62ch;
+  color: rgba(255, 213, 217, 0.68);
+  line-height: 1.55;
+}
+
 .gallery-trail-summary span,
 .gallery-trail-modal-progress span {
   color: rgba(255, 213, 217, 0.68);
@@ -9484,7 +9503,34 @@ body.shelves-page .shelves-reading-desk {
   text-transform: uppercase;
 }
 
+.gallery-trail-modal-progress {
+  position: relative;
+  border: 1px solid rgba(255, 70, 95, 0.12);
+  border-radius: 14px;
+  padding: 0.72rem;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 146, 98, 0.08), transparent 42%),
+    rgba(8, 0, 5, 0.34);
+}
+
+.gallery-trail-modal-progress__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.8rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gallery-trail-modal-progress__meta strong {
+  color: rgba(255, 198, 174, 0.8);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .gallery-trail-progress {
+  position: relative;
   height: 6px;
   overflow: hidden;
   border-radius: 999px;
@@ -9498,6 +9544,27 @@ body.shelves-page .shelves-reading-desk {
   border-radius: inherit;
   background: linear-gradient(90deg, rgba(255, 70, 95, 0.86), rgba(255, 146, 98, 0.82));
   box-shadow: 0 0 14px rgba(255, 35, 65, 0.28);
+}
+
+.gallery-trail-progress.is-complete span,
+.gallery-trail-progress.is-assembling span {
+  background: linear-gradient(90deg, rgba(255, 70, 95, 0.9), rgba(255, 204, 146, 0.88), rgba(255, 105, 124, 0.92));
+  box-shadow:
+    0 0 16px rgba(255, 35, 65, 0.34),
+    0 0 26px rgba(255, 190, 110, 0.12);
+}
+
+.gallery-trail-progress.is-complete::after,
+.gallery-trail-progress.is-assembling::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 0%, rgba(255, 244, 220, 0.38) 45%, transparent 72%);
+  transform: translateX(-100%);
+}
+
+.gallery-trail-progress.is-assembling::after {
+  animation: galleryTrailSweep 780ms ease forwards;
 }
 
 .gallery-trail-list-pagination {
@@ -9595,27 +9662,85 @@ body.shelves-page .shelves-reading-desk {
 }
 
 .gallery-trail-fragment-grid {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.65rem;
   width: min(100%, 520px);
   margin-inline: auto;
+  isolation: isolate;
+}
+
+.gallery-trail-fragment-grid::before,
+.gallery-trail-fragment-grid::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.gallery-trail-fragment-grid::before {
+  inset: -1.2rem;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 35, 65, 0.16), transparent 58%),
+    radial-gradient(circle at 52% 60%, rgba(255, 190, 120, 0.06), transparent 62%);
+  opacity: 0.72;
+}
+
+.gallery-trail-fragment-grid::after {
+  z-index: 2;
+  inset: -0.3rem;
+  border-radius: 16px;
+  background: linear-gradient(110deg, transparent 0%, rgba(255, 236, 210, 0.28) 42%, transparent 70%);
+  opacity: 0;
+  transform: translateX(-110%);
+}
+
+.gallery-trail-fragment-grid.is-assembling::after {
+  opacity: 1;
+  animation: galleryTrailSweep 780ms ease forwards;
 }
 
 .gallery-trail-fragment {
   position: relative;
-  display: grid;
-  gap: 0.35rem;
+  display: block;
   aspect-ratio: 1 / 1;
   min-height: 0;
-  place-items: center;
   margin: 0;
   overflow: hidden;
   border: 1px solid rgba(255, 70, 95, 0.22);
-  border-radius: 10px;
+  border-radius: 12px;
   background:
     radial-gradient(circle at 50% 35%, rgba(255, 35, 65, 0.12), transparent 56%),
     rgba(8, 0, 4, 0.82);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 241, 214, 0.06),
+    0 12px 28px rgba(0, 0, 0, 0.25);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.gallery-trail-fragment:hover {
+  border-color: rgba(255, 116, 126, 0.44);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 241, 214, 0.1),
+    0 14px 30px rgba(0, 0, 0, 0.3),
+    0 0 22px rgba(255, 35, 65, 0.14);
+  transform: translateY(-2px);
+}
+
+.gallery-trail-fragment-grid.is-assembling .gallery-trail-fragment {
+  animation: galleryTrailFragmentAssemble 780ms ease forwards;
+}
+
+.gallery-trail-fragment__media {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  place-items: center;
 }
 
 .gallery-trail-fragment img {
@@ -9625,7 +9750,17 @@ body.shelves-page .shelves-reading-desk {
   object-fit: cover;
 }
 
-.gallery-trail-fragment.is-locked span {
+.gallery-trail-fragment.is-recovered::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 46%, rgba(8, 0, 4, 0.82) 100%),
+    radial-gradient(circle at 50% 12%, rgba(255, 245, 215, 0.08), transparent 42%);
+  pointer-events: none;
+}
+
+.gallery-trail-fragment.is-locked .gallery-trail-fragment__media > span {
   color: rgba(255, 213, 217, 0.58);
   font-size: 0.74rem;
   font-weight: 900;
@@ -9633,7 +9768,7 @@ body.shelves-page .shelves-reading-desk {
   text-transform: uppercase;
 }
 
-.gallery-trail-fragment.is-locked small {
+.gallery-trail-fragment.is-locked .gallery-trail-fragment__media small {
   max-width: 22ch;
   color: rgba(255, 213, 217, 0.42);
   font-size: 0.68rem;
@@ -9642,50 +9777,139 @@ body.shelves-page .shelves-reading-desk {
   text-align: center;
 }
 
-.gallery-trail-restored {
-  display: grid;
-  gap: 0.5rem;
-  margin: 0;
-  justify-items: center;
+.gallery-trail-fragment__meta {
+  position: absolute;
+  right: 0.55rem;
+  bottom: 0.5rem;
+  left: 0.55rem;
+  z-index: 1;
+  display: flex;
+  gap: 0.35rem;
+  align-items: end;
+  justify-content: space-between;
+  color: rgba(255, 241, 214, 0.92);
 }
 
-.gallery-trail-restored img {
-  display: block;
-  width: min(100%, 520px);
-  max-height: min(44vh, 360px);
-  object-fit: contain;
-  background: rgba(8, 0, 4, 0.72);
+.gallery-trail-fragment__meta strong,
+.gallery-trail-fragment__meta em {
+  border: 1px solid rgba(255, 198, 174, 0.16);
+  border-radius: 999px;
+  background: rgba(8, 0, 4, 0.62);
+  backdrop-filter: blur(10px);
 }
 
-.gallery-trail-restored figcaption {
-  color: rgba(255, 190, 198, 0.76);
-  font-size: 0.72rem;
+.gallery-trail-fragment__meta strong {
+  min-width: 0;
+  overflow: hidden;
+  padding: 0.28rem 0.42rem;
+  font-family: var(--archive-manuscript-font);
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gallery-trail-fragment__meta em {
+  flex: 0 0 auto;
+  padding: 0.25rem 0.4rem;
+  color: rgba(255, 198, 174, 0.74);
+  font-size: 0.58rem;
+  font-style: normal;
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.gallery-trail-restored p {
-  display: none;
-  margin: 0;
-  color: rgba(255, 213, 217, 0.68);
-  font-size: 0.82rem;
-  line-height: 1.4;
+.gallery-trail-fragment.is-locked .gallery-trail-fragment__meta {
+  opacity: 0.72;
 }
 
-.gallery-trail-restored.is-image-missing img,
-.gallery-trail-restored.is-image-missing figcaption {
-  display: none;
+.gallery-trail-reveal-button {
+  position: relative;
+  justify-self: center;
+  min-height: 42px;
+  min-width: min(100%, 260px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 198, 174, 0.26);
+  border-radius: 999px;
+  padding: 0 1.2rem;
+  color: rgba(255, 241, 214, 0.94);
+  background:
+    linear-gradient(135deg, rgba(130, 12, 30, 0.68), rgba(24, 3, 10, 0.88)),
+    rgba(10, 0, 5, 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 241, 214, 0.12),
+    0 0 22px rgba(255, 35, 65, 0.14);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
 
-.gallery-trail-restored.is-image-missing p {
-  display: block;
+.gallery-trail-reveal-button::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  bottom: -40%;
+  left: -55%;
+  width: 44%;
+  background: linear-gradient(100deg, transparent, rgba(255, 244, 220, 0.3), transparent);
+  transform: skewX(-18deg);
+}
+
+.gallery-trail-reveal-button:hover,
+.gallery-trail-reveal-button:focus-visible {
+  outline: none;
+  border-color: rgba(255, 214, 182, 0.46);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 241, 214, 0.18),
+    0 0 26px rgba(255, 35, 65, 0.2),
+    0 0 18px rgba(255, 190, 120, 0.08);
+  transform: translateY(-1px);
+}
+
+.gallery-trail-reveal-button:hover::before,
+.gallery-trail-reveal-button:focus-visible::before {
+  animation: galleryTrailButtonSweep 760ms ease forwards;
+}
+
+.gallery-trail-reveal-button:disabled {
+  border-color: rgba(255, 213, 217, 0.12);
+  color: rgba(255, 213, 217, 0.48);
+  background: rgba(8, 0, 4, 0.54);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.gallery-trail-reveal-button:disabled::before {
+  display: none;
 }
 
 @media (max-width: 420px) {
   .gallery-trail-fragment-grid {
     width: min(100%, 300px);
     gap: 0.5rem;
+  }
+
+  .gallery-trail-fragment__meta {
+    right: 0.4rem;
+    bottom: 0.4rem;
+    left: 0.4rem;
+    display: grid;
+    align-items: start;
+  }
+
+  .gallery-trail-fragment__meta strong,
+  .gallery-trail-fragment__meta em {
+    justify-self: start;
   }
 }
 
@@ -9712,6 +9936,196 @@ body.shelves-page .shelves-reading-desk {
   border-color: rgba(255, 116, 126, 0.52);
   box-shadow: 0 0 18px rgba(210, 31, 50, 0.22);
   outline: none;
+}
+
+.gallery-trail-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 2rem);
+}
+
+.gallery-trail-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(115, 5, 24, 0.28), transparent 48%),
+    rgba(0, 0, 0, 0.86);
+  cursor: pointer;
+}
+
+.gallery-trail-lightbox__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(94vw, 980px);
+  max-height: 92vh;
+  border: 1px solid rgba(255, 116, 126, 0.22);
+  border-radius: 18px;
+  padding: clamp(0.8rem, 2vw, 1.1rem);
+  background:
+    linear-gradient(180deg, rgba(18, 0, 8, 0.82), rgba(5, 0, 3, 0.94)),
+    rgba(5, 0, 3, 0.94);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.62),
+    0 0 42px rgba(255, 35, 65, 0.16);
+}
+
+.gallery-trail-lightbox__close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 2;
+  min-height: 34px;
+  border: 1px solid rgba(255, 213, 217, 0.18);
+  border-radius: 999px;
+  padding: 0 0.72rem;
+  color: rgba(255, 241, 214, 0.86);
+  background: rgba(8, 0, 4, 0.72);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gallery-trail-lightbox__close:hover,
+.gallery-trail-lightbox__close:focus-visible {
+  outline: none;
+  border-color: rgba(255, 198, 174, 0.38);
+  box-shadow: 0 0 18px rgba(255, 35, 65, 0.18);
+}
+
+.gallery-trail-lightbox__figure {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  justify-items: center;
+}
+
+.gallery-trail-lightbox__figure img {
+  display: block;
+  max-width: 100%;
+  max-height: min(74vh, 760px);
+  border-radius: 12px;
+  object-fit: contain;
+  background: rgba(8, 0, 4, 0.72);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.38),
+    0 0 22px rgba(255, 70, 95, 0.12);
+}
+
+.gallery-trail-lightbox__figure figcaption {
+  max-width: 62ch;
+  color: rgba(255, 229, 215, 0.78);
+  font-family: var(--archive-manuscript-font);
+  font-size: clamp(0.94rem, 2vw, 1.1rem);
+  line-height: 1.4;
+  text-align: center;
+}
+
+.gallery-trail-lightbox__figure p {
+  display: none;
+  margin: 0;
+  color: rgba(255, 213, 217, 0.68);
+  font-size: 0.86rem;
+  text-align: center;
+}
+
+.gallery-trail-lightbox__figure.is-image-missing img,
+.gallery-trail-lightbox__figure.is-image-missing figcaption {
+  display: none;
+}
+
+.gallery-trail-lightbox__figure.is-image-missing p {
+  display: block;
+}
+
+@keyframes galleryTrailSweep {
+  0% {
+    transform: translateX(-110%);
+  }
+
+  100% {
+    transform: translateX(110%);
+  }
+}
+
+@keyframes galleryTrailButtonSweep {
+  0% {
+    left: -55%;
+  }
+
+  100% {
+    left: 115%;
+  }
+}
+
+@keyframes galleryTrailFragmentAssemble {
+  0%,
+  100% {
+    filter: brightness(1);
+    transform: translate(0, 0) scale(1);
+  }
+
+  45% {
+    filter: brightness(1.18);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 241, 214, 0.12),
+      0 0 26px rgba(255, 35, 65, 0.24);
+    transform: translate(var(--gallery-trail-shift-x, 0), var(--gallery-trail-shift-y, 0)) scale(1.015);
+  }
+}
+
+.gallery-trail-fragment-grid.is-assembling .gallery-trail-fragment:nth-child(1) {
+  --gallery-trail-shift-x: 4px;
+  --gallery-trail-shift-y: 4px;
+}
+
+.gallery-trail-fragment-grid.is-assembling .gallery-trail-fragment:nth-child(2) {
+  --gallery-trail-shift-x: -4px;
+  --gallery-trail-shift-y: 4px;
+}
+
+.gallery-trail-fragment-grid.is-assembling .gallery-trail-fragment:nth-child(3) {
+  --gallery-trail-shift-x: 4px;
+  --gallery-trail-shift-y: -4px;
+}
+
+.gallery-trail-fragment-grid.is-assembling .gallery-trail-fragment:nth-child(4) {
+  --gallery-trail-shift-x: -4px;
+  --gallery-trail-shift-y: -4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-trail-progress.is-assembling::after,
+  .gallery-trail-fragment-grid.is-assembling::after,
+  .gallery-trail-fragment-grid.is-assembling .gallery-trail-fragment,
+  .gallery-trail-reveal-button:hover::before,
+  .gallery-trail-reveal-button:focus-visible::before {
+    animation: none;
+  }
+
+  .gallery-trail-fragment,
+  .gallery-trail-reveal-button {
+    transition: none;
+  }
+}
+
+body.reduce-motion .gallery-trail-progress.is-assembling::after,
+body.reduce-motion .gallery-trail-fragment-grid.is-assembling::after,
+body.reduce-motion .gallery-trail-fragment-grid.is-assembling .gallery-trail-fragment,
+body.reduce-motion .gallery-trail-reveal-button:hover::before,
+body.reduce-motion .gallery-trail-reveal-button:focus-visible::before {
+  animation: none;
+}
+
+body.reduce-motion .gallery-trail-fragment,
+body.reduce-motion .gallery-trail-reveal-button {
+  transition: none;
 }
 
 .gallery-records-tools button {

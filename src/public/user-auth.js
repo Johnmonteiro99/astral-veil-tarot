@@ -1,5 +1,5 @@
 import { getCurrentUser, signIn, signUp } from '../services/auth.js';
-import { isSupabaseConfigured } from '../services/supabase-client.js';
+import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
 
 const form = document.querySelector('[data-user-auth-form]');
 const message = document.querySelector('[data-auth-message]');
@@ -12,6 +12,13 @@ const passwordInput = form.querySelector('input[name="password"]');
 const passwordToggle = document.querySelector('[data-password-toggle]');
 const forgotPasswordLink = document.querySelector('[data-forgot-password]');
 const authOptions = document.querySelector('[data-auth-options]');
+const loginWelcome = document.querySelector('[data-login-welcome]');
+const forgotPasswordModal = document.querySelector('[data-forgot-password-modal]');
+const forgotPasswordForm = document.querySelector('[data-forgot-password-form]');
+const forgotPasswordInput = document.querySelector('[data-forgot-password-email]');
+const forgotPasswordStatus = document.querySelector('[data-forgot-password-status]');
+const forgotPasswordSubmit = document.querySelector('[data-forgot-password-submit]');
+const forgotPasswordCancelButtons = Array.from(document.querySelectorAll('[data-forgot-password-cancel]'));
 const returnToStorageKey = 'astralVeilReturnTo';
 const defaultPublicAuthRedirect = 'index.html';
 const blockedPublicReturnPaths = new Set([
@@ -21,6 +28,7 @@ const blockedPublicReturnPaths = new Set([
 ]);
 
 let authMode = 'login';
+let isSendingPasswordReset = false;
 
 function getSafeReturnTo(value) {
   if (!value) {
@@ -95,6 +103,95 @@ function setMessage(text, type = '') {
   message.hidden = !text;
 }
 
+function setForgotPasswordStatus(text = '', type = '') {
+  if (!forgotPasswordStatus) {
+    return;
+  }
+
+  forgotPasswordStatus.textContent = text;
+  forgotPasswordStatus.dataset.messageType = type;
+  forgotPasswordStatus.hidden = !text;
+}
+
+function setForgotPasswordSaving(isSaving) {
+  isSendingPasswordReset = isSaving;
+
+  if (forgotPasswordSubmit) {
+    forgotPasswordSubmit.disabled = isSaving;
+    forgotPasswordSubmit.textContent = isSaving ? 'Sending...' : 'Send Reset Link';
+  }
+
+  forgotPasswordCancelButtons.forEach((button) => {
+    button.disabled = isSaving;
+  });
+}
+
+function setForgotPasswordModalOpen(isOpen) {
+  if (!forgotPasswordModal) {
+    return;
+  }
+
+  forgotPasswordModal.hidden = !isOpen;
+  document.body.classList.toggle('auth-modal-open', isOpen);
+
+  if (!isOpen) {
+    forgotPasswordForm?.reset();
+    forgotPasswordInput?.removeAttribute('aria-invalid');
+    setForgotPasswordSaving(false);
+    setForgotPasswordStatus('');
+    forgotPasswordLink?.focus({ preventScroll: true });
+    return;
+  }
+
+  setForgotPasswordStatus('');
+  forgotPasswordInput?.focus({ preventScroll: true });
+}
+
+function getPasswordResetRedirectUrl() {
+  const resetUrl = new URL('account.html', window.location.href);
+
+  resetUrl.searchParams.set('changePassword', '1');
+  resetUrl.hash = 'privacy-security';
+  return resetUrl.href;
+}
+
+async function sendPasswordResetEmail(event) {
+  event.preventDefault();
+
+  const supabase = getSupabaseClient();
+  const email = String(forgotPasswordInput?.value || '').trim();
+
+  forgotPasswordInput?.removeAttribute('aria-invalid');
+
+  if (!email) {
+    forgotPasswordInput?.setAttribute('aria-invalid', 'true');
+    setForgotPasswordStatus('Enter your account email.', 'error');
+    return;
+  }
+
+  if (!supabase) {
+    setForgotPasswordStatus('Password reset is not available right now. Please try again later.', 'error');
+    return;
+  }
+
+  setForgotPasswordSaving(true);
+  setForgotPasswordStatus('Sending reset link...');
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: getPasswordResetRedirectUrl(),
+  });
+
+  setForgotPasswordSaving(false);
+
+  if (error) {
+    console.error('Forgot password reset email failed:', error);
+    setForgotPasswordStatus('We could not send the reset link. Please check the email address and try again.', 'error');
+    return;
+  }
+
+  setForgotPasswordStatus('If an account exists for that email, a reset link has been sent.', 'success');
+}
+
 function getAuthNoticeMessage() {
   const notice = new URLSearchParams(window.location.search).get('notice');
 
@@ -122,9 +219,14 @@ function setMode(nextMode) {
   displayNameField.hidden = !isSignup;
   displayNameField.querySelector('input').disabled = !isSignup;
   authOptions.hidden = isSignup;
+  if (loginWelcome) {
+    loginWelcome.textContent = isSignup
+      ? 'Begin your Astral Veil journey'
+      : 'Welcome back to Astral Veil';
+  }
   passwordInput.autocomplete = isSignup ? 'new-password' : 'current-password';
-  submitButton.textContent = isSignup ? 'Sign Up' : 'Log In';
-  modeTitle.textContent = isSignup ? 'Sign Up' : 'Log In';
+  submitButton.textContent = isSignup ? 'Sign Up' : 'Sign In';
+  modeTitle.textContent = isSignup ? 'Sign Up' : 'Sign In';
   modeCopy.textContent = isSignup
     ? 'Create an account to save your discoveries when progression opens.'
     : 'Return to your archive and keep your thread close.';
@@ -156,8 +258,18 @@ passwordToggle.addEventListener('click', () => {
 
 forgotPasswordLink.addEventListener('click', (event) => {
   event.preventDefault();
-  setMessage('Password reset will be available soon.', 'success');
+  setForgotPasswordModalOpen(true);
 });
+
+forgotPasswordCancelButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    if (!isSendingPasswordReset) {
+      setForgotPasswordModalOpen(false);
+    }
+  });
+});
+
+forgotPasswordForm?.addEventListener('submit', sendPasswordResetEmail);
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -180,11 +292,12 @@ form.addEventListener('submit', async (event) => {
     : await signIn(email, password);
 
   if (result.error) {
+    console.error(`${authMode === 'signup' ? 'Sign up' : 'Sign in'} failed:`, result.error);
     submitButton.disabled = false;
     const fallback = authMode === 'signup'
       ? 'We could not create that account. Please check your details and try again.'
       : 'We could not sign you in. Please check your email and password.';
-    setMessage(result.error.message || fallback, 'error');
+    setMessage(fallback, 'error');
     return;
   }
 
@@ -206,3 +319,11 @@ if (!isSupabaseConfigured()) {
   }
   redirectIfSignedIn();
 }
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && forgotPasswordModal && !forgotPasswordModal.hidden) {
+    if (!isSendingPasswordReset) {
+      setForgotPasswordModalOpen(false);
+    }
+  }
+});

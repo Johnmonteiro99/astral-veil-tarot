@@ -104,6 +104,22 @@ const contactSubjectInput = document.querySelector('[data-contact-subject]');
 const contactMessageInput = document.querySelector('[data-contact-message]');
 const contactSubmitButton = document.querySelector('[data-contact-submit]');
 const contactStatus = document.querySelector('[data-contact-status]');
+const securityAccountEmail = document.querySelector('[data-security-account-email]');
+const securityStatus = document.querySelector('[data-security-status]');
+const passwordResetSendButton = document.querySelector('[data-password-reset-send]');
+const changePasswordModal = document.querySelector('[data-change-password-modal]');
+const changePasswordForm = document.querySelector('[data-change-password-form]');
+const changePasswordCancelButtons = Array.from(document.querySelectorAll('[data-change-password-cancel]'));
+const changePasswordNewInput = document.querySelector('[data-change-password-new]');
+const changePasswordConfirmInput = document.querySelector('[data-change-password-confirm]');
+const changePasswordSubmitButton = document.querySelector('[data-change-password-submit]');
+const changePasswordSecurityEmailButton = document.querySelector('[data-change-password-security-email]');
+const changePasswordStatus = document.querySelector('[data-change-password-status]');
+const privacyControlsOpenButton = document.querySelector('[data-privacy-controls-open]');
+const privacyControlsModal = document.querySelector('[data-privacy-controls-modal]');
+const privacyControlsCloseButtons = Array.from(document.querySelectorAll('[data-privacy-controls-close]'));
+const privacyCleanupButtons = Array.from(document.querySelectorAll('[data-privacy-cleanup]'));
+const privacyControlsStatus = document.querySelector('[data-privacy-controls-status]');
 const accountDeletionOpenButton = document.querySelector('[data-account-deletion-open]');
 const accountDeletionModal = document.querySelector('[data-account-deletion-modal]');
 const accountDeletionForm = document.querySelector('[data-account-deletion-form]');
@@ -173,10 +189,25 @@ const contactEmailMaxLength = 254;
 const contactSubjectMaxLength = 160;
 const contactMessageMaxLength = 5000;
 const accountDeletionReasonMaxLength = 1000;
+const privacyCleanupActions = {
+  recent: {
+    table: 'user_gallery_recent_records',
+    label: 'recently viewed Gallery records',
+    confirmMessage: 'Clear your recently viewed Gallery records? This only removes your account history for Gallery records.'
+  },
+  marked: {
+    table: 'user_gallery_marked_records',
+    label: 'marked Gallery records',
+    confirmMessage: 'Clear your marked Gallery records? This only removes your account marks in the Gallery.'
+  },
+};
 const maxAvatarInputFileSize = 8 * 1024 * 1024;
 const targetAvatarUploadSize = 2 * 1024 * 1024;
 const maxAvatarImageSide = 800;
 const avatarCompressionQuality = 0.82;
+const changePasswordMinimumLength = 8;
+let isChangingPassword = false;
+let changePasswordCloseTimer = null;
 const allowedAvatarTypes = new Map([
   ['image/png', 'png'],
   ['image/jpeg', 'jpg'],
@@ -1083,6 +1114,287 @@ function populateContactEmail(user) {
   }
 
   contactEmailInput.value = user?.email || '';
+}
+
+function updateSecurityAccountEmail(user) {
+  if (securityAccountEmail) {
+    securityAccountEmail.textContent = user?.email || 'No email available';
+  }
+}
+
+function setSecurityStatus(message = '', type = '') {
+  if (!securityStatus) {
+    return;
+  }
+
+  securityStatus.textContent = message || 'Your account details remain private and connected only to your Archive.';
+  securityStatus.classList.toggle('is-success', type === 'success');
+  securityStatus.classList.toggle('is-error', type === 'error');
+}
+
+function setChangePasswordStatus(message = '', type = '') {
+  if (!changePasswordStatus) {
+    return;
+  }
+
+  changePasswordStatus.textContent = message;
+  changePasswordStatus.classList.toggle('is-success', type === 'success');
+  changePasswordStatus.classList.toggle('is-error', type === 'error');
+}
+
+function setChangePasswordSaving(isSaving) {
+  isChangingPassword = isSaving;
+
+  if (changePasswordSubmitButton) {
+    changePasswordSubmitButton.disabled = isSaving;
+    changePasswordSubmitButton.textContent = isSaving ? 'Updating...' : 'Update Password';
+  }
+
+  changePasswordCancelButtons.forEach((button) => {
+    button.disabled = isSaving;
+  });
+}
+
+function setChangePasswordModalOpen(isOpen) {
+  if (!changePasswordModal) {
+    return;
+  }
+
+  window.clearTimeout(changePasswordCloseTimer);
+  changePasswordModal.hidden = !isOpen;
+  document.body.classList.toggle('change-password-modal-open', isOpen);
+
+  if (!isOpen) {
+    changePasswordForm?.reset();
+    changePasswordNewInput?.removeAttribute('aria-invalid');
+    changePasswordConfirmInput?.removeAttribute('aria-invalid');
+    if (changePasswordSecurityEmailButton) {
+      changePasswordSecurityEmailButton.hidden = true;
+    }
+    setChangePasswordSaving(false);
+    setChangePasswordStatus('');
+    passwordResetSendButton?.focus({ preventScroll: true });
+    return;
+  }
+
+  if (!activeUser) {
+    setChangePasswordStatus('Please log in again to change your password.', 'error');
+    if (changePasswordSubmitButton) {
+      changePasswordSubmitButton.disabled = true;
+    }
+    if (changePasswordSecurityEmailButton) {
+      changePasswordSecurityEmailButton.hidden = true;
+    }
+  } else {
+    setChangePasswordStatus('');
+    if (changePasswordSubmitButton) {
+      changePasswordSubmitButton.disabled = false;
+    }
+    if (changePasswordSecurityEmailButton) {
+      changePasswordSecurityEmailButton.hidden = true;
+    }
+  }
+
+  changePasswordNewInput?.focus({ preventScroll: true });
+}
+
+function validateChangePasswordForm() {
+  const newPassword = String(changePasswordNewInput?.value || '');
+  const confirmPassword = String(changePasswordConfirmInput?.value || '');
+  let message = '';
+
+  changePasswordNewInput?.removeAttribute('aria-invalid');
+  changePasswordConfirmInput?.removeAttribute('aria-invalid');
+
+  if (!newPassword) {
+    message = 'Enter a new password.';
+    changePasswordNewInput?.setAttribute('aria-invalid', 'true');
+  } else if (!confirmPassword) {
+    message = 'Confirm your new password.';
+    changePasswordConfirmInput?.setAttribute('aria-invalid', 'true');
+  } else if (newPassword.length < changePasswordMinimumLength) {
+    message = 'Use at least 8 characters for your new password.';
+    changePasswordNewInput?.setAttribute('aria-invalid', 'true');
+  } else if (newPassword !== confirmPassword) {
+    message = 'The passwords do not match.';
+    changePasswordConfirmInput?.setAttribute('aria-invalid', 'true');
+  }
+
+  if (message) {
+    setChangePasswordStatus(message, 'error');
+    return null;
+  }
+
+  return newPassword;
+}
+
+function isReauthenticationRequiredError(error) {
+  const message = String(error?.message || error?.name || error?.code || '').toLowerCase();
+
+  return message.includes('reauth') ||
+    message.includes('re-auth') ||
+    message.includes('nonce') ||
+    message.includes('recent') ||
+    message.includes('security');
+}
+
+function setPrivacyControlsStatus(message = '', type = '') {
+  if (!privacyControlsStatus) {
+    return;
+  }
+
+  privacyControlsStatus.textContent = message;
+  privacyControlsStatus.classList.toggle('is-success', type === 'success');
+  privacyControlsStatus.classList.toggle('is-error', type === 'error');
+}
+
+function setPrivacyControlsModalOpen(isOpen) {
+  if (!privacyControlsModal) {
+    return;
+  }
+
+  privacyControlsModal.hidden = !isOpen;
+  document.body.classList.toggle('privacy-controls-modal-open', isOpen);
+
+  if (!isOpen) {
+    setPrivacyControlsStatus('');
+    privacyCleanupButtons.forEach((button) => {
+      button.disabled = false;
+      button.textContent = button.dataset.originalText || button.textContent;
+      delete button.dataset.originalText;
+    });
+    privacyControlsOpenButton?.focus({ preventScroll: true });
+    return;
+  }
+
+  privacyCleanupButtons[0]?.focus({ preventScroll: true });
+}
+
+async function sendPasswordSecurityEmail() {
+  const supabase = getSupabaseClient();
+  const email = activeUser?.email || '';
+
+  if (!supabase || !email) {
+    setChangePasswordStatus('Please log in again to change your password.', 'error');
+    return false;
+  }
+
+  if (changePasswordSecurityEmailButton) {
+    changePasswordSecurityEmailButton.disabled = true;
+    changePasswordSecurityEmailButton.textContent = 'Sending...';
+  }
+
+  setChangePasswordStatus('Sending security email...');
+
+  const { error } = typeof supabase.auth.reauthenticate === 'function'
+    ? await supabase.auth.reauthenticate()
+    : await supabase.auth.resetPasswordForEmail(email);
+
+  if (changePasswordSecurityEmailButton) {
+    changePasswordSecurityEmailButton.disabled = false;
+    changePasswordSecurityEmailButton.textContent = 'Send Security Email';
+  }
+
+  if (error) {
+    console.error('Password security email failed:', error);
+    setChangePasswordStatus('We could not send the security email. Please try again in a moment.', 'error');
+    return false;
+  }
+
+  setChangePasswordStatus('Security email sent. Follow the email instructions, then return to update your password.', 'success');
+  return true;
+}
+
+async function handleChangePasswordSubmit(event) {
+  event.preventDefault();
+
+  const supabase = getSupabaseClient();
+  const newPassword = validateChangePasswordForm();
+
+  if (!activeUser || !supabase) {
+    setChangePasswordStatus('Please log in again to change your password.', 'error');
+    return;
+  }
+
+  if (!newPassword) {
+    return;
+  }
+
+  setChangePasswordSaving(true);
+  setChangePasswordStatus('Updating your password...');
+
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+  setChangePasswordSaving(false);
+
+  if (error) {
+    console.error('Password update failed:', error);
+
+    if (isReauthenticationRequiredError(error)) {
+      setChangePasswordStatus('For your security, confirm this change through your email before choosing a new password.', 'error');
+      if (changePasswordSecurityEmailButton) {
+        changePasswordSecurityEmailButton.hidden = false;
+        changePasswordSecurityEmailButton.focus({ preventScroll: true });
+      }
+      return;
+    }
+
+    setChangePasswordStatus('We could not update your password. Please try again in a moment.', 'error');
+    return;
+  }
+
+  if (changePasswordSecurityEmailButton) {
+    changePasswordSecurityEmailButton.hidden = true;
+  }
+  changePasswordForm?.reset();
+  setChangePasswordStatus('Your password has been updated.', 'success');
+  changePasswordCloseTimer = window.setTimeout(() => {
+    setChangePasswordModalOpen(false);
+  }, 1400);
+}
+
+async function clearPrivacyData(actionKey, button) {
+  const action = privacyCleanupActions[actionKey];
+  const supabase = getSupabaseClient();
+
+  if (!action) {
+    return;
+  }
+
+  if (!activeUser || !supabase) {
+    setPrivacyControlsStatus('Privacy cleanup is not available right now.', 'error');
+    return;
+  }
+
+  if (!window.confirm(action.confirmMessage)) {
+    return;
+  }
+
+  if (button) {
+    button.disabled = true;
+    button.dataset.originalText = button.textContent;
+    button.textContent = 'Clearing...';
+  }
+
+  setPrivacyControlsStatus(`Clearing ${action.label}...`);
+
+  const { error } = await supabase
+    .from(action.table)
+    .delete()
+    .eq('user_id', activeUser.id);
+
+  if (button) {
+    button.disabled = false;
+    button.textContent = button.dataset.originalText || 'Clear';
+  }
+
+  if (error) {
+    console.error(`Privacy cleanup failed for ${action.table}:`, error);
+    setPrivacyControlsStatus(`We could not clear your ${action.label}. Please try again in a moment.`, 'error');
+    return;
+  }
+
+  setPrivacyControlsStatus(`Your ${action.label} have been cleared.`, 'success');
 }
 
 function applyContactTopicSubject() {
@@ -3514,6 +3826,23 @@ function showHashAccountSection() {
   setMobileNavOpen(false);
 }
 
+function shouldOpenChangePasswordFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+
+  return /^(1|true|yes|open)$/i.test(params.get('changePassword') || '');
+}
+
+function clearChangePasswordUrlFlag() {
+  const url = new URL(window.location.href);
+
+  if (!url.searchParams.has('changePassword')) {
+    return;
+  }
+
+  url.searchParams.delete('changePassword');
+  window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+}
+
 function setMobileNavOpen(isOpen) {
   accountNav?.classList.toggle('is-open', isOpen);
   accountNavToggle?.setAttribute('aria-expanded', String(isOpen));
@@ -3553,6 +3882,7 @@ async function loadAccount() {
   await loadProfileUnlocks();
   await ensureRestrictedWingProfileRewards();
   updateAccountProfileDisplay(activeProfile, user);
+  updateSecurityAccountEmail(user);
 
   adminLink.hidden = !isAdmin;
   loadingPanel.hidden = true;
@@ -3566,6 +3896,12 @@ async function loadAccount() {
     loadOverviewActivity();
   });
   showHashAccountSection();
+
+  if (shouldOpenChangePasswordFromUrl()) {
+    setAccountSectionHash('privacy-security');
+    window.setTimeout(() => setChangePasswordModalOpen(true), 0);
+    clearChangePasswordUrlFlag();
+  }
 }
 
 async function handleLogout(event) {
@@ -3670,6 +4006,38 @@ contactForm?.addEventListener('submit', async (event) => {
   setContactStatus('Your message has been sent. We’ll get back to you soon.', 'success');
 });
 
+passwordResetSendButton?.addEventListener('click', () => {
+  setChangePasswordModalOpen(true);
+});
+
+changePasswordCancelButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    if (!isChangingPassword) {
+      setChangePasswordModalOpen(false);
+    }
+  });
+});
+
+changePasswordForm?.addEventListener('submit', handleChangePasswordSubmit);
+
+changePasswordSecurityEmailButton?.addEventListener('click', sendPasswordSecurityEmail);
+
+privacyControlsOpenButton?.addEventListener('click', () => {
+  setPrivacyControlsModalOpen(true);
+});
+
+privacyControlsCloseButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    setPrivacyControlsModalOpen(false);
+  });
+});
+
+privacyCleanupButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    clearPrivacyData(button.dataset.privacyCleanup, button);
+  });
+});
+
 accountDeletionOpenButton?.addEventListener('click', () => {
   setAccountDeletionModalOpen(true);
 });
@@ -3705,7 +4073,7 @@ accountDeletionForm?.addEventListener('submit', async (event) => {
   if (accountDeletionSubmitButton) {
     accountDeletionSubmitButton.disabled = true;
   }
-  setAccountDeletionStatus('Sending deletion request...');
+  setAccountDeletionStatus('Sending account deletion request for review...');
 
   const { error } = await supabase.rpc('request_account_deletion', {
     p_user_email: activeUser.email || '',
@@ -3721,7 +4089,7 @@ accountDeletionForm?.addEventListener('submit', async (event) => {
     return;
   }
 
-  setAccountDeletionStatus('Deletion request sent. Signing you out...', 'success');
+  setAccountDeletionStatus('Deletion request sent for review. Signing you out...', 'success');
   await signOut();
   redirectToSignedOutNotice('account_deletion_requested');
 });
@@ -4444,8 +4812,25 @@ savedReadingModalCloseButtons.forEach((button) => {
 });
 
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && changePasswordModal && !changePasswordModal.hidden) {
+    if (!isChangingPassword) {
+      setChangePasswordModalOpen(false);
+    }
+    return;
+  }
+
   if (event.key === 'Escape' && savedReadingModal && !savedReadingModal.hidden) {
     closeSavedReadingModal();
+    return;
+  }
+
+  if (event.key === 'Escape' && privacyControlsModal && !privacyControlsModal.hidden) {
+    setPrivacyControlsModalOpen(false);
+    return;
+  }
+
+  if (event.key === 'Escape' && accountDeletionModal && !accountDeletionModal.hidden) {
+    setAccountDeletionModalOpen(false);
     return;
   }
 

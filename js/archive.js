@@ -48,6 +48,9 @@ let galleryRecordsUseFallback = false;
 let openGalleryRecordId = "";
 let galleryFeaturedIndex = 0;
 let openGalleryUtilityModal = "";
+let openGalleryTrailRestoredId = "";
+let galleryTrailRevealAnimatingId = "";
+let galleryTrailRevealTimer = null;
 const galleryRecentlyViewedRecords = [];
 const galleryMarkedRecordIds = new Set();
 const galleryUserState = {
@@ -1385,7 +1388,7 @@ function getGalleryImageErrorHandler(imageUrl) {
 }
 
 function getVisualTrailImageErrorHandler(imageUrl) {
-  return `console.warn('Visual trail image failed to load:', '${escapeHtml(imageUrl)}');this.closest('.gallery-trail-restored')?.classList.add('is-image-missing');`;
+  return `console.warn('Visual trail image failed to load:', '${escapeHtml(imageUrl)}');this.closest('.gallery-trail-restored, .gallery-trail-lightbox__figure')?.classList.add('is-image-missing');`;
 }
 
 async function fetchGalleryRecordsFromSupabase(supabase) {
@@ -4492,35 +4495,39 @@ function getCompletedGalleryVisualTrailRecords() {
 
       return recoveredIds.size >= total;
     })
-    .map((trail) => ({
-      id: `visual-trail-${trail.id}`,
-      slug: trail.slug || `visual-trail-${trail.id}`,
-      title: trail.title || "Restored Visual Trail",
-      description: trail.description || "",
-      lore_note: trail.lore_note || trail.description || "",
-      category: "Unknown Records",
-      image: trail.preview_image_url || trail.full_image_url,
-      previewImage: trail.preview_image_url || trail.full_image_url,
-      preview_image_url: trail.preview_image_url || trail.full_image_url,
-      fullImage: trail.full_image_url,
-      full_image_url: trail.full_image_url,
-      recordType: "unknown",
-      record_type: "unknown",
-      status: "recovered",
-      origin: "Visual Trail",
-      relatedRoom: "The Gallery",
-      related_room: "The Gallery",
-      is_active: true,
-      is_featured: false,
-      tags: ["Unknown Records", "Recovered", "Visual Trail"],
-      themes: ["Visual Trail"],
-      display_layout: "standard",
-      recovered: true,
-      sealed: false,
-      marked: false,
-      variant: "standard",
-      isVirtualTrailRecord: true
-    }));
+    .map((trail) => {
+      const normalizedTrail = getGalleryVisualTrailViewModel(trail);
+
+      return {
+        id: `visual-trail-${trail.id}`,
+        slug: trail.slug || `visual-trail-${trail.id}`,
+        title: normalizedTrail.title || "Restored Visual Trail",
+        description: normalizedTrail.description || "",
+        lore_note: normalizedTrail.description || "",
+        category: "Unknown Records",
+        image: trail.preview_image_url || normalizedTrail.fullImage,
+        previewImage: trail.preview_image_url || normalizedTrail.fullImage,
+        preview_image_url: trail.preview_image_url || normalizedTrail.fullImage,
+        fullImage: normalizedTrail.fullImage,
+        full_image_url: normalizedTrail.fullImage,
+        recordType: "unknown",
+        record_type: "unknown",
+        status: "recovered",
+        origin: "Visual Trail",
+        relatedRoom: "The Gallery",
+        related_room: "The Gallery",
+        is_active: true,
+        is_featured: false,
+        tags: ["Unknown Records", "Recovered", "Visual Trail"],
+        themes: ["Visual Trail"],
+        display_layout: "standard",
+        recovered: true,
+        sealed: false,
+        marked: false,
+        variant: "standard",
+        isVirtualTrailRecord: true
+      };
+    });
 }
 
 function syncSelectedGalleryVisualTrail(trailId = galleryVisualTrailState.selectedTrailId) {
@@ -4583,7 +4590,10 @@ function getGalleryRecordById(recordId) {
 }
 
 function updateGalleryModalOpenState() {
-  document.body.classList.toggle("is-gallery-record-modal-open", Boolean(openGalleryRecordId || openGalleryUtilityModal));
+  document.body.classList.toggle(
+    "is-gallery-record-modal-open",
+    Boolean(openGalleryRecordId || openGalleryUtilityModal || openGalleryTrailRestoredId || galleryTrailRevealAnimatingId)
+  );
 }
 
 function isGallerySupabaseRecordId(recordId) {
@@ -4997,6 +5007,22 @@ function openGalleryRecordModal(recordId) {
 function closeGalleryModals() {
   openGalleryRecordId = "";
   openGalleryUtilityModal = "";
+  openGalleryTrailRestoredId = "";
+  galleryTrailRevealAnimatingId = "";
+  if (galleryTrailRevealTimer) {
+    window.clearTimeout(galleryTrailRevealTimer);
+    galleryTrailRevealTimer = null;
+  }
+  updateGalleryModalOpenState();
+}
+
+function closeGalleryTrailRestoredOverlay() {
+  openGalleryTrailRestoredId = "";
+  galleryTrailRevealAnimatingId = "";
+  if (galleryTrailRevealTimer) {
+    window.clearTimeout(galleryTrailRevealTimer);
+    galleryTrailRevealTimer = null;
+  }
   updateGalleryModalOpenState();
 }
 
@@ -5589,6 +5615,108 @@ function getGalleryVisualTrailDisplayFragments(trail = galleryVisualTrailState.t
   return fragments;
 }
 
+const galleryFirstReflectionTrailCopy = {
+  title: "The First Reflection",
+  subtitle: "Two figures stood apart, though the record shows only one arrival.",
+  description: "The Archive first named this a meeting. Later notes call it a recurrence. No one has agreed on which side began the pattern.",
+  restoredCaption: "The Archive marked this image complete. The image did not.",
+  fragments: ["I. Arrival", "II. Answer", "III. Echo", "IV. Return"]
+};
+
+function shouldUseFirstReflectionTrailCopy(trail) {
+  const slug = String(trail?.slug || "").toLowerCase();
+  const title = String(trail?.title || "").toLowerCase();
+
+  return slug.includes("celestial-duality")
+    || slug.includes("first-reflection")
+    || slug.includes("spiral")
+    || title.includes("celestial duality")
+    || title.includes("first reflection")
+    || title.includes("spiral beyond");
+}
+
+function getGalleryVisualTrailViewModel(trail = galleryVisualTrailState.trail) {
+  const trailId = String(trail?.id || "");
+  const progress = getGalleryVisualTrailProgress(trail);
+  const recoveredIds = galleryUserState.user
+    ? galleryVisualTrailState.recoveredIdsByTrailId.get(trailId) || new Set()
+    : new Set();
+  const useFirstReflectionCopy = shouldUseFirstReflectionTrailCopy(trail);
+  const copy = useFirstReflectionCopy ? galleryFirstReflectionTrailCopy : {};
+  const fragments = getGalleryVisualTrailDisplayFragments(trail).map((fragment, index) => {
+    const fragmentId = String(fragment?.id || `missing-fragment-${index + 1}`);
+    const title = copy.fragments?.[index]
+      || fragment?.title
+      || `Fragment ${fragment?.fragment_number || index + 1}`;
+
+    return {
+      id: fragmentId,
+      title,
+      image: fragment?.fragment_image_url || fragment?.image || "",
+      recovered: recoveredIds.has(fragmentId),
+      hint: fragment?.hint_text || ""
+    };
+  });
+
+  return {
+    id: trailId,
+    title: copy.title || trail?.title || "Visual Trail",
+    subtitle: copy.subtitle || trail?.subtitle || "",
+    description: copy.description || trail?.description || trail?.lore_note || "The Archive is still assembling this visual trail.",
+    restoredCaption: copy.restoredCaption || trail?.restored_caption || trail?.restoredCaption || "Image restored.",
+    fullImage: trail?.full_image_url || trail?.fullImage || "",
+    progress,
+    fragments,
+    isComplete: Boolean(galleryUserState.user && progress.recovered >= progress.total),
+    isAssembling: Boolean(trailId && galleryTrailRevealAnimatingId === trailId)
+  };
+}
+
+function galleryPrefersReducedMotion() {
+  return document.body.classList.contains("reduce-motion")
+    || document.documentElement.dataset.reduceMotion === "true"
+    || Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches);
+}
+
+function revealGalleryVisualTrailRestoredImage() {
+  if (galleryTrailRevealAnimatingId) {
+    return;
+  }
+
+  const trailView = getGalleryVisualTrailViewModel();
+
+  if (!trailView.id || !trailView.isComplete || !trailView.fullImage) {
+    return;
+  }
+
+  if (galleryTrailRevealTimer) {
+    window.clearTimeout(galleryTrailRevealTimer);
+    galleryTrailRevealTimer = null;
+  }
+
+  openGalleryTrailRestoredId = "";
+
+  if (galleryPrefersReducedMotion()) {
+    galleryTrailRevealAnimatingId = "";
+    openGalleryTrailRestoredId = trailView.id;
+    updateGalleryModalOpenState();
+    renderArchiveRooms();
+    return;
+  }
+
+  galleryTrailRevealAnimatingId = trailView.id;
+  updateGalleryModalOpenState();
+  renderArchiveRooms();
+
+  galleryTrailRevealTimer = window.setTimeout(() => {
+    galleryTrailRevealTimer = null;
+    galleryTrailRevealAnimatingId = "";
+    openGalleryTrailRestoredId = trailView.id;
+    updateGalleryModalOpenState();
+    renderArchiveRooms();
+  }, 780);
+}
+
 function getGalleryVisualTrailStatus(progress) {
   if (progress.recovered >= progress.total) {
     return "Restored";
@@ -5617,11 +5745,12 @@ function renderGalleryVisualTrailDots(recoveredCount, totalFragments) {
 }
 
 function renderGalleryVisualTrailRow(trail, { asListItem = false } = {}) {
-  const progress = getGalleryVisualTrailProgress(trail);
+  const trailView = getGalleryVisualTrailViewModel(trail);
+  const progress = trailView.progress;
   const status = getGalleryVisualTrailStatus(progress);
-  const note = trail?.description || trail?.lore_note || "Recovered images are restored one fragment at a time.";
+  const note = trailView.description || "Recovered images are restored one fragment at a time.";
   const isComplete = progress.recovered >= progress.total;
-  const image = isComplete ? trail?.preview_image_url || trail?.full_image_url || "" : "";
+  const image = isComplete ? trail?.preview_image_url || trailView.fullImage || "" : "";
   const thumbState = isComplete ? "is-restored" : "is-locked";
 
   return `
@@ -5629,7 +5758,7 @@ function renderGalleryVisualTrailRow(trail, { asListItem = false } = {}) {
       ${asListItem ? "" : `<span class="gallery-trail-row__thumb ${thumbState}" aria-hidden="true">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" decoding="async" onerror="${getVisualTrailImageErrorHandler(image)}" />` : ""}</span>`}
       <span class="gallery-trail-row__main">
         <span class="gallery-trail-row__copy">
-          <strong>${escapeHtml(trail?.title || "Visual Trail")}</strong>
+          <strong>${escapeHtml(trailView.title || "Visual Trail")}</strong>
           ${asListItem ? `<em>${escapeHtml(note)}</em>` : ""}
         </span>
         <span class="gallery-trail-row__progress">
@@ -5740,10 +5869,6 @@ function renderGalleryRecordModal() {
 
 function renderGalleryVisualTrailModalContent() {
   const trail = galleryVisualTrailState.trail;
-  const fragments = getGalleryVisualTrailDisplayFragments(trail);
-  const progress = getGalleryVisualTrailProgress(trail);
-  const isComplete = galleryUserState.user && progress.recovered >= progress.total;
-  const note = trail?.lore_note || trail?.description || "The Archive is still assembling this visual trail.";
 
   if (!trail) {
     return `
@@ -5753,41 +5878,81 @@ function renderGalleryVisualTrailModalContent() {
     `;
   }
 
+  const trailView = getGalleryVisualTrailViewModel(trail);
+  const progress = trailView.progress;
+  const revealButtonLabel = trailView.isComplete && trailView.fullImage
+    ? "Reveal Restored Image"
+    : "Recover all fragments to restore the image";
+
   return `
     <p class="gallery-record-modal__eyebrow">Visual Trail</p>
-    <h2 id="gallery-utility-modal-title">${escapeHtml(trail.title || "Visual Trail")}</h2>
-    <p>${escapeHtml(note)}</p>
+    <h2 id="gallery-utility-modal-title">${escapeHtml(trailView.title || "Visual Trail")}</h2>
+    ${trailView.subtitle ? `<p class="gallery-trail-modal-subtitle">${escapeHtml(trailView.subtitle)}</p>` : ""}
+    <p class="gallery-trail-modal-description">${escapeHtml(trailView.description)}</p>
     <div class="gallery-trail-modal-progress">
-      <span>${progress.recovered} / ${progress.total} fragments recovered</span>
-      <div class="gallery-trail-progress" aria-hidden="true">
+      <div class="gallery-trail-modal-progress__meta">
+        <span>${progress.recovered} / ${progress.total} fragments recovered</span>
+        <strong>${trailView.isComplete ? "Restoration complete" : getGalleryVisualTrailStatus(progress)}</strong>
+      </div>
+      <div class="gallery-trail-progress${trailView.isComplete ? " is-complete" : ""}${trailView.isAssembling ? " is-assembling" : ""}" aria-hidden="true">
         <span style="width: ${progress.percent}%"></span>
       </div>
     </div>
-    <div class="gallery-trail-fragment-grid" aria-label="Visual trail fragments">
-      ${fragments.map((fragment) => {
-        const isRecovered = galleryVisualTrailState.recoveredIds.has(String(fragment.id || ""));
+    <div class="gallery-trail-fragment-grid${trailView.isAssembling ? " is-assembling" : ""}" aria-label="Visual trail fragments">
+      ${trailView.fragments.map((fragment) => {
         return `
-          <figure class="gallery-trail-fragment${isRecovered ? " is-recovered" : " is-locked"}">
-            ${isRecovered
-              ? `<img src="${escapeHtml(fragment.fragment_image_url)}" alt="${escapeHtml(fragment.title || `Fragment ${fragment.fragment_number}`)}" loading="lazy" decoding="async" onerror="${getVisualTrailImageErrorHandler(fragment.fragment_image_url)}" />`
-              : `<span>Fragment locked</span>${fragment.hint_text ? `<small>${escapeHtml(fragment.hint_text)}</small>` : ""}`}
+          <figure class="gallery-trail-fragment${fragment.recovered ? " is-recovered" : " is-locked"}">
+            <span class="gallery-trail-fragment__media" aria-hidden="${fragment.recovered ? "false" : "true"}">
+              ${fragment.recovered && fragment.image
+                ? `<img src="${escapeHtml(fragment.image)}" alt="${escapeHtml(fragment.title)}" loading="lazy" decoding="async" onerror="${getVisualTrailImageErrorHandler(fragment.image)}" />`
+                : `<span>Fragment locked</span>${fragment.hint ? `<small>${escapeHtml(fragment.hint)}</small>` : ""}`}
+            </span>
+            <figcaption class="gallery-trail-fragment__meta">
+              <strong>${escapeHtml(fragment.title)}</strong>
+              <em>${fragment.recovered ? "Recovered" : "Unrecovered"}</em>
+            </figcaption>
           </figure>
         `;
       }).join("")}
     </div>
-    ${isComplete && trail.full_image_url ? `
-      <figure class="gallery-trail-restored">
-        <img src="${escapeHtml(trail.full_image_url)}" alt="${escapeHtml(trail.title || "Restored visual trail")}" loading="lazy" decoding="async" onerror="${getVisualTrailImageErrorHandler(trail.full_image_url)}" />
-        <figcaption>Image restored.</figcaption>
-        <p>Restored image could not be loaded.</p>
-      </figure>
-    ` : isComplete ? `<p class="gallery-bottom-empty">Restored image could not be loaded.</p>` : ""}
+    <button class="gallery-trail-reveal-button" type="button" data-gallery-reveal-trail${trailView.isComplete && trailView.fullImage && !trailView.isAssembling ? "" : " disabled"}>
+      ${escapeHtml(revealButtonLabel)}
+    </button>
+    ${trailView.isComplete && !trailView.fullImage ? `<p class="gallery-bottom-empty">Restored image could not be loaded.</p>` : ""}
     ${galleryVisualTrailState.error ? `<p class="gallery-bottom-empty">${escapeHtml(galleryVisualTrailState.error)}</p>` : ""}
     ${galleryUserState.user
       ? progress.recovered < progress.total
         ? `<button class="gallery-trail-recover-button" type="button" data-gallery-recover-trail-fragment>Recover next fragment</button>`
         : ""
       : `<p class="gallery-bottom-empty">Sign in to recover visual fragments.</p>`}
+  `;
+}
+
+function renderGalleryVisualTrailRestoredOverlay() {
+  if (!openGalleryTrailRestoredId) {
+    return "";
+  }
+
+  const trail = galleryVisualTrailState.trails.find((item) => String(item.id || "") === String(openGalleryTrailRestoredId))
+    || galleryVisualTrailState.trail;
+  const trailView = getGalleryVisualTrailViewModel(trail);
+
+  if (!trailView.fullImage) {
+    return "";
+  }
+
+  return `
+    <div class="gallery-trail-lightbox is-open" role="presentation">
+      <button class="gallery-trail-lightbox__backdrop" type="button" data-gallery-trail-restored-close aria-label="Close restored image"></button>
+      <article class="gallery-trail-lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="gallery-trail-lightbox-title">
+        <button class="gallery-trail-lightbox__close" type="button" data-gallery-trail-restored-close aria-label="Close restored image">Close</button>
+        <figure class="gallery-trail-lightbox__figure">
+          <img src="${escapeHtml(trailView.fullImage)}" alt="${escapeHtml(`${trailView.title} restored image`)}" loading="eager" decoding="async" onerror="${getVisualTrailImageErrorHandler(trailView.fullImage)}" />
+          <figcaption id="gallery-trail-lightbox-title">${escapeHtml(trailView.restoredCaption)}</figcaption>
+          <p>Restored image could not be loaded.</p>
+        </figure>
+      </article>
+    </div>
   `;
 }
 
@@ -6039,6 +6204,7 @@ function renderGalleryRoom(room) {
       </figure>
       ${renderGalleryRecordModal()}
       ${renderGalleryUtilityModal()}
+      ${renderGalleryVisualTrailRestoredOverlay()}
     </div>
   `;
 }
@@ -6515,6 +6681,8 @@ document.addEventListener("click", (event) => {
   const galleryOpenTrailButton = event.target.closest("[data-gallery-open-trail]");
   const galleryTrailsPageButton = event.target.closest("[data-gallery-trails-page]");
   const galleryRecoverTrailButton = event.target.closest("[data-gallery-recover-trail-fragment]");
+  const galleryRevealTrailButton = event.target.closest("[data-gallery-reveal-trail]");
+  const galleryTrailRestoredClose = event.target.closest("[data-gallery-trail-restored-close]");
   const galleryMoreFiltersButton = event.target.closest("[data-gallery-more-filters]");
   const galleryFilterChip = event.target.closest("[data-gallery-filter]");
   const shelvesFilterButton = event.target.closest("[data-shelves-filter]");
@@ -6797,6 +6965,12 @@ document.addEventListener("click", (event) => {
     return;
   }
 
+  if (galleryTrailRestoredClose) {
+    closeGalleryTrailRestoredOverlay();
+    renderArchiveRooms();
+    return;
+  }
+
   if (galleryMarkRecordButton) {
     event.stopPropagation();
     toggleGalleryMarkedRecord(galleryMarkRecordButton.dataset.galleryMarkRecord);
@@ -6857,6 +7031,11 @@ document.addEventListener("click", (event) => {
 
   if (galleryRecoverTrailButton) {
     recoverNextGalleryTrailFragment();
+    return;
+  }
+
+  if (galleryRevealTrailButton) {
+    revealGalleryVisualTrailRestoredImage();
     return;
   }
 
@@ -6939,6 +7118,13 @@ document.addEventListener("change", (event) => {
 
 document.addEventListener("keydown", (event) => {
   const whisperRow = event.target.closest?.("[data-whisper-id]");
+
+  if (event.key === "Escape" && (openGalleryTrailRestoredId || galleryTrailRevealAnimatingId)) {
+    event.preventDefault();
+    closeGalleryTrailRestoredOverlay();
+    renderArchiveRooms();
+    return;
+  }
 
   if (event.key === "Escape" && (openGalleryRecordId || openGalleryUtilityModal)) {
     event.preventDefault();
