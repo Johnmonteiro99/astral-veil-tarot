@@ -28,6 +28,8 @@ async function getCachedCurrentUser() {
   return readingSaveState.currentUser;
 }
 
+// Saved readings are account-bound private data. Every query includes user_id,
+// and Supabase RLS must enforce the same owner check server-side.
 function getSaveContainer() {
   const threadSection = document.querySelector('[data-reading-thread-section]');
   if (threadSection) {

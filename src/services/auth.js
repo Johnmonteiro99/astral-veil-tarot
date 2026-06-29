@@ -70,6 +70,8 @@ export async function getCurrentUser() {
     return { user: null, error: getMissingClientError() };
   }
 
+  // Use getSession only as a cheap presence check; getUser validates the JWT
+  // with Supabase before protected pages trust the identity.
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
   if (sessionError) {
@@ -175,6 +177,8 @@ export async function requireAdmin({ redirectTo = '', redirectDelay = 0 } = {}) 
     };
   }
 
+  // Frontend admin gating is only for UX. Database writes still depend on
+  // Supabase RLS policies and the public.is_admin() helper in migrations.
   const { isAdmin, profile, error: profileError } = await isCurrentUserAdmin();
 
   if (profileError) {

@@ -631,7 +631,7 @@ const galleryVisualRecords = [
     id: "trio-study",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/trio-study.webp",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
     width: 1120,
     height: 1400,
     caption: "The Archive has recovered the image, but not its name."
@@ -658,7 +658,7 @@ const galleryVisualRecords = [
     id: "the-veil-trine",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
     width: 1120,
     height: 1400,
     caption: "The Archive has recovered the image, but not its name."
@@ -706,7 +706,7 @@ const galleryRecordPlaceholders = [
     id: "glr-prt-017",
     title: "Sealed Portrait No. 17",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/trio-study.webp",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
     marked: true,
     recovered: true,
     variant: "portrait"
@@ -715,7 +715,7 @@ const galleryRecordPlaceholders = [
     id: "glr-sym-004",
     title: "Astral Seal / Symbol Record",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
     marked: true,
     recovered: true,
     variant: "square"
@@ -749,14 +749,14 @@ const galleryRecordPlaceholders = [
     id: "glr-sym-008",
     title: "Winged Statue / Watcher Record",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
     variant: "tall"
   },
   {
     id: "glr-prt-022",
     title: "Red Veiled Portrait",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/trio-study.webp",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
     marked: true,
     recovered: true,
     variant: "featured-small"
@@ -779,7 +779,7 @@ const galleryRecordPlaceholders = [
     id: "glr-sym-017",
     title: "Red Sigil / Seal Record",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
     marked: true,
     variant: "square"
   },
@@ -787,7 +787,7 @@ const galleryRecordPlaceholders = [
     id: "glr-prt-031",
     title: "Portrait of the Veiled Scribe",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/trio-study.webp",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
     recovered: true,
     variant: "portrait"
   },
@@ -827,14 +827,14 @@ const galleryRecordPlaceholders = [
     id: "glr-sym-025",
     title: "Aster Gate Marking",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
     variant: "tall"
   },
   {
     id: "glr-prt-038",
     title: "The Watcher Who Blinked",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/trio-study.webp",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
     marked: true,
     variant: "featured-small"
   },
@@ -856,7 +856,7 @@ const galleryRecordPlaceholders = [
     id: "glr-sym-033",
     title: "Red Archive Diagram",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
     recovered: true,
     variant: "square"
   },
@@ -897,14 +897,14 @@ const galleryRecordPlaceholders = [
     id: "glr-prt-046",
     title: "Mirror Portrait Fragment",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/trio-study.webp",
+    image: "assets/images/noctis/visual-records/castle-black.webp",
     recovered: true
   },
   {
     id: "glr-sym-052",
     title: "Sixfold Blood Star",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
     marked: true,
     variant: "tall"
   },
@@ -936,7 +936,7 @@ const galleryRecordPlaceholders = [
     id: "glr-sym-061",
     title: "Seal of the Returning Moon",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/the-veil-trine.webp",
+    image: "assets/images/noctis/visual-records/lost-city.webp",
     recovered: true,
     variant: "square"
   }
@@ -1472,13 +1472,6 @@ async function loadGalleryRecords() {
       : [];
     galleryRecordsUseFallback = false;
     galleryRecordsError = galleryRecords.length ? "" : "No visual records answered from the dark.";
-    console.info("Gallery records loaded:", galleryRecords.length, galleryRecords.map((record) => ({
-      title: record.title,
-      record_type: record.record_type,
-      status: record.status,
-      tags: record.tags,
-      themes: record.themes
-    })));
   } catch (error) {
     console.warn("Gallery records failed to load:", {
       message: error?.message,
@@ -5344,12 +5337,6 @@ function galleryRecordMatchesFilter(record, filter) {
 function getGalleryFilteredRecords() {
   const sourceRecords = getGallerySourceRecords();
   const filteredRecords = sourceRecords.filter((record) => galleryRecordMatchesFilter(record, galleryActiveFilter));
-
-  console.info("Gallery filter applied:", {
-    activeFilter: galleryActiveFilter,
-    beforeCount: sourceRecords.length,
-    afterCount: filteredRecords.length
-  });
 
   return filteredRecords;
 }

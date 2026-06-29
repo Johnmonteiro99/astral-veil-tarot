@@ -35,6 +35,9 @@ export function getSupabaseClient() {
   if (!supabaseClient) {
     const { url, anonKey } = getSupabaseConfig();
 
+    // This client intentionally uses the frontend-safe publishable/anon key.
+    // Private data boundaries must be enforced by Supabase RLS, not by secrets
+    // embedded in the static site.
     supabaseClient = createClient(url, anonKey, {
       auth: {
         autoRefreshToken: true,

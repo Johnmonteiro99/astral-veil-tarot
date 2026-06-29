@@ -190,6 +190,8 @@ function redirectToLogin() {
   window.location.replace(`auth.html?returnTo=${encodeURIComponent(returnTo)}`);
 }
 
+// Journal entries are private. The page does not render or save entries until
+// Supabase confirms a signed-in user, and all reads/writes are scoped by user_id.
 function getJournalAuthUrl(mode = 'login') {
   const params = new URLSearchParams({
     returnTo: getCurrentReturnPath(),

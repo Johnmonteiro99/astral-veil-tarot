@@ -20,11 +20,13 @@ function logProgressionError(message, error) {
 }
 
 function logRoomVisit(message, detail = '') {
-  console.info(`[Astral Veil progression] ${message}${detail ? `: ${detail}` : ''}`);
+  void message;
+  void detail;
 }
 
 function logDiscovery(message, detail = '') {
-  console.info(`[Astral Veil progression] ${message}${detail ? `: ${detail}` : ''}`);
+  void message;
+  void detail;
 }
 
 async function getProgressionContext() {

@@ -55,7 +55,6 @@ const readerLineIdMap = {
 };
 
 const selectedLineCache = new Map();
-const DEBUG_READER_LINES = true;
 
 function normalizeReaderLineMode(mode) {
   if (!mode) {
@@ -140,19 +139,7 @@ function pickRandomItem(items) {
 }
 
 function logReaderLineDebug(details = {}) {
-  if (!DEBUG_READER_LINES) {
-    return;
-  }
-
-  console.log({
-    rawReaderId: details.rawReaderId || '',
-    rawReaderName: details.rawReaderName || '',
-    mappedReaderId: details.mappedReaderId || '',
-    rawMode: details.rawMode || '',
-    normalizedMode: details.normalizedMode || '',
-    rowsReturned: details.rowsReturned || 0,
-    error: details.error || null,
-  });
+  void details;
 }
 
 async function fetchReaderIntroLines(supabase, { reader, readerId, rawMode, normalizedMode, modes }) {

@@ -14,6 +14,9 @@ const countTables = [
   'veilwalker_notes',
 ];
 
+// Admin UI checks prevent accidental access in the browser; all admin writes
+// must also be protected by Supabase RLS/public.is_admin() policies.
+
 const characterLineModes = ['sun', 'moon', 'bloodMoon', 'blueMoon', 'all'];
 const characterLineContexts = [
   'reading_intro',

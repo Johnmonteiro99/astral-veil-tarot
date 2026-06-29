@@ -215,6 +215,9 @@ const privacyCleanupActions = {
     confirmMessage: 'Clear your marked Gallery records? This only removes your account marks in the Gallery.'
   },
 };
+
+// Account archive data is private. Client filters by activeUser.id for UX, and
+// Supabase owner-only RLS is the required enforcement layer for deployment.
 const maxAvatarInputFileSize = 8 * 1024 * 1024;
 const targetAvatarUploadSize = 2 * 1024 * 1024;
 const maxAvatarImageSide = 800;
