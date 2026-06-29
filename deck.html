@@ -13,9 +13,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Exo+2:wght@600;700&family=Inter:wght@500;600;700;800;900&family=Literata:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Marcellus&family=Playfair+Display:wght@600;700&family=Rajdhani:wght@600;700&family=Space+Grotesk:wght@500;600;700&family=Spectral:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Oxanium:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("astralVeilDisableGlowEffects") === "true") {
+            document.documentElement.classList.add("no-glow");
+          }
+        } catch (error) {}
+      })();
+    </script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
     <link rel="stylesheet" href="css/deck.css" />
@@ -90,7 +103,7 @@
           <span class="theme-orb-toggle__label theme-orb-toggle__label--sun">Sun</span>
           <span class="theme-orb-toggle__icon-wrap" aria-hidden="true">
             <img
-              src="assets/icons/symbols/sun-moon-toggle-transparent.png"
+              src="assets/icons/symbols/sun-moon-transparent.png"
               alt=""
               class="theme-orb-toggle__icon"
               width="512"
@@ -229,6 +242,40 @@
           <p data-lightbox-card-meaning></p>
         </div>
       </div>
+    </div>
+
+    <div class="deck-info-modal" data-deck-info-modal aria-hidden="true">
+      <button class="deck-info-modal__backdrop" type="button" data-close-deck-info aria-label="Close deck details"></button>
+      <article class="deck-info-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="deck-info-title">
+        <button class="deck-info-modal__close" type="button" data-close-deck-info aria-label="Close deck details">
+          <span class="close-circle-icon" aria-hidden="true"></span>
+        </button>
+        <div class="deck-info-modal__artifact">
+          <button class="deck-modal-card-tilt" type="button" data-deck-info-tilt aria-label="Inspect deck card">
+            <img src="" alt="" data-deck-info-image />
+            <span class="deck-card-shine" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="deck-info-modal__content">
+          <p class="deck-info-modal__category" data-deck-info-category></p>
+          <h2 id="deck-info-title" data-deck-info-title></h2>
+          <p class="deck-info-modal__intro" data-deck-info-intro></p>
+          <p class="deck-info-modal__status" data-deck-info-status></p>
+          <div class="deck-info-modal__section">
+            <h3>About This Deck</h3>
+            <p data-deck-info-about></p>
+          </div>
+          <div class="deck-info-modal__section">
+            <h3>What It Reveals</h3>
+            <p data-deck-info-reveals></p>
+          </div>
+          <div class="deck-info-modal__best-for" aria-label="Best for" data-deck-info-best-for></div>
+          <div class="deck-info-modal__actions">
+            <button class="deck-info-modal__view" type="button" data-deck-info-view>View Deck</button>
+            <button class="deck-info-modal__dismiss" type="button" data-close-deck-info>Close</button>
+          </div>
+        </div>
+      </article>
     </div>
 
     <script src="data/events.js"></script>

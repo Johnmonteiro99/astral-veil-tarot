@@ -7,6 +7,7 @@ import {
 } from './profile-unlocks.js';
 import { getUserProgressStats } from './progression.js';
 import {
+  applyGlowEffectsPreference,
   applyReduceMotionPreference,
   normalizeUserPreferences,
   userPreferenceDefaults,
@@ -71,6 +72,7 @@ const selectedProfileTitleSelect = document.querySelector('[data-preference-sele
 const allowReversedCardsToggle = document.querySelector('[data-preference-allow-reversed-cards]');
 const saveReadingsPromptToggle = document.querySelector('[data-preference-save-readings-prompt]');
 const reduceMotionToggle = document.querySelector('[data-preference-reduce-motion]');
+const disableGlowEffectsToggle = document.querySelector('[data-preference-disable-glow-effects]');
 const defaultReadingModeSelect = document.querySelector('[data-preference-default-reading-mode]');
 const preferencesStatus = document.querySelector('[data-preferences-status]');
 const zodiacPreview = document.querySelector('[data-zodiac-preview]');
@@ -135,6 +137,18 @@ let activeReadingFilter = 'all';
 let activeReadingPage = 1;
 let savedReadingDeckDataPromise = null;
 let activeSavedReadingModalId = '';
+
+function preventPrivateCardDrag(event) {
+  if (event.target?.closest?.('[data-private-card="true"], .private-data-card, [data-protected-media="true"], .protected-media')) {
+    event.preventDefault();
+  }
+}
+
+function preventProtectedMediaContextMenu(event) {
+  if (event.target?.closest?.('[data-protected-media="true"], .protected-media')) {
+    event.preventDefault();
+  }
+}
 let journalEntriesLoaded = false;
 let journalEntriesCache = [];
 let activeJournalFilter = 'all';
@@ -519,11 +533,16 @@ function updatePreferenceControls(profile) {
     reduceMotionToggle.checked = advancedPreferences.reduce_motion;
   }
 
+  if (disableGlowEffectsToggle) {
+    disableGlowEffectsToggle.checked = advancedPreferences.disable_glow_effects;
+  }
+
   if (defaultReadingModeSelect) {
     defaultReadingModeSelect.value = advancedPreferences.default_reading_mode;
   }
 
   applyReduceMotionPreference(advancedPreferences);
+  applyGlowEffectsPreference(advancedPreferences);
 
   if (!selectedProfileTitleSelect) {
     return;
@@ -1934,9 +1953,11 @@ function formatSavedCardVisual(card, reading, index) {
     : 'assets/images/cards/original/card-back.webp';
   const isReversed = orientation.toLowerCase() === 'reversed';
   const altParts = [toTitleLabel(position, `Card ${index + 1}`), title, orientation].filter(Boolean);
+  const protectedMediaClass = isBloodMoonReading(reading) ? ' protected-media' : '';
+  const protectedMediaAttrs = isBloodMoonReading(reading) ? ' data-protected-media="true"' : '';
 
   return `
-    <article class="saved-reading-card__visual" tabindex="0">
+    <article class="saved-reading-card__visual private-data-card${protectedMediaClass}" tabindex="0" data-private-card="true"${protectedMediaAttrs} draggable="false">
       <div class="saved-reading-card__visual-frame">
         <img
           class="saved-reading-card__visual-image${isReversed ? ' is-reversed' : ''}"
@@ -1946,6 +1967,7 @@ function formatSavedCardVisual(card, reading, index) {
           height="420"
           loading="lazy"
           decoding="async"
+          draggable="false"
           onerror="this.src='${escapeHtml(fallbackImage)}'"
         />
       </div>
@@ -2128,7 +2150,7 @@ function renderSavedReadingDetails(reading, detailsId) {
   const readerName = reading.reader_name || metadata.reader?.name || metadata.reader_name || 'Astral Reading';
 
   return `
-    <div class="saved-reading-card__details ${getReadingModeClass(reading)}" data-saved-reading-details="${escapeHtml(detailsId)}">
+    <div class="saved-reading-card__details ${getReadingModeClass(reading)}${isBloodMoonReading(reading) ? ' protected-media' : ''}" data-saved-reading-details="${escapeHtml(detailsId)}" data-private-card="true"${isBloodMoonReading(reading) ? ' data-protected-media="true"' : ''} draggable="false">
       <div class="saved-reading-card__detail-header">
         <div>
           <span>${escapeHtml(getReadingTypeLabel(reading))}</span>
@@ -2282,7 +2304,7 @@ function renderSavedReadings(readings) {
       const readerName = reading.reader_name || metadata.reader?.name || metadata.reader_name || 'Astral Veil';
 
       return `
-      <article class="saved-reading-card ${getReadingModeClass(reading)}">
+      <article class="saved-reading-card private-data-card ${isBloodMoonReading(reading) ? 'protected-media ' : ''}${getReadingModeClass(reading)}" data-private-card="true"${isBloodMoonReading(reading) ? ' data-protected-media="true"' : ''} draggable="false">
         <div class="saved-reading-card__header">
           <div class="saved-reading-card__title">
             <span class="saved-reading-card__badge">${escapeHtml(getReadingTypeLabel(reading))}</span>
@@ -3432,10 +3454,12 @@ function renderJournalEntries() {
     .map((entry) => {
       const modeClass = getJournalModeClass(entry);
       const coverImage = getJournalCoverImage(modeClass);
+      const protectedMediaClass = modeClass === 'bloodmoon' ? ' protected-media' : '';
+      const protectedMediaAttrs = modeClass === 'bloodmoon' ? ' data-protected-media="true"' : '';
 
       return `
-        <article class="journal-entry-card journal-entry-card--${escapeHtml(modeClass)}">
-          <img class="journal-entry-card__cover" src="${coverImage}" alt="" loading="lazy" onerror="this.onerror=null; this.src='assets/images/background _images/moon_journal.png'">
+        <article class="journal-entry-card private-data-card${protectedMediaClass} journal-entry-card--${escapeHtml(modeClass)}" data-private-card="true"${protectedMediaAttrs} draggable="false">
+          <img class="journal-entry-card__cover" src="${coverImage}" alt="" loading="lazy" draggable="false" onerror="this.onerror=null; this.src='assets/images/background _images/moon_journal.png'">
           <div class="journal-entry-card__overlay" aria-hidden="true"></div>
           <div class="journal-entry-card__content">
             <p class="journal-entry-card__meta">${escapeHtml(formatEntryDate(entry.entry_date))}</p>
@@ -4344,6 +4368,14 @@ reduceMotionToggle?.addEventListener('change', () => {
   saveAdvancedPreference(reduceMotionToggle, 'reduce_motion', reduceMotionToggle.checked);
 });
 
+disableGlowEffectsToggle?.addEventListener('change', () => {
+  applyGlowEffectsPreference({
+    ...getAdvancedUserPreferences(activeProfile),
+    disable_glow_effects: disableGlowEffectsToggle.checked,
+  });
+  saveAdvancedPreference(disableGlowEffectsToggle, 'disable_glow_effects', disableGlowEffectsToggle.checked);
+});
+
 defaultReadingModeSelect?.addEventListener('change', () => {
   const nextMode = normalizeUserPreferences({
     default_reading_mode: defaultReadingModeSelect.value,
@@ -4806,6 +4838,9 @@ savedReadingsList?.addEventListener('click', (event) => {
 
   deleteSavedReading(deleteButton.dataset.savedReadingDelete, deleteButton);
 });
+
+document.addEventListener('dragstart', preventPrivateCardDrag);
+document.addEventListener('contextmenu', preventProtectedMediaContextMenu);
 
 savedReadingModalCloseButtons.forEach((button) => {
   button.addEventListener('click', closeSavedReadingModal);

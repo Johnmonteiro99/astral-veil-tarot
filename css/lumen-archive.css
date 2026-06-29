@@ -477,11 +477,13 @@ body.lumen-archive-page .tarot-stage {
 
 .lumen-arrival-intro-track {
   display: grid;
+  align-items: stretch;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
 
 .lumen-arrival-intro-slide {
+  display: flex;
   min-width: 0;
 }
 
@@ -497,9 +499,13 @@ body.lumen-archive-page .tarot-stage {
 
 .lumen-arrival-panel {
   display: grid;
-  align-content: start;
+  grid-template-rows: minmax(4.2rem, auto) 1fr;
+  align-content: center;
+  justify-items: center;
   gap: 0.85rem;
-  min-height: 170px;
+  width: 100%;
+  min-height: clamp(280px, 24vw, 320px);
+  text-align: center;
 }
 
 .lumen-arrival-intro-grid .lumen-arrival-panel {
@@ -514,7 +520,38 @@ body.lumen-archive-page .tarot-stage {
 .lumen-arrival-panel p {
   margin: 0;
   color: var(--lumen-dashboard-muted);
-  line-height: 1.62;
+  max-width: 34ch;
+  font-family: "Lora", "Cormorant Garamond", serif;
+  font-size: clamp(0.94rem, 1.05vw, 1.02rem);
+  line-height: 1.72;
+}
+
+.lumen-arrival-panel p:not(.lumen-room-panel__label) + p:not(.lumen-room-panel__label) {
+  margin-top: 0.18rem;
+}
+
+.lumen-arrival-panel__heading,
+.lumen-arrival-panel__body {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+}
+
+.lumen-arrival-panel__heading {
+  align-content: start;
+  min-height: 4.2rem;
+}
+
+.lumen-arrival-panel__body {
+  align-content: start;
+  gap: 0.78rem;
+}
+
+.lumen-arrival-panel .lumen-room-panel__label {
+  max-width: none;
+  font-family: var(--lumen-font-ui);
+  line-height: 1.3;
+  text-align: center;
 }
 
 .lumen-arrival-previews {
@@ -854,10 +891,6 @@ body.lumen-archive-page .tarot-stage {
     sepia(0.35)
     saturate(1.35)
     drop-shadow(0 0 8px rgba(245, 220, 163, 0.5));
-}
-
-.lumen-journal-btn img {
-  filter: none;
 }
 
 .seal-panel {
@@ -5684,8 +5717,7 @@ body.lumen-archive-page .lumen-unseal-scroll-btn:active {
   transform: translateY(0);
 }
 
-body.lumen-archive-page .lumen-action-btn img,
-body.lumen-archive-page .lumen-journal-btn img {
+body.lumen-archive-page .lumen-action-btn img {
   width: 16px;
   height: 16px;
   object-fit: contain;
@@ -5785,6 +5817,109 @@ body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn img {
     sepia(0.22)
     saturate(1.2)
     drop-shadow(0 0 8px rgba(245, 220, 163, 0.42));
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:focus-within,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:focus-within,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:focus-within {
+  transform: none;
+  box-shadow: none;
+  filter: none;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:hover::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:hover::after,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:focus-within::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:focus-within::after,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:hover::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:hover::after,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:focus-within::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:focus-within::after,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:hover::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:hover::after,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:focus-within::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:focus-within::after {
+  box-shadow: none;
+  filter: none;
+  opacity: 0.52;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-action-btn {
+  min-height: 44px;
+  border: 1px solid rgba(120, 175, 230, 0.36);
+  border-radius: 12px;
+  padding: 0.78rem 1.28rem;
+  color: #fff8ea;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.055), transparent 48%),
+    rgba(20, 44, 72, 0.46);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  filter: none;
+  text-shadow: none;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn::before {
+  display: none;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-journal-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-question-cycle-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-unseal-scroll-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:hover .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:hover .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:hover .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:focus-within .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:focus-within .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:focus-within .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-journal-btn:focus-visible,
+body.lumen-archive-page .lumen-room-content-grid .lumen-question-cycle-btn:focus-visible,
+body.lumen-archive-page .lumen-room-content-grid .lumen-unseal-scroll-btn:focus-visible,
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible {
+  border: 1px solid rgba(150, 205, 255, 0.62);
+  outline: none;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), transparent 48%),
+    rgba(48, 91, 135, 0.46);
+  box-shadow:
+    inset 0 1px 0 rgba(215, 240, 255, 0.14),
+    inset 0 0 18px rgba(110, 180, 255, 0.08);
+  filter: none;
+  transform: translateY(-1px);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible {
+  outline: 2px solid rgba(190, 225, 255, 0.78);
+  outline-offset: 3px;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:active,
+body.lumen-archive-page .lumen-room-content-grid .lumen-journal-btn:active,
+body.lumen-archive-page .lumen-room-content-grid .lumen-question-cycle-btn:active,
+body.lumen-archive-page .lumen-room-content-grid .lumen-unseal-scroll-btn:active {
+  border-color: rgba(150, 205, 255, 0.56);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.045), transparent 48%),
+    rgba(36, 75, 116, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(215, 240, 255, 0.1),
+    inset 0 8px 18px rgba(5, 15, 34, 0.16);
+  transform: translateY(1px);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn img {
+  filter: none;
 }
 
 body.lumen-archive-page .lumen-room-hero-card h2 {
@@ -5948,4 +6083,257 @@ body.lumen-archive-page .lumen-room-preview-element {
   body.lumen-archive-page .lumen-arrival-hero h2 {
     font-size: clamp(3rem, 14vw, 4.6rem);
   }
+}
+
+@media (min-width: 901px) and (max-width: 1366px), (min-width: 901px) and (max-height: 800px) {
+  body.lumen-archive-page .lumen-dashboard {
+    width: min(1240px, calc(100% - 32px));
+    grid-template-columns: minmax(220px, 250px) minmax(0, 1fr);
+    gap: 1rem;
+    padding: clamp(4.8rem, 8vh, 6.5rem) 0 clamp(2rem, 5vh, 3.4rem);
+  }
+
+  body.lumen-archive-page .lumen-room-sidebar {
+    gap: 0.85rem;
+    padding: 1rem;
+    border-radius: 22px;
+  }
+
+  body.lumen-archive-page .lumen-room-sidebar h1,
+  body.lumen-archive-page .lumen-room-sidebar h2 {
+    font-size: clamp(1.65rem, 2vw, 2.05rem);
+  }
+
+  body.lumen-archive-page .lumen-arrival-hero,
+  body.lumen-archive-page .lumen-room-hero-card {
+    min-height: clamp(230px, 38vh, 330px);
+    border-radius: 22px;
+    padding: clamp(1.35rem, 3vw, 2.4rem);
+  }
+
+  body.lumen-archive-page .lumen-arrival-hero h2,
+  body.lumen-archive-page .lumen-room-hero-card h2 {
+    font-size: clamp(2.5rem, 5vw, 4.6rem);
+  }
+
+  body.lumen-archive-page .lumen-arrival-welcome-panel,
+  body.lumen-archive-page .lumen-room-panel,
+  body.lumen-archive-page .lumen-other-rooms {
+    min-height: auto;
+    border-radius: 20px;
+    padding: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  body.lumen-archive-page .lumen-arrival-intro-track,
+  body.lumen-archive-page .lumen-sanctuary-card-track,
+  body.lumen-archive-page .lumen-other-rooms__grid {
+    scroll-snap-type: none;
+  }
+
+  body.lumen-archive-page .lumen-arrival-intro-slide,
+  body.lumen-archive-page .lumen-sanctuary-slide,
+  body.lumen-archive-page .lumen-other-rooms__grid > * {
+    scroll-snap-align: none;
+  }
+
+  body.lumen-room-page .lumen-sanctuary-detail,
+  body.lumen-room-page .sanctuary-scene-overlay {
+    min-height: auto;
+  }
+
+  body.lumen-room-page .sanctuary-scene-overlay {
+    width: min(1040px, calc(100% - 32px));
+    gap: clamp(1.4rem, 4vh, 2.8rem);
+    padding: clamp(5.4rem, 9vh, 7rem) 0 clamp(2.5rem, 6vh, 4.5rem);
+  }
+
+  body.lumen-room-page .sanctuary-hero {
+    width: min(900px, 100%);
+    min-height: clamp(300px, 52vh, 460px);
+    border-radius: 26px;
+    padding: clamp(2rem, 5vh, 3.5rem) clamp(1rem, 3vw, 2.4rem);
+  }
+
+  body.lumen-room-page .archive-room-placeholder__title {
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+    white-space: normal;
+  }
+
+  body.lumen-room-page .archive-room-placeholder__copy {
+    font-size: clamp(0.96rem, 1.25vw, 1.08rem);
+    line-height: 1.48;
+  }
+
+  .lumen-interior-panel {
+    min-height: clamp(250px, 40vh, 330px);
+    padding: clamp(54px, 7vh, 68px) clamp(18px, 3vw, 36px) clamp(24px, 4vh, 34px);
+  }
+
+  .lumen-interior-panel h3,
+  .lumen-interior-panel blockquote {
+    font-size: clamp(1.85rem, 3.2vw, 3rem);
+  }
+
+  .lumen-interior-panel__copy {
+    font-size: clamp(1rem, 1.35vw, 1.22rem);
+  }
+}
+
+/* Shared room action controls: keep all three card buttons visually identical. */
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-journal-btn.lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-question-cycle-btn.lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-unseal-scroll-btn.lumen-room-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-room-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-room-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-room-seal-card .lumen-room-action-btn {
+  min-height: 44px;
+  border: 1px solid rgba(120, 175, 230, 0.42);
+  border-radius: 12px;
+  padding: 0.78rem 1.28rem;
+  color: #fff8ea;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.055), transparent 48%),
+    rgba(20, 44, 72, 0.52);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  filter: none;
+  text-shadow: none;
+  transform: translateY(0);
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn::before {
+  display: none;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:focus-visible,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-room-action-btn:hover,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-room-action-btn:hover,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-room-seal-card .lumen-room-action-btn:hover,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-room-action-btn:focus-visible,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-room-action-btn:focus-visible,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-room-seal-card .lumen-room-action-btn:focus-visible,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:hover .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:hover .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:hover .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:focus-within .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:focus-within .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:focus-within .lumen-room-action-btn {
+  border-color: rgba(165, 215, 255, 0.78);
+  color: #ffffff;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.085), transparent 48%),
+    rgba(54, 100, 145, 0.62);
+  box-shadow:
+    inset 0 1px 0 rgba(215, 240, 255, 0.16),
+    inset 0 0 18px rgba(110, 180, 255, 0.08);
+  filter: none;
+  transform: translateY(-1px);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:focus-visible {
+  outline: 2px solid rgba(190, 225, 255, 0.78);
+  outline-offset: 3px;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:active,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-room-action-btn:active,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-room-action-btn:active,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-room-seal-card .lumen-room-action-btn:active {
+  border-color: rgba(150, 205, 255, 0.56);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.045), transparent 48%),
+    rgba(36, 75, 116, 0.56);
+  box-shadow:
+    inset 0 1px 0 rgba(215, 240, 255, 0.1),
+    inset 0 8px 18px rgba(5, 15, 34, 0.16);
+  transform: translateY(1px);
+}
+
+html.no-glow body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn,
+html.no-glow body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:hover,
+html.no-glow body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:focus-visible,
+body.lumen-archive-page.no-glow .lumen-room-content-grid .lumen-room-action-btn,
+body.lumen-archive-page.no-glow .lumen-room-content-grid .lumen-room-action-btn:hover,
+body.lumen-archive-page.no-glow .lumen-room-content-grid .lumen-room-action-btn:focus-visible {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html.no-glow body.lumen-archive-page,
+body.lumen-archive-page.no-glow,
+html.no-glow body.lumen-room-page,
+body.lumen-room-page.no-glow {
+  --lumen-hero-glow: transparent;
+  --lumen-name-glow: transparent;
+  --lumen-selector-glow: transparent;
+  --lumen-selector-glow-soft: transparent;
+  --lumen-selector-separator-glow: transparent;
+}
+
+html.no-glow body.lumen-archive-page *,
+html.no-glow body.lumen-archive-page *::before,
+html.no-glow body.lumen-archive-page *::after,
+body.lumen-archive-page.no-glow *,
+body.lumen-archive-page.no-glow *::before,
+body.lumen-archive-page.no-glow *::after,
+html.no-glow body.lumen-room-page *,
+html.no-glow body.lumen-room-page *::before,
+html.no-glow body.lumen-room-page *::after,
+body.lumen-room-page.no-glow *,
+body.lumen-room-page.no-glow *::before,
+body.lumen-room-page.no-glow *::after {
+  text-shadow: none !important;
+}
+
+html.no-glow body.lumen-archive-page *:not(img):not(svg):not(canvas),
+html.no-glow body.lumen-archive-page *:not(img):not(svg):not(canvas)::before,
+html.no-glow body.lumen-archive-page *:not(img):not(svg):not(canvas)::after,
+body.lumen-archive-page.no-glow *:not(img):not(svg):not(canvas),
+body.lumen-archive-page.no-glow *:not(img):not(svg):not(canvas)::before,
+body.lumen-archive-page.no-glow *:not(img):not(svg):not(canvas)::after,
+html.no-glow body.lumen-room-page *:not(img):not(svg):not(canvas),
+html.no-glow body.lumen-room-page *:not(img):not(svg):not(canvas)::before,
+html.no-glow body.lumen-room-page *:not(img):not(svg):not(canvas)::after,
+body.lumen-room-page.no-glow *:not(img):not(svg):not(canvas),
+body.lumen-room-page.no-glow *:not(img):not(svg):not(canvas)::before,
+body.lumen-room-page.no-glow *:not(img):not(svg):not(canvas)::after {
+  box-shadow: none !important;
+}
+
+html.no-glow body.lumen-archive-page .lumen-action-btn::before,
+html.no-glow body.lumen-archive-page .lumen-room-panel::before,
+html.no-glow body.lumen-archive-page .lumen-room-panel::after,
+html.no-glow body.lumen-archive-page .lumen-sanctuary-tab__icon::before,
+html.no-glow body.lumen-archive-page .lumen-sanctuary-tab__icon::after,
+body.lumen-archive-page.no-glow .lumen-action-btn::before,
+body.lumen-archive-page.no-glow .lumen-room-panel::before,
+body.lumen-archive-page.no-glow .lumen-room-panel::after,
+body.lumen-archive-page.no-glow .lumen-sanctuary-tab__icon::before,
+body.lumen-archive-page.no-glow .lumen-sanctuary-tab__icon::after {
+  opacity: 0 !important;
+}
+
+html.no-glow body.lumen-archive-page .lumen-question-icon,
+html.no-glow body.lumen-archive-page .lumen-action-btn img,
+html.no-glow body.lumen-archive-page .lumen-room-nav__icon img,
+html.no-glow body.lumen-archive-page .lumen-sanctuary-tab__icon img,
+html.no-glow body.lumen-archive-page .sanctuary-offer-icon,
+html.no-glow body.lumen-archive-page .lumen-scroll-glyph,
+html.no-glow body.lumen-room-page .lumen-scroll-glyph,
+body.lumen-archive-page.no-glow .lumen-question-icon,
+body.lumen-archive-page.no-glow .lumen-action-btn img,
+body.lumen-archive-page.no-glow .lumen-room-nav__icon img,
+body.lumen-archive-page.no-glow .lumen-sanctuary-tab__icon img,
+body.lumen-archive-page.no-glow .sanctuary-offer-icon,
+body.lumen-archive-page.no-glow .lumen-scroll-glyph,
+body.lumen-room-page.no-glow .lumen-scroll-glyph {
+  filter: none !important;
 }

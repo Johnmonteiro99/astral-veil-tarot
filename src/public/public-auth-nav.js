@@ -82,13 +82,16 @@ function cachePublicAuthNav({ user, profile }) {
   }
 }
 
-function createLoginLink(className, datasetValue) {
+function createLoginLink(className, datasetValue, { compact = false } = {}) {
   const link = document.createElement('a');
 
   link.className = className;
   link.href = getAuthHref();
   link.textContent = 'Log In';
   link.dataset.publicAuthNav = datasetValue;
+  if (compact) {
+    link.dataset.compactAuthControl = 'true';
+  }
   link.setAttribute('aria-label', 'Log in to Astral Veil');
   link.addEventListener('click', storeReturnTo);
 
@@ -123,7 +126,7 @@ function createAvatar({ avatarUrl = '', initials = 'AV' } = {}) {
   return avatar;
 }
 
-function createAccountControl({ avatarUrl = '', initials = 'AV', mobile = false } = {}) {
+function createAccountControl({ avatarUrl = '', initials = 'AV', mobile = false, compact = false } = {}) {
   const wrap = document.createElement('div');
   const link = document.createElement('a');
 
@@ -133,7 +136,7 @@ function createAccountControl({ avatarUrl = '', initials = 'AV', mobile = false 
   link.setAttribute('aria-label', 'Open account page');
   link.append(createAvatar({ avatarUrl, initials }));
 
-  if (mobile) {
+  if (mobile && !compact) {
     const label = document.createElement('span');
     label.textContent = 'Account';
     link.append(label);
@@ -167,7 +170,7 @@ function getResolvedAuthView({ user, profile, cached, loading = false }) {
   };
 }
 
-function renderPublicAuthMount(mount, view, { mobile = false } = {}) {
+function renderPublicAuthMount(mount, view, { mobile = false, compact = false } = {}) {
   if (!mount) {
     return;
   }
@@ -200,13 +203,15 @@ function renderPublicAuthMount(mount, view, { mobile = false } = {}) {
       avatarUrl: view.avatarUrl,
       initials: view.initials,
       mobile,
+      compact,
     }));
     return;
   }
 
   mount.replaceChildren(createLoginLink(
-    mobile ? 'navbar__mobile-link navbar__mobile-link--account' : 'navbar__link navbar__link--account',
-    mobile ? 'mobile' : 'desktop'
+    compact ? 'navbar-account__button navbar-account__button--login' : (mobile ? 'navbar__mobile-link navbar__mobile-link--account' : 'navbar__link navbar__link--account'),
+    mobile ? 'mobile' : 'desktop',
+    { compact }
   ));
 }
 
@@ -215,25 +220,67 @@ function renderPublicAuthNav({ user = null, profile = null, cached = null, loadi
   const mobileMount = document.querySelector('[data-public-auth-nav="mobile"]');
   const view = getResolvedAuthView({ user, profile, cached, loading });
 
-  renderPublicAuthMount(desktopMount, view);
-  renderPublicAuthMount(mobileMount, view, { mobile: true });
+  renderPublicAuthMount(desktopMount, view, { compact: true });
+  renderPublicAuthMount(mobileMount, view, { mobile: true, compact: true });
+}
+
+function getOrCreateNavActions(navbar) {
+  let actions = navbar.querySelector(':scope > .navbar__actions');
+
+  if (!actions) {
+    actions = document.createElement('div');
+    actions.className = 'navbar__actions';
+  }
+
+  const themeToggle = navbar.querySelector(':scope > .theme-toggle, :scope > .navbar__actions > .theme-toggle');
+  const menuToggle = navbar.querySelector(':scope > .navbar__menu-toggle, :scope > .navbar__actions > .navbar__menu-toggle');
+  const bloodMoonControl = navbar.querySelector(':scope > .blood-moon-nav-control, :scope > .navbar__actions > .blood-moon-nav-control');
+
+  if (!actions.isConnected) {
+    navbar.insertBefore(actions, navbar.querySelector(':scope > .navbar__mobile-menu'));
+  }
+
+  if (themeToggle && themeToggle.parentElement !== actions) {
+    actions.append(themeToggle);
+  }
+
+  if (menuToggle && menuToggle.parentElement !== actions) {
+    actions.append(menuToggle);
+  }
+
+  if (bloodMoonControl && bloodMoonControl.parentElement !== actions) {
+    actions.insertBefore(bloodMoonControl, menuToggle || null);
+  }
+
+  return actions;
+}
+
+function removeLegacyPublicAuthMounts(navbar) {
+  navbar.querySelectorAll('.navbar__links > [data-public-auth-nav="desktop"]').forEach((mount) => mount.remove());
+  navbar.querySelectorAll('.navbar__mobile-menu > [data-public-auth-nav="mobile"]').forEach((mount) => mount.remove());
 }
 
 function ensurePublicAuthMounts() {
-  const desktopNav = document.querySelector('.navbar__links');
-  const mobileNav = document.querySelector('.navbar__mobile-menu');
+  document.querySelectorAll('.navbar').forEach((navbar) => {
+    removeLegacyPublicAuthMounts(navbar);
 
-  if (desktopNav && !desktopNav.querySelector('[data-public-auth-nav="desktop"]')) {
-    const listItem = document.createElement('li');
-    listItem.dataset.publicAuthNav = 'desktop';
-    desktopNav.append(listItem);
-  }
+    const actions = getOrCreateNavActions(navbar);
+    const themeToggle = actions.querySelector(':scope > .theme-toggle');
 
-  if (mobileNav && !mobileNav.querySelector('[data-public-auth-nav="mobile"]')) {
-    const mobileItem = document.createElement('div');
-    mobileItem.dataset.publicAuthNav = 'mobile';
-    mobileNav.append(mobileItem);
-  }
+    if (!actions.querySelector(':scope > [data-public-auth-nav="desktop"]')) {
+      const desktopItem = document.createElement('div');
+      desktopItem.className = 'navbar__auth-slot navbar__auth-slot--desktop';
+      desktopItem.dataset.publicAuthNav = 'desktop';
+      actions.insertBefore(desktopItem, themeToggle);
+    }
+
+    if (!actions.querySelector(':scope > [data-public-auth-nav="mobile"]')) {
+      const mobileItem = document.createElement('div');
+      mobileItem.className = 'navbar__auth-slot navbar__auth-slot--mobile';
+      mobileItem.dataset.publicAuthNav = 'mobile';
+      actions.insertBefore(mobileItem, themeToggle);
+    }
+  });
 }
 
 async function initPublicAuthNav() {

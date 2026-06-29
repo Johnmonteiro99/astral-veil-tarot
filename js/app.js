@@ -36,6 +36,28 @@ let expandedImagePreview = null;
 let expandedImagePreviewImage = null;
 let angelWindowTimer = null;
 
+function isProtectedOrPrivateElement(element) {
+  return Boolean(element?.closest?.(
+    '[data-private-card="true"], .private-data-card, [data-protected-media="true"], .protected-media'
+  ));
+}
+
+function isProtectedMediaElement(element) {
+  return Boolean(element?.closest?.('[data-protected-media="true"], .protected-media'));
+}
+
+document.addEventListener("dragstart", (event) => {
+  if (isProtectedOrPrivateElement(event.target)) {
+    event.preventDefault();
+  }
+});
+
+document.addEventListener("contextmenu", (event) => {
+  if (isProtectedMediaElement(event.target)) {
+    event.preventDefault();
+  }
+});
+
 ////////////////////////////////////////////////////
 // Shared Navigation and Image Preview Helpers
 ////////////////////////////////////////////////////
@@ -91,7 +113,8 @@ function getExpandableImageData(trigger) {
       alt: trigger.dataset.imagePreviewAlt || trigger.dataset.imagePreviewTitle || "Expanded image",
       title: trigger.dataset.imagePreviewTitle || "Expanded image",
       caption: trigger.dataset.imagePreviewCaption || "",
-      minimal
+      minimal,
+      protected: isProtectedMediaElement(trigger)
     };
   }
 
@@ -104,7 +127,8 @@ function getExpandableImageData(trigger) {
     alt: image.alt || trigger.dataset.imagePreviewTitle || "Expanded image",
     title: trigger.dataset.imagePreviewTitle || image.dataset.imagePreviewTitle || image.alt || "Expanded image",
     caption: trigger.dataset.imagePreviewCaption || image.dataset.imagePreviewCaption || "",
-    minimal
+    minimal,
+    protected: isProtectedMediaElement(trigger) || isProtectedMediaElement(image)
   };
 }
 
@@ -117,6 +141,13 @@ function openExpandedImagePreview(imageData) {
   createExpandedImagePreview();
   expandedImagePreviewImage.src = imageData.src;
   expandedImagePreviewImage.alt = imageData.alt;
+  expandedImagePreviewImage.draggable = !imageData.protected;
+  expandedImagePreviewImage.classList.toggle("protected-media", Boolean(imageData.protected));
+  if (imageData.protected) {
+    expandedImagePreviewImage.setAttribute("data-protected-media", "true");
+  } else {
+    expandedImagePreviewImage.removeAttribute("data-protected-media");
+  }
   expandedImagePreview.classList.toggle("image-preview--minimal", Boolean(imageData.minimal));
   expandedImagePreview.classList.add("is-open");
   expandedImagePreview.setAttribute("aria-hidden", "false");
@@ -136,6 +167,9 @@ function closeExpandedImagePreview() {
   if (expandedImagePreviewImage) {
     expandedImagePreviewImage.removeAttribute("src");
     expandedImagePreviewImage.alt = "";
+    expandedImagePreviewImage.draggable = true;
+    expandedImagePreviewImage.classList.remove("protected-media");
+    expandedImagePreviewImage.removeAttribute("data-protected-media");
   }
 }
 

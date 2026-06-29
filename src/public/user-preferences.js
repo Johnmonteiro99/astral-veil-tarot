@@ -5,10 +5,12 @@ export const userPreferenceDefaults = {
   allow_reversed_cards: false,
   save_readings_prompt: true,
   reduce_motion: false,
+  disable_glow_effects: false,
   default_reading_mode: 'last_used',
 };
 
 const validReadingModes = new Set(['last_used', 'sun', 'moon']);
+export const disableGlowPreferenceStorageKey = 'astralVeilDisableGlowEffects';
 let cachedPreferences = null;
 let cachedUserId = undefined;
 let preferencesPromise = null;
@@ -19,6 +21,29 @@ function getProfilePreferences(profile) {
     : {};
 }
 
+function readStoredDisableGlowPreference() {
+  try {
+    return localStorage.getItem(disableGlowPreferenceStorageKey) === 'true';
+  } catch (error) {
+    return false;
+  }
+}
+
+function writeStoredDisableGlowPreference(isDisabled) {
+  try {
+    localStorage.setItem(disableGlowPreferenceStorageKey, isDisabled ? 'true' : 'false');
+  } catch (error) {
+    return;
+  }
+}
+
+function getLocalPreferenceDefaults() {
+  return {
+    ...userPreferenceDefaults,
+    disable_glow_effects: readStoredDisableGlowPreference(),
+  };
+}
+
 export function normalizeUserPreferences(preferences = {}) {
   const defaultReadingMode = String(preferences.default_reading_mode || '').trim().toLowerCase();
 
@@ -26,6 +51,7 @@ export function normalizeUserPreferences(preferences = {}) {
     allow_reversed_cards: preferences.allow_reversed_cards === true,
     save_readings_prompt: preferences.save_readings_prompt !== false,
     reduce_motion: preferences.reduce_motion === true,
+    disable_glow_effects: preferences.disable_glow_effects === true,
     default_reading_mode: validReadingModes.has(defaultReadingMode) ? defaultReadingMode : 'last_used',
   };
 }
@@ -45,6 +71,10 @@ function normalizePartialUserPreferences(preferences = {}) {
     normalizedPreferences.reduce_motion = preferences.reduce_motion === true;
   }
 
+  if (Object.prototype.hasOwnProperty.call(preferences, 'disable_glow_effects')) {
+    normalizedPreferences.disable_glow_effects = preferences.disable_glow_effects === true;
+  }
+
   if (Object.prototype.hasOwnProperty.call(preferences, 'default_reading_mode')) {
     const defaultReadingMode = String(preferences.default_reading_mode || '').trim().toLowerCase();
     normalizedPreferences.default_reading_mode = validReadingModes.has(defaultReadingMode)
@@ -62,8 +92,23 @@ export function applyReduceMotionPreference(preferences = cachedPreferences || u
   document.documentElement.dataset.reduceMotion = normalizedPreferences.reduce_motion ? 'true' : 'false';
 }
 
+export function applyGlowEffectsPreference(preferences = cachedPreferences || getLocalPreferenceDefaults()) {
+  const normalizedPreferences = normalizeUserPreferences(preferences);
+  const shouldDisableGlow = normalizedPreferences.disable_glow_effects;
+
+  document.documentElement.classList.toggle('no-glow', shouldDisableGlow);
+  document.body?.classList.toggle('no-glow', shouldDisableGlow);
+  document.documentElement.dataset.disableGlowEffects = shouldDisableGlow ? 'true' : 'false';
+  writeStoredDisableGlowPreference(shouldDisableGlow);
+}
+
+export function applyUserPreferences(preferences = cachedPreferences || getLocalPreferenceDefaults()) {
+  applyReduceMotionPreference(preferences);
+  applyGlowEffectsPreference(preferences);
+}
+
 export function getCachedUserPreferences() {
-  return cachedPreferences || { ...userPreferenceDefaults };
+  return cachedPreferences || getLocalPreferenceDefaults();
 }
 
 export async function loadCurrentUserPreferences({ force = false } = {}) {
@@ -78,8 +123,8 @@ export async function loadCurrentUserPreferences({ force = false } = {}) {
   preferencesPromise = (async () => {
     if (!isSupabaseConfigured()) {
       cachedUserId = null;
-      cachedPreferences = { ...userPreferenceDefaults };
-      applyReduceMotionPreference(cachedPreferences);
+      cachedPreferences = getLocalPreferenceDefaults();
+      applyUserPreferences(cachedPreferences);
       return cachedPreferences;
     }
 
@@ -87,8 +132,8 @@ export async function loadCurrentUserPreferences({ force = false } = {}) {
 
     if (userError || !user) {
       cachedUserId = user?.id || null;
-      cachedPreferences = { ...userPreferenceDefaults };
-      applyReduceMotionPreference(cachedPreferences);
+      cachedPreferences = getLocalPreferenceDefaults();
+      applyUserPreferences(cachedPreferences);
       return cachedPreferences;
     }
 
@@ -96,8 +141,8 @@ export async function loadCurrentUserPreferences({ force = false } = {}) {
 
     if (!supabase) {
       cachedUserId = user.id;
-      cachedPreferences = { ...userPreferenceDefaults };
-      applyReduceMotionPreference(cachedPreferences);
+      cachedPreferences = getLocalPreferenceDefaults();
+      applyUserPreferences(cachedPreferences);
       return cachedPreferences;
     }
 
@@ -109,9 +154,9 @@ export async function loadCurrentUserPreferences({ force = false } = {}) {
 
     cachedUserId = user.id;
     cachedPreferences = error
-      ? { ...userPreferenceDefaults }
+      ? getLocalPreferenceDefaults()
       : normalizeUserPreferences(getProfilePreferences(data));
-    applyReduceMotionPreference(cachedPreferences);
+    applyUserPreferences(cachedPreferences);
     return cachedPreferences;
   })();
 
@@ -165,12 +210,15 @@ export async function saveCurrentUserPreferences(nextPreferences) {
 
   cachedUserId = user.id;
   cachedPreferences = normalizeUserPreferences(mergedPreferences);
-  applyReduceMotionPreference(cachedPreferences);
+  applyUserPreferences(cachedPreferences);
   return { preferences: cachedPreferences, error: null };
 }
 
 window.AstralVeilUserPreferences = {
+  applyGlowEffectsPreference,
   applyReduceMotionPreference,
+  applyUserPreferences,
+  disableGlowPreferenceStorageKey,
   getCachedUserPreferences,
   loadCurrentUserPreferences,
   normalizeUserPreferences,
@@ -178,4 +226,4 @@ window.AstralVeilUserPreferences = {
   userPreferenceDefaults,
 };
 
-applyReduceMotionPreference(userPreferenceDefaults);
+applyUserPreferences(getLocalPreferenceDefaults());

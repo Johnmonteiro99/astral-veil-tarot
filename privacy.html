@@ -123,7 +123,26 @@
         padding: 0 0.95rem;
         text-decoration: none;
       }
+
+      html.no-glow *,
+      html.no-glow *::before,
+      html.no-glow *::after,
+      body.no-glow *,
+      body.no-glow *::before,
+      body.no-glow *::after {
+        text-shadow: none !important;
+        box-shadow: none !important;
+      }
     </style>
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("astralVeilDisableGlowEffects") === "true") {
+            document.documentElement.classList.add("no-glow");
+          }
+        } catch (error) {}
+      })();
+    </script>
   </head>
   <body>
     <main>

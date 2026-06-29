@@ -15,6 +15,15 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@400;500;600;700&family=Literata:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Marcellus&family=Playfair+Display:wght@400;500;600;700&family=Playwrite+USA+Modern&family=Quicksand:wght@400;500;600;700&family=Spectral:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("astralVeilDisableGlowEffects") === "true") {
+            document.documentElement.classList.add("no-glow");
+          }
+        } catch (error) {}
+      })();
+    </script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
     <link rel="stylesheet" href="css/journal.css" />
@@ -89,7 +98,7 @@
           <span class="theme-orb-toggle__label theme-orb-toggle__label--sun">Sun</span>
           <span class="theme-orb-toggle__icon-wrap" aria-hidden="true">
             <img
-              src="assets/icons/symbols/sun-moon-toggle-transparent.png"
+              src="assets/icons/symbols/sun-moon-transparent.png"
               alt=""
               class="theme-orb-toggle__icon"
               width="512"
@@ -239,16 +248,12 @@
             </div>
           </section>
 
-          <section class="journal-form-footer" aria-label="Journal actions and recent entries">
-            <aside class="journal-form-footer__recent" aria-labelledby="journal-form-recent-title">
-              <div class="journal-form-footer__recent-header">
-                <h2 id="journal-form-recent-title">Recent Reflections</h2>
-              </div>
-              <div class="journal-form-footer__recent-list" data-form-recent-journal-entries></div>
-              <a class="journal-form-footer__recent-link" href="account.html#journal-entries">
-                View all recent entries
-                <span class="journal-icon journal-icon--arrow-long-right" aria-hidden="true"></span>
-              </a>
+          <section class="journal-form-footer" aria-label="Journal actions and reflection reminder">
+            <aside class="journal-form-footer__quote" aria-labelledby="journal-form-quote-title">
+              <p class="journal-form-footer__quote-title" id="journal-form-quote-title">A Quiet Reminder</p>
+              <p class="journal-form-footer__quote-text" data-journal-reminder-quote>
+                You are allowed to arrive here unfinished.
+              </p>
             </aside>
 
             <div class="journal-form-footer__symbol" aria-hidden="true">

@@ -344,7 +344,6 @@ const elementalKeys = [
       "A dark glass key formed from reflection, memory, and surrender. It does not open what is ahead. It opens what has been waiting within.",
     lore:
       "The Water Relic keeps what the mind tries to dissolve. It does not reveal truth by force. It lets buried things rise slowly, until the surface can no longer pretend to be still.",
-    clue: "Look for the reflection that moves after you stop moving.",
     archiveNote:
       "Recovered from a place where memory pooled beneath the floor. The relic hums faintly when sorrow, intuition, or forgotten names draw near.",
     useHint:
@@ -366,7 +365,6 @@ const elementalKeys = [
       "A pale key formed from breath, silence, and release. It does not open by force. It opens when what was held is finally allowed to move.",
     lore:
       "The Air Relic does not answer to force. It stirs only when what has been held too tightly is allowed to move again. Some locks in the Archive are not opened by strength, but by release.",
-    clue: "Listen where the room goes quiet. The relic remembers what was exhaled.",
     archiveNote:
       "Recovered after the Sanctuary of Breath was entered. Its shape appears weightless at first, but its edges shift when silence gathers around it.",
     useHint:
@@ -382,15 +380,16 @@ const elementalKeys = [
     element: "Fire",
     alignment: ["Fire", "Rebirth", "Will", "Ash"],
     recoveredFrom: "The Thread Between Flame and Ending",
-    subtitle: "Recovered through a reading pattern tied to ending, ignition, and return.",
+    subtitle: "The Thread Between Flame and Ending",
     shortDescription: "A key shaped by heat, ash, and returning motion.",
     description:
       "A key shaped by heat, ash, and returning motion. It does not answer to destruction alone. It opens when the old form has burned and something brave enough to live again begins to rise.",
-    lore: "Placeholder lore text. Final Fire Key lore will be added later.",
-    clue: "Found where Death walks beside flame.",
+    lore:
+      "The Ember Key carries the heat of what has ended but not disappeared. It does not burn to destroy. It burns to reveal what still has shape beneath the ash.",
     archiveNote:
-      "Placeholder archive note. This relic was recovered through a reading pattern tied to ending, ignition, and return.",
-    useHint: "Placeholder use text. This artifact may unlock future paths tied to courage, action, and transformation.",
+      "Recovered through a reading pattern tied to endings, ignition, and return. The relic glows brightest when a choice has already begun changing the one who made it.",
+    useHint:
+      "May open paths connected to courage, transformation, will, rebirth, or fire-aligned sanctuaries.",
     image: "assets/images/fire-artifact-clean.webp",
     accentClass: "element-fire"
   },
@@ -408,7 +407,6 @@ const elementalKeys = [
       "A dark stone key veined with gold, heavy with the silence of buried things. It does not open by force. It opens when what was hidden is allowed to have weight.",
     lore:
       "The Earth Key answers to roots, memory, and the truths that waited below language.",
-    clue: "Find the place where the wall feels older than the room.",
     archiveNote:
       "Recovered after the Grounding Sanctuary was unsealed. Its stone body seems ordinary until quiet weight gathers around it, then gold veins rise like roots remembering light.",
     useHint:
@@ -2902,7 +2900,7 @@ function getSelectedRecoveredObject(recoveredObjects) {
 
 function renderRecoveredObjectIcon(object) {
   if (object.image) {
-    return `<img src="${escapeHtml(object.image)}" alt="${escapeHtml(object.title)} artifact" width="${ARCHIVE_ARTIFACT_SIZE}" height="${ARCHIVE_ARTIFACT_SIZE}" loading="lazy" decoding="async" onerror="this.closest('.archive-recovered-object-card__icon').classList.add('is-missing'); this.remove();" />`;
+    return `<img src="${escapeHtml(object.image)}" alt="${escapeHtml(object.title)} artifact" width="${ARCHIVE_ARTIFACT_SIZE}" height="${ARCHIVE_ARTIFACT_SIZE}" loading="lazy" decoding="async" draggable="false" onerror="this.closest('.archive-recovered-object-card__icon').classList.add('is-missing'); this.remove();" />`;
   }
 
   return `<span aria-hidden="true">${escapeHtml(object.name?.charAt(0) || "K")}</span>`;
@@ -2916,7 +2914,7 @@ function renderRecoveredObjectCard(object, isRecovered = true) {
     : "Sealed finding not yet recovered";
 
   return `
-    <button class="archive-recovered-object-card ${escapeHtml(isRecovered ? object.accentClass || "" : "")}${isRecovered ? " is-recovered" : " is-locked"}" type="button" ${dataAttribute} ${isRecovered ? "" : "disabled"} aria-label="${escapeHtml(cardLabel)}">
+    <button class="archive-recovered-object-card protected-media ${escapeHtml(isRecovered ? object.accentClass || "" : "")}${isRecovered ? " is-recovered" : " is-locked"}" type="button" ${dataAttribute} ${isRecovered ? 'data-protected-media="true" draggable="false"' : "disabled"} aria-label="${escapeHtml(cardLabel)}">
       <span class="archive-recovered-object-card__icon">
         ${isRecovered ? renderRecoveredObjectIcon(object) : `<span aria-hidden="true">?</span>`}
       </span>
@@ -2943,8 +2941,8 @@ function renderRecoveredObjectDetail(object) {
     <div class="archive-recovered-object-modal" role="presentation" data-recovered-object-close>
       <article class="archive-recovered-object-detail ${escapeHtml(object.accentClass || "")}" role="dialog" aria-modal="true" aria-labelledby="recovered-object-title" aria-live="polite">
         <button class="archive-recovered-object-modal__close" type="button" data-recovered-object-close aria-label="Close recovered artifact details">Close</button>
-        <figure class="archive-artifact-modal-figure">
-          <img class="archive-artifact-preview-image" src="${escapeHtml(object.image)}" alt="${escapeHtml(object.title)} artifact" width="${ARCHIVE_ARTIFACT_SIZE}" height="${ARCHIVE_ARTIFACT_SIZE}" loading="lazy" decoding="async" />
+        <figure class="archive-artifact-modal-figure protected-media" data-protected-media="true">
+          <img class="archive-artifact-preview-image" src="${escapeHtml(object.image)}" alt="${escapeHtml(object.title)} artifact" width="${ARCHIVE_ARTIFACT_SIZE}" height="${ARCHIVE_ARTIFACT_SIZE}" loading="lazy" decoding="async" draggable="false" />
         </figure>
         <div class="archive-artifact-lore-panel">
           <div class="archive-recovered-object-detail__header">
@@ -2956,7 +2954,6 @@ function renderRecoveredObjectDetail(object) {
             </div>
           </div>
           ${renderRecoveredObjectDetailSection("Lore", object.lore || object.description)}
-          ${renderRecoveredObjectDetailSection("Clue", object.clue)}
           ${renderRecoveredObjectDetailSection("Archive Note", object.archiveNote)}
           ${renderRecoveredObjectDetailSection("Use", object.useHint)}
         </div>
@@ -4332,9 +4329,9 @@ function renderShelvesRoom() {
 
 function renderVisualRecordCard(record) {
   return `
-    <figure class="archive-visual-record">
+    <figure class="archive-visual-record protected-media" data-protected-media="true" draggable="false">
       <button class="archive-visual-record__preview" type="button" data-visual-record="${escapeHtml(record.id)}" aria-label="${escapeHtml(`View ${record.title} full size`)}">
-        <img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)} visual record" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="lazy" decoding="async" onerror="this.closest('.archive-visual-record').classList.add('is-image-missing'); this.remove();" />
+        <img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)} visual record" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="lazy" decoding="async" draggable="false" onerror="this.closest('.archive-visual-record').classList.add('is-image-missing'); this.remove();" />
         <span class="archive-visual-record__missing">Record unavailable</span>
       </button>
       <figcaption>
@@ -4378,9 +4375,9 @@ function renderGalleryRecordViewer() {
   return `
     <div class="archive-gallery-viewer" data-gallery-carousel>
       <button class="archive-gallery-viewer__nav" type="button" data-gallery-record-nav="previous" aria-label="Previous visual record">‹</button>
-      <figure class="archive-gallery-record">
+      <figure class="archive-gallery-record protected-media" data-protected-media="true" draggable="false">
         <button class="archive-gallery-record__image-button" type="button" data-visual-record="${escapeHtml(record.id)}" aria-label="${escapeHtml(`Open visual record ${selectedGalleryRecordIndex + 1} full size`)}">
-          <img src="${escapeHtml(record.image)}" alt="${escapeHtml(`Unknown visual record ${selectedGalleryRecordIndex + 1}`)}" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="lazy" decoding="async" />
+          <img src="${escapeHtml(record.image)}" alt="${escapeHtml(`Unknown visual record ${selectedGalleryRecordIndex + 1}`)}" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="lazy" decoding="async" draggable="false" />
         </button>
         <figcaption>
           <span>Visual Record</span>
@@ -4429,8 +4426,8 @@ function renderVisualRecordModal() {
         <button class="visual-record-modal__close" type="button" data-visual-record-close aria-label="Close visual record">
           <span class="close-circle-icon" aria-hidden="true"></span>
         </button>
-        <figure class="visual-record-modal__image-frame">
-          <img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)} visual record" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="eager" decoding="async" />
+        <figure class="visual-record-modal__image-frame protected-media" data-protected-media="true">
+          <img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)} visual record" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="eager" decoding="async" draggable="false" />
         </figure>
       </article>
     </div>
@@ -5465,10 +5462,10 @@ function renderGalleryFeaturedRecord(featuredRecord) {
           <button class="gallery-featured-card__nav gallery-featured-card__nav--next" type="button" data-gallery-featured-nav="next" aria-label="Next featured visual record"${hasMultipleFeaturedRecords ? "" : " disabled"}></button>
         </div>
       </header>
-      <div class="gallery-featured-card__visual">
+      <div class="gallery-featured-card__visual protected-media" data-protected-media="true" draggable="false">
         <div class="gallery-featured-card__image">
           <button class="gallery-featured-card__open" type="button" data-gallery-open-record="${escapeHtml(safeRecordId)}" aria-label="${escapeHtml(`Open ${title}`)}">
-            <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" decoding="async" onerror="${getGalleryImageErrorHandler(image)}" />
+            <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" decoding="async" draggable="false" onerror="${getGalleryImageErrorHandler(image)}" />
           </button>
         </div>
         <div class="gallery-featured-card__dots" aria-label="Featured visual record position">
@@ -5519,10 +5516,10 @@ function renderGalleryRecordPlaceholder(record) {
   const canMarkRecord = !record?.isVirtualTrailRecord;
 
   return `
-    <article class="gallery-record-card${record.sealed ? " is-sealed" : ""}${record.variant ? ` gallery-record-card--${escapeHtml(record.variant)}` : ""}" aria-label="${escapeHtml(`${record.title}, ${record.category}`)}">
+    <article class="gallery-record-card protected-media${record.sealed ? " is-sealed" : ""}${record.variant ? ` gallery-record-card--${escapeHtml(record.variant)}` : ""}" aria-label="${escapeHtml(`${record.title}, ${record.category}`)}" data-protected-media="true" draggable="false">
       <button class="gallery-record-card__open" type="button" data-gallery-open-record="${escapeHtml(recordId)}" aria-label="${escapeHtml(`Open ${record.title}`)}">
       <span class="gallery-record-card__image">
-        ${gridImage ? `<img src="${escapeHtml(gridImage)}" alt="${escapeHtml(record.title)}" loading="eager" decoding="async" onerror="${getGalleryImageErrorHandler(gridImage)}" />` : ""}
+        ${gridImage ? `<img src="${escapeHtml(gridImage)}" alt="${escapeHtml(record.title)}" loading="eager" decoding="async" draggable="false" onerror="${getGalleryImageErrorHandler(gridImage)}" />` : ""}
       </span>
       </button>
       ${canMarkRecord ? `<button class="gallery-record-card__mark${galleryMarkedRecordIds.has(recordId) ? " is-marked" : ""}" type="button" data-gallery-mark-record="${escapeHtml(recordId)}" aria-label="${escapeHtml(`${galleryMarkedRecordIds.has(recordId) ? "Unmark" : "Mark"} ${record.title}`)}"></button>` : ""}
@@ -5755,7 +5752,7 @@ function renderGalleryVisualTrailRow(trail, { asListItem = false } = {}) {
 
   return `
     <button class="gallery-trail-row${asListItem ? " gallery-trail-row--list" : " gallery-trail-row--summary"}" type="button" data-gallery-open-trail="${escapeHtml(trail?.id || "")}">
-      ${asListItem ? "" : `<span class="gallery-trail-row__thumb ${thumbState}" aria-hidden="true">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" decoding="async" onerror="${getVisualTrailImageErrorHandler(image)}" />` : ""}</span>`}
+      ${asListItem ? "" : `<span class="gallery-trail-row__thumb protected-media ${thumbState}" aria-hidden="true" data-protected-media="true">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" decoding="async" draggable="false" onerror="${getVisualTrailImageErrorHandler(image)}" />` : ""}</span>`}
       <span class="gallery-trail-row__main">
         <span class="gallery-trail-row__copy">
           <strong>${escapeHtml(trailView.title || "Visual Trail")}</strong>
@@ -5780,7 +5777,7 @@ function renderGalleryMiniRecordRow(item, { includeUnmark = false } = {}) {
   return `
     <div class="gallery-mini-row-wrap">
       <button class="gallery-mini-row" type="button" data-gallery-open-record="${escapeHtml(recordId)}">
-        <span class="gallery-mini-thumb" aria-hidden="true">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" decoding="async" onerror="${getGalleryImageErrorHandler(image)}" />` : ""}</span>
+        <span class="gallery-mini-thumb protected-media" aria-hidden="true" data-protected-media="true">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" decoding="async" draggable="false" onerror="${getGalleryImageErrorHandler(image)}" />` : ""}</span>
         <span>
           <strong>${escapeHtml(record?.title || "Unknown Visual Record")}</strong>
           <em>${escapeHtml(subtext)}</em>
@@ -5859,8 +5856,8 @@ function renderGalleryRecordModal() {
       <button class="gallery-record-modal__backdrop" type="button" data-gallery-modal-close aria-label="Close visual record"></button>
       <article class="gallery-record-modal__dialog" role="dialog" aria-modal="true" aria-label="Expanded visual record">
         <button class="gallery-record-modal__close" type="button" data-gallery-modal-close aria-label="Close visual record">×</button>
-        <figure class="gallery-record-modal__figure">
-          ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="eager" decoding="async" onerror="${getGalleryImageErrorHandler(image)}" />` : ""}
+        <figure class="gallery-record-modal__figure protected-media" data-protected-media="true">
+          ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="eager" decoding="async" draggable="false" onerror="${getGalleryImageErrorHandler(image)}" />` : ""}
         </figure>
       </article>
     </div>
@@ -5901,10 +5898,10 @@ function renderGalleryVisualTrailModalContent() {
     <div class="gallery-trail-fragment-grid${trailView.isAssembling ? " is-assembling" : ""}" aria-label="Visual trail fragments">
       ${trailView.fragments.map((fragment) => {
         return `
-          <figure class="gallery-trail-fragment${fragment.recovered ? " is-recovered" : " is-locked"}">
+          <figure class="gallery-trail-fragment protected-media${fragment.recovered ? " is-recovered" : " is-locked"}" data-protected-media="true" draggable="false">
             <span class="gallery-trail-fragment__media" aria-hidden="${fragment.recovered ? "false" : "true"}">
               ${fragment.recovered && fragment.image
-                ? `<img src="${escapeHtml(fragment.image)}" alt="${escapeHtml(fragment.title)}" loading="lazy" decoding="async" onerror="${getVisualTrailImageErrorHandler(fragment.image)}" />`
+                ? `<img src="${escapeHtml(fragment.image)}" alt="${escapeHtml(fragment.title)}" loading="lazy" decoding="async" draggable="false" onerror="${getVisualTrailImageErrorHandler(fragment.image)}" />`
                 : `<span>Fragment locked</span>${fragment.hint ? `<small>${escapeHtml(fragment.hint)}</small>` : ""}`}
             </span>
             <figcaption class="gallery-trail-fragment__meta">
@@ -5946,8 +5943,8 @@ function renderGalleryVisualTrailRestoredOverlay() {
       <button class="gallery-trail-lightbox__backdrop" type="button" data-gallery-trail-restored-close aria-label="Close restored image"></button>
       <article class="gallery-trail-lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="gallery-trail-lightbox-title">
         <button class="gallery-trail-lightbox__close" type="button" data-gallery-trail-restored-close aria-label="Close restored image">Close</button>
-        <figure class="gallery-trail-lightbox__figure">
-          <img src="${escapeHtml(trailView.fullImage)}" alt="${escapeHtml(`${trailView.title} restored image`)}" loading="eager" decoding="async" onerror="${getVisualTrailImageErrorHandler(trailView.fullImage)}" />
+        <figure class="gallery-trail-lightbox__figure protected-media" data-protected-media="true">
+          <img src="${escapeHtml(trailView.fullImage)}" alt="${escapeHtml(`${trailView.title} restored image`)}" loading="eager" decoding="async" draggable="false" onerror="${getVisualTrailImageErrorHandler(trailView.fullImage)}" />
           <figcaption id="gallery-trail-lightbox-title">${escapeHtml(trailView.restoredCaption)}</figcaption>
           <p>Restored image could not be loaded.</p>
         </figure>

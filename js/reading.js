@@ -594,6 +594,10 @@ function renderDeckOptions() {
       const isAccessible = isDeckAccessible(deck);
       const lockedReason = getDeckLockedReason(deck);
       const themeClass = deck.imageSet || deck.id;
+      const isProtectedDeckMedia = deck.id === "bloodMoon" || deck.imageSet === "bloodMoon";
+      const protectedMediaClass = isProtectedDeckMedia ? " protected-media" : "";
+      const protectedMediaAttrs = isProtectedDeckMedia ? ' data-protected-media="true" draggable="false"' : "";
+      const protectedImageAttr = isProtectedDeckMedia ? ' draggable="false"' : "";
 
       return `
         <article
@@ -606,8 +610,8 @@ function renderDeckOptions() {
             <div class="deck-selection-card__topline">
               <span class="deck-selection-card__badge">${escapeHtml(isAccessible ? deck.label : lockedReason)}</span>
             </div>
-            <div class="deck-selection-card__preview">
-              <img src="${escapeHtml(deck.previewImage)}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'" />
+            <div class="deck-selection-card__preview${protectedMediaClass}"${protectedMediaAttrs}>
+              <img src="${escapeHtml(deck.previewImage)}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} onerror="this.style.visibility='hidden'" />
             </div>
             <div class="deck-selection-card__content">
               <h3>${escapeHtml(deck.title)}</h3>
@@ -949,6 +953,9 @@ function renderThreadPositionBlocks(spread) {
   if (!spread?.positions?.length || revealedCards.length < 2) {
     return "";
   }
+  const protectedMediaClass = isBloodMoonReadingActive() ? " protected-media" : "";
+  const protectedMediaAttrs = isBloodMoonReadingActive() ? ' data-protected-media="true" draggable="false"' : "";
+  const protectedImageAttr = isBloodMoonReadingActive() ? ' draggable="false"' : "";
 
   return `
     <div class="combined-reading__thread-grid">
@@ -961,8 +968,8 @@ function renderThreadPositionBlocks(spread) {
 
         return `
           <section class="combined-reading__thread-card">
-            <div class="combined-reading__thread-card-image">
-              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" onerror="this.src='${getActiveCardBackImage()}'" />
+            <div class="combined-reading__thread-card-image${protectedMediaClass}"${protectedMediaAttrs}>
+              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} onerror="this.src='${getActiveCardBackImage()}'" />
             </div>
             <div>
               <span class="combined-reading__position-pill">${escapeHtml(positionLabel)}</span>
@@ -2310,6 +2317,9 @@ function renderReadingCards(cards) {
   cardList.innerHTML = "";
   cardList.dataset.cardCount = String(cards.length);
   const cardBackImage = getActiveCardBackImage();
+  const protectedMediaClass = isBloodMoonReadingActive() ? " protected-media" : "";
+  const protectedMediaAttrs = isBloodMoonReadingActive() ? ' data-protected-media="true" draggable="false"' : "";
+  const protectedImageAttr = isBloodMoonReadingActive() ? ' draggable="false"' : "";
 
   cardList.innerHTML = cards
     .map((card, index) => {
@@ -2319,13 +2329,13 @@ function renderReadingCards(cards) {
       const reversedClass = isCardReversed(card) ? " is-reversed" : "";
 
       return `
-        <button class="tarot-card energy-${energy} fade-slide-in" type="button" data-card-index="${index}" aria-label="Reveal ${escapeHtml(cardName)}">
+        <button class="tarot-card energy-${energy} fade-slide-in${protectedMediaClass}" type="button" data-card-index="${index}" aria-label="Reveal ${escapeHtml(cardName)}"${protectedMediaAttrs}>
           <span class="tarot-card__inner">
             <span class="tarot-card__face tarot-card__back">
-              <img src="${cardBackImage}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" />
+              <img src="${cardBackImage}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} />
             </span>
             <span class="tarot-card__face tarot-card__front">
-              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.src='${cardBackImage}'" />
+              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} onerror="this.src='${cardBackImage}'" />
               <span class="card-orientation-badge">${escapeHtml(orientationLabel)}</span>
             </span>
           </span>
@@ -2541,13 +2551,25 @@ function renderReadingResults() {
   const cardTitle = getCardDisplayName(activeCard, { includeOrientation: true });
   const orientationLabel = getCardOrientationLabel(activeCard);
   const reversedClass = isCardReversed(activeCard) ? " is-reversed" : "";
+  const protectedMediaClass = isBloodMoonReadingActive() ? " protected-media" : "";
+  const protectedMediaAttrs = isBloodMoonReadingActive() ? ' data-protected-media="true" draggable="false"' : "";
+  const protectedImageAttr = isBloodMoonReadingActive() ? ' draggable="false"' : "";
 
   readingStatus.textContent = progressText;
   syncReadingCardStates();
   centerActiveReadingCardOnMobile();
   readingReveals.innerHTML = `
     <article class="reading-viewer energy-${activeEnergy}" aria-live="polite">
-      <div class="reading-viewer__image-frame">
+      <div
+        class="reading-viewer__image-frame${protectedMediaClass}"
+        ${protectedMediaAttrs}
+        data-expandable-image
+        data-image-preview-title="${escapeHtml(cardTitle)}"
+        data-image-preview-caption="${escapeHtml(`${activePositionLabel} • ${orientationLabel}`)}"
+        role="button"
+        tabindex="0"
+        aria-label="Expand ${escapeHtml(cardTitle)} image"
+      >
         <img
           class="reading-viewer__image card-image${reversedClass}"
           src="${escapeHtml(activeCard.image)}"
@@ -2556,12 +2578,9 @@ function renderReadingResults() {
           height="${CARD_IMAGE_HEIGHT}"
           loading="eager"
           decoding="async"
-          data-expandable-image
           data-image-preview-title="${escapeHtml(cardTitle)}"
           data-image-preview-caption="${escapeHtml(`${activePositionLabel} • ${orientationLabel}`)}"
-          role="button"
-          tabindex="0"
-          aria-label="Expand ${escapeHtml(cardTitle)} image"
+          ${protectedImageAttr}
           onerror="this.src='${getActiveCardBackImage()}'"
         />
         <span class="card-orientation-badge reading-viewer__orientation-badge">${escapeHtml(orientationLabel)}</span>

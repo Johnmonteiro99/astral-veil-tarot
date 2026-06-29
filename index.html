@@ -16,6 +16,15 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
       rel="stylesheet"
     />
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("astralVeilDisableGlowEffects") === "true") {
+            document.documentElement.classList.add("no-glow");
+          }
+        } catch (error) {}
+      })();
+    </script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
     <link rel="stylesheet" href="css/reading.css" />

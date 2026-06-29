@@ -10,7 +10,6 @@
     <title>The Lumen Archive | Astral Veil</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="preload" as="image" href="assets/images/lumen_archive_rooms/dawn_atium.png" fetchpriority="high" />
-    <link rel="preload" as="image" href="assets/images/lumen_archive_rooms/reflection_pool.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,6 +17,15 @@
       rel="stylesheet"
     />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("astralVeilDisableGlowEffects") === "true") {
+            document.documentElement.classList.add("no-glow");
+          }
+        } catch (error) {}
+      })();
+    </script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
     <link rel="stylesheet" href="css/lumen-archive.css" />
@@ -203,20 +211,35 @@
               <div class="lumen-arrival-intro-track" data-lumen-arrival-intro-track>
                 <div class="lumen-arrival-intro-slide">
                   <article class="lumen-arrival-panel">
-                    <p class="lumen-room-panel__label">What this place is</p>
-                    <p>The Lumen Archive is not a place for perfect answers. It is a sanctuary for reflection, healing, renewal, grounding, and integration.</p>
+                    <div class="lumen-arrival-panel__heading">
+                      <p class="lumen-room-panel__label">WHAT THIS PLACE IS</p>
+                    </div>
+                    <div class="lumen-arrival-panel__body">
+                      <p>The Lumen Archive is a quiet place for reflection, healing, renewal, grounding, and integration. You do not need to arrive with perfect answers, a calm mind, or a finished version of yourself.</p>
+                      <p>Many who enter are seeking something: comfort, clarity, direction, or a safe place to set down what they have been carrying. This Archive does not judge the shape you arrive in. It simply offers rooms where your thoughts can soften, your questions can breathe, and your light can be noticed again.</p>
+                    </div>
                   </article>
                 </div>
                 <div class="lumen-arrival-intro-slide">
                   <article class="lumen-arrival-panel">
-                    <p class="lumen-room-panel__label">How to walk the rooms</p>
-                    <p>Each room offers a different kind of remembering. Some ask you to soften. Some ask you to breathe. Some ask you to grow slowly.</p>
+                    <div class="lumen-arrival-panel__heading">
+                      <p class="lumen-room-panel__label">HOW TO WALK THE ROOMS</p>
+                    </div>
+                    <div class="lumen-arrival-panel__body">
+                      <p>Each room is connected to an element and a human experience. Water invites emotional clarity. Air offers breath, release, and perspective. Fire helps you return to courage, energy, and renewal. Earth brings grounding, roots, and steadier steps. Integration gathers the pieces together.</p>
+                      <p>You do not need to move through the rooms in order. Let the room that calls to you be enough. Each path serves the same larger purpose: helping you listen inward with more patience and less pressure.</p>
+                    </div>
                   </article>
                 </div>
                 <div class="lumen-arrival-intro-slide">
                   <article class="lumen-arrival-panel">
-                    <p class="lumen-room-panel__label">What the Archive remembers</p>
-                    <p>None of these rooms ask you to become someone else. They invite the self already here to return with gentleness.</p>
+                    <div class="lumen-arrival-panel__heading">
+                      <p class="lumen-room-panel__label">WHAT THE ARCHIVE REMEMBERS</p>
+                    </div>
+                    <div class="lumen-arrival-panel__body">
+                      <p>The Archive remembers that safety, comfort, and happiness are not as far away as they can feel. Some days may ask more of you than you know how to give. Other days may arrive softly, already full of light.</p>
+                      <p>Wherever you are, the Lumen Archive keeps a place for the part of you still reaching forward. It does not promise that every path will be easy, but it offers a gentler light for seeing the next step.</p>
+                    </div>
                   </article>
                 </div>
               </div>
@@ -253,9 +276,8 @@
                     <h3 data-lumen-dashboard-purpose-title></h3>
                     <p data-lumen-dashboard-purpose></p>
                     <p class="lumen-purpose-note" data-lumen-dashboard-ritual></p>
-                    <a class="lumen-action-btn lumen-journal-btn" href="journal.html">
+                    <a class="lumen-action-btn lumen-room-action-btn lumen-journal-btn" href="journal.html">
                       <span>Write in Journal</span>
-                      <img src="assets/icons/symbols/feather-pen.svg" alt="" aria-hidden="true" />
                     </a>
                   </article>
                 </div>
@@ -267,8 +289,8 @@
                       <span class="lumen-question-icon" aria-hidden="true">✦</span>
                       <p class="lumen-single-question-text" data-lumen-dashboard-question-text></p>
                     </article>
-                    <button class="lumen-action-btn lumen-question-cycle-btn" type="button" data-lumen-question-cycle>
-                      <span>Let the Room Ask Again</span>
+                    <button class="lumen-action-btn lumen-room-action-btn lumen-question-cycle-btn" type="button" data-lumen-question-cycle>
+                      <span>Reflect Again</span>
                     </button>
                   </article>
                 </div>
@@ -280,7 +302,7 @@
                     <div class="lumen-room-seal-content">
                       <h3 data-lumen-dashboard-seal-title></h3>
                       <p data-lumen-dashboard-seal-description></p>
-                      <button class="lumen-action-btn lumen-unseal-scroll-btn" type="button" data-lumen-dashboard-unseal-scroll>
+                      <button class="lumen-action-btn lumen-room-action-btn lumen-unseal-scroll-btn" type="button" data-lumen-dashboard-unseal-scroll>
                         <span>Unseal Scroll</span>
                       </button>
                     </div>

@@ -17,19 +17,71 @@ const LUMEN_ROOM_IMAGES = {
   mirrorsPreview: "Hall_of_mirros.png",
   mirrorsSeal: "seal_of_integration.png"
 };
+const LUMEN_ROOM_IMAGE_ALIASES = {
+  "dawn atrium.png": LUMEN_ROOM_IMAGES.arrivalHero,
+  "dawn-atrium.png": LUMEN_ROOM_IMAGES.arrivalHero,
+  "dawn_atrium.png": LUMEN_ROOM_IMAGES.arrivalHero,
+  "dawn atium.png": LUMEN_ROOM_IMAGES.arrivalHero,
+  "dawn-atium.png": LUMEN_ROOM_IMAGES.arrivalHero,
+  "garden of renewal.png": LUMEN_ROOM_IMAGES.renewalHero,
+  "garden-of-renewal.png": LUMEN_ROOM_IMAGES.renewalHero,
+  "reflection pool.png": LUMEN_ROOM_IMAGES.reflectionHero,
+  "reflection-pool.png": LUMEN_ROOM_IMAGES.reflectionHero,
+  "sanctuary of breath.png": LUMEN_ROOM_IMAGES.breathHero,
+  "sanctuary-of-breath.png": LUMEN_ROOM_IMAGES.breathHero,
+  "sanctuary_breath.png": LUMEN_ROOM_IMAGES.breathHero,
+  "rooted grove.png": LUMEN_ROOM_IMAGES.groveHero,
+  "rooted-grove.png": LUMEN_ROOM_IMAGES.groveHero,
+  "hall of mirrors.png": LUMEN_ROOM_IMAGES.mirrorsHero,
+  "hall-of-mirrors.png": LUMEN_ROOM_IMAGES.mirrorsHero,
+  "hall_of_mirrors.png": LUMEN_ROOM_IMAGES.mirrorsHero
+};
 
 function getLumenRoomImagePath(filename) {
-  const imageName = String(filename || "").trim();
+  const imageName = String(filename || "").trim().replaceAll("\\", "/");
 
   if (!imageName) {
     return "";
   }
 
-  if (/^(?:https?:)?\/\//.test(imageName) || imageName.startsWith("/") || imageName.startsWith(LUMEN_ROOM_IMAGE_BASE)) {
+  if (/^(?:https?:)?\/\//.test(imageName) || imageName.startsWith("/")) {
     return imageName;
   }
 
-  return `${LUMEN_ROOM_IMAGE_BASE}${imageName.replace(/^\.?\//, "")}`;
+  const normalizedImageName = imageName
+    .replace(/^\.?\//, "")
+    .replace(/^assets\/images\/lumen archive rooms\//i, LUMEN_ROOM_IMAGE_BASE)
+    .replace(/^assets\/images\/lumen-archive-rooms\//i, LUMEN_ROOM_IMAGE_BASE);
+  const rawBasename = normalizedImageName.split("/").pop() || normalizedImageName;
+  let decodedBasename = rawBasename;
+
+  try {
+    decodedBasename = decodeURIComponent(rawBasename);
+  } catch (error) {
+    decodedBasename = rawBasename;
+  }
+
+  const aliasedBasename = LUMEN_ROOM_IMAGE_ALIASES[decodedBasename.toLowerCase()] || decodedBasename;
+
+  if (normalizedImageName.startsWith(LUMEN_ROOM_IMAGE_BASE)) {
+    return `${LUMEN_ROOM_IMAGE_BASE}${aliasedBasename}`;
+  }
+
+  return `${LUMEN_ROOM_IMAGE_BASE}${aliasedBasename}`;
+}
+
+function getLumenCssImageUrl(filename) {
+  const imagePath = getLumenRoomImagePath(filename);
+
+  if (!imagePath) {
+    return "";
+  }
+
+  try {
+    return new URL(imagePath, document.baseURI).href;
+  } catch (error) {
+    return imagePath;
+  }
 }
 
 const lumenSanctuaries = [
@@ -572,7 +624,7 @@ function setLumenRoomScene(sanctuary) {
   lumenRoomPage?.classList.add(atmosphereClass);
 
   if (heroImage) {
-    lumenRoomHero?.style.setProperty("--room-hero-image", `url("${heroImage}")`);
+    lumenRoomHero?.style.setProperty("--room-hero-image", `url("${getLumenCssImageUrl(heroImage)}")`);
   } else {
     lumenRoomHero?.style.removeProperty("--room-hero-image");
   }
@@ -580,6 +632,16 @@ function setLumenRoomScene(sanctuary) {
 
 function getLumenScrollBehavior() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+}
+
+function scrollLumenArchiveToTop() {
+  window.requestAnimationFrame(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: getLumenScrollBehavior()
+    });
+  });
 }
 
 function shouldAutoScrollLumenPortalOnSelection() {
@@ -1768,7 +1830,7 @@ function renderLumenArrivalRoom() {
   resetLumenArrivalIntroCarousel();
 
   if (lumenArrivalHero) {
-    lumenArrivalHero.style.setProperty("--room-hero-image", `url("${lumenArrivalRoomEntry.heroImage}")`);
+    lumenArrivalHero.style.setProperty("--room-hero-image", `url("${getLumenCssImageUrl(lumenArrivalRoomEntry.heroImage)}")`);
   }
 
   if (lumenArrivalHeroImage) {
@@ -1972,7 +2034,7 @@ function renderLumenSanctuaryDashboardRoom(sanctuary) {
   resetLumenSanctuaryCardCarousel();
 
   if (lumenDashboardHero) {
-    lumenDashboardHero.style.setProperty("--room-hero-image", `url("${heroImage}")`);
+    lumenDashboardHero.style.setProperty("--room-hero-image", `url("${getLumenCssImageUrl(heroImage)}")`);
   }
 
   if (lumenDashboardHeroImage) {
@@ -2099,7 +2161,12 @@ function initializeLumenDashboard() {
       return;
     }
 
+    const selectedFromRoomPreview = Boolean(roomButton.closest(".lumen-other-rooms, .lumen-arrival-previews"));
     setActiveLumenDashboardRoom(roomButton.dataset.lumenDashboardRoom);
+
+    if (selectedFromRoomPreview) {
+      scrollLumenArchiveToTop();
+    }
   });
 
   window.addEventListener("hashchange", () => {

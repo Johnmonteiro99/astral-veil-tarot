@@ -16,6 +16,15 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
       rel="stylesheet"
     />
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("astralVeilDisableGlowEffects") === "true") {
+            document.documentElement.classList.add("no-glow");
+          }
+        } catch (error) {}
+      })();
+    </script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
     <!-- Google tag (gtag.js) -->
@@ -89,7 +98,7 @@
           <span class="theme-orb-toggle__label theme-orb-toggle__label--sun">Sun</span>
           <span class="theme-orb-toggle__icon-wrap" aria-hidden="true">
             <img
-              src="assets/icons/symbols/sun-moon-toggle-transparent.png"
+              src="assets/icons/symbols/sun-moon-transparent.png"
               alt=""
               class="theme-orb-toggle__icon"
               width="512"

@@ -35,7 +35,7 @@ const reflectionLength = document.querySelector('[data-reflection-length]');
 const privacyReminder = document.querySelector('[data-privacy-reminder]');
 const attachedReadingWrap = document.querySelector('[data-attached-reading]');
 const recentEntriesWrap = document.querySelector('[data-recent-journal-entries]');
-const formRecentEntriesWrap = document.querySelector('[data-form-recent-journal-entries]');
+const reminderQuote = document.querySelector('[data-journal-reminder-quote]');
 const recentTitle = document.querySelector('[data-recent-title]');
 const recentSubtitle = document.querySelector('[data-recent-subtitle]');
 const journalVibeSelect = document.querySelector('[data-journal-vibe-select]');
@@ -64,6 +64,13 @@ const tagIconMap = {
   Gratitude: 'gratitude',
   Question: 'question',
 };
+const reflectionReminderQuotes = [
+  'Not every thought needs an answer. Some only need a place to land.',
+  'The page does not ask you to be finished. It only asks you to begin.',
+  'What you write today may become a lantern for the self you meet later.',
+  'Even the quietest truth becomes clearer when given room to breathe.',
+  'You are allowed to arrive here unfinished.',
+];
 const fallbackSunMoonQuestions = [
   'What has been sitting on your mind today?',
   'What gave you peace today?',
@@ -498,7 +505,7 @@ function lockJournalForSignedOutUser() {
   }
   updateReflectionLength();
   renderRecentEntries([]);
-  renderFormRecentEntries([]);
+  renderReflectionReminderQuote();
 
   if (loadingState) {
     loadingState.hidden = true;
@@ -524,21 +531,84 @@ function renderMoodOptions() {
   ].join('');
 }
 
+function renderReflectionReminderQuote() {
+  if (!reminderQuote) {
+    return;
+  }
+
+  const quoteIndex = Math.floor(Math.random() * reflectionReminderQuotes.length);
+  reminderQuote.textContent = reflectionReminderQuotes[quoteIndex];
+}
+
+function preventPrivateCardDrag(event) {
+  if (event.target?.closest?.('[data-private-card="true"], .private-data-card, [data-protected-media="true"], .protected-media')) {
+    event.preventDefault();
+  }
+}
+
+function preventProtectedMediaContextMenu(event) {
+  if (event.target?.closest?.('[data-protected-media="true"], .protected-media')) {
+    event.preventDefault();
+  }
+}
+
 function renderTags(selectedTags = []) {
   if (!tagWrap) {
     return;
   }
 
+  const wasOpen = tagWrap.classList.contains('is-open');
+  const selectedCount = selectedTags.length;
+  const toggleLabel = selectedCount
+    ? `Quick Tags (${selectedCount} selected)`
+    : 'Quick Tags';
+
   tagWrap.innerHTML = `
     <legend>Quick Tags</legend>
-    ${tagOptions.map((tag) => `
-      <label class="journal-tag-option">
-        <input type="checkbox" name="tags" value="${escapeHtml(tag)}" ${selectedTags.includes(tag) ? 'checked' : ''} />
-        <span class="journal-icon journal-icon--${escapeHtml(tagIconMap[tag] || 'star')}" aria-hidden="true"></span>
-        ${escapeHtml(tag)}
-      </label>
-    `).join('')}
+    <button
+      class="journal-tags__toggle"
+      type="button"
+      aria-expanded="${wasOpen ? 'true' : 'false'}"
+      data-journal-tags-toggle
+    >
+      <span>${escapeHtml(toggleLabel)}</span>
+      <span class="journal-tags__toggle-arrow" aria-hidden="true"></span>
+    </button>
+    <div class="journal-tags__options" data-journal-tags-options>
+      ${tagOptions.map((tag) => `
+        <label class="journal-tag-option">
+          <input type="checkbox" name="tags" value="${escapeHtml(tag)}" ${selectedTags.includes(tag) ? 'checked' : ''} />
+          <span class="journal-icon journal-icon--${escapeHtml(tagIconMap[tag] || 'star')}" aria-hidden="true"></span>
+          ${escapeHtml(tag)}
+        </label>
+      `).join('')}
+    </div>
   `;
+
+  tagWrap.classList.toggle('is-open', wasOpen);
+
+  const toggle = tagWrap.querySelector('[data-journal-tags-toggle]');
+  const updateToggleLabel = () => {
+    const count = tagWrap.querySelectorAll('input[name="tags"]:checked').length;
+    const label = count ? `Quick Tags (${count} selected)` : 'Quick Tags';
+    const labelWrap = toggle?.querySelector('span');
+
+    if (labelWrap) {
+      labelWrap.textContent = label;
+    }
+  };
+
+  tagWrap.onclick = (event) => {
+    const toggleButton = event.target.closest('[data-journal-tags-toggle]');
+
+    if (!toggleButton) {
+      return;
+    }
+
+    const isOpen = tagWrap.classList.toggle('is-open');
+    toggleButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  };
+  tagWrap.querySelector('[data-journal-tags-options]')?.addEventListener('change', updateToggleLabel);
 }
 
 function getDefaultTagsForContext() {
@@ -1402,7 +1472,7 @@ function renderRecentEntries(entries = []) {
     const createdLabel = formatEntryTime(entry.created_at);
 
     return `
-      <a class="journal-entry-card journal-vibe-preview-entry" href="account.html#journal-entries" aria-label="${escapeHtml(`Open journal archive for ${title}`)}">
+      <a class="journal-entry-card journal-vibe-preview-entry private-data-card" href="account.html#journal-entries" aria-label="${escapeHtml(`Open journal archive for ${title}`)}" data-private-card="true" draggable="false">
         <span class="journal-entry-card__media" aria-hidden="true"></span>
         <span class="journal-entry-card__date">
           <time datetime="${escapeHtml(entry.entry_date || '')}" class="journal-vibe-preview-date">${escapeHtml(formatEntryDate(entry.entry_date))}</time>
@@ -1414,32 +1484,8 @@ function renderRecentEntries(entries = []) {
   }).join('');
 }
 
-function renderFormRecentEntries(entries = []) {
-  if (!formRecentEntriesWrap) {
-    return;
-  }
-
-  formRecentEntriesWrap.innerHTML = entries.slice(0, 3).map((entry, index) => {
-    const title = getFallbackTitle({
-      title: entry.title,
-      mood: entry.mood || entry.mood_key,
-      entryDate: entry.entry_date,
-    });
-
-    return `
-      <a class="journal-form-footer__recent-entry journal-vibe-preview-entry" href="account.html#journal-entries" aria-label="${escapeHtml(`Open journal archive for ${title}`)}">
-        <span class="journal-form-footer__recent-title">
-          <span class="journal-form-footer__recent-index">${escapeHtml(toRomanNumeral(index))}.</span>
-          <span class="journal-form-footer__recent-name journal-vibe-preview-title">${escapeHtml(title)}</span>
-        </span>
-        <time datetime="${escapeHtml(entry.entry_date || '')}">${escapeHtml(formatEntryDate(entry.entry_date))}</time>
-      </a>
-    `;
-  }).join('');
-}
-
 async function loadRecentEntries() {
-  if ((!recentEntriesWrap && !formRecentEntriesWrap) || !activeUser) {
+  if (!recentEntriesWrap || !activeUser) {
     return;
   }
 
@@ -1447,7 +1493,6 @@ async function loadRecentEntries() {
 
   if (!supabase) {
     renderRecentEntries([]);
-    renderFormRecentEntries([]);
     return;
   }
 
@@ -1462,12 +1507,10 @@ async function loadRecentEntries() {
   if (error) {
     console.error('Recent journal entries load failed:', error);
     renderRecentEntries([]);
-    renderFormRecentEntries([]);
     return;
   }
 
   renderRecentEntries(data || []);
-  renderFormRecentEntries(data || []);
 }
 
 async function loadAttachedReading() {
@@ -1630,6 +1673,7 @@ async function initJournalPage() {
   applyThemeCopy();
   renderMoodOptions();
   renderTags();
+  renderReflectionReminderQuote();
 
   if (loadingState) {
     loadingState.hidden = true;
@@ -1715,5 +1759,8 @@ document.addEventListener('keydown', (event) => {
     closeGuidedModal();
   }
 });
+
+document.addEventListener('dragstart', preventPrivateCardDrag);
+document.addEventListener('contextmenu', preventProtectedMediaContextMenu);
 
 initJournalPage();

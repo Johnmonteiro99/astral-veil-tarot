@@ -263,6 +263,45 @@
   font-size: 0.88rem;
 }
 
+@media (min-width: 901px) and (max-width: 1366px), (min-width: 901px) and (max-height: 800px) {
+  .archive-room-placeholder-page {
+    min-height: auto;
+  }
+
+  .noctis-room-navbar {
+    min-height: 58px;
+    grid-template-columns: minmax(190px, 230px) minmax(0, 1fr) auto;
+    column-gap: clamp(1rem, 2vw, 2rem);
+    padding-inline: clamp(0.9rem, 3vw, 2rem);
+  }
+
+  .noctis-room-brand {
+    min-width: 190px;
+    font-size: clamp(0.82rem, 1vw, 0.96rem);
+  }
+
+  .noctis-room-links {
+    gap: clamp(0.85rem, 1.6vw, 1.4rem);
+  }
+
+  .noctis-room-link {
+    min-height: 38px;
+    padding-block: 0.58rem;
+    font-size: 0.68rem;
+  }
+
+  .archive-room-placeholder__stage {
+    max-width: min(820px, 100%);
+    padding: clamp(0.9rem, 2vh, 1.4rem) 1rem clamp(1.4rem, 3vh, 2rem);
+  }
+
+  .archive-room-placeholder__card {
+    width: min(820px, 100%);
+    gap: 0.8rem;
+    padding: clamp(1rem, 2.2vw, 1.55rem);
+  }
+}
+
 @media (max-width: 1099px) {
   .noctis-room-navbar {
     position: sticky;
