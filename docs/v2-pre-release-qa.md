@@ -5,6 +5,7 @@ Last updated: 2026-06-28
 ## Security Fixes Added In This Pass
 
 - Added `supabase/migrations/20260628193000_v2_security_foundation.sql`.
+- Added `supabase/migrations/20260628200000_cleanup_v2_private_rls_policies.sql`.
 - Defines `public.is_admin()` for admin RLS policies that already reference it.
 - Enables owner-only RLS, when tables exist, for:
   - `profiles`
@@ -13,6 +14,8 @@ Last updated: 2026-06-28
   - `user_artifacts`
   - `user_rooms`
 - Keeps admin read policies for account-support views where needed.
+- Deduplicates private user-table policies into one readable owner policy per action where safe.
+- Recreates `user_visual_trail_fragments` SELECT/INSERT policies as authenticated-only owner policies.
 - Does not create new app data models or infer missing schemas.
 
 ## Verified From Local Code
@@ -32,6 +35,7 @@ Last updated: 2026-06-28
 These must be verified in the Supabase dashboard or by running SQL against the deployed project:
 
 - Confirm the new `20260628193000_v2_security_foundation.sql` migration has been applied.
+- Confirm the new `20260628200000_cleanup_v2_private_rls_policies.sql` migration has been applied.
 - Confirm `public.is_admin()` exists and returns true only for intended admin profiles.
 - Confirm RLS is enabled on all private user tables in production:
   - `profiles`
@@ -48,6 +52,8 @@ These must be verified in the Supabase dashboard or by running SQL against the d
   - `user_gallery_marked_records`
   - `user_visual_trail_fragments`
 - Confirm no private table has unrestricted `anon` select/insert/update/delete grants.
+- Confirm `user_visual_trail_fragments` has no PUBLIC/anon SELECT or INSERT policies.
+- Confirm duplicate owner policies were removed from private user tables after the cleanup migration.
 - Confirm admin-managed tables and storage buckets use `public.is_admin()` or equivalent server-side policies, not only frontend UI.
 - Confirm avatar storage policies restrict writes to each user's own path.
 - Confirm Supabase Auth redirect URLs include deployed auth/account URLs.
