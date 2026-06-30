@@ -680,6 +680,204 @@ body.blood-moon-mode .veilwalker-selector__closing p {
   }
 }
 
+@media (min-width: 901px) and (max-width: 1366px), (min-width: 901px) and (max-height: 800px) {
+  .readers-stage {
+    min-height: auto;
+    place-items: start center;
+    padding:
+      clamp(82px, 11vh, 104px)
+      clamp(18px, 3vw, 42px)
+      clamp(26px, 4vh, 46px);
+  }
+
+  .readers-page {
+    width: min(100%, 1120px);
+    gap: clamp(16px, 2.4vw, 28px);
+  }
+
+  .veilwalker-selector-hero,
+  .veilwalker-selector,
+  .veilwalker-selector__featured {
+    max-width: min(100%, 1080px);
+    margin-inline: auto;
+  }
+
+  .readers-hero-letter {
+    width: min(100%, 1040px);
+    min-height: clamp(260px, 38vh, 340px);
+    border-radius: 16px;
+  }
+
+  .readers-hero-letter__copy {
+    gap: clamp(0.5rem, 1.1vw, 0.8rem);
+    width: min(36rem, 52%);
+    padding:
+      clamp(1.45rem, 3vw, 2.45rem)
+      clamp(1.35rem, 4vw, 3.4rem)
+      clamp(1.65rem, 3.6vw, 2.85rem);
+  }
+
+  .readers-page #readers-title {
+    font-size: clamp(2.7rem, 4vw, 4rem);
+  }
+
+  .readers-hero-letter p {
+    font-size: clamp(0.94rem, 1.2vw, 1rem);
+    line-height: 1.5;
+  }
+
+  .veilwalker-selector {
+    gap: clamp(10px, 1.6vw, 16px);
+  }
+
+  .veilwalker-selector__featured {
+    padding-inline: clamp(0px, 1.6vw, 18px);
+  }
+
+  .veilwalker-feature {
+    grid-template-columns: minmax(290px, 0.84fr) minmax(0, 1fr);
+    gap: clamp(18px, 3vw, 34px);
+    max-width: min(100%, 1040px);
+    margin-inline: auto;
+    padding: clamp(12px, 1.6vw, 18px);
+    border-radius: 14px;
+  }
+
+  .veilwalker-feature__image-wrap {
+    max-height: clamp(340px, 58vh, 500px);
+    border-radius: 10px;
+  }
+
+  .veilwalker-feature__image {
+    min-height: clamp(340px, 55vh, 500px);
+    max-height: clamp(340px, 58vh, 500px);
+  }
+
+  .veilwalker-feature__details {
+    gap: clamp(9px, 1.25vw, 14px);
+    padding: clamp(8px, 1.7vw, 18px) clamp(4px, 0.9vw, 10px);
+  }
+
+  .veilwalker-feature__meta {
+    gap: 7px;
+    font-size: 0.74rem;
+  }
+
+  .veilwalker-feature__glyph {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .veilwalker-feature__glyph::before {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .veilwalker-feature h2 {
+    font-size: clamp(2.1rem, 4vw, 3.6rem);
+  }
+
+  .veilwalker-feature__quote {
+    font-size: clamp(0.98rem, 1.45vw, 1.12rem);
+    line-height: 1.38;
+  }
+
+  .veilwalker-feature__description,
+  .veilwalker-feature__unavailable {
+    font-size: clamp(0.92rem, 1.1vw, 1rem);
+    line-height: 1.58;
+  }
+
+  .veilwalker-feature__detail-list {
+    gap: 5px;
+  }
+
+  .veilwalker-feature__detail-row {
+    gap: 10px;
+    padding: 6px 0;
+  }
+
+  .veilwalker-feature__actions {
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .veilwalker-feature__button {
+    min-height: 40px;
+    padding: 0.66rem 1.05rem;
+    font-size: 0.9rem;
+  }
+
+  .veilwalker-selector__zodiac {
+    width: min(100%, 1040px);
+    padding: 6px 8px;
+  }
+
+  .veilwalker-zodiac-track {
+    gap: 6px;
+    scroll-snap-type: none;
+  }
+
+  .veilwalker-zodiac-button {
+    flex-basis: clamp(68px, 7vw, 86px);
+    min-width: 68px;
+    padding: 0.52rem 0.5rem;
+    font-size: 0.7rem;
+    scroll-snap-align: none;
+  }
+
+  .veilwalker-zodiac-button__glyph {
+    width: 1.85rem;
+    height: 1.85rem;
+  }
+
+  .veilwalker-zodiac-button__icon {
+    width: 1.08rem;
+    height: 1.08rem;
+  }
+
+  .veilwalker-selector__closing {
+    margin-top: clamp(4px, 1.2vw, 10px);
+    padding-top: clamp(4px, 1vw, 8px);
+    font-size: clamp(1.15rem, 2vw, 1.65rem);
+  }
+
+  .reader-profile-grid {
+    gap: 14px;
+  }
+
+  .reader-profile-card img {
+    height: clamp(280px, 42vh, 360px);
+  }
+
+  .reader-profile-card__content {
+    gap: 0.58rem;
+    padding: clamp(1rem, 1.8vw, 1.25rem);
+  }
+
+  .reader-profile-card h2 {
+    font-size: clamp(1.65rem, 2.5vw, 2rem);
+  }
+
+  .reader-lightbox {
+    padding: clamp(14px, 3vw, 28px);
+  }
+
+  .reader-lightbox__dialog {
+    width: min(92vw, 900px);
+    max-height: 88vh;
+  }
+
+  .reader-lightbox__image {
+    min-height: clamp(360px, 64vh, 460px);
+    max-height: 88vh;
+  }
+
+  .reader-lightbox__content {
+    padding: clamp(18px, 3vw, 30px);
+  }
+}
+
 /* ================================
    Veilwalker Grid Cards
 ================================ */

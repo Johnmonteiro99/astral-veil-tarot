@@ -145,6 +145,10 @@ function getReaderBloodMoonCardClass(reader) {
   return reader?.id === "aquarius" ? " reader-profile-card--aquarius-bloodmoon" : "";
 }
 
+function isProtectedReaderVisual(reader, image = "") {
+  return Boolean(isBloodMoonActive() && reader?.bloodMoonImage && (!image || image === reader.bloodMoonImage));
+}
+
 function getReaderDetailAccentClass(reader) {
   if (reader.isBloodMoon) {
     return "";
@@ -448,6 +452,10 @@ function renderFeaturedVeilwalkerSelector() {
   const canBeginReading = isReaderBeginReadingAvailable(reader);
   const isZephyraReader = reader.id === "zephyra-noctis";
   const useZephyraLockedStyle = isZephyraReader && !isBloodMoonActive();
+  const isProtectedVisual = isProtectedReaderVisual(reader, image);
+  const protectedMediaClass = isProtectedVisual ? " protected-media" : "";
+  const protectedMediaAttrs = isProtectedVisual ? ' data-protected-media="true" draggable="false"' : "";
+  const protectedImageAttr = isProtectedVisual ? ' draggable="false"' : "";
   const unavailableMessage = reader.requiresBloodMoon && !isBloodMoonActive()
     ? "Available when the Blood Moon opens."
     : "";
@@ -457,8 +465,8 @@ function renderFeaturedVeilwalkerSelector() {
       <button class="veilwalker-feature__nav veilwalker-feature__nav--prev" type="button" data-reader-selector-nav="prev" aria-label="Previous Veilwalker">
         <span aria-hidden="true">‹</span>
       </button>
-      <div class="veilwalker-feature__image-wrap">
-        <img class="veilwalker-feature__image" src="${escapeHtml(image)}" alt="${escapeHtml(presentation.name)}" loading="eager" decoding="async" onerror="this.style.visibility='hidden'" />
+      <div class="veilwalker-feature__image-wrap${protectedMediaClass}"${protectedMediaAttrs}>
+        <img class="veilwalker-feature__image" src="${escapeHtml(image)}" alt="${escapeHtml(presentation.name)}" loading="eager" decoding="async"${protectedImageAttr} onerror="this.style.visibility='hidden'" />
       </div>
       <div class="veilwalker-feature__details">
         <div class="veilwalker-feature__meta">
@@ -595,6 +603,7 @@ function renderOpenReader(reader) {
   const activeForm = getActiveReaderForm(reader);
   const fallbackImage = presentation.phase1Image || presentation.image;
   const activeImage = activeForm?.image || presentation.image;
+  const isProtectedVisual = isProtectedReaderVisual(reader, activeImage);
 
   lightboxImage.hidden = false;
   lightboxImage.dataset.fallbackApplied = "false";
@@ -612,6 +621,13 @@ function renderOpenReader(reader) {
   lightboxImage.dataset.imagePreviewTitle = presentation.name;
   lightboxImage.dataset.imagePreviewCaption = getReaderImagePreviewCaption(activeForm, title);
   lightboxImage.dataset.imagePreviewMinimal = "true";
+  lightboxImage.draggable = !isProtectedVisual;
+  lightboxImage.classList.toggle("protected-media", isProtectedVisual);
+  if (isProtectedVisual) {
+    lightboxImage.setAttribute("data-protected-media", "true");
+  } else {
+    lightboxImage.removeAttribute("data-protected-media");
+  }
   readerLightbox.querySelector(".reader-lightbox__dialog").className =
     `reader-lightbox__dialog${detailAccentClass}`;
   readerLightbox.querySelector(".reader-lightbox__content").innerHTML = `

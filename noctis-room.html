@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Noctis Archive room placeholder page."
+    />
+    <title>Noctis Room | Astral Veil</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preload" as="image" href="assets/images/noctis-header.webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:wght@500;600;700&family=IM+Fell+English+SC&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("astralVeilDisableGlowEffects") === "true") {
+            document.documentElement.classList.add("no-glow");
+          }
+        } catch (error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/archive-room-pages.css" />
+    <link rel="stylesheet" href="css/archive.css" />
+    <link rel="stylesheet" href="css/scroll-reader.css" />
+  </head>
+  <body class="sun-mode noctis-room-page" data-requires-bloodmoon="true">
+    <script>
+      (function () {
+        document.body.classList.remove("sun-mode", "moon-mode", "blood-moon-mode");
+        document.body.classList.add("blood-moon-mode");
+      })();
+    </script>
+    <script src="js/bloodmoon-access.js"></script>
+    <script>
+      window.requireBloodMoonAccess({
+        fallback: "gate",
+        redirectTo: "archive.html"
+      });
+    </script>
+
+    <header class="noctis-room-navbar" data-noctis-room-navbar></header>
+
+    <div class="tarot-background" aria-hidden="true">
+      <div class="celestial-wash"></div>
+      <div class="botanical-veil"></div>
+      <div class="starfield"></div>
+      <div class="mystic-mist"></div>
+      <div class="lunar-orb"></div>
+      <div class="moon-particles"></div>
+    </div>
+
+    <div class="scorpio-constellation" aria-hidden="true">
+      <svg viewBox="0 0 320 220" focusable="false">
+        <polyline points="40,80 78,62 118,76 150,105 185,112 222,90 260,118 285,155" />
+        <circle cx="40" cy="80" r="3" />
+        <circle cx="78" cy="62" r="3" />
+        <circle cx="118" cy="76" r="3" />
+        <circle cx="150" cy="105" r="3" />
+        <circle cx="185" cy="112" r="3" />
+        <circle cx="222" cy="90" r="3" />
+        <circle cx="260" cy="118" r="3" />
+        <circle cx="285" cy="155" r="3" />
+      </svg>
+    </div>
+
+    <main class="tarot-stage archive-room-placeholder-page">
+      <section class="archive-room-placeholder__stage" aria-labelledby="noctis-room-title">
+        <article class="archive-room-placeholder__card" data-noctis-room-shell>
+          <p class="archive-room-placeholder__kicker" data-noctis-room-type>Noctis Archive</p>
+          <h1 id="noctis-room-title" class="archive-room-placeholder__title" data-noctis-room-title>Room Not Found</h1>
+          <p class="archive-room-placeholder__meta">Choose a chamber from the Noctis Archive.</p>
+          <hr class="archive-room-placeholder__keyline" />
+          <p class="archive-room-placeholder__copy" data-noctis-room-copy>
+            Choose a valid chamber from the Noctis Archive and return to begin.
+          </p>
+          <a class="archive-room-placeholder__back" href="archive.html" data-noctis-room-back>Return to Noctis Archive</a>
+          <section data-noctis-room-content aria-live="polite"></section>
+        </article>
+      </section>
+    </main>
+
+    <footer class="site-footer" data-footer-drawer>
+      <div class="site-footer__shell">
+        <div class="site-footer__compact">
+          <p class="site-footer__mark">Astral Veil™</p>
+          <p class="site-footer__tagline">Between fate and imagination</p>
+          <div class="site-footer__actions">
+            <button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details">
+              <span data-footer-toggle-label>Explore</span>
+              <span class="site-footer__chevron" aria-hidden="true">⌄</span>
+            </button>
+            <button class="site-footer__share" type="button" data-share-astral-veil>Share</button>
+          </div>
+        </div>
+
+        <div class="site-footer__inner" id="site-footer-details" hidden>
+          <div class="site-footer__brand">
+            <h2>Astral Veil™</h2>
+            <p>Cinematic tarot reading and reflective archive experiences.</p>
+            <p class="site-footer__poem">✦ Between fate and imagination ✦</p>
+          </div>
+          <nav class="site-footer__nav" aria-label="Footer navigation">
+            <p class="site-footer__label">Explore</p>
+            <a href="index.html">Home</a>
+            <a href="readers.html">Veilwalkers</a>
+            <a href="deck.html">DECKS</a>
+            <a href="about.html">About</a>
+          </nav>
+          <div class="site-footer__creator">
+            <p class="site-footer__label">Creator</p>
+            <p>Crafted by João Monteiro</p>
+            <p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p>
+            <p>Designer • Developer • Worldbuilder</p>
+          </div>
+          <p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p>
+          <nav class="site-footer__legal" aria-label="Legal links">
+            <a href="terms.html">Terms of Service</a>
+            <span aria-hidden="true">·</span>
+            <a href="privacy.html">Privacy Policy</a>
+          </nav>
+        </div>
+
+        <p class="site-footer__share-status" aria-live="polite"></p>
+      </div>
+    </footer>
+
+    <div class="archive-room-toast" data-archive-room-toast role="status" aria-live="polite" hidden></div>
+
+    <script src="data/events.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/app.js"></script>
+    <script src="data/archiveSections.js"></script>
+    <script src="js/scroll-reader.js"></script>
+    <script src="js/archive.js"></script>
+    <script>
+      (function () {
+        document.body.classList.remove("sun-mode", "moon-mode");
+        document.body.classList.add("blood-moon-mode", "noctis-room-page");
+
+        const themeToggle = document.querySelector("[data-theme-toggle]");
+
+        if (themeToggle) {
+          themeToggle.disabled = true;
+          themeToggle.setAttribute("aria-label", "Theme is fixed to Blood Moon in this room");
+          themeToggle.setAttribute("aria-pressed", "true");
+        }
+      })();
+    </script>
+    <script type="module" src="src/public/public-auth-nav.js"></script>
+  </body>
+</html>

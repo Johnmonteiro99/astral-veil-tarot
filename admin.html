@@ -1,0 +1,4120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Astral Veil Admin</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Marcellus&family=Rajdhani:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #060202;
+        --panel: rgba(18, 5, 6, 0.74);
+        --panel-strong: rgba(12, 3, 4, 0.9);
+        --panel-soft: rgba(255, 255, 255, 0.055);
+        --text: #fff4ee;
+        --muted: #d7b9ae;
+        --quiet: #aa8178;
+        --line: rgba(179, 28, 35, 0.58);
+        --line-soft: rgba(179, 28, 35, 0.28);
+        --crimson: #d21f32;
+        --purple: #7a161d;
+        --gold: #d98942;
+        --status-good: #22f58a;
+        --status-good-soft: rgba(34, 245, 138, 0.16);
+        --status-good-glow: rgba(34, 245, 138, 0.45);
+        --status-warning: #ffb86b;
+        --status-danger: #ff304f;
+        --blood-red: #c51f32;
+        --green: var(--status-good);
+        --danger: #ff9b86;
+        --blood: #a60f1d;
+        --ember: #ff6a2f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        overflow-x: hidden;
+        background:
+          radial-gradient(circle at 70% 8%, rgba(116, 11, 17, 0.24), transparent 24rem),
+          radial-gradient(circle at 12% 28%, rgba(83, 8, 12, 0.18), transparent 18rem),
+          linear-gradient(180deg, #050101 0%, #090202 48%, #030000 100%),
+          #000;
+        color: var(--text);
+        font-family: Rajdhani, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body::before {
+        display: none;
+      }
+
+      body::after {
+        display: none;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-family: Cinzel, Marcellus, Georgia, serif;
+        font-size: clamp(2.35rem, 4.4vw, 4.15rem);
+        font-weight: 600;
+        letter-spacing: 0.11em;
+        line-height: 1;
+        text-transform: uppercase;
+        background: linear-gradient(180deg, #fff2dc 0%, #d13b34 54%, #771018 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 30px rgba(166, 15, 29, 0.42);
+      }
+
+      h2 {
+        color: #ffb06a;
+        font-family: Cinzel, Marcellus, Georgia, serif;
+        font-size: clamp(1.9rem, 3.2vw, 2.75rem);
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      h3 {
+        color: var(--text);
+        font-family: Cinzel, Marcellus, Georgia, serif;
+        font-size: 1.2rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      p {
+        color: var(--muted);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 1.05rem;
+        line-height: 1.55;
+      }
+
+      button,
+      a {
+        min-height: 2.65rem;
+        border-radius: 6px;
+        font: inherit;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      button {
+        border: 1px solid rgba(210, 31, 50, 0.78);
+        background: rgba(122, 16, 22, 0.36);
+        color: #ffd8c2;
+        cursor: pointer;
+        padding: 0 1.15rem;
+        box-shadow: 0 0 18px rgba(166, 15, 29, 0.22);
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.7;
+      }
+
+      .admin-primary-action {
+        border-color: rgba(255, 106, 47, 0.82);
+        background:
+          linear-gradient(180deg, rgba(210, 31, 50, 0.48), rgba(122, 16, 22, 0.76)),
+          rgba(122, 16, 22, 0.42);
+        color: #fff0df;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+          0 0 24px rgba(210, 31, 50, 0.28);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid rgba(255, 106, 47, 0.32);
+        outline-offset: 3px;
+      }
+
+      .admin-shell {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-areas:
+          "header header"
+          "sidebar main";
+        grid-template-columns: 16rem minmax(0, 1fr);
+        gap: 1.1rem;
+        width: min(100% - 2rem, 98rem);
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 1.35rem 0;
+      }
+
+      .admin-shell.sidebar-collapsed {
+        grid-template-areas:
+          "header"
+          "main";
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .admin-shell.sidebar-collapsed .admin-sidebar {
+        display: none;
+      }
+
+      .admin-sidebar,
+      .admin-header,
+      .panel,
+      .section-card,
+      .system-strip {
+        border: 1px solid var(--line);
+        background:
+          linear-gradient(180deg, rgba(21, 4, 5, 0.9), rgba(6, 1, 2, 0.82)),
+          rgba(5, 1, 2, 0.78);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.035) inset,
+          0 0 34px rgba(119, 16, 24, 0.26);
+        backdrop-filter: blur(14px) saturate(132%);
+      }
+
+      .admin-sidebar {
+        position: sticky;
+        top: 1rem;
+        grid-area: sidebar;
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        max-height: calc(100vh - 2rem);
+        min-height: 40rem;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 1rem 0.65rem;
+        border-radius: 8px;
+        scrollbar-color: rgba(210, 31, 50, 0.82) rgba(18, 3, 5, 0.86);
+        scrollbar-width: thin;
+      }
+
+      .admin-sidebar::-webkit-scrollbar {
+        width: 0.55rem;
+      }
+
+      .admin-sidebar::-webkit-scrollbar-track {
+        border-radius: 999px;
+        background: rgba(18, 3, 5, 0.86);
+      }
+
+      .admin-sidebar::-webkit-scrollbar-thumb {
+        border: 2px solid rgba(18, 3, 5, 0.86);
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(126, 14, 22, 0.94), rgba(210, 31, 50, 0.9));
+      }
+
+      .sidebar-profile {
+        display: grid;
+        justify-items: center;
+        gap: 0.4rem;
+        padding: 0.8rem 0.55rem 1rem;
+        text-align: center;
+      }
+
+      .sidebar-avatar {
+        display: inline-grid;
+        width: 4.25rem;
+        height: 4.25rem;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid rgba(255, 106, 47, 0.58);
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 50% 35%, rgba(255, 106, 47, 0.2), transparent 48%),
+          rgba(10, 2, 3, 0.84);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+          0 0 18px rgba(166, 15, 29, 0.34);
+        color: #ffd5bd;
+        font-family: Cinzel, Marcellus, Georgia, serif;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+      }
+
+      .sidebar-avatar.has-image {
+        background: var(--avatar-url) center / cover no-repeat, rgba(10, 2, 3, 0.84);
+        color: transparent;
+      }
+
+      .sidebar-profile__label {
+        margin-top: 0.35rem;
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .sidebar-profile__email {
+        max-width: 100%;
+        overflow: hidden;
+        color: var(--text);
+        font-size: 0.98rem;
+        font-weight: 700;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .sidebar-role-badge {
+        display: inline-flex;
+        min-height: 1.65rem;
+        align-items: center;
+        padding: 0 0.55rem;
+        border: 1px solid rgba(255, 106, 47, 0.38);
+        border-radius: 999px;
+        background: rgba(166, 15, 29, 0.22);
+        color: #ff9a72;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .sidebar-profile__separator {
+        width: 68%;
+        height: 1px;
+        margin-top: 0.6rem;
+        background: linear-gradient(90deg, transparent, rgba(255, 106, 47, 0.58), transparent);
+      }
+
+      .nav-toggle {
+        min-height: 2.35rem;
+        margin: 0 0.5rem 0.6rem;
+        padding: 0 0.75rem;
+        border-color: rgba(166, 15, 29, 0.46);
+        background: rgba(10, 2, 3, 0.44);
+        color: #ffd8c2;
+        font-size: 0.8rem;
+        box-shadow: none;
+      }
+
+      .nav-toggle:hover,
+      .sidebar-logout:hover {
+        border-color: rgba(255, 106, 47, 0.7);
+        background: rgba(122, 16, 22, 0.46);
+        box-shadow: 0 0 18px rgba(166, 15, 29, 0.25);
+      }
+
+      .admin-nav {
+        display: grid;
+        flex: 0 0 auto;
+        align-content: start;
+        gap: 0.72rem;
+        padding: 0.4rem 0;
+      }
+
+      .admin-nav a {
+        display: flex;
+        min-height: 3.65rem;
+        align-items: center;
+        padding: 0 0.85rem;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        color: var(--text);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.94rem;
+      }
+
+      .admin-nav a:hover,
+      .admin-nav a:focus-visible,
+      .admin-nav a[aria-current="page"] {
+        border-color: rgba(255, 106, 47, 0.62);
+        background: linear-gradient(90deg, rgba(166, 15, 29, 0.24), rgba(255, 106, 47, 0.08));
+        color: #ffb06a;
+        box-shadow: 0 0 22px rgba(166, 15, 29, 0.22);
+      }
+
+      .nav-icon,
+      .card-icon {
+        display: block;
+        background: transparent;
+        color: var(--crimson);
+        filter: drop-shadow(0 0 7px rgba(210, 31, 50, 0.74));
+        -webkit-mask: var(--icon-url) center / contain no-repeat;
+        mask: var(--icon-url) center / contain no-repeat;
+      }
+
+      .nav-icon::before,
+      .card-icon::before {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: currentColor;
+      }
+
+      .nav-icon {
+        width: 1.45rem;
+        height: 1.45rem;
+      }
+
+      .system-panel {
+        display: grid;
+        flex: 0 0 auto;
+        gap: 0.65rem;
+        margin: auto 0.5rem 0;
+        padding: 0.9rem;
+        border: 1px solid rgba(166, 15, 29, 0.34);
+        border-radius: 7px;
+        background: rgba(8, 2, 3, 0.56);
+      }
+
+      .system-panel__label {
+        color: #ff9a72;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .system-panel__ok,
+      .system-panel__node {
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.88rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .system-panel__ok {
+        color: var(--status-good);
+      }
+
+      .system-panel__ok::before {
+        content: "";
+        display: inline-block;
+        width: 0.55rem;
+        height: 0.55rem;
+        margin-right: 0.45rem;
+        border-radius: 50%;
+        background: var(--status-good);
+        box-shadow: 0 0 10px var(--status-good-glow);
+      }
+
+      .system-panel__node {
+        color: #ffb06a;
+      }
+
+      .system-panel__line {
+        height: 1px;
+        background: linear-gradient(90deg, rgba(210, 31, 50, 0.46), transparent);
+      }
+
+      .sidebar-actions {
+        display: grid;
+        gap: 0.65rem;
+        flex: 0 0 auto;
+        margin: 1.15rem 0.5rem 0.85rem;
+      }
+
+      .sidebar-logout {
+        width: 100%;
+        min-height: 2.65rem;
+        border-color: rgba(210, 31, 50, 0.68);
+        background: rgba(77, 7, 12, 0.58);
+        color: #ffd8c2;
+        box-shadow: none;
+      }
+
+      .sidebar-reopen {
+        position: fixed;
+        z-index: 40;
+        top: 1rem;
+        left: 1rem;
+        display: none;
+        width: 3rem;
+        height: 3rem;
+        min-height: 3rem;
+        place-items: center;
+        padding: 0;
+        border: 1px solid rgba(210, 31, 50, 0.74);
+        border-radius: 8px;
+        background: rgba(10, 2, 3, 0.9);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+          0 0 18px rgba(166, 15, 29, 0.26);
+      }
+
+      .sidebar-reopen:hover {
+        border-color: rgba(255, 106, 47, 0.78);
+        background: rgba(77, 7, 12, 0.92);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+          0 0 22px rgba(166, 15, 29, 0.36);
+      }
+
+      .sidebar-reopen span {
+        display: grid;
+        place-items: center;
+      }
+
+      .sidebar-reopen svg {
+        width: 1.45rem;
+        height: 1.45rem;
+        color: #ffb06a;
+        filter: drop-shadow(0 0 8px rgba(210, 31, 50, 0.68));
+      }
+
+      .admin-shell.sidebar-collapsed .sidebar-reopen {
+        display: grid;
+      }
+
+      .sidebar-scrim {
+        position: fixed;
+        inset: 0;
+        z-index: 29;
+        display: none;
+        border: 0;
+        border-radius: 0;
+        background: rgba(0, 0, 0, 0.62);
+        box-shadow: none;
+        cursor: pointer;
+      }
+
+      body.admin-nav-open {
+        overflow: hidden;
+      }
+
+      .admin-main {
+        grid-area: main;
+        min-width: 0;
+        display: grid;
+        align-content: start;
+        gap: 1rem;
+      }
+
+      main {
+        display: grid;
+        gap: 1.15rem;
+        min-width: 0;
+      }
+
+      .admin-header {
+        position: relative;
+        overflow: hidden;
+        grid-area: header;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        align-items: center;
+        min-height: clamp(9rem, 17vw, 13.5rem);
+        padding: clamp(1rem, 2.5vw, 1.65rem) clamp(1rem, 3vw, 2rem);
+        border-radius: 8px;
+        background:
+          linear-gradient(90deg, rgba(5, 0, 0, 0.92), rgba(16, 2, 3, 0.48) 48%, rgba(5, 0, 0, 0.9)),
+          linear-gradient(180deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.78)),
+          url("assets/images/concepts-ideas/admin-header-image.png") center 38% / cover;
+        box-shadow:
+          0 0 0 1px rgba(255, 184, 116, 0.08) inset,
+          0 22px 60px rgba(0, 0, 0, 0.28),
+          0 0 44px rgba(119, 16, 24, 0.34);
+      }
+
+      .admin-header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 50% 18%, rgba(196, 26, 32, 0.2), transparent 28%),
+          linear-gradient(180deg, rgba(255, 122, 52, 0.08), transparent 42%);
+        pointer-events: none;
+      }
+
+      .admin-header::after {
+        content: "";
+        position: absolute;
+        inset: 0.65rem;
+        border: 1px solid rgba(255, 166, 102, 0.14);
+        border-radius: 6px;
+        pointer-events: none;
+      }
+
+      .admin-header__title {
+        position: relative;
+        z-index: 1;
+      }
+
+      .admin-header__title {
+        display: grid;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .admin-console-label {
+        margin-top: 0.42rem;
+        color: #e8a06c;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: clamp(0.95rem, 1.7vw, 1.2rem);
+        font-weight: 700;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+      }
+
+      .admin-header__subtitle {
+        margin-top: 0.7rem;
+        color: #e5b8a8;
+        font-size: 1.02rem;
+        letter-spacing: 0.04em;
+        text-align: center;
+      }
+
+      .card-status,
+      .count-pill {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        border-radius: 6px;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.86rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .panel {
+        min-width: 0;
+        overflow: hidden;
+        border-radius: 8px;
+        padding: clamp(1rem, 2.6vw, 2rem);
+      }
+
+      .access-panel {
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      .access-panel__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .status {
+        color: var(--muted);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .status--success {
+        color: var(--status-good);
+      }
+
+      .status--success::before {
+        content: "";
+        display: inline-block;
+        width: 0.62rem;
+        height: 0.62rem;
+        margin-right: 0.55rem;
+        border-radius: 50%;
+        background: var(--status-good);
+        box-shadow: 0 0 10px var(--status-good-glow);
+      }
+
+      .status--error {
+        color: var(--danger);
+      }
+
+      .overview-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 1rem;
+        align-items: start;
+        margin-bottom: 1.6rem;
+      }
+
+      .overview-status {
+        min-height: 2.6rem;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 1rem;
+        border: 1px solid rgba(166, 15, 29, 0.24);
+        border-radius: 7px;
+        background: rgba(12, 3, 4, 0.54);
+      }
+
+      .command-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.1rem;
+        margin-bottom: 1.15rem;
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(10rem, 1fr));
+        gap: 0.75rem;
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+        padding: 0.1rem 0.1rem 0.75rem;
+        scroll-padding-inline: 0.1rem;
+        scrollbar-color: rgba(210, 31, 50, 0.82) rgba(18, 3, 5, 0.86);
+        scrollbar-width: thin;
+      }
+
+      .metrics-grid::-webkit-scrollbar {
+        height: 0.55rem;
+      }
+
+      .metrics-grid::-webkit-scrollbar-track {
+        border-radius: 999px;
+        background: rgba(18, 3, 5, 0.86);
+      }
+
+      .metrics-grid::-webkit-scrollbar-thumb {
+        border: 2px solid rgba(18, 3, 5, 0.86);
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(126, 14, 22, 0.94), rgba(210, 31, 50, 0.9), rgba(255, 106, 47, 0.72));
+      }
+
+      .metric-card {
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        background:
+          linear-gradient(180deg, rgba(32, 8, 9, 0.66), rgba(10, 2, 3, 0.82)),
+          rgba(9, 1, 2, 0.68);
+        box-shadow: 0 0 22px rgba(110, 9, 17, 0.18);
+      }
+
+      .metric-card {
+        display: grid;
+        min-height: 6.2rem;
+        gap: 0.22rem;
+        align-content: center;
+        padding: 0.78rem 0.85rem;
+      }
+
+      .metric-card__label {
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .metric-card__value {
+        color: #fff0df;
+        font-family: Marcellus, Georgia, serif;
+        font-size: clamp(1.55rem, 2.6vw, 2.15rem);
+        line-height: 1;
+      }
+
+      .metric-card__note {
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.2;
+      }
+
+      .overview-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.1rem;
+        min-width: 0;
+      }
+
+      .section-card {
+        display: grid;
+        min-height: 17.6rem;
+        align-content: space-between;
+        gap: 1.1rem;
+        padding: 1.55rem;
+        border-radius: 8px;
+      }
+
+      .section-card[data-admin-view-link] {
+        cursor: pointer;
+      }
+
+      .section-card[data-admin-view-link]:hover,
+      .section-card[data-admin-view-link]:focus-visible {
+        border-color: rgba(255, 106, 47, 0.72);
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+          0 0 34px rgba(166, 15, 29, 0.32);
+      }
+
+      .section-card--compact-filter {
+        min-height: 0;
+        align-content: start;
+        gap: 0.65rem;
+        padding: 0.95rem 1rem;
+      }
+
+      .section-card--compact-filter .admin-form,
+      .section-card--compact-filter .admin-form__grid {
+        gap: 0.7rem;
+      }
+
+      .section-card__top {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .card-icon {
+        width: 3.1rem;
+        height: 3.1rem;
+      }
+
+      .section-card p {
+        color: #d5cde7;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      .section-card__meta {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0.75rem;
+        align-items: center;
+        padding-top: 0.9rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .card-status {
+        color: #ff9a72;
+      }
+
+      .count-pill {
+        min-height: 2.1rem;
+        padding: 0 0.75rem;
+        border-left: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        font-size: 0.92rem;
+        letter-spacing: 0.02em;
+        text-transform: none;
+        white-space: nowrap;
+      }
+
+      .system-strip {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(12rem, 0.7fr) minmax(12rem, 0.7fr);
+        gap: 1rem;
+        align-items: center;
+        padding: 0.95rem 1.3rem;
+        border-radius: 8px;
+      }
+
+      .system-strip__item {
+        min-height: 3rem;
+        display: grid;
+        align-content: center;
+        gap: 0.1rem;
+        padding-left: 1rem;
+        border-left: 1px solid rgba(166, 15, 29, 0.3);
+      }
+
+      .system-strip__item:first-child {
+        border-left: 0;
+        padding-left: 0;
+      }
+
+      .system-strip__label {
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .system-strip__value {
+        color: var(--text);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 1rem;
+      }
+
+      .system-strip__value--ember {
+        color: #ff9a72;
+        font-family: Marcellus, Georgia, serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      [data-admin-shell] {
+        display: none;
+      }
+
+      [data-admin-shell].is-visible {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .admin-view[hidden] {
+        display: none !important;
+      }
+
+      .admin-view {
+        display: grid;
+        gap: 1.15rem;
+      }
+
+      .admin-section-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 1rem;
+        align-items: start;
+      }
+
+      .admin-section-eyebrow {
+        color: #ff9a72;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .admin-section-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: flex-end;
+      }
+
+      .admin-table-panel {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .admin-progress-summary {
+        display: grid;
+        grid-auto-columns: minmax(10.5rem, 1fr);
+        grid-auto-flow: column;
+        gap: 0.75rem;
+        overflow-x: auto;
+        padding: 0.1rem 0.1rem 0.75rem;
+        scrollbar-color: rgba(210, 31, 50, 0.82) rgba(18, 3, 5, 0.86);
+        scrollbar-width: thin;
+      }
+
+      .admin-progress-summary::-webkit-scrollbar,
+      .admin-progress-table-scroll::-webkit-scrollbar {
+        height: 0.55rem;
+      }
+
+      .admin-progress-summary::-webkit-scrollbar-track,
+      .admin-progress-table-scroll::-webkit-scrollbar-track {
+        border-radius: 999px;
+        background: rgba(18, 3, 5, 0.86);
+      }
+
+      .admin-progress-summary::-webkit-scrollbar-thumb,
+      .admin-progress-table-scroll::-webkit-scrollbar-thumb {
+        border: 2px solid rgba(18, 3, 5, 0.86);
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(126, 14, 22, 0.94), rgba(210, 31, 50, 0.9), rgba(255, 106, 47, 0.72));
+      }
+
+      .progress-summary-card {
+        display: grid;
+        gap: 0.2rem;
+        min-height: 5.2rem;
+        align-content: center;
+        padding: 0.75rem 0.85rem;
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        background:
+          linear-gradient(180deg, rgba(32, 8, 9, 0.58), rgba(10, 2, 3, 0.82)),
+          rgba(9, 1, 2, 0.68);
+      }
+
+      .progress-summary-card span {
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .progress-summary-card strong {
+        color: #fff0df;
+        font-family: Marcellus, Georgia, serif;
+        font-size: 1.7rem;
+        font-weight: 400;
+        line-height: 1;
+      }
+
+      .admin-table-scroll {
+        overflow-x: auto;
+        scrollbar-color: rgba(210, 31, 50, 0.82) rgba(18, 3, 5, 0.86);
+        scrollbar-width: thin;
+      }
+
+      .admin-table {
+        width: 100%;
+        min-width: 52rem;
+        border-collapse: collapse;
+      }
+
+      .admin-table th,
+      .admin-table td {
+        padding: 0.95rem 0.85rem;
+        border-bottom: 1px solid rgba(179, 28, 35, 0.22);
+        color: var(--muted);
+        font-family: Rajdhani, system-ui, sans-serif;
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      .admin-table th {
+        color: #ff9a72;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .admin-table td {
+        font-size: 0.95rem;
+      }
+
+      .admin-table td::before {
+        display: none;
+      }
+
+      .admin-table__title {
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      .admin-table__muted {
+        color: var(--quiet);
+      }
+
+      .admin-table__thumbnail {
+        width: 5.25rem;
+      }
+
+      .admin-table__thumbnail img {
+        display: block;
+        width: 4.2rem;
+        height: 3.1rem;
+        object-fit: cover;
+        border: 1px solid rgba(179, 28, 35, 0.32);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.7);
+      }
+
+      .admin-table__thumbnail-placeholder {
+        display: grid;
+        width: 4.2rem;
+        height: 3.1rem;
+        place-items: center;
+        border: 1px solid rgba(179, 28, 35, 0.24);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.72);
+        color: rgba(255, 216, 194, 0.48);
+        font: 700 0.72rem/1 Rajdhani, system-ui, sans-serif;
+        text-transform: uppercase;
+      }
+
+      .gallery-record-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+
+      .gallery-record-stat {
+        display: grid;
+        gap: 0.18rem;
+        min-height: 4.7rem;
+        align-content: center;
+        padding: 0.8rem 1rem;
+        border: 1px solid rgba(179, 28, 35, 0.24);
+        border-radius: 8px;
+        background: rgba(12, 3, 4, 0.42);
+      }
+
+      .gallery-record-stat span {
+        color: var(--quiet);
+        font: 700 0.76rem/1.1 Rajdhani, system-ui, sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .gallery-record-stat strong {
+        color: #fff0df;
+        font: 400 1.55rem/1 Marcellus, Georgia, serif;
+      }
+
+      .gallery-record-feature-button {
+        display: inline-grid;
+        width: 2.35rem;
+        min-width: 2.35rem;
+        height: 2.35rem;
+        min-height: 2.35rem;
+        place-items: center;
+        padding: 0;
+        border-color: rgba(228, 189, 118, 0.24);
+        border-radius: 999px;
+        background: rgba(7, 8, 20, 0.72);
+        color: rgba(255, 216, 194, 0.58);
+        font-size: 1.05rem;
+        line-height: 1;
+      }
+
+      .gallery-record-feature-button.is-active {
+        border-color: rgba(255, 206, 122, 0.78);
+        background:
+          radial-gradient(circle at 50% 35%, rgba(255, 206, 122, 0.22), transparent 58%),
+          rgba(77, 7, 12, 0.68);
+        color: #ffd16f;
+        box-shadow:
+          0 0 0 1px rgba(255, 206, 122, 0.16) inset,
+          0 0 18px rgba(210, 31, 50, 0.24),
+          0 0 16px rgba(255, 206, 122, 0.16);
+      }
+
+      .gallery-record-feature-button:disabled {
+        opacity: 0.58;
+        cursor: wait;
+      }
+
+      .admin-form__preview {
+        align-content: start;
+      }
+
+      .admin-form__preview img {
+        width: min(100%, 16rem);
+        max-height: 10rem;
+        object-fit: cover;
+        border: 1px solid rgba(179, 28, 35, 0.32);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.7);
+      }
+
+      .admin-form__preview img[hidden],
+      .admin-form__preview a[hidden] {
+        display: none;
+      }
+
+      .journal-prompts-table {
+        min-width: 76rem;
+        table-layout: fixed;
+      }
+
+      .journal-prompts-table col:nth-child(1) {
+        width: 38%;
+      }
+
+      .journal-prompts-table col:nth-child(2) {
+        width: 10%;
+      }
+
+      .journal-prompts-table col:nth-child(3),
+      .journal-prompts-table col:nth-child(4),
+      .journal-prompts-table col:nth-child(5),
+      .journal-prompts-table col:nth-child(7) {
+        width: 8%;
+      }
+
+      .journal-prompts-table col:nth-child(6) {
+        width: 10%;
+      }
+
+      .journal-prompts-table col:nth-child(8) {
+        width: 13%;
+      }
+
+      .journal-prompts-table td {
+        vertical-align: top;
+      }
+
+      .journal-prompts-table__prompt {
+        color: var(--text);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.4;
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-break: normal;
+        hyphens: auto;
+      }
+
+      .journal-prompts-table__meta {
+        color: var(--quiet);
+        font-size: 0.88rem;
+        overflow-wrap: anywhere;
+      }
+
+      .admin-badge {
+        display: inline-flex;
+        max-width: 100%;
+        min-height: 1.75rem;
+        align-items: center;
+        padding: 0.18rem 0.55rem;
+        border: 1px solid rgba(179, 28, 35, 0.34);
+        border-radius: 999px;
+        background: rgba(20, 4, 6, 0.72);
+        color: #ffd8c2;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        line-height: 1.1;
+        text-transform: uppercase;
+        overflow-wrap: anywhere;
+      }
+
+      .admin-badge--mode {
+        border-color: rgba(255, 154, 114, 0.42);
+        color: #ffccb0;
+      }
+
+      .admin-badge--mood,
+      .admin-badge--intensity {
+        border-color: rgba(255, 206, 122, 0.34);
+        color: #ffe0a6;
+      }
+
+      .admin-badge--active {
+        border-color: rgba(34, 245, 138, 0.32);
+        background: rgba(20, 85, 55, 0.24);
+        color: var(--status-good);
+      }
+
+      .admin-badge--inactive {
+        border-color: rgba(255, 48, 79, 0.34);
+        background: rgba(75, 7, 15, 0.24);
+        color: #ff9b86;
+      }
+
+      .journal-prompts-table .admin-action-group {
+        min-width: 0;
+        justify-content: flex-start;
+      }
+
+      .journal-prompts-table .admin-action-group .admin-row-action {
+        flex: 1 1 6.4rem;
+        min-width: 6.4rem;
+      }
+
+      .character-lines-table {
+        min-width: 94rem;
+        table-layout: fixed;
+      }
+
+      .character-lines-table col:nth-child(1) {
+        width: 12%;
+      }
+
+      .character-lines-table col:nth-child(2),
+      .character-lines-table col:nth-child(5),
+      .character-lines-table col:nth-child(6),
+      .character-lines-table col:nth-child(7) {
+        width: 9%;
+      }
+
+      .character-lines-table col:nth-child(3),
+      .character-lines-table col:nth-child(4),
+      .character-lines-table col:nth-child(9) {
+        width: 8%;
+      }
+
+      .character-lines-table col:nth-child(8) {
+        width: 24%;
+      }
+
+      .character-lines-table col:nth-child(10) {
+        width: 13%;
+      }
+
+      .character-lines-table td {
+        vertical-align: top;
+      }
+
+      .character-lines-table__line {
+        color: var(--text);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.4;
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-break: normal;
+        hyphens: auto;
+      }
+
+      .character-lines-table__meta {
+        color: var(--quiet);
+        font-size: 0.88rem;
+        overflow-wrap: anywhere;
+      }
+
+      .character-lines-table .admin-action-group {
+        min-width: 0;
+        justify-content: flex-start;
+      }
+
+      .character-lines-table .admin-action-group .admin-row-action {
+        flex: 1 1 6.4rem;
+        min-width: 6.4rem;
+      }
+
+      .admin-row-action {
+        min-height: 2.25rem;
+        padding: 0 0.8rem;
+        white-space: nowrap;
+      }
+
+      .admin-row-select {
+        width: 100%;
+        min-width: 8rem;
+        min-height: 2.25rem;
+        border: 1px solid rgba(228, 189, 118, 0.22);
+        border-radius: 999px;
+        background: rgba(7, 8, 20, 0.72);
+        color: var(--text);
+        font: 700 0.72rem/1.2 var(--font-ui);
+        padding: 0.35rem 0.7rem;
+      }
+
+      .admin-action-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        align-items: center;
+        min-width: 14rem;
+      }
+
+      .admin-action-group .admin-row-action {
+        min-width: 4.4rem;
+        flex: 0 0 auto;
+      }
+
+      .admin-pagination {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.85rem;
+        border: 1px solid rgba(179, 28, 35, 0.24);
+        border-radius: 8px;
+        background: rgba(12, 3, 4, 0.42);
+      }
+
+      .admin-pagination[hidden] {
+        display: none;
+      }
+
+      .admin-pagination__summary,
+      .admin-pagination__size {
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .admin-pagination__size {
+        display: inline-flex;
+        gap: 0.45rem;
+        align-items: center;
+      }
+
+      .admin-pagination__size select {
+        min-height: 2.2rem;
+        border: 1px solid rgba(179, 28, 35, 0.35);
+        border-radius: 7px;
+        background: rgba(9, 1, 2, 0.82);
+        color: var(--text);
+        font: 700 0.9rem Rajdhani, system-ui, sans-serif;
+      }
+
+      .admin-pagination__controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      .admin-pagination__button {
+        min-width: 2.45rem;
+        min-height: 2.25rem;
+        padding: 0 0.75rem;
+      }
+
+      .admin-pagination__button.is-active {
+        border-color: rgba(255, 206, 122, 0.78);
+        background:
+          linear-gradient(180deg, rgba(255, 206, 122, 0.18), rgba(113, 15, 24, 0.7)),
+          rgba(14, 2, 4, 0.92);
+        color: #fff0cf;
+        box-shadow: 0 0 0 1px rgba(255, 206, 122, 0.16) inset;
+      }
+
+      .admin-form__hint {
+        margin: 0.25rem 0 0;
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.86rem;
+        font-weight: 600;
+        line-height: 1.35;
+      }
+
+      .journal-prompt-sort-input {
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+
+      .journal-prompt-sort-input::-webkit-outer-spin-button,
+      .journal-prompt-sort-input::-webkit-inner-spin-button {
+        margin: 0;
+        appearance: none;
+        -webkit-appearance: none;
+      }
+
+      .admin-state {
+        padding: 1rem;
+        border: 1px solid rgba(166, 15, 29, 0.24);
+        border-radius: 7px;
+        background: rgba(12, 3, 4, 0.5);
+        color: var(--muted);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-weight: 600;
+      }
+
+      .admin-state--error {
+        border-color: rgba(255, 48, 79, 0.45);
+        color: #ff9b86;
+      }
+
+      .admin-state--success {
+        border-color: rgba(34, 245, 138, 0.32);
+        color: var(--status-good);
+      }
+
+      .admin-form {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .admin-form__grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+      }
+
+      .admin-form__field {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .admin-form__field--wide {
+        grid-column: 1 / -1;
+      }
+
+      .admin-form__field label,
+      .admin-form__checkbox span {
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .admin-form__field input,
+      .admin-form__field select,
+      .admin-form__field textarea {
+        width: 100%;
+        border: 1px solid rgba(179, 28, 35, 0.35);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.72);
+        color: var(--text);
+        font: 600 1rem Rajdhani, system-ui, sans-serif;
+      }
+
+      .admin-form__field input,
+      .admin-form__field select {
+        min-height: 2.8rem;
+        padding: 0 0.8rem;
+      }
+
+      .admin-form__field textarea {
+        min-height: 7.5rem;
+        padding: 0.8rem;
+        resize: vertical;
+      }
+
+      .admin-form__field input:focus,
+      .admin-form__field select:focus,
+      .admin-form__field textarea:focus {
+        outline: 2px solid rgba(255, 106, 47, 0.42);
+        outline-offset: 2px;
+        border-color: rgba(255, 106, 47, 0.64);
+      }
+
+      .admin-form__checkbox {
+        display: inline-flex;
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      .admin-form__checkbox input {
+        width: 1.05rem;
+        height: 1.05rem;
+        accent-color: var(--blood-red);
+      }
+
+      .admin-form__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+      }
+
+      .admin-detail {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .admin-detail__header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 1rem;
+        align-items: start;
+      }
+
+      .admin-detail__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+      }
+
+      .admin-detail-chip {
+        display: inline-flex;
+        min-height: 1.85rem;
+        align-items: center;
+        padding: 0 0.6rem;
+        border: 1px solid rgba(166, 15, 29, 0.32);
+        border-radius: 999px;
+        background: rgba(10, 2, 3, 0.54);
+        color: #ffd8c2;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .admin-detail__body {
+        display: grid;
+        gap: 0.85rem;
+        max-height: 28rem;
+        overflow-y: auto;
+        padding: 1rem;
+        border: 1px solid rgba(179, 28, 35, 0.22);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.56);
+        white-space: pre-wrap;
+      }
+
+      .admin-detail__field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+
+      .admin-detail-field {
+        display: grid;
+        gap: 0.18rem;
+        min-width: 0;
+      }
+
+      .admin-detail-field span:first-child {
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .admin-detail-field span:last-child {
+        overflow-wrap: anywhere;
+        color: var(--muted);
+      }
+
+      .admin-image-previews {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+        gap: 0.85rem;
+      }
+
+      .admin-image-preview {
+        display: grid;
+        gap: 0.45rem;
+        min-width: 0;
+      }
+
+      .admin-image-preview img {
+        width: 100%;
+        max-height: 8.5rem;
+        object-fit: cover;
+        border: 1px solid rgba(179, 28, 35, 0.28);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.7);
+      }
+
+      .admin-image-preview span {
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .admin-image-preview a,
+      .admin-image-preview small {
+        overflow-wrap: anywhere;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .admin-progress-groups {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .admin-progress-group {
+        display: grid;
+        gap: 0.7rem;
+        padding: 1rem;
+        border: 1px solid rgba(179, 28, 35, 0.22);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.5);
+      }
+
+      .admin-progress-group h4 {
+        margin: 0;
+        color: #fff0df;
+        font-family: Marcellus, Georgia, serif;
+        font-size: 1.1rem;
+        font-weight: 400;
+      }
+
+      .admin-progress-group__state {
+        color: var(--muted);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-weight: 600;
+      }
+
+      .admin-progress-table-scroll {
+        overflow-x: auto;
+        scrollbar-color: rgba(210, 31, 50, 0.82) rgba(18, 3, 5, 0.86);
+        scrollbar-width: thin;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .admin-shell.is-auth-checking,
+      .admin-shell.is-access-denied {
+        grid-template-areas: "main";
+        grid-template-columns: minmax(0, 1fr);
+        align-content: start;
+      }
+
+      .admin-shell.is-auth-checking .admin-header,
+      .admin-shell.is-auth-checking .admin-sidebar,
+      .admin-shell.is-auth-checking .system-strip,
+      .admin-shell.is-auth-checking [data-admin-shell],
+      .admin-shell.is-access-denied .admin-header,
+      .admin-shell.is-access-denied .admin-sidebar,
+      .admin-shell.is-access-denied .system-strip,
+      .admin-shell.is-access-denied [data-admin-shell] {
+        display: none !important;
+      }
+
+      @media (max-width: 1280px) {
+        .overview-grid {
+          grid-auto-columns: minmax(18rem, 21rem);
+          grid-auto-flow: column;
+          grid-template-rows: repeat(2, minmax(13.5rem, auto));
+          grid-template-columns: none;
+          overflow-x: auto;
+          overscroll-behavior-inline: contain;
+          padding: 0.15rem 0.15rem 1rem;
+          scroll-padding-inline: 0.15rem;
+          scroll-snap-type: inline proximity;
+          scrollbar-color: rgba(210, 31, 50, 0.78) rgba(18, 3, 5, 0.86);
+          scrollbar-width: thin;
+        }
+
+        .overview-grid::-webkit-scrollbar {
+          height: 0.65rem;
+        }
+
+        .overview-grid::-webkit-scrollbar-track {
+          border-radius: 999px;
+          background: rgba(18, 3, 5, 0.86);
+        }
+
+        .overview-grid::-webkit-scrollbar-thumb {
+          border: 2px solid rgba(18, 3, 5, 0.86);
+          border-radius: 999px;
+          background: linear-gradient(90deg, rgba(166, 15, 29, 0.9), rgba(255, 106, 47, 0.86));
+        }
+
+      }
+
+      @media (max-width: 900px) {
+        .admin-shell {
+          width: min(100% - 1rem, 96rem);
+          grid-template-areas:
+            "header"
+            "main";
+          grid-template-columns: 1fr;
+          padding: 0.5rem 0 1rem;
+        }
+
+        .admin-shell.sidebar-collapsed {
+          grid-template-areas:
+            "header"
+            "main";
+          grid-template-columns: 1fr;
+        }
+
+        .admin-shell.sidebar-collapsed .admin-sidebar,
+        .admin-sidebar {
+          display: flex;
+        }
+
+        .admin-sidebar {
+          position: fixed;
+          z-index: 30;
+          inset: 0;
+          width: 100vw;
+          height: 100vh;
+          max-height: none;
+          min-height: 0;
+          overflow-y: auto;
+          padding: 1rem;
+          border-radius: 0;
+          transform: translateX(-100%);
+          transition: transform 180ms ease;
+        }
+
+        .admin-shell.sidebar-open .admin-sidebar {
+          transform: translateX(0);
+        }
+
+        .admin-shell.sidebar-open .sidebar-scrim {
+          display: block;
+        }
+
+        .admin-shell.sidebar-open .sidebar-reopen {
+          display: none;
+        }
+
+        .sidebar-reopen,
+        .admin-shell.sidebar-collapsed .sidebar-reopen {
+          display: grid;
+          top: 0.75rem;
+          left: 0.75rem;
+        }
+
+        .sidebar-profile {
+          padding: 0.75rem 0.5rem 1rem;
+        }
+
+        .admin-nav {
+          grid-auto-flow: row;
+          grid-auto-columns: auto;
+          grid-template-columns: 1fr;
+          gap: 0.7rem;
+          overflow: visible;
+          padding: 0.75rem 0.5rem;
+          scrollbar-width: auto;
+        }
+
+        .admin-nav a {
+          width: 100%;
+          min-height: 3.55rem;
+          justify-content: center;
+          white-space: nowrap;
+        }
+
+        .system-panel {
+          margin: 1rem 0.5rem 0;
+        }
+
+        .admin-header,
+        .overview-header,
+        .system-strip {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        h1 {
+          font-size: clamp(1.85rem, 10vw, 2.7rem);
+        }
+
+        h2 {
+          font-size: clamp(1.6rem, 9vw, 2.1rem);
+        }
+
+        .overview-grid {
+          grid-auto-columns: minmax(17rem, calc(100vw - 2.5rem));
+          grid-auto-flow: column;
+          grid-template-rows: none;
+          grid-template-columns: none;
+          overflow-x: auto;
+          padding-bottom: 0.85rem;
+          scroll-snap-type: inline proximity;
+        }
+
+        .section-card {
+          min-height: 13.5rem;
+          padding: 1.15rem;
+        }
+
+        .metric-card {
+          min-height: 5.9rem;
+        }
+
+        .section-card__meta {
+          grid-template-columns: 1fr;
+        }
+
+        .gallery-record-stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .admin-section-header,
+        .admin-detail__header,
+        .admin-detail__field-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .admin-section-actions {
+          justify-content: stretch;
+        }
+
+        .admin-section-actions button,
+        .admin-row-action,
+        .admin-form__actions button {
+          width: 100%;
+        }
+
+        .admin-form__grid {
+          grid-template-columns: 1fr;
+        }
+
+        .admin-table {
+          min-width: 0;
+        }
+
+        .admin-table thead {
+          display: none;
+        }
+
+        .admin-table,
+        .admin-table tbody,
+        .admin-table tr,
+        .admin-table td {
+          display: block;
+          width: 100%;
+        }
+
+        .admin-table tr {
+          padding: 0.85rem;
+          border: 1px solid rgba(179, 28, 35, 0.24);
+          border-radius: 8px;
+          background: rgba(5, 1, 2, 0.52);
+        }
+
+        .admin-table tr + tr {
+          margin-top: 0.8rem;
+        }
+
+        .admin-table td {
+          display: grid;
+          grid-template-columns: minmax(6rem, 0.42fr) minmax(0, 1fr);
+          gap: 0.75rem;
+          align-items: start;
+          padding: 0.45rem 0;
+          border-bottom: 1px solid rgba(179, 28, 35, 0.16);
+        }
+
+        .admin-table td:last-child {
+          border-bottom: 0;
+        }
+
+        .admin-action-group {
+          justify-content: stretch;
+          min-width: 0;
+        }
+
+        .admin-action-group .admin-row-action {
+          width: auto;
+          min-width: min(8rem, 100%);
+          flex: 1 1 7rem;
+        }
+
+        .admin-table td::before {
+          content: attr(data-label);
+          display: block;
+          color: #ff9a72;
+          font-size: 0.76rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        .journal-prompts-table tr,
+        .character-lines-table tr {
+          padding: 1rem;
+          background:
+            linear-gradient(180deg, rgba(42, 8, 11, 0.38), rgba(6, 1, 2, 0.72)),
+            rgba(5, 1, 2, 0.58);
+        }
+
+        .journal-prompts-table td,
+        .character-lines-table td {
+          grid-template-columns: minmax(5.8rem, 0.32fr) minmax(0, 1fr);
+        }
+
+        .journal-prompts-table__prompt,
+        .character-lines-table__line {
+          display: block;
+          padding-bottom: 0.65rem;
+          border-bottom: 1px solid rgba(179, 28, 35, 0.18);
+          font-size: 1.04rem;
+          line-height: 1.45;
+        }
+
+        .journal-prompts-table__prompt::before,
+        .character-lines-table__line::before {
+          margin-bottom: 0.35rem;
+        }
+
+        .journal-prompts-table .admin-action-group,
+        .character-lines-table .admin-action-group {
+          justify-content: stretch;
+        }
+
+        .journal-prompts-table .admin-action-group .admin-row-action,
+        .character-lines-table .admin-action-group .admin-row-action {
+          flex: 1 1 8rem;
+          min-width: min(8rem, 100%);
+        }
+
+        .admin-sidebar,
+        .admin-header,
+        .panel,
+        .system-strip {
+          border-radius: 7px;
+        }
+
+        .admin-header,
+        .panel {
+          padding: 1rem;
+        }
+
+        .admin-nav a {
+          min-height: 3.25rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="admin-shell is-auth-checking" data-admin-layout>
+      <button class="sidebar-reopen" type="button" data-sidebar-open aria-label="Open admin navigation">
+        <span aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" focusable="false">
+            <path
+              d="M3.5 7.25A2.25 2.25 0 0 1 5.75 5h4.1c.7 0 1.36.33 1.78.89l.95 1.27c.24.33.63.52 1.04.52h4.63A2.25 2.25 0 0 1 20.5 9.93v6.82A2.25 2.25 0 0 1 18.25 19H5.75a2.25 2.25 0 0 1-2.25-2.25v-9.5Z"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path d="M4 9h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </span>
+      </button>
+      <button class="sidebar-scrim" type="button" data-sidebar-scrim aria-label="Close navigation"></button>
+
+      <header class="admin-header">
+        <div class="admin-header__title">
+          <h1>Astral Veil</h1>
+          <span class="admin-console-label">Admin Console</span>
+          <p class="admin-header__subtitle">Archive control, content management, and progression oversight.</p>
+        </div>
+      </header>
+
+      <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
+        <div class="sidebar-profile" data-admin-identity hidden>
+          <span class="sidebar-avatar" data-admin-avatar aria-hidden="true">AV</span>
+          <span class="sidebar-profile__label">Signed in as</span>
+          <span class="sidebar-profile__email" data-admin-email></span>
+          <span class="sidebar-role-badge" data-role-badge hidden>Admin</span>
+          <span class="sidebar-profile__separator" aria-hidden="true"></span>
+        </div>
+
+        <button class="nav-toggle" type="button" data-nav-toggle aria-controls="admin-sidebar" aria-expanded="true">
+          Hide Navigation
+        </button>
+
+        <nav class="admin-nav" id="admin-navigation" aria-label="Admin sections">
+          <a href="#overview" aria-current="page" data-admin-view-link="overview">
+            <span>Overview</span>
+          </a>
+          <a href="#journals" data-admin-view-link="journals">
+            <span>Journals</span>
+          </a>
+          <a href="#journal-prompts" data-admin-view-link="journal-prompts">
+            <span>Journal Prompts</span>
+          </a>
+          <a href="#character-lines" data-admin-view-link="character-lines">
+            <span>Character Lines</span>
+          </a>
+          <a href="#contact-messages" data-admin-view-link="contact-messages">
+            <span>Contact Messages</span>
+          </a>
+          <a href="#archive-rooms" data-admin-view-link="archive-rooms">
+            <span>Archive Rooms</span>
+          </a>
+          <a href="#gallery-records" data-admin-view-link="gallery-records">
+            <span>Gallery Records</span>
+          </a>
+          <a href="#artifacts" data-admin-view-link="artifacts">
+            <span>Artifacts</span>
+          </a>
+          <a href="#memory-fragments" data-admin-view-link="memory-fragments">
+            <span>Memory Fragments</span>
+          </a>
+          <a href="#veilwalkers" data-admin-view-link="veilwalkers">
+            <span>Veilwalkers</span>
+          </a>
+          <a href="#veilwalker-notes" data-admin-view-link="veilwalker-notes">
+            <span>Veilwalker Notes</span>
+          </a>
+          <a href="#user-progress" data-admin-view-link="user-progress">
+            <span>User Progress</span>
+          </a>
+          <a href="#app-settings" data-admin-view-link="app-settings">
+            <span>App Settings</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-actions">
+          <button class="sidebar-logout" type="button" data-sign-out hidden>Logout</button>
+        </div>
+
+        <div class="system-panel" aria-hidden="true">
+          <span class="system-panel__label">System Status</span>
+          <span class="system-panel__ok">All systems operational</span>
+          <span class="system-panel__line"></span>
+          <span class="system-panel__label">Archive Node</span>
+          <span class="system-panel__node">07</span>
+        </div>
+      </aside>
+
+      <div class="admin-main">
+        <main>
+          <section class="panel access-panel" data-access-panel>
+            <h2>Access Check</h2>
+            <p class="status" data-access-message>Checking admin access...</p>
+            <div class="access-panel__actions">
+              <a href="admin-login.html" data-login-link hidden>Go to admin sign in</a>
+              <button type="button" data-access-sign-out hidden>Logout</button>
+            </div>
+          </section>
+
+          <div data-admin-shell>
+            <section class="panel admin-view" id="overview" aria-labelledby="overview-title" data-admin-view="overview">
+              <div class="overview-header">
+                <div>
+                  <h2 id="overview-title">Overview</h2>
+                  <p>Blood Moon command overview and read-only previews for future admin content areas.</p>
+                </div>
+                <p class="status status--success overview-status">Admin access confirmed.</p>
+              </div>
+
+              <div class="command-grid" aria-label="Admin overview metrics">
+                <div class="metrics-grid">
+                  <article class="metric-card">
+                    <span class="metric-card__label">Active Users</span>
+                    <span class="metric-card__value">--</span>
+                    <p class="metric-card__note">Presence later</p>
+                  </article>
+                  <article class="metric-card">
+                    <span class="metric-card__label">Total Accounts</span>
+                    <span class="metric-card__value">--</span>
+                    <p class="metric-card__note">Profiles later</p>
+                  </article>
+                  <article class="metric-card">
+                    <span class="metric-card__label">Unlocked Artifacts</span>
+                    <span class="metric-card__value">--</span>
+                    <p class="metric-card__note">Progress later</p>
+                  </article>
+                  <article class="metric-card">
+                    <span class="metric-card__label">Open Rooms</span>
+                    <span class="metric-card__value">--</span>
+                    <p class="metric-card__note">Availability</p>
+                  </article>
+                  <article class="metric-card">
+                    <span class="metric-card__label">Recent Activity</span>
+                    <span class="metric-card__value">--</span>
+                    <p class="metric-card__note">Audit feed later</p>
+                  </article>
+                  <article class="metric-card">
+                    <span class="metric-card__label">Session Status</span>
+                    <span class="metric-card__value">Live</span>
+                    <p class="metric-card__note">Protected session</p>
+                  </article>
+                </div>
+              </div>
+
+              <div class="overview-grid">
+                <article
+                  class="section-card"
+                  id="journals-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="journals"
+                  aria-label="Open Journals admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/journal1.svg')" aria-hidden="true"></span>
+                    <h3>Journals</h3>
+                    <p>Manage lore entries, recovered writings, letters, and transmissions.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">Read-only preview</span>
+                    <span class="count-pill" data-count-table="journals">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="archive-rooms-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="archive-rooms"
+                  aria-label="Open Archive Rooms admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/archive_rooms1.svg')" aria-hidden="true"></span>
+                    <h3>Archive Rooms</h3>
+                    <p>Manage Noctis and Lumen room content, statuses, and images.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">Read-only preview</span>
+                    <span class="count-pill" data-count-table="archive_rooms">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="character-lines-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="character-lines"
+                  aria-label="Open Character Lines admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/comment.svg')" aria-hidden="true"></span>
+                    <h3>Character Lines</h3>
+                    <p>Manage reader dialogue lines for readings, decks, rooms, artifacts, and future modes.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">CRUD enabled</span>
+                    <span class="count-pill" data-count-table="reader_lines">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="contact-messages-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="contact-messages"
+                  aria-label="Open Contact Messages admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/contact-us.svg')" aria-hidden="true"></span>
+                    <h3>Contact Messages</h3>
+                    <p>Review user support inquiries, update status, and keep internal notes.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">Review enabled</span>
+                    <span class="count-pill" data-count-table="contact_messages">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="artifacts-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="artifacts"
+                  aria-label="Open Artifacts admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/artifacts1.svg')" aria-hidden="true"></span>
+                    <h3>Artifacts</h3>
+                    <p>Manage recovered objects, keys, relics, and code-entry unlocks.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">Read-only preview</span>
+                    <span class="count-pill" data-count-table="artifacts">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="gallery-records-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="gallery-records"
+                  aria-label="Open Gallery Records admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/images.svg')" aria-hidden="true"></span>
+                    <h3>Gallery Records</h3>
+                    <p>Upload and manage Noctis Gallery images, lore notes, featured status, and visibility.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">CRUD enabled</span>
+                    <span class="count-pill" data-count-table="gallery_records">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="memory-fragments-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="memory-fragments"
+                  aria-label="Open Memory Fragments admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/memory_fragment1.svg')" aria-hidden="true"></span>
+                    <h3>Memory Fragments</h3>
+                    <p>Manage hidden story fragments and secret progression pieces.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">Read-only preview</span>
+                    <span class="count-pill" data-count-table="memory_fragments">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="veilwalkers-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="veilwalkers"
+                  aria-label="Open Veilwalkers admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/veilwalkers1.svg')" aria-hidden="true"></span>
+                    <h3>Veilwalkers</h3>
+                    <p>Manage character versions, images, traits, and reading identities.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">Read-only preview</span>
+                    <span class="count-pill" data-count-table="veilwalkers">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="veilwalker-notes-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="veilwalker-notes"
+                  aria-label="Open Veilwalker Notes admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/user_notes1.svg')" aria-hidden="true"></span>
+                    <h3>Veilwalker Notes</h3>
+                    <p>Manage hidden profile notes, scrolls, and character-linked writings.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">Read-only preview</span>
+                    <span class="count-pill" data-count-table="veilwalker_notes">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="user-progress-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="user-progress"
+                  aria-label="Open User Progress admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/user_progress.svg')" aria-hidden="true"></span>
+                    <h3>User Progress</h3>
+                    <p>View saved artifacts, rooms, fragments, discoveries, and readings later.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">Read-only preview</span>
+                    <span class="count-pill">Count: Profiles later</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
+                  id="app-settings-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="app-settings"
+                  aria-label="Open App Settings admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/settings1.svg')" aria-hidden="true"></span>
+                    <h3>App Settings</h3>
+                    <p>Manage global site settings, events, and future feature flags.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">Read-only preview</span>
+                    <span class="count-pill">Count: --</span>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            <section class="panel admin-view" id="journals" aria-labelledby="journals-title" data-admin-view="journals" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="journals-title">Journals</h2>
+                  <p>Create, edit, publish, and review lore entries, recovered writings, letters, and transmissions from the journals table.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-journal-new>New Journal</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-journal-form-panel hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Journal editor</p>
+                    <h3 data-journal-form-title>New Journal</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-journal-form-cancel>Cancel</button>
+                </div>
+                <p class="admin-state" data-journal-form-state hidden></p>
+                <form class="admin-form" data-journal-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="journal-title">Title *</label>
+                      <input id="journal-title" name="title" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-slug">Slug *</label>
+                      <input id="journal-slug" name="slug" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-type">Journal Type</label>
+                      <input id="journal-type" name="journal_type" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-archive-section">Archive Section</label>
+                      <input id="journal-archive-section" name="archive_section" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-theme-mode">Theme Mode</label>
+                      <input id="journal-theme-mode" name="theme_mode" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-related-character">Related Character</label>
+                      <input id="journal-related-character" name="related_character" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-sort-order">Sort Order</label>
+                      <input id="journal-sort-order" name="sort_order" type="number" step="1" inputmode="numeric" />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="is_published" type="checkbox" />
+                      <span>Published</span>
+                    </label>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="journal-excerpt">Excerpt</label>
+                      <textarea id="journal-excerpt" name="excerpt" rows="3"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="journal-body">Body *</label>
+                      <textarea id="journal-body" name="body" rows="8" required></textarea>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-journal-form-submit>Save Journal</button>
+                    <button type="button" data-journal-form-cancel-secondary>Cancel</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Journals table">
+                <p class="admin-state" data-journals-state>Loading journals...</p>
+                <div class="admin-table-scroll" data-journals-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Slug</th>
+                        <th scope="col">Journal Key</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Published</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-journals-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-journal-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Journal detail</p>
+                    <h3 data-journal-detail-title>Selected Journal</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-journal-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-journal-detail-meta></div>
+                <div class="admin-detail__field-grid" data-journal-detail-fields></div>
+                <div class="admin-detail__body" data-journal-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="journal-prompts" aria-labelledby="journal-prompts-title" data-admin-view="journal-prompts" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Prompt library management</p>
+                  <h2 id="journal-prompts-title">Journal Prompts</h2>
+                  <p>Manage guided reflection questions, Blood Moon shadow prompts, and reading reflection prompts.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-journal-prompt-new>New Prompt</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-journal-prompt-form-panel aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Prompt editor</p>
+                    <h3 data-journal-prompt-form-title>New Prompt</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-journal-prompt-form-cancel hidden>Cancel Edit</button>
+                </div>
+                <p class="admin-state" data-journal-prompt-form-state hidden></p>
+                <form class="admin-form" data-journal-prompt-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="journal-prompt-text">Prompt Text *</label>
+                      <textarea id="journal-prompt-text" name="prompt_text" rows="4" required></textarea>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-prompt-type">Prompt Type</label>
+                      <select id="journal-prompt-type" name="prompt_type">
+                        <option value="prompt_of_day">prompt_of_day</option>
+                        <option value="guided_question" selected>guided_question</option>
+                        <option value="shadow_question">shadow_question</option>
+                        <option value="reading_reflection">reading_reflection</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-prompt-mode">Mode</label>
+                      <select id="journal-prompt-mode" name="mode">
+                        <option value="lumen" selected>Sun + Moon</option>
+                        <option value="sun">Sun Only</option>
+                        <option value="moon">Moon Only</option>
+                        <option value="bloodmoon">Blood Moon</option>
+                        <option value="all">Universal / Reserved - rare, not used by Blood Moon fetching</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-prompt-mood">Mood</label>
+                      <select id="journal-prompt-mood" name="mood">
+                        <option value="any" selected>any</option>
+                        <option value="calm">calm</option>
+                        <option value="hopeful">hopeful</option>
+                        <option value="restless">restless</option>
+                        <option value="upset">upset</option>
+                        <option value="inspired">inspired</option>
+                        <option value="heavy">heavy</option>
+                        <option value="confused">confused</option>
+                        <option value="grateful">grateful</option>
+                        <option value="clear">clear</option>
+                        <option value="raw">raw</option>
+                        <option value="angry">angry</option>
+                        <option value="numb">numb</option>
+                        <option value="haunted">haunted</option>
+                        <option value="unsettled">unsettled</option>
+                        <option value="avoidant">avoidant</option>
+                        <option value="exposed">exposed</option>
+                        <option value="ready">ready</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-prompt-intensity">Intensity</label>
+                      <select id="journal-prompt-intensity" name="intensity">
+                        <option value="gentle" selected>gentle</option>
+                        <option value="reflective">reflective</option>
+                        <option value="deep">deep</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-prompt-category">Category</label>
+                      <input id="journal-prompt-category" name="category" type="text" autocomplete="off" placeholder="emotion, shadow, reading, gratitude, grounding, etc." />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-prompt-sort-order">Sort Order</label>
+                      <input class="journal-prompt-sort-input" id="journal-prompt-sort-order" name="sort_order" type="number" step="1" inputmode="numeric" placeholder="Auto" aria-describedby="journal-prompt-sort-help" />
+                      <p class="admin-form__hint" id="journal-prompt-sort-help">Leave blank to place this prompt at the end.</p>
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="is_active" type="checkbox" checked />
+                      <span>Active</span>
+                    </label>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-journal-prompt-form-submit>Save Prompt</button>
+                    <button type="button" data-journal-prompt-form-cancel-secondary hidden>Cancel Edit</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="section-card">
+                <div class="admin-form">
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="journal-prompt-filter-type">Filter by prompt type</label>
+                      <select id="journal-prompt-filter-type" data-journal-prompt-filter="prompt_type">
+                        <option value="__all">All Types</option>
+                        <option value="prompt_of_day">prompt_of_day</option>
+                        <option value="guided_question">guided_question</option>
+                        <option value="shadow_question">shadow_question</option>
+                        <option value="reading_reflection">reading_reflection</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-prompt-filter-mode">Filter by mode</label>
+                      <select id="journal-prompt-filter-mode" data-journal-prompt-filter="mode">
+                        <option value="__all">All Modes</option>
+                        <option value="lumen">Sun + Moon</option>
+                        <option value="sun">Sun Only</option>
+                        <option value="moon">Moon Only</option>
+                        <option value="bloodmoon">Blood Moon</option>
+                        <option value="all">Universal / Reserved - rare</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-prompt-filter-mood">Filter by mood</label>
+                      <select id="journal-prompt-filter-mood" data-journal-prompt-filter="mood">
+                        <option value="__all">All Moods</option>
+                        <option value="any">any</option>
+                        <option value="calm">calm</option>
+                        <option value="hopeful">hopeful</option>
+                        <option value="restless">restless</option>
+                        <option value="upset">upset</option>
+                        <option value="inspired">inspired</option>
+                        <option value="heavy">heavy</option>
+                        <option value="confused">confused</option>
+                        <option value="grateful">grateful</option>
+                        <option value="clear">clear</option>
+                        <option value="raw">raw</option>
+                        <option value="angry">angry</option>
+                        <option value="numb">numb</option>
+                        <option value="haunted">haunted</option>
+                        <option value="unsettled">unsettled</option>
+                        <option value="avoidant">avoidant</option>
+                        <option value="exposed">exposed</option>
+                        <option value="ready">ready</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-prompt-filter-active">Filter by active status</label>
+                      <select id="journal-prompt-filter-active" data-journal-prompt-filter="active">
+                        <option value="__all">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Journal Prompts table">
+                <p class="admin-state" data-journal-prompts-state>Loading journal prompts...</p>
+                <div class="admin-table-scroll" data-journal-prompts-table-wrap hidden>
+                  <table class="admin-table journal-prompts-table">
+                    <colgroup>
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th scope="col">Prompt</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Mood</th>
+                        <th scope="col">Intensity</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-journal-prompts-table-body></tbody>
+                  </table>
+                </div>
+                <footer class="admin-pagination" data-journal-prompts-pagination hidden>
+                  <span class="admin-pagination__summary" data-journal-prompts-pagination-summary>Showing 0-0 of 0 prompts</span>
+                  <label class="admin-pagination__size" for="journal-prompts-page-size">
+                    Per page
+                    <select id="journal-prompts-page-size" data-journal-prompts-page-size>
+                      <option value="10" selected>10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                    </select>
+                  </label>
+                  <div class="admin-pagination__controls" data-journal-prompts-pagination-controls aria-label="Journal prompt pages"></div>
+                </footer>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="character-lines" aria-labelledby="character-lines-title" data-admin-view="character-lines" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Reader dialogue management</p>
+                  <h2 id="character-lines-title">Character Lines</h2>
+                  <p>Manage reader and character dialogue lines for reading intros, deck intros, rooms, artifacts, fragments, and future modes.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-character-line-new>New Line</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-character-line-form-panel aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Line editor</p>
+                    <h3 data-character-line-form-title>New Line</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-character-line-form-cancel hidden>Cancel Edit</button>
+                </div>
+                <p class="admin-state" data-character-line-form-state hidden></p>
+                <form class="admin-form" data-character-line-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="character-line-reader-id">Reader ID *</label>
+                      <input id="character-line-reader-id" name="reader_id" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-reader-name">Reader Name *</label>
+                      <input id="character-line-reader-name" name="reader_name" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-mode">Mode *</label>
+                      <select id="character-line-mode" name="mode" required>
+                        <option value="sun">sun</option>
+                        <option value="moon">moon</option>
+                        <option value="bloodMoon">bloodMoon</option>
+                        <option value="blueMoon">blueMoon</option>
+                        <option value="all" selected>all</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-context">Context *</label>
+                      <select id="character-line-context" name="context" required>
+                        <option value="reading_intro" selected>reading_intro</option>
+                        <option value="post_reading">post_reading</option>
+                        <option value="deck_intro">deck_intro</option>
+                        <option value="room_encounter">room_encounter</option>
+                        <option value="room_unlock">room_unlock</option>
+                        <option value="artifact_hint">artifact_hint</option>
+                        <option value="memory_fragment">memory_fragment</option>
+                        <option value="restricted_wing">restricted_wing</option>
+                        <option value="journal_prompt">journal_prompt</option>
+                        <option value="custom">custom</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-tone">Tone</label>
+                      <input id="character-line-tone" name="tone" type="text" autocomplete="off" placeholder="gentle, eerie, playful, etc." />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-deck-id">Deck ID</label>
+                      <input id="character-line-deck-id" name="deck_id" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-room-id">Room ID</label>
+                      <input id="character-line-room-id" name="room_id" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-sort-order">Sort Order</label>
+                      <input id="character-line-sort-order" name="sort_order" type="number" step="1" inputmode="numeric" placeholder="Auto" aria-describedby="character-line-sort-help" />
+                      <p class="admin-form__hint" id="character-line-sort-help">Leave blank to place this line at the end of its group.</p>
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="is_active" type="checkbox" checked />
+                      <span>Active</span>
+                    </label>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="character-line-text">Line Text *</label>
+                      <textarea id="character-line-text" name="line_text" rows="6" required></textarea>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-character-line-form-submit>Save Line</button>
+                    <button type="button" data-character-line-form-cancel-secondary hidden>Cancel Edit</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="section-card">
+                <div class="admin-form">
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="character-line-filter-reader">Filter by reader</label>
+                      <input id="character-line-filter-reader" data-character-line-filter="reader" type="text" autocomplete="off" placeholder="Reader ID or name" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-filter-mode">Filter by mode</label>
+                      <select id="character-line-filter-mode" data-character-line-filter="mode">
+                        <option value="__all">All Modes</option>
+                        <option value="sun">sun</option>
+                        <option value="moon">moon</option>
+                        <option value="bloodMoon">bloodMoon</option>
+                        <option value="blueMoon">blueMoon</option>
+                        <option value="all">all</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-filter-context">Filter by context</label>
+                      <select id="character-line-filter-context" data-character-line-filter="context">
+                        <option value="__all">All Contexts</option>
+                        <option value="reading_intro">reading_intro</option>
+                        <option value="post_reading">post_reading</option>
+                        <option value="deck_intro">deck_intro</option>
+                        <option value="room_encounter">room_encounter</option>
+                        <option value="room_unlock">room_unlock</option>
+                        <option value="artifact_hint">artifact_hint</option>
+                        <option value="memory_fragment">memory_fragment</option>
+                        <option value="restricted_wing">restricted_wing</option>
+                        <option value="journal_prompt">journal_prompt</option>
+                        <option value="custom">custom</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="character-line-filter-active">Filter by active status</label>
+                      <select id="character-line-filter-active" data-character-line-filter="active">
+                        <option value="__all">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Character Lines table">
+                <p class="admin-state" data-character-lines-state>Loading character lines...</p>
+                <div class="admin-table-scroll" data-character-lines-table-wrap hidden>
+                  <table class="admin-table character-lines-table">
+                    <colgroup>
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th scope="col">Reader</th>
+                        <th scope="col">Reader ID</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Context</th>
+                        <th scope="col">Tone</th>
+                        <th scope="col">Deck</th>
+                        <th scope="col">Room</th>
+                        <th scope="col">Line Preview</th>
+                        <th scope="col">Status / Order</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-character-lines-table-body></tbody>
+                  </table>
+                </div>
+                <footer class="admin-pagination" data-character-lines-pagination hidden>
+                  <span class="admin-pagination__summary" data-character-lines-pagination-summary>Showing 0-0 of 0 lines</span>
+                  <label class="admin-pagination__size" for="character-lines-page-size">
+                    Per page
+                    <select id="character-lines-page-size" data-character-lines-page-size>
+                      <option value="10" selected>10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                    </select>
+                  </label>
+                  <div class="admin-pagination__controls" data-character-lines-pagination-controls aria-label="Character line pages"></div>
+                </footer>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="contact-messages" aria-labelledby="contact-messages-title" data-admin-view="contact-messages" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Support inbox</p>
+                  <h2 id="contact-messages-title">Contact Messages</h2>
+                  <p>Review account support inquiries submitted from the Account page and track their status.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-contact-message-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Message detail</p>
+                    <h3 data-contact-message-detail-title>Selected Message</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-contact-message-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-contact-message-detail-meta></div>
+                <div class="admin-detail__field-grid" data-contact-message-detail-fields></div>
+                <div class="admin-detail__body" data-contact-message-detail-body></div>
+                <form class="admin-form" data-contact-message-notes-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="contact-message-detail-status">Status</label>
+                      <select id="contact-message-detail-status" name="status" data-contact-message-detail-status>
+                        <option value="new">new</option>
+                        <option value="in_review">in_review</option>
+                        <option value="resolved">resolved</option>
+                        <option value="archived">archived</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="contact-message-admin-notes">Admin Notes</label>
+                      <textarea id="contact-message-admin-notes" name="admin_notes" rows="5" data-contact-message-admin-notes></textarea>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-contact-message-notes-submit>Save Status &amp; Notes</button>
+                  </div>
+                </form>
+                <p class="admin-state" data-contact-message-detail-state hidden></p>
+              </section>
+
+              <section class="section-card section-card--compact-filter">
+                <div class="admin-form">
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="contact-message-filter-status">Filter by status</label>
+                      <select id="contact-message-filter-status" data-contact-message-filter="status">
+                        <option value="__all">All Statuses</option>
+                        <option value="new">new</option>
+                        <option value="in_review">in_review</option>
+                        <option value="resolved">resolved</option>
+                        <option value="archived">archived</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="contact-message-filter-topic">Filter by topic</label>
+                      <select id="contact-message-filter-topic" data-contact-message-filter="topic">
+                        <option value="__all">All Topics</option>
+                        <option value="Account Help">Account Help</option>
+                        <option value="Reading Issue">Reading Issue</option>
+                        <option value="Journal Issue">Journal Issue</option>
+                        <option value="Decks & Unlocks">Decks &amp; Unlocks</option>
+                        <option value="Bug Report">Bug Report</option>
+                        <option value="Feature Suggestion">Feature Suggestion</option>
+                        <option value="Billing / Subscription">Billing / Subscription</option>
+                        <option value="General Question">General Question</option>
+                        <option value="Report a Problem">Report a Problem</option>
+                        <option value="Delete Account Request">Delete Account Request</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Contact Messages table">
+                <p class="admin-state" data-contact-messages-state>Loading contact messages...</p>
+                <div class="admin-table-scroll" data-contact-messages-table-wrap hidden>
+                  <table class="admin-table contact-messages-table">
+                    <colgroup>
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th scope="col">Created</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Topic</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Message Preview</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-contact-messages-table-body></tbody>
+                  </table>
+                </div>
+                <footer class="admin-pagination" data-contact-messages-pagination hidden>
+                  <span class="admin-pagination__summary" data-contact-messages-pagination-summary>Showing 0-0 of 0 messages</span>
+                  <label class="admin-pagination__size" for="contact-messages-page-size">
+                    Per page
+                    <select id="contact-messages-page-size" data-contact-messages-page-size>
+                      <option value="10" selected>10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                    </select>
+                  </label>
+                  <div class="admin-pagination__controls" data-contact-messages-pagination-controls aria-label="Contact message pages"></div>
+                </footer>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="archive-rooms" aria-labelledby="archive-rooms-title" data-admin-view="archive-rooms" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="archive-rooms-title">Archive Rooms</h2>
+                  <p>Create, edit, activate, and review Noctis rooms and Lumen sanctuaries from the archive rooms table.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-archive-room-new>New Archive Room</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-archive-room-form-panel hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Archive room editor</p>
+                    <h3 data-archive-room-form-title>New Archive Room</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-archive-room-form-cancel>Cancel</button>
+                </div>
+                <p class="admin-state" data-archive-room-form-state hidden></p>
+                <form class="admin-form" data-archive-room-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="archive-room-key">Room Key *</label>
+                      <input id="archive-room-key" name="room_key" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="archive-room-title">Title *</label>
+                      <input id="archive-room-title" name="title" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="archive-room-name">Name</label>
+                      <input id="archive-room-name" name="name" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="archive-room-type">Archive Type</label>
+                      <input id="archive-room-type" name="archive_type" type="text" list="archive-type-options" autocomplete="off" placeholder="noctis or lumen" />
+                      <datalist id="archive-type-options">
+                        <option value="noctis"></option>
+                        <option value="lumen"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="archive-room-kind">Room Kind</label>
+                      <input id="archive-room-kind" name="room_kind" type="text" list="room-kind-options" autocomplete="off" placeholder="sanctuary, vault, gate..." />
+                      <datalist id="room-kind-options">
+                        <option value="sanctuary"></option>
+                        <option value="progression_room"></option>
+                        <option value="vault"></option>
+                        <option value="gate"></option>
+                        <option value="gallery"></option>
+                        <option value="journal_room"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="archive-room-mode">Mode Key</label>
+                      <input id="archive-room-mode" name="mode_key" type="text" list="archive-mode-options" autocomplete="off" placeholder="moon, bloodmoon, lumen..." />
+                      <datalist id="archive-mode-options">
+                        <option value="sun"></option>
+                        <option value="moon"></option>
+                        <option value="bloodmoon"></option>
+                        <option value="lumen"></option>
+                        <option value="noctis"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="archive-room-status">Status</label>
+                      <input id="archive-room-status" name="status" type="text" list="archive-status-options" autocomplete="off" placeholder="open, locked, sealed..." />
+                      <datalist id="archive-status-options">
+                        <option value="open"></option>
+                        <option value="locked"></option>
+                        <option value="restricted"></option>
+                        <option value="sealed"></option>
+                        <option value="hidden"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="archive-room-image">Image URL</label>
+                      <input id="archive-room-image" name="image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="archive-room-sort">Sort Order</label>
+                      <input id="archive-room-sort" name="sort_order" type="number" step="1" inputmode="numeric" />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="is_active" type="checkbox" />
+                      <span>Active</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_unlockable" type="checkbox" />
+                      <span>Unlockable</span>
+                    </label>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="archive-room-description">Description</label>
+                      <textarea id="archive-room-description" name="description" rows="5"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="archive-room-metadata">Metadata JSON</label>
+                      <textarea id="archive-room-metadata" name="metadata" rows="6" spellcheck="false" placeholder='{"key": "value"}'></textarea>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-archive-room-form-submit>Save Archive Room</button>
+                    <button type="button" data-archive-room-form-cancel-secondary>Cancel</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Archive Rooms table">
+                <p class="admin-state" data-archive-rooms-state>Loading archive rooms...</p>
+                <div class="admin-table-scroll" data-archive-rooms-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Room Key</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Archive Type</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Sort</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-archive-rooms-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-archive-room-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Archive room detail</p>
+                    <h3 data-archive-room-detail-title>Selected Room</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-archive-room-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-archive-room-detail-meta></div>
+                <div class="admin-detail__field-grid" data-archive-room-detail-fields></div>
+                <div class="admin-detail__body" data-archive-room-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="gallery-records" aria-labelledby="gallery-records-title" data-admin-view="gallery-records" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Gallery management</p>
+                  <h2 id="gallery-records-title">Gallery Records</h2>
+                  <p>Upload Noctis Gallery images, edit record metadata, and control public visibility or Featured Visual Record placement.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button class="admin-primary-action" type="button" data-gallery-record-new>Upload Gallery Record</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="gallery-record-stats" aria-label="Gallery Records summary">
+                <article class="gallery-record-stat">
+                  <span>Total Records</span>
+                  <strong data-gallery-record-stat="total">0</strong>
+                </article>
+                <article class="gallery-record-stat">
+                  <span>Active</span>
+                  <strong data-gallery-record-stat="active">0</strong>
+                </article>
+                <article class="gallery-record-stat">
+                  <span>Featured</span>
+                  <strong data-gallery-record-stat="featured">0</strong>
+                </article>
+                <article class="gallery-record-stat">
+                  <span>Inactive</span>
+                  <strong data-gallery-record-stat="inactive">0</strong>
+                </article>
+              </section>
+
+              <section class="section-card admin-detail" data-gallery-record-form-panel hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Gallery record editor</p>
+                    <h3 data-gallery-record-form-title>New Gallery Record</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-gallery-record-form-cancel>Cancel</button>
+                </div>
+                <p class="admin-state" data-gallery-record-form-state hidden></p>
+                <form class="admin-form" data-gallery-record-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="gallery-record-title">Title *</label>
+                      <input id="gallery-record-title" name="title" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-slug">Slug *</label>
+                      <input id="gallery-record-slug" name="slug" type="text" autocomplete="off" />
+                      <p class="admin-form__hint">Leave blank on create to generate from title.</p>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-unknown-title">Unknown Title</label>
+                      <input id="gallery-record-unknown-title" name="unknown_title" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-type">Record Type *</label>
+                      <select id="gallery-record-type" name="record_type" required>
+                        <option value="portrait">portrait</option>
+                        <option value="place">place</option>
+                        <option value="symbol">symbol</option>
+                        <option value="map">map</option>
+                        <option value="anomaly">anomaly</option>
+                        <option value="unknown">unknown</option>
+                        <option value="recovered">recovered</option>
+                        <option value="featured">featured</option>
+                        <option value="fragmented_record">fragmented_record</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-status">Status *</label>
+                      <select id="gallery-record-status" name="status" required>
+                        <option value="available">available</option>
+                        <option value="recovered">recovered</option>
+                        <option value="unknown">unknown</option>
+                        <option value="unnamed">unnamed</option>
+                        <option value="fragmented">fragmented</option>
+                        <option value="sealed">sealed</option>
+                        <option value="hidden">hidden</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-folder">Upload Folder</label>
+                      <select id="gallery-record-folder" name="upload_folder">
+                        <option value="featured">featured</option>
+                        <option value="portraits">portraits</option>
+                        <option value="places">places</option>
+                        <option value="symbols">symbols</option>
+                        <option value="maps">maps</option>
+                        <option value="anomalies">anomalies</option>
+                        <option value="unknown">unknown</option>
+                        <option value="recovered">recovered</option>
+                        <option value="fragments">fragments</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-origin">Origin</label>
+                      <input id="gallery-record-origin" name="origin" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-related-room">Related Room</label>
+                      <input id="gallery-record-related-room" name="related_room" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-sort">Sort Order</label>
+                      <input id="gallery-record-sort" name="sort_order" type="number" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-required-fragments">Required Fragments</label>
+                      <input id="gallery-record-required-fragments" name="required_fragments" type="number" min="0" step="1" inputmode="numeric" />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="is_featured" type="checkbox" />
+                      <span>Featured Visual Record</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_active" type="checkbox" />
+                      <span>Active</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_fragmented" type="checkbox" />
+                      <span>Fragmented</span>
+                    </label>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-document-id">Related Document ID</label>
+                      <input id="gallery-record-document-id" name="related_document_id" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-description">Description</label>
+                      <textarea id="gallery-record-description" name="description" rows="4"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-lore-note">Lore Note</label>
+                      <textarea id="gallery-record-lore-note" name="lore_note" rows="4"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-tags">Tags</label>
+                      <input id="gallery-record-tags" name="tags" type="text" autocomplete="off" placeholder="Portraits, Noctis, Blood Moon" />
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-themes">Themes</label>
+                      <input id="gallery-record-themes" name="themes" type="text" autocomplete="off" placeholder="portrait, candlelight, witness" />
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-image-file">Image Upload</label>
+                      <input id="gallery-record-image-file" name="image_file" type="file" accept="image/*" />
+                      <p class="admin-form__hint">Uploads to the Supabase Storage bucket <code>gallery-records</code>. The same URL is saved for preview and full image.</p>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-preview-url">Preview Image URL</label>
+                      <input id="gallery-record-preview-url" name="preview_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="gallery-record-full-url">Full Image URL</label>
+                      <input id="gallery-record-full-url" name="full_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide admin-form__preview">
+                      <label>Image Preview</label>
+                      <img alt="Selected Gallery record preview" data-gallery-record-preview-image hidden />
+                      <a href="#" target="_blank" rel="noreferrer" data-gallery-record-preview-link hidden>Open image</a>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-gallery-record-form-submit>Save Gallery Record</button>
+                    <button type="button" data-gallery-record-form-cancel-secondary>Cancel</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="section-card section-card--compact-filter">
+                <div class="admin-form">
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="gallery-record-filter-search">Search gallery records</label>
+                      <input id="gallery-record-filter-search" data-gallery-record-filter="search" type="search" autocomplete="off" placeholder="Search gallery records..." />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-filter-type">Filter by type</label>
+                      <select id="gallery-record-filter-type" data-gallery-record-filter="type">
+                        <option value="__all">All Types</option>
+                        <option value="portrait">portrait</option>
+                        <option value="place">place</option>
+                        <option value="symbol">symbol</option>
+                        <option value="map">map</option>
+                        <option value="anomaly">anomaly</option>
+                        <option value="unknown">unknown</option>
+                        <option value="recovered">recovered</option>
+                        <option value="featured">featured</option>
+                        <option value="fragmented_record">fragmented_record</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-filter-status">Filter by status</label>
+                      <select id="gallery-record-filter-status" data-gallery-record-filter="status">
+                        <option value="__all">All Statuses</option>
+                        <option value="available">available</option>
+                        <option value="recovered">recovered</option>
+                        <option value="unknown">unknown</option>
+                        <option value="unnamed">unnamed</option>
+                        <option value="fragmented">fragmented</option>
+                        <option value="sealed">sealed</option>
+                        <option value="hidden">hidden</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="gallery-record-filter-visibility">Filter by visibility</label>
+                      <select id="gallery-record-filter-visibility" data-gallery-record-filter="visibility">
+                        <option value="__all">All Records</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="featured">Featured</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Gallery Records table">
+                <p class="admin-state" data-gallery-records-state>Loading gallery records...</p>
+                <div class="admin-table-scroll" data-gallery-records-table-wrap hidden>
+                  <table class="admin-table gallery-records-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Preview</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Featured</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Sort</th>
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody data-gallery-records-table-body></tbody>
+                  </table>
+                </div>
+                <footer class="admin-pagination" data-gallery-records-pagination hidden>
+                  <span class="admin-pagination__summary" data-gallery-records-pagination-summary>Showing 0-0 of 0 records</span>
+                  <div class="admin-pagination__controls" data-gallery-records-pagination-controls aria-label="Gallery record pages"></div>
+                </footer>
+              </section>
+
+              <section class="section-card admin-detail" data-gallery-record-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Gallery record detail</p>
+                    <h3 data-gallery-record-detail-title>Selected Gallery Record</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-gallery-record-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-gallery-record-detail-meta></div>
+                <div class="admin-detail__field-grid" data-gallery-record-detail-fields></div>
+                <div class="admin-image-previews" data-gallery-record-detail-images></div>
+                <div class="admin-detail__body" data-gallery-record-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="artifacts" aria-labelledby="artifacts-title" data-admin-view="artifacts" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="artifacts-title">Artifacts</h2>
+                  <p>Create, edit, activate, and review recovered objects, keys, relics, unlock methods, and source locations.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-artifact-new>New Artifact</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-artifact-form-panel hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Artifact editor</p>
+                    <h3 data-artifact-form-title>New Artifact</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-artifact-form-cancel>Cancel</button>
+                </div>
+                <p class="admin-state" data-artifact-form-state hidden></p>
+                <form class="admin-form" data-artifact-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="artifact-key">Artifact Key *</label>
+                      <input id="artifact-key" name="artifact_key" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="artifact-title">Title *</label>
+                      <input id="artifact-title" name="title" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="artifact-name">Name</label>
+                      <input id="artifact-name" name="name" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="artifact-element">Element</label>
+                      <input id="artifact-element" name="element" type="text" list="artifact-element-options" autocomplete="off" placeholder="air, water, moon..." />
+                      <datalist id="artifact-element-options">
+                        <option value="air"></option>
+                        <option value="water"></option>
+                        <option value="earth"></option>
+                        <option value="fire"></option>
+                        <option value="sun"></option>
+                        <option value="moon"></option>
+                        <option value="bloodmoon"></option>
+                        <option value="unknown"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="artifact-type">Artifact Type</label>
+                      <input id="artifact-type" name="artifact_type" type="text" list="artifact-type-options" autocomplete="off" placeholder="key, relic, seal..." />
+                      <datalist id="artifact-type-options">
+                        <option value="key"></option>
+                        <option value="relic"></option>
+                        <option value="seal"></option>
+                        <option value="fragment"></option>
+                        <option value="object"></option>
+                        <option value="unknown"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="artifact-image">Image URL</label>
+                      <input id="artifact-image" name="image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="artifact-sort">Sort Order</label>
+                      <input id="artifact-sort" name="sort_order" type="number" step="1" inputmode="numeric" />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="is_active" type="checkbox" />
+                      <span>Active</span>
+                    </label>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="artifact-unlock-method">Unlock Method</label>
+                      <textarea id="artifact-unlock-method" name="unlock_method" rows="3"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="artifact-source-location">Source Location</label>
+                      <textarea id="artifact-source-location" name="source_location" rows="3"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="artifact-description">Description</label>
+                      <textarea id="artifact-description" name="description" rows="5"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="artifact-metadata">Metadata JSON</label>
+                      <textarea id="artifact-metadata" name="metadata" rows="6" spellcheck="false" placeholder='{"key": "value"}'></textarea>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-artifact-form-submit>Save Artifact</button>
+                    <button type="button" data-artifact-form-cancel-secondary>Cancel</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Artifacts table">
+                <p class="admin-state" data-artifacts-state>Loading artifacts...</p>
+                <div class="admin-table-scroll" data-artifacts-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Artifact Key</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Element</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Unlock</th>
+                        <th scope="col">Source</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-artifacts-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-artifact-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Artifact detail</p>
+                    <h3 data-artifact-detail-title>Selected Artifact</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-artifact-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-artifact-detail-meta></div>
+                <div class="admin-detail__field-grid" data-artifact-detail-fields></div>
+                <div class="admin-detail__body" data-artifact-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="memory-fragments" aria-labelledby="memory-fragments-title" data-admin-view="memory-fragments" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="memory-fragments-title">Memory Fragments</h2>
+                  <p>Review hidden story fragments, sequence pieces, related rooms, and artifact-linked discoveries.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-memory-fragment-new>New Memory Fragment</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-memory-fragment-form-panel hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Memory fragment editor</p>
+                    <h3 data-memory-fragment-form-title>New Memory Fragment</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-memory-fragment-form-cancel>Cancel</button>
+                </div>
+                <p class="admin-state" data-memory-fragment-form-state hidden></p>
+                <form class="admin-form" data-memory-fragment-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="memory-fragment-key">Fragment Key *</label>
+                      <input id="memory-fragment-key" name="fragment_key" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="memory-fragment-title">Title *</label>
+                      <input id="memory-fragment-title" name="title" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="memory-fragment-name">Name</label>
+                      <input id="memory-fragment-name" name="name" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="memory-fragment-type">Fragment Type</label>
+                      <input id="memory-fragment-type" name="fragment_type" type="text" list="memory-fragment-type-options" autocomplete="off" placeholder="note, image, whisper..." />
+                      <datalist id="memory-fragment-type-options">
+                        <option value="note"></option>
+                        <option value="image"></option>
+                        <option value="whisper"></option>
+                        <option value="code"></option>
+                        <option value="vision"></option>
+                        <option value="unknown"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="memory-fragment-sequence">Sequence Number</label>
+                      <input id="memory-fragment-sequence" name="sequence_number" type="number" step="1" inputmode="numeric" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="memory-fragment-room-key">Related Room Key</label>
+                      <input id="memory-fragment-room-key" name="related_room_key" type="text" list="memory-fragment-room-options" autocomplete="off" />
+                      <datalist id="memory-fragment-room-options" data-memory-fragment-room-options></datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="memory-fragment-artifact-key">Related Artifact Key</label>
+                      <input id="memory-fragment-artifact-key" name="related_artifact_key" type="text" list="memory-fragment-artifact-options" autocomplete="off" />
+                      <datalist id="memory-fragment-artifact-options" data-memory-fragment-artifact-options></datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="memory-fragment-image">Image URL</label>
+                      <input id="memory-fragment-image" name="image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="memory-fragment-sort">Sort Order</label>
+                      <input id="memory-fragment-sort" name="sort_order" type="number" step="1" inputmode="numeric" />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="is_active" type="checkbox" />
+                      <span>Active</span>
+                    </label>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="memory-fragment-description">Description</label>
+                      <textarea id="memory-fragment-description" name="description" rows="4"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="memory-fragment-body">Body</label>
+                      <textarea id="memory-fragment-body" name="body" rows="8"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="memory-fragment-metadata">Metadata JSON</label>
+                      <textarea id="memory-fragment-metadata" name="metadata" rows="6" spellcheck="false" placeholder='{"key": "value"}'></textarea>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-memory-fragment-form-submit>Save Memory Fragment</button>
+                    <button type="button" data-memory-fragment-form-cancel-secondary>Cancel</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Memory Fragments table">
+                <p class="admin-state" data-memory-fragments-state>Loading memory fragments...</p>
+                <div class="admin-table-scroll" data-memory-fragments-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Fragment Key</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Sequence</th>
+                        <th scope="col">Room</th>
+                        <th scope="col">Artifact</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-memory-fragments-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-memory-fragment-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Memory fragment detail</p>
+                    <h3 data-memory-fragment-detail-title>Selected Fragment</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-memory-fragment-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-memory-fragment-detail-meta></div>
+                <div class="admin-detail__field-grid" data-memory-fragment-detail-fields></div>
+                <div class="admin-detail__body" data-memory-fragment-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="veilwalker-notes" aria-labelledby="veilwalker-notes-title" data-admin-view="veilwalker-notes" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Hidden note management</p>
+                  <h2 id="veilwalker-notes-title">Veilwalker Notes</h2>
+                  <p>Create, edit, activate, hide, and review profile notes, scrolls, mode-linked writings, and character-linked transmissions.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-veilwalker-note-new>New Veilwalker Note</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-veilwalker-note-form-panel hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Veilwalker note editor</p>
+                    <h3 data-veilwalker-note-form-title>New Veilwalker Note</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-veilwalker-note-form-cancel>Cancel</button>
+                </div>
+                <p class="admin-state" data-veilwalker-note-form-state hidden></p>
+                <form class="admin-form" data-veilwalker-note-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="veilwalker-note-key">Note Key *</label>
+                      <input id="veilwalker-note-key" name="note_key" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-note-veilwalker-key">Veilwalker Key</label>
+                      <input id="veilwalker-note-veilwalker-key" name="veilwalker_key" type="text" list="veilwalker-note-veilwalker-options" autocomplete="off" />
+                      <datalist id="veilwalker-note-veilwalker-options" data-veilwalker-note-veilwalker-options></datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-note-title">Title *</label>
+                      <input id="veilwalker-note-title" name="title" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-note-type">Note Type</label>
+                      <input id="veilwalker-note-type" name="note_type" type="text" list="veilwalker-note-type-options" autocomplete="off" placeholder="profile_note, scroll, letter..." />
+                      <datalist id="veilwalker-note-type-options">
+                        <option value="profile_note"></option>
+                        <option value="scroll"></option>
+                        <option value="letter"></option>
+                        <option value="clue"></option>
+                        <option value="transmission"></option>
+                        <option value="unknown"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-note-mode">Mode Key</label>
+                      <input id="veilwalker-note-mode" name="mode_key" type="text" list="veilwalker-note-mode-options" autocomplete="off" placeholder="sun, moon, bloodmoon..." />
+                      <datalist id="veilwalker-note-mode-options">
+                        <option value="sun"></option>
+                        <option value="moon"></option>
+                        <option value="bloodmoon"></option>
+                        <option value="lumen"></option>
+                        <option value="noctis"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-note-source">Source Location</label>
+                      <input id="veilwalker-note-source" name="source_location" type="text" autocomplete="off" placeholder="aquarius_profile_hidden_note" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-note-sort">Sort Order</label>
+                      <input id="veilwalker-note-sort" name="sort_order" type="number" step="1" inputmode="numeric" />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="is_hidden" type="checkbox" />
+                      <span>Hidden</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_active" type="checkbox" />
+                      <span>Active</span>
+                    </label>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="veilwalker-note-body">Body *</label>
+                      <textarea id="veilwalker-note-body" name="body" rows="8" required></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="veilwalker-note-metadata">Metadata JSON</label>
+                      <textarea id="veilwalker-note-metadata" name="metadata" rows="6" spellcheck="false" placeholder='{"key": "value"}'></textarea>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-veilwalker-note-form-submit>Save Veilwalker Note</button>
+                    <button type="button" data-veilwalker-note-form-cancel-secondary>Cancel</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Veilwalker Notes table">
+                <p class="admin-state" data-veilwalker-notes-state>Loading veilwalker notes...</p>
+                <div class="admin-table-scroll" data-veilwalker-notes-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Note Key</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Veilwalker</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Hidden</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-veilwalker-notes-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-veilwalker-note-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Veilwalker note detail</p>
+                    <h3 data-veilwalker-note-detail-title>Selected Note</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-veilwalker-note-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-veilwalker-note-detail-meta></div>
+                <div class="admin-detail__field-grid" data-veilwalker-note-detail-fields></div>
+                <div class="admin-detail__body" data-veilwalker-note-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="veilwalkers" aria-labelledby="veilwalkers-title" data-admin-view="veilwalkers" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Veilwalker management</p>
+                  <h2 id="veilwalkers-title">Veilwalkers</h2>
+                  <p>Create, edit, activate, and review character versions, profile copy, image references, and reading identities.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-veilwalker-new>New Veilwalker</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-veilwalker-form-panel hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Veilwalker editor</p>
+                    <h3 data-veilwalker-form-title>New Veilwalker</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-veilwalker-form-cancel>Cancel</button>
+                </div>
+                <p class="admin-state" data-veilwalker-form-state hidden></p>
+                <form class="admin-form" data-veilwalker-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="veilwalker-key">Veilwalker Key *</label>
+                      <input id="veilwalker-key" name="veilwalker_key" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-zodiac">Zodiac Key *</label>
+                      <input id="veilwalker-zodiac" name="zodiac_key" type="text" list="veilwalker-zodiac-options" autocomplete="off" required />
+                      <datalist id="veilwalker-zodiac-options">
+                        <option value="aries"></option>
+                        <option value="taurus"></option>
+                        <option value="gemini"></option>
+                        <option value="cancer"></option>
+                        <option value="leo"></option>
+                        <option value="virgo"></option>
+                        <option value="libra"></option>
+                        <option value="scorpio"></option>
+                        <option value="sagittarius"></option>
+                        <option value="capricorn"></option>
+                        <option value="aquarius"></option>
+                        <option value="pisces"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-display-name">Display Name *</label>
+                      <input id="veilwalker-display-name" name="display_name" type="text" autocomplete="off" required />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-theme-mode">Theme Mode</label>
+                      <input id="veilwalker-theme-mode" name="theme_mode" type="text" list="veilwalker-theme-mode-options" autocomplete="off" placeholder="standard, bloodmoon..." />
+                      <datalist id="veilwalker-theme-mode-options">
+                        <option value="standard"></option>
+                        <option value="bloodmoon"></option>
+                        <option value="blue_moon"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-form-key">Form Key</label>
+                      <input id="veilwalker-form-key" name="form_key" type="text" list="veilwalker-form-key-options" autocomplete="off" placeholder="oracle, ascendant..." />
+                      <datalist id="veilwalker-form-key-options">
+                        <option value="oracle"></option>
+                        <option value="ascendant"></option>
+                        <option value="bloodmoon"></option>
+                        <option value="mystery"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-form-label">Form Label</label>
+                      <input id="veilwalker-form-label" name="form_label" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-element">Element</label>
+                      <input id="veilwalker-element" name="element" type="text" list="veilwalker-element-options" autocomplete="off" placeholder="fire, earth, air..." />
+                      <datalist id="veilwalker-element-options">
+                        <option value="fire"></option>
+                        <option value="earth"></option>
+                        <option value="air"></option>
+                        <option value="water"></option>
+                        <option value="unknown"></option>
+                      </datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-symbol">Symbol</label>
+                      <input id="veilwalker-symbol" name="symbol" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-accent-color">Accent Color</label>
+                      <input id="veilwalker-accent-color" name="accent_color" type="text" autocomplete="off" placeholder="#d98942" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-glow-color">Glow Color</label>
+                      <input id="veilwalker-glow-color" name="glow_color" type="text" autocomplete="off" placeholder="rgba(210, 31, 50, 0.45)" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-card-image">Card Image URL</label>
+                      <input id="veilwalker-card-image" name="card_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-profile-image">Profile Image URL</label>
+                      <input id="veilwalker-profile-image" name="profile_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-profile-title">Profile Title</label>
+                      <input id="veilwalker-profile-title" name="profile_title" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-focus-label">Focus Label</label>
+                      <input id="veilwalker-focus-label" name="focus_label" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-reading-style">Reading Style</label>
+                      <input id="veilwalker-reading-style" name="reading_style" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-profile-note-key">Profile Note Key</label>
+                      <input id="veilwalker-profile-note-key" name="profile_note_key" type="text" list="veilwalker-profile-note-options" autocomplete="off" />
+                      <datalist id="veilwalker-profile-note-options" data-veilwalker-profile-note-options></datalist>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="veilwalker-sort">Sort Order</label>
+                      <input id="veilwalker-sort" name="sort_order" type="number" step="1" inputmode="numeric" />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="reading_enabled" type="checkbox" />
+                      <span>Reading Enabled</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="has_profile_note" type="checkbox" />
+                      <span>Has Profile Note</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_mystery" type="checkbox" />
+                      <span>Mystery</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_active" type="checkbox" />
+                      <span>Active</span>
+                    </label>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="veilwalker-short-quote">Short Quote</label>
+                      <textarea id="veilwalker-short-quote" name="short_quote" rows="3"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="veilwalker-card-description">Card Description</label>
+                      <textarea id="veilwalker-card-description" name="card_description" rows="4"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="veilwalker-profile-body">Profile Body</label>
+                      <textarea id="veilwalker-profile-body" name="profile_body" rows="7"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="veilwalker-focus-text">Focus Text</label>
+                      <textarea id="veilwalker-focus-text" name="focus_text" rows="3"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="veilwalker-traits">Traits</label>
+                      <textarea id="veilwalker-traits" name="traits" rows="4" spellcheck="false" placeholder="courage, renewal, clarity"></textarea>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-veilwalker-form-submit>Save Veilwalker</button>
+                    <button type="button" data-veilwalker-form-cancel-secondary>Cancel</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Veilwalkers table">
+                <p class="admin-state" data-veilwalkers-state>Loading veilwalkers...</p>
+                <div class="admin-table-scroll" data-veilwalkers-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Key</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Zodiac</th>
+                        <th scope="col">Element</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Sort</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-veilwalkers-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-veilwalker-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">Veilwalker detail</p>
+                    <h3 data-veilwalker-detail-title>Selected Veilwalker</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-veilwalker-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-veilwalker-detail-meta></div>
+                <div class="admin-detail__field-grid" data-veilwalker-detail-fields></div>
+                <div class="admin-image-previews" data-veilwalker-detail-images></div>
+                <div class="admin-detail__body" data-veilwalker-detail-body></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="user-progress" aria-labelledby="user-progress-title" data-admin-view="user-progress" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Read-only management</p>
+                  <h2 id="user-progress-title">User Progress</h2>
+                  <p>Review account records and saved progression across artifacts, rooms, fragments, discoveries, readings, and events.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="admin-progress-summary" aria-label="User progress summary">
+                <article class="progress-summary-card">
+                  <span>Total Profiles</span>
+                  <strong data-user-progress-count="profiles">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Artifact Unlocks</span>
+                  <strong data-user-progress-count="user_artifacts">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Room Records</span>
+                  <strong data-user-progress-count="user_rooms">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Fragments</span>
+                  <strong data-user-progress-count="user_fragments">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Discoveries</span>
+                  <strong data-user-progress-count="user_discoveries">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Readings</span>
+                  <strong data-user-progress-count="user_readings">--</strong>
+                </article>
+                <article class="progress-summary-card">
+                  <span>Events</span>
+                  <strong data-user-progress-count="user_events">--</strong>
+                </article>
+              </section>
+
+              <section class="admin-table-panel" aria-label="User profiles table">
+                <p class="admin-state" data-user-progress-state>Loading user profiles...</p>
+                <div class="admin-table-scroll" data-user-progress-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">User</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Avatar</th>
+                        <th scope="col">User ID</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-user-progress-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-user-progress-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">User progress detail</p>
+                    <h3 data-user-progress-detail-title>Selected User</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-user-progress-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-user-progress-detail-meta></div>
+                <div class="admin-detail__field-grid" data-user-progress-detail-fields></div>
+                <div class="admin-progress-groups" data-user-progress-detail-groups></div>
+              </section>
+            </section>
+
+            <section class="panel admin-view" id="app-settings" aria-labelledby="app-settings-title" data-admin-view="app-settings" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Settings management</p>
+                  <h2 id="app-settings-title">App Settings</h2>
+                  <p>Create, edit, activate, and review global settings without changing live public behavior.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-app-setting-new>New Setting</button>
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card admin-detail" data-app-setting-form-panel hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">App setting editor</p>
+                    <h3 data-app-setting-form-title>New Setting</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-app-setting-form-cancel>Cancel</button>
+                </div>
+                <p class="admin-state" data-app-setting-form-state hidden></p>
+                <form class="admin-form" data-app-setting-form>
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="app-setting-key">Setting Key *</label>
+                      <input id="app-setting-key" name="setting_key" type="text" autocomplete="off" required />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="is_public" type="checkbox" />
+                      <span>Public</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_active" type="checkbox" />
+                      <span>Active</span>
+                    </label>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="app-setting-description">Description</label>
+                      <textarea id="app-setting-description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="admin-form__field admin-form__field--wide">
+                      <label for="app-setting-value">Setting Value JSON *</label>
+                      <textarea id="app-setting-value" name="setting_value" rows="12" spellcheck="false" required placeholder='{"enabled": true}'></textarea>
+                    </div>
+                  </div>
+                  <div class="admin-form__actions">
+                    <button type="submit" data-app-setting-form-submit>Save Setting</button>
+                    <button type="button" data-app-setting-form-cancel-secondary>Cancel</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="admin-table-panel" aria-label="App Settings table">
+                <p class="admin-state" data-app-settings-state>Loading app settings...</p>
+                <div class="admin-table-scroll" data-app-settings-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Setting Key</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Public</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody data-app-settings-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-app-setting-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">App setting detail</p>
+                    <h3 data-app-setting-detail-title>Selected Setting</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-app-setting-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-app-setting-detail-meta></div>
+                <div class="admin-detail__field-grid" data-app-setting-detail-fields></div>
+                <div class="admin-detail__body" data-app-setting-detail-body></div>
+              </section>
+            </section>
+
+          </div>
+        </main>
+
+        <section class="system-strip" aria-label="Admin session status" data-admin-status-strip hidden>
+          <div class="system-strip__item">
+            <span class="system-strip__value system-strip__value--ember">Secure Admin Protocol</span>
+            <span class="system-strip__label">// Archive Node 07</span>
+          </div>
+          <div class="system-strip__item">
+            <span class="system-strip__label">Last Login</span>
+            <span class="system-strip__value">Current session</span>
+          </div>
+          <div class="system-strip__item">
+            <span class="system-strip__label">Session Status</span>
+            <span class="system-strip__value status status--success">Active</span>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script type="module" src="src/admin/admin-dashboard.js"></script>
+  </body>
+</html>

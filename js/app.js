@@ -38,10 +38,29 @@ let navLinks = document.querySelectorAll(".navbar__link, .navbar__mobile-link");
 let mobileMenuLinks = document.querySelectorAll(".navbar__mobile-link");
 let expandedImagePreview = null;
 let expandedImagePreviewImage = null;
-let expandedImagePreviewTitle = null;
-let expandedImagePreviewCaption = null;
-let expandedImagePreviewCaptionFrame = null;
 let angelWindowTimer = null;
+
+function isProtectedOrPrivateElement(element) {
+  return Boolean(element?.closest?.(
+    '[data-private-card="true"], .private-data-card, [data-protected-media="true"], .protected-media'
+  ));
+}
+
+function isProtectedMediaElement(element) {
+  return Boolean(element?.closest?.('[data-protected-media="true"], .protected-media'));
+}
+
+document.addEventListener("dragstart", (event) => {
+  if (isProtectedOrPrivateElement(event.target)) {
+    event.preventDefault();
+  }
+});
+
+document.addEventListener("contextmenu", (event) => {
+  if (isProtectedMediaElement(event.target)) {
+    event.preventDefault();
+  }
+});
 
 ////////////////////////////////////////////////////
 // Shared Navigation and Image Preview Helpers
@@ -64,23 +83,16 @@ function createExpandedImagePreview() {
   expandedImagePreview.setAttribute("aria-hidden", "true");
   expandedImagePreview.innerHTML = `
     <button class="image-preview__backdrop" type="button" data-close-image-preview aria-label="Close expanded image"></button>
-    <figure class="image-preview__dialog" role="dialog" aria-modal="true" aria-labelledby="image-preview-title">
+    <div class="image-preview__dialog" role="dialog" aria-modal="true" aria-label="Expanded image">
       <button class="image-preview__close" type="button" data-close-image-preview aria-label="Close expanded image">
-        &times;
+        <span class="close-circle-icon" aria-hidden="true"></span>
       </button>
       <img class="image-preview__image" alt="" data-image-preview-image />
-      <figcaption class="image-preview__caption">
-        <strong id="image-preview-title" data-image-preview-title></strong>
-        <span data-image-preview-caption></span>
-      </figcaption>
-    </figure>
+    </div>
   `;
 
   document.body.appendChild(expandedImagePreview);
   expandedImagePreviewImage = expandedImagePreview.querySelector("[data-image-preview-image]");
-  expandedImagePreviewTitle = expandedImagePreview.querySelector("[data-image-preview-title]");
-  expandedImagePreviewCaption = expandedImagePreview.querySelector("[data-image-preview-caption]");
-  expandedImagePreviewCaptionFrame = expandedImagePreview.querySelector(".image-preview__caption");
 
   expandedImagePreview.addEventListener("click", (event) => {
     if (event.target.closest("[data-close-image-preview]")) {
@@ -105,7 +117,8 @@ function getExpandableImageData(trigger) {
       alt: trigger.dataset.imagePreviewAlt || trigger.dataset.imagePreviewTitle || "Expanded image",
       title: trigger.dataset.imagePreviewTitle || "Expanded image",
       caption: trigger.dataset.imagePreviewCaption || "",
-      minimal
+      minimal,
+      protected: isProtectedMediaElement(trigger)
     };
   }
 
@@ -118,7 +131,8 @@ function getExpandableImageData(trigger) {
     alt: image.alt || trigger.dataset.imagePreviewTitle || "Expanded image",
     title: trigger.dataset.imagePreviewTitle || image.dataset.imagePreviewTitle || image.alt || "Expanded image",
     caption: trigger.dataset.imagePreviewCaption || image.dataset.imagePreviewCaption || "",
-    minimal
+    minimal,
+    protected: isProtectedMediaElement(trigger) || isProtectedMediaElement(image)
   };
 }
 
@@ -131,10 +145,13 @@ function openExpandedImagePreview(imageData) {
   createExpandedImagePreview();
   expandedImagePreviewImage.src = imageData.src;
   expandedImagePreviewImage.alt = imageData.alt;
-  expandedImagePreviewTitle.textContent = imageData.title;
-  expandedImagePreviewCaption.textContent = imageData.caption;
-  expandedImagePreviewCaption.hidden = !imageData.caption;
-  expandedImagePreviewCaptionFrame.hidden = Boolean(imageData.minimal);
+  expandedImagePreviewImage.draggable = !imageData.protected;
+  expandedImagePreviewImage.classList.toggle("protected-media", Boolean(imageData.protected));
+  if (imageData.protected) {
+    expandedImagePreviewImage.setAttribute("data-protected-media", "true");
+  } else {
+    expandedImagePreviewImage.removeAttribute("data-protected-media");
+  }
   expandedImagePreview.classList.toggle("image-preview--minimal", Boolean(imageData.minimal));
   expandedImagePreview.classList.add("is-open");
   expandedImagePreview.setAttribute("aria-hidden", "false");
@@ -154,6 +171,9 @@ function closeExpandedImagePreview() {
   if (expandedImagePreviewImage) {
     expandedImagePreviewImage.removeAttribute("src");
     expandedImagePreviewImage.alt = "";
+    expandedImagePreviewImage.draggable = true;
+    expandedImagePreviewImage.classList.remove("protected-media");
+    expandedImagePreviewImage.removeAttribute("data-protected-media");
   }
 }
 
@@ -173,9 +193,13 @@ function updateLumenArchiveNav(isVisible) {
   const existingDesktopLink = document.querySelector("[data-lumen-archive-nav-link]");
   const existingMobileLink = document.querySelector("[data-lumen-archive-mobile-nav-link]");
   const footerLinks = document.querySelectorAll("[data-lumen-archive-footer-link]");
+  const archiveFooterLinks = document.querySelectorAll("[data-archive-footer-link]");
 
   footerLinks.forEach((link) => {
     link.hidden = !isVisible;
+  });
+  archiveFooterLinks.forEach((link) => {
+    link.hidden = isVisible;
   });
 
   document.querySelectorAll("[data-footer-drawer] .site-footer__nav").forEach((footerNav) => {
@@ -207,8 +231,8 @@ function updateLumenArchiveNav(isVisible) {
 
   if (desktopLinks && !existingDesktopLink) {
     const archiveItem = document.createElement("li");
-    const aboutItem = Array.from(desktopLinks.querySelectorAll("a"))
-      .find((link) => getNormalizedNavPath(link.href) === "about.html")
+    const targetItem = Array.from(desktopLinks.querySelectorAll("a"))
+      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)))
       ?.closest("li");
 
     archiveItem.innerHTML = `
@@ -216,19 +240,19 @@ function updateLumenArchiveNav(isVisible) {
         ${lumenArchiveNavItem.label}
       </a>
     `;
-    desktopLinks.insertBefore(archiveItem, aboutItem || null);
+    desktopLinks.insertBefore(archiveItem, targetItem || null);
   }
 
   if (mobileMenu && !existingMobileLink) {
     const archiveLink = document.createElement("a");
-    const aboutLink = Array.from(mobileMenu.querySelectorAll("a"))
-      .find((link) => getNormalizedNavPath(link.href) === "about.html");
+    const targetLink = Array.from(mobileMenu.querySelectorAll("a"))
+      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)));
 
     archiveLink.className = "navbar__mobile-link navbar__mobile-link--featured navbar__mobile-link--lumen-archive";
     archiveLink.href = lumenArchiveNavItem.href;
     archiveLink.textContent = lumenArchiveNavItem.label;
     archiveLink.dataset.lumenArchiveMobileNavLink = "";
-    mobileMenu.insertBefore(archiveLink, aboutLink || null);
+    mobileMenu.insertBefore(archiveLink, targetLink || null);
   }
 
   refreshNavCollections();
@@ -256,8 +280,8 @@ function updateBloodMoonNav(isActive) {
 
   if (desktopLinks && !existingDesktopLink) {
     const archiveItem = document.createElement("li");
-    const aboutItem = Array.from(desktopLinks.querySelectorAll("a"))
-      .find((link) => getNormalizedNavPath(link.href) === "about.html")
+    const targetItem = Array.from(desktopLinks.querySelectorAll("a"))
+      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)))
       ?.closest("li");
 
     archiveItem.innerHTML = `
@@ -265,19 +289,19 @@ function updateBloodMoonNav(isActive) {
         ${archiveNavItem.label}
       </a>
     `;
-    desktopLinks.insertBefore(archiveItem, aboutItem || null);
+    desktopLinks.insertBefore(archiveItem, targetItem || null);
   }
 
   if (mobileMenu && !existingMobileLink) {
     const archiveLink = document.createElement("a");
-    const aboutLink = Array.from(mobileMenu.querySelectorAll("a"))
-      .find((link) => getNormalizedNavPath(link.href) === "about.html");
+    const targetLink = Array.from(mobileMenu.querySelectorAll("a"))
+      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)));
 
     archiveLink.className = "navbar__mobile-link navbar__mobile-link--blood-moon";
     archiveLink.href = archiveNavItem.href;
     archiveLink.textContent = archiveNavItem.label;
     archiveLink.dataset.bloodMoonMobileNavLink = "";
-    mobileMenu.insertBefore(archiveLink, aboutLink || null);
+    mobileMenu.insertBefore(archiveLink, targetLink || null);
   }
 
   refreshNavCollections();
@@ -308,7 +332,7 @@ function updateBloodMoonControl(isActive) {
   control.title = "Seal the Veil";
   control.innerHTML = `
     <img class="blood-moon-nav-control__sigil" src="assets/icons/symbols/seal-button-transparent.png" alt="" aria-hidden="true" width="512" height="512" />
-    <span class="blood-moon-nav-control__label">Seal</span>
+    <span class="blood-moon-nav-control__label">bloodmoon</span>
   `;
 
   if (themeToggle) {
@@ -335,6 +359,10 @@ function notifyBloodMoonStateChange(isActive) {
 
 // Reads Blood Moon state through the event helper, with localStorage fallback for older pages.
 function isBloodMoonActive() {
+  if (window.AstralVeilBloodMoonAccess) {
+    return window.AstralVeilBloodMoonAccess.isBloodMoonActive();
+  }
+
   if (window.AstralVeilEvents) {
     return window.AstralVeilEvents.isEventActive(bloodMoonEventId);
   }

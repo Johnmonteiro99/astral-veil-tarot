@@ -9,14 +9,26 @@
     />
     <title>Deck | Astral Veil</title>
     <link rel="icon" type="image/png" href="favicon.png" />
-    <link rel="preload" as="image" href="assets/images/concepts-ideas/deck-page-card.webp" fetchpriority="high" />
     <link rel="preload" as="image" href="assets/images/cards/original/card-back.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Exo+2:wght@600;700&family=Inter:wght@500;600;700;800;900&family=Literata:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Marcellus&family=Playfair+Display:wght@600;700&family=Rajdhani:wght@600;700&family=Space+Grotesk:wght@500;600;700&family=Spectral:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Oxanium:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("astralVeilDisableGlowEffects") === "true") {
+            document.documentElement.classList.add("no-glow");
+          }
+        } catch (error) {}
+      })();
+    </script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
     <link rel="stylesheet" href="css/deck.css" />
@@ -82,7 +94,8 @@
         <ul class="navbar__links">
           <li><a class="navbar__link" href="index.html">Readings</a></li>
           <li><a class="navbar__link" href="readers.html">Veilwalkers</a></li>
-          <li><a class="navbar__link" href="deck.html">Deck</a></li>
+          <li><a class="navbar__link" href="deck.html">DECKS</a></li>
+          <li><a class="navbar__link" href="journal.html">Journal</a></li>
           <li><a class="navbar__link" href="about.html">About</a></li>
         </ul>
 
@@ -90,7 +103,7 @@
           <span class="theme-orb-toggle__label theme-orb-toggle__label--sun">Sun</span>
           <span class="theme-orb-toggle__icon-wrap" aria-hidden="true">
             <img
-              src="assets/icons/symbols/sun-moon-toggle-transparent.png"
+              src="assets/icons/symbols/sun-moon-transparent.png"
               alt=""
               class="theme-orb-toggle__icon"
               width="512"
@@ -109,17 +122,14 @@
           aria-controls="mobile-navigation"
           aria-expanded="false"
         >
-          <span class="navbar__menu-icon" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
+          <span class="navbar__menu-icon" aria-hidden="true"></span>
         </button>
 
         <div class="navbar__mobile-menu" id="mobile-navigation" aria-hidden="true">
           <a class="navbar__mobile-link" href="index.html">Readings</a>
           <a class="navbar__mobile-link" href="readers.html">Veilwalkers</a>
-          <a class="navbar__mobile-link" href="deck.html">Deck</a>
+          <a class="navbar__mobile-link" href="deck.html">DECKS</a>
+          <a class="navbar__mobile-link" href="journal.html">Journal</a>
           <a class="navbar__mobile-link" href="about.html">About</a>
         </div>
       </nav>
@@ -158,8 +168,6 @@
           <p class="deck-hero__subtitle" data-deck-description>Choose a tarot collection to explore the cards held within the Astral Veil.</p>
         </header>
 
-        <section class="deck-ritual-feature" aria-hidden="true" data-deck-ritual-feature></section>
-
         <div class="deck-view" data-deck-view></div>
 
         <aside class="deck-lore-note" aria-label="Deck lore note">
@@ -197,7 +205,7 @@
             <p class="site-footer__label">Explore</p>
             <a href="index.html">Home</a>
             <a href="readers.html">Veilwalkers</a>
-            <a href="deck.html">Deck</a>
+            <a href="deck.html">DECKS</a>
             <a href="about.html">About</a>
             <a href="lumen-archive.html" data-lumen-archive-footer-link>Lumen Archive</a>
           </nav>
@@ -211,6 +219,11 @@
           </div>
 
           <p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p>
+          <nav class="site-footer__legal" aria-label="Legal links">
+            <a href="terms.html">Terms of Service</a>
+            <span aria-hidden="true">·</span>
+            <a href="privacy.html">Privacy Policy</a>
+          </nav>
         </div>
 
         <p class="site-footer__share-status" aria-live="polite"></p>
@@ -221,7 +234,7 @@
       <button class="deck-lightbox__backdrop" type="button" data-close-deck-lightbox aria-label="Close card image"></button>
       <div class="deck-lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="deck-lightbox-title">
         <button class="deck-lightbox__close" type="button" data-close-deck-lightbox aria-label="Close card image">
-          &times;
+          <span class="close-circle-icon" aria-hidden="true"></span>
         </button>
         <img class="deck-lightbox__image" alt="" data-lightbox-card-image data-expandable-image role="button" tabindex="0" aria-label="Expand card image" />
         <div class="deck-lightbox__content">
@@ -231,13 +244,49 @@
       </div>
     </div>
 
+    <div class="deck-info-modal" data-deck-info-modal aria-hidden="true">
+      <button class="deck-info-modal__backdrop" type="button" data-close-deck-info aria-label="Close deck details"></button>
+      <article class="deck-info-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="deck-info-title">
+        <button class="deck-info-modal__close" type="button" data-close-deck-info aria-label="Close deck details">
+          <span class="close-circle-icon" aria-hidden="true"></span>
+        </button>
+        <div class="deck-info-modal__artifact">
+          <button class="deck-modal-card-tilt" type="button" data-deck-info-tilt aria-label="Inspect deck card">
+            <img alt="" data-deck-info-image />
+            <span class="deck-card-shine" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="deck-info-modal__content">
+          <p class="deck-info-modal__category" data-deck-info-category></p>
+          <h2 id="deck-info-title" data-deck-info-title></h2>
+          <p class="deck-info-modal__intro" data-deck-info-intro></p>
+          <p class="deck-info-modal__status" data-deck-info-status></p>
+          <div class="deck-info-modal__section">
+            <h3>About This Deck</h3>
+            <p data-deck-info-about></p>
+          </div>
+          <div class="deck-info-modal__section">
+            <h3>What It Reveals</h3>
+            <p data-deck-info-reveals></p>
+          </div>
+          <div class="deck-info-modal__best-for" aria-label="Best for" data-deck-info-best-for></div>
+          <div class="deck-info-modal__actions">
+            <button class="deck-info-modal__view" type="button" data-deck-info-view>View Deck</button>
+            <button class="deck-info-modal__dismiss" type="button" data-close-deck-info>Close</button>
+          </div>
+        </div>
+      </article>
+    </div>
+
     <script src="data/events.js"></script>
     <script src="data/cards.js"></script>
     <script src="data/cardCombinations.js"></script>
     <script src="data/spreads.js"></script>
     <script src="data/decks.js"></script>
     <script src="js/events.js"></script>
+    <script src="js/bloodmoon-access.js"></script>
     <script src="js/app.js"></script>
     <script src="js/deck.js"></script>
+    <script type="module" src="src/public/public-auth-nav.js"></script>
   </body>
 </html>

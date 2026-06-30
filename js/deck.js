@@ -8,14 +8,57 @@ const lightboxCardImage = document.querySelector("[data-lightbox-card-image]");
 const lightboxCardName = document.querySelector("[data-lightbox-card-name]");
 const lightboxCardMeaning = document.querySelector("[data-lightbox-card-meaning]");
 const closeDeckLightboxButtons = document.querySelectorAll("[data-close-deck-lightbox]");
+const deckInfoModal = document.querySelector("[data-deck-info-modal]");
+const deckInfoImage = document.querySelector("[data-deck-info-image]");
+const deckInfoCategory = document.querySelector("[data-deck-info-category]");
+const deckInfoTitle = document.querySelector("[data-deck-info-title]");
+const deckInfoIntro = document.querySelector("[data-deck-info-intro]");
+const deckInfoAbout = document.querySelector("[data-deck-info-about]");
+const deckInfoReveals = document.querySelector("[data-deck-info-reveals]");
+const deckInfoBestFor = document.querySelector("[data-deck-info-best-for]");
+const deckInfoStatus = document.querySelector("[data-deck-info-status]");
+const deckInfoViewButton = document.querySelector("[data-deck-info-view]");
+const deckInfoTiltButton = document.querySelector("[data-deck-info-tilt]");
+const closeDeckInfoButtons = document.querySelectorAll("[data-close-deck-info]");
 
 let activeCollectionId = "original";
+let activeDeckFilter = "All";
 let activeCardIndex = 0;
+let activeDeckInfoCollectionId = "";
+let mobileDeckViewMode = "browse";
+let mobileDeckSwipeStartX = null;
+let mobileDeckSwipeStartY = null;
+let mobileDeckDidSwipe = false;
+let deckCarouselIndexes = {
+  "all-decks": 0,
+  free: 0,
+  unlockable: 0,
+  purchasable: 0
+};
 let deckMessageTimeout = null;
+let deckAuthState = {
+  checked: false,
+  user: null
+};
 const DECK_CARD_IMAGE_WIDTH = 800;
 const DECK_CARD_IMAGE_HEIGHT = 1200;
 const thumbnailPlaceholder =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+const DECK_BROWSER_SECTION_ID = "all-decks";
+const deckLibraryFilters = ["All", "Gifted", "Arcane Market", "Veiled"];
+const deckFilterTitles = {
+  All: "All Decks",
+  Gifted: "Gifted Decks",
+  Veiled: "Veiled Decks",
+  "Arcane Market": "Arcane Market Decks"
+};
+const deckInfoModalThemeClasses = [
+  "deck-modal--verdant",
+  "deck-modal--dreambound",
+  "deck-modal--moonveil",
+  "deck-modal--bloodmoon",
+  "deck-modal--cyber-hacked"
+];
 
 ////////////////////////////////////////////////////
 // Deck Collection Access and Card Data Helpers
@@ -30,10 +73,34 @@ function isDeckEventActive(eventId) {
   return Boolean(window.AstralVeilEvents?.isEventActive(eventId));
 }
 
+function isBloodMoonCollection(collection) {
+  return collection?.id === "bloodMoon" || collection?.requiredEvent === "bloodMoon";
+}
+
+function isDeckUserAuthenticated() {
+  return Boolean(deckAuthState.user);
+}
+
+function canViewBloodMoonDeck() {
+  return isDeckEventActive("bloodMoon") || document.body.classList.contains("blood-moon-mode");
+}
+
+function isAuthLockedCollection(collection) {
+  return collection?.accessType === "requiresAuth";
+}
+
 // Central lock check for free, event, purchased, premium, and coming-soon collections.
 function isCollectionLocked(collection) {
   if (!collection) {
     return true;
+  }
+
+  if (isBloodMoonCollection(collection)) {
+    return !canViewBloodMoonDeck();
+  }
+
+  if (isAuthLockedCollection(collection)) {
+    return !isDeckUserAuthenticated();
   }
 
   if (collection.accessType === "event") {
@@ -62,10 +129,56 @@ function updateDeckHero({ eyebrow, title, description }) {
   }
 }
 
+function updateDeckHeroStatus() {
+  if (!deckDescription || typeof deckCollections === "undefined") {
+    return;
+  }
+
+  let statusLine = document.querySelector("[data-deck-status-line]");
+
+  if (!statusLine) {
+    statusLine = document.createElement("p");
+    statusLine.className = "deck-hero__status";
+    statusLine.dataset.deckStatusLine = "";
+    deckDescription.insertAdjacentElement("afterend", statusLine);
+  }
+
+  const discoveredCount = deckCollections.length;
+  const unlockedCount = deckCollections.filter((collection) => !isCollectionLocked(collection)).length;
+  const sealedCount = Math.max(0, discoveredCount - unlockedCount);
+
+  statusLine.textContent = `${discoveredCount} decks discovered | ${unlockedCount} unlocked | ${sealedCount} still sealed`;
+  statusLine.hidden = false;
+}
+
+function hideDeckHeroStatus() {
+  const statusLine = document.querySelector("[data-deck-status-line]");
+
+  if (statusLine) {
+    statusLine.hidden = true;
+  }
+}
+
 function setDeckRitualFeatureVisible(isVisible) {
   if (deckRitualFeature) {
     deckRitualFeature.hidden = !isVisible;
   }
+}
+
+function isSmallDeckViewport() {
+  return window.matchMedia("(max-width: 760px)").matches;
+}
+
+function scrollToDeckPageTop({ behavior = "smooth" } = {}) {
+  const target = document.querySelector(".deck-page") || document.querySelector(".tarot-stage") || document.body;
+  const targetTop = Math.max(0, target.getBoundingClientRect().top + window.scrollY - 12);
+
+  window.requestAnimationFrame(() => {
+    window.scrollTo({
+      top: targetTop,
+      behavior
+    });
+  });
 }
 
 function getCollectionCards(collection) {
@@ -84,16 +197,169 @@ function getCollectionById(collectionId) {
   return deckCollections.find((item) => item.id === collectionId);
 }
 
+function getCollectionCategory(collection) {
+  return collection?.category || "Lumen";
+}
+
+function getCollectionSection(collection) {
+  return collection?.librarySection || "free";
+}
+
+function normalizeDeckFilter(value) {
+  const normalized = String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  if (normalized === "free") {
+    return "gifted";
+  }
+
+  if (normalized === "arcane-market" || normalized === "shop") {
+    return "market";
+  }
+
+  return normalized;
+}
+
+function getDeckFilterTitle() {
+  return deckFilterTitles[activeDeckFilter] || "All Decks";
+}
+
+function getDeckFilterEmptyMessage() {
+  return {
+    title: "No decks have surfaced here yet.",
+    note: "Try another filter, or return when the Archive shifts."
+  };
+}
+
+function getCollectionFilterTags(collection) {
+  const tags = new Set((collection?.filters || []).map(normalizeDeckFilter));
+  const section = getCollectionSection(collection);
+  const category = getCollectionCategory(collection);
+
+  if (section === "free") {
+    tags.add("gifted");
+  }
+
+  if (section === "unlockable") {
+    tags.add("veiled");
+  }
+
+  if (section === "purchasable") {
+    tags.add("market");
+  }
+
+  if (collection?.accessType === "premium" || collection?.accessType === "purchased" || collection?.accessType === "comingSoon") {
+    tags.add("market");
+  }
+
+  if (collection?.accessType === "comingSoon") {
+    tags.add("coming-soon");
+  }
+
+  tags.add(isCollectionLocked(collection) ? "locked" : "unlocked");
+
+  return tags;
+}
+
+function getDeckFilterCount(filter) {
+  if (typeof deckCollections === "undefined") {
+    return 0;
+  }
+
+  if (filter === "All") {
+    return deckCollections.length;
+  }
+
+  const filterKey = normalizeDeckFilter(filter);
+  return deckCollections.filter((collection) => getCollectionFilterTags(collection).has(filterKey)).length;
+}
+
+function getCollectionTheme(collection) {
+  return collection?.theme || collection?.id || "lumen";
+}
+
 function getCollectionStatus(collection) {
+  if (isBloodMoonCollection(collection) && !canViewBloodMoonDeck()) {
+    return collection.lockedStatus || "Blood Moon Only";
+  }
+
+  if (isAuthLockedCollection(collection) && !isDeckUserAuthenticated()) {
+    return collection.lockedStatus || "Locked";
+  }
+
   return isCollectionLocked(collection)
     ? collection.lockedStatus || "Locked"
     : collection.unlockedStatus || collection.status;
 }
 
 function getCollectionActionLabel(collection) {
+  if (isBloodMoonCollection(collection) && !canViewBloodMoonDeck()) {
+    return collection.lockedActionLabel || "Blood Moon Only";
+  }
+
   return isCollectionLocked(collection)
     ? collection.lockedActionLabel || "Locked"
     : collection.actionLabel;
+}
+
+function getCollectionTypeLabel(collection) {
+  if (!collection) {
+    return "Archive Deck";
+  }
+
+  if (getCollectionFilterTags(collection).has("market")) {
+    return "Market";
+  }
+
+  if (getCollectionFilterTags(collection).has("veiled")) {
+    return "Veiled Deck";
+  }
+
+  return collection.status || collection.category || "Deck Collection";
+}
+
+function getCollectionStatusLabel(collection) {
+  if (!collection) {
+    return "Unknown";
+  }
+
+  if (collection.accessType === "comingSoon") {
+    return "Coming Soon";
+  }
+
+  return isCollectionLocked(collection) ? "Locked" : "Unlocked";
+}
+
+function getCollectionMoodKeywords(collection) {
+  const keywords = {
+    original: "Clarity / Growth / Guidance",
+    dreambound: "Wonder / Courage / Dreams",
+    moonveil: "Intuition / Balance / Stillness",
+    bloodMoon: "Shadow / Truth / Transformation",
+    cyberpunkArcana: "Neon / Synthetic / Future"
+  };
+
+  return keywords[collection?.id] || "Symbol / Story / Reading";
+}
+
+function getDeckReturnToPath() {
+  return `${window.location.pathname}${window.location.search}${window.location.hash}` || "/deck.html";
+}
+
+function getDeckAuthUrl(mode = "login") {
+  const params = new URLSearchParams({
+    returnTo: getDeckReturnToPath()
+  });
+
+  if (mode === "signup") {
+    params.set("mode", "signup");
+  }
+
+  return `auth.html?${params.toString()}`;
 }
 
 function escapeHtml(value) {
@@ -107,6 +373,158 @@ function escapeHtml(value) {
 
 function getCardDescription(card) {
   return card?.meaning || card?.shortMeaning || card?.summary || "";
+}
+
+function getCollectionDetailDescription(collection) {
+  return collection?.detailDescription || collection?.viewDescription || collection?.subtitle || "";
+}
+
+function getCollectionModalTitle(collection) {
+  return collection?.fullTitle || collection?.title || collection?.name || "Deck Details";
+}
+
+function getCollectionModalCategory(collection) {
+  return collection?.categoryLabel || getCollectionTypeLabel(collection);
+}
+
+function getCollectionModalStatus(collection) {
+  if (!collection) {
+    return "";
+  }
+
+  if (collection.accessType === "comingSoon") {
+    return collection.statusLabel || collection.lockedStatus || "Coming Soon";
+  }
+
+  if (isBloodMoonCollection(collection) && !canViewBloodMoonDeck()) {
+    return "This deck can only be viewed while Blood Moon mode is active.";
+  }
+
+  if (isCollectionLocked(collection)) {
+    return getCollectionStatus(collection);
+  }
+
+  return collection.statusLabel || getCollectionStatusLabel(collection);
+}
+
+function getCollectionModalCardBack(collection) {
+  return collection?.cardBackImage || collection?.previewImage || collection?.coverImage || "";
+}
+
+function getCollectionModalIntro(collection) {
+  return collection?.modalIntro || collection?.subtitle || getCollectionDetailDescription(collection);
+}
+
+function getCollectionModalAbout(collection) {
+  return collection?.modalAbout || getCollectionDetailDescription(collection);
+}
+
+function getCollectionModalReveals(collection) {
+  return collection?.modalReveals || collection?.viewDescription || collection?.subtitle || "";
+}
+
+function getCollectionBestFor(collection) {
+  if (Array.isArray(collection?.bestForTags) && collection.bestForTags.length) {
+    return collection.bestForTags;
+  }
+
+  if (Array.isArray(collection?.bestFor) && collection.bestFor.length) {
+    return collection.bestFor;
+  }
+
+  return getCollectionMoodKeywords(collection)
+    .split("/")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+}
+
+function getDeckInfoModalThemeClass(collection) {
+  if (!collection) {
+    return "deck-modal--verdant";
+  }
+
+  if (collection.id === "cyberpunkArcana") {
+    return "deck-modal--cyber-hacked";
+  }
+
+  if (collection.id === "bloodMoon") {
+    return "deck-modal--bloodmoon";
+  }
+
+  if (collection.id === "dreambound") {
+    return "deck-modal--dreambound";
+  }
+
+  if (collection.id === "moonveil") {
+    return "deck-modal--moonveil";
+  }
+
+  return "deck-modal--verdant";
+}
+
+function setDeckInfoParagraph(element, value) {
+  if (!element) {
+    return;
+  }
+
+  element.innerHTML = String(value || "")
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .map((paragraph) => `<span>${escapeHtml(paragraph)}</span>`)
+    .join("");
+}
+
+function resetDeckInfoTilt() {
+  if (!deckInfoTiltButton) {
+    return;
+  }
+
+  deckInfoTiltButton.style.setProperty("--tilt-x", "0deg");
+  deckInfoTiltButton.style.setProperty("--tilt-y", "0deg");
+  deckInfoTiltButton.style.setProperty("--shine-x", "50%");
+  deckInfoTiltButton.style.setProperty("--shine-y", "50%");
+}
+
+function updateDeckInfoTilt(event) {
+  if (!deckInfoTiltButton || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  const rect = deckInfoTiltButton.getBoundingClientRect();
+  const relativeX = (event.clientX - rect.left) / rect.width;
+  const relativeY = (event.clientY - rect.top) / rect.height;
+  const tiltY = (relativeX - 0.5) * 12;
+  const tiltX = (0.5 - relativeY) * 12;
+
+  deckInfoTiltButton.style.setProperty("--tilt-x", `${tiltX.toFixed(2)}deg`);
+  deckInfoTiltButton.style.setProperty("--tilt-y", `${tiltY.toFixed(2)}deg`);
+  deckInfoTiltButton.style.setProperty("--shine-x", `${(relativeX * 100).toFixed(1)}%`);
+  deckInfoTiltButton.style.setProperty("--shine-y", `${(relativeY * 100).toFixed(1)}%`);
+}
+
+function startDeckInfoTilt(event) {
+  if (!deckInfoTiltButton || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  if (typeof deckInfoTiltButton.setPointerCapture === "function" && event.pointerId !== undefined) {
+    deckInfoTiltButton.setPointerCapture(event.pointerId);
+  }
+
+  updateDeckInfoTilt(event);
+}
+
+function endDeckInfoTilt(event) {
+  if (deckInfoTiltButton && typeof deckInfoTiltButton.releasePointerCapture === "function" && event?.pointerId !== undefined) {
+    try {
+      deckInfoTiltButton.releasePointerCapture(event.pointerId);
+    } catch (error) {
+      // Pointer capture may already be released by the browser.
+    }
+  }
+
+  resetDeckInfoTilt();
 }
 
 // Creates temporary study keywords when older card data does not define them directly.
@@ -324,6 +742,437 @@ function showDeckMessage(message) {
   }, 3200);
 }
 
+function renderDeckAccessLoading() {
+  if (!deckView) {
+    return;
+  }
+
+  deckView.innerHTML = `
+    <div class="deck-access-loading" role="status" aria-live="polite">
+      Checking deck access...
+    </div>
+  `;
+}
+
+function renderDeckFilterControls() {
+  return `
+    <div class="deck-filter-row" aria-label="Filter deck collections">
+      <button class="deck-filter-arrow deck-filter-arrow--prev" type="button" data-deck-filter-nav="prev" aria-label="Previous deck filter"></button>
+      <div class="deck-filter-track">
+        ${deckLibraryFilters
+          .map(
+            (filter) => `
+              <button class="deck-filter-pill${filter === activeDeckFilter ? " is-active" : ""}" type="button" data-deck-filter="${escapeHtml(filter)}" aria-pressed="${filter === activeDeckFilter ? "true" : "false"}">
+                <span class="deck-filter-pill__label">${escapeHtml(filter)}</span>
+              </button>
+            `
+          )
+          .join("")}
+      </div>
+      <button class="deck-filter-arrow deck-filter-arrow--next" type="button" data-deck-filter-nav="next" aria-label="Next deck filter"></button>
+    </div>
+  `;
+}
+
+function centerActiveDeckFilter({ behavior = "smooth" } = {}) {
+  const track = deckView?.querySelector(".deck-filter-track");
+  const activeButton = track?.querySelector(".deck-filter-pill.is-active");
+
+  if (!track || !activeButton) {
+    return;
+  }
+
+  const targetScrollLeft = activeButton.offsetLeft + activeButton.offsetWidth / 2 - track.clientWidth / 2;
+
+  track.scrollTo({
+    left: Math.max(0, targetScrollLeft),
+    behavior
+  });
+}
+
+function setDeckFilter(filter, { behavior = "smooth" } = {}) {
+  if (!deckLibraryFilters.includes(filter)) {
+    return;
+  }
+
+  activeDeckFilter = filter;
+  deckCarouselIndexes[DECK_BROWSER_SECTION_ID] = 0;
+  mobileDeckViewMode = "browse";
+  renderDeckCollection();
+  window.requestAnimationFrame(() => centerActiveDeckFilter({ behavior }));
+}
+
+function moveDeckFilter(direction) {
+  const currentIndex = deckLibraryFilters.indexOf(activeDeckFilter);
+  const offset = direction === "next" ? 1 : -1;
+  const nextIndex = (currentIndex + offset + deckLibraryFilters.length) % deckLibraryFilters.length;
+
+  setDeckFilter(deckLibraryFilters[nextIndex]);
+}
+
+function getCollectionIdClass(collection) {
+  return String(collection?.id || "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .replace(/[^a-zA-Z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+}
+
+function getCarouselDeckLabel(collection) {
+  const labels = {
+    original: "VERDANT",
+    dreambound: "DREAMBOUND",
+    moonveil: "MOONVEIL",
+    bloodMoon: "BLOOD MOON",
+    cyberpunkArcana: "CYBER-HACKED"
+  };
+
+  return labels[collection?.id] || getCollectionCategory(collection);
+}
+
+function getCarouselDeckIntention(collection) {
+  const intentions = {
+    original: "For those learning to grow through every season.",
+    dreambound: "For those who follow wonder, courage, and the language of dreams.",
+    moonveil: "For those seeking emotional balance within.",
+    bloodMoon: "For those ready to face the truth beneath the surface.",
+    cyberpunkArcana: "For those drawn to synthetic souls, neon omens, and fractured futures."
+  };
+
+  return intentions[collection?.id] || "";
+}
+
+function renderDeckCollectionCard(collection, options = {}) {
+  const {
+    extraClass = "",
+    includeCardDeckTrigger = true,
+    showTitle = false,
+    showDescription = true,
+    labelText = "",
+    intentionText = ""
+  } = options;
+  const isLocked = isCollectionLocked(collection);
+  const isAuthLocked = isAuthLockedCollection(collection) && isLocked;
+  const canOpenLockedPrompt = false;
+  const isComingSoon = collection?.accessType === "comingSoon";
+  const status = getCollectionStatus(collection);
+  const actionLabel = getCollectionActionLabel(collection);
+  const category = getCollectionCategory(collection);
+  const visibleLabel = labelText || category;
+  const theme = getCollectionTheme(collection);
+  const description = isBloodMoonCollection(collection) && isLocked
+    ? "Available only during Blood Moon."
+    : isAuthLocked && collection?.lockedMessage
+    ? `${collection.lockedMessage}`
+    : collection?.subtitle || "";
+  const previewImage = collection?.previewImage || collection?.coverImage;
+  const tileBackgroundImage = collection?.backgroundImage || collection?.coverImage || "";
+  const tileBackgroundStyle = tileBackgroundImage
+    ? `style='--deck-collection-cover: url("${tileBackgroundImage}")'`
+    : "";
+  const cardDeckAttribute = isComingSoon || !includeCardDeckTrigger ? "" : `data-view-deck="${escapeHtml(collection.id)}"`;
+  const buttonDeckAttribute = isComingSoon || (isBloodMoonCollection(collection) && isLocked)
+    ? ""
+    : `data-view-deck="${escapeHtml(collection.id)}"`;
+  const modifierClass = extraClass ? ` ${extraClass}` : "";
+  const idClass = getCollectionIdClass(collection);
+  const deckIdClass = idClass ? ` deck-collection-card--${idClass}` : "";
+  const protectedMediaClass = isBloodMoonCollection(collection) ? " protected-media" : "";
+  const protectedMediaAttrs = isBloodMoonCollection(collection) ? ' data-protected-media="true" draggable="false"' : "";
+  const protectedImageAttr = isBloodMoonCollection(collection) ? ' draggable="false"' : "";
+
+  return `
+      <article class="deck-collection-card deck-collection-card--${escapeHtml(theme)}${escapeHtml(deckIdClass)}${isLocked ? " is-locked" : ""}${isComingSoon ? " is-coming-soon" : ""}${escapeHtml(modifierClass)}${protectedMediaClass}" ${tileBackgroundStyle} data-deck-card data-deck-category="${escapeHtml(category)}" ${protectedMediaAttrs} ${cardDeckAttribute} aria-disabled="${isLocked}">
+      <span class="deck-collection-card__badge">${escapeHtml(status)}</span>
+      <button class="deck-collection-card__preview" type="button" data-deck-details="${escapeHtml(collection.id)}" aria-label="View details for ${escapeHtml(collection.title)}">
+        <img src="${escapeHtml(previewImage)}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} />
+        <span class="deck-collection-card__detail-hint">View Details</span>
+      </button>
+      <div class="deck-collection-card__content">
+        <p class="deck-collection-card__category">${escapeHtml(visibleLabel)}</p>
+        ${showTitle ? `<h2>${escapeHtml(collection.title)}</h2>` : ""}
+        ${intentionText ? `<p class="deck-collection-card__intention">${escapeHtml(intentionText)}</p>` : ""}
+        ${showDescription ? `<p>${escapeHtml(description)}</p>` : ""}
+      </div>
+      <div class="deck-collection-card__actions">
+        <button class="deck-collection-card__action" type="button" ${buttonDeckAttribute} ${isLocked && !canOpenLockedPrompt && !isAuthLocked ? "disabled" : ""}>
+          ${escapeHtml(actionLabel)}
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+function getDeckCarouselIndex(sectionId, itemCount) {
+  if (!itemCount) {
+    return 0;
+  }
+
+  const currentIndex = Number(deckCarouselIndexes[sectionId] || 0);
+  return ((currentIndex % itemCount) + itemCount) % itemCount;
+}
+
+function getDeckCarouselItem(collections, activeIndex, offset) {
+  const itemCount = collections.length;
+
+  if (!itemCount) {
+    return null;
+  }
+
+  return collections[((activeIndex + offset) % itemCount + itemCount) % itemCount];
+}
+
+function renderDeckCarouselPreview(collection, sectionId, index, position) {
+  if (!collection) {
+    return "";
+  }
+
+  const previewImage = collection.previewImage || collection.coverImage || "";
+  const protectedMediaClass = isBloodMoonCollection(collection) ? " protected-media" : "";
+  const protectedMediaAttrs = isBloodMoonCollection(collection) ? ' data-protected-media="true" draggable="false"' : "";
+  const protectedImageAttr = isBloodMoonCollection(collection) ? ' draggable="false"' : "";
+
+  return `
+    <button class="deck-focused-carousel__preview deck-focused-carousel__preview--${escapeHtml(position)}${protectedMediaClass}" type="button" data-deck-carousel-focus="${escapeHtml(sectionId)}" data-deck-carousel-index="${index}" aria-label="Focus ${escapeHtml(collection.title)}"${protectedMediaAttrs}>
+      <img class="deck-focused-carousel__preview-cardback" src="${escapeHtml(previewImage)}" alt="${escapeHtml(collection.title)} card back" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} />
+    </button>
+  `;
+}
+
+function getMobileDeckShelfName(collection) {
+  return String(collection?.title || collection?.displayName || getCarouselDeckLabel(collection) || "")
+    .replace(/\s+ARCANA$/i, "")
+    .replace(/\s+Arcana$/i, "")
+    .trim();
+}
+
+function renderMobileDeckShelfItem(collection, sectionId, index, activeIndex, itemCount) {
+  const previewImage = collection?.previewImage || collection?.coverImage || "";
+  const isLocked = isCollectionLocked(collection);
+  const status = getCollectionStatus(collection);
+  const isSelected = index === activeIndex;
+  const protectedMediaClass = isBloodMoonCollection(collection) ? " protected-media" : "";
+  const protectedMediaAttrs = isBloodMoonCollection(collection) ? ' data-protected-media="true" draggable="false"' : "";
+  const protectedImageAttr = isBloodMoonCollection(collection) ? ' draggable="false"' : "";
+  let offset = index - activeIndex;
+
+  if (offset > itemCount / 2) {
+    offset -= itemCount;
+  } else if (offset < -itemCount / 2) {
+    offset += itemCount;
+  }
+
+  const visibleOffset = Math.max(-3, Math.min(3, offset));
+
+  return `
+    <button class="deck-mobile-shelf__item deck-mobile-shelf__item--offset-${visibleOffset < 0 ? `neg-${Math.abs(visibleOffset)}` : visibleOffset}${isSelected ? " is-selected" : ""}${isLocked ? " is-locked" : ""}${protectedMediaClass}" type="button" data-mobile-deck-focus="${escapeHtml(sectionId)}" data-deck-carousel-index="${index}" data-mobile-deck-offset="${offset}" aria-label="${isSelected ? `Open focused view for ${escapeHtml(collection.title)}` : `Bring ${escapeHtml(collection.title)} forward`}" aria-pressed="${isSelected ? "true" : "false"}"${protectedMediaAttrs}>
+      <span class="deck-mobile-shelf__card">
+        <img src="${escapeHtml(previewImage)}" alt="${escapeHtml(collection.title)} card back" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} />
+        ${isLocked ? `<span class="deck-mobile-shelf__status">${escapeHtml(status)}</span>` : ""}
+      </span>
+      <span class="deck-mobile-shelf__name">${escapeHtml(getMobileDeckShelfName(collection))}</span>
+    </button>
+  `;
+}
+
+function renderMobileDeckShelf(section, sectionCollections, activeIndex) {
+  return `
+    <div class="deck-mobile-browser" data-mobile-deck-browser>
+      <div class="deck-mobile-browser__heading">
+        <h3>${escapeHtml(section.title)}</h3>
+        <p>Tap a side deck to center it. Tap the center deck to bring it forward.</p>
+      </div>
+      <div class="deck-mobile-shelf" aria-label="${escapeHtml(`${section.title} deck shelf`)}">
+        ${sectionCollections
+          .map((collection, index) => renderMobileDeckShelfItem(collection, section.id, index, activeIndex, sectionCollections.length))
+          .join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderDeckSectionIntro(section) {
+  return section.intro || section.note ? `
+    <div class="deck-library-section__intro">
+      ${section.intro ? `<p>${escapeHtml(section.intro)}</p>` : ""}
+      ${section.note ? `<small>${escapeHtml(section.note)}</small>` : ""}
+    </div>
+  ` : "";
+}
+
+function renderDeckFocusedCarousel(section, sectionCollections) {
+  const itemCount = sectionCollections.length;
+  const emptyMessage = section.emptyMessage || getDeckFilterEmptyMessage();
+
+  if (!itemCount) {
+    return `
+      <section class="deck-library-section deck-library-section--carousel" aria-labelledby="deck-library-${escapeHtml(section.id)}" data-deck-carousel-section="${escapeHtml(section.id)}">
+        <div class="deck-library-section__header">
+          <span aria-hidden="true"></span>
+          <h2 id="deck-library-${escapeHtml(section.id)}">${escapeHtml(section.title)}</h2>
+          <span aria-hidden="true"></span>
+        </div>
+        ${renderDeckSectionIntro(section)}
+        <div class="deck-focused-carousel deck-focused-carousel--empty" data-deck-carousel="${escapeHtml(section.id)}" role="status" aria-live="polite">
+          <div class="deck-empty-state">
+            <p>${escapeHtml(emptyMessage.title)}</p>
+            <small>${escapeHtml(emptyMessage.note)}</small>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  const activeIndex = getDeckCarouselIndex(section.id, sectionCollections.length);
+  const activeCollection = sectionCollections[activeIndex];
+  const hasMultipleItems = itemCount > 1;
+  const hasSidePair = itemCount > 2;
+  const previousIndex = hasSidePair ? (activeIndex - 1 + itemCount) % itemCount : -1;
+  const nextIndex = hasMultipleItems ? (activeIndex + 1) % itemCount : -1;
+  const previousCollection = hasSidePair ? getDeckCarouselItem(sectionCollections, activeIndex, -1) : null;
+  const nextCollection = hasMultipleItems ? getDeckCarouselItem(sectionCollections, activeIndex, 1) : null;
+  const carouselModifier = itemCount === 1
+    ? " deck-focused-carousel--single"
+    : itemCount === 2
+      ? " deck-focused-carousel--pair"
+      : "";
+  const activeIdClass = getCollectionIdClass(activeCollection);
+  const focusModifier = activeIdClass ? ` deck-focused-carousel__focus--${activeIdClass}` : "";
+  const mobileModeClass = mobileDeckViewMode === "focused" ? " is-mobile-focused" : " is-mobile-browsing";
+
+  deckCarouselIndexes[section.id] = activeIndex;
+
+  return `
+    <section class="deck-library-section deck-library-section--carousel${mobileModeClass}" aria-labelledby="deck-library-${escapeHtml(section.id)}" data-deck-carousel-section="${escapeHtml(section.id)}">
+      <div class="deck-library-section__header">
+        <span aria-hidden="true"></span>
+        <h2 id="deck-library-${escapeHtml(section.id)}">${escapeHtml(section.title)}</h2>
+        <span aria-hidden="true"></span>
+      </div>
+      ${renderDeckSectionIntro(section)}
+      ${renderMobileDeckShelf(section, sectionCollections, activeIndex)}
+      <button class="deck-mobile-focused-back" type="button" data-mobile-back-to-decks>
+        <span aria-hidden="true">‹</span>
+        Back to Decks
+      </button>
+      <div class="deck-focused-carousel${carouselModifier}" data-deck-carousel="${escapeHtml(section.id)}" aria-roledescription="${hasMultipleItems ? "carousel" : "group"}" aria-label="${escapeHtml(section.title)}">
+        ${hasMultipleItems ? `<button class="deck-focused-carousel__nav deck-focused-carousel__nav--prev" type="button" data-deck-carousel-nav="${escapeHtml(section.id)}" data-deck-carousel-direction="prev" aria-label="Previous deck"></button>` : ""}
+        <div class="deck-focused-carousel__stage">
+          ${renderDeckCarouselPreview(previousCollection, section.id, previousIndex, "prev")}
+          <div class="deck-focused-carousel__focus${escapeHtml(focusModifier)}" aria-live="polite">
+            ${renderDeckCollectionCard(activeCollection, {
+              extraClass: "is-carousel-focus",
+              includeCardDeckTrigger: false,
+              showTitle: false,
+              showDescription: false,
+              labelText: getCarouselDeckLabel(activeCollection),
+              intentionText: getCarouselDeckIntention(activeCollection)
+            })}
+            <span class="deck-focus-pedestal" aria-hidden="true"></span>
+          </div>
+          ${renderDeckCarouselPreview(nextCollection, section.id, nextIndex, "next")}
+        </div>
+        ${hasMultipleItems ? `<button class="deck-focused-carousel__nav deck-focused-carousel__nav--next" type="button" data-deck-carousel-nav="${escapeHtml(section.id)}" data-deck-carousel-direction="next" aria-label="Next deck"></button>` : ""}
+        ${hasMultipleItems ? `
+          <div class="deck-focused-carousel__meta" aria-label="Deck carousel position">
+            <span>${activeIndex + 1} of ${itemCount}</span>
+            <div class="deck-focused-carousel__dots">
+              ${sectionCollections.map((collection, index) => `
+                <button class="deck-focused-carousel__dot${index === activeIndex ? " is-active" : ""}" type="button" data-deck-carousel-focus="${escapeHtml(section.id)}" data-deck-carousel-index="${index}" aria-label="Focus ${escapeHtml(collection.title)}" aria-current="${index === activeIndex ? "true" : "false"}"></button>
+              `).join("")}
+            </div>
+          </div>
+        ` : ""}
+      </div>
+    </section>
+  `;
+}
+
+function getFilteredDeckCollections() {
+  if (typeof deckCollections === "undefined") {
+    return [];
+  }
+
+  if (activeDeckFilter === "All") {
+    return deckCollections;
+  }
+
+  const activeFilterKey = normalizeDeckFilter(activeDeckFilter);
+  return deckCollections.filter((collection) => getCollectionFilterTags(collection).has(activeFilterKey));
+}
+
+function renderDeckLibrarySections() {
+  const filteredCollections = getFilteredDeckCollections();
+  const section = {
+    id: DECK_BROWSER_SECTION_ID,
+    title: getDeckFilterTitle(),
+    emptyMessage: getDeckFilterEmptyMessage()
+  };
+
+  return renderDeckFocusedCarousel(section, filteredCollections);
+}
+
+function renderBloodMoonLockedPrompt() {
+  if (!deckView) {
+    return;
+  }
+
+  const collection = getCollectionById("bloodMoon");
+
+  updateDeckHero({
+    eyebrow: collection?.eyebrow || "Blood Moon Arcana",
+    title: collection?.title || "Blood Moon Deck",
+    description: "A sealed crimson collection waits at the edge of the Astral Veil."
+  });
+  hideDeckHeroStatus();
+  setDeckRitualFeatureVisible(false);
+
+  deckView.innerHTML = `
+    <section class="deck-lock-panel deck-lock-panel--bloodMoon" aria-labelledby="blood-moon-deck-lock-title">
+      <span class="deck-lock-panel__eyebrow">Deck Sealed</span>
+      <h2 id="blood-moon-deck-lock-title">The Blood Moon Deck is sealed.</h2>
+      <p>
+        The Blood Moon deck can only be viewed while Blood Moon mode is active.
+      </p>
+      <div class="deck-lock-panel__actions">
+        <button class="deck-lock-panel__button deck-lock-panel__button--ghost" type="button" data-back-to-decks>
+          Return to Decks
+        </button>
+      </div>
+    </section>
+  `;
+
+  scrollToDeckPageTop();
+}
+
+async function hydrateDeckAuthState() {
+  try {
+    const { getCurrentUser } = await import("../src/services/auth.js");
+    const { user, error } = await getCurrentUser();
+
+    if (error) {
+      console.error("Unable to check deck auth state:", error);
+    }
+
+    deckAuthState = {
+      checked: true,
+      user: user || null
+    };
+  } catch (error) {
+    console.error("Unable to load deck auth helper:", error);
+    deckAuthState = {
+      checked: true,
+      user: null
+    };
+  }
+}
+
+async function initializeDeckAccess() {
+  renderDeckAccessLoading();
+  await hydrateDeckAuthState();
+  renderDeckCollection();
+}
+
 // Renders the deck-selection rail and handles locked deck messaging through delegated clicks.
 function renderDeckCollection() {
   if (!deckView || typeof deckCollections === "undefined") {
@@ -335,38 +1184,18 @@ function renderDeckCollection() {
     title: "The Astral Decks",
     description: "Choose a tarot collection to explore the cards held within the Astral Veil."
   });
+  updateDeckHeroStatus();
   setDeckRitualFeatureVisible(true);
 
   deckView.innerHTML = `
     <div class="deck-collection-shell">
-      <div class="deck-collection" aria-label="Available tarot decks">
-        ${deckCollections
-          .map(
-            (collection) => `
-              <article class="deck-collection-card deck-collection-card--${collection.id}${isCollectionLocked(collection) ? " is-locked" : ""}" data-view-deck="${collection.id}" aria-disabled="${isCollectionLocked(collection)}">
-                <div class="deck-collection-card__preview" aria-hidden="true">
-                  <img src="${collection.coverImage}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" />
-                </div>
-                <div class="deck-collection-card__content">
-                  <div class="deck-collection-card__header">
-                    <span class="deck-collection-card__badge">${getCollectionStatus(collection)}</span>
-                    <h2>${collection.title}</h2>
-                    <p>${collection.subtitle}</p>
-                  </div>
-                  <div class="deck-collection-card__actions">
-                    <button class="deck-collection-card__action" type="button" data-view-deck="${collection.id}" ${isCollectionLocked(collection) ? "disabled" : ""}>
-                      ${getCollectionActionLabel(collection)}
-                    </button>
-                  </div>
-                </div>
-              </article>
-            `
-          )
-          .join("")}
-      </div>
+      ${renderDeckFilterControls()}
+      ${renderDeckLibrarySections()}
     </div>
     <p class="deck-collection-message" data-deck-message aria-live="polite"></p>
   `;
+
+  window.requestAnimationFrame(() => centerActiveDeckFilter({ behavior: "auto" }));
 }
 
 // Renders the large selected-card-left, meaning-panel-right viewer and bottom thumbnail rail.
@@ -378,6 +1207,11 @@ function renderDeckGallery(collectionId) {
   const collection = getCollectionById(collectionId);
 
   if (!collection || isCollectionLocked(collection)) {
+    if (isBloodMoonCollection(collection)) {
+      renderBloodMoonLockedPrompt();
+      return;
+    }
+
     renderDeckCollection();
     return;
   }
@@ -387,6 +1221,10 @@ function renderDeckGallery(collectionId) {
   activeCardIndex = Math.min(Math.max(activeCardIndex, 0), collectionCards.length - 1);
   const activeCard = collectionCards[activeCardIndex];
   const cardDescription = getCardDescription(activeCard);
+  const isProtectedDeckMedia = isBloodMoonCollection(collection);
+  const protectedMediaClass = isProtectedDeckMedia ? " protected-media" : "";
+  const protectedMediaAttrs = isProtectedDeckMedia ? ' data-protected-media="true" draggable="false"' : "";
+  const protectedImageAttr = isProtectedDeckMedia ? ' draggable="false"' : "";
 
   if (!activeCard) {
     renderDeckCollection();
@@ -395,11 +1233,16 @@ function renderDeckGallery(collectionId) {
 
   preloadAdjacentCards(collectionCards, activeCardIndex);
 
+  const deckHeroTitle = collection?.viewTitle || collection?.title || collection?.name || collection?.eyebrow || "The Astral Deck";
+  const deckHeroDescription =
+    collection?.viewDescription || collection?.detailDescription || collection?.description || collection?.subtitle || "";
+
   updateDeckHero({
     eyebrow: collection.eyebrow,
-    title: collection.viewTitle,
-    description: collection.viewDescription
+    title: deckHeroTitle,
+    description: deckHeroDescription
   });
+  hideDeckHeroStatus();
   setDeckRitualFeatureVisible(false);
 
   deckView.innerHTML = `
@@ -410,7 +1253,7 @@ function renderDeckGallery(collectionId) {
     </div>
     <section class="deck-viewer deck-viewer--${escapeHtml(collection.id)}" data-card-gallery aria-label="${escapeHtml(collection.title)} card viewer">
       <div class="deck-viewer__stage">
-        <button class="deck-viewer__image-button" type="button" data-featured-card-image="${escapeHtml(activeCard.id)}" aria-label="Expand ${escapeHtml(activeCard.name)}">
+        <button class="deck-viewer__image-button${protectedMediaClass}" type="button" data-featured-card-image="${escapeHtml(activeCard.id)}" aria-label="Expand ${escapeHtml(activeCard.name)}"${protectedMediaAttrs}>
           <img
             class="deck-viewer__image"
             src="${escapeHtml(activeCard.image)}"
@@ -420,6 +1263,7 @@ function renderDeckGallery(collectionId) {
             loading="eager"
             decoding="async"
             fetchpriority="high"
+            ${protectedImageAttr}
           />
         </button>
 
@@ -448,7 +1292,7 @@ function renderDeckGallery(collectionId) {
                 index <= 11 || Math.abs(index - activeCardIndex) <= 6;
 
               return `
-              <button class="deck-thumbnail${index === activeCardIndex ? " is-active" : ""}" type="button" data-card-index="${index}" aria-label="Show ${escapeHtml(card.name)}" aria-current="${index === activeCardIndex ? "true" : "false"}">
+              <button class="deck-thumbnail${index === activeCardIndex ? " is-active" : ""}${protectedMediaClass}" type="button" data-card-index="${index}" aria-label="Show ${escapeHtml(card.name)}" aria-current="${index === activeCardIndex ? "true" : "false"}"${protectedMediaAttrs}>
                 <img
                   src="${shouldLoadThumbnail ? escapeHtml(card.image) : thumbnailPlaceholder}"
                   ${shouldLoadThumbnail ? "" : `data-thumbnail-src="${escapeHtml(card.image)}"`}
@@ -457,6 +1301,7 @@ function renderDeckGallery(collectionId) {
                   height="${DECK_CARD_IMAGE_HEIGHT}"
                   loading="lazy"
                   decoding="async"
+                  ${protectedImageAttr}
                 />
                 <span>${index + 1}</span>
               </button>
@@ -488,6 +1333,14 @@ function selectDeckCard(index) {
   renderDeckGallery(activeCollectionId);
 }
 
+function selectDeckThumbnailCard(index) {
+  selectDeckCard(index);
+
+  if (isSmallDeckViewport()) {
+    scrollToDeckPageTop();
+  }
+}
+
 function moveDeckCard(direction) {
   selectDeckCard(activeCardIndex + (direction === "next" ? 1 : -1));
 }
@@ -498,6 +1351,12 @@ function openDeckLightbox(cardId) {
   }
 
   const activeCollection = getCollectionById(activeCollectionId) || deckCollections[0];
+
+  if (isCollectionLocked(activeCollection)) {
+    closeDeckLightbox();
+    return;
+  }
+
   const card = getCollectionCards(activeCollection).find((item) => item.id === cardId);
 
   if (!card || !deckLightbox) {
@@ -508,6 +1367,13 @@ function openDeckLightbox(cardId) {
   lightboxCardImage.alt = card.name;
   lightboxCardImage.dataset.imagePreviewTitle = card.name;
   lightboxCardImage.dataset.imagePreviewCaption = getCardDescription(card);
+  lightboxCardImage.draggable = !isBloodMoonCollection(activeCollection);
+  lightboxCardImage.classList.toggle("protected-media", isBloodMoonCollection(activeCollection));
+  if (isBloodMoonCollection(activeCollection)) {
+    lightboxCardImage.setAttribute("data-protected-media", "true");
+  } else {
+    lightboxCardImage.removeAttribute("data-protected-media");
+  }
   lightboxCardName.textContent = card.name;
   lightboxCardMeaning.textContent = getCardDescription(card);
   deckLightbox.classList.add("is-open");
@@ -525,7 +1391,102 @@ function closeDeckLightbox() {
   document.body.classList.remove("is-lightbox-open");
 }
 
-renderDeckCollection();
+function openDeckInfoModal(collectionId) {
+  const collection = getCollectionById(collectionId);
+
+  if (!collection || !deckInfoModal) {
+    return;
+  }
+
+  const isLocked = isCollectionLocked(collection);
+  const isComingSoon = collection.accessType === "comingSoon";
+  const category = getCollectionModalCategory(collection);
+  const status = getCollectionModalStatus(collection);
+  const previewImage = getCollectionModalCardBack(collection);
+  const modalThemeClass = getDeckInfoModalThemeClass(collection);
+  const isProtectedDeckMedia = isBloodMoonCollection(collection);
+
+  activeDeckInfoCollectionId = collection.id;
+  deckInfoModal.classList.remove(...deckInfoModalThemeClasses);
+  deckInfoModal.classList.add(modalThemeClass);
+  resetDeckInfoTilt();
+
+  if (deckInfoImage) {
+    deckInfoImage.src = previewImage;
+    deckInfoImage.alt = `${getCollectionModalTitle(collection)} card back`;
+    deckInfoImage.draggable = !isProtectedDeckMedia;
+    deckInfoImage.classList.toggle("protected-media", isProtectedDeckMedia);
+    if (isProtectedDeckMedia) {
+      deckInfoImage.setAttribute("data-protected-media", "true");
+    } else {
+      deckInfoImage.removeAttribute("data-protected-media");
+    }
+  }
+
+  if (deckInfoTiltButton) {
+    deckInfoTiltButton.setAttribute("aria-label", `Inspect ${getCollectionModalTitle(collection)} card`);
+    deckInfoTiltButton.draggable = !isProtectedDeckMedia;
+    deckInfoTiltButton.classList.toggle("protected-media", isProtectedDeckMedia);
+    if (isProtectedDeckMedia) {
+      deckInfoTiltButton.setAttribute("data-protected-media", "true");
+    } else {
+      deckInfoTiltButton.removeAttribute("data-protected-media");
+    }
+  }
+
+  if (deckInfoCategory) {
+    deckInfoCategory.textContent = category;
+  }
+
+  if (deckInfoTitle) {
+    deckInfoTitle.textContent = getCollectionModalTitle(collection);
+    deckInfoTitle.classList.toggle("deck-title--cyber-hacked", collection.id === "cyberpunkArcana");
+  }
+
+  if (deckInfoIntro) {
+    deckInfoIntro.textContent = getCollectionModalIntro(collection);
+  }
+
+  setDeckInfoParagraph(deckInfoAbout, getCollectionModalAbout(collection));
+  setDeckInfoParagraph(deckInfoReveals, getCollectionModalReveals(collection));
+
+  if (deckInfoBestFor) {
+    deckInfoBestFor.innerHTML = getCollectionBestFor(collection)
+      .map((tag) => `<span>${escapeHtml(tag)}</span>`)
+      .join("");
+  }
+
+  if (deckInfoStatus) {
+    deckInfoStatus.textContent = status || "";
+  }
+
+  if (deckInfoViewButton) {
+    const isBloodMoonLocked = isBloodMoonCollection(collection) && isLocked;
+    const shouldHideButton = isLocked && !isComingSoon && !isBloodMoonLocked && !isAuthLockedCollection(collection);
+
+    deckInfoViewButton.hidden = shouldHideButton;
+    deckInfoViewButton.disabled = isComingSoon || shouldHideButton || isBloodMoonLocked;
+    deckInfoViewButton.textContent = getCollectionActionLabel(collection) || "View Deck";
+  }
+
+  deckInfoModal.classList.add("is-open");
+  deckInfoModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("is-deck-info-open");
+  window.requestAnimationFrame(() => deckInfoModal.querySelector(".deck-info-modal__close")?.focus({ preventScroll: true }));
+}
+
+function closeDeckInfoModal() {
+  if (!deckInfoModal) {
+    return;
+  }
+
+  activeDeckInfoCollectionId = "";
+  resetDeckInfoTilt();
+  deckInfoModal.classList.remove("is-open");
+  deckInfoModal.classList.remove(...deckInfoModalThemeClasses);
+  deckInfoModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("is-deck-info-open");
+}
 
 ////////////////////////////////////////////////////
 // Deck Viewer Event Listeners
@@ -533,23 +1494,157 @@ renderDeckCollection();
 
 // Delegated click handling covers collection cards, thumbnail rail, nav controls, and image expansion.
 if (deckView) {
+  deckView.addEventListener("pointerdown", (event) => {
+    const mobileShelf = event.target.closest(".deck-mobile-shelf");
+
+    if (!mobileShelf || !isSmallDeckViewport()) {
+      return;
+    }
+
+    mobileDeckSwipeStartX = event.clientX;
+    mobileDeckSwipeStartY = event.clientY;
+    mobileDeckDidSwipe = false;
+  });
+
+  deckView.addEventListener("pointerup", (event) => {
+    const mobileShelf = event.target.closest(".deck-mobile-shelf");
+
+    if (!mobileShelf || !isSmallDeckViewport() || mobileDeckSwipeStartX === null || mobileDeckSwipeStartY === null) {
+      mobileDeckSwipeStartX = null;
+      mobileDeckSwipeStartY = null;
+      return;
+    }
+
+    const deltaX = event.clientX - mobileDeckSwipeStartX;
+    const deltaY = event.clientY - mobileDeckSwipeStartY;
+    mobileDeckSwipeStartX = null;
+    mobileDeckSwipeStartY = null;
+
+    if (Math.abs(deltaX) < 36 || Math.abs(deltaX) < Math.abs(deltaY) * 1.2) {
+      return;
+    }
+
+    mobileDeckDidSwipe = true;
+    const direction = deltaX < 0 ? 1 : -1;
+    deckCarouselIndexes[DECK_BROWSER_SECTION_ID] = Number(deckCarouselIndexes[DECK_BROWSER_SECTION_ID] || 0) + direction;
+    mobileDeckViewMode = "browse";
+    renderDeckCollection();
+  });
+
   deckView.addEventListener("click", (event) => {
+    const deckDetailsTrigger = event.target.closest("[data-deck-details]");
+    const mobileDeckFocusButton = event.target.closest("[data-mobile-deck-focus]");
+    const mobileDeckBackButton = event.target.closest("[data-mobile-back-to-decks]");
+    const deckCarouselNavButton = event.target.closest("[data-deck-carousel-nav]");
+    const deckCarouselFocusButton = event.target.closest("[data-deck-carousel-focus]");
     const deckTrigger = event.target.closest("[data-view-deck]");
+    const filterTrigger = event.target.closest("[data-deck-filter]");
+    const filterNavButton = event.target.closest("[data-deck-filter-nav]");
     const backButton = event.target.closest("[data-back-to-decks]");
     const thumbnailButton = event.target.closest("[data-card-index]");
     const viewerNavButton = event.target.closest("[data-deck-viewer-nav]");
     const featuredCardButton = event.target.closest("[data-featured-card-image]");
 
+    if (mobileDeckDidSwipe) {
+      mobileDeckDidSwipe = false;
+      event.preventDefault();
+      return;
+    }
+
+    if (deckDetailsTrigger) {
+      event.stopPropagation();
+      openDeckInfoModal(deckDetailsTrigger.dataset.deckDetails);
+      return;
+    }
+
+    if (mobileDeckFocusButton) {
+      const sectionId = mobileDeckFocusButton.dataset.mobileDeckFocus || DECK_BROWSER_SECTION_ID;
+      const nextIndex = Number(mobileDeckFocusButton.dataset.deckCarouselIndex || 0);
+      const currentIndex = getDeckCarouselIndex(sectionId, getFilteredDeckCollections().length);
+
+      if (nextIndex !== currentIndex) {
+        deckCarouselIndexes[sectionId] = nextIndex;
+        mobileDeckViewMode = "browse";
+        renderDeckCollection();
+        return;
+      }
+
+      deckCarouselIndexes[sectionId] = nextIndex;
+      mobileDeckViewMode = "focused";
+      renderDeckCollection();
+      window.requestAnimationFrame(() => {
+        deckView.querySelector(`[data-deck-carousel-section="${sectionId}"]`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      });
+      return;
+    }
+
+    if (mobileDeckBackButton) {
+      mobileDeckViewMode = "browse";
+      renderDeckCollection();
+      window.requestAnimationFrame(() => {
+        deckView.querySelector("[data-mobile-deck-browser]")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      });
+      return;
+    }
+
+    if (deckCarouselNavButton) {
+      const sectionId = deckCarouselNavButton.dataset.deckCarouselNav || DECK_BROWSER_SECTION_ID;
+      const direction = deckCarouselNavButton.dataset.deckCarouselDirection === "prev" ? -1 : 1;
+      deckCarouselIndexes[sectionId] = Number(deckCarouselIndexes[sectionId] || 0) + direction;
+      if (isSmallDeckViewport()) {
+        mobileDeckViewMode = "focused";
+      }
+      renderDeckCollection();
+      return;
+    }
+
+    if (deckCarouselFocusButton) {
+      const sectionId = deckCarouselFocusButton.dataset.deckCarouselFocus || DECK_BROWSER_SECTION_ID;
+      deckCarouselIndexes[sectionId] = Number(deckCarouselFocusButton.dataset.deckCarouselIndex || 0);
+      if (isSmallDeckViewport()) {
+        mobileDeckViewMode = "focused";
+      }
+      renderDeckCollection();
+      return;
+    }
+
+    if (filterNavButton) {
+      moveDeckFilter(filterNavButton.dataset.deckFilterNav);
+      return;
+    }
+
+    if (filterTrigger) {
+      setDeckFilter(filterTrigger.dataset.deckFilter || "All");
+      return;
+    }
+
     if (deckTrigger) {
       const collection = getCollectionById(deckTrigger.dataset.viewDeck);
 
       if (collection && isCollectionLocked(collection)) {
+        if (isBloodMoonCollection(collection)) {
+          showDeckMessage(collection.lockedMessage || "Available only during Blood Moon.");
+          return;
+        }
+
+        if (isAuthLockedCollection(collection)) {
+          window.location.href = getDeckAuthUrl(collection.authMode || "signup");
+          return;
+        }
+
         showDeckMessage(collection.lockedMessage || "This deck is locked.");
         return;
       }
 
       activeCardIndex = 0;
       renderDeckGallery(deckTrigger.dataset.viewDeck);
+      scrollToDeckPageTop();
       return;
     }
 
@@ -567,7 +1662,7 @@ if (deckView) {
     }
 
     if (thumbnailButton) {
-      selectDeckCard(Number(thumbnailButton.dataset.cardIndex));
+      selectDeckThumbnailCard(Number(thumbnailButton.dataset.cardIndex));
       return;
     }
 
@@ -581,9 +1676,53 @@ closeDeckLightboxButtons.forEach((button) => {
   button.addEventListener("click", closeDeckLightbox);
 });
 
+closeDeckInfoButtons.forEach((button) => {
+  button.addEventListener("click", closeDeckInfoModal);
+});
+
+if (deckInfoTiltButton) {
+  deckInfoTiltButton.addEventListener("pointerdown", startDeckInfoTilt);
+  deckInfoTiltButton.addEventListener("pointermove", updateDeckInfoTilt);
+  deckInfoTiltButton.addEventListener("pointerleave", resetDeckInfoTilt);
+  deckInfoTiltButton.addEventListener("pointercancel", endDeckInfoTilt);
+  deckInfoTiltButton.addEventListener("pointerup", endDeckInfoTilt);
+}
+
+deckInfoViewButton?.addEventListener("click", () => {
+  const collection = getCollectionById(activeDeckInfoCollectionId);
+
+  if (!collection) {
+    closeDeckInfoModal();
+    return;
+  }
+
+  if (isCollectionLocked(collection)) {
+    closeDeckInfoModal();
+
+    if (isBloodMoonCollection(collection)) {
+      showDeckMessage(collection.lockedMessage || "Available only during Blood Moon.");
+      return;
+    }
+
+    if (isAuthLockedCollection(collection)) {
+      window.location.href = getDeckAuthUrl(collection.authMode || "signup");
+      return;
+    }
+
+    showDeckMessage(collection.lockedMessage || "This deck is locked.");
+    return;
+  }
+
+  closeDeckInfoModal();
+  activeCardIndex = 0;
+  renderDeckGallery(collection.id);
+  scrollToDeckPageTop();
+});
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeDeckLightbox();
+    closeDeckInfoModal();
   }
 
   if (!deckLightbox?.classList.contains("is-open") && deckView?.querySelector("[data-card-gallery]")) {
@@ -599,14 +1738,22 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-window.addEventListener("astralVeilBloodMoonChange", (event) => {
-  if (event.detail.isActive) {
+window.addEventListener("astralVeilBloodMoonChange", () => {
+  closeDeckLightbox();
+
+  if (activeCollectionId === "bloodMoon") {
+    if (canViewBloodMoonDeck()) {
+      renderDeckGallery("bloodMoon");
+      return;
+    }
+
+    activeCollectionId = "original";
+    activeCardIndex = 0;
     renderDeckCollection();
     return;
   }
 
-  closeDeckLightbox();
-  activeCollectionId = "original";
-  activeCardIndex = 0;
   renderDeckCollection();
 });
+
+initializeDeckAccess();

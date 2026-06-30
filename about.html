@@ -16,6 +16,15 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Marcellus&display=swap"
       rel="stylesheet"
     />
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("astralVeilDisableGlowEffects") === "true") {
+            document.documentElement.classList.add("no-glow");
+          }
+        } catch (error) {}
+      })();
+    </script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/animations.css" />
     <!-- Google tag (gtag.js) -->
@@ -80,7 +89,8 @@
         <ul class="navbar__links">
           <li><a class="navbar__link" href="index.html">Readings</a></li>
           <li><a class="navbar__link" href="readers.html">Veilwalkers</a></li>
-          <li><a class="navbar__link" href="deck.html">Deck</a></li>
+          <li><a class="navbar__link" href="deck.html">DECKS</a></li>
+          <li><a class="navbar__link" href="journal.html">Journal</a></li>
           <li><a class="navbar__link" href="about.html">About</a></li>
         </ul>
 
@@ -88,7 +98,7 @@
           <span class="theme-orb-toggle__label theme-orb-toggle__label--sun">Sun</span>
           <span class="theme-orb-toggle__icon-wrap" aria-hidden="true">
             <img
-              src="assets/icons/symbols/sun-moon-toggle-transparent.png"
+              src="assets/icons/symbols/sun-moon-transparent.png"
               alt=""
               class="theme-orb-toggle__icon"
               width="512"
@@ -107,17 +117,14 @@
           aria-controls="mobile-navigation"
           aria-expanded="false"
         >
-          <span class="navbar__menu-icon" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
+          <span class="navbar__menu-icon" aria-hidden="true"></span>
         </button>
 
         <div class="navbar__mobile-menu" id="mobile-navigation" aria-hidden="true">
           <a class="navbar__mobile-link" href="index.html">Readings</a>
           <a class="navbar__mobile-link" href="readers.html">Veilwalkers</a>
-          <a class="navbar__mobile-link" href="deck.html">Deck</a>
+          <a class="navbar__mobile-link" href="deck.html">DECKS</a>
+          <a class="navbar__mobile-link" href="journal.html">Journal</a>
           <a class="navbar__mobile-link" href="about.html">About</a>
         </div>
       </nav>
@@ -402,7 +409,7 @@
             <p class="site-footer__label">Explore</p>
             <a href="index.html">Home</a>
             <a href="readers.html">Veilwalkers</a>
-            <a href="deck.html">Deck</a>
+            <a href="deck.html">DECKS</a>
             <a href="about.html">About</a>
             <a href="lumen-archive.html" data-lumen-archive-footer-link>Lumen Archive</a>
           </nav>
@@ -416,6 +423,11 @@
           </div>
 
           <p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p>
+          <nav class="site-footer__legal" aria-label="Legal links">
+            <a href="terms.html">Terms of Service</a>
+            <span aria-hidden="true">·</span>
+            <a href="privacy.html">Privacy Policy</a>
+          </nav>
         </div>
 
         <p class="site-footer__share-status" aria-live="polite"></p>
@@ -425,5 +437,6 @@
     <script src="data/events.js"></script>
     <script src="js/events.js"></script>
     <script src="js/app.js"></script>
+    <script type="module" src="src/public/public-auth-nav.js"></script>
   </body>
 </html>

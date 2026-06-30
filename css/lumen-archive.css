@@ -2,6 +2,2055 @@
   place-items: stretch;
 }
 
+/* Single-page Lumen dashboard */
+body.lumen-archive-page .tarot-background {
+  background-color: #030712;
+  background-image:
+    radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 74% 26%, rgba(185, 217, 255, 0.07) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 42% 72%, rgba(231, 214, 255, 0.06) 0 1px, transparent 1.7px),
+    linear-gradient(180deg, #020511 0%, #071022 52%, #030711 100%);
+  background-position: center;
+  background-size: 170px 170px, 240px 240px, 330px 330px, cover;
+}
+
+body.lumen-archive-page .celestial-wash,
+body.lumen-archive-page .botanical-veil,
+body.lumen-archive-page .mystic-mist,
+body.lumen-archive-page .lunar-orb,
+body.lumen-archive-page .moon-particles,
+body.lumen-archive-page .tarot-background::before {
+  display: none;
+}
+
+body.lumen-archive-page .tarot-background::after {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.18), transparent 24%, rgba(0, 0, 0, 0.34));
+}
+
+body.lumen-archive-page .starfield {
+  opacity: 0.72;
+}
+
+body.lumen-archive-page .scorpio-constellation {
+  opacity: 0.16;
+}
+
+body.lumen-archive-page .tarot-stage {
+  display: block;
+  min-height: auto;
+  padding: 0;
+}
+
+.lumen-dashboard {
+  --lumen-dashboard-text: #f6f8ff;
+  --lumen-dashboard-muted: rgba(216, 226, 248, 0.76);
+  --lumen-dashboard-faint: rgba(216, 226, 248, 0.58);
+  --lumen-dashboard-panel: rgba(5, 10, 28, 0.66);
+  --lumen-dashboard-panel-strong: rgba(7, 14, 36, 0.82);
+  --lumen-dashboard-border: rgba(144, 190, 255, 0.2);
+  --lumen-dashboard-border-strong: rgba(183, 218, 255, 0.42);
+  --lumen-dashboard-glow: rgba(101, 168, 255, 0.22);
+  width: min(1480px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: clamp(6rem, 10vh, 8rem) 0 clamp(3rem, 7vh, 5rem);
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 1.5rem;
+  color: var(--lumen-dashboard-text);
+}
+
+.lumen-room-sidebar,
+.lumen-room-panel,
+.lumen-other-rooms {
+  border: 1px solid var(--lumen-dashboard-border);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.055), transparent 38%),
+    var(--lumen-dashboard-panel);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.lumen-room-sidebar {
+  position: relative;
+  top: auto;
+  align-self: stretch;
+  display: flex;
+  min-height: 100%;
+  height: auto;
+  flex-direction: column;
+  gap: 1.15rem;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  border-radius: 28px;
+  padding: 1.5rem;
+}
+
+.lumen-room-sidebar__heading {
+  display: grid;
+  justify-items: center;
+  margin-bottom: 0;
+  padding-bottom: 0.35rem;
+  text-align: center;
+}
+
+.lumen-room-sidebar__eyebrow,
+.lumen-room-panel__label {
+  margin: 0;
+  color: #b8d8ff;
+  font-family: var(--body-font);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.lumen-room-sidebar h1,
+.lumen-room-sidebar h2 {
+  margin: 0;
+  color: #fff8e8;
+  font-family: var(--heading-font);
+  font-size: clamp(1.9rem, 2.2vw, 2.4rem);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+  text-shadow: 0 0 18px var(--lumen-dashboard-glow);
+}
+
+.lumen-sidebar-mark {
+  display: block;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 0.25rem;
+  object-fit: contain;
+  filter: drop-shadow(0 0 14px rgba(245, 220, 163, 0.22));
+}
+
+.lumen-room-sidebar .lumen-sidebar-header p {
+  max-width: 24ch;
+  margin: 0.28rem auto 0;
+  color: #f5dca3;
+  font-family: var(--font-body-serif);
+  font-size: 0.95rem;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.lumen-room-sidebar p,
+.lumen-room-panel p,
+.lumen-room-quote p {
+  color: var(--lumen-dashboard-muted);
+}
+
+.lumen-room-sidebar p,
+.lumen-room-panel p {
+  margin: 0;
+  font-size: 0.96rem;
+  line-height: 1.6;
+}
+
+.lumen-room-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.lumen-room-nav__button {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 18px;
+  padding: 0.7rem 0.75rem;
+  color: var(--lumen-dashboard-text);
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
+}
+
+.lumen-room-nav__button:hover,
+.lumen-room-nav__button:focus-visible {
+  border-color: transparent;
+  outline: none;
+  background: rgba(120, 170, 230, 0.08);
+  box-shadow: none;
+}
+
+.lumen-room-nav__button.is-active {
+  border-color: var(--lumen-dashboard-border-strong);
+  outline: none;
+  background: rgba(40, 95, 170, 0.24);
+  box-shadow:
+    0 0 22px rgba(72, 160, 255, 0.22),
+    inset 0 0 18px rgba(110, 180, 255, 0.08);
+}
+
+.lumen-room-nav__button:hover,
+.lumen-room-nav__button:focus-visible {
+  transform: translateY(-1px);
+}
+
+.lumen-room-nav__icon {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  color: #dfeeff;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.lumen-room-nav__icon img {
+  display: block;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter:
+    brightness(1.25)
+    drop-shadow(0 0 10px rgba(245, 220, 163, 0.55));
+  opacity: 0.95;
+}
+
+.lumen-room-nav__button:hover .lumen-room-nav__icon img,
+.lumen-room-nav__button:focus-visible .lumen-room-nav__icon img,
+.lumen-room-nav__button.is-active .lumen-room-nav__icon img,
+.lumen-room-nav__button.active .lumen-room-nav__icon img,
+.lumen-room-nav__button[aria-current="true"] .lumen-room-nav__icon img {
+  filter:
+    brightness(1.45)
+    drop-shadow(0 0 12px rgba(245, 220, 163, 0.72))
+    drop-shadow(0 0 22px rgba(120, 190, 255, 0.22));
+  opacity: 1;
+}
+
+.lumen-room-nav__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.lumen-room-nav__copy strong,
+.lumen-room-preview strong {
+  overflow-wrap: anywhere;
+}
+
+.lumen-room-nav__copy strong {
+  color: var(--lumen-dashboard-text);
+  font-family: var(--heading-font);
+  font-size: 1.04rem;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.lumen-room-sidebar__return,
+.lumen-room-panel__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: 1px solid rgba(190, 220, 255, 0.25);
+  border-radius: 14px;
+  padding: 0 1rem;
+  color: #f4f8ff;
+  background: rgba(255, 255, 255, 0.055);
+  font-weight: 700;
+  text-decoration: none;
+  transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.lumen-room-sidebar__return:hover,
+.lumen-room-sidebar__return:focus-visible,
+.lumen-room-panel__action:hover,
+.lumen-room-panel__action:focus-visible {
+  border-color: var(--lumen-dashboard-border-strong);
+  outline: none;
+  background: rgba(132, 183, 255, 0.14);
+  box-shadow: 0 0 24px rgba(101, 168, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.lumen-room-quote {
+  margin: 0;
+  border-left: 1px solid rgba(190, 220, 255, 0.3);
+  padding: 0.2rem 0 0.2rem 1rem;
+}
+
+.lumen-sidebar-quote {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  margin-top: 1.25rem;
+  min-height: 264px;
+  border: 1px solid rgba(190, 220, 255, 0.22);
+  border-radius: 18px;
+  padding: 1rem;
+  background-image:
+    linear-gradient(90deg, rgba(3, 7, 18, 0.78), rgba(3, 7, 18, 0.36)),
+    url("../assets/images/lumen_archive_rooms/lumen_quote_bg.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 28px rgba(101, 168, 255, 0.1);
+}
+
+.lumen-room-quote p {
+  margin: 0;
+  color: #f5dca3;
+  font-family: var(--font-body-serif);
+  font-size: 0.96rem;
+  font-style: italic;
+  line-height: 1.42;
+  text-align: left;
+}
+
+.lumen-room-main {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.lumen-sanctuary-dashboard-layout,
+.lumen-arrival-room {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.lumen-sanctuary-dashboard-layout[hidden],
+.lumen-arrival-room[hidden],
+.lumen-arrival-explore[hidden] {
+  display: none;
+}
+
+.lumen-arrival-hero,
+.lumen-arrival-welcome-panel,
+.lumen-arrival-panel,
+.lumen-arrival-previews {
+  border: 1px solid var(--lumen-dashboard-border);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.065), transparent 42%),
+    var(--lumen-dashboard-panel);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.lumen-arrival-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-height: clamp(260px, 32vh, 380px);
+  border-radius: 28px;
+  padding: clamp(2rem, 5vw, 3.5rem);
+  background-image:
+    linear-gradient(90deg, rgba(3, 7, 18, 0.86), rgba(3, 7, 18, 0.4), rgba(3, 7, 18, 0.62)),
+    var(--room-hero-image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.lumen-arrival-hero::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(181, 215, 255, 0.08), transparent 58%),
+    radial-gradient(circle at 82% 20%, rgba(255, 239, 190, 0.14), transparent 34%);
+  pointer-events: none;
+}
+
+.lumen-arrival-hero > * {
+  position: relative;
+  z-index: 2;
+}
+
+.lumen-arrival-hero-content {
+  max-width: 620px;
+}
+
+.lumen-arrival-hero h2 {
+  max-width: 10ch;
+  margin: 0.2em 0;
+  color: #fff;
+  font-family: var(--heading-font);
+  font-size: clamp(3.4rem, 7vw, 6rem);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 0.92;
+  text-shadow: 0 0 30px rgba(160, 203, 255, 0.25), 0 4px 28px rgba(0, 0, 0, 0.46);
+}
+
+.lumen-arrival-subtitle,
+.lumen-arrival-welcome,
+.lumen-arrival-poetic,
+.lumen-arrival-marcus-quote {
+  max-width: 62ch;
+  margin: 0;
+  color: var(--lumen-dashboard-muted);
+  line-height: 1.62;
+}
+
+.lumen-arrival-subtitle {
+  color: #dcecff;
+  font-family: var(--font-body-serif);
+  font-size: clamp(1.08rem, 1.7vw, 1.35rem);
+  font-style: italic;
+}
+
+.lumen-arrival-welcome-panel {
+  display: grid;
+  gap: 1rem;
+  min-height: clamp(260px, 28vh, 340px);
+  align-content: center;
+  border: 0;
+  border-radius: 24px;
+  padding: clamp(2rem, 4vw, 3rem);
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.lumen-arrival-welcome {
+  margin: 0 0 0.2rem;
+  color: #f7fbff;
+  font-family: var(--heading-font);
+  font-size: clamp(1.7rem, 3.2vw, 2.7rem);
+  line-height: 1.12;
+}
+
+.lumen-arrival-poetic {
+  max-width: 850px;
+  color: rgba(245, 240, 226, 0.92);
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  line-height: 1.65;
+}
+
+.lumen-arrival-marcus-quote {
+  max-width: 800px;
+  margin-top: 0.4rem;
+  border-left: 1px solid rgba(245, 220, 163, 0.45);
+  padding-left: 1rem;
+  color: #f5dca3;
+  font-family: var(--font-body-serif);
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.lumen-arrival-marcus-quote p {
+  margin: 0;
+}
+
+.lumen-arrival-marcus-quote cite {
+  display: block;
+  margin-top: 0.65rem;
+  color: rgba(245, 220, 163, 0.78);
+  font-size: 0.9rem;
+  font-style: normal;
+}
+
+.lumen-arrival-intro-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.lumen-arrival-intro-track {
+  display: grid;
+  align-items: stretch;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.lumen-arrival-intro-slide {
+  display: flex;
+  min-width: 0;
+}
+
+.lumen-arrival-intro-controls {
+  display: none;
+}
+
+.lumen-arrival-panel,
+.lumen-arrival-previews {
+  border-radius: 22px;
+  padding: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+
+.lumen-arrival-panel {
+  display: grid;
+  grid-template-rows: minmax(4.2rem, auto) 1fr;
+  align-content: center;
+  justify-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  min-height: clamp(280px, 24vw, 320px);
+  text-align: center;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel {
+  border-color: rgba(120, 190, 255, 0.24);
+  background:
+    linear-gradient(135deg, rgba(25, 88, 160, 0.34), rgba(8, 16, 38, 0.78));
+  box-shadow:
+    inset 0 0 18px rgba(90, 170, 255, 0.08),
+    0 0 18px rgba(70, 160, 255, 0.12);
+}
+
+.lumen-arrival-panel p {
+  margin: 0;
+  color: var(--lumen-dashboard-muted);
+  max-width: 34ch;
+  font-family: "Lora", "Cormorant Garamond", serif;
+  font-size: clamp(0.94rem, 1.05vw, 1.02rem);
+  line-height: 1.72;
+}
+
+.lumen-arrival-panel p:not(.lumen-room-panel__label) + p:not(.lumen-room-panel__label) {
+  margin-top: 0.18rem;
+}
+
+.lumen-arrival-panel__heading,
+.lumen-arrival-panel__body {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+}
+
+.lumen-arrival-panel__heading {
+  align-content: start;
+  min-height: 4.2rem;
+}
+
+.lumen-arrival-panel__body {
+  align-content: start;
+  gap: 0.78rem;
+}
+
+.lumen-arrival-panel .lumen-room-panel__label {
+  max-width: none;
+  font-family: var(--lumen-font-ui);
+  line-height: 1.3;
+  text-align: center;
+}
+
+.lumen-arrival-previews {
+  display: grid;
+  gap: 1rem;
+}
+
+.lumen-room-hero-card {
+  position: relative;
+  min-height: clamp(280px, 34vw, 420px);
+  overflow: hidden;
+  border: 1px solid rgba(156, 203, 255, 0.28);
+  border-radius: 28px;
+  background-image:
+    linear-gradient(90deg, rgba(3, 7, 18, 0.82), rgba(3, 7, 18, 0.38), rgba(3, 7, 18, 0.68)),
+    var(--room-hero-image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.42),
+    0 0 42px rgba(106, 171, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.lumen-room-hero-img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.lumen-room-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(3, 7, 18, 0.86), rgba(3, 7, 18, 0.36), rgba(3, 7, 18, 0.7)),
+    linear-gradient(180deg, rgba(3, 7, 18, 0.18), rgba(3, 7, 18, 0.62));
+  pointer-events: none;
+}
+
+.lumen-room-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, transparent 38%, rgba(2, 5, 13, 0.72));
+  pointer-events: none;
+}
+
+.lumen-room-hero-card__content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  align-content: end;
+  justify-items: start;
+  gap: 0.55rem;
+  width: min(100%, 620px);
+  min-height: inherit;
+  padding: clamp(1.4rem, 4vw, 3.2rem) clamp(1.4rem, 5.4vw, 4.8rem);
+}
+
+.lumen-room-hero-card__element {
+  width: fit-content;
+  margin: 0;
+  border: 1px solid rgba(202, 226, 255, 0.34);
+  border-radius: 999px;
+  padding: 0.42rem 0.75rem;
+  color: #eaf4ff;
+  background: rgba(3, 8, 22, 0.56);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.lumen-room-hero-card__element {
+  border: 0;
+  padding: 0;
+  color: #b8d8ff;
+  background: transparent;
+  box-shadow: none;
+}
+
+.lumen-room-hero-card h2 {
+  margin: 0;
+  color: #fff;
+  font-family: var(--heading-font);
+  font-size: clamp(2.55rem, 5.2vw, 4.95rem);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 0.92;
+  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.52), 0 0 26px rgba(155, 202, 255, 0.24);
+}
+
+.lumen-room-hero-card__line {
+  max-width: 54ch;
+  margin: 0;
+  color: rgba(240, 246, 255, 0.84);
+  font-family: var(--font-body-serif);
+  font-size: clamp(1.02rem, 1.5vw, 1.22rem);
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.lumen-room-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(260px, 0.75fr);
+  gap: clamp(1rem, 1.8vw, 1.35rem);
+  align-items: stretch;
+}
+
+.lumen-room-content-grid--compact {
+  grid-template-columns: minmax(0, 1.85fr) minmax(260px, 0.75fr);
+  gap: clamp(1rem, 2vw, 1.35rem);
+}
+
+.lumen-sanctuary-card-track {
+  display: contents;
+}
+
+.lumen-sanctuary-slide {
+  min-width: 0;
+}
+
+.lumen-sanctuary-carousel-controls {
+  display: none;
+}
+
+.lumen-room-panel {
+  display: grid;
+  align-content: start;
+  gap: 0.95rem;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 22px;
+  padding: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+
+.lumen-room-content-grid .lumen-room-panel {
+  border-color: rgba(120, 190, 255, 0.24);
+  background:
+    linear-gradient(145deg, rgba(42, 95, 170, 0.16), rgba(5, 10, 28, 0.88) 56%),
+    rgba(5, 10, 28, 0.78);
+  box-shadow:
+    inset 0 0 24px rgba(95, 175, 255, 0.08),
+    0 0 26px rgba(70, 150, 255, 0.11),
+    0 22px 60px rgba(0, 0, 0, 0.28);
+}
+
+.lumen-room-panel h3,
+.lumen-other-rooms h3 {
+  margin: 0;
+  color: var(--lumen-dashboard-text);
+  font-family: var(--heading-font);
+  font-size: clamp(1.45rem, 2.2vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.lumen-purpose-card,
+.lumen-questions-card {
+  align-content: start;
+  background:
+    radial-gradient(circle at 72% 22%, rgba(76, 160, 255, 0.08), transparent 34%),
+    linear-gradient(135deg, rgba(8, 17, 38, 0.88), rgba(3, 7, 20, 0.94));
+}
+
+.lumen-guidance-purpose,
+.lumen-guidance-questions {
+  min-width: 0;
+}
+
+.lumen-guidance-purpose {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.lumen-panel-kicker {
+  margin-bottom: 0.45rem;
+}
+
+.lumen-purpose-card h3,
+.lumen-room-seal-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+}
+
+.lumen-purpose-card p:not(.lumen-room-panel__label) {
+  max-width: 36ch;
+  font-size: 0.92rem;
+  line-height: 1.48;
+}
+
+.lumen-room-panel__divider {
+  width: min(100%, 140px);
+  height: 1px;
+  background: linear-gradient(90deg, rgba(187, 218, 255, 0.76), transparent);
+}
+
+.lumen-room-panel__ritual {
+  font-family: var(--font-body-serif);
+  font-style: italic;
+}
+
+.lumen-purpose-note {
+  width: 100%;
+  max-width: 34ch;
+  margin-top: 0.85rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(180, 210, 255, 0.14);
+  font-style: italic;
+}
+
+.lumen-guidance-purpose .lumen-action-btn {
+  align-self: center;
+  margin-top: auto;
+}
+
+.lumen-guidance-questions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+  text-align: center;
+}
+
+.lumen-single-question-card {
+  position: relative;
+  width: 100%;
+  margin-top: 0.85rem;
+  min-height: 88px;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  text-align: center;
+}
+
+.lumen-single-question-card .lumen-question-icon {
+  position: static;
+  transform: none;
+  color: #bfe8ff;
+  font-size: 1.05rem;
+  line-height: 1;
+  text-shadow:
+    0 0 10px rgba(120, 200, 255, 0.9),
+    0 0 22px rgba(120, 200, 255, 0.35);
+}
+
+.lumen-single-question-text {
+  margin: 0;
+  max-width: 34ch;
+  color: rgba(245, 248, 255, 0.94);
+  font-family: var(--lumen-font-body, var(--font-body-serif));
+  font-size: clamp(0.9rem, 0.92vw, 1rem);
+  line-height: 1.35;
+  text-align: center;
+}
+
+.lumen-question-cycle-btn {
+  align-self: center;
+  min-height: 38px;
+  margin-top: auto;
+  padding: 0.55rem 1rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
+.lumen-question-cycle-btn:hover {
+  box-shadow:
+    inset 0 0 20px rgba(110, 190, 255, 0.16),
+    0 0 28px rgba(90, 170, 255, 0.28);
+}
+
+.lumen-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 40px;
+  border: 1px solid rgba(165, 215, 255, 0.4);
+  border-radius: 999px;
+  padding: 0.58rem 1rem;
+  color: #fff8e8;
+  background:
+    linear-gradient(135deg, rgba(40, 115, 205, 0.34), rgba(10, 16, 36, 0.82));
+  box-shadow:
+    inset 0 0 18px rgba(110, 190, 255, 0.1),
+    0 0 22px rgba(80, 170, 255, 0.18);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.lumen-purpose-card .lumen-action-btn,
+.lumen-questions-card .lumen-action-btn {
+  min-height: 38px;
+  padding: 0.52rem 1rem;
+}
+
+.lumen-action-btn:hover,
+.lumen-action-btn:focus-visible {
+  border-color: rgba(195, 230, 255, 0.68);
+  outline: none;
+  box-shadow:
+    inset 0 0 20px rgba(110, 190, 255, 0.16),
+    0 0 30px rgba(80, 170, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.lumen-action-btn img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  filter:
+    brightness(1.45)
+    sepia(0.35)
+    saturate(1.35)
+    drop-shadow(0 0 8px rgba(245, 220, 163, 0.5));
+}
+
+.seal-panel {
+  justify-items: center;
+  text-align: center;
+}
+
+.lumen-room-seal-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  min-height: 0;
+  padding: clamp(1.25rem, 2vw, 1.6rem);
+  background: rgba(5, 10, 28, 0.78);
+}
+
+.lumen-room-seal-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.lumen-room-seal-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(3, 7, 18, 0.04), rgba(3, 7, 18, 0.52) 48%, rgba(3, 7, 18, 0.92) 78%),
+    linear-gradient(90deg, rgba(3, 7, 18, 0.28), rgba(3, 7, 18, 0.08), rgba(3, 7, 18, 0.28));
+  pointer-events: none;
+}
+
+.lumen-room-seal-content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  gap: 0.65rem;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.48);
+}
+
+.lumen-room-seal-card h3 {
+  font-size: clamp(1.4rem, 2vw, 1.9rem);
+}
+
+.lumen-room-seal-card h3.element-water {
+  color: #8fd8ff;
+  text-shadow: 0 0 12px rgba(90, 190, 255, 0.42);
+}
+
+.lumen-room-seal-card h3.element-air {
+  color: #c8f7ff;
+  text-shadow: 0 0 12px rgba(170, 240, 255, 0.36);
+}
+
+.lumen-room-seal-card h3.element-fire {
+  color: #ffb15f;
+  text-shadow: 0 0 12px rgba(255, 130, 45, 0.46);
+}
+
+.lumen-room-seal-card h3.element-earth {
+  color: #bfe58b;
+  text-shadow: 0 0 12px rgba(165, 220, 110, 0.4);
+}
+
+.lumen-room-seal-card h3.element-integration {
+  color: #d7c3ff;
+  text-shadow: 0 0 12px rgba(170, 130, 255, 0.4);
+}
+
+.lumen-room-seal-card p:not(.lumen-room-panel__label) {
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.lumen-room-seal-content .lumen-room-panel__label,
+.lumen-room-seal-content h3,
+.lumen-room-seal-content p,
+.lumen-room-seal-content .lumen-action-btn {
+  justify-self: center;
+  max-width: 28ch;
+}
+
+.lumen-unseal-scroll-btn {
+  margin-top: 0.2rem;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel,
+.lumen-room-content-grid .lumen-room-panel {
+  --lumen-vertical-card-line: rgba(178, 222, 255, 0.7);
+  --lumen-vertical-card-line-strong: rgba(224, 242, 255, 0.94);
+  --lumen-vertical-card-glow: rgba(95, 175, 255, 0.22);
+  --lumen-vertical-card-glow-strong: rgba(95, 175, 255, 0.38);
+  --lumen-vertical-card-ambient: rgba(110, 184, 255, 0);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transition:
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 260ms ease;
+}
+
+body.sun-mode .lumen-arrival-intro-grid .lumen-arrival-panel,
+body.sun-mode .lumen-room-content-grid .lumen-room-panel {
+  --lumen-vertical-card-line: rgba(245, 220, 163, 0.66);
+  --lumen-vertical-card-line-strong: rgba(255, 238, 190, 0.92);
+  --lumen-vertical-card-glow: rgba(120, 190, 255, 0.16);
+  --lumen-vertical-card-glow-strong: rgba(245, 220, 163, 0.34);
+}
+
+body.moon-mode .lumen-arrival-intro-grid .lumen-arrival-panel,
+body.moon-mode .lumen-room-content-grid .lumen-room-panel {
+  --lumen-vertical-card-line: rgba(174, 218, 255, 0.74);
+  --lumen-vertical-card-line-strong: rgba(220, 241, 255, 0.96);
+  --lumen-vertical-card-glow: rgba(95, 175, 255, 0.24);
+  --lumen-vertical-card-glow-strong: rgba(95, 175, 255, 0.42);
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel > *,
+.lumen-room-content-grid .lumen-room-panel > * {
+  position: relative;
+  z-index: 2;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel::before,
+.lumen-arrival-intro-grid .lumen-arrival-panel::after,
+.lumen-room-content-grid .lumen-room-panel::before,
+.lumen-room-content-grid .lumen-room-panel::after {
+  content: "";
+  position: absolute;
+  top: 13%;
+  bottom: 13%;
+  z-index: 3;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--lumen-vertical-card-line),
+    transparent
+  );
+  box-shadow: 0 0 12px var(--lumen-vertical-card-glow);
+  opacity: 0.92;
+  pointer-events: none;
+  transition:
+    background 260ms ease,
+    box-shadow 260ms ease,
+    opacity 260ms ease,
+    filter 260ms ease;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel::before,
+.lumen-room-content-grid .lumen-room-panel::before {
+  left: 0;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel::after,
+.lumen-room-content-grid .lumen-room-panel::after {
+  right: 0;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel:hover,
+.lumen-arrival-intro-grid .lumen-arrival-panel:focus-within,
+.lumen-room-content-grid .lumen-room-panel:hover,
+.lumen-room-content-grid .lumen-room-panel:focus-within {
+  transform: translateY(-6px) scale(1.01);
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 12px 28px var(--lumen-vertical-card-glow-strong));
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel:hover::before,
+.lumen-arrival-intro-grid .lumen-arrival-panel:hover::after,
+.lumen-arrival-intro-grid .lumen-arrival-panel:focus-within::before,
+.lumen-arrival-intro-grid .lumen-arrival-panel:focus-within::after,
+.lumen-room-content-grid .lumen-room-panel:hover::before,
+.lumen-room-content-grid .lumen-room-panel:hover::after,
+.lumen-room-content-grid .lumen-room-panel:focus-within::before,
+.lumen-room-content-grid .lumen-room-panel:focus-within::after {
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--lumen-vertical-card-line-strong),
+    transparent
+  );
+  box-shadow: 0 0 18px var(--lumen-vertical-card-glow-strong);
+  filter: drop-shadow(0 0 8px var(--lumen-vertical-card-glow-strong));
+  opacity: 1;
+}
+
+.lumen-room-content-grid .lumen-room-seal-card {
+  border-radius: 10px;
+  background: rgba(5, 10, 28, 0.78);
+  box-shadow:
+    inset 0 0 24px rgba(95, 175, 255, 0.08),
+    0 0 26px rgba(70, 150, 255, 0.11),
+    0 22px 60px rgba(0, 0, 0, 0.28);
+}
+
+.lumen-room-content-grid .lumen-room-seal-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  mix-blend-mode: normal;
+  object-fit: cover;
+  object-position: center top;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.lumen-room-content-grid .lumen-room-seal-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(3, 7, 18, 0.04), rgba(3, 7, 18, 0.52) 48%, rgba(3, 7, 18, 0.92) 78%),
+    linear-gradient(90deg, rgba(3, 7, 18, 0.28), rgba(3, 7, 18, 0.08), rgba(3, 7, 18, 0.28));
+}
+
+.lumen-room-content-grid .lumen-room-seal-content {
+  position: relative;
+  z-index: 2;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel .lumen-room-panel__label,
+.lumen-room-content-grid .lumen-room-panel .lumen-room-panel__label {
+  position: relative;
+  display: inline-grid;
+  justify-self: center;
+  gap: 0.45rem;
+  text-align: center;
+}
+
+.lumen-arrival-intro-grid .lumen-arrival-panel .lumen-room-panel__label::after,
+.lumen-room-content-grid .lumen-room-panel .lumen-room-panel__label::after {
+  content: "";
+  width: min(74px, 100%);
+  height: 1px;
+  justify-self: center;
+  background: linear-gradient(90deg, transparent, var(--lumen-vertical-card-line), transparent);
+  box-shadow: 0 0 10px var(--lumen-vertical-card-glow);
+}
+
+.lumen-other-rooms,
+.lumen-arrival-previews {
+  display: grid;
+  gap: 1.15rem;
+  margin-top: clamp(1.75rem, 4vw, 2.75rem);
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.lumen-other-rooms__heading {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.9rem;
+  width: min(760px, 100%);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.lumen-other-rooms__heading span {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245, 220, 163, 0.75), transparent);
+}
+
+.lumen-other-rooms__heading h2 {
+  margin: 0;
+  color: #f5dca3;
+  font-family: var(--body-font);
+  font-size: clamp(0.82rem, 1.2vw, 0.95rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.lumen-other-rooms__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.9rem, 1.8vw, 1.25rem);
+}
+
+.lumen-other-rooms__mobile-controls {
+  display: none;
+}
+
+.lumen-other-rooms__indicators {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: min(42vw, 150px);
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(143, 216, 255, 0.22);
+  box-shadow: inset 0 0 8px rgba(90, 190, 255, 0.12);
+}
+
+.lumen-other-rooms__indicators::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--lumen-preview-progress, 25%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, #64dcff, #a9efff);
+  box-shadow: 0 0 14px rgba(90, 190, 255, 0.72);
+  transition: width 180ms ease;
+}
+
+.lumen-other-rooms__indicator {
+  display: none;
+}
+
+.lumen-arrival-previews .lumen-other-rooms__grid {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+  scrollbar-color: rgba(74, 190, 255, 0.95) rgba(7, 18, 42, 0.72);
+  scrollbar-width: thin;
+  scroll-padding-inline: 0.15rem;
+  scroll-snap-type: x proximity;
+}
+
+.lumen-arrival-previews .lumen-other-rooms__grid::-webkit-scrollbar {
+  height: 10px;
+}
+
+.lumen-arrival-previews .lumen-other-rooms__grid::-webkit-scrollbar-track {
+  border: 1px solid rgba(74, 190, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(7, 18, 42, 0.72);
+  box-shadow: inset 0 0 12px rgba(74, 190, 255, 0.08);
+}
+
+.lumen-arrival-previews .lumen-other-rooms__grid::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(7, 18, 42, 0.88);
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3fdcff, #58a8ff 58%, #8adfff);
+  box-shadow: 0 0 14px rgba(74, 190, 255, 0.72);
+}
+
+.lumen-arrival-previews .lumen-other-rooms__grid::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #7deaff, #6bb7ff 58%, #c4f5ff);
+}
+
+.lumen-arrival-previews .lumen-room-preview {
+  flex: 0 0 calc((100% - 2.7rem) / 4);
+  scroll-snap-align: start;
+}
+
+.lumen-room-preview {
+  appearance: none;
+  position: relative;
+  min-height: 132px;
+  aspect-ratio: 1.48 / 1;
+  overflow: hidden;
+  border: 0;
+  border-radius: 18px;
+  padding: 0;
+  color: var(--lumen-dashboard-text);
+  background: transparent;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.32);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, filter 180ms ease;
+}
+
+.lumen-room-preview:hover,
+.lumen-room-preview:focus-visible {
+  outline: none;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.36), 0 0 28px rgba(101, 168, 255, 0.16);
+  filter: brightness(1.06);
+  transform: translateY(-2px);
+}
+
+.lumen-room-preview-img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.02);
+}
+
+.lumen-room-preview-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(3, 7, 18, 0.05), rgba(3, 7, 18, 0.84)),
+    linear-gradient(90deg, rgba(3, 7, 18, 0.58), rgba(3, 7, 18, 0.08));
+  pointer-events: none;
+}
+
+.lumen-room-preview-copy {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.9rem;
+  left: 1rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.18rem;
+}
+
+.lumen-room-preview-element {
+  color: rgba(245, 220, 163, 0.86);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.lumen-room-preview-title {
+  color: #fff8e8;
+  font-family: var(--heading-font);
+  font-size: clamp(0.9rem, 1.15vw, 1.05rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+@media (min-width: 1200px) {
+  .lumen-dashboard,
+  .lumen-dashboard--aligned.is-sanctuary-active {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .lumen-room-sidebar {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 0;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .lumen-dashboard.is-arrival-active .lumen-room-sidebar {
+    grid-column: 1;
+  }
+
+  .lumen-dashboard.is-arrival-active .lumen-room-main {
+    grid-column: 2;
+  }
+
+  .lumen-dashboard.is-arrival-active .lumen-arrival-explore {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-top: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .lumen-dashboard.is-arrival-active .lumen-arrival-explore .lumen-other-rooms__grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(0.9rem, 1.4vw, 1.2rem);
+    overflow: visible;
+    padding-bottom: 0;
+    scroll-padding-inline: 0;
+    scroll-snap-type: none;
+  }
+
+  .lumen-dashboard.is-arrival-active .lumen-arrival-explore .lumen-room-preview {
+    width: 100%;
+    min-width: 0;
+    min-height: 150px;
+    height: auto;
+    flex: initial;
+    aspect-ratio: 1.35 / 1;
+    scroll-snap-align: none;
+  }
+
+  .lumen-room-main,
+  .lumen-sanctuary-dashboard-layout {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: clamp(1.25rem, 2.4vw, 2rem);
+  }
+
+  .lumen-sidebar-quote {
+    margin-top: clamp(2rem, 5vh, 4rem);
+  }
+
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-core,
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid,
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid--compact {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 2vw, 1.35rem);
+    align-items: start;
+  }
+
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-purpose-card,
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-questions-card,
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-seal-card,
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-panel {
+    height: auto;
+    min-height: unset;
+  }
+
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-purpose-card p:not(.lumen-room-panel__label) {
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-single-question-card {
+    min-height: 88px;
+  }
+
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-single-question-text {
+    font-size: clamp(0.9rem, 0.92vw, 1rem);
+    line-height: 1.35;
+  }
+
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-purpose-card,
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-questions-card {
+    min-height: 330px;
+    max-height: 330px;
+    padding: 1.25rem;
+  }
+
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-purpose-card .lumen-action-btn,
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-questions-card .lumen-action-btn {
+    min-height: 36px;
+    padding: 0.5rem 0.95rem;
+  }
+
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-seal-card {
+    min-height: 330px;
+    max-height: 330px;
+    justify-content: flex-end;
+    padding: 1.25rem;
+  }
+
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-seal-card h3 {
+    font-size: clamp(1.35rem, 1.7vw, 1.8rem);
+  }
+
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-seal-card p:not(.lumen-room-panel__label) {
+    font-size: 0.9rem;
+    line-height: 1.38;
+  }
+
+  .lumen-dashboard--aligned.is-sanctuary-active .lumen-other-rooms {
+    margin-top: clamp(0.75rem, 2vw, 1.25rem);
+  }
+}
+
+@media (max-width: 1199px) {
+  .lumen-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .lumen-room-sidebar {
+    position: relative;
+    top: auto;
+  }
+
+  .lumen-room-nav {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .lumen-room-nav__button {
+    flex: 0 0 min(260px, 78vw);
+    scroll-snap-align: start;
+  }
+
+  .lumen-room-sidebar__return,
+  .lumen-room-quote {
+    display: none;
+  }
+
+  .lumen-room-content-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .seal-panel {
+    grid-column: 1 / -1;
+  }
+
+  .lumen-other-rooms__grid {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: clamp(0.9rem, 1.8vw, 1.25rem);
+    padding: 0 0 0.25rem;
+    scroll-padding-inline: 0;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .lumen-other-rooms__grid::-webkit-scrollbar,
+  .lumen-arrival-previews .lumen-other-rooms__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .lumen-room-preview {
+    flex: 0 0 calc((100% - clamp(0.9rem, 1.8vw, 1.25rem)) / 2);
+    min-height: 170px;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .lumen-arrival-previews .lumen-room-preview {
+    flex-basis: calc((100% - clamp(0.9rem, 1.8vw, 1.25rem)) / 2);
+  }
+
+}
+
+@media (max-width: 1050px) {
+  .lumen-room-content-grid--compact {
+    grid-template-columns: 1fr;
+  }
+
+  .lumen-room-seal-card {
+    min-height: 320px;
+  }
+}
+
+@media (min-width: 721px) and (max-width: 1199px) {
+  .lumen-arrival-intro-carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    margin-top: 1.25rem;
+  }
+
+  .lumen-arrival-intro-track {
+    display: flex;
+    gap: 0;
+    transition: transform 320ms ease;
+    will-change: transform;
+  }
+
+  .lumen-arrival-intro-slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+    padding: 0;
+  }
+
+  .lumen-arrival-intro-slide > article,
+  .lumen-arrival-intro-slide > .lumen-arrival-info-card {
+    width: min(620px, 100%);
+    margin: 0 auto;
+  }
+
+  .lumen-arrival-intro-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .lumen-arrival-intro-prev,
+  .lumen-arrival-intro-next {
+    border: 0;
+    padding: 0;
+    color: #72e6ff;
+    background: transparent;
+    box-shadow: none;
+    cursor: pointer;
+    font: inherit;
+    font-size: 2rem;
+    line-height: 1;
+    text-shadow:
+      0 0 10px rgba(114, 230, 255, 0.8),
+      0 0 22px rgba(114, 230, 255, 0.35);
+  }
+
+  .lumen-arrival-intro-prev:focus-visible,
+  .lumen-arrival-intro-next:focus-visible {
+    outline: 2px solid rgba(143, 216, 255, 0.62);
+    outline-offset: 4px;
+  }
+
+  .lumen-arrival-intro-dots {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: min(42vw, 150px);
+    height: 4px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(143, 216, 255, 0.22);
+    box-shadow: inset 0 0 8px rgba(90, 190, 255, 0.12);
+  }
+
+  .lumen-arrival-intro-dots::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--lumen-carousel-progress, 33.333%);
+    border-radius: inherit;
+    background: linear-gradient(90deg, #64dcff, #a9efff);
+    box-shadow: 0 0 14px rgba(90, 190, 255, 0.72);
+    transition: width 180ms ease;
+  }
+
+  .lumen-arrival-intro-dots span {
+    display: none;
+  }
+
+  .lumen-other-rooms__mobile-controls {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    margin-top: 0.35rem;
+  }
+
+  .lumen-other-rooms__mobile-controls button {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    color: #66dfff;
+    background: transparent;
+    box-shadow: none;
+    cursor: pointer;
+  }
+
+  .lumen-other-rooms__mobile-controls button:focus-visible {
+    outline: 2px solid rgba(143, 216, 255, 0.62);
+    outline-offset: 4px;
+  }
+
+  .lumen-other-rooms__mobile-controls img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    filter: brightness(0) saturate(100%) invert(77%) sepia(75%) saturate(1325%) hue-rotate(166deg) brightness(103%) contrast(104%);
+  }
+
+  .lumen-room-content-grid.lumen-sanctuary-card-carousel,
+  .lumen-room-content-grid--compact.lumen-sanctuary-card-carousel,
+  .lumen-room-core.lumen-sanctuary-card-carousel {
+    display: block;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .lumen-sanctuary-card-track {
+    display: flex;
+    transition: transform 320ms ease;
+    will-change: transform;
+  }
+
+  .lumen-sanctuary-slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+    padding: 0;
+  }
+
+  .lumen-sanctuary-slide > .lumen-room-panel,
+  .lumen-sanctuary-slide > .lumen-guidance-panel,
+  .lumen-sanctuary-slide > .lumen-room-seal-card {
+    width: min(760px, 100%);
+    min-height: 340px;
+    margin: 0 auto;
+  }
+
+  .lumen-sanctuary-carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .lumen-sanctuary-carousel-prev,
+  .lumen-sanctuary-carousel-next {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    color: #72e6ff;
+    background: transparent;
+    box-shadow: none;
+    cursor: pointer;
+    font: inherit;
+    font-size: 2rem;
+    line-height: 1;
+    text-shadow:
+      0 0 10px rgba(114, 230, 255, 0.8),
+      0 0 22px rgba(114, 230, 255, 0.35);
+  }
+
+  .lumen-sanctuary-carousel-prev:focus-visible,
+  .lumen-sanctuary-carousel-next:focus-visible {
+    outline: 2px solid rgba(143, 216, 255, 0.62);
+    outline-offset: 4px;
+  }
+
+  .lumen-sanctuary-carousel-dots {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: min(42vw, 150px);
+    height: 4px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(143, 216, 255, 0.22);
+    box-shadow: inset 0 0 8px rgba(90, 190, 255, 0.12);
+  }
+
+  .lumen-sanctuary-carousel-dots::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--lumen-carousel-progress, 33.333%);
+    border-radius: inherit;
+    background: linear-gradient(90deg, #64dcff, #a9efff);
+    box-shadow: 0 0 14px rgba(90, 190, 255, 0.72);
+    transition: width 180ms ease;
+  }
+
+  .lumen-sanctuary-carousel-dots span {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .lumen-dashboard {
+    width: min(100% - 24px, 1480px);
+    padding-top: clamp(5.5rem, 11vh, 6.5rem);
+    gap: 1rem;
+  }
+
+  .lumen-room-sidebar,
+  .lumen-room-hero-card,
+  .lumen-room-panel,
+  .lumen-other-rooms {
+    border-radius: 20px;
+  }
+
+  .lumen-room-sidebar {
+    padding: 1rem;
+  }
+
+  .lumen-room-hero-card {
+    min-height: 360px;
+    background-image:
+      linear-gradient(180deg, rgba(3, 7, 18, 0.36), rgba(3, 7, 18, 0.9)),
+      var(--room-hero-image);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .lumen-room-hero-card__content {
+    padding: 1.15rem;
+  }
+
+  .lumen-room-hero-card h2 {
+    font-size: clamp(2.15rem, 11vw, 3.35rem);
+  }
+
+  .lumen-room-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lumen-sanctuary-carousel-controls {
+    display: none;
+  }
+
+  .lumen-sanctuary-card-track {
+    display: block;
+    transform: none !important;
+  }
+
+  .lumen-sanctuary-slide {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lumen-sanctuary-slide + .lumen-sanctuary-slide {
+    margin-top: 1rem;
+  }
+
+  .lumen-guidance-purpose,
+  .lumen-guidance-questions {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .lumen-purpose-note {
+    width: 100%;
+  }
+
+  .lumen-guidance-purpose .lumen-action-btn,
+  .lumen-question-cycle-btn {
+    align-self: center;
+  }
+
+  .lumen-single-question-card {
+    min-height: 84px;
+    padding: 0;
+  }
+
+  .lumen-single-question-text {
+    font-size: 0.95rem;
+    line-height: 1.38;
+  }
+
+  .lumen-question-cycle-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .lumen-arrival-hero {
+    min-height: 280px;
+    padding: 1.5rem;
+  }
+
+  .lumen-arrival-hero h2 {
+    font-size: clamp(3rem, 14vw, 4.6rem);
+  }
+
+  .lumen-arrival-intro-track {
+    display: block;
+    transform: none !important;
+  }
+
+  .lumen-arrival-intro-slide {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lumen-arrival-intro-slide + .lumen-arrival-intro-slide {
+    margin-top: 1rem;
+  }
+
+  .lumen-arrival-intro-controls {
+    display: none;
+  }
+
+  .seal-panel {
+    grid-column: auto;
+  }
+
+  .lumen-room-panel {
+    min-height: 0;
+  }
+
+  .lumen-other-rooms__grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding: 0 calc((100% - min(310px, 82vw)) / 2) 0.2rem;
+    scroll-padding-inline: calc((100% - min(310px, 82vw)) / 2);
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .lumen-other-rooms__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .lumen-arrival-previews .lumen-other-rooms__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .lumen-room-preview {
+    flex: 0 0 min(310px, 82vw);
+    min-height: 180px;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+
+  .lumen-arrival-previews .lumen-room-preview {
+    flex-basis: min(310px, 82vw);
+  }
+
+  .lumen-other-rooms__mobile-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    margin-top: 0.35rem;
+  }
+
+  .lumen-other-rooms__mobile-controls button {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    color: #66dfff;
+    background: transparent;
+    box-shadow: none;
+    cursor: pointer;
+  }
+
+  .lumen-other-rooms__mobile-controls button:focus-visible {
+    outline: 2px solid rgba(143, 216, 255, 0.62);
+    outline-offset: 4px;
+  }
+
+  .lumen-other-rooms__mobile-controls img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    filter: brightness(0) saturate(100%) invert(77%) sepia(75%) saturate(1325%) hue-rotate(166deg) brightness(103%) contrast(104%);
+  }
+}
+
+@media (max-width: 1199px) {
+  .lumen-arrival-intro-carousel,
+  .lumen-room-content-grid.lumen-sanctuary-card-carousel,
+  .lumen-room-content-grid--compact.lumen-sanctuary-card-carousel,
+  .lumen-room-core.lumen-sanctuary-card-carousel {
+    overflow: visible;
+    width: 100%;
+  }
+
+  .lumen-arrival-intro-track,
+  .lumen-sanctuary-card-track {
+    display: flex;
+    gap: clamp(1rem, 3vw, 1.35rem);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    padding: 0 0 0.7rem;
+    scroll-padding-inline: 0;
+    scroll-snap-type: x mandatory;
+    scrollbar-color: rgba(108, 213, 255, 0.88) rgba(9, 24, 54, 0.62);
+    scrollbar-width: thin;
+    transform: none !important;
+    transition: none;
+    will-change: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .lumen-arrival-intro-track::-webkit-scrollbar,
+  .lumen-sanctuary-card-track::-webkit-scrollbar {
+    display: block;
+    height: 8px;
+  }
+
+  .lumen-arrival-intro-track::-webkit-scrollbar-track,
+  .lumen-sanctuary-card-track::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(7, 18, 42, 0.34), rgba(16, 45, 85, 0.72), rgba(7, 18, 42, 0.34));
+    box-shadow: inset 0 0 8px rgba(95, 175, 255, 0.12);
+  }
+
+  .lumen-arrival-intro-track::-webkit-scrollbar-thumb,
+  .lumen-sanctuary-card-track::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(91, 187, 255, 0.9), rgba(178, 235, 255, 0.98));
+    box-shadow:
+      0 0 10px rgba(96, 204, 255, 0.46),
+      inset 0 0 6px rgba(255, 255, 255, 0.22);
+  }
+
+  .lumen-arrival-intro-track::-webkit-scrollbar-thumb:hover,
+  .lumen-sanctuary-card-track::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, rgba(121, 213, 255, 0.96), rgba(218, 248, 255, 1));
+    box-shadow:
+      0 0 14px rgba(110, 222, 255, 0.62),
+      inset 0 0 6px rgba(255, 255, 255, 0.28);
+  }
+
+  .lumen-arrival-intro-slide,
+  .lumen-sanctuary-slide {
+    flex: 0 0 clamp(320px, 42vw, 380px);
+    width: auto;
+    min-width: 0;
+    padding: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .lumen-arrival-intro-slide + .lumen-arrival-intro-slide,
+  .lumen-sanctuary-slide + .lumen-sanctuary-slide {
+    margin-top: 0;
+  }
+
+  .lumen-arrival-intro-slide > article,
+  .lumen-arrival-intro-slide > .lumen-arrival-info-card,
+  .lumen-sanctuary-slide > .lumen-room-panel,
+  .lumen-sanctuary-slide > .lumen-guidance-panel,
+  .lumen-sanctuary-slide > .lumen-room-seal-card {
+    width: 100%;
+    min-height: 330px;
+    margin: 0;
+  }
+
+  .lumen-arrival-intro-controls,
+  .lumen-sanctuary-carousel-controls {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .lumen-arrival-intro-track,
+  .lumen-sanctuary-card-track {
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+    scroll-padding-inline: 0;
+  }
+
+  .lumen-arrival-intro-slide,
+  .lumen-sanctuary-slide {
+    flex-basis: min(88vw, 340px);
+  }
+
+  .lumen-arrival-intro-slide > article,
+  .lumen-arrival-intro-slide > .lumen-arrival-info-card,
+  .lumen-sanctuary-slide > .lumen-room-panel,
+  .lumen-sanctuary-slide > .lumen-guidance-panel,
+  .lumen-sanctuary-slide > .lumen-room-seal-card {
+    min-height: 330px;
+  }
+}
+
 .lumen-archive {
   width: min(100%, 1180px);
   margin: 0 auto;
@@ -886,9 +2935,27 @@ body.blood-moon-mode .lumen-name-form {
   .lumen-name-entry__card,
   .lumen-name-entry__form input,
   .lumen-name-entry__form button,
-  .lumen-name-entry__ornament {
+  .lumen-name-entry__ornament,
+  .lumen-arrival-intro-grid .lumen-arrival-panel,
+  .lumen-room-content-grid .lumen-room-panel,
+  .lumen-arrival-intro-grid .lumen-arrival-panel::before,
+  .lumen-arrival-intro-grid .lumen-arrival-panel::after,
+  .lumen-room-content-grid .lumen-room-panel::before,
+  .lumen-room-content-grid .lumen-room-panel::after,
+  body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn,
+  body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn::before {
     animation: none;
     transition: none;
+  }
+
+  .lumen-arrival-intro-grid .lumen-arrival-panel:hover,
+  .lumen-arrival-intro-grid .lumen-arrival-panel:focus-within,
+  .lumen-room-content-grid .lumen-room-panel:hover,
+  .lumen-room-content-grid .lumen-room-panel:focus-within,
+  body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:hover,
+  body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible,
+  body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:active {
+    transform: none;
   }
 }
 
@@ -1614,11 +3681,13 @@ body.blood-moon-mode .lumen-sanctuary {
 
 .sanctuary-room-showcase__offers {
   display: grid;
+  justify-items: center;
   gap: 0.8rem;
   margin: clamp(1.35rem, 2.8vw, 1.8rem) 0 clamp(1.45rem, 3vw, 2rem);
 }
 
 .sanctuary-room-showcase__offers p {
+  width: min(100%, 440px);
   margin: 0;
   color: var(--lumen-selector-accent-strong);
   font-family: var(--body-font);
@@ -1626,16 +3695,17 @@ body.blood-moon-mode .lumen-sanctuary {
   font-weight: 900;
   letter-spacing: 0.16em;
   line-height: 1.2;
+  text-align: center;
   text-transform: uppercase;
 }
 
 .sanctuary-offers {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
   gap: clamp(0.65rem, 1.4vw, 1rem);
-  width: min(100%, 390px);
+  width: min(100%, 440px);
   max-width: 100%;
-  margin: 0;
+  margin-inline: auto;
 }
 
 .sanctuary-offer-tile {
@@ -2199,6 +4269,376 @@ body.blood-moon-mode .lumen-sanctuary {
   text-shadow: 0 0 12px var(--lumen-selector-glow);
 }
 
+body.lumen-room-page .tarot-background {
+  background-color: #040813;
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 76% 28%, rgba(255, 255, 255, 0.07) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 45% 72%, rgba(255, 255, 255, 0.06) 0 1px, transparent 1.5px),
+    linear-gradient(180deg, #050915 0%, #07111d 48%, #030610 100%);
+  background-position: center;
+  background-size: 180px 180px, 240px 240px, 320px 320px, cover;
+}
+
+body.lumen-room-page .tarot-background::before {
+  background: none;
+  opacity: 0;
+  animation: none;
+}
+
+body.lumen-room-page .tarot-background::after {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.22), transparent 28%, rgba(0, 0, 0, 0.38));
+}
+
+body.lumen-room-page .celestial-wash {
+  background: none;
+  opacity: 0;
+  animation: none;
+}
+
+body.lumen-room-page .starfield {
+  opacity: 0.28;
+  background-image:
+    radial-gradient(circle, rgba(229, 235, 255, 0.72) 0 0.8px, transparent 1.4px),
+    radial-gradient(circle, rgba(183, 216, 234, 0.42) 0 0.8px, transparent 1.5px),
+    radial-gradient(circle, rgba(150, 119, 224, 0.34) 0 0.8px, transparent 1.6px);
+  background-position:
+    6vw 11vh,
+    16vw 20vh,
+    4vw 4vh;
+  background-size:
+    132px 151px,
+    191px 227px,
+    271px 313px;
+  animation: moonStarFloat 56s linear infinite;
+}
+
+body.lumen-room-page .mystic-mist {
+  background: none;
+  opacity: 0;
+  animation: none;
+}
+
+body.lumen-room-page .lunar-orb {
+  opacity: 0;
+  animation: none;
+}
+
+body.lumen-room-page .moon-particles {
+  opacity: 0.2;
+  animation: moonParticleFloat 70s linear infinite;
+}
+
+body.lumen-room-page .lumen-sanctuary-detail {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  background-color: #040813;
+  background-image:
+    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 76% 28%, rgba(255, 255, 255, 0.07) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 45% 72%, rgba(255, 255, 255, 0.06) 0 1px, transparent 1.5px),
+    linear-gradient(180deg, #050915 0%, #07111d 48%, #030610 100%);
+  background-position: center;
+  background-repeat: repeat, repeat, repeat, no-repeat;
+  background-size: 180px 180px, 240px 240px, 320px 320px, cover;
+}
+
+body.lumen-room-page .lumen-sanctuary-detail::before,
+body.lumen-room-page .lumen-sanctuary-detail::after {
+  content: none;
+  display: none;
+}
+
+body.lumen-room-page .lumen-sanctuary-detail > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.lumen-room-page .sanctuary-scene-overlay {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: clamp(2rem, 6vh, 4.5rem);
+  width: min(1120px, calc(100% - 40px));
+  max-width: none;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: clamp(7rem, 11vh, 9rem) 0 clamp(4rem, 8vh, 7rem);
+}
+
+body.lumen-room-page .sanctuary-hero {
+  --room-hero-image: none;
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: clamp(0.75rem, 1.6vw, 1.15rem);
+  width: min(980px, 100%);
+  min-height: clamp(360px, 46vh, 560px);
+  margin: 0 auto;
+  border: 1px solid rgba(255, 235, 190, 0.26);
+  border-radius: 32px;
+  overflow: hidden;
+  padding: clamp(3rem, 7vh, 5rem) clamp(1.25rem, 4vw, 3rem);
+  background:
+    linear-gradient(90deg, rgba(3, 6, 15, 0.86), rgba(3, 6, 15, 0.48), rgba(3, 6, 15, 0.78)),
+    linear-gradient(180deg, rgba(3, 6, 15, 0.28), rgba(3, 6, 15, 0.78)),
+    var(--room-hero-image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
+  text-align: center;
+  align-content: center;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+}
+
+body.lumen-room-page .sanctuary-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.lumen-room-page .archive-room-placeholder__kicker {
+  color: color-mix(in srgb, var(--lumen-selector-accent-strong) 88%, white);
+  font-family: var(--logo-font);
+  font-size: clamp(0.74rem, 1vw, 0.86rem);
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-shadow: 0 0 18px rgba(0, 0, 0, 0.38);
+}
+
+body.lumen-room-page .archive-room-placeholder__title {
+  max-width: 100%;
+  color: #fff8e7;
+  font-family: var(--heading-font);
+  font-size: clamp(2.45rem, 5.8vw, 5.35rem);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 0.98;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow:
+    0 0 28px color-mix(in srgb, var(--lumen-selector-glow) 34%, transparent),
+    0 6px 30px rgba(0, 0, 0, 0.42);
+}
+
+body.lumen-room-page .archive-room-placeholder__meta {
+  color: color-mix(in srgb, #fff2d1 86%, var(--lumen-selector-accent-strong));
+  font-family: var(--font-body-serif);
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  font-style: italic;
+  line-height: 1.35;
+  opacity: 0.94;
+}
+
+body.lumen-room-page .archive-room-placeholder__copy {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 58rem;
+  color: rgba(255, 246, 224, 0.9);
+  font-family: var(--font-body-serif);
+  font-size: clamp(1rem, 1.45vw, 1.24rem);
+  line-height: 1.55;
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.38);
+}
+
+body.lumen-room-page .archive-room-placeholder__copy span:not(:first-child) {
+  font-style: italic;
+  opacity: 0.88;
+}
+
+body.lumen-room-page .archive-room-placeholder__keyline {
+  width: min(420px, 62vw);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--lumen-selector-accent-strong) 72%, transparent), transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--lumen-selector-glow) 42%, transparent);
+}
+
+body.lumen-room-page .archive-room-placeholder__back {
+  display: inline-flex;
+  justify-self: center;
+  margin: 0.35rem auto 0;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--lumen-selector-accent-strong) 62%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--lumen-selector-accent-strong) 62%, transparent);
+  border-radius: 0;
+  padding: 0.56rem 0.35rem;
+  color: color-mix(in srgb, #fff2d1 86%, var(--lumen-selector-accent-strong));
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+body.lumen-room-page .archive-room-placeholder__back:hover,
+body.lumen-room-page .archive-room-placeholder__back:focus-visible {
+  border-color: color-mix(in srgb, var(--lumen-selector-accent-strong) 88%, white);
+  color: #fff7d8;
+  background: transparent;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--lumen-selector-glow) 22%, transparent);
+}
+
+body.lumen-room-page .sanctuary-actions-region,
+body.lumen-room-page .lumen-sanctuary-interior,
+body.lumen-room-page .lumen-interior-shell {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.lumen-room-page .lumen-interior-shell {
+  gap: 0;
+}
+
+body.lumen-room-page .lumen-interior-panel-grid {
+  grid-template-columns: repeat(2, minmax(0, 300px));
+  gap: clamp(1.15rem, 3vw, 2.25rem);
+  align-items: stretch;
+  justify-content: center;
+  width: min(100%, 680px);
+  margin: 0 auto;
+  padding-top: 0;
+}
+
+body.lumen-room-page .lumen-interior-panel {
+  min-height: clamp(215px, 20vw, 250px);
+  border: 1px solid rgba(255, 245, 214, 0.22);
+  border-radius: 22px;
+  padding: clamp(3.35rem, 4vw, 3.9rem) clamp(1rem, 2vw, 1.35rem) clamp(1rem, 2vw, 1.25rem);
+  background: rgba(5, 8, 18, 0.24);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+body.lumen-room-page .lumen-interior-panel__badge {
+  width: 3.15rem;
+  height: 3.15rem;
+  top: -1.55rem;
+}
+
+body.lumen-room-page .lumen-interior-panel__badge {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--lumen-selector-accent-strong) 18%, transparent), transparent 62%),
+    rgba(5, 8, 18, 0.48);
+}
+
+body.lumen-room-page .lumen-interior-panel__label {
+  font-size: clamp(0.64rem, 0.9vw, 0.72rem);
+  letter-spacing: 0.22em;
+}
+
+body.lumen-room-page .lumen-interior-panel h3,
+body.lumen-room-page .lumen-interior-panel blockquote {
+  font-size: clamp(1.35rem, 2.35vw, 2rem);
+  line-height: 1.08;
+}
+
+body.lumen-room-page .lumen-interior-panel__copy {
+  font-size: clamp(0.88rem, 1vw, 0.98rem);
+  line-height: 1.42;
+}
+
+body.lumen-room-page .lumen-interior-panel__divider {
+  width: min(100%, 170px);
+  margin-block: 0;
+}
+
+body.lumen-room-page .lumen-interior-action {
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  color: color-mix(in srgb, var(--lumen-selector-accent-strong) 82%, #fff3bd);
+  background: transparent;
+  box-shadow: none;
+  text-shadow: 0 0 14px color-mix(in srgb, var(--lumen-selector-glow) 42%, transparent);
+  font-size: clamp(1rem, 1.35vw, 1.12rem);
+  line-height: 1.2;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--lumen-selector-accent-strong) 52%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.28em;
+}
+
+body.lumen-room-page .lumen-interior-action:hover,
+body.lumen-room-page .lumen-interior-action:focus-visible {
+  border: 0;
+  color: #fff1b8;
+  outline: none;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+body.lumen-room-page .lumen-sanctuary-detail.sanctuary-water {
+  --lumen-selector-glow: rgba(92, 186, 255, 0.44);
+}
+
+body.lumen-room-page .lumen-sanctuary-detail.sanctuary-air {
+  --lumen-selector-glow: rgba(180, 255, 245, 0.36);
+}
+
+body.lumen-room-page .lumen-sanctuary-detail.sanctuary-fire {
+  --lumen-selector-glow: rgba(255, 148, 54, 0.42);
+}
+
+body.lumen-room-page .lumen-sanctuary-detail.sanctuary-earth {
+  --lumen-selector-glow: rgba(139, 207, 122, 0.38);
+}
+
+body.lumen-room-page .lumen-sanctuary-detail.sanctuary-mirror {
+  --lumen-selector-glow: rgba(210, 190, 255, 0.4);
+}
+
+@media (max-width: 768px) {
+  body.lumen-room-page .sanctuary-scene-overlay {
+    justify-content: flex-start;
+    gap: 1.35rem;
+    width: min(calc(100% - 28px), 680px);
+    min-height: 100vh;
+    padding: 88px 0 clamp(34px, 8vw, 56px);
+  }
+
+  body.lumen-room-page .sanctuary-hero {
+    gap: 0.7rem;
+  }
+
+  body.lumen-room-page .archive-room-placeholder__title {
+    font-size: clamp(1.65rem, 8.4vw, 3.45rem);
+  }
+
+  body.lumen-room-page .archive-room-placeholder__meta {
+    font-size: clamp(1rem, 5vw, 1.25rem);
+  }
+
+  body.lumen-room-page .archive-room-placeholder__copy {
+    font-size: 0.98rem;
+  }
+
+  body.lumen-room-page .lumen-interior-panel-grid {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+    width: min(100%, 320px);
+  }
+
+  body.lumen-room-page .lumen-interior-panel {
+    min-height: 215px;
+    padding: 3.35rem 1.2rem 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body.lumen-room-page .lumen-sanctuary-detail {
+    min-height: 100vh;
+  }
+}
+
 body.is-lumen-image-lightbox-open {
   overflow: hidden;
 }
@@ -2277,8 +4717,9 @@ body.is-lumen-image-lightbox-open {
   width: auto;
   height: auto;
   object-fit: contain;
-  border-radius: 18px;
-  box-shadow: 0 0 28px color-mix(in srgb, var(--navbar-glow) 44%, transparent);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 body.sun-mode .lumen-archive__hero,
@@ -2553,6 +4994,17 @@ body.moon-mode .lumen-sanctuary-viewer {
 }
 
 @media (max-width: 640px) {
+  .lumen-room-nav__icon {
+    width: 46px;
+    height: 46px;
+    flex-basis: 46px;
+  }
+
+  .lumen-room-nav__icon img {
+    width: 38px;
+    height: 38px;
+  }
+
   .lumen-archive {
     gap: 16px;
   }
@@ -3248,4 +5700,718 @@ body.moon-mode .lumen-sanctuary-viewer {
   .lumen-sanctuary-tab__copy em {
     font-size: 0.8rem;
   }
+}
+
+body.lumen-archive-page {
+  --lumen-font-title: "Cormorant Garamond", serif;
+  --lumen-font-body: "Lora", serif;
+  --lumen-font-ui: "Quicksand", sans-serif;
+  --lumen-font-button: "Manrope", sans-serif;
+}
+
+body.lumen-archive-page .lumen-dashboard h1,
+body.lumen-archive-page .lumen-dashboard h2,
+body.lumen-archive-page .lumen-dashboard h3,
+body.lumen-archive-page .lumen-sidebar-header h2,
+body.lumen-archive-page .lumen-room-hero-card h2,
+body.lumen-archive-page .lumen-arrival-hero h2,
+body.lumen-archive-page .lumen-arrival-welcome-panel h2,
+body.lumen-archive-page .lumen-room-nav__copy strong,
+body.lumen-archive-page .lumen-room-preview-title,
+body.lumen-archive-page .lumen-room-seal-content h3,
+body.lumen-archive-page .lumen-room-panel h3 {
+  font-family: var(--lumen-font-title);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+body.lumen-archive-page .lumen-dashboard p,
+body.lumen-archive-page .lumen-dashboard li,
+body.lumen-archive-page .lumen-dashboard blockquote,
+body.lumen-archive-page .lumen-room-panel,
+body.lumen-archive-page .lumen-single-question-text,
+body.lumen-archive-page .lumen-arrival-intro-grid,
+body.lumen-archive-page .lumen-sidebar-quote {
+  font-family: var(--lumen-font-body);
+  font-weight: 400;
+}
+
+body.lumen-archive-page .lumen-dashboard button,
+body.lumen-archive-page .lumen-room-panel__label,
+body.lumen-archive-page .lumen-room-hero-card__element,
+body.lumen-archive-page .lumen-room-preview-element,
+body.lumen-archive-page .lumen-action-btn,
+body.lumen-archive-page .lumen-room-number-pill,
+body.lumen-archive-page .lumen-other-rooms__heading h2 {
+  font-family: var(--lumen-font-ui);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+body.lumen-archive-page .lumen-action-btn,
+body.lumen-archive-page .lumen-journal-btn,
+body.lumen-archive-page .lumen-question-cycle-btn,
+body.lumen-archive-page .lumen-unseal-scroll-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 42px;
+  border: 1px solid rgba(145, 205, 255, 0.46);
+  border-radius: 14px;
+  padding: 0.68rem 1.05rem;
+  color: #fff8e8;
+  background:
+    linear-gradient(135deg, rgba(48, 128, 218, 0.36), rgba(8, 18, 42, 0.88));
+  box-shadow:
+    inset 0 0 18px rgba(125, 200, 255, 0.12),
+    0 0 22px rgba(82, 170, 255, 0.18);
+  cursor: pointer;
+  font-family: var(--lumen-font-button);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  line-height: 1.1;
+  text-transform: none;
+}
+
+body.lumen-archive-page .lumen-action-btn:hover,
+body.lumen-archive-page .lumen-journal-btn:hover,
+body.lumen-archive-page .lumen-question-cycle-btn:hover,
+body.lumen-archive-page .lumen-unseal-scroll-btn:hover {
+  border-color: rgba(200, 232, 255, 0.72);
+  background:
+    linear-gradient(135deg, rgba(65, 150, 245, 0.42), rgba(10, 22, 52, 0.92));
+  box-shadow:
+    inset 0 0 22px rgba(125, 200, 255, 0.16),
+    0 0 30px rgba(82, 170, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+body.lumen-archive-page .lumen-action-btn:active,
+body.lumen-archive-page .lumen-journal-btn:active,
+body.lumen-archive-page .lumen-question-cycle-btn:active,
+body.lumen-archive-page .lumen-unseal-scroll-btn:active {
+  transform: translateY(0);
+}
+
+body.lumen-archive-page .lumen-action-btn img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 42px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.68rem 1.18rem;
+  color: #fff8ea;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(104, 185, 255, 0.24), transparent 44%),
+    linear-gradient(135deg, rgba(37, 85, 135, 0.95), rgba(15, 42, 78, 0.95) 56%, rgba(8, 20, 48, 0.94));
+  box-shadow:
+    0 0 14px rgba(80, 170, 255, 0.22),
+    0 8px 24px rgba(30, 80, 140, 0.16),
+    inset 0 1px 0 rgba(175, 222, 255, 0.12),
+    inset 0 -10px 22px rgba(5, 15, 34, 0.16);
+  font-size: 0.82rem;
+  letter-spacing: 0.055em;
+  line-height: 1.15;
+  text-shadow: 0 1px 8px rgba(4, 14, 32, 0.42);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    background 220ms ease,
+    filter 220ms ease;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(120deg, transparent 18%, rgba(95, 190, 255, 0.18) 42%, transparent 68%);
+  opacity: 0;
+  transform: translateX(-28%);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible {
+  border: 0;
+  outline: none;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(112, 198, 255, 0.3), transparent 44%),
+    linear-gradient(135deg, rgba(43, 105, 164, 0.97), rgba(17, 52, 94, 0.95) 56%, rgba(9, 24, 54, 0.95));
+  box-shadow:
+    0 0 24px rgba(110, 190, 255, 0.35),
+    0 10px 26px rgba(30, 90, 150, 0.18),
+    inset 0 1px 0 rgba(180, 228, 255, 0.14),
+    inset 0 -10px 24px rgba(5, 15, 34, 0.14);
+  filter: saturate(1.06);
+  transform: translateY(-2px);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:hover::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible::before {
+  opacity: 1;
+  transform: translateX(18%);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible {
+  box-shadow:
+    0 0 0 3px rgba(80, 170, 255, 0.14),
+    0 0 0 5px rgba(108, 213, 255, 0.24),
+    0 0 28px rgba(110, 190, 255, 0.34),
+    inset 0 1px 0 rgba(180, 228, 255, 0.14);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:active {
+  transform: translateY(0);
+  box-shadow:
+    0 0 14px rgba(80, 170, 255, 0.2),
+    inset 0 1px 0 rgba(175, 222, 255, 0.1),
+    inset 0 8px 18px rgba(5, 15, 34, 0.18);
+}
+
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-action-btn {
+  min-height: 42px;
+  padding: 0.68rem 1.18rem;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-question-cycle-btn {
+  white-space: nowrap;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn img {
+  filter:
+    brightness(1.45)
+    sepia(0.22)
+    saturate(1.2)
+    drop-shadow(0 0 8px rgba(245, 220, 163, 0.42));
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:focus-within,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:focus-within,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:focus-within {
+  transform: none;
+  box-shadow: none;
+  filter: none;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:hover::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:hover::after,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:focus-within::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:focus-within::after,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:hover::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:hover::after,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:focus-within::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:focus-within::after,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:hover::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:hover::after,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:focus-within::before,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:focus-within::after {
+  box-shadow: none;
+  filter: none;
+  opacity: 0.52;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-action-btn {
+  min-height: 44px;
+  border: 1px solid rgba(120, 175, 230, 0.36);
+  border-radius: 12px;
+  padding: 0.78rem 1.28rem;
+  color: #fff8ea;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.055), transparent 48%),
+    rgba(20, 44, 72, 0.46);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  filter: none;
+  text-shadow: none;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn::before {
+  display: none;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-journal-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-question-cycle-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-unseal-scroll-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:hover .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:hover .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:hover .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:focus-within .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:focus-within .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:focus-within .lumen-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-journal-btn:focus-visible,
+body.lumen-archive-page .lumen-room-content-grid .lumen-question-cycle-btn:focus-visible,
+body.lumen-archive-page .lumen-room-content-grid .lumen-unseal-scroll-btn:focus-visible,
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible {
+  border: 1px solid rgba(150, 205, 255, 0.62);
+  outline: none;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), transparent 48%),
+    rgba(48, 91, 135, 0.46);
+  box-shadow:
+    inset 0 1px 0 rgba(215, 240, 255, 0.14),
+    inset 0 0 18px rgba(110, 180, 255, 0.08);
+  filter: none;
+  transform: translateY(-1px);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:focus-visible {
+  outline: 2px solid rgba(190, 225, 255, 0.78);
+  outline-offset: 3px;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn:active,
+body.lumen-archive-page .lumen-room-content-grid .lumen-journal-btn:active,
+body.lumen-archive-page .lumen-room-content-grid .lumen-question-cycle-btn:active,
+body.lumen-archive-page .lumen-room-content-grid .lumen-unseal-scroll-btn:active {
+  border-color: rgba(150, 205, 255, 0.56);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.045), transparent 48%),
+    rgba(36, 75, 116, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(215, 240, 255, 0.1),
+    inset 0 8px 18px rgba(5, 15, 34, 0.16);
+  transform: translateY(1px);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-action-btn img {
+  filter: none;
+}
+
+body.lumen-archive-page .lumen-room-hero-card h2 {
+  font-size: clamp(2.7rem, 5.4vw, 5.1rem);
+  line-height: 0.9;
+}
+
+body.lumen-archive-page .lumen-arrival-hero h2 {
+  font-size: clamp(3.4rem, 7vw, 6rem);
+  line-height: 0.92;
+}
+
+body.lumen-archive-page .lumen-sidebar-header h2 {
+  font-size: clamp(2rem, 2.4vw, 2.6rem);
+  line-height: 1;
+}
+
+body.lumen-archive-page .lumen-room-nav__copy strong {
+  font-size: 1.05rem;
+  line-height: 1.08;
+}
+
+body.lumen-archive-page .lumen-room-panel p,
+body.lumen-archive-page .lumen-room-panel li {
+  font-size: 1rem;
+  line-height: 1.62;
+}
+
+body.lumen-archive-page .lumen-room-preview-title {
+  font-size: 1rem;
+  line-height: 1.05;
+}
+
+body.lumen-archive-page .lumen-room-preview-element {
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1199px) {
+  body.lumen-archive-page .lumen-dashboard,
+  body.lumen-archive-page .lumen-dashboard--aligned {
+    display: block;
+    width: min(100% - 24px, 760px);
+    margin: 0 auto;
+  }
+
+  body.lumen-archive-page .lumen-room-sidebar {
+    position: relative;
+    top: auto;
+    display: block;
+    height: auto;
+    min-height: 0;
+    align-self: auto;
+    margin: 0 0 1rem;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  body.lumen-archive-page .lumen-sidebar-header,
+  body.lumen-archive-page .lumen-sidebar-quote,
+  body.lumen-archive-page .lumen-sidebar-return,
+  body.lumen-archive-page .lumen-return-archive,
+  body.lumen-archive-page .lumen-room-sidebar__return,
+  body.lumen-archive-page .lumen-room-quote {
+    display: none;
+  }
+
+  body.lumen-archive-page .lumen-sidebar-nav-area,
+  body.lumen-archive-page .lumen-room-nav {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.25rem 0 0.75rem;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.lumen-archive-page .lumen-sidebar-nav-area::-webkit-scrollbar,
+  body.lumen-archive-page .lumen-room-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.lumen-archive-page .lumen-room-nav__button {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 150px;
+    max-width: 190px;
+    min-height: 58px;
+    height: 58px;
+    border-radius: 18px;
+    padding: 0.55rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    scroll-snap-align: start;
+  }
+
+  body.lumen-archive-page .lumen-room-nav__button.is-active,
+  body.lumen-archive-page .lumen-room-nav__button.active,
+  body.lumen-archive-page .lumen-room-nav__button[aria-current="true"] {
+    min-height: 58px;
+    height: 58px;
+    border: 1px solid rgba(120, 190, 255, 0.52);
+    background: rgba(35, 88, 160, 0.28);
+    box-shadow:
+      0 0 18px rgba(72, 160, 255, 0.22),
+      inset 0 0 16px rgba(110, 180, 255, 0.08);
+  }
+
+  body.lumen-archive-page .lumen-room-nav__icon {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+  }
+
+  body.lumen-archive-page .lumen-room-nav__icon img {
+    width: 30px;
+    height: 30px;
+  }
+
+  body.lumen-archive-page .lumen-room-nav__copy {
+    min-width: 0;
+    gap: 0.12rem;
+  }
+
+  body.lumen-archive-page .lumen-room-nav__copy strong {
+    font-size: 0.86rem;
+    line-height: 1.05;
+    white-space: normal;
+  }
+
+}
+
+@media (max-width: 620px) {
+  body.lumen-archive-page .lumen-other-rooms__grid {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.lumen-archive-page .lumen-other-rooms__grid::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  body.lumen-archive-page .lumen-room-hero-card h2 {
+    font-size: clamp(2.15rem, 11vw, 3.35rem);
+  }
+
+  body.lumen-archive-page .lumen-arrival-hero h2 {
+    font-size: clamp(3rem, 14vw, 4.6rem);
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1366px), (min-width: 901px) and (max-height: 800px) {
+  body.lumen-archive-page .lumen-dashboard {
+    width: min(1240px, calc(100% - 32px));
+    grid-template-columns: minmax(220px, 250px) minmax(0, 1fr);
+    gap: 1rem;
+    padding: clamp(4.8rem, 8vh, 6.5rem) 0 clamp(2rem, 5vh, 3.4rem);
+  }
+
+  body.lumen-archive-page .lumen-room-sidebar {
+    gap: 0.85rem;
+    padding: 1rem;
+    border-radius: 22px;
+  }
+
+  body.lumen-archive-page .lumen-room-sidebar h1,
+  body.lumen-archive-page .lumen-room-sidebar h2 {
+    font-size: clamp(1.65rem, 2vw, 2.05rem);
+  }
+
+  body.lumen-archive-page .lumen-arrival-hero,
+  body.lumen-archive-page .lumen-room-hero-card {
+    min-height: clamp(230px, 38vh, 330px);
+    border-radius: 22px;
+    padding: clamp(1.35rem, 3vw, 2.4rem);
+  }
+
+  body.lumen-archive-page .lumen-arrival-hero h2,
+  body.lumen-archive-page .lumen-room-hero-card h2 {
+    font-size: clamp(2.5rem, 5vw, 4.6rem);
+  }
+
+  body.lumen-archive-page .lumen-arrival-welcome-panel,
+  body.lumen-archive-page .lumen-room-panel,
+  body.lumen-archive-page .lumen-other-rooms {
+    min-height: auto;
+    border-radius: 20px;
+    padding: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  body.lumen-archive-page .lumen-arrival-intro-track,
+  body.lumen-archive-page .lumen-sanctuary-card-track,
+  body.lumen-archive-page .lumen-other-rooms__grid {
+    scroll-snap-type: none;
+  }
+
+  body.lumen-archive-page .lumen-arrival-intro-slide,
+  body.lumen-archive-page .lumen-sanctuary-slide,
+  body.lumen-archive-page .lumen-other-rooms__grid > * {
+    scroll-snap-align: none;
+  }
+
+  body.lumen-room-page .lumen-sanctuary-detail,
+  body.lumen-room-page .sanctuary-scene-overlay {
+    min-height: auto;
+  }
+
+  body.lumen-room-page .sanctuary-scene-overlay {
+    width: min(1040px, calc(100% - 32px));
+    gap: clamp(1.4rem, 4vh, 2.8rem);
+    padding: clamp(5.4rem, 9vh, 7rem) 0 clamp(2.5rem, 6vh, 4.5rem);
+  }
+
+  body.lumen-room-page .sanctuary-hero {
+    width: min(900px, 100%);
+    min-height: clamp(300px, 52vh, 460px);
+    border-radius: 26px;
+    padding: clamp(2rem, 5vh, 3.5rem) clamp(1rem, 3vw, 2.4rem);
+  }
+
+  body.lumen-room-page .archive-room-placeholder__title {
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+    white-space: normal;
+  }
+
+  body.lumen-room-page .archive-room-placeholder__copy {
+    font-size: clamp(0.96rem, 1.25vw, 1.08rem);
+    line-height: 1.48;
+  }
+
+  .lumen-interior-panel {
+    min-height: clamp(250px, 40vh, 330px);
+    padding: clamp(54px, 7vh, 68px) clamp(18px, 3vw, 36px) clamp(24px, 4vh, 34px);
+  }
+
+  .lumen-interior-panel h3,
+  .lumen-interior-panel blockquote {
+    font-size: clamp(1.85rem, 3.2vw, 3rem);
+  }
+
+  .lumen-interior-panel__copy {
+    font-size: clamp(1rem, 1.35vw, 1.22rem);
+  }
+}
+
+/* Shared room action controls: keep all three card buttons visually identical. */
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-journal-btn.lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-question-cycle-btn.lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-unseal-scroll-btn.lumen-room-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-room-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-room-action-btn,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-room-seal-card .lumen-room-action-btn {
+  min-height: 44px;
+  border: 1px solid rgba(120, 175, 230, 0.42);
+  border-radius: 12px;
+  padding: 0.78rem 1.28rem;
+  color: #fff8ea;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.055), transparent 48%),
+    rgba(20, 44, 72, 0.52);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  filter: none;
+  text-shadow: none;
+  transform: translateY(0);
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn::before {
+  display: none;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:hover,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:focus-visible,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-room-action-btn:hover,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-room-action-btn:hover,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-room-seal-card .lumen-room-action-btn:hover,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-room-action-btn:focus-visible,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-room-action-btn:focus-visible,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-room-seal-card .lumen-room-action-btn:focus-visible,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:hover .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:hover .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:hover .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-purpose-card:focus-within .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-questions-card:focus-within .lumen-room-action-btn,
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-seal-card:focus-within .lumen-room-action-btn {
+  border-color: rgba(165, 215, 255, 0.78);
+  color: #ffffff;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.085), transparent 48%),
+    rgba(54, 100, 145, 0.62);
+  box-shadow:
+    inset 0 1px 0 rgba(215, 240, 255, 0.16),
+    inset 0 0 18px rgba(110, 180, 255, 0.08);
+  filter: none;
+  transform: translateY(-1px);
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:focus-visible {
+  outline: 2px solid rgba(190, 225, 255, 0.78);
+  outline-offset: 3px;
+}
+
+body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:active,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-purpose-card .lumen-room-action-btn:active,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-questions-card .lumen-room-action-btn:active,
+body.lumen-archive-page .lumen-dashboard--aligned.is-sanctuary-active .lumen-room-content-grid .lumen-room-seal-card .lumen-room-action-btn:active {
+  border-color: rgba(150, 205, 255, 0.56);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.045), transparent 48%),
+    rgba(36, 75, 116, 0.56);
+  box-shadow:
+    inset 0 1px 0 rgba(215, 240, 255, 0.1),
+    inset 0 8px 18px rgba(5, 15, 34, 0.16);
+  transform: translateY(1px);
+}
+
+html.no-glow body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn,
+html.no-glow body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:hover,
+html.no-glow body.lumen-archive-page .lumen-room-content-grid .lumen-room-action-btn:focus-visible,
+body.lumen-archive-page.no-glow .lumen-room-content-grid .lumen-room-action-btn,
+body.lumen-archive-page.no-glow .lumen-room-content-grid .lumen-room-action-btn:hover,
+body.lumen-archive-page.no-glow .lumen-room-content-grid .lumen-room-action-btn:focus-visible {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html.no-glow body.lumen-archive-page,
+body.lumen-archive-page.no-glow,
+html.no-glow body.lumen-room-page,
+body.lumen-room-page.no-glow {
+  --lumen-hero-glow: transparent;
+  --lumen-name-glow: transparent;
+  --lumen-selector-glow: transparent;
+  --lumen-selector-glow-soft: transparent;
+  --lumen-selector-separator-glow: transparent;
+}
+
+html.no-glow body.lumen-archive-page *,
+html.no-glow body.lumen-archive-page *::before,
+html.no-glow body.lumen-archive-page *::after,
+body.lumen-archive-page.no-glow *,
+body.lumen-archive-page.no-glow *::before,
+body.lumen-archive-page.no-glow *::after,
+html.no-glow body.lumen-room-page *,
+html.no-glow body.lumen-room-page *::before,
+html.no-glow body.lumen-room-page *::after,
+body.lumen-room-page.no-glow *,
+body.lumen-room-page.no-glow *::before,
+body.lumen-room-page.no-glow *::after {
+  text-shadow: none !important;
+}
+
+html.no-glow body.lumen-archive-page *:not(img):not(svg):not(canvas),
+html.no-glow body.lumen-archive-page *:not(img):not(svg):not(canvas)::before,
+html.no-glow body.lumen-archive-page *:not(img):not(svg):not(canvas)::after,
+body.lumen-archive-page.no-glow *:not(img):not(svg):not(canvas),
+body.lumen-archive-page.no-glow *:not(img):not(svg):not(canvas)::before,
+body.lumen-archive-page.no-glow *:not(img):not(svg):not(canvas)::after,
+html.no-glow body.lumen-room-page *:not(img):not(svg):not(canvas),
+html.no-glow body.lumen-room-page *:not(img):not(svg):not(canvas)::before,
+html.no-glow body.lumen-room-page *:not(img):not(svg):not(canvas)::after,
+body.lumen-room-page.no-glow *:not(img):not(svg):not(canvas),
+body.lumen-room-page.no-glow *:not(img):not(svg):not(canvas)::before,
+body.lumen-room-page.no-glow *:not(img):not(svg):not(canvas)::after {
+  box-shadow: none !important;
+}
+
+html.no-glow body.lumen-archive-page .lumen-action-btn::before,
+html.no-glow body.lumen-archive-page .lumen-room-panel::before,
+html.no-glow body.lumen-archive-page .lumen-room-panel::after,
+html.no-glow body.lumen-archive-page .lumen-sanctuary-tab__icon::before,
+html.no-glow body.lumen-archive-page .lumen-sanctuary-tab__icon::after,
+body.lumen-archive-page.no-glow .lumen-action-btn::before,
+body.lumen-archive-page.no-glow .lumen-room-panel::before,
+body.lumen-archive-page.no-glow .lumen-room-panel::after,
+body.lumen-archive-page.no-glow .lumen-sanctuary-tab__icon::before,
+body.lumen-archive-page.no-glow .lumen-sanctuary-tab__icon::after {
+  opacity: 0 !important;
+}
+
+html.no-glow body.lumen-archive-page .lumen-question-icon,
+html.no-glow body.lumen-archive-page .lumen-action-btn img,
+html.no-glow body.lumen-archive-page .lumen-room-nav__icon img,
+html.no-glow body.lumen-archive-page .lumen-sanctuary-tab__icon img,
+html.no-glow body.lumen-archive-page .sanctuary-offer-icon,
+html.no-glow body.lumen-archive-page .lumen-scroll-glyph,
+html.no-glow body.lumen-room-page .lumen-scroll-glyph,
+body.lumen-archive-page.no-glow .lumen-question-icon,
+body.lumen-archive-page.no-glow .lumen-action-btn img,
+body.lumen-archive-page.no-glow .lumen-room-nav__icon img,
+body.lumen-archive-page.no-glow .lumen-sanctuary-tab__icon img,
+body.lumen-archive-page.no-glow .sanctuary-offer-icon,
+body.lumen-archive-page.no-glow .lumen-scroll-glyph,
+body.lumen-room-page.no-glow .lumen-scroll-glyph {
+  filter: none !important;
 }
