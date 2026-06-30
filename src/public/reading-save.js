@@ -1,5 +1,6 @@
 import { getBannedAccountMessage, requireAllowedAccount } from '../services/auth.js';
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
+import { checkGalleryFragmentUnlock } from './progression.js';
 import { loadCurrentUserPreferences } from './user-preferences.js';
 
 const FREE_SAVED_READING_LIMIT = 25;
@@ -11,6 +12,7 @@ const readingSaveState = {
   savedReadingIds: new Map(),
   savedReadingKeys: new Set(),
   savingReadingKeys: new Set(),
+  checkedGalleryUnlockReadingKeys: new Set(),
 };
 
 async function getCachedCurrentUser() {
@@ -307,6 +309,12 @@ window.addEventListener('astralveil:reading-completed', (event) => {
   }
 
   readingSaveState.currentReading = reading;
+  if (!readingSaveState.checkedGalleryUnlockReadingKeys.has(reading.reading_key)) {
+    readingSaveState.checkedGalleryUnlockReadingKeys.add(reading.reading_key);
+    checkGalleryFragmentUnlock('bloodmoon_zephyra_death_sun', '', { reading }).catch((error) => {
+      console.warn('[Astral Veil progression] Reading fragment unlock check failed.', error);
+    });
+  }
   renderReadingSavePanel();
 });
 

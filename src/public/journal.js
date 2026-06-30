@@ -1,5 +1,6 @@
 import { getBannedAccountMessage, getCurrentUserWithProfile, isBannedUser, signOut } from '../services/auth.js';
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
+import { checkGalleryFragmentUnlock } from './progression.js';
 
 const returnToStorageKey = 'astralVeilReturnTo';
 const shell = document.querySelector('[data-journal-shell]');
@@ -1924,6 +1925,9 @@ async function handleSubmit(event) {
 
   resetForm();
   setMessage(isBloodMoonMode() ? 'The shadow has been recorded.' : 'Journal entry saved.', 'success');
+  checkGalleryFragmentUnlock('journal_entry_count', '', { user: activeUser, supabase }).catch((error) => {
+    console.warn('[Astral Veil progression] Journal fragment unlock check failed.', error);
+  });
   loadRecentEntries();
 }
 

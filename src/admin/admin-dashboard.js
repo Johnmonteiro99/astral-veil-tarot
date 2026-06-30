@@ -49,65 +49,6 @@ const NOCTIS_DOCUMENTS_PAGE_SIZE = 10;
 const ADMIN_USERS_PAGE_SIZE = 10;
 const noctisDocumentTypes = ['journal', 'manuscript', 'letter', 'cipher', 'fragment', 'veil_lore', 'unstable_text', 'blood_moon', 'other'];
 const noctisDocumentModes = ['blood_moon', 'moon', 'sun', 'blue_moon', 'all'];
-const canonicalTideDocumentBody = `I used to think water was soft because it yielded.
-
-I was wrong.
-
-Water yields because it is patient enough to win without announcing itself. It does not argue with stone. It remembers the shape of resistance and returns, again and again, until the mountain learns to bow.
-
-There is a kind of strength that breaks everything it touches.
-
-There is another kind that enters without violence, fills what is empty, cools what is burning, reflects what refuses to be named, and carries away what has become too heavy to hold.
-
-The archive taught me this beside a basin with no bottom.
-
-I looked into it and saw every version of myself that had tried to become fire just to survive. Every face was bright. Every face was tired.
-
-Then the water moved.
-
-Not against me.
-
-Through me.
-
-Water does not show you the world by keeping still.
-
-It shows you what moves when you finally look.
-
-The sailor crosses oceans seeking new shores.
-
-Home waits beneath the face in the tide.
-
-In every reflection, a door opens inward.
-
-Nothing is farther than the self we avoid.
-
-That is what water knows.
-
-Long before maps were trusted, people followed the sea into the unknown. They sailed past familiar shores because something in them believed discovery lived beyond the horizon.
-
-But the oldest voyage was never across the water.
-
-It was through it.
-
-A person may cross every ocean and still remain a stranger to themselves. They may name islands, chart stars, survive storms, and return with gold in their hands, yet never once look into the dark mirror beneath the ship.
-
-Water remembers what the traveler forgets.
-
-It shows the face, then the fear behind the face. It shows the wound, then the tenderness guarding it. It shows the self not as a fixed thing, but as a current becoming.
-
-To become like water is not to disappear.
-
-It is to stop mistaking hardness for power.
-
-It is to move with enough truth that no cage can keep its original shape around you.
-
-When the candle went out, something small rested at the bottom of the basin.
-
-A key, dark as midnight glass.
-
-It had no teeth.
-
-Only a reflection.`;
 
 const accessMessage = document.querySelector('[data-access-message]');
 const loginLink = document.querySelector('[data-login-link]');
@@ -620,45 +561,6 @@ function normalizeNoctisDocumentFilterMatchValue(value) {
     .trim()
     .toLowerCase()
     .replace(/[-\s]+/g, '_');
-}
-
-function isNoctisDocumentsDebugEnabled() {
-  try {
-    return window.location.search.includes('noctisDebug=1')
-      || window.localStorage?.getItem('astral_noctis_admin_debug') === 'true';
-  } catch (error) {
-    return false;
-  }
-}
-
-function logNoctisDocumentsDebug(message, payload) {
-  if (!isNoctisDocumentsDebugEnabled()) {
-    return;
-  }
-
-  if (typeof payload === 'undefined') {
-    console.log(`[Noctis Admin] ${message}`);
-    return;
-  }
-
-  console.log(`[Noctis Admin] ${message}`, payload);
-}
-
-function getNoctisDocumentsDebugDocument(row) {
-  return {
-    id: row?.id,
-    title: row?.title,
-    slug: row?.slug,
-    document_type: row?.document_type,
-    mode: row?.mode,
-    is_published: row?.is_published,
-    is_blood_moon: row?.is_blood_moon,
-    is_featured: row?.is_featured,
-  };
-}
-
-function getNoctisDocumentsDebugDocuments(rows = []) {
-  return (Array.isArray(rows) ? rows : []).map((row) => getNoctisDocumentsDebugDocument(row));
 }
 
 function isAllFilterValue(value) {
@@ -2256,8 +2158,6 @@ function renderNoctisDocumentsPagination(totalCount) {
 
 function renderNoctisDocumentRows(rows = noctisDocumentRows) {
   noctisDocumentsTableBody.replaceChildren();
-  logNoctisDocumentsDebug('render target', document.querySelector('#noctis-documents'));
-  logNoctisDocumentsDebug('render count', rows.length);
 
   if (!rows.length) {
     setNoctisDocumentsState('No Noctis documents found for these filters.');
@@ -2436,12 +2336,6 @@ function applyNoctisDocumentFilters({ resetPage = false } = {}) {
   const currentFilters = getNoctisDocumentActiveFilters();
   const filteredRows = getFilteredNoctisDocumentRows();
 
-  logNoctisDocumentsDebug('filters', currentFilters);
-  logNoctisDocumentsDebug('filtered result', {
-    count: filteredRows.length,
-    titles: filteredRows.map((doc) => doc?.title),
-  });
-
   if (!filteredRows.length && noctisDocumentRows.length && areNoctisDocumentFiltersDefault()) {
     resetNoctisDocumentFiltersToDefaults();
     noctisDocumentsPage = 1;
@@ -2463,26 +2357,6 @@ function resetNoctisDocumentFiltersToDefaults() {
 
     filter.value = '__all';
   });
-}
-
-function getNoctisDocumentDedupeKey(row) {
-  return String(row?.id || row?.slug || row?.shelf_mark || row?.title || '').trim().toLowerCase();
-}
-
-function mergeNoctisDocumentRows(...rowGroups) {
-  const rowsByKey = new Map();
-
-  rowGroups.flat().filter(Boolean).forEach((row) => {
-    const key = getNoctisDocumentDedupeKey(row);
-
-    if (!key || rowsByKey.has(key)) {
-      return;
-    }
-
-    rowsByKey.set(key, row);
-  });
-
-  return [...rowsByKey.values()];
 }
 
 function sortNoctisDocumentRows(rows) {
@@ -2538,19 +2412,10 @@ async function fetchNoctisDocumentRows(supabase) {
     const { data, error } = await attempt.query();
 
     if (!error) {
-      if (lastError) {
-        logNoctisDocumentsDebug('query recovered with fallback', attempt.label);
-      }
-
       return { data, error: null };
     }
 
     lastError = error;
-    logNoctisDocumentsDebug('query attempt failed', {
-      attempt: attempt.label,
-      message: error.message || '',
-      code: error.code || '',
-    });
   }
 
   return { data: null, error: lastError };
@@ -2567,134 +2432,6 @@ function logNoctisDocumentQueryError(error) {
     hint: error.hint || '',
     code: error.code || '',
   });
-}
-
-function getCanonicalTideDocumentPayload({ includeBody = true } = {}) {
-  const payload = {
-    title: 'The Tide That Moves Within',
-    slug: 'the-tide-that-moves-within',
-    subtitle: 'Recovered Journal Fragment',
-    author: 'Zephyra Noctis',
-    attribution: 'Zephyra Noctis',
-    zodiac: 'Scorpio',
-    document_type: 'journal',
-    category: 'journals',
-    category_label: 'Recovered Journal',
-    summary: 'A recovered journal fragment about memory, water, resistance, and the quiet strength of yielding.',
-    excerpt: 'The sea is not distant. It is memory. It pulls at the edge of the self, where names dissolve and the Veil grows thin.',
-    tags: ['water', 'memory', 'fragment'],
-    themes: ['The Veil', 'Tides', 'Memory'],
-    shelf_mark: 'J-SC-ZN-01',
-    mode: 'blood_moon',
-    moon_phase: 'blood_moon',
-    unlock_requirement: 'public',
-    is_published: true,
-    is_featured: true,
-    is_blood_moon: true,
-    sort_order: 0,
-  };
-
-  if (includeBody) {
-    payload.body = canonicalTideDocumentBody;
-  }
-
-  return payload;
-}
-
-function getCanonicalTideDocumentLegacyPayload({ includeBody = true } = {}) {
-  const payload = {
-    title: 'The Tide That Moves Within',
-    slug: 'the-tide-that-moves-within',
-    subtitle: 'Recovered Journal Fragment',
-    author: 'Zephyra Noctis',
-    zodiac: 'Scorpio',
-    document_type: 'journal',
-    category: 'journals',
-    summary: 'A recovered journal fragment about memory, water, resistance, and the quiet strength of yielding.',
-    excerpt: 'The sea is not distant. It is memory. It pulls at the edge of the self, where names dissolve and the Veil grows thin.',
-    tags: ['water', 'memory', 'fragment'],
-    themes: ['The Veil', 'Tides', 'Memory'],
-    shelf_mark: 'J-SC-ZN-01',
-    moon_phase: 'blood_moon',
-    unlock_requirement: 'public',
-    is_published: true,
-    is_featured: true,
-  };
-
-  if (includeBody) {
-    payload.body = canonicalTideDocumentBody;
-  }
-
-  return payload;
-}
-
-function isMissingNoctisDocumentColumnError(error) {
-  return error?.code === '42703' || /column .* does not exist/i.test(String(error?.message || ''));
-}
-
-async function ensureCanonicalTideDocument(supabase) {
-  const { data: existingRows, error: existingError } = await supabase
-    .from('noctis_documents')
-    .select('id, slug, shelf_mark, body')
-    .or('slug.eq.the-tide-that-moves-within,shelf_mark.eq.J-SC-ZN-01')
-    .limit(1);
-
-  if (existingError) {
-    return { row: null, error: existingError };
-  }
-
-  const existingRow = Array.isArray(existingRows) ? existingRows[0] : null;
-
-  if (existingRow?.id) {
-    let updateResult = await supabase
-      .from('noctis_documents')
-      .update(getCanonicalTideDocumentPayload({ includeBody: false }))
-      .eq('id', existingRow.id)
-      .select('*')
-      .single();
-
-    if (isMissingNoctisDocumentColumnError(updateResult.error)) {
-      updateResult = await supabase
-        .from('noctis_documents')
-        .update(getCanonicalTideDocumentLegacyPayload({ includeBody: false }))
-        .eq('id', existingRow.id)
-        .select('*')
-        .single();
-    }
-
-    return { row: updateResult.data || null, error: updateResult.error };
-  }
-
-  let insertResult = await supabase
-    .from('noctis_documents')
-    .insert(getCanonicalTideDocumentPayload())
-    .select('*')
-    .single();
-
-  if (isMissingNoctisDocumentColumnError(insertResult.error)) {
-    insertResult = await supabase
-      .from('noctis_documents')
-      .insert(getCanonicalTideDocumentLegacyPayload())
-      .select('*')
-      .single();
-  }
-
-  const { data, error } = insertResult;
-
-  if (error && error.code === '23505') {
-    const retryResult = await supabase
-      .from('noctis_documents')
-      .select('*')
-      .or('slug.eq.the-tide-that-moves-within,shelf_mark.eq.J-SC-ZN-01')
-      .limit(1);
-
-    return {
-      row: Array.isArray(retryResult.data) ? retryResult.data[0] || null : null,
-      error: retryResult.error,
-    };
-  }
-
-  return { row: data || null, error };
 }
 
 function getJournalPromptFilterValue(filterName) {
@@ -7584,8 +7321,6 @@ async function showUserProgressDetail(index) {
 }
 
 async function loadNoctisDocuments() {
-  logNoctisDocumentsDebug('loadNoctisDocuments started');
-
   const supabase = getSupabaseClient();
 
   if (!supabase) {
@@ -7603,7 +7338,6 @@ async function loadNoctisDocuments() {
     noctisDocumentFiltersInitialized = true;
   }
 
-  logNoctisDocumentsDebug('loading from public.noctis_documents');
   const { data, error } = await fetchNoctisDocumentRows(supabase);
 
   if (error) {
@@ -7612,11 +7346,6 @@ async function loadNoctisDocuments() {
     setNoctisDocumentsState('Noctis documents could not be loaded. Please try again later.', 'error');
     return;
   }
-
-  logNoctisDocumentsDebug('query result', {
-    count: data?.length,
-    titles: data?.map((doc) => doc?.title),
-  });
 
   noctisDocumentRows = sortNoctisDocumentRows(Array.isArray(data) ? data : []);
   noctisDocumentsLoaded = true;
@@ -8566,7 +8295,6 @@ function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
   }
 
   if (normalizedViewName === 'noctis-documents') {
-    logNoctisDocumentsDebug('route opened');
     loadNoctisDocuments();
   }
 

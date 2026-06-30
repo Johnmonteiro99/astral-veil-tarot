@@ -1798,6 +1798,31 @@ function trackArtifactDiscovery(keyId) {
   });
 }
 
+async function checkArchiveGalleryFragmentUnlock(unlockType, unlockValue, context = {}) {
+  if (!isLoggedInArchiveUser() && !galleryUserState.user) {
+    return { status: "skipped" };
+  }
+
+  try {
+    const { checkGalleryFragmentUnlock } = await import("../src/public/progression.js");
+    const result = await checkGalleryFragmentUnlock(unlockType, unlockValue, {
+      user: artifactProgressState.user || galleryUserState.user,
+      supabase: artifactProgressState.supabase || galleryUserState.supabase,
+      ...context
+    });
+
+    if (result?.status === "recovered" && isNoctisRoomPage && getNoctisRoomFromQuery()?.id === "gallery") {
+      await refreshGalleryUserInteractions();
+      renderArchiveRooms();
+    }
+
+    return result;
+  } catch (error) {
+    console.warn("[Astral Veil archive] Gallery fragment unlock could not be checked.", error);
+    return { status: "error", error };
+  }
+}
+
 function trackRestrictedWingSealDiscovery() {
   if (!isLoggedInArchiveUser()) {
     return;
@@ -1858,6 +1883,9 @@ async function saveUnlockedElementalKey(keyId) {
 
     if (isDuplicate) {
       artifactProgressState.unlockedKeys = getValidElementalKeyIds([...previousKeys, keyId]);
+      if (keyId === "fire") {
+        await checkArchiveGalleryFragmentUnlock("recover_artifact", "ember_key");
+      }
       return { status: "duplicate", previousKeys };
     }
 
@@ -1866,6 +1894,9 @@ async function saveUnlockedElementalKey(keyId) {
 
   artifactProgressState.unlockedKeys = getValidElementalKeyIds([...previousKeys, keyId]);
   trackArtifactDiscovery(keyId);
+  if (keyId === "fire") {
+    await checkArchiveGalleryFragmentUnlock("recover_artifact", "ember_key");
+  }
   return { status: "saved", previousKeys };
 }
 
@@ -4777,7 +4808,7 @@ async function loadGalleryVisualTrail(supabase, user = null) {
   try {
     const { data: trailData, error: trailError } = await supabase
       .from("visual_trails")
-      .select("*")
+      .select("id,title,slug,description,lore_note,total_fragments,is_active,sort_order,created_at,updated_at")
       .eq("is_active", true)
       .order("sort_order", { ascending: true });
 
@@ -4851,11 +4882,48 @@ async function loadGalleryVisualTrail(supabase, user = null) {
       }
     });
 
-    galleryVisualTrailState.trails = trails;
+    const completedTrailIds = user?.id
+      ? trails
+        .filter((trail) => {
+          const trailId = String(trail.id || "");
+          const requiredCount = Number(trail.total_fragments || fragmentsByTrailId.get(trailId)?.length || 0);
+          const recoveredCount = recoveredIdsByTrailId.get(trailId)?.size || 0;
+
+          return requiredCount > 0 && recoveredCount >= requiredCount;
+        })
+        .map((trail) => trail.id)
+        .filter(Boolean)
+      : [];
+    let trailsWithFullImages = trails;
+
+    if (completedTrailIds.length) {
+      const { data: fullImageData, error: fullImageError } = await supabase
+        .from("visual_trails")
+        .select("id,full_image_url,preview_image_url")
+        .in("id", completedTrailIds);
+
+      if (fullImageError) {
+        throw fullImageError;
+      }
+
+      const imageByTrailId = new Map((Array.isArray(fullImageData) ? fullImageData : [])
+        .map((trail) => [String(trail.id || ""), {
+          fullImage: trail.full_image_url || "",
+          previewImage: trail.preview_image_url || "",
+        }]));
+
+      trailsWithFullImages = trails.map((trail) => ({
+        ...trail,
+        full_image_url: imageByTrailId.get(String(trail.id || ""))?.fullImage || "",
+        preview_image_url: imageByTrailId.get(String(trail.id || ""))?.previewImage || "",
+      }));
+    }
+
+    galleryVisualTrailState.trails = trailsWithFullImages;
     galleryVisualTrailState.fragmentsByTrailId = fragmentsByTrailId;
     galleryVisualTrailState.recoveredRowsByTrailId = recoveredRowsByTrailId;
     galleryVisualTrailState.recoveredIdsByTrailId = recoveredIdsByTrailId;
-    syncSelectedGalleryVisualTrail(galleryVisualTrailState.selectedTrailId || trails[0]?.id || "");
+    syncSelectedGalleryVisualTrail(galleryVisualTrailState.selectedTrailId || trailsWithFullImages[0]?.id || "");
     galleryVisualTrailState.isLoaded = true;
   } catch (error) {
     console.warn("Visual trail could not be loaded:", {
@@ -5188,76 +5256,6 @@ async function toggleGalleryMarkedRecord(recordId) {
   }
 
   await refreshGalleryUserInteractions();
-  renderArchiveRooms();
-}
-
-async function recoverNextGalleryTrailFragment() {
-  const supabase = galleryUserState.supabase;
-  const trail = galleryVisualTrailState.trail;
-  const nextFragment = galleryVisualTrailState.fragments.find((fragment) => !galleryVisualTrailState.recoveredIds.has(String(fragment.id || "")));
-
-  if (!supabase) {
-    showGallerySignInMessage();
-    return;
-  }
-
-  const { data: authData, error: authError } = await supabase.auth.getUser();
-  const user = authData?.user || null;
-
-  if (authError || !user?.id) {
-    if (authError) {
-      console.warn("Visual trail fragment could not be recovered:", {
-        message: authError?.message,
-        details: authError?.details,
-        hint: authError?.hint,
-        code: authError?.code,
-        error: authError,
-        action: "getUser"
-      });
-    }
-
-    showGallerySignInMessage();
-    return;
-  }
-
-  if (!trail?.id || !nextFragment?.id) {
-    return;
-  }
-
-  const { error } = await supabase
-    .from("user_visual_trail_fragments")
-    .insert({
-      user_id: user.id,
-      trail_id: trail.id,
-      fragment_id: nextFragment.id
-    });
-
-  if (error) {
-    if (error.code === "23505") {
-      galleryUserState.user = user;
-      await loadGalleryVisualTrail(supabase, user);
-      openGalleryUtilityModal = "trail-detail";
-      updateGalleryModalOpenState();
-      renderArchiveRooms();
-      return;
-    }
-
-    console.warn("Visual trail fragment could not be recovered:", {
-      message: error?.message,
-      details: error?.details,
-      hint: error?.hint,
-      code: error?.code,
-      error
-    });
-    galleryVisualTrailState.error = "Visual fragment could not be recovered.";
-    renderArchiveRooms();
-    return;
-  }
-
-  galleryUserState.user = user;
-  await loadGalleryVisualTrail(supabase, user);
-  openGalleryUtilityModal = "trail-detail";
-  updateGalleryModalOpenState();
   renderArchiveRooms();
 }
 
@@ -5639,6 +5637,13 @@ const galleryFirstReflectionTrailCopy = {
   fragments: ["I. Arrival", "II. Answer", "III. Echo", "IV. Return"]
 };
 
+const galleryVisualTrailUnlockHints = {
+  1: "The first fragment waits for Scorpio beneath the Blood Moon, where ending and light appear together.",
+  2: "The second fragment answers when flame has been recovered.",
+  3: "The third fragment listens for the phrase the Archive keeps behind its teeth.",
+  4: "The final fragment waits until your own words have returned to the Archive three times."
+};
+
 function shouldUseFirstReflectionTrailCopy(trail) {
   const slug = String(trail?.slug || "").toLowerCase();
   const title = String(trail?.title || "").toLowerCase();
@@ -5670,7 +5675,7 @@ function getGalleryVisualTrailViewModel(trail = galleryVisualTrailState.trail) {
       title,
       image: fragment?.fragment_image_url || fragment?.image || "",
       recovered: recoveredIds.has(fragmentId),
-      hint: fragment?.hint_text || ""
+      hint: galleryVisualTrailUnlockHints[Number(fragment?.fragment_number || index + 1)] || fragment?.hint_text || ""
     };
   });
 
@@ -5938,7 +5943,7 @@ function renderGalleryVisualTrailModalContent() {
     ${galleryVisualTrailState.error ? `<p class="gallery-bottom-empty">${escapeHtml(galleryVisualTrailState.error)}</p>` : ""}
     ${galleryUserState.user
       ? progress.recovered < progress.total
-        ? `<button class="gallery-trail-recover-button" type="button" data-gallery-recover-trail-fragment>Recover next fragment</button>`
+        ? `<p class="gallery-bottom-empty">Fragments recover through readings, relics, archive phrases, and journal entries.</p>`
         : ""
       : `<p class="gallery-bottom-empty">Sign in to recover visual fragments.</p>`}
   `;
@@ -6331,6 +6336,13 @@ function showArchiveCodeFeedback(message, tone = "info") {
 async function handleArchiveCodeSubmit(form) {
   const formData = new FormData(form);
   const submittedCode = normalizeArchiveCode(formData.get("archive-code"));
+
+  if (submittedCode === normalizeArchiveCode("The Veil")) {
+    await checkArchiveGalleryFragmentUnlock("entry_code", "The Veil");
+    showArchiveCodeFeedback("The Archive heard your whisper.", "success");
+    return;
+  }
+
   const matchedKeyId = Object.keys(correctArchiveCodes).find(
     (keyId) => normalizeArchiveCode(correctArchiveCodes[keyId]) === submittedCode
   );
@@ -6346,6 +6358,9 @@ async function handleArchiveCodeSubmit(form) {
   }
 
   if (isElementalKeyUnlocked(matchedKeyId)) {
+    if (matchedKeyId === "fire") {
+      await checkArchiveGalleryFragmentUnlock("recover_artifact", "ember_key");
+    }
     showArchiveCodeFeedback("The Archive heard your whisper.", "success");
     return;
   }
@@ -6696,7 +6711,6 @@ document.addEventListener("click", (event) => {
   const galleryBottomActionButton = event.target.closest("[data-gallery-bottom-action]");
   const galleryOpenTrailButton = event.target.closest("[data-gallery-open-trail]");
   const galleryTrailsPageButton = event.target.closest("[data-gallery-trails-page]");
-  const galleryRecoverTrailButton = event.target.closest("[data-gallery-recover-trail-fragment]");
   const galleryRevealTrailButton = event.target.closest("[data-gallery-reveal-trail]");
   const galleryTrailRestoredClose = event.target.closest("[data-gallery-trail-restored-close]");
   const galleryMoreFiltersButton = event.target.closest("[data-gallery-more-filters]");
@@ -7042,11 +7056,6 @@ document.addEventListener("click", (event) => {
     }
 
     renderArchiveRooms();
-    return;
-  }
-
-  if (galleryRecoverTrailButton) {
-    recoverNextGalleryTrailFragment();
     return;
   }
 

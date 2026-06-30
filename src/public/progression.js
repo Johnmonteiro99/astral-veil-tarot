@@ -19,6 +19,13 @@ function logProgressionError(message, error) {
   console.warn(`[Astral Veil progression] ${message}`, error);
 }
 
+const galleryFragmentUnlocks = {
+  visual_record_1_fragment_1: { trailSlug: 'celestial-duality', fragmentNumber: 1 },
+  visual_record_1_fragment_2: { trailSlug: 'celestial-duality', fragmentNumber: 2 },
+  visual_record_1_fragment_3: { trailSlug: 'celestial-duality', fragmentNumber: 3 },
+  visual_record_1_fragment_4: { trailSlug: 'celestial-duality', fragmentNumber: 4 },
+};
+
 function logRoomVisit(message, detail = '') {
   void message;
   void detail;
@@ -52,6 +59,201 @@ async function getProgressionContext() {
     logProgressionError('Could not resolve current user.', error);
     return { user: null, supabase };
   }
+}
+
+function normalizeUnlockValue(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[-\s]+/g, '_')
+    .replace(/[^a-z0-9_]+/g, '')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+function getReadingCards(context = {}) {
+  const cards = Array.isArray(context.cards)
+    ? context.cards
+    : Array.isArray(context.reading?.cards)
+      ? context.reading.cards
+      : [];
+
+  return cards.map((card) => normalizeUnlockValue(
+    card?.card_key
+      || card?.cardKey
+      || card?.originalCardId
+      || card?.original_card_id
+      || card?.id
+      || card?.name
+      || card?.title,
+  ).replace(/^blood_moon_/, ''));
+}
+
+function readingMatchesBloodMoonZephyraDeathSun(context = {}) {
+  const reading = context.reading || context;
+  const mode = normalizeUnlockValue(
+    reading.mode_key
+      || reading.modeKey
+      || reading.readingMode
+      || reading.mode
+      || reading.metadata?.mode
+      || reading.metadata?.readingMode,
+  );
+  const readerValues = [
+    reading.reader_key,
+    reading.readerKey,
+    reading.reader_name,
+    reading.readerName,
+    reading.reader,
+    reading.metadata?.reader?.key,
+    reading.metadata?.reader?.name,
+    reading.metadata?.reader?.zodiac,
+  ].map(normalizeUnlockValue);
+  const cards = new Set(getReadingCards(reading));
+
+  return ['blood_moon', 'bloodmoon'].includes(mode)
+    && readerValues.some((value) => ['zephyra_noctis', 'zephyra', 'scorpio'].includes(value))
+    && cards.has('death')
+    && cards.has('the_sun');
+}
+
+async function getJournalEntryCount(supabase, userId) {
+  const { count, error } = await supabase
+    .from('user_journal_entries')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId);
+
+  if (error) {
+    logProgressionError('Journal entry count failed.', error);
+    return 0;
+  }
+
+  return count || 0;
+}
+
+function showGalleryFragmentRecoveredToast() {
+  const toastDetail = {
+    title: 'Fragment Recovered',
+    message: 'A hidden piece has answered from the dark.',
+    type: 'fragment',
+    duration: 6000,
+  };
+
+  if (window.AstralVeilToast?.show) {
+    window.AstralVeilToast.show(toastDetail);
+    return;
+  }
+
+  window.dispatchEvent(new CustomEvent('astralveil:toast', { detail: toastDetail }));
+}
+
+export async function recoverGalleryFragment(fragmentKey, context = {}) {
+  const unlockConfig = galleryFragmentUnlocks[fragmentKey];
+
+  if (!unlockConfig) {
+    return { status: 'skipped', reason: 'unknown_fragment' };
+  }
+
+  const progressionContext = context.user && context.supabase
+    ? { user: context.user, supabase: context.supabase }
+    : await getProgressionContext();
+  const { user, supabase } = progressionContext;
+
+  if (!user?.id || !supabase) {
+    return { status: 'skipped', reason: 'signed_out' };
+  }
+
+  const { data: trail, error: trailError } = await supabase
+    .from('visual_trails')
+    .select('id')
+    .eq('slug', unlockConfig.trailSlug)
+    .eq('is_active', true)
+    .maybeSingle();
+
+  if (trailError || !trail?.id) {
+    if (trailError) {
+      logProgressionError('Visual trail lookup failed.', trailError);
+    }
+
+    return { status: 'error', error: trailError || new Error('Visual trail not found.') };
+  }
+
+  const { data: fragment, error: fragmentError } = await supabase
+    .from('visual_trail_fragments')
+    .select('id')
+    .eq('trail_id', trail.id)
+    .eq('fragment_number', unlockConfig.fragmentNumber)
+    .maybeSingle();
+
+  if (fragmentError || !fragment?.id) {
+    if (fragmentError) {
+      logProgressionError('Visual trail fragment lookup failed.', fragmentError);
+    }
+
+    return { status: 'error', error: fragmentError || new Error('Visual trail fragment not found.') };
+  }
+
+  const { error } = await supabase
+    .from('user_visual_trail_fragments')
+    .insert({
+      user_id: user.id,
+      trail_id: trail.id,
+      fragment_id: fragment.id,
+    });
+
+  if (error) {
+    if (isDuplicateError(error)) {
+      return { status: 'duplicate', fragmentKey };
+    }
+
+    logProgressionError('Visual trail fragment recovery failed.', error);
+    return { status: 'error', error };
+  }
+
+  showGalleryFragmentRecoveredToast();
+
+  return { status: 'recovered', fragmentKey };
+}
+
+export async function checkGalleryFragmentUnlock(unlockType, unlockValue = '', context = {}) {
+  const normalizedType = normalizeUnlockValue(unlockType);
+  const normalizedValue = normalizeUnlockValue(unlockValue);
+
+  if (normalizedType === 'bloodmoon_zephyra_death_sun') {
+    return readingMatchesBloodMoonZephyraDeathSun(context)
+      ? recoverGalleryFragment('visual_record_1_fragment_1', context)
+      : { status: 'skipped', reason: 'requirements_not_met' };
+  }
+
+  if (normalizedType === 'recover_artifact') {
+    return ['fire', 'ember', 'ember_key'].includes(normalizedValue)
+      ? recoverGalleryFragment('visual_record_1_fragment_2', context)
+      : { status: 'skipped', reason: 'requirements_not_met' };
+  }
+
+  if (normalizedType === 'entry_code') {
+    return normalizedValue === 'the_veil'
+      ? recoverGalleryFragment('visual_record_1_fragment_3', context)
+      : { status: 'skipped', reason: 'requirements_not_met' };
+  }
+
+  if (normalizedType === 'journal_entry_count') {
+    const progressionContext = context.user && context.supabase
+      ? { user: context.user, supabase: context.supabase }
+      : await getProgressionContext();
+
+    if (!progressionContext.user?.id || !progressionContext.supabase) {
+      return { status: 'skipped', reason: 'signed_out' };
+    }
+
+    const count = Number(context.count ?? await getJournalEntryCount(progressionContext.supabase, progressionContext.user?.id));
+
+    return count >= 3
+      ? recoverGalleryFragment('visual_record_1_fragment_4', progressionContext)
+      : { status: 'skipped', reason: 'requirements_not_met' };
+  }
+
+  return { status: 'skipped', reason: 'unknown_unlock_type' };
 }
 
 export async function trackProgressEvent(event = {}) {

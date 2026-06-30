@@ -179,6 +179,100 @@ window.AstralVeilImagePreview = {
 };
 
 ////////////////////////////////////////////////////
+// Global Toasts
+////////////////////////////////////////////////////
+
+let astralToastRegion = null;
+let astralToastSequence = 0;
+
+function getAstralToastRegion() {
+  if (astralToastRegion?.isConnected) {
+    return astralToastRegion;
+  }
+
+  astralToastRegion = document.createElement("div");
+  astralToastRegion.className = "astral-toast-region";
+  astralToastRegion.setAttribute("aria-live", "polite");
+  astralToastRegion.setAttribute("aria-atomic", "false");
+  document.body.appendChild(astralToastRegion);
+
+  return astralToastRegion;
+}
+
+function removeAstralToast(toast, timerId) {
+  if (!toast?.isConnected) {
+    return;
+  }
+
+  window.clearTimeout(timerId);
+  toast.classList.add("is-leaving");
+
+  window.setTimeout(() => {
+    toast.remove();
+  }, 180);
+}
+
+function showAstralToast({ title = "", message = "", type = "default", duration = 6000 } = {}) {
+  if (!document.body) {
+    return null;
+  }
+
+  const normalizedType = String(type || "default").replace(/[^a-z0-9_-]/gi, "").toLowerCase() || "default";
+  const toast = document.createElement("article");
+  const toastId = `astral-toast-${astralToastSequence += 1}`;
+  const titleId = `${toastId}-title`;
+  const messageId = `${toastId}-message`;
+  toast.className = `astral-toast astral-toast--${normalizedType}`;
+  toast.setAttribute("role", "status");
+  toast.setAttribute("aria-labelledby", titleId);
+  toast.setAttribute("aria-describedby", messageId);
+
+  const content = document.createElement("div");
+  content.className = "astral-toast__content";
+
+  const titleElement = document.createElement("p");
+  titleElement.className = "astral-toast__title";
+  titleElement.id = titleId;
+  titleElement.textContent = title || "Fragment Recovered";
+
+  const messageElement = document.createElement("p");
+  messageElement.className = "astral-toast__message";
+  messageElement.id = messageId;
+  messageElement.textContent = message || "A hidden piece has answered from the dark.";
+
+  const closeButton = document.createElement("button");
+  closeButton.className = "astral-toast__close";
+  closeButton.type = "button";
+  closeButton.setAttribute("aria-label", "Dismiss message");
+  closeButton.textContent = "×";
+
+  content.append(titleElement, messageElement);
+  toast.append(content, closeButton);
+
+  const normalizedDuration = Number.isFinite(Number(duration))
+    ? Math.min(Math.max(Number(duration), 5000), 7000)
+    : 6000;
+  const timerId = window.setTimeout(() => removeAstralToast(toast, timerId), normalizedDuration);
+
+  closeButton.addEventListener("click", () => removeAstralToast(toast, timerId));
+  getAstralToastRegion().appendChild(toast);
+
+  window.requestAnimationFrame(() => {
+    toast.classList.add("is-visible");
+  });
+
+  return toast;
+}
+
+window.AstralVeilToast = {
+  show: showAstralToast
+};
+
+window.addEventListener("astralveil:toast", (event) => {
+  showAstralToast(event.detail || {});
+});
+
+////////////////////////////////////////////////////
 // Blood Moon Event Shell
 ////////////////////////////////////////////////////
 
