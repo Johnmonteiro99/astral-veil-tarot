@@ -1,4 +1,11 @@
-import { getCurrentUserWithProfile, isCurrentUserAdmin, signOut } from '../services/auth.js';
+import {
+  getAccountStatus,
+  getBannedAccountMessage,
+  getCurrentUserWithProfile,
+  isBannedUser,
+  isCurrentUserAdmin,
+  signOut,
+} from '../services/auth.js';
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
 import {
   getProfileUnlockDefinition,
@@ -3896,9 +3903,15 @@ async function loadAccount() {
 
   activeUser = user;
   activeProfile = profile || {};
-  const accountStatus = getProfileValue(activeProfile, ['account_status']) || 'active';
+  const accountStatus = getAccountStatus(activeProfile);
 
-  if (accountStatus !== 'active') {
+  if (isBannedUser(activeProfile)) {
+    await signOut();
+    showError(getBannedAccountMessage());
+    return;
+  }
+
+  if (accountStatus === 'pending_deletion') {
     await signOut();
     redirectToSignedOutNotice('account_pending_deletion');
     return;

@@ -1,8 +1,9 @@
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
-import { requireAdmin, signOut } from '../services/auth.js';
+import { clearAdminVerified, requireAdmin, requireAdminGate, signOut } from '../services/auth.js';
 
 const countTables = [
-  'journals',
+  'profiles',
+  'noctis_documents',
   'journal_prompts',
   'reader_lines',
   'contact_messages',
@@ -12,6 +13,18 @@ const countTables = [
   'memory_fragments',
   'veilwalkers',
   'veilwalker_notes',
+];
+
+const adminOverviewActivityTables = [
+  { tableName: 'user_journal_entries', timestampColumns: ['updated_at', 'created_at'] },
+  { tableName: 'user_readings', timestampColumns: ['created_at'] },
+  { tableName: 'user_artifacts', timestampColumns: ['unlocked_at', 'created_at'] },
+  { tableName: 'user_room_visits', timestampColumns: ['last_visited_at', 'first_visited_at'] },
+  { tableName: 'user_gallery_recent_records', timestampColumns: ['last_viewed_at', 'created_at'] },
+  { tableName: 'user_gallery_marked_records', timestampColumns: ['marked_at', 'created_at'] },
+  { tableName: 'user_gallery_fragments', timestampColumns: ['collected_at', 'created_at'] },
+  { tableName: 'user_noctis_saved_documents', timestampColumns: ['created_at'] },
+  { tableName: 'user_profile_unlocks', timestampColumns: ['unlocked_at', 'created_at'] },
 ];
 
 // Admin UI checks prevent accidental access in the browser; all admin writes
@@ -32,6 +45,67 @@ const characterLineContexts = [
 ];
 const galleryStorageBucket = 'gallery-records';
 const galleryUploadFolders = ['featured', 'portraits', 'places', 'symbols', 'maps', 'anomalies', 'unknown', 'recovered', 'fragments'];
+const noctisDocumentTypes = ['journal', 'manuscript', 'letter', 'cipher', 'fragment', 'veil_lore', 'unstable_text', 'blood_moon', 'other'];
+const noctisDocumentModes = ['blood_moon', 'moon', 'sun', 'blue_moon', 'all'];
+const canonicalTideDocumentBody = `I used to think water was soft because it yielded.
+
+I was wrong.
+
+Water yields because it is patient enough to win without announcing itself. It does not argue with stone. It remembers the shape of resistance and returns, again and again, until the mountain learns to bow.
+
+There is a kind of strength that breaks everything it touches.
+
+There is another kind that enters without violence, fills what is empty, cools what is burning, reflects what refuses to be named, and carries away what has become too heavy to hold.
+
+The archive taught me this beside a basin with no bottom.
+
+I looked into it and saw every version of myself that had tried to become fire just to survive. Every face was bright. Every face was tired.
+
+Then the water moved.
+
+Not against me.
+
+Through me.
+
+Water does not show you the world by keeping still.
+
+It shows you what moves when you finally look.
+
+The sailor crosses oceans seeking new shores.
+
+Home waits beneath the face in the tide.
+
+In every reflection, a door opens inward.
+
+Nothing is farther than the self we avoid.
+
+That is what water knows.
+
+Long before maps were trusted, people followed the sea into the unknown. They sailed past familiar shores because something in them believed discovery lived beyond the horizon.
+
+But the oldest voyage was never across the water.
+
+It was through it.
+
+A person may cross every ocean and still remain a stranger to themselves. They may name islands, chart stars, survive storms, and return with gold in their hands, yet never once look into the dark mirror beneath the ship.
+
+Water remembers what the traveler forgets.
+
+It shows the face, then the fear behind the face. It shows the wound, then the tenderness guarding it. It shows the self not as a fixed thing, but as a current becoming.
+
+To become like water is not to disappear.
+
+It is to stop mistaking hardness for power.
+
+It is to move with enough truth that no cage can keep its original shape around you.
+
+When the candle went out, something small rested at the bottom of the basin.
+
+A key, dark as midnight glass.
+
+It had no teeth.
+
+Only a reflection.`;
 
 const accessMessage = document.querySelector('[data-access-message]');
 const loginLink = document.querySelector('[data-login-link]');
@@ -51,6 +125,15 @@ const sidebarScrim = document.querySelector('[data-sidebar-scrim]');
 const mobileNavigationQuery = window.matchMedia('(max-width: 900px)');
 const adminViews = document.querySelectorAll('[data-admin-view]');
 const viewLinks = document.querySelectorAll('[data-admin-view-link]');
+const overviewStatElements = {
+  totalAccounts: document.querySelector('[data-admin-overview-stat="totalAccounts"]'),
+  activeUsers: document.querySelector('[data-admin-overview-stat="activeUsers"]'),
+  newThisWeek: document.querySelector('[data-admin-overview-stat="newThisWeek"]'),
+  journalEntries: document.querySelector('[data-admin-overview-stat="journalEntries"]'),
+  savedReadings: document.querySelector('[data-admin-overview-stat="savedReadings"]'),
+  recoveredArtifacts: document.querySelector('[data-admin-overview-stat="recoveredArtifacts"]'),
+  sessionStatus: document.querySelector('[data-admin-overview-stat="sessionStatus"]'),
+};
 const journalsState = document.querySelector('[data-journals-state]');
 const journalsTableWrap = document.querySelector('[data-journals-table-wrap]');
 const journalsTableBody = document.querySelector('[data-journals-table-body]');
@@ -67,6 +150,7 @@ const journalFormTitle = document.querySelector('[data-journal-form-title]');
 const journalFormState = document.querySelector('[data-journal-form-state]');
 const journalFormSubmitButton = document.querySelector('[data-journal-form-submit]');
 const journalFormCancelButtons = document.querySelectorAll('[data-journal-form-cancel], [data-journal-form-cancel-secondary]');
+const journalFilters = Array.from(document.querySelectorAll('[data-journal-filter]'));
 const journalPromptsState = document.querySelector('[data-journal-prompts-state]');
 const journalPromptsTableWrap = document.querySelector('[data-journal-prompts-table-wrap]');
 const journalPromptsTableBody = document.querySelector('[data-journal-prompts-table-body]');
@@ -255,6 +339,20 @@ const userProgressDetailMeta = document.querySelector('[data-user-progress-detai
 const userProgressDetailFields = document.querySelector('[data-user-progress-detail-fields]');
 const userProgressDetailGroups = document.querySelector('[data-user-progress-detail-groups]');
 const userProgressDetailCloseButton = document.querySelector('[data-user-progress-detail-close]');
+const adminUsersState = document.querySelector('[data-admin-users-state]');
+const adminUsersTableWrap = document.querySelector('[data-admin-users-table-wrap]');
+const adminUsersTableBody = document.querySelector('[data-admin-users-table-body]');
+const adminUserSearchInput = document.querySelector('[data-admin-user-search]');
+const adminUserDetail = document.querySelector('[data-admin-user-detail]');
+const adminUserDetailTitle = document.querySelector('[data-admin-user-detail-title]');
+const adminUserDetailMeta = document.querySelector('[data-admin-user-detail-meta]');
+const adminUserDetailFields = document.querySelector('[data-admin-user-detail-fields]');
+const adminUserDetailCloseButton = document.querySelector('[data-admin-user-detail-close]');
+const userModerationForm = document.querySelector('[data-user-moderation-form]');
+const userModerationStatusSelect = document.querySelector('[data-user-moderation-status]');
+const userModerationReasonField = document.querySelector('[data-user-moderation-reason]');
+const userModerationState = document.querySelector('[data-user-moderation-state]');
+const userModerationSubmitButton = document.querySelector('[data-user-moderation-submit]');
 
 const userProgressSummaryTables = [
   'profiles',
@@ -344,6 +442,7 @@ const userProgressSections = [
 let journalsLoaded = false;
 let journalRows = [];
 let editingJournalId = null;
+let journalFiltersInitialized = false;
 let journalPromptsLoaded = false;
 let journalPromptRows = [];
 let editingJournalPromptId = null;
@@ -386,8 +485,13 @@ let editingVeilwalkerId = null;
 let appSettingsLoaded = false;
 let appSettingRows = [];
 let editingAppSettingId = null;
+let adminUsersLoaded = false;
+let adminUserRows = [];
+let filteredAdminUserRows = [];
 let userProgressLoaded = false;
 let profileRows = [];
+let currentAdminUserId = null;
+let adminDashboardBindingsInitialized = false;
 
 function setAccessMessage(text, state = '') {
   accessMessage.textContent = text;
@@ -475,7 +579,7 @@ function formatDate(value) {
 }
 
 function getJournalTitle(row) {
-  return formatValue(getFirstValue(row, ['title', 'name', 'heading']), 'Untitled journal');
+  return formatValue(getFirstValue(row, ['title', 'name', 'heading']), 'Untitled document');
 }
 
 function getJournalSlug(row) {
@@ -487,19 +591,26 @@ function getJournalId(row) {
 }
 
 function getJournalKey(row) {
-  return formatValue(getFirstValue(row, ['journal_key', 'key', 'id']));
+  return formatValue(getFirstValue(row, ['shelf_mark', 'journal_key', 'key', 'id']));
 }
 
 function getJournalType(row) {
-  return formatValue(getFirstValue(row, ['journal_type', 'entry_type', 'type']));
+  return normalizeNoctisDocumentType(getFirstValue(row, ['document_type', 'journal_type', 'entry_type', 'type']));
 }
 
 function getJournalArchiveSection(row) {
-  return formatValue(getFirstValue(row, ['archive_section', 'section']));
+  return formatValue(getFirstValue(row, ['category_label', 'category', 'archive_section', 'section']));
 }
 
 function getJournalThemeMode(row) {
-  return formatValue(getFirstValue(row, ['theme_mode', 'mode_key', 'mode', 'site_mode', 'event_mode', 'collection_mode']));
+  return formatValue(getFirstValue(row, ['mode', 'moon_phase', 'theme_mode', 'mode_key', 'site_mode', 'event_mode', 'collection_mode']));
+}
+
+function normalizeJournalFilterMatchValue(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[-\s]+/g, '_');
 }
 
 function getJournalPublishedState(row) {
@@ -530,10 +641,14 @@ function getJournalMode(row) {
   return getJournalThemeMode(row);
 }
 
+function getJournalModeForFilter(row) {
+  return normalizeJournalFilterMatchValue(getFirstValue(row, ['mode', 'moon_phase', 'theme_mode', 'mode_key', 'site_mode', 'event_mode', 'collection_mode']));
+}
+
 function getJournalBody(row) {
   return formatValue(
     getFirstValue(row, ['body', 'content', 'text', 'entry', 'description', 'summary']),
-    'No body/content field available for this journal.',
+    'No body/content field available for this document.',
   );
 }
 
@@ -542,11 +657,106 @@ function getJournalExcerpt(row) {
 }
 
 function getJournalRelatedCharacter(row) {
-  return formatValue(getFirstValue(row, ['related_character', 'character_key', 'veilwalker_key']));
+  return formatValue(getFirstValue(row, ['attribution', 'related_character', 'character_key', 'veilwalker_key']));
 }
 
 function getJournalSortOrder(row) {
   return formatValue(getFirstValue(row, ['sort_order', 'display_order', 'order']));
+}
+
+function normalizeNoctisDocumentType(value) {
+  const normalized = String(value || 'journal').trim().toLowerCase();
+  const typeMap = {
+    journals: 'journal',
+    journal_fragment: 'journal',
+    recovered_journal: 'journal',
+    manuscripts: 'manuscript',
+    letters: 'letter',
+    cryptic_codes: 'cipher',
+    codes: 'cipher',
+    fragments: 'fragment',
+    veil: 'veil_lore',
+    the_veil: 'veil_lore',
+    unstable_texts: 'unstable_text',
+    blood_moon_record: 'blood_moon',
+    bloodmoon: 'blood_moon',
+  };
+  const nextType = typeMap[normalized] || normalized;
+
+  return noctisDocumentTypes.includes(nextType) ? nextType : 'other';
+}
+
+function getJournalAuthor(row) {
+  return formatValue(getFirstValue(row, ['author']));
+}
+
+function getJournalAttribution(row) {
+  return formatValue(getFirstValue(row, ['attribution']));
+}
+
+function getJournalAuthorAttribution(row) {
+  const author = getJournalAuthor(row);
+  const attribution = getJournalAttribution(row);
+
+  if (author !== '--' && attribution !== '--' && author !== attribution) {
+    return `${author} / ${attribution}`;
+  }
+
+  return author !== '--' ? author : attribution;
+}
+
+function getJournalShelfMark(row) {
+  return formatValue(getFirstValue(row, ['shelf_mark']));
+}
+
+function getJournalTags(row) {
+  return normalizeAdminListField(getFirstValue(row, ['tags']));
+}
+
+function getJournalThemes(row) {
+  return normalizeAdminListField(getFirstValue(row, ['themes']));
+}
+
+function getJournalFeaturedBoolean(row) {
+  return Boolean(getFirstValue(row, ['is_featured']));
+}
+
+function getJournalNotableBoolean(row) {
+  return Boolean(getFirstValue(row, ['is_notable']));
+}
+
+function getJournalBloodMoonBoolean(row) {
+  return Boolean(getFirstValue(row, ['is_blood_moon'])) || getJournalModeForFilter(row) === 'blood_moon' || getJournalType(row) === 'blood_moon';
+}
+
+function getJournalFeaturedNotableState(row) {
+  const states = [];
+
+  if (getJournalFeaturedBoolean(row)) {
+    states.push('Featured');
+  }
+
+  if (getJournalNotableBoolean(row)) {
+    states.push('Notable');
+  }
+
+  return states.join(' / ') || '--';
+}
+
+function getNoctisDocumentCategory(type) {
+  const categoryMap = {
+    journal: 'journals',
+    manuscript: 'manuscripts',
+    letter: 'letters',
+    cipher: 'cryptic_codes',
+    fragment: 'fragments',
+    veil_lore: 'veil_lore',
+    unstable_text: 'unstable_texts',
+    blood_moon: 'blood_moon',
+    other: 'other',
+  };
+
+  return categoryMap[type] || 'other';
 }
 
 function getJournalPromptId(row) {
@@ -1089,7 +1299,7 @@ function getVeilwalkerKey(row) {
 }
 
 function getVeilwalkerZodiac(row) {
-  return formatValue(getFirstValue(row, ['zodiac_key', 'zodiac', 'sign']));
+  return formatValue(getFirstValue(row, ['zodiac_sign', 'zodiac_key', 'zodiac', 'sign']));
 }
 
 function getVeilwalkerThemeMode(row) {
@@ -1293,6 +1503,43 @@ function getProfileDisplayName(row) {
 
 function getProfileRole(row) {
   return formatValue(getFirstValue(row, ['role', 'account_role']));
+}
+
+function getProfileEmail(row) {
+  return formatValue(getFirstValue(row, ['email', 'user_email']));
+}
+
+function getProfileAccountStatus(row) {
+  const status = String(getFirstValue(row, ['account_status']) || 'active').trim().toLowerCase();
+
+  return status || 'active';
+}
+
+function getProfileAccountStatusLabel(row) {
+  const labels = {
+    active: 'Active',
+    restricted: 'Restricted',
+    banned: 'Banned',
+    pending_deletion: 'Pending Deletion',
+  };
+
+  return labels[getProfileAccountStatus(row)] || formatValue(getProfileAccountStatus(row));
+}
+
+function getProfileBanReason(row) {
+  return formatValue(getFirstValue(row, ['ban_reason']));
+}
+
+function getProfileBannedAt(row) {
+  return formatDate(getFirstValue(row, ['banned_at']));
+}
+
+function getProfileCreatedAt(row) {
+  return formatDate(getFirstValue(row, ['created_at', 'inserted_at']));
+}
+
+function getProfileUpdatedAt(row) {
+  return formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated']));
 }
 
 function getProfileAvatarUrl(row) {
@@ -1513,6 +1760,28 @@ function setUserProgressState(message, state = '') {
   userProgressState.hidden = false;
 }
 
+function setAdminUsersState(message, state = '') {
+  adminUsersState.textContent = message;
+  adminUsersState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  adminUsersState.hidden = false;
+}
+
+function setUserModerationState(message, state = '') {
+  if (!userModerationState) {
+    return;
+  }
+
+  userModerationState.textContent = message;
+  userModerationState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  userModerationState.hidden = false;
+}
+
+function hideUserModerationState() {
+  if (userModerationState) {
+    userModerationState.hidden = true;
+  }
+}
+
 function hideJournalDetail() {
   journalDetail.hidden = true;
 }
@@ -1523,7 +1792,7 @@ function hideJournalForm() {
   hideJournalFormState();
   journalFormPanel.hidden = true;
   journalFormSubmitButton.disabled = false;
-  journalFormSubmitButton.textContent = 'Save Journal';
+  journalFormSubmitButton.textContent = 'Save Document';
 }
 
 function setJournalPromptFormCancelVisible(isVisible) {
@@ -1690,6 +1959,14 @@ function hideAppSettingForm() {
 
 function hideUserProgressDetail() {
   userProgressDetail.hidden = true;
+  userProgressDetail.dataset.profileIndex = '';
+}
+
+function hideAdminUserDetail() {
+  adminUserDetail.hidden = true;
+  adminUserDetail.dataset.userIndex = '';
+  userModerationForm?.setAttribute('hidden', '');
+  hideUserModerationState();
 }
 
 function appendTextCell(rowElement, label, value, className = '') {
@@ -1758,29 +2035,38 @@ function appendCharacterLineBadgeCell(rowElement, label, value, badgeClassName =
   rowElement.append(cell);
 }
 
-function renderJournalRows(rows) {
+function renderJournalRows(rows = journalRows) {
   journalsTableBody.replaceChildren();
 
-  rows.forEach((row) => {
+  if (!rows.length) {
+    setJournalsState('No Noctis documents found for these filters.');
+    journalsTableWrap.hidden = true;
+    return;
+  }
+
+  rows.forEach((row, index) => {
     const tableRow = document.createElement('tr');
     const actionCell = document.createElement('td');
     const actionGroup = document.createElement('div');
     const viewButton = document.createElement('button');
     const editButton = document.createElement('button');
     const publishButton = document.createElement('button');
+    const deleteButton = document.createElement('button');
 
     appendTextCell(tableRow, 'Title', getJournalTitle(row), 'admin-table__title');
     appendTextCell(tableRow, 'Slug', getJournalSlug(row), 'admin-table__muted');
-    appendTextCell(tableRow, 'Journal Key', getJournalKey(row), 'admin-table__muted');
     appendTextCell(tableRow, 'Type', getJournalType(row));
+    appendTextCell(tableRow, 'Author/Attribution', getJournalAuthorAttribution(row), 'admin-table__muted');
+    appendTextCell(tableRow, 'Shelf Mark', getJournalShelfMark(row), 'admin-table__muted');
     appendTextCell(tableRow, 'Mode', getJournalMode(row));
     appendTextCell(tableRow, 'Published', getJournalPublishedState(row));
+    appendTextCell(tableRow, 'Featured/Notable', getJournalFeaturedNotableState(row));
     appendTextCell(tableRow, 'Updated', formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated'])));
 
     viewButton.className = 'admin-row-action';
     viewButton.type = 'button';
     viewButton.textContent = 'View';
-    viewButton.addEventListener('click', () => showJournalDetail(index));
+    viewButton.addEventListener('click', () => showJournalDetail(row));
 
     editButton.className = 'admin-row-action';
     editButton.type = 'button';
@@ -1792,13 +2078,288 @@ function renderJournalRows(rows) {
     publishButton.textContent = getJournalPublishedBoolean(row) ? 'Unpublish' : 'Publish';
     publishButton.addEventListener('click', () => toggleJournalPublished(row, publishButton));
 
+    deleteButton.className = 'admin-row-action';
+    deleteButton.type = 'button';
+    deleteButton.textContent = 'Delete';
+    deleteButton.addEventListener('click', () => deleteJournal(row, deleteButton));
+
     actionGroup.className = 'admin-action-group';
-    actionCell.dataset.label = 'Action';
-    actionGroup.append(viewButton, editButton, publishButton);
+    actionCell.dataset.label = 'Actions';
+    actionGroup.append(viewButton, editButton, publishButton, deleteButton);
     actionCell.append(actionGroup);
     tableRow.append(actionCell);
     journalsTableBody.append(tableRow);
   });
+
+  journalsState.hidden = true;
+  journalsTableWrap.hidden = false;
+}
+
+function getJournalFilterValue(filterName) {
+  const field = journalFilters.find((filter) => filter.dataset.journalFilter === filterName);
+
+  return field?.value || '__all';
+}
+
+function getJournalSearchText(row) {
+  return [
+    getJournalTitle(row),
+    getJournalAuthor(row),
+    getJournalAttribution(row),
+    getJournalShelfMark(row),
+    getJournalBody(row),
+    getJournalExcerpt(row),
+    getJournalTags(row).join(' '),
+    getJournalThemes(row).join(' '),
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+
+function getFilteredJournalRows() {
+  const query = String(getJournalFilterValue('search') || '').trim().toLowerCase();
+  const typeFilter = getJournalFilterValue('document_type');
+  const publishedFilter = getJournalFilterValue('published');
+  const modeFilter = normalizeJournalFilterMatchValue(getJournalFilterValue('mode'));
+  const bloodMoonFilter = getJournalFilterValue('blood_moon');
+
+  return journalRows.filter((row) => {
+    if (query && !getJournalSearchText(row).includes(query)) {
+      return false;
+    }
+
+    if (typeFilter !== '__all' && getJournalType(row) !== typeFilter) {
+      return false;
+    }
+
+    if (publishedFilter === 'published' && !getJournalPublishedBoolean(row)) {
+      return false;
+    }
+
+    if (publishedFilter === 'unpublished' && getJournalPublishedBoolean(row)) {
+      return false;
+    }
+
+    if (modeFilter !== '__all' && getJournalModeForFilter(row) !== modeFilter) {
+      return false;
+    }
+
+    if (bloodMoonFilter === 'blood_moon' && !getJournalBloodMoonBoolean(row)) {
+      return false;
+    }
+
+    if (bloodMoonFilter === 'not_blood_moon' && getJournalBloodMoonBoolean(row)) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+function applyJournalFilters() {
+  renderJournalRows(getFilteredJournalRows());
+}
+
+function resetJournalFiltersToDefaults() {
+  journalFilters.forEach((filter) => {
+    if (filter.dataset.journalFilter === 'search') {
+      filter.value = '';
+      return;
+    }
+
+    filter.value = '__all';
+  });
+}
+
+function getNoctisDocumentDedupeKey(row) {
+  return String(row?.id || row?.slug || row?.shelf_mark || row?.title || '').trim().toLowerCase();
+}
+
+function mergeNoctisDocumentRows(...rowGroups) {
+  const rowsByKey = new Map();
+
+  rowGroups.flat().filter(Boolean).forEach((row) => {
+    const key = getNoctisDocumentDedupeKey(row);
+
+    if (!key || rowsByKey.has(key)) {
+      return;
+    }
+
+    rowsByKey.set(key, row);
+  });
+
+  return [...rowsByKey.values()];
+}
+
+function sortNoctisDocumentRows(rows) {
+  return rows.slice().sort((first, second) => {
+    const firstOrder = Number(getFirstValue(first, ['sort_order'])) || 0;
+    const secondOrder = Number(getFirstValue(second, ['sort_order'])) || 0;
+
+    if (firstOrder !== secondOrder) {
+      return firstOrder - secondOrder;
+    }
+
+    const firstUpdated = new Date(getFirstValue(first, ['updated_at', 'created_at']) || 0).getTime();
+    const secondUpdated = new Date(getFirstValue(second, ['updated_at', 'created_at']) || 0).getTime();
+
+    if (firstUpdated !== secondUpdated) {
+      return secondUpdated - firstUpdated;
+    }
+
+    return getJournalTitle(first).localeCompare(getJournalTitle(second));
+  });
+}
+
+async function fetchNoctisDocumentRows(supabase, { publishedOnly = false } = {}) {
+  let query = supabase
+    .from('noctis_documents')
+    .select('*');
+
+  if (publishedOnly) {
+    query = query.eq('is_published', true);
+  }
+
+  return query.limit(500);
+}
+
+function logNoctisDocumentQueryError(error) {
+  if (!error) {
+    return;
+  }
+
+  console.error('Noctis Documents query failed:', {
+    message: error.message || '',
+    details: error.details || '',
+    hint: error.hint || '',
+    code: error.code || '',
+  });
+}
+
+function getCanonicalTideDocumentPayload({ includeBody = true } = {}) {
+  const payload = {
+    title: 'The Tide That Moves Within',
+    slug: 'the-tide-that-moves-within',
+    subtitle: 'Recovered Journal Fragment',
+    author: 'Zephyra Noctis',
+    attribution: 'Zephyra Noctis',
+    zodiac: 'Scorpio',
+    document_type: 'journal',
+    category: 'journals',
+    category_label: 'Recovered Journal',
+    summary: 'A recovered journal fragment about memory, water, resistance, and the quiet strength of yielding.',
+    excerpt: 'The sea is not distant. It is memory. It pulls at the edge of the self, where names dissolve and the Veil grows thin.',
+    tags: ['water', 'memory', 'fragment'],
+    themes: ['The Veil', 'Tides', 'Memory'],
+    shelf_mark: 'J-SC-ZN-01',
+    mode: 'blood_moon',
+    moon_phase: 'blood_moon',
+    unlock_requirement: 'public',
+    is_published: true,
+    is_featured: true,
+    is_blood_moon: true,
+    sort_order: 0,
+  };
+
+  if (includeBody) {
+    payload.body = canonicalTideDocumentBody;
+  }
+
+  return payload;
+}
+
+function getCanonicalTideDocumentLegacyPayload({ includeBody = true } = {}) {
+  const payload = {
+    title: 'The Tide That Moves Within',
+    slug: 'the-tide-that-moves-within',
+    subtitle: 'Recovered Journal Fragment',
+    author: 'Zephyra Noctis',
+    zodiac: 'Scorpio',
+    document_type: 'journal',
+    category: 'journals',
+    summary: 'A recovered journal fragment about memory, water, resistance, and the quiet strength of yielding.',
+    excerpt: 'The sea is not distant. It is memory. It pulls at the edge of the self, where names dissolve and the Veil grows thin.',
+    tags: ['water', 'memory', 'fragment'],
+    themes: ['The Veil', 'Tides', 'Memory'],
+    shelf_mark: 'J-SC-ZN-01',
+    moon_phase: 'blood_moon',
+    unlock_requirement: 'public',
+    is_published: true,
+    is_featured: true,
+  };
+
+  if (includeBody) {
+    payload.body = canonicalTideDocumentBody;
+  }
+
+  return payload;
+}
+
+function isMissingNoctisDocumentColumnError(error) {
+  return error?.code === '42703' || /column .* does not exist/i.test(String(error?.message || ''));
+}
+
+async function ensureCanonicalTideDocument(supabase) {
+  const { data: existingRows, error: existingError } = await supabase
+    .from('noctis_documents')
+    .select('id, slug, shelf_mark, body')
+    .or('slug.eq.the-tide-that-moves-within,shelf_mark.eq.J-SC-ZN-01')
+    .limit(1);
+
+  if (existingError) {
+    return { row: null, error: existingError };
+  }
+
+  const existingRow = Array.isArray(existingRows) ? existingRows[0] : null;
+
+  if (existingRow?.id) {
+    let updateResult = await supabase
+      .from('noctis_documents')
+      .update(getCanonicalTideDocumentPayload({ includeBody: false }))
+      .eq('id', existingRow.id)
+      .select('*')
+      .single();
+
+    if (isMissingNoctisDocumentColumnError(updateResult.error)) {
+      updateResult = await supabase
+        .from('noctis_documents')
+        .update(getCanonicalTideDocumentLegacyPayload({ includeBody: false }))
+        .eq('id', existingRow.id)
+        .select('*')
+        .single();
+    }
+
+    return { row: updateResult.data || null, error: updateResult.error };
+  }
+
+  let insertResult = await supabase
+    .from('noctis_documents')
+    .insert(getCanonicalTideDocumentPayload())
+    .select('*')
+    .single();
+
+  if (isMissingNoctisDocumentColumnError(insertResult.error)) {
+    insertResult = await supabase
+      .from('noctis_documents')
+      .insert(getCanonicalTideDocumentLegacyPayload())
+      .select('*')
+      .single();
+  }
+
+  const { data, error } = insertResult;
+
+  if (error && error.code === '23505') {
+    const retryResult = await supabase
+      .from('noctis_documents')
+      .select('*')
+      .or('slug.eq.the-tide-that-moves-within,shelf_mark.eq.J-SC-ZN-01')
+      .limit(1);
+
+    return {
+      row: Array.isArray(retryResult.data) ? retryResult.data[0] || null : null,
+      error: retryResult.error,
+    };
+  }
+
+  return { row: data || null, error };
 }
 
 function getJournalPromptFilterValue(filterName) {
@@ -2333,8 +2894,8 @@ function appendDetailChip(container, label, value) {
   container.append(chip);
 }
 
-function showJournalDetail(index) {
-  const row = journalRows[index];
+function showJournalDetail(rowOrIndex) {
+  const row = typeof rowOrIndex === 'number' ? journalRows[rowOrIndex] : rowOrIndex;
 
   if (!row) {
     return;
@@ -2349,16 +2910,24 @@ function showJournalDetail(index) {
   appendDetailChip(journalDetailMeta, 'Type', getJournalType(row));
   appendDetailChip(journalDetailMeta, 'Mode', getJournalMode(row));
   appendDetailChip(journalDetailMeta, 'Slug', getJournalSlug(row));
-  appendDetailChip(journalDetailMeta, 'Key', getJournalKey(row));
+  appendDetailChip(journalDetailMeta, 'Shelf Mark', getJournalShelfMark(row));
   appendDetailField(journalDetailFields, 'Slug', getJournalSlug(row));
-  appendDetailField(journalDetailFields, 'Journal Key', getJournalKey(row));
+  appendDetailField(journalDetailFields, 'Shelf Mark', getJournalShelfMark(row));
   appendDetailField(journalDetailFields, 'Type', getJournalType(row));
+  appendDetailField(journalDetailFields, 'Category Label', getJournalArchiveSection(row));
+  appendDetailField(journalDetailFields, 'Author', getJournalAuthor(row));
+  appendDetailField(journalDetailFields, 'Attribution', getJournalAttribution(row));
   appendDetailField(journalDetailFields, 'Mode', getJournalMode(row));
   appendDetailField(journalDetailFields, 'Published', getJournalPublishedState(row));
-  appendDetailField(journalDetailFields, 'Source', formatValue(getFirstValue(row, ['source', 'origin', 'author'])));
+  appendDetailField(journalDetailFields, 'Featured / Notable', getJournalFeaturedNotableState(row));
+  appendDetailField(journalDetailFields, 'Blood Moon', getJournalBloodMoonBoolean(row) ? 'Yes' : 'No');
+  appendDetailField(journalDetailFields, 'Tags', formatAdminList(getJournalTags(row)) || '--');
+  appendDetailField(journalDetailFields, 'Themes', formatAdminList(getJournalThemes(row)) || '--');
+  appendDetailField(journalDetailFields, 'Unlock Key', formatValue(getFirstValue(row, ['unlock_key'])));
+  appendDetailField(journalDetailFields, 'Required Artifact', formatValue(getFirstValue(row, ['required_artifact_key'])));
+  appendDetailField(journalDetailFields, 'Required Fragment', formatValue(getFirstValue(row, ['required_fragment_key'])));
   appendDetailField(journalDetailFields, 'Created', formatDate(getFirstValue(row, ['created_at', 'inserted_at'])));
   appendDetailField(journalDetailFields, 'Updated', formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated'])));
-  appendDetailField(journalDetailFields, 'Metadata', formatValue(getFirstValue(row, ['metadata', 'meta', 'settings'])));
 
   journalDetail.hidden = false;
   journalDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2386,22 +2955,34 @@ function showJournalForm(row = null) {
 
   if (row) {
     editingJournalId = getJournalId(row);
-    journalFormTitle.textContent = 'Edit Journal';
+    journalFormTitle.textContent = 'Edit Document';
     journalFormSubmitButton.textContent = 'Save Changes';
     setJournalFormValue('title', getJournalTitle(row));
     setJournalFormValue('slug', getJournalSlug(row));
-    setJournalFormValue('journal_type', getJournalType(row));
-    setJournalFormValue('archive_section', getJournalArchiveSection(row));
-    setJournalFormValue('theme_mode', getJournalThemeMode(row));
+    setJournalFormValue('document_type', getJournalType(row));
+    setJournalFormValue('category_label', getJournalArchiveSection(row));
+    setJournalFormValue('author', getJournalAuthor(row));
+    setJournalFormValue('attribution', getJournalAttribution(row));
+    setJournalFormValue('shelf_mark', getJournalShelfMark(row));
     setJournalFormValue('excerpt', getJournalExcerpt(row));
     setJournalFormValue('body', getJournalBody(row));
-    setJournalFormValue('related_character', getJournalRelatedCharacter(row));
+    setJournalFormValue('tags', formatAdminList(getJournalTags(row)));
+    setJournalFormValue('themes', formatAdminList(getJournalThemes(row)));
+    setJournalFormValue('mode', getJournalMode(row) === '--' ? 'blood_moon' : getJournalMode(row));
     setJournalFormValue('is_published', getJournalPublishedBoolean(row));
+    setJournalFormValue('is_featured', getJournalFeaturedBoolean(row));
+    setJournalFormValue('is_notable', getJournalNotableBoolean(row));
+    setJournalFormValue('is_blood_moon', getJournalBloodMoonBoolean(row));
     setJournalFormValue('sort_order', getJournalSortOrder(row));
+    setJournalFormValue('unlock_key', formatValue(getFirstValue(row, ['unlock_key'])));
+    setJournalFormValue('required_artifact_key', formatValue(getFirstValue(row, ['required_artifact_key'])));
+    setJournalFormValue('required_fragment_key', formatValue(getFirstValue(row, ['required_fragment_key'])));
   } else {
     editingJournalId = null;
-    journalFormTitle.textContent = 'New Journal';
-    journalFormSubmitButton.textContent = 'Create Journal';
+    journalFormTitle.textContent = 'New Document';
+    journalFormSubmitButton.textContent = 'Create Document';
+    setJournalFormValue('document_type', 'journal');
+    setJournalFormValue('mode', 'blood_moon');
   }
 
   journalFormPanel.hidden = false;
@@ -2411,16 +2992,31 @@ function showJournalForm(row = null) {
 function getJournalFormPayload() {
   const formData = new FormData(journalForm);
   const sortOrderValue = String(formData.get('sort_order') || '').trim();
+  const title = String(formData.get('title') || '').trim();
+  const documentType = normalizeNoctisDocumentType(formData.get('document_type'));
+  const mode = String(formData.get('mode') || 'blood_moon').trim() || 'blood_moon';
   const payload = {
-    title: String(formData.get('title') || '').trim(),
-    slug: String(formData.get('slug') || '').trim(),
-    journal_type: String(formData.get('journal_type') || '').trim() || null,
-    archive_section: String(formData.get('archive_section') || '').trim() || null,
-    theme_mode: String(formData.get('theme_mode') || '').trim() || null,
+    title,
+    slug: String(formData.get('slug') || '').trim() || toKebabCase(title),
+    document_type: documentType,
+    category_label: String(formData.get('category_label') || '').trim() || null,
+    category: getNoctisDocumentCategory(documentType),
+    author: String(formData.get('author') || '').trim() || null,
+    attribution: String(formData.get('attribution') || '').trim() || null,
+    shelf_mark: String(formData.get('shelf_mark') || '').trim() || null,
     excerpt: String(formData.get('excerpt') || '').trim() || null,
     body: String(formData.get('body') || '').trim(),
-    related_character: String(formData.get('related_character') || '').trim() || null,
+    tags: parseAdminList(formData.get('tags')),
+    themes: parseAdminList(formData.get('themes')),
+    mode,
+    moon_phase: mode,
     is_published: formData.has('is_published'),
+    is_featured: formData.has('is_featured'),
+    is_notable: formData.has('is_notable'),
+    is_blood_moon: formData.has('is_blood_moon') || mode === 'blood_moon' || documentType === 'blood_moon',
+    unlock_key: String(formData.get('unlock_key') || '').trim() || null,
+    required_artifact_key: String(formData.get('required_artifact_key') || '').trim() || null,
+    required_fragment_key: String(formData.get('required_fragment_key') || '').trim() || null,
   };
 
   if (sortOrderValue !== '') {
@@ -2441,8 +3037,8 @@ function validateJournalPayload(payload) {
     missingFields.push('title');
   }
 
-  if (!payload.slug) {
-    missingFields.push('slug');
+  if (!payload.document_type) {
+    missingFields.push('document_type');
   }
 
   if (!payload.body) {
@@ -2476,26 +3072,26 @@ async function handleJournalFormSubmit(event) {
   const supabase = getSupabaseClient();
 
   if (!supabase) {
-    setJournalFormState('Journals cannot be saved because the archive connection is not configured.', 'error');
+    setJournalFormState('Noctis documents cannot be saved because the archive connection is not configured.', 'error');
     return;
   }
 
   journalFormSubmitButton.disabled = true;
-  setJournalFormState(editingJournalId ? 'Saving journal changes...' : 'Creating journal...');
+  setJournalFormState(editingJournalId ? 'Saving document changes...' : 'Creating document...');
 
   const query = editingJournalId
-    ? supabase.from('journals').update(payload).eq('id', editingJournalId).select('*').single()
-    : supabase.from('journals').insert(payload).select('*').single();
+    ? supabase.from('noctis_documents').update(payload).eq('id', editingJournalId).select('*').single()
+    : supabase.from('noctis_documents').insert(payload).select('*').single();
 
   const { error } = await query;
 
   if (error) {
     journalFormSubmitButton.disabled = false;
-    setJournalFormState(`Journal could not be saved. ${error.message || 'Please try again later.'}`, 'error');
+    setJournalFormState(`Document could not be saved. ${error.message || 'Please try again later.'}`, 'error');
     return;
   }
 
-  const successMessage = editingJournalId ? 'Journal updated successfully.' : 'Journal created successfully.';
+  const successMessage = editingJournalId ? 'Document updated successfully.' : 'Document created successfully.';
   hideJournalForm();
   await refreshJournals(successMessage);
 }
@@ -2505,19 +3101,19 @@ async function toggleJournalPublished(row, button) {
   const supabase = getSupabaseClient();
 
   if (!journalId) {
-    setJournalsState('This journal cannot be updated because it is missing an id.', 'error');
+    setJournalsState('This document cannot be updated because it is missing an id.', 'error');
     return;
   }
 
   if (!supabase) {
-    setJournalsState('Journals cannot be updated because the archive connection is not configured.', 'error');
+    setJournalsState('Noctis documents cannot be updated because the archive connection is not configured.', 'error');
     return;
   }
 
   button.disabled = true;
   const nextPublishedState = !getJournalPublishedBoolean(row);
   const { error } = await supabase
-    .from('journals')
+    .from('noctis_documents')
     .update({ is_published: nextPublishedState })
     .eq('id', journalId)
     .select('id')
@@ -2529,7 +3125,41 @@ async function toggleJournalPublished(row, button) {
     return;
   }
 
-  await refreshJournals(nextPublishedState ? 'Journal published.' : 'Journal unpublished.');
+  await refreshJournals(nextPublishedState ? 'Document published.' : 'Document unpublished.');
+}
+
+async function deleteJournal(row, button) {
+  const journalId = getJournalId(row);
+  const title = getJournalTitle(row);
+  const supabase = getSupabaseClient();
+
+  if (!journalId) {
+    setJournalsState('This document cannot be deleted because it is missing an id.', 'error');
+    return;
+  }
+
+  if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) {
+    return;
+  }
+
+  if (!supabase) {
+    setJournalsState('Noctis documents cannot be deleted because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  const { error } = await supabase
+    .from('noctis_documents')
+    .delete()
+    .eq('id', journalId);
+
+  if (error) {
+    button.disabled = false;
+    setJournalsState(`Document could not be deleted. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  await refreshJournals('Document deleted.');
 }
 
 function setJournalPromptFormValue(fieldName, value) {
@@ -3422,8 +4052,20 @@ function parseAdminList(value) {
     .filter(Boolean);
 }
 
+function normalizeAdminListField(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item || '').trim()).filter(Boolean);
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.values(value).map((item) => String(item || '').trim()).filter(Boolean);
+  }
+
+  return parseAdminList(value);
+}
+
 function formatAdminList(value) {
-  return Array.isArray(value) ? value.join(', ') : '';
+  return normalizeAdminListField(value).join(', ');
 }
 
 function normalizeGalleryAdminValue(value) {
@@ -5087,55 +5729,6 @@ async function toggleVeilwalkerNoteActive(row, button) {
   await toggleVeilwalkerNoteBoolean(row, button, 'is_active', getVeilwalkerNoteActiveBoolean, 'Veilwalker note activated.', 'Veilwalker note deactivated.');
 }
 
-function renderVeilwalkerRows(rows) {
-  veilwalkersTableBody.replaceChildren();
-
-  rows.forEach((row, index) => {
-    const tableRow = document.createElement('tr');
-    const actionCell = document.createElement('td');
-    const actionGroup = document.createElement('div');
-    const viewButton = document.createElement('button');
-    const editButton = document.createElement('button');
-    const activeButton = document.createElement('button');
-
-    appendTextCell(tableRow, 'Key', getVeilwalkerKey(row), 'admin-table__muted');
-    appendTextCell(tableRow, 'Name', getVeilwalkerName(row), 'admin-table__title');
-    appendTextCell(tableRow, 'Zodiac', getVeilwalkerZodiac(row));
-    appendTextCell(tableRow, 'Element', getVeilwalkerElement(row));
-    appendTextCell(tableRow, 'Title', getVeilwalkerTitle(row));
-    appendTextCell(tableRow, 'Mode', getVeilwalkerMode(row));
-    appendTextCell(tableRow, 'Active', getVeilwalkerActiveState(row));
-    appendTextCell(tableRow, 'Sort', getVeilwalkerSortOrder(row));
-
-    viewButton.className = 'admin-row-action';
-    viewButton.type = 'button';
-    viewButton.textContent = 'View';
-    viewButton.addEventListener('click', () => showVeilwalkerDetail(index));
-
-    editButton.className = 'admin-row-action';
-    editButton.type = 'button';
-    editButton.textContent = 'Edit';
-    editButton.addEventListener('click', () => showVeilwalkerForm(row));
-
-    activeButton.className = 'admin-row-action';
-    activeButton.type = 'button';
-    activeButton.textContent = getVeilwalkerActiveBoolean(row) ? 'Deactivate' : 'Activate';
-    activeButton.addEventListener('click', () => toggleVeilwalkerActive(row, activeButton));
-
-    actionGroup.className = 'admin-action-group';
-    actionCell.dataset.label = 'Action';
-    actionGroup.append(viewButton, editButton);
-
-    if (Object.prototype.hasOwnProperty.call(row, 'is_active')) {
-      actionGroup.append(activeButton);
-    }
-
-    actionCell.append(actionGroup);
-    tableRow.append(actionCell);
-    veilwalkersTableBody.append(tableRow);
-  });
-}
-
 function appendImagePreview(container, label, value) {
   if (!value || value === '--') {
     return;
@@ -5166,61 +5759,6 @@ function appendImagePreview(container, label, value) {
 
   preview.append(labelElement, image, link);
   container.append(preview);
-}
-
-function showVeilwalkerDetail(index) {
-  const row = veilwalkerRows[index];
-
-  if (!row) {
-    return;
-  }
-
-  veilwalkerDetailTitle.textContent = getVeilwalkerName(row);
-  veilwalkerDetailMeta.replaceChildren();
-  veilwalkerDetailFields.replaceChildren();
-  veilwalkerDetailImages.replaceChildren();
-  veilwalkerDetailBody.textContent = getVeilwalkerDescription(row);
-
-  appendDetailChip(veilwalkerDetailMeta, 'Zodiac', getVeilwalkerZodiac(row));
-  appendDetailChip(veilwalkerDetailMeta, 'Element', getVeilwalkerElement(row));
-  appendDetailChip(veilwalkerDetailMeta, 'Key', getVeilwalkerKey(row));
-  appendDetailChip(veilwalkerDetailMeta, 'Active', getVeilwalkerActiveState(row));
-  appendDetailField(veilwalkerDetailFields, 'Veilwalker Key', getVeilwalkerKey(row));
-  appendDetailField(veilwalkerDetailFields, 'Zodiac/Sign', getVeilwalkerZodiac(row));
-  appendDetailField(veilwalkerDetailFields, 'Theme Mode', getVeilwalkerThemeMode(row));
-  appendDetailField(veilwalkerDetailFields, 'Form Key', getVeilwalkerFormKey(row));
-  appendDetailField(veilwalkerDetailFields, 'Form Label', getVeilwalkerFormLabel(row));
-  appendDetailField(veilwalkerDetailFields, 'Element', getVeilwalkerElement(row));
-  appendDetailField(veilwalkerDetailFields, 'Symbol', getVeilwalkerSymbol(row));
-  appendDetailField(veilwalkerDetailFields, 'Accent Color', getVeilwalkerAccentColor(row));
-  appendDetailField(veilwalkerDetailFields, 'Glow Color', getVeilwalkerGlowColor(row));
-  appendDetailField(veilwalkerDetailFields, 'Title', getVeilwalkerTitle(row));
-  appendDetailField(veilwalkerDetailFields, 'Short Quote', getVeilwalkerTagline(row));
-  appendDetailField(veilwalkerDetailFields, 'Card Description', getVeilwalkerCardDescription(row));
-  appendDetailField(veilwalkerDetailFields, 'Focus Label', getVeilwalkerFocusLabel(row));
-  appendDetailField(veilwalkerDetailFields, 'Focus Text', getVeilwalkerFocus(row));
-  appendDetailField(veilwalkerDetailFields, 'Traits', getVeilwalkerTraits(row));
-  appendDetailField(veilwalkerDetailFields, 'Mode', getVeilwalkerMode(row));
-  appendDetailField(veilwalkerDetailFields, 'Reading Enabled', getVeilwalkerReadingEnabledState(row));
-  appendDetailField(veilwalkerDetailFields, 'Reading Style', getVeilwalkerReadingStyle(row));
-  appendDetailField(veilwalkerDetailFields, 'Has Profile Note', getVeilwalkerHasProfileNoteState(row));
-  appendDetailField(veilwalkerDetailFields, 'Profile Note Key', getVeilwalkerProfileNoteKey(row));
-  appendDetailField(veilwalkerDetailFields, 'Mystery', getVeilwalkerMysteryState(row));
-  appendDetailField(veilwalkerDetailFields, 'Active', getVeilwalkerActiveState(row));
-  appendDetailField(veilwalkerDetailFields, 'Sort Order', getVeilwalkerSortOrder(row));
-  appendDetailField(veilwalkerDetailFields, 'Created', formatDate(getFirstValue(row, ['created_at', 'inserted_at'])));
-  appendDetailField(veilwalkerDetailFields, 'Updated', formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated'])));
-  appendDetailField(veilwalkerDetailFields, 'Metadata', formatValue(getFirstValue(row, ['metadata', 'meta', 'settings'])));
-
-  appendImagePreview(veilwalkerDetailImages, 'Card Image URL', getVeilwalkerCardImageUrl(row));
-  appendImagePreview(veilwalkerDetailImages, 'Profile Image URL', getVeilwalkerProfileImageUrl(row));
-  appendImagePreview(veilwalkerDetailImages, 'Image URL', getVeilwalkerImageValue(row, 'image_url'));
-  appendImagePreview(veilwalkerDetailImages, 'Phase 1 Image', getVeilwalkerImageValue(row, 'phase1_image'));
-  appendImagePreview(veilwalkerDetailImages, 'Phase 2 Image', getVeilwalkerImageValue(row, 'phase2_image'));
-  appendImagePreview(veilwalkerDetailImages, 'Blood Moon Image', getVeilwalkerImageValue(row, 'blood_moon_image'));
-
-  veilwalkerDetail.hidden = false;
-  veilwalkerDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function formatTraitsForForm(value) {
@@ -5278,163 +5816,6 @@ function updateVeilwalkerProfileNoteOptions() {
   setDatalistOptions(veilwalkerProfileNoteOptions, veilwalkerNoteRows.map((row) => getVeilwalkerNoteKey(row)));
 }
 
-function showVeilwalkerForm(row = null) {
-  hideVeilwalkerDetail();
-  hideVeilwalkerFormState();
-  veilwalkerForm.reset();
-  updateVeilwalkerProfileNoteOptions();
-
-  if (row) {
-    editingVeilwalkerId = getVeilwalkerId(row);
-    veilwalkerFormTitle.textContent = 'Edit Veilwalker';
-    veilwalkerFormSubmitButton.textContent = 'Save Changes';
-    setVeilwalkerFormValue('veilwalker_key', getVeilwalkerKey(row));
-    setVeilwalkerFormValue('zodiac_key', getVeilwalkerZodiac(row));
-    setVeilwalkerFormValue('theme_mode', getVeilwalkerThemeMode(row));
-    setVeilwalkerFormValue('form_key', getVeilwalkerFormKey(row));
-    setVeilwalkerFormValue('display_name', getVeilwalkerName(row));
-    setVeilwalkerFormValue('form_label', getVeilwalkerFormLabel(row));
-    setVeilwalkerFormValue('element', getVeilwalkerElement(row));
-    setVeilwalkerFormValue('symbol', getVeilwalkerSymbol(row));
-    setVeilwalkerFormValue('accent_color', getVeilwalkerAccentColor(row));
-    setVeilwalkerFormValue('glow_color', getVeilwalkerGlowColor(row));
-    setVeilwalkerFormValue('card_image_url', getVeilwalkerCardImageUrl(row));
-    setVeilwalkerFormValue('profile_image_url', getVeilwalkerProfileImageUrl(row));
-    setVeilwalkerFormValue('short_quote', getVeilwalkerTagline(row));
-    setVeilwalkerFormValue('card_description', getVeilwalkerCardDescription(row));
-    setVeilwalkerFormValue('profile_title', getVeilwalkerTitle(row));
-    setVeilwalkerFormValue('profile_body', getVeilwalkerDescription(row));
-    setVeilwalkerFormValue('focus_label', getVeilwalkerFocusLabel(row));
-    setVeilwalkerFormValue('focus_text', getVeilwalkerFocus(row));
-    setVeilwalkerFormValue('traits', formatTraitsForForm(getFirstValue(row, ['traits', 'trait_list'])));
-    setVeilwalkerFormValue('reading_enabled', getVeilwalkerReadingEnabledBoolean(row));
-    setVeilwalkerFormValue('reading_style', getVeilwalkerReadingStyle(row));
-    setVeilwalkerFormValue('has_profile_note', getVeilwalkerHasProfileNoteBoolean(row));
-    setVeilwalkerFormValue('profile_note_key', getVeilwalkerProfileNoteKey(row));
-    setVeilwalkerFormValue('is_mystery', getVeilwalkerMysteryBoolean(row));
-    setVeilwalkerFormValue('is_active', getVeilwalkerActiveBoolean(row));
-    setVeilwalkerFormValue('sort_order', getVeilwalkerSortOrder(row));
-  } else {
-    editingVeilwalkerId = null;
-    veilwalkerFormTitle.textContent = 'New Veilwalker';
-    veilwalkerFormSubmitButton.textContent = 'Create Veilwalker';
-  }
-
-  veilwalkerFormPanel.hidden = false;
-  veilwalkerForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function getVeilwalkerFormPayload() {
-  const formData = new FormData(veilwalkerForm);
-  const sortOrderValue = String(formData.get('sort_order') || '').trim();
-  const { value: traitsValue, error: traitsError } = parseVeilwalkerTraits(formData.get('traits'));
-  const payload = {
-    veilwalker_key: String(formData.get('veilwalker_key') || '').trim(),
-    zodiac_key: String(formData.get('zodiac_key') || '').trim(),
-    theme_mode: String(formData.get('theme_mode') || '').trim() || null,
-    form_key: String(formData.get('form_key') || '').trim() || null,
-    display_name: String(formData.get('display_name') || '').trim(),
-    form_label: String(formData.get('form_label') || '').trim() || null,
-    element: String(formData.get('element') || '').trim() || null,
-    symbol: String(formData.get('symbol') || '').trim() || null,
-    accent_color: String(formData.get('accent_color') || '').trim() || null,
-    glow_color: String(formData.get('glow_color') || '').trim() || null,
-    card_image_url: String(formData.get('card_image_url') || '').trim() || null,
-    profile_image_url: String(formData.get('profile_image_url') || '').trim() || null,
-    short_quote: String(formData.get('short_quote') || '').trim() || null,
-    card_description: String(formData.get('card_description') || '').trim() || null,
-    profile_title: String(formData.get('profile_title') || '').trim() || null,
-    profile_body: String(formData.get('profile_body') || '').trim() || null,
-    focus_label: String(formData.get('focus_label') || '').trim() || null,
-    focus_text: String(formData.get('focus_text') || '').trim() || null,
-    traits: traitsValue,
-    reading_enabled: formData.has('reading_enabled'),
-    reading_style: String(formData.get('reading_style') || '').trim() || null,
-    has_profile_note: formData.has('has_profile_note'),
-    profile_note_key: String(formData.get('profile_note_key') || '').trim() || null,
-    is_mystery: formData.has('is_mystery'),
-    is_active: formData.has('is_active'),
-  };
-
-  if (traitsError) {
-    return { payload, error: traitsError };
-  }
-
-  if (sortOrderValue !== '') {
-    const sortOrder = Number(sortOrderValue);
-
-    if (!Number.isNaN(sortOrder)) {
-      payload.sort_order = sortOrder;
-    }
-  }
-
-  return { payload, error: '' };
-}
-
-function validateVeilwalkerPayload(payload) {
-  const missingFields = [];
-
-  if (!payload.veilwalker_key) {
-    missingFields.push('veilwalker_key');
-  }
-
-  if (!payload.zodiac_key) {
-    missingFields.push('zodiac_key');
-  }
-
-  if (!payload.display_name) {
-    missingFields.push('display_name');
-  }
-
-  return missingFields;
-}
-
-async function runVeilwalkerMutation(supabase, payload) {
-  let nextPayload = { ...payload };
-
-  for (let attempt = 0; attempt < 28; attempt += 1) {
-    const query = editingVeilwalkerId
-      ? supabase.from('veilwalkers').update(nextPayload).eq('id', editingVeilwalkerId).select('*').single()
-      : supabase.from('veilwalkers').insert(nextPayload).select('*').single();
-    const { error } = await query;
-
-    if (!error) {
-      return { error: null };
-    }
-
-    const missingColumn = getMissingSchemaColumn(error, 'veilwalkers');
-
-    if (!missingColumn || !Object.prototype.hasOwnProperty.call(nextPayload, missingColumn)) {
-      return { error };
-    }
-
-    const { [missingColumn]: _removedColumn, ...prunedPayload } = nextPayload;
-    nextPayload = prunedPayload;
-  }
-
-  return { error: new Error('Veilwalker could not be saved because too many optional fields are unavailable.') };
-}
-
-async function veilwalkerKeyExists(supabase, veilwalkerKey) {
-  let query = supabase
-    .from('veilwalkers')
-    .select('id')
-    .eq('veilwalker_key', veilwalkerKey)
-    .limit(1);
-
-  if (editingVeilwalkerId) {
-    query = query.neq('id', editingVeilwalkerId);
-  }
-
-  const { data, error } = await query.maybeSingle();
-
-  if (error) {
-    return { exists: false, error };
-  }
-
-  return { exists: Boolean(data), error: null };
-}
-
 async function refreshVeilwalkers(message = '') {
   veilwalkersLoaded = false;
   hideVeilwalkerDetail();
@@ -5443,60 +5824,6 @@ async function refreshVeilwalkers(message = '') {
   if (message) {
     setVeilwalkersState(message, 'success');
   }
-}
-
-async function handleVeilwalkerFormSubmit(event) {
-  event.preventDefault();
-
-  const { payload, error: parseError } = getVeilwalkerFormPayload();
-
-  if (parseError) {
-    setVeilwalkerFormState(parseError, 'error');
-    return;
-  }
-
-  const missingFields = validateVeilwalkerPayload(payload);
-
-  if (missingFields.length) {
-    setVeilwalkerFormState(`Please fill in required fields: ${missingFields.join(', ')}.`, 'error');
-    return;
-  }
-
-  const supabase = getSupabaseClient();
-
-  if (!supabase) {
-    setVeilwalkerFormState('Veilwalkers cannot be saved because the archive connection is not configured.', 'error');
-    return;
-  }
-
-  veilwalkerFormSubmitButton.disabled = true;
-  setVeilwalkerFormState(editingVeilwalkerId ? 'Saving veilwalker changes...' : 'Creating veilwalker...');
-
-  const { exists, error: duplicateError } = await veilwalkerKeyExists(supabase, payload.veilwalker_key);
-
-  if (duplicateError) {
-    veilwalkerFormSubmitButton.disabled = false;
-    setVeilwalkerFormState(`Veilwalker key could not be checked. ${duplicateError.message || 'Please try again later.'}`, 'error');
-    return;
-  }
-
-  if (exists) {
-    veilwalkerFormSubmitButton.disabled = false;
-    setVeilwalkerFormState('A veilwalker with this veilwalker_key already exists.', 'error');
-    return;
-  }
-
-  const { error } = await runVeilwalkerMutation(supabase, payload);
-
-  if (error) {
-    veilwalkerFormSubmitButton.disabled = false;
-    setVeilwalkerFormState(`Veilwalker could not be saved. ${error.message || 'Please try again later.'}`, 'error');
-    return;
-  }
-
-  const successMessage = editingVeilwalkerId ? 'Veilwalker updated successfully.' : 'Veilwalker created successfully.';
-  hideVeilwalkerForm();
-  await refreshVeilwalkers(successMessage);
 }
 
 async function toggleVeilwalkerActive(row, button) {
@@ -5534,6 +5861,382 @@ async function toggleVeilwalkerActive(row, button) {
   }
 
   await refreshVeilwalkers(nextActiveState ? 'Veilwalker activated.' : 'Veilwalker deactivated.');
+}
+
+const veilwalkerVariantFormGroups = [
+  { prefix: 'oracle', defaultKey: 'oracle', defaultMode: 'normal', defaultPhase: 'phase_1' },
+  { prefix: 'ascendant', defaultKey: 'ascendant', defaultMode: 'normal', defaultPhase: 'phase_2' },
+  { prefix: 'bloodmoon', defaultKey: 'bloodmoon', defaultMode: 'blood_moon', defaultPhase: '' },
+];
+
+function getVeilwalkerVariants(row) {
+  const variants = row?.veilwalker_variants || row?.variants || [];
+  return Array.isArray(variants) ? variants : [];
+}
+
+function getVeilwalkerVariantCount(row) {
+  return String(getVeilwalkerVariants(row).length);
+}
+
+function getVariantForFormGroup(row, config) {
+  return getVeilwalkerVariants(row).find((variant) => (
+    variant?.variant_key === config.defaultKey
+    || (config.defaultPhase && variant?.phase === config.defaultPhase)
+    || (config.defaultMode === 'blood_moon' && variant?.mode === 'blood_moon')
+  )) || null;
+}
+
+function parseVeilwalkerTextList(value) {
+  const trimmedValue = String(value || '').trim();
+
+  if (!trimmedValue) {
+    return [];
+  }
+
+  if (trimmedValue.startsWith('[')) {
+    try {
+      const parsedValue = JSON.parse(trimmedValue);
+      return Array.isArray(parsedValue) ? parsedValue.map((item) => String(item).trim()).filter(Boolean) : [];
+    } catch {
+      return trimmedValue.split(',').map((item) => item.trim()).filter(Boolean);
+    }
+  }
+
+  return trimmedValue.split(',').map((item) => item.trim()).filter(Boolean);
+}
+
+function formatVeilwalkerTextList(value) {
+  return Array.isArray(value) ? value.join(', ') : String(value || '');
+}
+
+function getVeilwalkerFormField(name) {
+  return veilwalkerForm.elements[name] || null;
+}
+
+function setVeilwalkerVariantFormValue(name, value) {
+  const field = getVeilwalkerFormField(name);
+
+  if (!field) {
+    return;
+  }
+
+  if (field.type === 'checkbox') {
+    field.checked = Boolean(value);
+    return;
+  }
+
+  field.value = value || '';
+}
+
+function populateVeilwalkerVariantFormGroup(row, config) {
+  const variant = getVariantForFormGroup(row, config);
+  const prefix = `variant_${config.prefix}`;
+
+  setVeilwalkerVariantFormValue(`${prefix}_id`, variant?.id || '');
+  setVeilwalkerVariantFormValue(`${prefix}_key`, variant?.variant_key || config.defaultKey);
+  setVeilwalkerVariantFormValue(`${prefix}_mode`, variant?.mode || config.defaultMode);
+  setVeilwalkerVariantFormValue(`${prefix}_phase`, variant?.phase || config.defaultPhase);
+  setVeilwalkerVariantFormValue(`${prefix}_title`, variant?.title || '');
+  setVeilwalkerVariantFormValue(`${prefix}_description`, variant?.description || '');
+  setVeilwalkerVariantFormValue(`${prefix}_focus`, variant?.focus || '');
+  setVeilwalkerVariantFormValue(`${prefix}_image_url`, variant?.image_url || '');
+  setVeilwalkerVariantFormValue(`${prefix}_profile_image_url`, variant?.profile_image_url || '');
+  setVeilwalkerVariantFormValue(`${prefix}_traits`, formatVeilwalkerTextList(variant?.traits));
+  setVeilwalkerVariantFormValue(`${prefix}_symbolic_traits`, formatVeilwalkerTextList(variant?.symbolic_traits));
+  setVeilwalkerVariantFormValue(`${prefix}_is_available`, variant ? variant.is_available !== false : true);
+}
+
+function resetVeilwalkerVariantFormGroups() {
+  veilwalkerVariantFormGroups.forEach((config) => populateVeilwalkerVariantFormGroup(null, config));
+}
+
+function getVeilwalkerVariantPayloads(formData) {
+  return veilwalkerVariantFormGroups
+    .map((config, index) => {
+      const prefix = `variant_${config.prefix}`;
+      const variantKey = String(formData.get(`${prefix}_key`) || config.defaultKey).trim();
+      const payload = {
+        id: String(formData.get(`${prefix}_id`) || '').trim() || null,
+        variant_key: variantKey,
+        mode: String(formData.get(`${prefix}_mode`) || config.defaultMode).trim() || 'normal',
+        phase: String(formData.get(`${prefix}_phase`) || '').trim() || null,
+        title: String(formData.get(`${prefix}_title`) || '').trim() || null,
+        subtitle: String(formData.get(`${prefix}_subtitle`) || '').trim() || null,
+        description: String(formData.get(`${prefix}_description`) || '').trim() || null,
+        focus: String(formData.get(`${prefix}_focus`) || '').trim() || null,
+        traits: parseVeilwalkerTextList(formData.get(`${prefix}_traits`)),
+        symbolic_traits: parseVeilwalkerTextList(formData.get(`${prefix}_symbolic_traits`)),
+        image_url: String(formData.get(`${prefix}_image_url`) || '').trim() || null,
+        profile_image_url: String(formData.get(`${prefix}_profile_image_url`) || '').trim() || null,
+        is_available: formData.has(`${prefix}_is_available`),
+        sort_order: index,
+      };
+
+      return payload;
+    })
+    .filter((payload) => payload.variant_key);
+}
+
+function renderVeilwalkerRows(rows) {
+  veilwalkersTableBody.replaceChildren();
+
+  rows.forEach((row, index) => {
+    const tableRow = document.createElement('tr');
+    const actionCell = document.createElement('td');
+    const actionGroup = document.createElement('div');
+    const viewButton = document.createElement('button');
+    const editButton = document.createElement('button');
+    const activeButton = document.createElement('button');
+
+    appendTextCell(tableRow, 'Name', getVeilwalkerName(row), 'admin-table__title');
+    appendTextCell(tableRow, 'Zodiac', getVeilwalkerZodiac(row));
+    appendTextCell(tableRow, 'Element', getVeilwalkerElement(row));
+    appendTextCell(tableRow, 'Active', getVeilwalkerActiveState(row));
+    appendTextCell(tableRow, 'Variants', getVeilwalkerVariantCount(row));
+    appendTextCell(tableRow, 'Sort', getVeilwalkerSortOrder(row));
+
+    viewButton.className = 'admin-row-action';
+    viewButton.type = 'button';
+    viewButton.textContent = 'View';
+    viewButton.addEventListener('click', () => showVeilwalkerDetail(index));
+
+    editButton.className = 'admin-row-action';
+    editButton.type = 'button';
+    editButton.textContent = 'Edit';
+    editButton.addEventListener('click', () => showVeilwalkerForm(row));
+
+    activeButton.className = 'admin-row-action';
+    activeButton.type = 'button';
+    activeButton.textContent = getVeilwalkerActiveBoolean(row) ? 'Deactivate' : 'Activate';
+    activeButton.addEventListener('click', () => toggleVeilwalkerActive(row, activeButton));
+
+    actionGroup.className = 'admin-action-group';
+    actionCell.dataset.label = 'Action';
+    actionGroup.append(viewButton, editButton, activeButton);
+    actionCell.append(actionGroup);
+    tableRow.append(actionCell);
+    veilwalkersTableBody.append(tableRow);
+  });
+}
+
+function showVeilwalkerDetail(index) {
+  const row = veilwalkerRows[index];
+
+  if (!row) {
+    return;
+  }
+
+  veilwalkerDetailTitle.textContent = getVeilwalkerName(row);
+  veilwalkerDetailMeta.replaceChildren();
+  veilwalkerDetailFields.replaceChildren();
+  veilwalkerDetailImages.replaceChildren();
+  veilwalkerDetailBody.replaceChildren();
+
+  appendDetailChip(veilwalkerDetailMeta, 'Zodiac', getVeilwalkerZodiac(row));
+  appendDetailChip(veilwalkerDetailMeta, 'Element', getVeilwalkerElement(row));
+  appendDetailChip(veilwalkerDetailMeta, 'Slug', getVeilwalkerKey(row));
+  appendDetailChip(veilwalkerDetailMeta, 'Active', getVeilwalkerActiveState(row));
+  appendDetailField(veilwalkerDetailFields, 'Slug', getVeilwalkerKey(row));
+  appendDetailField(veilwalkerDetailFields, 'Display Name', getVeilwalkerName(row));
+  appendDetailField(veilwalkerDetailFields, 'Zodiac Sign', getVeilwalkerZodiac(row));
+  appendDetailField(veilwalkerDetailFields, 'Element', getVeilwalkerElement(row));
+  appendDetailField(veilwalkerDetailFields, 'Active', getVeilwalkerActiveState(row));
+  appendDetailField(veilwalkerDetailFields, 'Variant Count', getVeilwalkerVariantCount(row));
+  appendDetailField(veilwalkerDetailFields, 'Sort Order', getVeilwalkerSortOrder(row));
+  appendDetailField(veilwalkerDetailFields, 'Created', formatDate(getFirstValue(row, ['created_at', 'inserted_at'])));
+  appendDetailField(veilwalkerDetailFields, 'Updated', formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated'])));
+
+  getVeilwalkerVariants(row).forEach((variant) => {
+    const section = document.createElement('section');
+    const title = document.createElement('h4');
+    const description = document.createElement('p');
+
+    title.textContent = `${variant.variant_key || 'variant'} / ${variant.mode || 'normal'}${variant.phase ? ` / ${variant.phase}` : ''}`;
+    description.textContent = variant.description || variant.focus || 'No variant copy yet.';
+    section.append(title, description);
+    veilwalkerDetailBody.append(section);
+
+    appendImagePreview(veilwalkerDetailImages, `${variant.variant_key || 'Variant'} Image`, variant.image_url);
+    appendImagePreview(veilwalkerDetailImages, `${variant.variant_key || 'Variant'} Profile Image`, variant.profile_image_url);
+  });
+
+  veilwalkerDetail.hidden = false;
+  veilwalkerDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showVeilwalkerForm(row = null) {
+  hideVeilwalkerDetail();
+  hideVeilwalkerFormState();
+  veilwalkerForm.reset();
+  resetVeilwalkerVariantFormGroups();
+
+  if (row) {
+    editingVeilwalkerId = getVeilwalkerId(row);
+    veilwalkerFormTitle.textContent = 'Edit Veilwalker';
+    veilwalkerFormSubmitButton.textContent = 'Save Changes';
+    setVeilwalkerFormValue('slug', getFirstValue(row, ['slug', 'veilwalker_key', 'reader_key', 'key']));
+    setVeilwalkerFormValue('display_name', getVeilwalkerName(row));
+    setVeilwalkerFormValue('zodiac_sign', getVeilwalkerZodiac(row));
+    setVeilwalkerFormValue('element', getVeilwalkerElement(row));
+    setVeilwalkerFormValue('sort_order', getVeilwalkerSortOrder(row));
+    setVeilwalkerFormValue('is_active', getVeilwalkerActiveBoolean(row));
+    veilwalkerVariantFormGroups.forEach((config) => populateVeilwalkerVariantFormGroup(row, config));
+  } else {
+    editingVeilwalkerId = null;
+    veilwalkerFormTitle.textContent = 'New Veilwalker';
+    veilwalkerFormSubmitButton.textContent = 'Create Veilwalker';
+    setVeilwalkerFormValue('is_active', true);
+  }
+
+  veilwalkerFormPanel.hidden = false;
+  veilwalkerForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function getVeilwalkerFormPayload() {
+  const formData = new FormData(veilwalkerForm);
+  const sortOrderValue = String(formData.get('sort_order') || '').trim();
+  const basePayload = {
+    slug: String(formData.get('slug') || '').trim(),
+    display_name: String(formData.get('display_name') || '').trim(),
+    zodiac_sign: String(formData.get('zodiac_sign') || '').trim() || null,
+    element: String(formData.get('element') || '').trim() || null,
+    is_active: formData.has('is_active'),
+  };
+
+  if (sortOrderValue !== '') {
+    const sortOrder = Number(sortOrderValue);
+
+    if (!Number.isNaN(sortOrder)) {
+      basePayload.sort_order = sortOrder;
+    }
+  }
+
+  return {
+    payload: {
+      base: basePayload,
+      variants: getVeilwalkerVariantPayloads(formData),
+    },
+    error: '',
+  };
+}
+
+function validateVeilwalkerPayload(payload) {
+  const missingFields = [];
+
+  if (!payload.base.slug) {
+    missingFields.push('slug');
+  }
+
+  if (!payload.base.display_name) {
+    missingFields.push('display_name');
+  }
+
+  return missingFields;
+}
+
+async function runVeilwalkerMutation(supabase, payload) {
+  const baseQuery = editingVeilwalkerId
+    ? supabase.from('veilwalkers').update(payload.base).eq('id', editingVeilwalkerId).select('*').single()
+    : supabase.from('veilwalkers').insert(payload.base).select('*').single();
+  const { data: savedVeilwalker, error: baseError } = await baseQuery;
+
+  if (baseError) {
+    return { error: baseError };
+  }
+
+  const veilwalkerId = savedVeilwalker?.id || editingVeilwalkerId;
+
+  for (const variantPayload of payload.variants) {
+    const { id, ...variantFields } = variantPayload;
+    const mutationPayload = {
+      ...variantFields,
+      veilwalker_id: veilwalkerId,
+    };
+    const variantQuery = id
+      ? supabase.from('veilwalker_variants').update(mutationPayload).eq('id', id).select('id').single()
+      : supabase.from('veilwalker_variants').insert(mutationPayload).select('id').single();
+    const { error: variantError } = await variantQuery;
+
+    if (variantError) {
+      return { error: variantError };
+    }
+  }
+
+  return { error: null };
+}
+
+async function veilwalkerKeyExists(supabase, slug) {
+  let query = supabase
+    .from('veilwalkers')
+    .select('id')
+    .eq('slug', slug)
+    .limit(1);
+
+  if (editingVeilwalkerId) {
+    query = query.neq('id', editingVeilwalkerId);
+  }
+
+  const { data, error } = await query.maybeSingle();
+
+  if (error) {
+    return { exists: false, error };
+  }
+
+  return { exists: Boolean(data), error: null };
+}
+
+async function handleVeilwalkerFormSubmit(event) {
+  event.preventDefault();
+
+  const { payload, error: parseError } = getVeilwalkerFormPayload();
+
+  if (parseError) {
+    setVeilwalkerFormState(parseError, 'error');
+    return;
+  }
+
+  const missingFields = validateVeilwalkerPayload(payload);
+
+  if (missingFields.length) {
+    setVeilwalkerFormState(`Please fill in required fields: ${missingFields.join(', ')}.`, 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setVeilwalkerFormState('Veilwalkers cannot be saved because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  veilwalkerFormSubmitButton.disabled = true;
+  setVeilwalkerFormState(editingVeilwalkerId ? 'Saving veilwalker changes...' : 'Creating veilwalker...');
+
+  const { exists, error: duplicateError } = await veilwalkerKeyExists(supabase, payload.base.slug);
+
+  if (duplicateError) {
+    veilwalkerFormSubmitButton.disabled = false;
+    setVeilwalkerFormState(`Slug could not be checked. ${duplicateError.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  if (exists) {
+    veilwalkerFormSubmitButton.disabled = false;
+    setVeilwalkerFormState('A veilwalker with this slug already exists.', 'error');
+    return;
+  }
+
+  const { error } = await runVeilwalkerMutation(supabase, payload);
+
+  if (error) {
+    veilwalkerFormSubmitButton.disabled = false;
+    setVeilwalkerFormState(`Veilwalker could not be saved. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  const successMessage = editingVeilwalkerId ? 'Veilwalker updated successfully.' : 'Veilwalker created successfully.';
+  hideVeilwalkerForm();
+  await refreshVeilwalkers(successMessage);
 }
 
 function renderAppSettingRows(rows) {
@@ -5878,6 +6581,271 @@ function setUserProgressCount(tableName, value) {
   countElement.textContent = value;
 }
 
+function getAdminUserSearchText(row) {
+  return [
+    getProfileDisplayName(row),
+    getProfileEmail(row),
+    getProfileRole(row),
+    getProfileAccountStatusLabel(row),
+    getProfileId(row),
+  ].join(' ').toLowerCase();
+}
+
+function getFilteredAdminUserRows() {
+  const search = String(adminUserSearchInput?.value || '').trim().toLowerCase();
+
+  if (!search) {
+    return [...adminUserRows];
+  }
+
+  return adminUserRows.filter((row) => getAdminUserSearchText(row).includes(search));
+}
+
+function renderAdminUserRows() {
+  adminUsersTableBody.replaceChildren();
+  filteredAdminUserRows = getFilteredAdminUserRows();
+
+  filteredAdminUserRows.forEach((row) => {
+    const tableRow = document.createElement('tr');
+    const actionsCell = document.createElement('td');
+    const actions = document.createElement('div');
+    const viewButton = document.createElement('button');
+    const restrictButton = document.createElement('button');
+    const banButton = document.createElement('button');
+    const restoreButton = document.createElement('button');
+    const rowIndex = adminUserRows.indexOf(row);
+    const status = getProfileAccountStatus(row);
+
+    appendTextCell(tableRow, 'Display Name', getProfileDisplayName(row), 'admin-table__title');
+    appendTextCell(tableRow, 'Email', getProfileEmail(row), 'admin-table__muted');
+    appendTextCell(tableRow, 'Role', getProfileRole(row));
+    appendTextCell(tableRow, 'Account Status', getProfileAccountStatusLabel(row));
+    appendTextCell(tableRow, 'Created', getProfileCreatedAt(row));
+    appendTextCell(tableRow, 'Updated', getProfileUpdatedAt(row));
+    appendTextCell(tableRow, 'User ID', getTruncatedId(getProfileId(row)), 'admin-table__muted');
+
+    actions.className = 'admin-action-group';
+    viewButton.className = 'admin-row-action';
+    viewButton.type = 'button';
+    viewButton.textContent = 'View User';
+    viewButton.addEventListener('click', () => showAdminUserDetail(rowIndex));
+
+    restrictButton.className = 'admin-row-action';
+    restrictButton.type = 'button';
+    restrictButton.textContent = 'Restrict';
+    restrictButton.disabled = status === 'restricted';
+    restrictButton.addEventListener('click', () => updateAdminUserAccountStatus(rowIndex, 'restricted'));
+
+    banButton.className = 'admin-row-action';
+    banButton.type = 'button';
+    banButton.textContent = 'Ban';
+    banButton.disabled = status === 'banned';
+    banButton.addEventListener('click', () => updateAdminUserAccountStatus(rowIndex, 'banned'));
+
+    restoreButton.className = 'admin-row-action';
+    restoreButton.type = 'button';
+    restoreButton.textContent = 'Restore Active';
+    restoreButton.disabled = status === 'active';
+    restoreButton.addEventListener('click', () => updateAdminUserAccountStatus(rowIndex, 'active'));
+
+    actions.append(viewButton, restrictButton, banButton, restoreButton);
+    actionsCell.dataset.label = 'Actions';
+    actionsCell.append(actions);
+    tableRow.append(actionsCell);
+    adminUsersTableBody.append(tableRow);
+  });
+
+  if (!filteredAdminUserRows.length) {
+    setAdminUsersState(adminUserRows.length ? 'No users match this search.' : 'No users found.');
+    adminUsersTableWrap.hidden = adminUserRows.length === 0;
+    return;
+  }
+
+  adminUsersState.hidden = true;
+  adminUsersTableWrap.hidden = false;
+}
+
+async function fetchAdminUserAggregateStats(supabase, userId) {
+  const statConfigs = [
+    ['Journal Entries', 'user_journal_entries'],
+    ['Readings', 'user_readings'],
+    ['Artifacts', 'user_artifacts'],
+    ['Gallery Fragments', 'user_gallery_fragments'],
+    ['Room Visits', 'user_room_visits'],
+  ];
+  const results = await Promise.allSettled(
+    statConfigs.map(async ([label, tableName]) => {
+      const { count, error } = await supabase
+        .from(tableName)
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', userId);
+
+      return {
+        label,
+        value: error || typeof count !== 'number' ? '—' : count,
+      };
+    }),
+  );
+
+  return results.map((result, index) => (
+    result.status === 'fulfilled'
+      ? result.value
+      : { label: statConfigs[index][0], value: '—' }
+  ));
+}
+
+async function showAdminUserDetail(index) {
+  const row = adminUserRows[index];
+  const userId = getProfileId(row);
+
+  if (!row || !userId) {
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  adminUserDetailTitle.textContent = getProfileDisplayName(row);
+  adminUserDetail.dataset.userIndex = String(index);
+  adminUserDetailMeta.replaceChildren();
+  adminUserDetailFields.replaceChildren();
+
+  appendDetailChip(adminUserDetailMeta, 'Role', getProfileRole(row));
+  appendDetailChip(adminUserDetailMeta, 'Status', getProfileAccountStatusLabel(row));
+  appendDetailChip(adminUserDetailMeta, 'User ID', getTruncatedId(userId));
+  appendDetailField(adminUserDetailFields, 'Display Name', getProfileDisplayName(row));
+  appendDetailField(adminUserDetailFields, 'Email', getProfileEmail(row));
+  appendDetailField(adminUserDetailFields, 'Role', getProfileRole(row));
+  appendDetailField(adminUserDetailFields, 'Account Status', getProfileAccountStatusLabel(row));
+  appendDetailField(adminUserDetailFields, 'User ID', formatValue(userId));
+  appendDetailField(adminUserDetailFields, 'Avatar URL', getProfileAvatarUrl(row));
+  appendDetailField(adminUserDetailFields, 'Created', getProfileCreatedAt(row));
+  appendDetailField(adminUserDetailFields, 'Updated', getProfileUpdatedAt(row));
+  appendDetailField(adminUserDetailFields, 'Ban Reason', getProfileBanReason(row));
+  appendDetailField(adminUserDetailFields, 'Banned At', getProfileBannedAt(row));
+  appendDetailField(adminUserDetailFields, 'Banned By', formatValue(getFirstValue(row, ['banned_by'])));
+
+  if (supabase) {
+    const aggregateStats = await fetchAdminUserAggregateStats(supabase, userId);
+
+    aggregateStats.forEach(({ label, value }) => {
+      appendDetailField(adminUserDetailFields, label, formatValue(value));
+    });
+  }
+
+  populateUserModerationForm(row, index);
+  adminUserDetail.hidden = false;
+  adminUserDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function populateUserModerationForm(row, index) {
+  if (!userModerationForm || !userModerationStatusSelect || !userModerationReasonField) {
+    return;
+  }
+
+  const status = getProfileAccountStatus(row);
+  const editableStatus = ['active', 'restricted', 'banned'].includes(status) ? status : 'active';
+
+  userModerationForm.dataset.userIndex = String(index);
+  userModerationStatusSelect.value = editableStatus;
+  userModerationReasonField.value = getFirstValue(row, ['ban_reason']) || '';
+  userModerationForm.hidden = false;
+  hideUserModerationState();
+}
+
+async function updateAdminUserAccountStatus(index, nextStatus, { reason = null } = {}) {
+  const row = adminUserRows[index];
+  const profileId = getProfileId(row);
+  const detailIsOpen = adminUserDetail && !adminUserDetail.hidden;
+  const setModerationFeedback = (message, state = '') => {
+    if (detailIsOpen) {
+      setUserModerationState(message, state);
+      return;
+    }
+
+    setAdminUsersState(message, state);
+  };
+
+  if (!row || !profileId) {
+    setModerationFeedback('Select a user before changing account status.', 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setModerationFeedback('The archive connection is not configured.', 'error');
+    return null;
+  }
+
+  const normalizedStatus = ['active', 'restricted', 'banned'].includes(nextStatus) ? nextStatus : 'active';
+
+  if (normalizedStatus === 'banned' && getProfileAccountStatus(row) !== 'banned') {
+    const confirmed = window.confirm('This prevents the account from using protected Astral Veil features. Ban this user?');
+
+    if (!confirmed) {
+      return null;
+    }
+  }
+
+  const moderationReason = typeof reason === 'string' ? reason.trim() : getFirstValue(row, ['ban_reason']) || null;
+  const existingBannedAt = getFirstValue(row, ['banned_at']);
+  const payload = {
+    account_status: normalizedStatus,
+    ban_reason: normalizedStatus === 'active' ? null : moderationReason || null,
+    banned_at: normalizedStatus === 'banned' ? existingBannedAt || new Date().toISOString() : null,
+    banned_by: normalizedStatus === 'banned' ? currentAdminUserId : null,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (userModerationSubmitButton) {
+    userModerationSubmitButton.disabled = true;
+  }
+  setModerationFeedback('Saving account status...');
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(payload)
+    .eq('id', profileId)
+    .select('*')
+    .maybeSingle();
+
+  if (userModerationSubmitButton) {
+    userModerationSubmitButton.disabled = false;
+  }
+
+  if (error) {
+    console.error('Account moderation update failed:', error);
+    setModerationFeedback('Account status could not be saved. Check admin RLS policies and try again.', 'error');
+    return;
+  }
+
+  adminUserRows[index] = data || { ...row, ...payload };
+  profileRows = profileRows.map((profileRow) => (
+    getProfileId(profileRow) === profileId ? { ...profileRow, ...adminUserRows[index] } : profileRow
+  ));
+  if (userProgressLoaded) {
+    renderProfileRows(profileRows);
+  }
+  renderAdminUserRows();
+  if (detailIsOpen) {
+    showAdminUserDetail(index);
+  }
+  setModerationFeedback('Account status saved.', 'success');
+  return adminUserRows[index];
+}
+
+async function handleUserModerationSubmit(event) {
+  event.preventDefault();
+
+  if (!userModerationForm || !userModerationStatusSelect || !userModerationReasonField) {
+    return;
+  }
+
+  await updateAdminUserAccountStatus(Number(userModerationForm.dataset.userIndex), userModerationStatusSelect.value, {
+    reason: userModerationReasonField.value,
+  });
+}
+
 function renderProfileRows(rows) {
   userProgressTableBody.replaceChildren();
 
@@ -5888,6 +6856,7 @@ function renderProfileRows(rows) {
 
     appendTextCell(tableRow, 'User', getProfileDisplayName(row), 'admin-table__title');
     appendTextCell(tableRow, 'Role', getProfileRole(row));
+    appendTextCell(tableRow, 'Status', getProfileAccountStatusLabel(row));
     appendTextCell(tableRow, 'Avatar', getProfileAvatarUrl(row), 'admin-table__muted');
     appendTextCell(tableRow, 'User ID', getTruncatedId(getProfileId(row)), 'admin-table__muted');
     appendTextCell(tableRow, 'Created', formatDate(getFirstValue(row, ['created_at', 'inserted_at'])));
@@ -6018,14 +6987,20 @@ async function showUserProgressDetail(index) {
   }
 
   userProgressDetailTitle.textContent = getProfileDisplayName(row);
+  userProgressDetail.dataset.profileIndex = String(index);
   userProgressDetailMeta.replaceChildren();
   userProgressDetailFields.replaceChildren();
   userProgressDetailGroups.replaceChildren();
 
   appendDetailChip(userProgressDetailMeta, 'Role', getProfileRole(row));
+  appendDetailChip(userProgressDetailMeta, 'Status', getProfileAccountStatusLabel(row));
   appendDetailChip(userProgressDetailMeta, 'User ID', getTruncatedId(userId));
   appendDetailField(userProgressDetailFields, 'Display Name', getProfileDisplayName(row));
   appendDetailField(userProgressDetailFields, 'Role', getProfileRole(row));
+  appendDetailField(userProgressDetailFields, 'Account Status', getProfileAccountStatusLabel(row));
+  appendDetailField(userProgressDetailFields, 'Ban Reason', getProfileBanReason(row));
+  appendDetailField(userProgressDetailFields, 'Banned At', getProfileBannedAt(row));
+  appendDetailField(userProgressDetailFields, 'Banned By', formatValue(getFirstValue(row, ['banned_by'])));
   appendDetailField(userProgressDetailFields, 'Avatar URL', getProfileAvatarUrl(row));
   appendDetailField(userProgressDetailFields, 'User ID', formatValue(userId));
   appendDetailField(userProgressDetailFields, 'Created', formatDate(getFirstValue(row, ['created_at', 'inserted_at'])));
@@ -6065,42 +7040,66 @@ async function loadJournals() {
   const supabase = getSupabaseClient();
 
   if (!supabase) {
-    setJournalsState('Journals are unavailable because the archive connection is not configured.', 'error');
+    setJournalsState('Noctis documents are unavailable because the archive connection is not configured.', 'error');
     return;
   }
 
-  setJournalsState('Loading journals...');
+  setJournalsState('Loading Noctis documents...');
   journalsTableWrap.hidden = true;
   hideJournalDetail();
   hideJournalForm();
 
-  const { data, error } = await supabase
-    .from('journals')
-    .select('*')
-    .limit(100);
+  if (!journalFiltersInitialized) {
+    resetJournalFiltersToDefaults();
+    journalFiltersInitialized = true;
+  }
+
+  const { data, error } = await fetchNoctisDocumentRows(supabase);
 
   if (error) {
-    setJournalsState('Journals could not be loaded. Please try again later.', 'error');
+    logNoctisDocumentQueryError(error);
+    setJournalsState('Noctis documents could not be loaded. Please try again later.', 'error');
     return;
   }
 
-  journalRows = Array.isArray(data) ? data : [];
+  let rows = Array.isArray(data) ? data : [];
+
+  if (!rows.length) {
+    const { data: publishedData, error: publishedError } = await fetchNoctisDocumentRows(supabase, { publishedOnly: true });
+
+    if (publishedError) {
+      logNoctisDocumentQueryError(publishedError);
+      setJournalsState('Noctis documents could not be loaded. Please try again later.', 'error');
+      return;
+    }
+
+    rows = Array.isArray(publishedData) ? publishedData : [];
+  }
+
+  if (!rows.length) {
+    setJournalsState('No Noctis documents found. Restoring the canonical Tide document...');
+    const { row: tideRow, error: tideError } = await ensureCanonicalTideDocument(supabase);
+
+    if (tideError) {
+      logNoctisDocumentQueryError(tideError);
+      setJournalsState(`Noctis documents could not be restored. ${tideError.message || 'Check admin RLS policies and migrations.'}`, 'error');
+      return;
+    }
+
+    if (tideRow) {
+      rows = [tideRow];
+    }
+  }
+
+  journalRows = sortNoctisDocumentRows(mergeNoctisDocumentRows(rows));
   journalsLoaded = true;
 
   if (!journalRows.length) {
-    setJournalsState('No journals found.');
+    setJournalsState('No Noctis documents found.');
     return;
   }
 
-  journalRows.sort((firstRow, secondRow) => {
-    const firstDate = new Date(getFirstValue(firstRow, ['updated_at', 'created_at']) || 0).getTime();
-    const secondDate = new Date(getFirstValue(secondRow, ['updated_at', 'created_at']) || 0).getTime();
-    return secondDate - firstDate;
-  });
-
-  renderJournalRows(journalRows);
-  journalsState.hidden = true;
-  journalsTableWrap.hidden = false;
+  applyJournalFilters();
 }
 
 async function loadJournalPrompts() {
@@ -6517,7 +7516,7 @@ async function loadVeilwalkers() {
 
   const { data, error } = await supabase
     .from('veilwalkers')
-    .select('*')
+    .select('*, veilwalker_variants(*)')
     .limit(100);
 
   if (error) {
@@ -6661,6 +7660,51 @@ async function loadUserProgress() {
   userProgressTableWrap.hidden = false;
 }
 
+async function loadAdminUsers() {
+  if (adminUsersLoaded) {
+    renderAdminUserRows();
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setAdminUsersState('Users are unavailable because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  setAdminUsersState('Loading users...');
+  adminUsersTableWrap.hidden = true;
+  hideAdminUserDetail();
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .limit(250);
+
+  if (error) {
+    console.warn('[Astral Veil admin] Users could not be loaded.');
+    setAdminUsersState('Users could not be loaded. Check admin RLS policies and try again.', 'error');
+    return;
+  }
+
+  adminUserRows = Array.isArray(data) ? data : [];
+  adminUsersLoaded = true;
+
+  adminUserRows.sort((firstRow, secondRow) => {
+    const firstDate = new Date(getFirstValue(firstRow, ['updated_at', 'created_at']) || 0).getTime();
+    const secondDate = new Date(getFirstValue(secondRow, ['updated_at', 'created_at']) || 0).getTime();
+
+    if (firstDate !== secondDate) {
+      return secondDate - firstDate;
+    }
+
+    return getProfileDisplayName(firstRow).localeCompare(getProfileDisplayName(secondRow));
+  });
+
+  renderAdminUserRows();
+}
+
 function showIdentity(user, profile) {
   adminEmail.textContent = user.email || 'Admin user';
   setAdminAvatar(user, profile);
@@ -6721,6 +7765,173 @@ async function fetchTableCount(tableName) {
   }
 
   return count;
+}
+
+function formatAdminStatValue(value) {
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    return '—';
+  }
+
+  return new Intl.NumberFormat().format(value);
+}
+
+function setOverviewStat(statName, value) {
+  const statElement = overviewStatElements[statName];
+
+  if (!statElement) {
+    return;
+  }
+
+  statElement.textContent = typeof value === 'string' ? value : formatAdminStatValue(value);
+}
+
+function setOverviewStatsLoading() {
+  Object.entries(overviewStatElements).forEach(([statName, statElement]) => {
+    if (!statElement || statName === 'sessionStatus') {
+      return;
+    }
+
+    statElement.textContent = 'Loading...';
+  });
+
+  setOverviewStat('sessionStatus', 'Live');
+}
+
+function logAdminMetricWarning(label, error) {
+  console.warn(`[Astral Veil admin] ${label} unavailable.`, {
+    message: error?.message || '',
+    code: error?.code || '',
+  });
+}
+
+function getSevenDaySinceIso() {
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  return Number.isNaN(since.getTime()) ? '' : since.toISOString();
+}
+
+async function fetchOverviewCount(supabase, tableName, { sinceColumn = '', sinceDate = '' } = {}) {
+  let query = supabase
+    .from(tableName)
+    .select('id', { count: 'exact', head: true });
+
+  if (sinceColumn && sinceDate && !Number.isNaN(new Date(sinceDate).getTime())) {
+    query = query.gte(sinceColumn, sinceDate);
+  }
+
+  const { count, error } = await query;
+
+  if (error || typeof count !== 'number') {
+    logAdminMetricWarning(`Overview stat for ${tableName}`, error);
+    return null;
+  }
+
+  return count;
+}
+
+async function fetchRecentActiveUsersForTable(supabase, config, sinceDate) {
+  if (!sinceDate || Number.isNaN(new Date(sinceDate).getTime())) {
+    return {
+      isAvailable: false,
+      tableName: config.tableName,
+      userIds: [],
+    };
+  }
+
+  for (const timestampColumn of config.timestampColumns) {
+    const { data, error } = await supabase
+      .from(config.tableName)
+      .select('user_id')
+      .gte(timestampColumn, sinceDate)
+      .limit(500);
+
+    if (!error) {
+      return {
+        isAvailable: true,
+        tableName: config.tableName,
+        userIds: (data || []).map((row) => row?.user_id).filter(Boolean),
+      };
+    }
+
+    logAdminMetricWarning(`Active-user source ${config.tableName}.${timestampColumn}`, error);
+  }
+
+  return {
+    isAvailable: false,
+    tableName: config.tableName,
+    userIds: [],
+  };
+}
+
+async function fetchActiveUserCount(supabase, sinceDate) {
+  const activeUserIds = new Set();
+  let availableSourceCount = 0;
+  const results = await Promise.allSettled(
+    adminOverviewActivityTables.map((config) => fetchRecentActiveUsersForTable(supabase, config, sinceDate)),
+  );
+
+  results.forEach((result) => {
+    if (result.status !== 'fulfilled') {
+      return;
+    }
+
+    if (result.value.isAvailable) {
+      availableSourceCount += 1;
+    }
+
+    result.value.userIds.forEach((userId) => {
+      activeUserIds.add(userId);
+    });
+  });
+
+  if (!availableSourceCount) {
+    return null;
+  }
+
+  return activeUserIds.size;
+}
+
+async function loadAdminOverviewStats() {
+  const supabase = getSupabaseClient();
+
+  setOverviewStatsLoading();
+
+  if (!supabase) {
+    ['totalAccounts', 'activeUsers', 'newThisWeek', 'journalEntries', 'savedReadings', 'recoveredArtifacts'].forEach((statName) => {
+      setOverviewStat(statName, '—');
+    });
+    return;
+  }
+
+  const sinceDate = getSevenDaySinceIso();
+  const statLoaders = {
+    totalAccounts: () => fetchOverviewCount(supabase, 'profiles'),
+    activeUsers: () => fetchActiveUserCount(supabase, sinceDate),
+    newThisWeek: () => fetchOverviewCount(supabase, 'profiles', { sinceColumn: 'created_at', sinceDate }),
+    journalEntries: () => fetchOverviewCount(supabase, 'user_journal_entries'),
+    savedReadings: () => fetchOverviewCount(supabase, 'user_readings'),
+    recoveredArtifacts: () => fetchOverviewCount(supabase, 'user_artifacts'),
+  };
+
+  const results = await Promise.allSettled(
+    Object.entries(statLoaders).map(async ([statName, loader]) => ({
+      statName,
+      value: await loader(),
+    })),
+  );
+
+  results.forEach((result) => {
+    if (result.status !== 'fulfilled' || result.value.value === null) {
+      const statName = result.status === 'fulfilled' ? result.value.statName : '';
+
+      if (statName) {
+        setOverviewStat(statName, '—');
+      }
+      return;
+    }
+
+    setOverviewStat(result.value.statName, result.value.value);
+  });
 }
 
 async function loadAdminCounts() {
@@ -6791,7 +8002,7 @@ function bindNavToggle() {
 }
 
 function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
-  const availableViews = ['overview', 'journals', 'journal-prompts', 'character-lines', 'contact-messages', 'archive-rooms', 'gallery-records', 'artifacts', 'memory-fragments', 'veilwalkers', 'veilwalker-notes', 'user-progress', 'app-settings'];
+  const availableViews = ['overview', 'journals', 'journal-prompts', 'character-lines', 'contact-messages', 'archive-rooms', 'gallery-records', 'artifacts', 'memory-fragments', 'veilwalkers', 'veilwalker-notes', 'users', 'user-progress', 'app-settings'];
   const normalizedViewName = availableViews.includes(viewName) ? viewName : 'overview';
 
   adminViews.forEach((view) => {
@@ -6846,6 +8057,10 @@ function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
     loadVeilwalkerNotes();
   }
 
+  if (normalizedViewName === 'users') {
+    loadAdminUsers();
+  }
+
   if (normalizedViewName === 'user-progress') {
     loadUserProgress();
   }
@@ -6883,6 +8098,10 @@ function bindViewLinks() {
   journalForm.addEventListener('submit', handleJournalFormSubmit);
   journalFormCancelButtons.forEach((button) => {
     button.addEventListener('click', hideJournalForm);
+  });
+  journalFilters.forEach((filter) => {
+    filter.addEventListener('input', applyJournalFilters);
+    filter.addEventListener('change', applyJournalFilters);
   });
   journalPromptNewButton.addEventListener('click', () => showJournalPromptForm());
   journalPromptForm.addEventListener('submit', handleJournalPromptFormSubmit);
@@ -7012,6 +8231,12 @@ function bindViewLinks() {
     button.addEventListener('click', hideVeilwalkerNoteForm);
   });
   userProgressDetailCloseButton.addEventListener('click', hideUserProgressDetail);
+  adminUserDetailCloseButton?.addEventListener('click', hideAdminUserDetail);
+  adminUserSearchInput?.addEventListener('input', () => {
+    renderAdminUserRows();
+    hideAdminUserDetail();
+  });
+  userModerationForm?.addEventListener('submit', handleUserModerationSubmit);
   appSettingDetailCloseButton.addEventListener('click', hideAppSettingDetail);
   appSettingNewButton.addEventListener('click', () => showAppSettingForm());
   appSettingForm.addEventListener('submit', handleAppSettingFormSubmit);
@@ -7023,51 +8248,126 @@ function bindViewLinks() {
   });
 }
 
-async function initAdminDashboard() {
+function bindAdminDashboardEvents() {
+  if (adminDashboardBindingsInitialized) {
+    return;
+  }
+
   bindSignOutButtons();
   bindNavToggle();
   bindViewLinks();
+  adminDashboardBindingsInitialized = true;
+}
 
-  if (!isSupabaseConfigured()) {
-    adminLayout.classList.remove('is-auth-checking');
-    adminLayout.classList.add('is-access-denied');
-    setAccessMessage('The archive connection is not configured for this environment.', 'error');
-    loginLink.hidden = false;
+function isAdminInitDebugEnabled() {
+  try {
+    return window.localStorage?.getItem('astral_admin_debug') === 'true'
+      || new URLSearchParams(window.location.search).has('debugAdmin');
+  } catch {
+    return false;
+  }
+}
+
+function logAdminInitDebug(label, value) {
+  if (!isAdminInitDebugEnabled()) {
     return;
   }
 
-  const result = await requireAdmin();
+  console.info(`[Astral Veil admin] ${label}:`, value);
+}
 
-  if (!result.authorized) {
-    if (result.reason === 'not_logged_in') {
-      window.location.replace('admin-login.html');
+function logAdminInitError(error) {
+  console.error('Admin init failed:', {
+    message: error?.message || '',
+    code: error?.code || '',
+    details: error?.details || '',
+    hint: error?.hint || '',
+  });
+}
+
+function redirectToAdminLogin() {
+  window.location.replace('admin-login.html');
+}
+
+function showAdminInitError(message) {
+  adminLayout.classList.remove('is-auth-checking');
+  adminLayout.classList.add('is-access-denied');
+  setAccessMessage(message, 'error');
+  loginLink.hidden = false;
+  accessSignOutButton.hidden = true;
+}
+
+async function initAdminDashboard() {
+  try {
+    if (!isSupabaseConfigured()) {
+      showAdminInitError('The archive connection is not configured for this environment.');
       return;
     }
 
-    adminLayout.classList.remove('is-auth-checking');
-    adminLayout.classList.add('is-access-denied');
+    const gateResult = requireAdminGate();
+    logAdminInitDebug('Admin gate present', gateResult.authorized);
 
-    if (result.reason === 'not_admin') {
-      setAccessMessage('Access denied. This account does not have admin access.', 'error');
-      showIdentity(result.user, result.profile);
-      accessSignOutButton.hidden = false;
-      loginLink.hidden = false;
+    if (!gateResult.authorized) {
+      clearAdminVerified();
+      redirectToAdminLogin();
       return;
     }
 
-    setAccessMessage(result.message, 'error');
-    loginLink.hidden = false;
-    return;
+    const supabase = getSupabaseClient();
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError) {
+      throw sessionError;
+    }
+
+    const hasSession = Boolean(sessionData?.session);
+    logAdminInitDebug('Supabase session present', hasSession);
+
+    if (!hasSession) {
+      clearAdminVerified();
+      redirectToAdminLogin();
+      return;
+    }
+
+    const result = await requireAdmin();
+    logAdminInitDebug('Admin profile check passed', Boolean(result?.authorized));
+
+    if (!result?.authorized) {
+      clearAdminVerified();
+
+      if (!result || result.reason === 'not_logged_in' || result.reason === 'not_admin') {
+        redirectToAdminLogin();
+        return;
+      }
+
+      showAdminInitError(result.message || 'Admin access could not be verified.');
+      return;
+    }
+
+    bindAdminDashboardEvents();
+    adminLayout.classList.remove('is-auth-checking', 'is-access-denied');
+    currentAdminUserId = result.user?.id || null;
+    setAccessMessage('Admin access confirmed.', 'success');
+    showIdentity(result.user, result.profile);
+    shell.classList.add('is-visible');
+    statusStrip.hidden = false;
+    signOutButton.hidden = false;
+    setCurrentView(window.location.hash.replace('#', '') || 'overview');
+    Promise.allSettled([
+      loadAdminOverviewStats(),
+      loadAdminCounts(),
+    ]).then((results) => {
+      results.forEach((metricResult) => {
+        if (metricResult.status === 'rejected') {
+          logAdminMetricWarning('Admin startup metric', metricResult.reason);
+        }
+      });
+    });
+  } catch (error) {
+    logAdminInitError(error);
+    clearAdminVerified();
+    showAdminInitError('Admin access could not be verified. Please return to admin login and try again.');
   }
-
-  adminLayout.classList.remove('is-auth-checking', 'is-access-denied');
-  setAccessMessage('Admin access confirmed.', 'success');
-  showIdentity(result.user, result.profile);
-  shell.classList.add('is-visible');
-  statusStrip.hidden = false;
-  signOutButton.hidden = false;
-  setCurrentView(window.location.hash.replace('#', '') || 'overview');
-  await loadAdminCounts();
 }
 
 initAdminDashboard();

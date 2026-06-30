@@ -24,6 +24,9 @@
   --navbar-glow: rgba(231, 160, 61, 0.34);
   --navbar-hover-bg: rgba(231, 195, 106, 0.14);
   --navbar-hover-text: #ffe9a6;
+  --nav-link-hover-color: #ffe9a6;
+  --nav-link-active-color: #ffe9a6;
+  --nav-link-underline-color: #ffe9a6;
   --toggle-bg: rgba(231, 195, 106, 0.18);
   --theme-accent-primary: #e7c36a;
   --theme-accent-secondary: #1f6f72;
@@ -115,6 +118,9 @@ body.sun-mode {
   --navbar-glow: rgba(231, 166, 68, 0.38);
   --navbar-hover-bg: rgba(231, 195, 106, 0.16);
   --navbar-hover-text: #ffe6a3;
+  --nav-link-hover-color: #f3c766;
+  --nav-link-active-color: #f3c766;
+  --nav-link-underline-color: #f3c766;
   --toggle-bg: rgba(231, 195, 106, 0.2);
   background: var(--emerald-black);
 }
@@ -136,6 +142,9 @@ body.moon-mode {
   --navbar-glow: var(--theme-glow-primary);
   --navbar-hover-bg: rgba(183, 140, 255, 0.12);
   --navbar-hover-text: #efe3ff;
+  --nav-link-hover-color: #e6e8ff;
+  --nav-link-active-color: #e6e8ff;
+  --nav-link-underline-color: #d8dcff;
   --toggle-bg: rgba(168, 85, 247, 0.2);
   background: var(--bg-obsidian);
 }
@@ -166,6 +175,9 @@ body.blood-moon-mode {
   --navbar-glow: rgba(217, 28, 63, 0.34);
   --navbar-hover-bg: rgba(120, 8, 24, 0.42);
   --navbar-hover-text: #fff3ef;
+  --nav-link-hover-color: #ff4f68;
+  --nav-link-active-color: #ff4f68;
+  --nav-link-underline-color: #ff405f;
   --toggle-bg: rgba(120, 0, 18, 0.3);
   background:
     radial-gradient(circle at 50% 12%, rgba(180, 18, 35, 0.32), transparent 30%),
@@ -554,7 +566,7 @@ body.blood-moon-mode .navbar__brand-text {
   max-width: 4.8rem;
   height: 2px;
   border-radius: 999px;
-  background: linear-gradient(90deg, transparent, var(--navbar-hover-text), transparent);
+  background: linear-gradient(90deg, transparent, var(--nav-link-underline-color, var(--navbar-hover-text)), transparent);
   box-shadow: 0 0 12px var(--navbar-glow);
   opacity: 0;
   transform: translateX(-50%) scaleX(0.42);
@@ -568,7 +580,7 @@ body.blood-moon-mode .navbar__brand-text {
 .navbar__link:focus-visible,
 .navbar__link.is-active,
 .navbar__link[aria-current="page"] {
-  color: var(--navbar-hover-text);
+  color: var(--nav-link-active-color, var(--navbar-hover-text));
   text-shadow: 0 0 10px color-mix(in srgb, var(--navbar-glow) 72%, transparent);
   transform: translateY(-1px);
 }
@@ -592,7 +604,7 @@ body.sun-mode .navbar__link:hover,
 body.sun-mode .navbar__link:focus-visible,
 body.sun-mode .navbar__link.is-active,
 body.sun-mode .navbar__link[aria-current="page"] {
-  color: #fff7df;
+  color: var(--nav-link-active-color);
   text-shadow:
     0 0 12px rgba(231, 166, 68, 0.34),
     0 0 20px rgba(151, 87, 30, 0.2);
@@ -615,7 +627,7 @@ body.sun-mode .navbar__link[aria-current="page"]::before {
 body.sun-mode .navbar__link.is-active::after,
 body.sun-mode .navbar__link[aria-current="page"]::after {
   opacity: 0.9;
-  background: linear-gradient(90deg, transparent, #ffe6a3, transparent);
+  background: linear-gradient(90deg, transparent, var(--nav-link-underline-color), transparent);
   box-shadow: 0 0 12px rgba(231, 166, 68, 0.38);
 }
 
@@ -623,7 +635,7 @@ body.moon-mode .navbar__link:hover,
 body.moon-mode .navbar__link:focus-visible,
 body.moon-mode .navbar__link.is-active,
 body.moon-mode .navbar__link[aria-current="page"] {
-  color: #f7efff;
+  color: var(--nav-link-active-color);
   text-shadow:
     0 0 10px var(--theme-glow-primary),
     0 0 18px rgba(92, 70, 190, 0.18);
@@ -646,7 +658,7 @@ body.moon-mode .navbar__link[aria-current="page"]::before {
 body.moon-mode .navbar__link.is-active::after,
 body.moon-mode .navbar__link[aria-current="page"]::after {
   opacity: 0.9;
-  background: linear-gradient(90deg, transparent, var(--theme-accent-secondary), transparent);
+  background: linear-gradient(90deg, transparent, var(--nav-link-underline-color), transparent);
   box-shadow: 0 0 12px rgba(214, 179, 106, 0.35);
 }
 
@@ -665,13 +677,13 @@ body.blood-moon-mode .navbar__link::before {
 }
 
 body.blood-moon-mode .navbar__link::after {
-  background: linear-gradient(90deg, transparent, rgba(255, 70, 100, 0.72), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--nav-link-underline-color) 72%, transparent), transparent);
   box-shadow: 0 0 10px rgba(217, 28, 63, 0.24);
 }
 
 body.blood-moon-mode .navbar__link:hover,
 body.blood-moon-mode .navbar__link:focus-visible {
-  color: #fff3ef;
+  color: var(--nav-link-hover-color);
   text-shadow: 0 0 12px rgba(217, 28, 63, 0.32);
 }
 
@@ -684,7 +696,7 @@ body.blood-moon-mode .navbar__link:focus-visible::before {
 
 body.blood-moon-mode .navbar__link.is-active,
 body.blood-moon-mode .navbar__link[aria-current="page"] {
-  color: #fff3ef;
+  color: var(--nav-link-active-color);
   text-shadow:
     0 0 12px rgba(255, 60, 90, 0.42),
     0 0 22px rgba(190, 10, 45, 0.32);
@@ -698,7 +710,7 @@ body.blood-moon-mode .navbar__link[aria-current="page"]::before {
 body.blood-moon-mode .navbar__link.is-active::after,
 body.blood-moon-mode .navbar__link[aria-current="page"]::after {
   opacity: 0.9;
-  background: linear-gradient(90deg, transparent, rgba(255, 70, 100, 0.86), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--nav-link-underline-color) 86%, transparent), transparent);
   box-shadow: 0 0 12px rgba(217, 28, 63, 0.38);
 }
 
@@ -767,6 +779,10 @@ body.blood-moon-mode .navbar__link[aria-current="page"]::after {
   min-width: 4.7rem;
 }
 
+[data-public-auth-nav][data-public-auth-state="anonymous"] {
+  min-width: 0;
+}
+
 .navbar-account-placeholder {
   width: 38px;
   height: 38px;
@@ -813,6 +829,51 @@ body.blood-moon-mode .navbar__link[aria-current="page"]::after {
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+.navbar-login-link {
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--navbar-muted);
+  box-shadow: none;
+  font-family: var(--logo-font);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  padding: 0.35rem 0.1rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    color 220ms ease,
+    text-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.navbar-login-link:hover,
+.navbar-login-link:focus-visible,
+.navbar-login-link.is-active,
+.navbar-login-link[aria-current="page"] {
+  border: 0;
+  background: transparent;
+  color: var(--nav-link-active-color, var(--navbar-hover-text));
+  box-shadow: none;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--navbar-glow) 52%, transparent);
+  transform: translateY(-1px);
+}
+
+.navbar-login-link--mobile {
+  min-height: 38px;
+  font-size: 0.72rem;
 }
 
 .navbar-account__button:hover,
@@ -1075,7 +1136,7 @@ body.moon-mode .navbar__link--lumen-archive:not(.is-active):not(:hover):not(:foc
   bottom: 8px;
   height: 1px;
   border-radius: 999px;
-  background: linear-gradient(90deg, transparent, var(--navbar-hover-text), transparent);
+  background: linear-gradient(90deg, transparent, var(--nav-link-underline-color, var(--navbar-hover-text)), transparent);
   box-shadow: 0 0 12px var(--navbar-glow);
   opacity: 0;
   transform: scaleX(0.48);
@@ -1088,7 +1149,7 @@ body.moon-mode .navbar__link--lumen-archive:not(.is-active):not(:hover):not(:foc
 .navbar__mobile-link:focus-visible,
 .navbar__mobile-link.is-active,
 .navbar__mobile-link[aria-current="page"] {
-  color: var(--navbar-hover-text);
+  color: var(--nav-link-active-color, var(--navbar-hover-text));
   background: var(--navbar-hover-bg);
   box-shadow: inset 0 0 18px color-mix(in srgb, var(--navbar-glow) 42%, transparent);
   text-shadow: 0 0 12px var(--navbar-glow);
@@ -1161,7 +1222,7 @@ body.sun-mode .navbar__mobile-link:hover,
 body.sun-mode .navbar__mobile-link:focus-visible,
 body.sun-mode .navbar__mobile-link.is-active,
 body.sun-mode .navbar__mobile-link[aria-current="page"] {
-  color: #fff7df;
+  color: var(--nav-link-active-color);
   background:
     linear-gradient(180deg, rgba(231, 195, 106, 0.2), rgba(151, 87, 30, 0.14));
   box-shadow:
@@ -1183,7 +1244,7 @@ body.moon-mode .navbar__mobile-link:hover,
 body.moon-mode .navbar__mobile-link:focus-visible,
 body.moon-mode .navbar__mobile-link.is-active,
 body.moon-mode .navbar__mobile-link[aria-current="page"] {
-  color: #f7efff;
+  color: var(--nav-link-active-color);
   background:
     linear-gradient(180deg, rgba(181, 132, 255, 0.18), rgba(72, 46, 150, 0.16));
   box-shadow:
@@ -1193,7 +1254,7 @@ body.moon-mode .navbar__mobile-link[aria-current="page"] {
 }
 
 body.moon-mode .navbar__mobile-link::before {
-  background: linear-gradient(90deg, transparent, var(--theme-divider-accent), transparent);
+  background: linear-gradient(90deg, transparent, var(--nav-link-underline-color), transparent);
   box-shadow: 0 0 12px var(--theme-glow-secondary);
 }
 
@@ -1223,8 +1284,9 @@ body.blood-moon-mode .navbar__mobile-link {
 }
 
 body.blood-moon-mode .navbar__mobile-link:hover,
-body.blood-moon-mode .navbar__mobile-link:focus-visible {
-  color: #fff3ef;
+body.blood-moon-mode .navbar__mobile-link:focus-visible,
+body.blood-moon-mode .navbar__mobile-link[aria-current="page"] {
+  color: var(--nav-link-hover-color);
   background:
     linear-gradient(180deg, rgba(86, 5, 18, 0.62), rgba(42, 0, 8, 0.52));
   box-shadow:
@@ -1232,8 +1294,9 @@ body.blood-moon-mode .navbar__mobile-link:focus-visible {
     inset 0 0 18px rgba(217, 28, 63, 0.12);
 }
 
-body.blood-moon-mode .navbar__mobile-link.is-active {
-  color: #fff3ef;
+body.blood-moon-mode .navbar__mobile-link.is-active,
+body.blood-moon-mode .navbar__mobile-link[aria-current="page"] {
+  color: var(--nav-link-active-color);
   background:
     linear-gradient(180deg, rgba(150, 12, 32, 0.96), rgba(92, 4, 20, 0.96));
   box-shadow:
@@ -4594,11 +4657,13 @@ body.blood-moon-mode .zodiac-icon-badge,
 }
 
 .reading-viewer__image {
+  --tarot-card-radius: 12px;
   display: block;
   width: 100%;
   height: 100%;
   border: 1px solid var(--glow-border);
-  border-radius: 12px;
+  border-radius: var(--tarot-card-radius);
+  clip-path: inset(0 round var(--tarot-card-radius));
   object-fit: cover;
   background: rgba(4, 3, 8, 0.72);
   box-shadow:
@@ -4607,6 +4672,9 @@ body.blood-moon-mode .zodiac-icon-badge,
 }
 
 .card-image {
+  border-radius: var(--tarot-card-radius, 14px);
+  clip-path: inset(0 round var(--tarot-card-radius, 14px));
+  overflow: hidden;
   transition: transform 260ms ease;
 }
 
@@ -5217,6 +5285,7 @@ body.blood-moon-mode .combined-reading__final {
 }
 
 .tarot-card__face {
+  --tarot-card-radius: 14px;
   position: absolute;
   inset: 0;
   display: flex;
@@ -5305,7 +5374,8 @@ body.blood-moon-mode .combined-reading__final {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: var(--tarot-card-radius);
+  clip-path: inset(0 round var(--tarot-card-radius));
   display: block;
 }
 
@@ -10748,6 +10818,7 @@ body.blood-moon-mode .combined-reading__thread-card:active {
 }
 
 .combined-reading__thread-card-image {
+  --tarot-card-radius: 8px;
   position: relative;
   overflow: hidden;
   aspect-ratio: 2 / 3;
@@ -10759,6 +10830,8 @@ body.blood-moon-mode .combined-reading__thread-card:active {
 .combined-reading__thread-card-image img {
   width: 100%;
   height: 100%;
+  border-radius: inherit;
+  clip-path: inset(0 round var(--tarot-card-radius));
   object-fit: cover;
 }
 

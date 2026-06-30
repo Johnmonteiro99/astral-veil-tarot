@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@400;500;600;700&family=Literata:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Marcellus&family=Playfair+Display:wght@400;500;600;700&family=Playwrite+USA+Modern&family=Quicksand:wght@400;500;600;700&family=Spectral:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=Literata:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Marcellus&family=Playfair+Display:wght@400;500;600;700&family=Playwrite+USA+Modern&family=Quicksand:wght@400;500;600;700&family=Spectral:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <script>
@@ -150,25 +150,49 @@
       <form class="journal-entry-form journal-redesign-shell" data-journal-form>
         <section class="journal-main-panel journal-panel" aria-label="Write a journal entry">
           <div class="journal-entry-context-grid" aria-label="Journal context">
-            <section class="journal-companion-section journal-entry-context-grid__check-in">
-              <label class="journal-field journal-field--check-in">
-                <small>OPTIONAL CHECK-IN</small>
-                <span data-check-in-label>How are you feeling today?</span>
-                <small>A small check-in for you.</small>
-                <input type="text" name="check_in" maxlength="220" autocomplete="off" placeholder="A few words are enough." />
-              </label>
+            <section class="journal-companion-section journal-entry-context-grid__check-in journal-mobile-accordion" data-journal-mobile-accordion data-journal-mobile-accordion-default="closed">
+              <button class="journal-mobile-accordion__trigger" type="button" aria-expanded="false" aria-controls="journal-check-in-panel" data-journal-mobile-accordion-trigger>
+                <span class="journal-mobile-accordion__copy">
+                  <span class="journal-mobile-accordion__title">Optional Check-In</span>
+                  <span class="journal-mobile-accordion__summary">How are you feeling today?</span>
+                </span>
+                <span class="journal-mobile-accordion__chevron" aria-hidden="true"></span>
+              </button>
+              <div class="journal-mobile-accordion__panel" id="journal-check-in-panel" data-journal-mobile-accordion-panel>
+                <label class="journal-field journal-field--check-in">
+                  <small>OPTIONAL CHECK-IN</small>
+                  <span data-check-in-label>How are you feeling today?</span>
+                  <small>A small check-in for you.</small>
+                  <input type="text" name="check_in" maxlength="220" autocomplete="off" aria-label="How are you feeling today?" placeholder="Write a little, if you'd like." />
+                </label>
+              </div>
             </section>
 
             <section class="journal-companion-section journal-daily-prompt" aria-label="Prompt of the day">
               <span>Prompt of the Day</span>
               <p data-prompt-of-day>What part of today asked to be remembered?</p>
+              <button class="journal-daily-prompt__refresh" type="button" data-prompt-refresh aria-label="Show another journal prompt">Ask Another</button>
             </section>
 
-            <section class="journal-companion-section journal-entry-context-grid__mood">
+            <section class="journal-companion-section journal-entry-context-grid__mood journal-mobile-mood-card">
               <label class="journal-field journal-field--mood">
                 <span>Mood</span>
                 <small>How would you describe your mood today?</small>
-                <select name="mood" data-mood-select></select>
+                <select name="mood" data-mood-select aria-label="Choose a mood"></select>
+                <div class="journal-mood-select" data-mobile-mood-select>
+                  <button
+                    class="journal-mood-select__button"
+                    type="button"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    aria-controls="journal-mobile-mood-options"
+                    data-mobile-mood-trigger
+                  >
+                    <span data-mobile-mood-label>Choose a mood</span>
+                    <span class="journal-mood-select__chevron" aria-hidden="true"></span>
+                  </button>
+                  <div class="journal-mood-select__menu" id="journal-mobile-mood-options" role="listbox" data-mobile-mood-menu hidden></div>
+                </div>
               </label>
             </section>
           </div>

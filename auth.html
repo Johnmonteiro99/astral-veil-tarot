@@ -698,7 +698,7 @@
 
       [data-auth-message][hidden],
       [hidden] {
-        display: none;
+        display: none !important;
       }
 
       [data-message-type="error"] {
@@ -709,6 +709,81 @@
       [data-message-type="success"] {
         border-color: rgba(168, 226, 130, 0.42);
         color: var(--success);
+      }
+
+      .auth-confirmation-panel {
+        display: grid;
+        gap: 0.85rem;
+        border: 1px solid rgba(168, 226, 130, 0.34);
+        border-radius: 18px;
+        padding: clamp(1.1rem, 4vw, 1.45rem);
+        background:
+          radial-gradient(circle at 50% 0%, rgba(168, 226, 130, 0.14), transparent 62%),
+          rgba(8, 14, 29, 0.68);
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .auth-confirmation-panel__eyebrow {
+        margin: 0;
+        color: var(--success);
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .auth-confirmation-panel h2 {
+        margin: 0;
+        color: var(--text);
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(1.8rem, 8vw, 2.4rem);
+        line-height: 1;
+      }
+
+      .auth-confirmation-panel p {
+        margin: 0;
+      }
+
+      .auth-confirmation-panel__email {
+        overflow-wrap: anywhere;
+        color: var(--text);
+        font-size: 0.9rem;
+      }
+
+      .auth-confirmation-panel__actions {
+        display: grid;
+        gap: 0.7rem;
+      }
+
+      .auth-confirmation-panel__actions .primary-action,
+      .auth-confirmation-panel__actions .secondary-action {
+        width: 100%;
+        min-height: 46px;
+      }
+
+      .auth-card.is-confirmation {
+        align-content: center;
+      }
+
+      .auth-card.is-confirmation .auth-confirmation-panel {
+        margin-block: 0.4rem;
+      }
+
+      .auth-card:not([data-auth-view="confirmation"]) .auth-confirmation-panel {
+        display: none !important;
+      }
+
+      .auth-card[data-auth-view="confirmation"] .auth-welcome,
+      .auth-card[data-auth-view="confirmation"] .mode-switch,
+      .auth-card[data-auth-view="confirmation"] [data-user-auth-form],
+      .auth-card[data-auth-view="confirmation"] .terms-text {
+        display: none !important;
+      }
+
+      .auth-card[data-auth-view="confirmation"] .auth-confirmation-panel {
+        display: grid !important;
       }
 
       .terms-text {
@@ -1024,7 +1099,7 @@
         <p>Tarot readings, hidden lore, and personal discovery.</p>
       </section>
 
-      <main>
+      <main class="auth-card" data-auth-card data-auth-view="signin">
         <span class="sr-only" data-auth-title>Sign In</span>
         <span class="sr-only" data-auth-copy>Return to your archive and keep your thread close.</span>
 
@@ -1082,6 +1157,18 @@
           </div>
           <button class="primary-action" type="submit" data-auth-submit>Sign In</button>
         </form>
+
+        <section class="auth-confirmation-panel" data-signup-confirmation hidden aria-labelledby="signup-confirmation-title" tabindex="-1">
+          <p class="auth-confirmation-panel__eyebrow">CONFIRMATION SENT</p>
+          <h2 id="signup-confirmation-title">The Archive has sent a confirmation link.</h2>
+          <p>Check your email to complete your account. Once confirmed, return here to sign in.</p>
+          <p class="auth-confirmation-panel__email" data-signup-confirmation-email hidden></p>
+          <div class="auth-confirmation-panel__actions">
+            <button class="primary-action" type="button" data-signup-back-login>Back to Sign In</button>
+            <button class="secondary-action" type="button" data-signup-resend>Resend Confirmation Email</button>
+          </div>
+          <p class="modal-status" data-signup-resend-status role="status" aria-live="polite" hidden></p>
+        </section>
 
         <p data-auth-message role="status" aria-live="polite" hidden></p>
 

@@ -1119,6 +1119,19 @@
         display: none;
       }
 
+      .admin-form__group-title {
+        grid-column: 1 / -1;
+        margin: 0.35rem 0 0;
+        padding-top: 0.7rem;
+        border-top: 1px solid rgba(179, 28, 35, 0.18);
+        color: #ff9a72;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
       .journal-prompts-table {
         min-width: 76rem;
         table-layout: fixed;
@@ -1609,6 +1622,71 @@
         gap: 1rem;
       }
 
+      .admin-moderation-form {
+        display: grid;
+        gap: 0.9rem;
+        padding: 1rem;
+        border: 1px solid rgba(179, 28, 35, 0.22);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.42);
+      }
+
+      .admin-moderation-form h4,
+      .admin-moderation-form p {
+        margin: 0;
+      }
+
+      .admin-moderation-form h4 {
+        color: #fff0df;
+        font-family: Marcellus, Georgia, serif;
+        font-size: 1.1rem;
+        font-weight: 400;
+      }
+
+      .admin-moderation-form p {
+        color: var(--muted);
+      }
+
+      .admin-moderation-form__grid {
+        display: grid;
+        grid-template-columns: minmax(11rem, 0.8fr) minmax(0, 1.2fr);
+        gap: 0.85rem;
+      }
+
+      .admin-moderation-form label {
+        display: grid;
+        gap: 0.35rem;
+        color: var(--quiet);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .admin-moderation-form select,
+      .admin-moderation-form textarea {
+        width: 100%;
+        border: 1px solid rgba(179, 28, 35, 0.28);
+        border-radius: 7px;
+        background: rgba(5, 1, 2, 0.72);
+        color: var(--text);
+        font: 600 0.95rem Rajdhani, system-ui, sans-serif;
+        letter-spacing: 0;
+        text-transform: none;
+      }
+
+      .admin-moderation-form select {
+        min-height: 2.75rem;
+        padding: 0 0.75rem;
+      }
+
+      .admin-moderation-form textarea {
+        min-height: 5rem;
+        padding: 0.7rem 0.75rem;
+        resize: vertical;
+      }
+
       .admin-progress-group {
         display: grid;
         gap: 0.7rem;
@@ -1636,6 +1714,12 @@
         overflow-x: auto;
         scrollbar-color: rgba(210, 31, 50, 0.82) rgba(18, 3, 5, 0.86);
         scrollbar-width: thin;
+      }
+
+      @media (max-width: 760px) {
+        .admin-moderation-form__grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       [hidden] {
@@ -1997,7 +2081,7 @@
             <span>Overview</span>
           </a>
           <a href="#journals" data-admin-view-link="journals">
-            <span>Journals</span>
+            <span>Noctis Documents</span>
           </a>
           <a href="#journal-prompts" data-admin-view-link="journal-prompts">
             <span>Journal Prompts</span>
@@ -2025,6 +2109,9 @@
           </a>
           <a href="#veilwalker-notes" data-admin-view-link="veilwalker-notes">
             <span>Veilwalker Notes</span>
+          </a>
+          <a href="#users" data-admin-view-link="users">
+            <span>Users</span>
           </a>
           <a href="#user-progress" data-admin-view-link="user-progress">
             <span>User Progress</span>
@@ -2071,33 +2158,38 @@
               <div class="command-grid" aria-label="Admin overview metrics">
                 <div class="metrics-grid">
                   <article class="metric-card">
-                    <span class="metric-card__label">Active Users</span>
-                    <span class="metric-card__value">--</span>
-                    <p class="metric-card__note">Presence later</p>
-                  </article>
-                  <article class="metric-card">
                     <span class="metric-card__label">Total Accounts</span>
-                    <span class="metric-card__value">--</span>
-                    <p class="metric-card__note">Profiles later</p>
+                    <span class="metric-card__value" data-admin-overview-stat="totalAccounts">Loading...</span>
+                    <p class="metric-card__note">Profiles</p>
                   </article>
                   <article class="metric-card">
-                    <span class="metric-card__label">Unlocked Artifacts</span>
-                    <span class="metric-card__value">--</span>
-                    <p class="metric-card__note">Progress later</p>
+                    <span class="metric-card__label">Active Users</span>
+                    <span class="metric-card__value" data-admin-overview-stat="activeUsers">Loading...</span>
+                    <p class="metric-card__note">Activity last 7 days</p>
                   </article>
                   <article class="metric-card">
-                    <span class="metric-card__label">Open Rooms</span>
-                    <span class="metric-card__value">--</span>
-                    <p class="metric-card__note">Availability</p>
+                    <span class="metric-card__label">New This Week</span>
+                    <span class="metric-card__value" data-admin-overview-stat="newThisWeek">Loading...</span>
+                    <p class="metric-card__note">Profiles created</p>
                   </article>
                   <article class="metric-card">
-                    <span class="metric-card__label">Recent Activity</span>
-                    <span class="metric-card__value">--</span>
-                    <p class="metric-card__note">Audit feed later</p>
+                    <span class="metric-card__label">Journal Entries</span>
+                    <span class="metric-card__value" data-admin-overview-stat="journalEntries">Loading...</span>
+                    <p class="metric-card__note">Private entries count</p>
+                  </article>
+                  <article class="metric-card">
+                    <span class="metric-card__label">Saved Readings</span>
+                    <span class="metric-card__value" data-admin-overview-stat="savedReadings">Loading...</span>
+                    <p class="metric-card__note">Archived readings</p>
+                  </article>
+                  <article class="metric-card">
+                    <span class="metric-card__label">Recovered Artifacts</span>
+                    <span class="metric-card__value" data-admin-overview-stat="recoveredArtifacts">Loading...</span>
+                    <p class="metric-card__note">User progress</p>
                   </article>
                   <article class="metric-card">
                     <span class="metric-card__label">Session Status</span>
-                    <span class="metric-card__value">Live</span>
+                    <span class="metric-card__value" data-admin-overview-stat="sessionStatus">Live</span>
                     <p class="metric-card__note">Protected session</p>
                   </article>
                 </div>
@@ -2110,16 +2202,16 @@
                   role="button"
                   tabindex="0"
                   data-admin-view-link="journals"
-                  aria-label="Open Journals admin section"
+                  aria-label="Open Noctis Documents admin section"
                 >
                   <div class="section-card__top">
                     <span class="card-icon" style="--icon-url: url('assets/icons/symbols/journal1.svg')" aria-hidden="true"></span>
-                    <h3>Journals</h3>
-                    <p>Manage lore entries, recovered writings, letters, and transmissions.</p>
+                    <h3>Noctis Documents</h3>
+                    <p>Manage recovered journals, manuscripts, letters, cipher texts, fragments, and forbidden records.</p>
                   </div>
                   <div class="section-card__meta">
-                    <span class="card-status">Read-only preview</span>
-                    <span class="count-pill" data-count-table="journals">Count: Checking...</span>
+                    <span class="card-status">CRUD enabled</span>
+                    <span class="count-pill" data-count-table="noctis_documents">Count: Checking...</span>
                   </div>
                 </article>
 
@@ -2277,6 +2369,25 @@
 
                 <article
                   class="section-card"
+                  id="users-card"
+                  role="button"
+                  tabindex="0"
+                  data-admin-view-link="users"
+                  aria-label="Open Users admin section"
+                >
+                  <div class="section-card__top">
+                    <span class="card-icon" style="--icon-url: url('assets/icons/symbols/profile.svg')" aria-hidden="true"></span>
+                    <h3>Users</h3>
+                    <p>Search and manage account roles, access status, and restrictions.</p>
+                  </div>
+                  <div class="section-card__meta">
+                    <span class="card-status">Account management</span>
+                    <span class="count-pill" data-count-table="profiles">Count: Checking...</span>
+                  </div>
+                </article>
+
+                <article
+                  class="section-card"
                   id="user-progress-card"
                   role="button"
                   tabindex="0"
@@ -2318,12 +2429,12 @@
             <section class="panel admin-view" id="journals" aria-labelledby="journals-title" data-admin-view="journals" hidden>
               <div class="admin-section-header">
                 <div>
-                  <p class="admin-section-eyebrow">Read-only management</p>
-                  <h2 id="journals-title">Journals</h2>
-                  <p>Create, edit, publish, and review lore entries, recovered writings, letters, and transmissions from the journals table.</p>
+                  <p class="admin-section-eyebrow">NOCTIS DOCUMENTS</p>
+                  <h2 id="journals-title">Noctis Documents</h2>
+                  <p>Create and manage recovered journals, manuscripts, letters, cipher texts, fragments, and forbidden records.</p>
                 </div>
                 <div class="admin-section-actions">
-                  <button type="button" data-journal-new>New Journal</button>
+                  <button type="button" data-journal-new>New Document</button>
                   <button type="button" data-admin-view-link="overview">Back to Overview</button>
                 </div>
               </div>
@@ -2331,46 +2442,55 @@
               <section class="section-card admin-detail" data-journal-form-panel hidden aria-live="polite">
                 <div class="admin-detail__header">
                   <div>
-                    <p class="admin-section-eyebrow">Journal editor</p>
-                    <h3 data-journal-form-title>New Journal</h3>
+                    <p class="admin-section-eyebrow">Document editor</p>
+                    <h3 data-journal-form-title>New Document</h3>
                   </div>
                   <button class="admin-row-action" type="button" data-journal-form-cancel>Cancel</button>
                 </div>
                 <p class="admin-state" data-journal-form-state hidden></p>
                 <form class="admin-form" data-journal-form>
                   <div class="admin-form__grid">
+                    <h4 class="admin-form__group-title">Identity</h4>
                     <div class="admin-form__field">
                       <label for="journal-title">Title *</label>
                       <input id="journal-title" name="title" type="text" autocomplete="off" required />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-slug">Slug *</label>
-                      <input id="journal-slug" name="slug" type="text" autocomplete="off" required />
+                      <label for="journal-slug">Slug</label>
+                      <input id="journal-slug" name="slug" type="text" autocomplete="off" />
+                    </div>
+                    <h4 class="admin-form__group-title">Classification</h4>
+                    <div class="admin-form__field">
+                      <label for="journal-document-type">Document Type *</label>
+                      <select id="journal-document-type" name="document_type" required>
+                        <option value="journal">journal</option>
+                        <option value="manuscript">manuscript</option>
+                        <option value="letter">letter</option>
+                        <option value="cipher">cipher</option>
+                        <option value="fragment">fragment</option>
+                        <option value="veil_lore">veil_lore</option>
+                        <option value="unstable_text">unstable_text</option>
+                        <option value="blood_moon">blood_moon</option>
+                        <option value="other">other</option>
+                      </select>
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-type">Journal Type</label>
-                      <input id="journal-type" name="journal_type" type="text" autocomplete="off" />
+                      <label for="journal-category-label">Category Label</label>
+                      <input id="journal-category-label" name="category_label" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-archive-section">Archive Section</label>
-                      <input id="journal-archive-section" name="archive_section" type="text" autocomplete="off" />
+                      <label for="journal-author">Author</label>
+                      <input id="journal-author" name="author" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-theme-mode">Theme Mode</label>
-                      <input id="journal-theme-mode" name="theme_mode" type="text" autocomplete="off" />
+                      <label for="journal-attribution">Attribution</label>
+                      <input id="journal-attribution" name="attribution" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-related-character">Related Character</label>
-                      <input id="journal-related-character" name="related_character" type="text" autocomplete="off" />
+                      <label for="journal-shelf-mark">Shelf Mark</label>
+                      <input id="journal-shelf-mark" name="shelf_mark" type="text" autocomplete="off" />
                     </div>
-                    <div class="admin-form__field">
-                      <label for="journal-sort-order">Sort Order</label>
-                      <input id="journal-sort-order" name="sort_order" type="number" step="1" inputmode="numeric" />
-                    </div>
-                    <label class="admin-form__checkbox">
-                      <input name="is_published" type="checkbox" />
-                      <span>Published</span>
-                    </label>
+                    <h4 class="admin-form__group-title">Content</h4>
                     <div class="admin-form__field admin-form__field--wide">
                       <label for="journal-excerpt">Excerpt</label>
                       <textarea id="journal-excerpt" name="excerpt" rows="3"></textarea>
@@ -2379,28 +2499,135 @@
                       <label for="journal-body">Body *</label>
                       <textarea id="journal-body" name="body" rows="8" required></textarea>
                     </div>
+                    <div class="admin-form__field">
+                      <label for="journal-tags">Tags</label>
+                      <input id="journal-tags" name="tags" type="text" autocomplete="off" placeholder="veil, water, cipher" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-themes">Themes</label>
+                      <input id="journal-themes" name="themes" type="text" autocomplete="off" placeholder="The Veil, Memory" />
+                    </div>
+                    <h4 class="admin-form__group-title">Visibility / Unlocking</h4>
+                    <div class="admin-form__field">
+                      <label for="journal-mode">Mode</label>
+                      <select id="journal-mode" name="mode">
+                        <option value="blood_moon">blood_moon</option>
+                        <option value="moon">moon</option>
+                        <option value="sun">sun</option>
+                        <option value="blue_moon">blue_moon</option>
+                        <option value="all">all</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-sort-order">Sort Order</label>
+                      <input id="journal-sort-order" name="sort_order" type="number" step="1" inputmode="numeric" />
+                    </div>
+                    <h4 class="admin-form__group-title">Metadata</h4>
+                    <label class="admin-form__checkbox">
+                      <input name="is_published" type="checkbox" />
+                      <span>Published</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_featured" type="checkbox" />
+                      <span>Featured</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_notable" type="checkbox" />
+                      <span>Notable</span>
+                    </label>
+                    <label class="admin-form__checkbox">
+                      <input name="is_blood_moon" type="checkbox" />
+                      <span>Blood Moon</span>
+                    </label>
+                    <div class="admin-form__field">
+                      <label for="journal-unlock-key">Unlock Key</label>
+                      <input id="journal-unlock-key" name="unlock_key" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-required-artifact-key">Required Artifact Key</label>
+                      <input id="journal-required-artifact-key" name="required_artifact_key" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-required-fragment-key">Required Fragment Key</label>
+                      <input id="journal-required-fragment-key" name="required_fragment_key" type="text" autocomplete="off" />
+                    </div>
                   </div>
                   <div class="admin-form__actions">
-                    <button type="submit" data-journal-form-submit>Save Journal</button>
+                    <button type="submit" data-journal-form-submit>Save Document</button>
                     <button type="button" data-journal-form-cancel-secondary>Cancel</button>
                   </div>
                 </form>
               </section>
 
-              <section class="admin-table-panel" aria-label="Journals table">
-                <p class="admin-state" data-journals-state>Loading journals...</p>
+              <section class="section-card section-card--compact-filter">
+                <div class="admin-form">
+                  <div class="admin-form__grid">
+                    <div class="admin-form__field">
+                      <label for="journal-filter-search">Search documents</label>
+                      <input id="journal-filter-search" data-journal-filter="search" type="search" autocomplete="off" placeholder="Title, author, shelf mark, body, tags..." />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-filter-type">Filter by type</label>
+                      <select id="journal-filter-type" data-journal-filter="document_type">
+                        <option value="__all">All Types</option>
+                        <option value="journal">journal</option>
+                        <option value="manuscript">manuscript</option>
+                        <option value="letter">letter</option>
+                        <option value="cipher">cipher</option>
+                        <option value="fragment">fragment</option>
+                        <option value="veil_lore">veil_lore</option>
+                        <option value="unstable_text">unstable_text</option>
+                        <option value="blood_moon">blood_moon</option>
+                        <option value="other">other</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-filter-published">Filter by publishing</label>
+                      <select id="journal-filter-published" data-journal-filter="published">
+                        <option value="__all">All Statuses</option>
+                        <option value="published">Published</option>
+                        <option value="unpublished">Unpublished</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-filter-mode">Filter by mode</label>
+                      <select id="journal-filter-mode" data-journal-filter="mode">
+                        <option value="__all">All Modes</option>
+                        <option value="blood_moon">blood_moon</option>
+                        <option value="moon">moon</option>
+                        <option value="sun">sun</option>
+                        <option value="blue_moon">blue_moon</option>
+                        <option value="all">all</option>
+                      </select>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="journal-filter-blood-moon">Filter by Blood Moon</label>
+                      <select id="journal-filter-blood-moon" data-journal-filter="blood_moon">
+                        <option value="__all">All Documents</option>
+                        <option value="blood_moon">Blood Moon</option>
+                        <option value="not_blood_moon">Not Blood Moon</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Noctis Documents table">
+                <p class="admin-state" data-journals-state>Loading Noctis documents...</p>
                 <div class="admin-table-scroll" data-journals-table-wrap hidden>
                   <table class="admin-table">
                     <thead>
                       <tr>
                         <th scope="col">Title</th>
                         <th scope="col">Slug</th>
-                        <th scope="col">Journal Key</th>
                         <th scope="col">Type</th>
+                        <th scope="col">Author/Attribution</th>
+                        <th scope="col">Shelf Mark</th>
                         <th scope="col">Mode</th>
                         <th scope="col">Published</th>
+                        <th scope="col">Featured/Notable</th>
                         <th scope="col">Updated</th>
-                        <th scope="col">Action</th>
+                        <th scope="col">Actions</th>
                       </tr>
                     </thead>
                     <tbody data-journals-table-body></tbody>
@@ -2411,8 +2638,8 @@
               <section class="section-card admin-detail" data-journal-detail hidden aria-live="polite">
                 <div class="admin-detail__header">
                   <div>
-                    <p class="admin-section-eyebrow">Journal detail</p>
-                    <h3 data-journal-detail-title>Selected Journal</h3>
+                    <p class="admin-section-eyebrow">Document detail</p>
+                    <h3 data-journal-detail-title>Selected Document</h3>
                   </div>
                   <button class="admin-row-action" type="button" data-journal-detail-close>Close</button>
                 </div>
@@ -3750,143 +3977,184 @@
                 <p class="admin-state" data-veilwalker-form-state hidden></p>
                 <form class="admin-form" data-veilwalker-form>
                   <div class="admin-form__grid">
+                    <h4 class="admin-form__group-title">Base Info</h4>
                     <div class="admin-form__field">
-                      <label for="veilwalker-key">Veilwalker Key *</label>
-                      <input id="veilwalker-key" name="veilwalker_key" type="text" autocomplete="off" required />
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-zodiac">Zodiac Key *</label>
-                      <input id="veilwalker-zodiac" name="zodiac_key" type="text" list="veilwalker-zodiac-options" autocomplete="off" required />
-                      <datalist id="veilwalker-zodiac-options">
-                        <option value="aries"></option>
-                        <option value="taurus"></option>
-                        <option value="gemini"></option>
-                        <option value="cancer"></option>
-                        <option value="leo"></option>
-                        <option value="virgo"></option>
-                        <option value="libra"></option>
-                        <option value="scorpio"></option>
-                        <option value="sagittarius"></option>
-                        <option value="capricorn"></option>
-                        <option value="aquarius"></option>
-                        <option value="pisces"></option>
-                      </datalist>
+                      <label for="veilwalker-slug">Slug *</label>
+                      <input id="veilwalker-slug" name="slug" type="text" autocomplete="off" required />
                     </div>
                     <div class="admin-form__field">
                       <label for="veilwalker-display-name">Display Name *</label>
                       <input id="veilwalker-display-name" name="display_name" type="text" autocomplete="off" required />
                     </div>
                     <div class="admin-form__field">
-                      <label for="veilwalker-theme-mode">Theme Mode</label>
-                      <input id="veilwalker-theme-mode" name="theme_mode" type="text" list="veilwalker-theme-mode-options" autocomplete="off" placeholder="standard, bloodmoon..." />
-                      <datalist id="veilwalker-theme-mode-options">
-                        <option value="standard"></option>
-                        <option value="bloodmoon"></option>
-                        <option value="blue_moon"></option>
+                      <label for="veilwalker-zodiac">Zodiac Sign</label>
+                      <input id="veilwalker-zodiac" name="zodiac_sign" type="text" list="veilwalker-zodiac-options" autocomplete="off" />
+                      <datalist id="veilwalker-zodiac-options">
+                        <option value="Aries"></option>
+                        <option value="Taurus"></option>
+                        <option value="Gemini"></option>
+                        <option value="Cancer"></option>
+                        <option value="Leo"></option>
+                        <option value="Virgo"></option>
+                        <option value="Libra"></option>
+                        <option value="Scorpio"></option>
+                        <option value="Sagittarius"></option>
+                        <option value="Capricorn"></option>
+                        <option value="Aquarius"></option>
+                        <option value="Pisces"></option>
                       </datalist>
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-form-key">Form Key</label>
-                      <input id="veilwalker-form-key" name="form_key" type="text" list="veilwalker-form-key-options" autocomplete="off" placeholder="oracle, ascendant..." />
-                      <datalist id="veilwalker-form-key-options">
-                        <option value="oracle"></option>
-                        <option value="ascendant"></option>
-                        <option value="bloodmoon"></option>
-                        <option value="mystery"></option>
-                      </datalist>
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-form-label">Form Label</label>
-                      <input id="veilwalker-form-label" name="form_label" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field">
                       <label for="veilwalker-element">Element</label>
-                      <input id="veilwalker-element" name="element" type="text" list="veilwalker-element-options" autocomplete="off" placeholder="fire, earth, air..." />
+                      <input id="veilwalker-element" name="element" type="text" list="veilwalker-element-options" autocomplete="off" />
                       <datalist id="veilwalker-element-options">
-                        <option value="fire"></option>
-                        <option value="earth"></option>
-                        <option value="air"></option>
-                        <option value="water"></option>
-                        <option value="unknown"></option>
+                        <option value="Fire"></option>
+                        <option value="Earth"></option>
+                        <option value="Air"></option>
+                        <option value="Water"></option>
                       </datalist>
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-symbol">Symbol</label>
-                      <input id="veilwalker-symbol" name="symbol" type="text" autocomplete="off" />
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-accent-color">Accent Color</label>
-                      <input id="veilwalker-accent-color" name="accent_color" type="text" autocomplete="off" placeholder="#d98942" />
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-glow-color">Glow Color</label>
-                      <input id="veilwalker-glow-color" name="glow_color" type="text" autocomplete="off" placeholder="rgba(210, 31, 50, 0.45)" />
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-card-image">Card Image URL</label>
-                      <input id="veilwalker-card-image" name="card_image_url" type="text" autocomplete="off" />
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-profile-image">Profile Image URL</label>
-                      <input id="veilwalker-profile-image" name="profile_image_url" type="text" autocomplete="off" />
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-profile-title">Profile Title</label>
-                      <input id="veilwalker-profile-title" name="profile_title" type="text" autocomplete="off" />
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-focus-label">Focus Label</label>
-                      <input id="veilwalker-focus-label" name="focus_label" type="text" autocomplete="off" />
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-reading-style">Reading Style</label>
-                      <input id="veilwalker-reading-style" name="reading_style" type="text" autocomplete="off" />
-                    </div>
-                    <div class="admin-form__field">
-                      <label for="veilwalker-profile-note-key">Profile Note Key</label>
-                      <input id="veilwalker-profile-note-key" name="profile_note_key" type="text" list="veilwalker-profile-note-options" autocomplete="off" />
-                      <datalist id="veilwalker-profile-note-options" data-veilwalker-profile-note-options></datalist>
                     </div>
                     <div class="admin-form__field">
                       <label for="veilwalker-sort">Sort Order</label>
                       <input id="veilwalker-sort" name="sort_order" type="number" step="1" inputmode="numeric" />
                     </div>
                     <label class="admin-form__checkbox">
-                      <input name="reading_enabled" type="checkbox" />
-                      <span>Reading Enabled</span>
-                    </label>
-                    <label class="admin-form__checkbox">
-                      <input name="has_profile_note" type="checkbox" />
-                      <span>Has Profile Note</span>
-                    </label>
-                    <label class="admin-form__checkbox">
-                      <input name="is_mystery" type="checkbox" />
-                      <span>Mystery</span>
-                    </label>
-                    <label class="admin-form__checkbox">
-                      <input name="is_active" type="checkbox" />
+                      <input name="is_active" type="checkbox" checked />
                       <span>Active</span>
                     </label>
-                    <div class="admin-form__field admin-form__field--wide">
-                      <label for="veilwalker-short-quote">Short Quote</label>
-                      <textarea id="veilwalker-short-quote" name="short_quote" rows="3"></textarea>
+
+                    <h4 class="admin-form__group-title">Oracle / Phase 1</h4>
+                    <input name="variant_oracle_id" type="hidden" />
+                    <div class="admin-form__field">
+                      <label for="variant-oracle-key">Variant Key</label>
+                      <input id="variant-oracle-key" name="variant_oracle_key" type="text" autocomplete="off" value="oracle" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-oracle-mode">Mode</label>
+                      <input id="variant-oracle-mode" name="variant_oracle_mode" type="text" autocomplete="off" value="normal" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-oracle-phase">Phase</label>
+                      <input id="variant-oracle-phase" name="variant_oracle_phase" type="text" autocomplete="off" value="phase_1" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-oracle-title">Title</label>
+                      <input id="variant-oracle-title" name="variant_oracle_title" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field admin-form__field--wide">
-                      <label for="veilwalker-card-description">Card Description</label>
-                      <textarea id="veilwalker-card-description" name="card_description" rows="4"></textarea>
+                      <label for="variant-oracle-description">Description</label>
+                      <textarea id="variant-oracle-description" name="variant_oracle_description" rows="4"></textarea>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-oracle-focus">Focus</label>
+                      <input id="variant-oracle-focus" name="variant_oracle_focus" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-oracle-image">Image URL</label>
+                      <input id="variant-oracle-image" name="variant_oracle_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-oracle-profile-image">Profile Image URL</label>
+                      <input id="variant-oracle-profile-image" name="variant_oracle_profile_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-oracle-traits">Traits</label>
+                      <input id="variant-oracle-traits" name="variant_oracle_traits" type="text" autocomplete="off" placeholder="courage, renewal" />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="variant_oracle_is_available" type="checkbox" checked />
+                      <span>Available</span>
+                    </label>
+
+                    <h4 class="admin-form__group-title">Ascendant / Phase 2</h4>
+                    <input name="variant_ascendant_id" type="hidden" />
+                    <div class="admin-form__field">
+                      <label for="variant-ascendant-key">Variant Key</label>
+                      <input id="variant-ascendant-key" name="variant_ascendant_key" type="text" autocomplete="off" value="ascendant" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-ascendant-mode">Mode</label>
+                      <input id="variant-ascendant-mode" name="variant_ascendant_mode" type="text" autocomplete="off" value="normal" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-ascendant-phase">Phase</label>
+                      <input id="variant-ascendant-phase" name="variant_ascendant_phase" type="text" autocomplete="off" value="phase_2" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-ascendant-title">Title</label>
+                      <input id="variant-ascendant-title" name="variant_ascendant_title" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field admin-form__field--wide">
-                      <label for="veilwalker-profile-body">Profile Body</label>
-                      <textarea id="veilwalker-profile-body" name="profile_body" rows="7"></textarea>
+                      <label for="variant-ascendant-description">Description</label>
+                      <textarea id="variant-ascendant-description" name="variant_ascendant_description" rows="4"></textarea>
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-ascendant-focus">Focus</label>
+                      <input id="variant-ascendant-focus" name="variant_ascendant_focus" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-ascendant-image">Image URL</label>
+                      <input id="variant-ascendant-image" name="variant_ascendant_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-ascendant-profile-image">Profile Image URL</label>
+                      <input id="variant-ascendant-profile-image" name="variant_ascendant_profile_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-ascendant-traits">Traits</label>
+                      <input id="variant-ascendant-traits" name="variant_ascendant_traits" type="text" autocomplete="off" />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="variant_ascendant_is_available" type="checkbox" checked />
+                      <span>Available</span>
+                    </label>
+
+                    <h4 class="admin-form__group-title">Blood Moon</h4>
+                    <input name="variant_bloodmoon_id" type="hidden" />
+                    <div class="admin-form__field">
+                      <label for="variant-bloodmoon-key">Variant Key</label>
+                      <input id="variant-bloodmoon-key" name="variant_bloodmoon_key" type="text" autocomplete="off" value="bloodmoon" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-bloodmoon-mode">Mode</label>
+                      <input id="variant-bloodmoon-mode" name="variant_bloodmoon_mode" type="text" autocomplete="off" value="blood_moon" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-bloodmoon-phase">Phase</label>
+                      <input id="variant-bloodmoon-phase" name="variant_bloodmoon_phase" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-bloodmoon-title">Title</label>
+                      <input id="variant-bloodmoon-title" name="variant_bloodmoon_title" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field admin-form__field--wide">
-                      <label for="veilwalker-focus-text">Focus Text</label>
-                      <textarea id="veilwalker-focus-text" name="focus_text" rows="3"></textarea>
+                      <label for="variant-bloodmoon-description">Description</label>
+                      <textarea id="variant-bloodmoon-description" name="variant_bloodmoon_description" rows="4"></textarea>
                     </div>
-                    <div class="admin-form__field admin-form__field--wide">
-                      <label for="veilwalker-traits">Traits</label>
-                      <textarea id="veilwalker-traits" name="traits" rows="4" spellcheck="false" placeholder="courage, renewal, clarity"></textarea>
+                    <div class="admin-form__field">
+                      <label for="variant-bloodmoon-focus">Focus</label>
+                      <input id="variant-bloodmoon-focus" name="variant_bloodmoon_focus" type="text" autocomplete="off" />
                     </div>
+                    <div class="admin-form__field">
+                      <label for="variant-bloodmoon-image">Image URL</label>
+                      <input id="variant-bloodmoon-image" name="variant_bloodmoon_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-bloodmoon-profile-image">Profile Image URL</label>
+                      <input id="variant-bloodmoon-profile-image" name="variant_bloodmoon_profile_image_url" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-bloodmoon-traits">Traits</label>
+                      <input id="variant-bloodmoon-traits" name="variant_bloodmoon_traits" type="text" autocomplete="off" />
+                    </div>
+                    <div class="admin-form__field">
+                      <label for="variant-bloodmoon-symbolic-traits">Symbolic Traits</label>
+                      <input id="variant-bloodmoon-symbolic-traits" name="variant_bloodmoon_symbolic_traits" type="text" autocomplete="off" />
+                    </div>
+                    <label class="admin-form__checkbox">
+                      <input name="variant_bloodmoon_is_available" type="checkbox" checked />
+                      <span>Available</span>
+                    </label>
                   </div>
                   <div class="admin-form__actions">
                     <button type="submit" data-veilwalker-form-submit>Save Veilwalker</button>
@@ -3901,13 +4169,11 @@
                   <table class="admin-table">
                     <thead>
                       <tr>
-                        <th scope="col">Key</th>
                         <th scope="col">Name</th>
                         <th scope="col">Zodiac</th>
                         <th scope="col">Element</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Mode</th>
                         <th scope="col">Active</th>
+                        <th scope="col">Variants</th>
                         <th scope="col">Sort</th>
                         <th scope="col">Action</th>
                       </tr>
@@ -3932,12 +4198,92 @@
               </section>
             </section>
 
+            <section class="panel admin-view" id="users" aria-labelledby="users-title" data-admin-view="users" hidden>
+              <div class="admin-section-header">
+                <div>
+                  <p class="admin-section-eyebrow">Account management</p>
+                  <h2 id="users-title">Users</h2>
+                  <p>Search and manage Astral Veil accounts, roles, and access status.</p>
+                </div>
+                <div class="admin-section-actions">
+                  <button type="button" data-admin-view-link="overview">Back to Overview</button>
+                </div>
+              </div>
+
+              <section class="section-card section-card--compact-filter">
+                <form class="admin-form" role="search">
+                  <div class="admin-form__grid">
+                    <label for="admin-user-search">
+                      Search users
+                      <input id="admin-user-search" data-admin-user-search type="search" autocomplete="off" placeholder="Name, email, ID, role, or status" />
+                    </label>
+                  </div>
+                </form>
+              </section>
+
+              <section class="admin-table-panel" aria-label="Users table">
+                <p class="admin-state" data-admin-users-state>Loading users...</p>
+                <div class="admin-table-scroll" data-admin-users-table-wrap hidden>
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Display Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Account Status</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">User ID</th>
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody data-admin-users-table-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section-card admin-detail" data-admin-user-detail hidden aria-live="polite">
+                <div class="admin-detail__header">
+                  <div>
+                    <p class="admin-section-eyebrow">User detail</p>
+                    <h3 data-admin-user-detail-title>Selected User</h3>
+                  </div>
+                  <button class="admin-row-action" type="button" data-admin-user-detail-close>Close</button>
+                </div>
+                <div class="admin-detail__meta" data-admin-user-detail-meta></div>
+                <div class="admin-detail__field-grid" data-admin-user-detail-fields></div>
+                <form class="admin-moderation-form" data-user-moderation-form hidden>
+                  <div>
+                    <p class="admin-section-eyebrow">Account restriction</p>
+                    <h4>Account Status</h4>
+                    <p>This prevents the account from using protected Astral Veil features.</p>
+                  </div>
+                  <div class="admin-moderation-form__grid">
+                    <label>
+                      Status
+                      <select name="account_status" data-user-moderation-status>
+                        <option value="active">Active</option>
+                        <option value="restricted">Restricted</option>
+                        <option value="banned">Banned</option>
+                      </select>
+                    </label>
+                    <label>
+                      Reason
+                      <textarea name="ban_reason" rows="3" maxlength="1000" data-user-moderation-reason placeholder="Optional internal reason"></textarea>
+                    </label>
+                  </div>
+                  <p class="admin-state" data-user-moderation-state hidden></p>
+                  <button class="admin-row-action" type="submit" data-user-moderation-submit>Save Account Status</button>
+                </form>
+              </section>
+            </section>
+
             <section class="panel admin-view" id="user-progress" aria-labelledby="user-progress-title" data-admin-view="user-progress" hidden>
               <div class="admin-section-header">
                 <div>
                   <p class="admin-section-eyebrow">Read-only management</p>
                   <h2 id="user-progress-title">User Progress</h2>
-                  <p>Review account records and saved progression across artifacts, rooms, fragments, discoveries, readings, and events.</p>
+                  <p>Review account progression across artifacts, rooms, fragments, discoveries, readings, and events.</p>
                 </div>
                 <div class="admin-section-actions">
                   <button type="button" data-admin-view-link="overview">Back to Overview</button>
@@ -3983,6 +4329,7 @@
                       <tr>
                         <th scope="col">User</th>
                         <th scope="col">Role</th>
+                        <th scope="col">Status</th>
                         <th scope="col">Avatar</th>
                         <th scope="col">User ID</th>
                         <th scope="col">Created</th>

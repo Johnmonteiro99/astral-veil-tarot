@@ -165,6 +165,14 @@ function setDeckRitualFeatureVisible(isVisible) {
   }
 }
 
+function setDeckHeroVisible(isVisible) {
+  const deckHero = document.querySelector(".deck-hero");
+
+  if (deckHero) {
+    deckHero.hidden = !isVisible;
+  }
+}
+
 function isSmallDeckViewport() {
   return window.matchMedia("(max-width: 760px)").matches;
 }
@@ -637,14 +645,26 @@ function renderDeckKeywords(card) {
 }
 
 function renderDeckMeaningCard(type, title, text) {
+  const safeText = String(text || "").trim();
+
   return `
-    <section class="deck-viewer__meaning-card deck-viewer__meaning-card--${escapeHtml(type)}">
-      <div class="deck-viewer__meaning-heading">
+    <article class="deck-viewer__meaning-card deck-viewer__meaning-card--${escapeHtml(type)} deck-viewer__meaning-card--desktop">
+      <div class="deck-viewer__meaning-summary">
         <span class="deck-viewer__meaning-icon">${getDeckMeaningIcon(type)}</span>
-        <h3>${escapeHtml(title)}</h3>
+        <span class="deck-viewer__meaning-title">${escapeHtml(title)}</span>
+        <span class="deck-viewer__meaning-dot" aria-hidden="true"></span>
+        <span class="deck-viewer__meaning-preview">${escapeHtml(safeText)}</span>
       </div>
-      <p>${escapeHtml(text)}</p>
-    </section>
+    </article>
+    <details class="deck-viewer__meaning-card deck-viewer__meaning-card--${escapeHtml(type)} deck-viewer__meaning-card--mobile">
+      <summary class="deck-viewer__meaning-summary">
+        <span class="deck-viewer__meaning-icon">${getDeckMeaningIcon(type)}</span>
+        <span class="deck-viewer__meaning-title">${escapeHtml(title)}</span>
+        <span class="deck-viewer__meaning-dot" aria-hidden="true"></span>
+        <span class="deck-viewer__meaning-chevron" aria-hidden="true"></span>
+      </summary>
+      <p>${escapeHtml(safeText)}</p>
+    </details>
   `;
 }
 
@@ -660,6 +680,69 @@ function renderDeckCardMeanings(card) {
       ${renderDeckMeaningCard("reflection", "Reflection", upright.reflection || reversed.reflection || card.reflectionQuestion)}
     </div>
   `;
+}
+
+function getDeckDetailThemeClass(collection) {
+  const themeSource = String(collection?.id || collection?.theme || "")
+    .trim()
+    .toLowerCase();
+
+  if (themeSource.includes("blood")) {
+    return "deck-detail--bloodmoon";
+  }
+
+  if (themeSource.includes("moonveil")) {
+    return "deck-detail--moonveil";
+  }
+
+  if (themeSource.includes("dreambound")) {
+    return "deck-detail--dreambound";
+  }
+
+  if (themeSource.includes("cyber")) {
+    return "deck-detail--cyber-hacked";
+  }
+
+  return "deck-detail--verdant";
+}
+
+function initializeDeckCardTilt() {
+  const tiltCards = deckView?.querySelectorAll("[data-tilt-card]");
+
+  if (!tiltCards?.length || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  tiltCards.forEach((tiltCard) => {
+    const resetTilt = () => {
+      tiltCard.classList.remove("is-tilting");
+      tiltCard.style.setProperty("--tilt-x", "0deg");
+      tiltCard.style.setProperty("--tilt-y", "0deg");
+      tiltCard.style.setProperty("--shine-x", "50%");
+      tiltCard.style.setProperty("--shine-y", "50%");
+    };
+
+    const updateTilt = (event) => {
+      const rect = tiltCard.getBoundingClientRect();
+      const relativeX = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
+      const relativeY = Math.min(Math.max((event.clientY - rect.top) / rect.height, 0), 1);
+      const tiltY = (relativeX - 0.5) * 14;
+      const tiltX = (0.5 - relativeY) * 14;
+
+      tiltCard.classList.add("is-tilting");
+      tiltCard.style.setProperty("--tilt-x", `${tiltX.toFixed(2)}deg`);
+      tiltCard.style.setProperty("--tilt-y", `${tiltY.toFixed(2)}deg`);
+      tiltCard.style.setProperty("--shine-x", `${(relativeX * 100).toFixed(1)}%`);
+      tiltCard.style.setProperty("--shine-y", `${(relativeY * 100).toFixed(1)}%`);
+    };
+
+    resetTilt();
+    tiltCard.addEventListener("pointerenter", updateTilt);
+    tiltCard.addEventListener("pointermove", updateTilt);
+    tiltCard.addEventListener("pointerleave", resetTilt);
+    tiltCard.addEventListener("pointercancel", resetTilt);
+    tiltCard.addEventListener("pointerup", resetTilt);
+  });
 }
 
 // Preloads only neighboring full-size images so next/previous card browsing feels responsive.
@@ -1184,6 +1267,7 @@ function renderDeckCollection() {
     title: "The Astral Decks",
     description: "Choose a tarot collection to explore the cards held within the Astral Veil."
   });
+  setDeckHeroVisible(true);
   updateDeckHeroStatus();
   setDeckRitualFeatureVisible(true);
 
@@ -1224,7 +1308,7 @@ function renderDeckGallery(collectionId) {
   const isProtectedDeckMedia = isBloodMoonCollection(collection);
   const protectedMediaClass = isProtectedDeckMedia ? " protected-media" : "";
   const protectedMediaAttrs = isProtectedDeckMedia ? ' data-protected-media="true" draggable="false"' : "";
-  const protectedImageAttr = isProtectedDeckMedia ? ' draggable="false"' : "";
+  const protectedImageAttr = ' draggable="false"';
 
   if (!activeCard) {
     renderDeckCollection();
@@ -1243,72 +1327,92 @@ function renderDeckGallery(collectionId) {
     description: deckHeroDescription
   });
   hideDeckHeroStatus();
+  setDeckHeroVisible(false);
   setDeckRitualFeatureVisible(false);
 
   deckView.innerHTML = `
-    <div class="deck-view__toolbar">
-      <button class="deck-back-button" type="button" data-back-to-decks>
-        Back to Decks
-      </button>
-    </div>
-    <section class="deck-viewer deck-viewer--${escapeHtml(collection.id)}" data-card-gallery aria-label="${escapeHtml(collection.title)} card viewer">
-      <div class="deck-viewer__stage">
-        <button class="deck-viewer__image-button${protectedMediaClass}" type="button" data-featured-card-image="${escapeHtml(activeCard.id)}" aria-label="Expand ${escapeHtml(activeCard.name)}"${protectedMediaAttrs}>
-          <img
-            class="deck-viewer__image"
-            src="${escapeHtml(activeCard.image)}"
-            alt="${escapeHtml(activeCard.name)}"
-            width="${DECK_CARD_IMAGE_WIDTH}"
-            height="${DECK_CARD_IMAGE_HEIGHT}"
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-            ${protectedImageAttr}
-          />
+    <section class="deck-viewer deck-viewer--${escapeHtml(collection.id)} ${getDeckDetailThemeClass(collection)}" data-card-gallery aria-label="${escapeHtml(collection.title)} card viewer">
+      <div class="deck-viewer__topbar">
+        <button class="deck-back-button" type="button" data-back-to-decks>
+          <span aria-hidden="true">‹</span>
+          Back to Decks
         </button>
+        <p class="deck-viewer__counter" aria-label="Card ${activeCardIndex + 1} of ${collectionCards.length}">
+          <span aria-hidden="true">✦</span>
+          ${activeCardIndex + 1} OF ${collectionCards.length}
+          <span aria-hidden="true">✦</span>
+        </p>
+        <span class="deck-viewer__sigil" aria-hidden="true">✶</span>
+      </div>
+      <div class="deck-viewer__stage">
+        <figure class="deck-viewer__card-panel">
+        <button class="deck-viewer__image-button deck-card-tilt${protectedMediaClass}" type="button" data-featured-card-image="${escapeHtml(activeCard.id)}" data-tilt-card aria-label="Expand ${escapeHtml(activeCard.name)}"${protectedMediaAttrs}>
+          <span class="deck-viewer__image-clip">
+            <img
+              class="deck-viewer__image"
+              src="${escapeHtml(activeCard.image)}"
+              alt="${escapeHtml(activeCard.name)}"
+              width="${DECK_CARD_IMAGE_WIDTH}"
+              height="${DECK_CARD_IMAGE_HEIGHT}"
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+              ${protectedImageAttr}
+            />
+          </span>
+          <span class="deck-card-shine" aria-hidden="true"></span>
+        </button>
+        <figcaption class="deck-viewer__tilt-hint">
+          <span aria-hidden="true">↻</span>
+          Drag to tilt
+        </figcaption>
+        </figure>
 
         <div class="deck-viewer__content">
-          <p class="deck-viewer__counter">${activeCardIndex + 1} of ${collectionCards.length}</p>
+          <p class="deck-viewer__deck-label">${escapeHtml(collection.title || collection.name || "Astral Veil")}</p>
+          <p class="deck-viewer__arcana-label">Major Arcana</p>
           <h2>${escapeHtml(activeCard.name)}</h2>
           <p>${escapeHtml(cardDescription)}</p>
           ${renderDeckKeywords(activeCard)}
           ${renderDeckCardMeanings(activeCard)}
-          <div class="deck-viewer__controls" aria-label="Browse cards">
-            <button class="deck-viewer__nav" type="button" data-deck-viewer-nav="prev">
-              ‹ Previous
-            </button>
-            <button class="deck-viewer__nav" type="button" data-deck-viewer-nav="next">
-              Next ›
-            </button>
-          </div>
         </div>
       </div>
 
-      <div class="deck-thumbnail-rail" aria-label="Select a card">
-        ${collectionCards
-          .map(
-            (card, index) => {
-              const shouldLoadThumbnail =
-                index <= 11 || Math.abs(index - activeCardIndex) <= 6;
+      <div class="deck-viewer__rail-wrap">
+        <button class="deck-viewer__nav" type="button" data-deck-viewer-nav="prev" aria-label="Previous card">
+          ‹
+        </button>
+        <div class="deck-thumbnail-rail" aria-label="Select a card">
+          ${collectionCards
+            .map(
+              (card, index) => {
+                const shouldLoadThumbnail =
+                  index <= 11 || Math.abs(index - activeCardIndex) <= 6;
 
-              return `
-              <button class="deck-thumbnail${index === activeCardIndex ? " is-active" : ""}${protectedMediaClass}" type="button" data-card-index="${index}" aria-label="Show ${escapeHtml(card.name)}" aria-current="${index === activeCardIndex ? "true" : "false"}"${protectedMediaAttrs}>
-                <img
-                  src="${shouldLoadThumbnail ? escapeHtml(card.image) : thumbnailPlaceholder}"
-                  ${shouldLoadThumbnail ? "" : `data-thumbnail-src="${escapeHtml(card.image)}"`}
-                  alt=""
-                  width="${DECK_CARD_IMAGE_WIDTH}"
-                  height="${DECK_CARD_IMAGE_HEIGHT}"
-                  loading="lazy"
-                  decoding="async"
-                  ${protectedImageAttr}
-                />
-                <span>${index + 1}</span>
-              </button>
-            `;
-            }
-          )
-          .join("")}
+                return `
+                <button class="deck-thumbnail${index === activeCardIndex ? " is-active" : ""}${protectedMediaClass}" type="button" data-card-index="${index}" aria-label="Show ${escapeHtml(card.name)}" aria-current="${index === activeCardIndex ? "true" : "false"}"${protectedMediaAttrs}>
+                  <span class="deck-thumbnail__image-clip">
+                    <img
+                      src="${shouldLoadThumbnail ? escapeHtml(card.image) : thumbnailPlaceholder}"
+                      ${shouldLoadThumbnail ? "" : `data-thumbnail-src="${escapeHtml(card.image)}"`}
+                      alt=""
+                      width="${DECK_CARD_IMAGE_WIDTH}"
+                      height="${DECK_CARD_IMAGE_HEIGHT}"
+                      loading="lazy"
+                      decoding="async"
+                      ${protectedImageAttr}
+                    />
+                  </span>
+                  <span class="deck-thumbnail__index">${index + 1}</span>
+                </button>
+              `;
+              }
+            )
+            .join("")}
+        </div>
+        <button class="deck-viewer__nav" type="button" data-deck-viewer-nav="next" aria-label="Next card">
+          ›
+        </button>
       </div>
     </section>
   `;
@@ -1318,6 +1422,7 @@ function renderDeckGallery(collectionId) {
     inline: "center"
   });
   initializeThumbnailLazyLoading();
+  initializeDeckCardTilt();
 }
 
 // Updates the selected card and re-renders the viewer while preserving the active deck collection.

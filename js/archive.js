@@ -86,6 +86,26 @@ let shelvesDocuments = [];
 let shelvesDocumentsLoaded = false;
 let shelvesDocumentsLoading = false;
 let shelvesDocumentsError = "";
+
+function sortShelvesDocuments(documents) {
+  return documents.slice().sort((first, second) => {
+    const firstOrder = Number(first?.sort_order ?? 0);
+    const secondOrder = Number(second?.sort_order ?? 0);
+
+    if (firstOrder !== secondOrder) {
+      return firstOrder - secondOrder;
+    }
+
+    const firstUpdated = new Date(first?.updated_at || first?.created_at || 0).getTime();
+    const secondUpdated = new Date(second?.updated_at || second?.created_at || 0).getTime();
+
+    if (firstUpdated !== secondUpdated) {
+      return secondUpdated - firstUpdated;
+    }
+
+    return String(first?.title || "").localeCompare(String(second?.title || ""));
+  });
+}
 let shelvesSearchQuery = "";
 let shelvesActiveFilter = "all";
 let shelvesActiveIndex = 0;
@@ -263,40 +283,22 @@ const veilwalkerWhispers = [
 ];
 const archiveEchoes = [
   {
-    id: "phrase-stirred",
-    title: "Recovered Phrase",
-    message: "A recovered phrase stirred beneath the desk.",
-    type: "activity"
+    id: "entry-codes",
+    title: "Entry Codes",
+    message: "Some phrases do more than open doors. Try what the Archive seems to repeat.",
+    type: "hint"
   },
   {
-    id: "sealed-path-listening",
-    title: "Sealed Path",
-    message: "One sealed path is listening.",
-    type: "activity"
+    id: "recovered-objects",
+    title: "Recovered Objects",
+    message: "Relics are hidden across readings, rooms, and records. Not every object announces itself.",
+    type: "hint"
   },
   {
-    id: "hidden-title-waits",
-    title: "Hidden Title",
-    message: "A hidden title waits for the right name.",
-    type: "unlock"
-  },
-  {
-    id: "restricted-wing-progress",
-    title: "Restricted Wing",
-    message: "The Restricted Wing remains aware of your progress.",
-    type: "progress"
-  },
-  {
-    id: "artifact-recognized",
-    title: "Recovered Object",
-    message: "An object you recovered has been recognized by the Entry Desk.",
-    type: "artifact"
-  },
-  {
-    id: "deck-beneath-veil",
-    title: "Hidden Deck",
-    message: "A deck beneath the Veil waits for the phrase that names it.",
-    type: "deck"
+    id: "sealed-paths",
+    title: "Sealed Paths",
+    message: "Some chambers respond only after the right signs, fragments, or memories have been found.",
+    type: "hint"
   }
 ];
 const elementalKeyDisplayOrder = ["air", "water", "earth", "fire"];
@@ -472,13 +474,14 @@ const archiveShelfEntries = [
 
 const shelvesFilterOptions = [
   { id: "all", label: "All" },
-  { id: "journals", label: "Journals" },
+  { id: "journals", label: "Recovered Journals" },
   { id: "manuscripts", label: "Manuscripts" },
   { id: "letters", label: "Letters" },
   { id: "cryptic-codes", label: "Cryptic Codes" },
   { id: "fragments", label: "Fragments" },
   { id: "blood-moon", label: "Blood Moon" },
-  { id: "the-veil", label: "The Veil" }
+  { id: "the-veil", label: "The Veil" },
+  { id: "unstable-texts", label: "Unstable Texts" }
 ];
 
 const shelvesBrowseCards = [
@@ -515,7 +518,7 @@ const shelvesBrowseCards = [
     title: "Unstable Texts",
     description: "Writings corrupted by ink shifts, time, or unknown influence.",
     filter: "unstable_texts",
-    activeFilter: "fragments"
+    activeFilter: "unstable-texts"
   },
   {
     id: "veil_lore",
@@ -1267,7 +1270,8 @@ async function loadShelvesDocuments() {
     const { getSupabaseClient, isSupabaseConfigured } = await import("../src/services/supabase-client.js");
 
     if (!isSupabaseConfigured()) {
-      shelvesDocumentsError = "Noctis documents are using local fallback records.";
+      shelvesDocuments = [];
+      shelvesDocumentsError = "The Shelves are quiet for now. Return when the Archive retrieves more.";
       return;
     }
 
@@ -1275,21 +1279,20 @@ async function loadShelvesDocuments() {
     const { data, error } = await supabase
       .from("noctis_documents")
       .select("*")
-      .eq("is_published", true)
-      .order("is_featured", { ascending: false })
-      .order("created_at", { ascending: false });
+      .eq("is_published", true);
 
     if (error) {
       throw error;
     }
 
-    shelvesDocuments = Array.isArray(data) ? data : [];
+    shelvesDocuments = sortShelvesDocuments(Array.isArray(data) ? data : []);
     shelvesDocumentsError = shelvesDocuments.length
       ? ""
-      : "No published Noctis documents found yet. Showing a local recovered fragment.";
+      : "The Shelves are quiet for now. Return when the Archive retrieves more.";
   } catch (error) {
     console.warn("[Astral Veil archive] Noctis documents could not be loaded.", error);
-    shelvesDocumentsError = "Noctis documents could not be loaded. Showing local recovered fragments.";
+    shelvesDocuments = [];
+    shelvesDocumentsError = "The Shelves are quiet for now. Return when the Archive retrieves more.";
   } finally {
     shelvesDocumentsLoaded = true;
     shelvesDocumentsLoading = false;
@@ -1571,7 +1574,7 @@ async function saveShelvesDocument(documentId) {
   }
 
   if (!document.id) {
-    setShelvesSavedNotice("This local fallback record cannot be saved yet.", "error");
+    setShelvesSavedNotice("This document cannot be saved yet.", "error");
     renderCurrentArchiveSurface();
     return;
   }
@@ -2899,12 +2902,27 @@ function renderRecoveredObjectIcon(object) {
   return `<span aria-hidden="true">${escapeHtml(object.name?.charAt(0) || "K")}</span>`;
 }
 
+function getRecoveredObjectTypeLabel(object) {
+  const element = String(object?.element || object?.name || "").trim();
+
+  if (element) {
+    return `${element} Relic`;
+  }
+
+  return object?.type || "Recovered Object";
+}
+
+function getRecoveredInventoryCountLabel(count) {
+  return `${count} ${count === 1 ? "object" : "objects"} recovered`;
+}
+
 function renderRecoveredObjectCard(object, isRecovered = true) {
   const dataAttribute = isRecovered ? `data-recovered-object="${escapeHtml(object.id)}"` : "";
   const cardTitle = isRecovered ? object.title : "Sealed Finding";
   const cardLabel = isRecovered
-    ? `Open ${object.title} recovered artifact details`
+    ? `Inspect ${object.title}`
     : "Sealed finding not yet recovered";
+  const typeLabel = isRecovered ? getRecoveredObjectTypeLabel(object) : "Unknown Relic";
 
   return `
     <button class="archive-recovered-object-card protected-media ${escapeHtml(isRecovered ? object.accentClass || "" : "")}${isRecovered ? " is-recovered" : " is-locked"}" type="button" ${dataAttribute} ${isRecovered ? 'data-protected-media="true" draggable="false"' : "disabled"} aria-label="${escapeHtml(cardLabel)}">
@@ -2913,7 +2931,10 @@ function renderRecoveredObjectCard(object, isRecovered = true) {
       </span>
       <span class="archive-recovered-object-card__copy">
         <strong>${escapeHtml(cardTitle)}</strong>
+        <span class="archive-recovered-object-card__meta">${escapeHtml(typeLabel)}</span>
+        <span class="archive-recovered-object-card__status">${isRecovered ? "Recovered" : "Sealed"}</span>
       </span>
+      ${isRecovered ? `<span class="archive-recovered-object-card__arrow" aria-hidden="true">›</span>` : ""}
     </button>
   `;
 }
@@ -3005,6 +3026,7 @@ function renderRecoveredFindingsEmptyState() {
 function renderRecoveredObjects() {
   const recoveredObjects = getVisibleRecoveredObjects();
   const selectedObject = getSelectedRecoveredObject(recoveredObjects);
+  const recoveredCountLabel = getRecoveredInventoryCountLabel(recoveredObjects.length);
 
   if (openRecoveredObjectId && !selectedObject) {
     openRecoveredObjectId = "";
@@ -3013,9 +3035,12 @@ function renderRecoveredObjects() {
 
   return `
     <section class="archive-recovered-objects entry-desk-findings-section" aria-labelledby="entry-desk-findings-title">
-      <div class="archive-section-copy entry-desk-section-heading">
-        <h3 id="entry-desk-findings-title">Recovered Findings</h3>
-        <p>Things pulled from the spaces between memory and forgetting.</p>
+      <div class="archive-recovered-header">
+        <div class="archive-section-copy entry-desk-section-heading">
+          <h3 id="entry-desk-findings-title">Recovered Inventory</h3>
+          <p>Objects pulled from the spaces between memory and forgetting.</p>
+        </div>
+        <p class="archive-recovered-count">${escapeHtml(recoveredCountLabel)}</p>
       </div>
       <div class="archive-recovered-inventory">
         <div class="archive-recovered-object-strip" aria-label="Recovered findings inventory">
@@ -3057,12 +3082,16 @@ function renderArchiveCodePanel() {
 function renderArchiveLandingRecoveredObjects() {
   const recoveredObjects = getVisibleRecoveredObjects();
   const selectedObject = getSelectedRecoveredObject(recoveredObjects);
+  const recoveredCountLabel = getRecoveredInventoryCountLabel(recoveredObjects.length);
 
   return `
     <section class="archive-recovered-objects archive-landing-recovered-objects" aria-labelledby="archive-landing-recovered-title">
-      <div class="archive-section-copy">
-        <h3 id="archive-landing-recovered-title">Recovered Objects</h3>
-        <p>Items pulled from the spaces between memory and forgetting.</p>
+      <div class="archive-recovered-header">
+        <div class="archive-section-copy">
+          <h3 id="archive-landing-recovered-title">Recovered Inventory</h3>
+          <p>Objects pulled from the spaces between memory and forgetting.</p>
+        </div>
+        <p class="archive-recovered-count">${escapeHtml(recoveredCountLabel)}</p>
       </div>
       ${recoveredObjects.length ? `
         <div class="archive-recovered-inventory archive-landing-recovered-objects__inventory">
@@ -3107,31 +3136,8 @@ function renderArchiveLorePanel() {
   `;
 }
 
-function getFallbackNoctisDocuments() {
-  return archiveShelfEntries.map((entry, index) => ({
-    id: entry.id,
-    slug: entry.id,
-    title: entry.title,
-    subtitle: entry.label,
-    author: entry.author,
-    document_type: "journal_fragment",
-    category: "journals",
-    summary: "The sea is not distant. It is memory. It pulls at the edge of the self, where names dissolve and the Veil grows thin.",
-    excerpt: "The sea is not distant. It is memory. It pulls at the edge of the self, where names dissolve and the Veil grows thin.",
-    body: entry.body,
-    tags: ["water", "memory", "fragment"],
-    themes: ["The Veil", "Tides", "Memory"],
-    unlock_requirement: "public",
-    is_published: true,
-    is_featured: index === 0,
-    shelf_mark: entry.shelfMark || "J-SC-ZN-01",
-    cover_image: "assets/images/noctis/recovered-code.png",
-    created_at: "2026-06-01T00:00:00.000Z"
-  }));
-}
-
 function getShelvesDocuments() {
-  return shelvesDocuments.length ? shelvesDocuments : getFallbackNoctisDocuments();
+  return shelvesDocuments;
 }
 
 function getDocumentId(document) {
@@ -3230,7 +3236,7 @@ function getShelvesRecentlyReadStorageKey() {
 }
 
 function getCleanShelvesAuthor(document) {
-  return String(document?.author || "Unknown Hand")
+  return String(document?.author || document?.attribution || "Unknown Hand")
     .replace(/^attributed\s+to\s+/i, "")
     .trim() || "Unknown Hand";
 }
@@ -3414,9 +3420,11 @@ function documentMatchesShelvesBrowseCard(document, cardOrId) {
 
   const category = normalizeShelvesMatchValue(document?.category);
   const documentType = normalizeShelvesMatchValue(document?.document_type);
+  const mode = normalizeShelvesMatchValue(document?.mode || document?.moon_phase);
+  const isBloodMoon = document?.is_blood_moon === true || mode === "blood_moon";
 
   if (card.id === "journals") {
-    return category === "journals" || documentType === "journal_fragment";
+    return category === "journals" || documentType === "journal" || documentType === "journal_fragment";
   }
 
   if (card.id === "manuscripts") {
@@ -3437,8 +3445,13 @@ function documentMatchesShelvesBrowseCard(document, cardOrId) {
 
   if (card.id === "veil_lore") {
     return category === "veil_lore"
+      || documentType === "veil_lore"
       || shelvesListIncludes(document?.themes, "The Veil")
       || shelvesListIncludes(document?.tags, "veil");
+  }
+
+  if (card.id === "blood_moon") {
+    return isBloodMoon || documentType === "blood_moon";
   }
 
   return false;
@@ -3465,6 +3478,7 @@ function getDocumentSearchText(document) {
     document?.title,
     document?.subtitle,
     document?.author,
+    document?.attribution,
     document?.summary,
     document?.excerpt,
     getDocumentBodyText(document),
@@ -3490,6 +3504,10 @@ function documentMatchesShelvesResearchTrail(document, trailOrId) {
   const normalizedType = normalizeShelvesMatchValue(document?.document_type);
 
   if (trail.id === "recovered-journals" && (normalizedCategory === "journals" || normalizedType === "journal_fragment")) {
+    return true;
+  }
+
+  if (trail.id === "recovered-journals" && normalizedType === "journal") {
     return true;
   }
 
@@ -3539,6 +3557,7 @@ function documentMatchesShelvesFilter(document, filterId = shelvesActiveFilter) 
   const values = [
     document?.document_type,
     document?.category,
+    document?.mode,
     document?.moon_phase,
     document?.shelf_mark,
     ...normalizeDocumentListField(document?.tags),
@@ -3547,13 +3566,14 @@ function documentMatchesShelvesFilter(document, filterId = shelvesActiveFilter) 
 
   const includesAny = (terms) => values.some((value) => terms.some((term) => value.includes(term)));
 
-  if (filterId === "journals") return includesAny(["journal"]);
-  if (filterId === "manuscripts") return includesAny(["manuscript"]);
-  if (filterId === "letters") return includesAny(["letter", "correspondence"]);
-  if (filterId === "cryptic-codes") return includesAny(["cipher", "cryptic", "code"]);
-  if (filterId === "fragments") return includesAny(["fragment", "unstable"]);
-  if (filterId === "blood-moon") return includesAny(["blood moon", "blood_moon", "bloodmoon"]);
-  if (filterId === "the-veil") return includesAny(["veil"]);
+  if (filterId === "journals") return documentMatchesShelvesBrowseCard(document, "journals") || includesAny(["journal"]);
+  if (filterId === "manuscripts") return documentMatchesShelvesBrowseCard(document, "manuscripts") || includesAny(["manuscript"]);
+  if (filterId === "letters") return documentMatchesShelvesBrowseCard(document, "letters") || includesAny(["letter", "correspondence"]);
+  if (filterId === "cryptic-codes") return documentMatchesShelvesBrowseCard(document, "cryptic_codes") || includesAny(["cipher", "cryptic", "code"]);
+  if (filterId === "fragments") return documentMatchesShelvesBrowseCard(document, "fragments") || includesAny(["fragment"]);
+  if (filterId === "blood-moon") return document?.is_blood_moon === true || includesAny(["blood moon", "blood_moon", "bloodmoon"]);
+  if (filterId === "the-veil") return documentMatchesShelvesBrowseCard(document, "veil_lore") || includesAny(["veil"]);
+  if (filterId === "unstable-texts") return documentMatchesShelvesBrowseCard(document, "unstable_texts") || includesAny(["unstable_text", "unstable texts"]);
 
   return true;
 }
@@ -3587,8 +3607,8 @@ function getFeaturedShelvesDocument(documents = getShelvesResultSet()) {
     return documents[Math.min(shelvesActiveIndex, documents.length - 1)] || documents[0];
   }
 
-  return documents[Math.min(shelvesActiveIndex, documents.length - 1)]
-    || documents.find((document) => document.is_featured)
+  return documents.find((document) => document.is_featured)
+    || documents[Math.min(shelvesActiveIndex, documents.length - 1)]
     || documents[0];
 }
 
@@ -3603,7 +3623,7 @@ function renderShelvesHero() {
         <p class="archive-entry__stamp">Noctis Archive</p>
         <h2 id="shelves-title">The Shelves</h2>
         <p class="shelves-hero__subtitle">A library of the lost, the forbidden, and the forgotten.</p>
-        <p>Search the recovered writings of Zephyra Noctis and other unknown hands. Knowledge waits in the dark.</p>
+        <p>The Shelves continue to wake as you move through Astral Veil. New documents may surface through readings, rooms, recovered objects, and paths not yet opened. The Archive is not silent. It listens, retrieves, and sometimes whispers back.</p>
       </div>
     </section>
   `;
@@ -3653,9 +3673,9 @@ function renderShelvesReadingDesk(document, documents) {
       <section class="shelves-reading-desk is-empty">
         <div class="shelves-reading-empty">
           <p class="shelves-section-kicker">Reading Desk</p>
-          <h2 id="shelves-reading-title">No records answered.</h2>
-          <p>The shelves shifted, but nothing stepped forward. Try another phrase, shelf mark, or forgotten name.</p>
-          <p class="shelves-empty-note">The Archive may still be listening.</p>
+          <h2 id="shelves-reading-title">The Shelves are quiet for now.</h2>
+          <p>No documents have surfaced here yet.</p>
+          <p class="shelves-empty-note">Return when the Archive retrieves more.</p>
         </div>
       </section>
     `;
@@ -3666,9 +3686,9 @@ function renderShelvesReadingDesk(document, documents) {
       <section class="shelves-reading-desk is-empty">
         <div class="shelves-reading-empty">
           <p class="shelves-section-kicker">Reading Desk</p>
-          <h2 id="shelves-reading-title">No records answered.</h2>
-          <p>The shelves shifted, but nothing stepped forward. Try another phrase, shelf mark, or forgotten name.</p>
-          <p class="shelves-empty-note">The Archive may still be listening.</p>
+          <h2 id="shelves-reading-title">The Shelves are quiet for now.</h2>
+          <p>No documents have surfaced here yet.</p>
+          <p class="shelves-empty-note">Return when the Archive retrieves more.</p>
         </div>
       </section>
     `;
@@ -3686,7 +3706,7 @@ function renderShelvesReadingDesk(document, documents) {
         <p class="archive-entry__stamp">Reading Desk</p>
         <p class="shelves-reading-desk__label">${shelvesSearchQuery ? "Search Result" : "Featured Fragment"}</p>
         <h3 id="shelves-reading-title" class="shelves-reading-title">${escapeHtml(document.title || "Untitled Document")}</h3>
-        <p class="shelves-reading-desk__author">${escapeHtml(document.author || "Unknown Hand")}</p>
+        <p class="shelves-reading-desk__author">${escapeHtml(document.author || document.attribution || "Unknown Hand")}</p>
         <p class="shelves-reading-excerpt">${escapeHtml(previewText)}</p>
         <div class="shelves-reading-desk__actions shelves-reading-actions">
           <button type="button" class="shelves-btn shelves-read-btn shelves-read-fragment-btn" data-action="read-fragment" data-shelves-document-id="${escapeHtml(getDocumentId(document))}">${locked ? "View Seal" : "Read Fragment"}</button>
@@ -3920,7 +3940,7 @@ function renderShelvesCompactDocumentRow(document) {
   return `
     <article class="shelves-document-row">
       <strong>${escapeHtml(document.title || "Untitled Document")}</strong>
-      <span>${escapeHtml(document.author || "Unknown Hand")} • ${escapeHtml(document.document_type || document.category || "Document")}</span>
+      <span>${escapeHtml(document.author || document.attribution || "Unknown Hand")} • ${escapeHtml(document.document_type || document.category || "Document")}</span>
     </article>
   `;
 }
@@ -4032,7 +4052,7 @@ function renderShelvesSavedDocumentRow(document) {
   const documentId = getDocumentId(document);
   const typeLabel = formatShelvesLabel(document.document_type || document.category, "Document");
   const metaParts = [
-    document.author || "Unknown Hand",
+    document.author || document.attribution || "Unknown Hand",
     typeLabel
   ].filter(Boolean);
   const pending = isShelvesDocumentSavePending(document);
@@ -4216,7 +4236,7 @@ function renderReadFragmentModal() {
         <button class="shelves-modal-close" type="button" data-close-shelves-modal aria-label="Return from reading fragment">Return</button>
         <p class="shelves-modal-kicker">${escapeHtml(typeLabel)}</p>
         <h2 class="shelves-read-title" id="shelves-read-title">${escapeHtml(document.title || "Untitled Document")}</h2>
-        <p class="shelves-read-author">${escapeHtml(document.author || "Unknown Hand")}</p>
+        <p class="shelves-read-author">${escapeHtml(document.author || document.attribution || "Unknown Hand")}</p>
         <div class="shelves-read-body">
           ${bodyMarkup}
         </div>
@@ -4249,7 +4269,7 @@ function renderDocumentDetailsModal() {
   const themes = normalizeDocumentListField(document.themes);
   const metadata = [
     ["Type", formatShelvesLabel(document.document_type || document.subtitle, "Recovered Document")],
-    ["Author", document.author || "Unknown Hand"],
+    ["Author", document.author || document.attribution || "Unknown Hand"],
     ["Category", formatShelvesLabel(document.category, "Unclassified")],
     ["Shelf Mark", document.shelf_mark || "Unmarked"],
     ["Status", getShelvesDocumentStatus(document)],
@@ -4308,7 +4328,7 @@ function renderShelvesRoom() {
         ${renderShelvesBrowseCards()}
         ${renderShelvesFindingAids()}
         ${renderShelvesBottomSections()}
-        <p class="shelves-closing-quote">“Knowledge does not belong to the light. It waits in the stacks.”<br />— Zephyra Noctis</p>
+        <p class="shelves-closing-quote">“Knowledge does not belong to the light. It waits in the stacks.”<br />— Recovered marginalia</p>
         ${renderReadFragmentModal()}
         ${renderDocumentDetailsModal()}
         ${renderShelvesAidModal()}
