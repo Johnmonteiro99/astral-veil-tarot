@@ -5115,6 +5115,10 @@ body.shelves-page .shelves-filter-chip[data-shelves-filter="all"] {
   --shelves-filter-icon: url("../assets/icons/noctis_icons/all-star.svg");
 }
 
+body.shelves-page .shelves-filter-chip[data-shelves-filter="featured"]::before {
+  display: none;
+}
+
 body.shelves-page .shelves-filter-chip[data-shelves-filter="journals"] {
   --shelves-filter-icon: url("../assets/icons/noctis_icons/feather.svg");
 }

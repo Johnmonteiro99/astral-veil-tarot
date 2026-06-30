@@ -1296,6 +1296,377 @@
         min-width: 6.4rem;
       }
 
+      .noctis-documents-table {
+        min-width: 72rem;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 0 0.45rem;
+      }
+
+      .noctis-documents-table th:nth-child(1) {
+        width: 34%;
+      }
+
+      .noctis-documents-table th:nth-child(2) {
+        width: 16%;
+      }
+
+      .noctis-documents-table th:nth-child(3) {
+        width: 20%;
+      }
+
+      .noctis-documents-table th:nth-child(4) {
+        width: 12%;
+      }
+
+      .noctis-documents-table th:nth-child(5) {
+        width: 20%;
+      }
+
+      .noctis-documents-table tbody tr {
+        background:
+          linear-gradient(90deg, rgba(84, 9, 18, 0.22), rgba(10, 2, 4, 0.48)),
+          rgba(8, 2, 3, 0.78);
+        box-shadow: inset 0 0 0 1px rgba(179, 28, 35, 0.16);
+        transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+      }
+
+      .noctis-documents-table tbody tr:hover,
+      .noctis-documents-table tbody tr:focus-within {
+        background:
+          linear-gradient(90deg, rgba(117, 18, 31, 0.28), rgba(16, 4, 6, 0.64)),
+          rgba(10, 2, 4, 0.86);
+        box-shadow: inset 0 0 0 1px rgba(255, 98, 113, 0.28);
+      }
+
+      .noctis-documents-table td {
+        vertical-align: top;
+        padding-top: 0.9rem;
+        padding-bottom: 0.9rem;
+      }
+
+      .noctis-document-cell {
+        display: grid;
+        gap: 0.42rem;
+        min-width: 0;
+      }
+
+      .noctis-document-cell__title {
+        color: #fff5df;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 1.05rem;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      .noctis-document-cell__slug {
+        color: rgba(255, 216, 194, 0.58);
+        font-size: 0.78rem;
+        overflow-wrap: anywhere;
+      }
+
+      .noctis-document-chip-row,
+      .noctis-document-status-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.32rem;
+        align-items: center;
+      }
+
+      .noctis-document-badge {
+        display: inline-flex;
+        min-height: 1.45rem;
+        align-items: center;
+        padding: 0.15rem 0.48rem;
+        border: 1px solid rgba(228, 189, 118, 0.24);
+        border-radius: 999px;
+        background: rgba(255, 238, 220, 0.035);
+        color: rgba(255, 231, 204, 0.82);
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .noctis-document-badge--published {
+        border-color: rgba(108, 214, 151, 0.34);
+        background: rgba(35, 105, 70, 0.18);
+        color: #b8f0c9;
+      }
+
+      .noctis-document-badge--draft {
+        border-color: rgba(157, 127, 130, 0.32);
+        background: rgba(91, 57, 61, 0.18);
+        color: rgba(238, 199, 193, 0.82);
+      }
+
+      .noctis-document-badge--featured {
+        border-color: rgba(255, 206, 122, 0.5);
+        background: rgba(130, 82, 20, 0.2);
+        color: #ffe0a6;
+      }
+
+      .noctis-document-badge--notable {
+        border-color: rgba(255, 159, 112, 0.36);
+        color: #ffc1a0;
+      }
+
+      .noctis-document-badge--blood {
+        border-color: rgba(255, 62, 88, 0.46);
+        background: rgba(127, 13, 29, 0.22);
+        color: #ffb2b8;
+      }
+
+      .noctis-document-author {
+        color: #ffe6c7;
+        font-weight: 700;
+      }
+
+      .noctis-document-date {
+        color: rgba(255, 238, 220, 0.74);
+        font-size: 0.86rem;
+      }
+
+      .noctis-doc-actions {
+        display: flex;
+        min-width: 11rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.45rem;
+      }
+
+      .noctis-doc-actions__row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .noctis-doc-actions__row--feature .admin-row-action {
+        flex-basis: 100%;
+      }
+
+      .noctis-doc-actions .admin-row-action {
+        flex: 1 1 5.2rem;
+        min-width: 0;
+        min-height: 2.15rem;
+        padding: 0 0.62rem;
+        font-size: 0.72rem;
+        white-space: nowrap;
+      }
+
+      .noctis-documents-table .admin-row-action--feature {
+        border-color: rgba(255, 206, 122, 0.42);
+        color: #ffe0a6;
+      }
+
+      .noctis-documents-table .admin-row-action--publish {
+        border-color: rgba(108, 214, 151, 0.28);
+      }
+
+      .noctis-documents-table .admin-row-action--unpublish {
+        border-color: rgba(255, 159, 112, 0.32);
+        color: #ffc1a0;
+      }
+
+      .noctis-documents-table .admin-row-action--delete {
+        border-color: rgba(255, 48, 79, 0.34);
+        color: #ff9b86;
+      }
+
+      .admin-search-panel {
+        display: grid;
+        min-height: auto;
+        align-content: start;
+        gap: 0.65rem;
+        padding: 1rem 1.1rem;
+      }
+
+      .admin-search-panel__label {
+        color: #ffbd9d;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 0.88rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .admin-search-control {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 0.65rem;
+        align-items: center;
+        min-height: 3.15rem;
+        padding: 0.35rem 0.45rem 0.35rem 0.85rem;
+        border: 1px solid rgba(179, 28, 35, 0.34);
+        border-radius: 10px;
+        background:
+          linear-gradient(90deg, rgba(84, 9, 18, 0.18), rgba(9, 1, 2, 0.72)),
+          rgba(7, 1, 2, 0.82);
+      }
+
+      .admin-search-icon {
+        width: 1rem;
+        aspect-ratio: 1;
+        border: 2px solid rgba(255, 206, 122, 0.72);
+        border-radius: 999px;
+        position: relative;
+      }
+
+      .admin-search-icon::after {
+        content: "";
+        position: absolute;
+        right: -0.38rem;
+        bottom: -0.28rem;
+        width: 0.48rem;
+        height: 2px;
+        transform: rotate(45deg);
+        border-radius: 999px;
+        background: rgba(255, 206, 122, 0.72);
+      }
+
+      .admin-search-control input {
+        width: 100%;
+        min-height: 2.35rem;
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        font: 700 1rem Rajdhani, system-ui, sans-serif;
+        outline: none;
+      }
+
+      .admin-search-control input::placeholder {
+        color: rgba(255, 216, 194, 0.52);
+      }
+
+      .admin-search-clear {
+        min-height: 2.15rem;
+        padding: 0 0.8rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+      }
+
+      .admin-users-table {
+        min-width: 78rem;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 0 0.45rem;
+      }
+
+      .admin-users-table th:nth-child(1) {
+        width: 26%;
+      }
+
+      .admin-users-table th:nth-child(2),
+      .admin-users-table th:nth-child(3) {
+        width: 11%;
+      }
+
+      .admin-users-table th:nth-child(4) {
+        width: 18%;
+      }
+
+      .admin-users-table th:nth-child(5) {
+        width: 14%;
+      }
+
+      .admin-users-table th:nth-child(6) {
+        width: 20%;
+      }
+
+      .admin-users-table tbody tr {
+        background:
+          linear-gradient(90deg, rgba(84, 9, 18, 0.2), rgba(10, 2, 4, 0.5)),
+          rgba(8, 2, 3, 0.78);
+        box-shadow: inset 0 0 0 1px rgba(179, 28, 35, 0.15);
+      }
+
+      .admin-users-table tbody tr:hover,
+      .admin-users-table tbody tr:focus-within {
+        box-shadow: inset 0 0 0 1px rgba(255, 98, 113, 0.28);
+      }
+
+      .admin-user-cell {
+        display: grid;
+        grid-template-columns: 2.2rem minmax(0, 1fr);
+        gap: 0.7rem;
+        align-items: center;
+      }
+
+      .admin-user-avatar {
+        display: grid;
+        width: 2.2rem;
+        aspect-ratio: 1;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid rgba(255, 206, 122, 0.25);
+        border-radius: 999px;
+        background: rgba(179, 28, 35, 0.18);
+        color: #ffe0a6;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-weight: 900;
+      }
+
+      .admin-user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .admin-user-name {
+        color: #fff5df;
+        font-family: Rajdhani, system-ui, sans-serif;
+        font-size: 1.02rem;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      .admin-user-email,
+      .admin-user-date__sub,
+      .admin-user-id {
+        color: rgba(255, 216, 194, 0.62);
+        font-size: 0.8rem;
+        overflow-wrap: anywhere;
+      }
+
+      .admin-user-date {
+        display: grid;
+        gap: 0.25rem;
+        color: rgba(255, 238, 220, 0.78);
+      }
+
+      .admin-users-table .admin-action-group {
+        min-width: 0;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.38rem;
+      }
+
+      .admin-users-table .admin-row-action {
+        min-width: 0;
+        width: 100%;
+        min-height: 2rem;
+        padding: 0 0.52rem;
+        font-size: 0.72rem;
+      }
+
+      .admin-users-table .admin-row-action--restrict {
+        border-color: rgba(255, 159, 112, 0.32);
+        color: #ffc1a0;
+      }
+
+      .admin-users-table .admin-row-action--ban {
+        border-color: rgba(255, 48, 79, 0.36);
+        color: #ff9b86;
+      }
+
+      .admin-users-table .admin-row-action--restore {
+        border-color: rgba(108, 214, 151, 0.32);
+        color: #b8f0c9;
+      }
+
       .admin-row-action {
         min-height: 2.25rem;
         padding: 0 0.8rem;
@@ -1971,6 +2342,70 @@
           flex: 1 1 7rem;
         }
 
+        .noctis-documents-table {
+          min-width: 0;
+          border-spacing: 0;
+        }
+
+        .noctis-documents-table tr {
+          background:
+            linear-gradient(180deg, rgba(84, 9, 18, 0.24), rgba(8, 2, 3, 0.68)),
+            rgba(5, 1, 2, 0.72);
+        }
+
+        .noctis-documents-table td {
+          grid-template-columns: 1fr;
+          gap: 0.35rem;
+        }
+
+        .noctis-doc-actions {
+          min-width: 0;
+        }
+
+        .noctis-doc-actions__row {
+          width: 100%;
+        }
+
+        .noctis-doc-actions .admin-row-action {
+          min-width: 0;
+          flex: initial;
+        }
+
+        .admin-search-control {
+          grid-template-columns: auto minmax(0, 1fr);
+        }
+
+        .admin-search-clear {
+          grid-column: 1 / -1;
+          width: 100%;
+        }
+
+        .admin-users-table {
+          min-width: 0;
+          border-spacing: 0;
+        }
+
+        .admin-users-table tr {
+          background:
+            linear-gradient(180deg, rgba(84, 9, 18, 0.22), rgba(8, 2, 3, 0.68)),
+            rgba(5, 1, 2, 0.72);
+        }
+
+        .admin-users-table td {
+          grid-template-columns: 1fr;
+          gap: 0.35rem;
+        }
+
+        .admin-users-table .admin-action-group {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .admin-users-table .admin-action-group .admin-row-action {
+          min-width: 0;
+          width: 100%;
+          flex: initial;
+        }
+
         .admin-table td::before {
           content: attr(data-label);
           display: block;
@@ -2080,7 +2515,7 @@
           <a href="#overview" aria-current="page" data-admin-view-link="overview">
             <span>Overview</span>
           </a>
-          <a href="#journals" data-admin-view-link="journals">
+          <a href="#noctis-documents" data-admin-view-link="noctis-documents">
             <span>Noctis Documents</span>
           </a>
           <a href="#journal-prompts" data-admin-view-link="journal-prompts">
@@ -2198,10 +2633,10 @@
               <div class="overview-grid">
                 <article
                   class="section-card"
-                  id="journals-card"
+                  id="noctis-documents-card"
                   role="button"
                   tabindex="0"
-                  data-admin-view-link="journals"
+                  data-admin-view-link="noctis-documents"
                   aria-label="Open Noctis Documents admin section"
                 >
                   <div class="section-card__top">
@@ -2426,43 +2861,43 @@
               </div>
             </section>
 
-            <section class="panel admin-view" id="journals" aria-labelledby="journals-title" data-admin-view="journals" hidden>
+            <section class="panel admin-view" id="noctis-documents" aria-labelledby="noctis-documents-title" data-admin-view="noctis-documents" hidden>
               <div class="admin-section-header">
                 <div>
                   <p class="admin-section-eyebrow">NOCTIS DOCUMENTS</p>
-                  <h2 id="journals-title">Noctis Documents</h2>
+                  <h2 id="noctis-documents-title">Noctis Documents</h2>
                   <p>Create and manage recovered journals, manuscripts, letters, cipher texts, fragments, and forbidden records.</p>
                 </div>
                 <div class="admin-section-actions">
-                  <button type="button" data-journal-new>New Document</button>
+                  <button type="button" data-noctis-document-new>New Document</button>
                   <button type="button" data-admin-view-link="overview">Back to Overview</button>
                 </div>
               </div>
 
-              <section class="section-card admin-detail" data-journal-form-panel hidden aria-live="polite">
+              <section class="section-card admin-detail" data-noctis-document-form-panel hidden aria-live="polite">
                 <div class="admin-detail__header">
                   <div>
                     <p class="admin-section-eyebrow">Document editor</p>
-                    <h3 data-journal-form-title>New Document</h3>
+                    <h3 data-noctis-document-form-title>New Document</h3>
                   </div>
-                  <button class="admin-row-action" type="button" data-journal-form-cancel>Cancel</button>
+                  <button class="admin-row-action" type="button" data-noctis-document-form-cancel>Cancel</button>
                 </div>
-                <p class="admin-state" data-journal-form-state hidden></p>
-                <form class="admin-form" data-journal-form>
+                <p class="admin-state" data-noctis-document-form-state hidden></p>
+                <form class="admin-form" data-noctis-document-form>
                   <div class="admin-form__grid">
                     <h4 class="admin-form__group-title">Identity</h4>
                     <div class="admin-form__field">
-                      <label for="journal-title">Title *</label>
-                      <input id="journal-title" name="title" type="text" autocomplete="off" required />
+                      <label for="noctis-document-title">Title *</label>
+                      <input id="noctis-document-title" name="title" type="text" autocomplete="off" required />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-slug">Slug</label>
-                      <input id="journal-slug" name="slug" type="text" autocomplete="off" />
+                      <label for="noctis-document-slug">Slug</label>
+                      <input id="noctis-document-slug" name="slug" type="text" autocomplete="off" />
                     </div>
                     <h4 class="admin-form__group-title">Classification</h4>
                     <div class="admin-form__field">
-                      <label for="journal-document-type">Document Type *</label>
-                      <select id="journal-document-type" name="document_type" required>
+                      <label for="noctis-document-type">Document Type *</label>
+                      <select id="noctis-document-type" name="document_type" required>
                         <option value="journal">journal</option>
                         <option value="manuscript">manuscript</option>
                         <option value="letter">letter</option>
@@ -2475,42 +2910,42 @@
                       </select>
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-category-label">Category Label</label>
-                      <input id="journal-category-label" name="category_label" type="text" autocomplete="off" />
+                      <label for="noctis-document-category-label">Category Label</label>
+                      <input id="noctis-document-category-label" name="category_label" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-author">Author</label>
-                      <input id="journal-author" name="author" type="text" autocomplete="off" />
+                      <label for="noctis-document-author">Author</label>
+                      <input id="noctis-document-author" name="author" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-attribution">Attribution</label>
-                      <input id="journal-attribution" name="attribution" type="text" autocomplete="off" />
+                      <label for="noctis-document-attribution">Attribution</label>
+                      <input id="noctis-document-attribution" name="attribution" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-shelf-mark">Shelf Mark</label>
-                      <input id="journal-shelf-mark" name="shelf_mark" type="text" autocomplete="off" />
+                      <label for="noctis-document-shelf-mark">Shelf Mark</label>
+                      <input id="noctis-document-shelf-mark" name="shelf_mark" type="text" autocomplete="off" />
                     </div>
                     <h4 class="admin-form__group-title">Content</h4>
                     <div class="admin-form__field admin-form__field--wide">
-                      <label for="journal-excerpt">Excerpt</label>
-                      <textarea id="journal-excerpt" name="excerpt" rows="3"></textarea>
+                      <label for="noctis-document-excerpt">Excerpt</label>
+                      <textarea id="noctis-document-excerpt" name="excerpt" rows="3"></textarea>
                     </div>
                     <div class="admin-form__field admin-form__field--wide">
-                      <label for="journal-body">Body *</label>
-                      <textarea id="journal-body" name="body" rows="8" required></textarea>
+                      <label for="noctis-document-body">Body *</label>
+                      <textarea id="noctis-document-body" name="body" rows="8" required></textarea>
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-tags">Tags</label>
-                      <input id="journal-tags" name="tags" type="text" autocomplete="off" placeholder="veil, water, cipher" />
+                      <label for="noctis-document-tags">Tags</label>
+                      <input id="noctis-document-tags" name="tags" type="text" autocomplete="off" placeholder="veil, water, cipher" />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-themes">Themes</label>
-                      <input id="journal-themes" name="themes" type="text" autocomplete="off" placeholder="The Veil, Memory" />
+                      <label for="noctis-document-themes">Themes</label>
+                      <input id="noctis-document-themes" name="themes" type="text" autocomplete="off" placeholder="The Veil, Memory" />
                     </div>
                     <h4 class="admin-form__group-title">Visibility / Unlocking</h4>
                     <div class="admin-form__field">
-                      <label for="journal-mode">Mode</label>
-                      <select id="journal-mode" name="mode">
+                      <label for="noctis-document-mode">Mode</label>
+                      <select id="noctis-document-mode" name="mode">
                         <option value="blood_moon">blood_moon</option>
                         <option value="moon">moon</option>
                         <option value="sun">sun</option>
@@ -2519,8 +2954,8 @@
                       </select>
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-sort-order">Sort Order</label>
-                      <input id="journal-sort-order" name="sort_order" type="number" step="1" inputmode="numeric" />
+                      <label for="noctis-document-sort-order">Sort Order</label>
+                      <input id="noctis-document-sort-order" name="sort_order" type="number" step="1" inputmode="numeric" />
                     </div>
                     <h4 class="admin-form__group-title">Metadata</h4>
                     <label class="admin-form__checkbox">
@@ -2540,21 +2975,21 @@
                       <span>Blood Moon</span>
                     </label>
                     <div class="admin-form__field">
-                      <label for="journal-unlock-key">Unlock Key</label>
-                      <input id="journal-unlock-key" name="unlock_key" type="text" autocomplete="off" />
+                      <label for="noctis-document-unlock-key">Unlock Key</label>
+                      <input id="noctis-document-unlock-key" name="unlock_key" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-required-artifact-key">Required Artifact Key</label>
-                      <input id="journal-required-artifact-key" name="required_artifact_key" type="text" autocomplete="off" />
+                      <label for="noctis-document-required-artifact-key">Required Artifact Key</label>
+                      <input id="noctis-document-required-artifact-key" name="required_artifact_key" type="text" autocomplete="off" />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-required-fragment-key">Required Fragment Key</label>
-                      <input id="journal-required-fragment-key" name="required_fragment_key" type="text" autocomplete="off" />
+                      <label for="noctis-document-required-fragment-key">Required Fragment Key</label>
+                      <input id="noctis-document-required-fragment-key" name="required_fragment_key" type="text" autocomplete="off" />
                     </div>
                   </div>
                   <div class="admin-form__actions">
-                    <button type="submit" data-journal-form-submit>Save Document</button>
-                    <button type="button" data-journal-form-cancel-secondary>Cancel</button>
+                    <button type="submit" data-noctis-document-form-submit>Save Document</button>
+                    <button type="button" data-noctis-document-form-cancel-secondary>Cancel</button>
                   </div>
                 </form>
               </section>
@@ -2563,12 +2998,12 @@
                 <div class="admin-form">
                   <div class="admin-form__grid">
                     <div class="admin-form__field">
-                      <label for="journal-filter-search">Search documents</label>
-                      <input id="journal-filter-search" data-journal-filter="search" type="search" autocomplete="off" placeholder="Title, author, shelf mark, body, tags..." />
+                      <label for="noctis-document-filter-search">Search documents</label>
+                      <input id="noctis-document-filter-search" data-noctis-document-filter="search" type="search" autocomplete="off" placeholder="Title, author, shelf mark, body, tags..." />
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-filter-type">Filter by type</label>
-                      <select id="journal-filter-type" data-journal-filter="document_type">
+                      <label for="noctis-document-filter-type">Filter by type</label>
+                      <select id="noctis-document-filter-type" data-noctis-document-filter="document_type">
                         <option value="__all">All Types</option>
                         <option value="journal">journal</option>
                         <option value="manuscript">manuscript</option>
@@ -2582,16 +3017,16 @@
                       </select>
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-filter-published">Filter by publishing</label>
-                      <select id="journal-filter-published" data-journal-filter="published">
+                      <label for="noctis-document-filter-published">Filter by publishing</label>
+                      <select id="noctis-document-filter-published" data-noctis-document-filter="published">
                         <option value="__all">All Statuses</option>
                         <option value="published">Published</option>
                         <option value="unpublished">Unpublished</option>
                       </select>
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-filter-mode">Filter by mode</label>
-                      <select id="journal-filter-mode" data-journal-filter="mode">
+                      <label for="noctis-document-filter-mode">Filter by mode</label>
+                      <select id="noctis-document-filter-mode" data-noctis-document-filter="mode">
                         <option value="__all">All Modes</option>
                         <option value="blood_moon">blood_moon</option>
                         <option value="moon">moon</option>
@@ -2601,11 +3036,11 @@
                       </select>
                     </div>
                     <div class="admin-form__field">
-                      <label for="journal-filter-blood-moon">Filter by Blood Moon</label>
-                      <select id="journal-filter-blood-moon" data-journal-filter="blood_moon">
+                      <label for="noctis-document-filter-blood-moon">Filter by Blood Moon</label>
+                      <select id="noctis-document-filter-blood-moon" data-noctis-document-filter="blood_moon">
                         <option value="__all">All Documents</option>
-                        <option value="blood_moon">Blood Moon</option>
-                        <option value="not_blood_moon">Not Blood Moon</option>
+                        <option value="blood_moon_only">Blood Moon</option>
+                        <option value="non_blood_moon">Not Blood Moon</option>
                       </select>
                     </div>
                   </div>
@@ -2613,39 +3048,38 @@
               </section>
 
               <section class="admin-table-panel" aria-label="Noctis Documents table">
-                <p class="admin-state" data-journals-state>Loading Noctis documents...</p>
-                <div class="admin-table-scroll" data-journals-table-wrap hidden>
-                  <table class="admin-table">
+                <p class="admin-state" data-noctis-documents-state>Loading Noctis documents...</p>
+                <div class="admin-table-scroll" data-noctis-documents-table-wrap hidden>
+                  <table class="admin-table noctis-documents-table">
                     <thead>
                       <tr>
-                        <th scope="col">Title</th>
-                        <th scope="col">Slug</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Author/Attribution</th>
-                        <th scope="col">Shelf Mark</th>
-                        <th scope="col">Mode</th>
-                        <th scope="col">Published</th>
-                        <th scope="col">Featured/Notable</th>
+                        <th scope="col">Document</th>
+                        <th scope="col">Author</th>
+                        <th scope="col">Status</th>
                         <th scope="col">Updated</th>
                         <th scope="col">Actions</th>
                       </tr>
                     </thead>
-                    <tbody data-journals-table-body></tbody>
+                    <tbody data-noctis-documents-table-body></tbody>
                   </table>
                 </div>
+                <footer class="admin-pagination" data-noctis-documents-pagination hidden>
+                  <span class="admin-pagination__summary" data-noctis-documents-pagination-summary>Showing 0-0 of 0 documents</span>
+                  <div class="admin-pagination__controls" data-noctis-documents-pagination-controls aria-label="Noctis document pages"></div>
+                </footer>
               </section>
 
-              <section class="section-card admin-detail" data-journal-detail hidden aria-live="polite">
+              <section class="section-card admin-detail" data-noctis-document-detail hidden aria-live="polite">
                 <div class="admin-detail__header">
                   <div>
                     <p class="admin-section-eyebrow">Document detail</p>
-                    <h3 data-journal-detail-title>Selected Document</h3>
+                    <h3 data-noctis-document-detail-title>Selected Document</h3>
                   </div>
-                  <button class="admin-row-action" type="button" data-journal-detail-close>Close</button>
+                  <button class="admin-row-action" type="button" data-noctis-document-detail-close>Close</button>
                 </div>
-                <div class="admin-detail__meta" data-journal-detail-meta></div>
-                <div class="admin-detail__field-grid" data-journal-detail-fields></div>
-                <div class="admin-detail__body" data-journal-detail-body></div>
+                <div class="admin-detail__meta" data-noctis-document-detail-meta></div>
+                <div class="admin-detail__field-grid" data-noctis-document-detail-fields></div>
+                <div class="admin-detail__body" data-noctis-document-detail-body></div>
               </section>
             </section>
 
@@ -4210,29 +4644,25 @@
                 </div>
               </div>
 
-              <section class="section-card section-card--compact-filter">
-                <form class="admin-form" role="search">
-                  <div class="admin-form__grid">
-                    <label for="admin-user-search">
-                      Search users
-                      <input id="admin-user-search" data-admin-user-search type="search" autocomplete="off" placeholder="Name, email, ID, role, or status" />
-                    </label>
-                  </div>
-                </form>
+              <section class="section-card admin-search-panel" role="search" aria-labelledby="admin-user-search-label">
+                <label class="admin-search-panel__label" id="admin-user-search-label" for="admin-user-search">Search Users</label>
+                <div class="admin-search-control">
+                  <span class="admin-search-icon" aria-hidden="true"></span>
+                  <input id="admin-user-search" data-admin-user-search type="search" autocomplete="off" placeholder="Search by name, email, role, status, or user ID..." />
+                  <button class="admin-search-clear" type="button" data-admin-user-search-clear aria-label="Clear user search" hidden>Clear</button>
+                </div>
               </section>
 
               <section class="admin-table-panel" aria-label="Users table">
                 <p class="admin-state" data-admin-users-state>Loading users...</p>
                 <div class="admin-table-scroll" data-admin-users-table-wrap hidden>
-                  <table class="admin-table">
+                  <table class="admin-table admin-users-table">
                     <thead>
                       <tr>
-                        <th scope="col">Display Name</th>
-                        <th scope="col">Email</th>
+                        <th scope="col">User</th>
                         <th scope="col">Role</th>
-                        <th scope="col">Account Status</th>
-                        <th scope="col">Created</th>
-                        <th scope="col">Updated</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Joined / Updated</th>
                         <th scope="col">User ID</th>
                         <th scope="col">Actions</th>
                       </tr>
@@ -4240,6 +4670,10 @@
                     <tbody data-admin-users-table-body></tbody>
                   </table>
                 </div>
+                <footer class="admin-pagination" data-admin-users-pagination hidden>
+                  <span class="admin-pagination__summary" data-admin-users-pagination-summary>Showing 0-0 of 0 users</span>
+                  <div class="admin-pagination__controls" data-admin-users-pagination-controls aria-label="User pages"></div>
+                </footer>
               </section>
 
               <section class="section-card admin-detail" data-admin-user-detail hidden aria-live="polite">
@@ -4301,7 +4735,7 @@
                 </article>
                 <article class="progress-summary-card">
                   <span>Room Records</span>
-                  <strong data-user-progress-count="user_rooms">--</strong>
+                  <strong data-user-progress-count="user_room_visits">--</strong>
                 </article>
                 <article class="progress-summary-card">
                   <span>Fragments</span>
@@ -4462,6 +4896,6 @@
       </div>
     </div>
 
-    <script type="module" src="src/admin/admin-dashboard.js"></script>
+    <script type="module" src="src/admin/admin-dashboard.js?v=20260630-noctis-pagination-featured"></script>
   </body>
 </html>

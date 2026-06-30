@@ -107,8 +107,8 @@ function sortShelvesDocuments(documents) {
   });
 }
 let shelvesSearchQuery = "";
-let shelvesActiveFilter = "all";
-let shelvesActiveIndex = 0;
+let shelvesActiveFilter = "featured";
+let activeReadingDeskIndex = 0;
 let openShelvesReadDocumentId = "";
 let openShelvesDetailsDocumentId = "";
 let openShelvesAidModalId = "";
@@ -473,7 +473,7 @@ const archiveShelfEntries = [
 ];
 
 const shelvesFilterOptions = [
-  { id: "all", label: "All" },
+  { id: "featured", label: "Featured" },
   { id: "journals", label: "Recovered Journals" },
   { id: "manuscripts", label: "Manuscripts" },
   { id: "letters", label: "Letters" },
@@ -1225,16 +1225,10 @@ async function loadArtifactProgress() {
     }
 
     const supabase = getSupabaseClient();
-    const [{ data, error }, { data: roomData, error: roomError }] = await Promise.all([
-      supabase
-        .from("user_artifacts")
-        .select("artifact_key")
-        .eq("user_id", user.id),
-      supabase
-        .from("user_rooms")
-        .select("room_key, status, unlock_method, source_location, metadata, unlocked_at, updated_at")
-        .eq("user_id", user.id)
-    ]);
+    const { data, error } = await supabase
+      .from("user_artifacts")
+      .select("artifact_key")
+      .eq("user_id", user.id);
 
     artifactProgressState.user = user;
     artifactProgressState.supabase = supabase;
@@ -1243,8 +1237,8 @@ async function loadArtifactProgress() {
       : getValidElementalKeyIds((data || []).map((artifact) => artifact.artifact_key));
     artifactProgressState.isLoaded = true;
     roomProgressState.user = user;
-    roomProgressState.supabase = supabase;
-    roomProgressState.rooms = roomError ? new Map() : getRoomProgressRows(roomData);
+    roomProgressState.supabase = null;
+    roomProgressState.rooms = new Map();
     roomProgressState.isLoaded = true;
   } catch (error) {
     artifactProgressState.user = null;
@@ -1286,11 +1280,12 @@ async function loadShelvesDocuments() {
     }
 
     shelvesDocuments = sortShelvesDocuments(Array.isArray(data) ? data : []);
+    activeReadingDeskIndex = 0;
     shelvesDocumentsError = shelvesDocuments.length
       ? ""
       : "The Shelves are quiet for now. Return when the Archive retrieves more.";
   } catch (error) {
-    console.warn("[Astral Veil archive] Noctis documents could not be loaded.", error);
+    logShelvesNoctisDocumentsError(error);
     shelvesDocuments = [];
     shelvesDocumentsError = "The Shelves are quiet for now. Return when the Archive retrieves more.";
   } finally {
@@ -1301,6 +1296,19 @@ async function loadShelvesDocuments() {
       renderNoctisRoomByQuery();
     }
   }
+}
+
+function logShelvesNoctisDocumentsError(error) {
+  if (!error) {
+    return;
+  }
+
+  console.error("Noctis documents query failed:", {
+    message: error.message || "",
+    details: error.details || "",
+    hint: error.hint || "",
+    code: error.code || "",
+  });
 }
 
 function getGalleryRecordCategoryLabel(record) {
@@ -3530,8 +3538,8 @@ function applyShelvesResearchTrail(trailId) {
 
   shelvesActiveResearchTrailId = trail.id;
   shelvesSearchQuery = trail.title;
-  shelvesActiveFilter = "all";
-  shelvesActiveIndex = 0;
+  shelvesActiveFilter = "featured";
+  activeReadingDeskIndex = 0;
   closeShelvesModals();
   renderCurrentArchiveSurface();
 
@@ -3546,6 +3554,10 @@ function applyShelvesResearchTrail(trailId) {
 function documentMatchesShelvesFilter(document, filterId = shelvesActiveFilter) {
   if (!filterId || filterId === "all") {
     return true;
+  }
+
+  if (filterId === "featured") {
+    return document?.is_featured === true;
   }
 
   const browseCard = shelvesBrowseCards.find((card) => card.filter === filterId || card.id === filterId);
@@ -3598,18 +3610,12 @@ function getShelvesResultSet() {
   });
 }
 
-function getFeaturedShelvesDocument(documents = getShelvesResultSet()) {
+function getActiveReadingDeskDocument(documents = getShelvesResultSet()) {
   if (!documents.length) {
     return null;
   }
 
-  if (shelvesSearchQuery || shelvesActiveFilter !== "all" || shelvesActiveResearchTrailId) {
-    return documents[Math.min(shelvesActiveIndex, documents.length - 1)] || documents[0];
-  }
-
-  return documents.find((document) => document.is_featured)
-    || documents[Math.min(shelvesActiveIndex, documents.length - 1)]
-    || documents[0];
+  return documents[Math.min(activeReadingDeskIndex, documents.length - 1)] || documents[0];
 }
 
 function getShelvesDocumentById(documentId) {
@@ -3666,15 +3672,15 @@ function renderShelvesSearch() {
 }
 
 function renderShelvesReadingDesk(document, documents) {
-  const currentResults = Array.isArray(documents) ? documents : [];
+  const readingDeskDocuments = Array.isArray(documents) ? documents : [];
 
-  if (!currentResults.length) {
+  if (!readingDeskDocuments.length) {
     return `
       <section class="shelves-reading-desk is-empty">
         <div class="shelves-reading-empty">
           <p class="shelves-section-kicker">Reading Desk</p>
-          <h2 id="shelves-reading-title">The Shelves are quiet for now.</h2>
-          <p>No documents have surfaced here yet.</p>
+          <h2 id="shelves-reading-title">No documents have surfaced here yet.</h2>
+          <p>Try another filter or search term when the Archive retrieves more.</p>
           <p class="shelves-empty-note">Return when the Archive retrieves more.</p>
         </div>
       </section>
@@ -3694,17 +3700,22 @@ function renderShelvesReadingDesk(document, documents) {
     `;
   }
 
-  const currentIndex = Math.max(0, documents.findIndex((item) => getDocumentId(item) === getDocumentId(document)));
+  const currentIndex = Math.max(0, readingDeskDocuments.findIndex((item) => getDocumentId(item) === getDocumentId(document)));
   const locked = isNoctisDocumentLocked(document);
   const previewText = locked
     ? "This record is sealed. Its body will remain unread until the proper access is recovered."
     : getDocumentExcerpt(document);
+  const readingDeskLabel = shelvesSearchQuery.trim()
+    ? "Search Result"
+    : shelvesActiveFilter === "featured"
+      ? "Featured Fragment"
+      : "Archive Result";
 
   return `
     <section class="shelves-reading-desk${locked ? " is-locked" : ""}" aria-labelledby="shelves-reading-title">
       <div class="shelves-reading-desk__copy shelves-reading-content">
         <p class="archive-entry__stamp">Reading Desk</p>
-        <p class="shelves-reading-desk__label">${shelvesSearchQuery ? "Search Result" : "Featured Fragment"}</p>
+        <p class="shelves-reading-desk__label">${escapeHtml(readingDeskLabel)}</p>
         <h3 id="shelves-reading-title" class="shelves-reading-title">${escapeHtml(document.title || "Untitled Document")}</h3>
         <p class="shelves-reading-desk__author">${escapeHtml(document.author || document.attribution || "Unknown Hand")}</p>
         <p class="shelves-reading-excerpt">${escapeHtml(previewText)}</p>
@@ -3717,9 +3728,9 @@ function renderShelvesReadingDesk(document, documents) {
         <img src="${escapeHtml(document.cover_image || "assets/images/noctis/recovered-code.png")}" alt="" width="900" height="600" loading="lazy" decoding="async" />
       </figure>
       <div class="shelves-reading-desk__controls shelves-reading-controls" aria-label="Browse current document results">
-        <button type="button" data-shelves-nav="previous" ${documents.length <= 1 ? "disabled" : ""}>Previous</button>
-        <span>${documents.length ? `${currentIndex + 1} of ${documents.length}` : "0 of 0"}</span>
-        <button type="button" data-shelves-nav="next" ${documents.length <= 1 ? "disabled" : ""}>Next</button>
+        <button type="button" data-shelves-nav="previous" ${readingDeskDocuments.length <= 1 ? "disabled" : ""}>Previous</button>
+        <span>${readingDeskDocuments.length ? `${currentIndex + 1} of ${readingDeskDocuments.length}` : "0 of 0"}</span>
+        <button type="button" data-shelves-nav="next" ${readingDeskDocuments.length <= 1 ? "disabled" : ""}>Next</button>
       </div>
     </section>
   `;
@@ -4300,12 +4311,13 @@ function renderDocumentDetailsModal() {
 }
 
 function renderShelvesRoom() {
-  const documents = getShelvesResultSet();
-  const activeDocument = getFeaturedShelvesDocument(documents);
+  const readingDeskDocuments = getShelvesResultSet();
 
-  if (shelvesActiveIndex >= documents.length) {
-    shelvesActiveIndex = 0;
+  if (activeReadingDeskIndex >= readingDeskDocuments.length) {
+    activeReadingDeskIndex = 0;
   }
+
+  const activeDocument = getActiveReadingDeskDocument(readingDeskDocuments);
 
   if (openShelvesReadDocumentId && !getShelvesDocumentById(openShelvesReadDocumentId)) {
     openShelvesReadDocumentId = "";
@@ -4324,7 +4336,7 @@ function renderShelvesRoom() {
       <section class="shelves-grid">
         ${renderShelvesHero()}
         ${renderShelvesSearch()}
-        ${renderShelvesReadingDesk(activeDocument, documents)}
+        ${renderShelvesReadingDesk(activeDocument, readingDeskDocuments)}
         ${renderShelvesBrowseCards()}
         ${renderShelvesFindingAids()}
         ${renderShelvesBottomSections()}
@@ -6718,9 +6730,9 @@ document.addEventListener("click", (event) => {
   }
 
   if (shelvesFilterButton) {
-    shelvesActiveFilter = shelvesFilterButton.dataset.shelvesFilter || "all";
+    shelvesActiveFilter = shelvesFilterButton.dataset.shelvesFilter || "featured";
     shelvesActiveResearchTrailId = "";
-    shelvesActiveIndex = 0;
+    activeReadingDeskIndex = 0;
     closeShelvesModals();
     renderCurrentArchiveSurface();
     return;
@@ -6741,10 +6753,10 @@ document.addEventListener("click", (event) => {
   }
 
   if (shelvesBrowseButton) {
-    shelvesActiveFilter = shelvesBrowseButton.dataset.shelvesBrowse || "all";
+    shelvesActiveFilter = shelvesBrowseButton.dataset.shelvesBrowse || "featured";
     shelvesSearchQuery = "";
     shelvesActiveResearchTrailId = "";
-    shelvesActiveIndex = 0;
+    activeReadingDeskIndex = 0;
     closeShelvesModals();
     renderCurrentArchiveSurface();
     return;
@@ -6755,9 +6767,9 @@ document.addEventListener("click", (event) => {
 
     if (documents.length) {
       const direction = shelvesNavButton.dataset.shelvesNav;
-      shelvesActiveIndex = direction === "previous"
-        ? (shelvesActiveIndex - 1 + documents.length) % documents.length
-        : (shelvesActiveIndex + 1) % documents.length;
+      activeReadingDeskIndex = direction === "previous"
+        ? (activeReadingDeskIndex - 1 + documents.length) % documents.length
+        : (activeReadingDeskIndex + 1) % documents.length;
       closeShelvesModals();
       renderCurrentArchiveSurface();
     }
@@ -7103,7 +7115,7 @@ document.addEventListener("input", (event) => {
 
   shelvesSearchQuery = shelvesSearchInput.value;
   shelvesActiveResearchTrailId = "";
-  shelvesActiveIndex = 0;
+  activeReadingDeskIndex = 0;
   closeShelvesModals();
   renderShelvesSurfaceWithSearchFocus(shelvesSearchInput.selectionStart, shelvesSearchInput.selectionEnd);
 });
