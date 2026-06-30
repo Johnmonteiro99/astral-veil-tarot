@@ -8,7 +8,7 @@
   --deck-hero-glow: var(--theme-glow-primary);
   width: min(100%, 900px);
   min-width: 0;
-  margin: clamp(5rem, 10vw, 8rem) auto clamp(3rem, 6vw, 5rem);
+  margin: clamp(3.4rem, 7vw, 5.6rem) auto clamp(2.1rem, 4.5vw, 3.6rem);
   padding: 0 clamp(10px, 3vw, 24px);
   color: var(--theme-text-main, var(--navbar-text));
   text-align: center;
@@ -19,7 +19,7 @@
   place-items: center;
   width: 2.4rem;
   height: 2.4rem;
-  margin: 0 auto 0.85rem;
+  margin: 0 auto 0.65rem;
   color: var(--deck-hero-accent);
   font-size: 1.18rem;
   line-height: 1;
@@ -41,7 +41,7 @@
 
 .deck-hero h1 {
   max-width: 100%;
-  margin: 0.65rem auto 0;
+  margin: 0.5rem auto 0;
   color: var(--theme-text-main, var(--navbar-text));
   font-family: var(--heading-font);
   font-size: clamp(3.2rem, 8vw, 6.5rem);
@@ -57,7 +57,7 @@
   position: relative;
   width: min(420px, 70vw);
   height: 1px;
-  margin: 1.25rem auto 1.5rem;
+  margin: 1rem auto 1.15rem;
   background:
     linear-gradient(90deg, transparent, var(--deck-hero-accent)) left center / calc(50% - 1.15rem) 1px no-repeat,
     linear-gradient(90deg, var(--deck-hero-accent), transparent) right center / calc(50% - 1.15rem) 1px no-repeat;
@@ -92,7 +92,7 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  margin: 0.95rem auto 0;
+  margin: 0.72rem auto 0;
   border: 1px solid color-mix(in srgb, var(--deck-hero-accent) 34%, rgba(255, 255, 255, 0.12));
   border-radius: 999px;
   padding: 0.48rem 0.9rem;
@@ -302,8 +302,8 @@ body.blood-moon-mode .deck-ritual-feature {
 
 @media (max-width: 760px) {
   .deck-hero {
-    margin-top: clamp(3.75rem, 16vw, 5.25rem);
-    margin-bottom: clamp(2.35rem, 10vw, 3.5rem);
+    margin-top: clamp(2.85rem, 13vw, 4.1rem);
+    margin-bottom: clamp(1.65rem, 8vw, 2.55rem);
     padding-inline: 4px;
   }
 
@@ -991,120 +991,305 @@ body.blood-moon-mode .deck-ritual-feature {
 }
 
 .deck-viewer {
-  --deck-viewer-accent: var(--navbar-border);
-  --deck-viewer-glow: var(--navbar-glow);
-  --deck-viewer-panel: var(--navbar-bg);
+  --deck-viewer-accent: #d7aa47;
+  --deck-viewer-accent-2: var(--theme-accent-secondary, #9f75ff);
+  --deck-viewer-glow: var(--theme-glow-primary, rgba(150, 81, 255, 0.24));
+  --deck-viewer-panel: var(--navbar-bg, rgba(255, 255, 255, 0.055));
+  --deck-viewer-text: var(--theme-text-main, var(--navbar-text, #fff7e8));
+  --deck-viewer-muted: var(--theme-text-muted, var(--navbar-muted, rgba(232, 223, 247, 0.78)));
+  position: relative;
   display: grid;
-  gap: clamp(16px, 2.4vw, 24px);
-  width: min(100%, 1120px);
-  margin: 0 auto;
+  gap: clamp(18px, 2.5vw, 28px);
+  width: min(100%, 1240px);
+  margin: clamp(0.5rem, 2vw, 1rem) auto 0;
   min-width: 0;
-  border: 1px solid transparent;
-  border-radius: 26px;
-  padding: clamp(16px, 3vw, 28px);
-  color: var(--navbar-text);
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  padding: clamp(18px, 3vw, 34px);
+  color: var(--deck-viewer-text);
   background: transparent;
   box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  isolation: auto;
+}
+
+.deck-viewer::before {
+  content: none;
+}
+
+.deck-detail--verdant {
+  --deck-viewer-accent: #d5b351;
+  --deck-viewer-accent-2: #7eb64a;
+  --deck-viewer-glow: rgba(126, 182, 74, 0.38);
+}
+
+.deck-detail--bloodmoon {
+  --deck-viewer-accent: #ff9aa8;
+  --deck-viewer-accent-2: #d41f3a;
+  --deck-viewer-glow: rgba(255, 35, 65, 0.38);
+}
+
+.deck-detail--moonveil {
+  --deck-viewer-accent: #c9d7ff;
+  --deck-viewer-accent-2: #8eb3ff;
+  --deck-viewer-glow: rgba(141, 176, 255, 0.34);
+}
+
+.deck-detail--dreambound {
+  --deck-viewer-accent: #ffd79d;
+  --deck-viewer-accent-2: #df94ff;
+  --deck-viewer-glow: rgba(223, 148, 255, 0.32);
+}
+
+.deck-detail--cyber-hacked {
+  --deck-viewer-accent: #65f7ff;
+  --deck-viewer-accent-2: #ff4df0;
+  --deck-viewer-glow: rgba(101, 247, 255, 0.34);
 }
 
 .deck-viewer--bloodMoon {
-  --deck-viewer-accent: var(--accent-color, #d41f3a);
-  --deck-viewer-glow: var(--accent-glow, rgba(255, 35, 65, 0.42));
   --deck-viewer-panel: var(--panel-bg, rgba(32, 3, 7, 0.78));
-  background: transparent;
 }
 
-.deck-viewer--moonveil {
-  --deck-viewer-accent: #8eb3ff;
-  --deck-viewer-glow: rgba(141, 176, 255, 0.34);
-  --deck-viewer-panel: rgba(12, 22, 49, 0.8);
+.deck-viewer__topbar {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: clamp(12px, 2vw, 26px);
+  min-width: 0;
 }
 
-.deck-viewer--dreambound {
-  --deck-viewer-accent: var(--navbar-border);
-  --deck-viewer-glow: var(--navbar-glow);
-  --deck-viewer-panel: var(--navbar-bg);
+.deck-viewer__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--deck-viewer-accent);
+  font-family: var(--logo-font);
+  font-size: clamp(0.68rem, 1vw, 0.84rem);
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.deck-viewer__brand-mark,
+.deck-viewer__sigil {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 62%, transparent);
+  border-radius: 50%;
+  color: var(--deck-viewer-accent);
+}
+
+.deck-viewer__brand-mark {
+  border: 0;
+  font-size: 1.65rem;
+}
+
+.deck-viewer .deck-back-button {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  border: 0;
+  border-radius: 0;
+  padding: 0.15rem 0.25rem;
+  color: var(--deck-viewer-muted);
   background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  font-family: var(--body-font);
+  font-size: 0.9rem;
+  letter-spacing: 0;
+  line-height: normal;
+  text-transform: none;
+}
+
+.deck-viewer .deck-back-button span {
+  font-size: 1.32em;
+  line-height: 1;
+}
+
+.deck-viewer .deck-back-button:hover,
+.deck-viewer .deck-back-button:focus-visible {
+  outline: none;
+  color: color-mix(in srgb, var(--theme-divider-accent, var(--deck-viewer-accent)) 84%, var(--deck-viewer-text));
+  text-shadow: none;
+}
+
+.deck-viewer .deck-back-button:focus-visible {
+  box-shadow: none;
+  text-decoration: underline;
+  text-underline-offset: 0.24em;
 }
 
 .deck-viewer__stage {
   display: grid;
-  grid-template-columns: minmax(210px, 340px) minmax(0, 1fr);
+  grid-template-columns: minmax(280px, 0.88fr) minmax(360px, 1fr);
   align-items: center;
-  gap: clamp(18px, 4vw, 44px);
+  gap: clamp(26px, 5vw, 72px);
   min-width: 0;
 }
 
+.deck-viewer__card-panel {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  margin: 0;
+  perspective: 900px;
+}
+
 .deck-viewer__image-button {
-  display: block;
-  width: min(100%, 340px);
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --shine-x: 50%;
+  --shine-y: 50%;
+  --tarot-card-radius: 16px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(100%, clamp(260px, 31vw, 430px));
   margin: 0 auto;
-  overflow: hidden;
-  border: 1px solid transparent;
-  border-radius: 20px;
-  padding: 8px;
+  overflow: visible;
+  border: 0;
+  border-radius: var(--tarot-card-radius);
+  padding: 0;
   background: transparent;
-  box-shadow: none;
   cursor: pointer;
+  transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
   transition:
     border-color 240ms ease,
     box-shadow 240ms ease,
-    transform 240ms ease;
+    transform 180ms ease;
+  touch-action: pan-y;
 }
 
 .deck-viewer__image-button:hover,
 .deck-viewer__image-button:focus-visible {
-  border-color: transparent;
   outline: none;
-  box-shadow: none;
-  transform: translateY(-2px);
+  box-shadow:
+    0 0 24px color-mix(in srgb, var(--deck-viewer-glow) 62%, transparent),
+    0 0 62px color-mix(in srgb, var(--deck-viewer-accent-2) 20%, transparent);
+}
+
+.deck-viewer__image-button.is-tilting {
+  transition: transform 80ms ease-out;
+}
+
+.deck-viewer__image-clip {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: var(--tarot-card-radius);
+  line-height: 0;
+  transform: translateZ(0);
+  background: transparent;
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.5),
+    0 0 36px color-mix(in srgb, var(--deck-viewer-glow) 60%, transparent);
 }
 
 .deck-viewer__image {
   display: block;
   width: 100%;
-  height: auto;
-  max-height: min(68vh, 480px);
-  object-fit: contain;
+  height: 100%;
+  max-height: none;
+  object-fit: cover;
   object-position: center;
-  border-radius: 14px;
-  background: rgba(4, 3, 8, 0.72);
+  border-radius: inherit;
+  -webkit-clip-path: inset(0 0 0 0 round var(--tarot-card-radius));
+  clip-path: inset(0 0 0 0 round var(--tarot-card-radius));
+  background: transparent;
+}
+
+.deck-viewer__image-button .deck-card-shine {
+  border-radius: var(--tarot-card-radius);
+  background:
+    radial-gradient(circle at var(--shine-x) var(--shine-y), rgba(255, 255, 255, 0.24), transparent 32%),
+    linear-gradient(115deg, transparent 20%, color-mix(in srgb, var(--deck-viewer-accent) 16%, transparent) 46%, transparent 68%);
+}
+
+.deck-viewer__image-button.is-tilting .deck-card-shine,
+.deck-viewer__image-button:hover .deck-card-shine,
+.deck-viewer__image-button:focus-visible .deck-card-shine {
+  opacity: 0.72;
+}
+
+.deck-viewer__tilt-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  color: var(--deck-viewer-muted);
+  font-family: var(--font-body-serif);
+  font-size: 0.94rem;
 }
 
 .deck-viewer__content {
   display: grid;
   align-content: center;
-  justify-items: start;
-  gap: clamp(10px, 1.6vw, 16px);
+  justify-items: center;
+  gap: clamp(9px, 1.4vw, 15px);
   min-width: 0;
+  text-align: center;
 }
 
 .deck-viewer__counter {
+  justify-self: end;
   margin: 0;
-  color: var(--navbar-muted);
-  font-size: 0.76rem;
+  color: var(--deck-viewer-text);
+  font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.deck-viewer__counter span {
+  color: var(--deck-viewer-accent);
+  padding-inline: 0.45rem;
+}
+
+.deck-viewer__deck-label,
+.deck-viewer__arcana-label {
+  margin: 0;
+  font-family: var(--body-font);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.32em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.deck-viewer__deck-label {
+  color: color-mix(in srgb, var(--deck-viewer-accent-2) 72%, #c9ff8f);
+}
+
+.deck-viewer__arcana-label {
+  color: var(--deck-viewer-accent);
 }
 
 .deck-viewer__content h2 {
   margin: 0;
-  color: var(--navbar-text);
+  color: var(--deck-viewer-text);
   font-family: var(--logo-font);
-  font-size: clamp(2.4rem, 5vw, 4.4rem);
+  font-size: clamp(3rem, 5.2vw, 5.25rem);
   line-height: 0.95;
   letter-spacing: 0;
+  text-shadow: 0 0 28px rgba(255, 255, 255, 0.08);
 }
 
-.deck-viewer__content p:not(.deck-viewer__counter) {
-  max-width: 58ch;
+.deck-viewer__content > p:not(.deck-viewer__counter):not(.deck-viewer__deck-label):not(.deck-viewer__arcana-label) {
+  max-width: 54ch;
   margin: 0;
-  color: var(--navbar-muted);
-  font-size: clamp(1.08rem, 1.5vw, 1.18rem);
-  line-height: 1.7;
+  color: var(--deck-viewer-muted);
+  font-family: var(--font-body-serif);
+  font-size: clamp(1.05rem, 1.35vw, 1.22rem);
+  line-height: 1.55;
 }
 
 .deck-viewer__keywords {
@@ -1117,83 +1302,98 @@ body.blood-moon-mode .deck-ritual-feature {
 }
 
 .deck-viewer__keywords li {
-  border: 1px solid transparent;
+  border: 1px solid color-mix(in srgb, var(--theme-divider-accent, var(--deck-viewer-accent)) 32%, rgba(255, 255, 255, 0.14));
   border-radius: 999px;
-  padding: 6px 10px;
-  color: var(--navbar-text);
+  padding: 0.44rem 0.88rem;
+  color: var(--deck-viewer-text);
   background:
     radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--deck-viewer-glow) 30%, transparent), transparent 70%),
-    rgba(255, 255, 255, 0.04);
-  font-size: 0.75rem;
-  font-weight: 800;
+    rgba(255, 255, 255, 0.055);
+  font-size: 0.82rem;
+  font-weight: 700;
   line-height: 1;
   text-transform: capitalize;
 }
 
 .deck-viewer__meaning-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: 1fr;
+  gap: 0.58rem;
   width: 100%;
-  max-width: 680px;
+  max-width: 620px;
+  margin-top: 0.3rem;
 }
 
 .deck-viewer__meaning-card {
-  display: grid;
-  gap: 8px;
   min-width: 0;
-  border: 1px solid transparent;
-  border-radius: 14px;
-  padding: 12px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--theme-divider-accent, var(--meaning-accent)) 30%, rgba(255, 255, 255, 0.12));
+  border-radius: 16px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 52%),
-    rgba(255, 255, 255, 0.035);
+    linear-gradient(135deg, color-mix(in srgb, var(--meaning-accent, var(--deck-viewer-accent)) 16%, transparent), transparent 56%),
+    color-mix(in srgb, var(--navbar-bg, rgba(0, 0, 0, 0.4)) 44%, rgba(4, 4, 14, 0.8));
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.deck-viewer__meaning-card--shadow,
-.deck-viewer__meaning-card--reflection {
-  grid-column: 1 / -1;
+.deck-viewer__meaning-card--upright {
+  --meaning-accent: #ffe071;
+}
+
+.deck-viewer__meaning-card--reversed {
+  --meaning-accent: #b987ff;
 }
 
 .deck-viewer__meaning-card--shadow {
-  border-color: transparent;
-  background:
-    radial-gradient(circle at 0% 0%, rgba(212, 31, 58, 0.13), transparent 55%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 52%),
-    rgba(255, 255, 255, 0.028);
+  --meaning-accent: #ff8996;
 }
 
-.deck-viewer__meaning-heading {
-  display: flex;
+.deck-viewer__meaning-card--reflection {
+  --meaning-accent: #d9e3ff;
+}
+
+.deck-viewer__meaning-summary {
+  display: grid;
+  grid-template-columns: auto minmax(92px, 0.32fr) auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 8px;
+  gap: clamp(0.65rem, 1.4vw, 1.1rem);
   min-width: 0;
+  min-height: 64px;
+  padding: 0.72rem 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.deck-viewer__meaning-card--desktop .deck-viewer__meaning-summary {
+  cursor: default;
+}
+
+.deck-viewer__meaning-card--mobile {
+  display: none;
+}
+
+.deck-viewer__meaning-summary::-webkit-details-marker {
+  display: none;
 }
 
 .deck-viewer__meaning-icon {
   display: inline-grid;
   flex: 0 0 auto;
-  width: 26px;
-  height: 26px;
+  width: 42px;
+  height: 42px;
   place-items: center;
-  border: 1px solid transparent;
+  border: 1px solid color-mix(in srgb, var(--meaning-accent) 52%, transparent);
   border-radius: 50%;
-  color: var(--navbar-hover-text);
-  background: color-mix(in srgb, var(--deck-viewer-glow) 18%, rgba(0, 0, 0, 0.22));
-  box-shadow: 0 0 14px color-mix(in srgb, var(--deck-viewer-glow) 38%, transparent);
-}
-
-.deck-viewer__meaning-card--shadow .deck-viewer__meaning-icon {
-  border-color: transparent;
-  color: #ffd5d9;
-  background: rgba(116, 18, 30, 0.32);
-  box-shadow: 0 0 14px rgba(255, 35, 65, 0.24);
+  color: var(--meaning-accent);
+  background: color-mix(in srgb, var(--meaning-accent) 16%, rgba(0, 0, 0, 0.24));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--meaning-accent) 24%, transparent);
 }
 
 .deck-viewer__meaning-icon svg {
   display: block;
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.7;
@@ -1201,22 +1401,60 @@ body.blood-moon-mode .deck-ritual-feature {
   stroke-linejoin: round;
 }
 
-.deck-viewer__meaning-card h3 {
+.deck-viewer__meaning-title {
   margin: 0;
-  color: var(--navbar-hover-text);
+  color: color-mix(in srgb, var(--meaning-accent) 72%, var(--deck-viewer-text));
   font-family: var(--body-font);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
   line-height: 1.2;
   text-transform: uppercase;
+  text-align: left;
+}
+
+.deck-viewer__meaning-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--meaning-accent);
+}
+
+.deck-viewer__meaning-preview {
+  min-width: 0;
+  color: color-mix(in srgb, var(--deck-viewer-text) 88%, var(--deck-viewer-muted));
+  font-family: var(--font-body-serif);
+  font-size: 0.98rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.deck-viewer__meaning-chevron {
+  width: 11px;
+  height: 11px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  color: var(--deck-viewer-muted);
+  transform: rotate(45deg);
+  transition: transform 180ms ease;
+}
+
+.deck-viewer__meaning-card[open] .deck-viewer__meaning-chevron {
+  transform: rotate(225deg);
+}
+
+.deck-viewer__meaning-card[open] .deck-viewer__meaning-preview {
+  display: none;
 }
 
 .deck-viewer__meaning-card p {
-  margin: 0;
-  color: var(--navbar-muted);
-  font-size: 0.88rem;
+  margin: -0.15rem 0 0;
+  padding: 0 1rem 0.9rem calc(42px + 2.1rem);
+  color: color-mix(in srgb, var(--deck-viewer-text) 88%, var(--deck-viewer-muted));
+  font-family: var(--font-body-serif);
+  font-size: 0.94rem;
   line-height: 1.55;
+  text-align: left;
 }
 
 .deck-viewer__controls {
@@ -1227,19 +1465,22 @@ body.blood-moon-mode .deck-ritual-feature {
 }
 
 .deck-viewer__nav {
-  min-height: 44px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  padding: 0 18px;
-  color: var(--navbar-text);
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 54%, rgba(255, 255, 255, 0.18));
+  border-radius: 50%;
+  padding: 0;
+  color: var(--deck-viewer-text);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
-    color-mix(in srgb, var(--navbar-hover-bg) 76%, rgba(255, 255, 255, 0.035));
-  box-shadow: 0 0 18px color-mix(in srgb, var(--deck-viewer-glow) 62%, transparent);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.07), transparent 52%),
+    color-mix(in srgb, var(--navbar-bg, rgba(0, 0, 0, 0.28)) 86%, transparent);
   cursor: pointer;
   font-family: var(--body-font);
-  font-weight: 800;
-  letter-spacing: 0.02em;
+  font-size: 1.85rem;
+  line-height: 1;
   transition:
     box-shadow 240ms ease,
     transform 240ms ease;
@@ -1252,15 +1493,24 @@ body.blood-moon-mode .deck-ritual-feature {
   transform: translateY(-1px);
 }
 
+.deck-viewer__rail-wrap {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1.35rem);
+  width: min(100%, 1080px);
+  margin: 0 auto;
+}
+
 .deck-thumbnail-rail {
   display: flex;
-  gap: 10px;
+  gap: clamp(0.62rem, 1.3vw, 0.95rem);
   max-width: 100%;
   min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 4px 2px 14px;
-  scroll-padding-inline: 2px;
+  padding: 40px 8px 22px;
+  scroll-padding-inline: 4px;
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
 }
@@ -1281,58 +1531,110 @@ body.blood-moon-mode .deck-ritual-feature {
 }
 
 .deck-thumbnail {
+  --tarot-card-radius: 8px;
   position: relative;
-  flex: 0 0 clamp(58px, 7vw, 82px);
+  flex: 0 0 clamp(70px, 7vw, 100px);
   display: grid;
-  gap: 4px;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 46%, transparent);
+  gap: 0.38rem;
+  overflow: visible;
+  border: 0;
   border-radius: 12px;
-  padding: 4px;
+  padding: 0;
   background:
-    radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--deck-viewer-glow) 14%, transparent), transparent 62%),
-    rgba(0, 0, 0, 0.3);
+    radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--deck-viewer-glow) 14%, transparent), transparent 62%);
   cursor: pointer;
-  opacity: 0.72;
+  opacity: 0.58;
   scroll-snap-align: center;
   transition:
-    border-color 220ms ease,
     box-shadow 220ms ease,
     opacity 220ms ease,
     transform 220ms ease;
+  transform-origin: center bottom;
+}
+
+.deck-thumbnail__image-clip {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--deck-viewer-accent) 42%, rgba(255, 255, 255, 0.16));
+  border-radius: var(--tarot-card-radius);
+  line-height: 0;
+  background: transparent;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  transform: translateZ(0);
 }
 
 .deck-thumbnail img {
   display: block;
   width: 100%;
-  height: auto;
-  max-height: 110px;
-  object-fit: contain;
+  height: 100%;
+  max-height: none;
+  object-fit: cover;
   object-position: center;
-  border-radius: 8px;
+  border: 0;
+  border-radius: inherit;
+  -webkit-clip-path: inset(0 0 0 0 round var(--tarot-card-radius));
+  clip-path: inset(0 0 0 0 round var(--tarot-card-radius));
+  box-shadow: none;
 }
 
-.deck-thumbnail span {
+.deck-thumbnail__index {
   display: inline-grid;
   justify-self: center;
   place-items: center;
   min-width: 22px;
   height: 22px;
   border-radius: 999px;
-  color: var(--navbar-text);
-  background: rgba(0, 0, 0, 0.58);
-  font-size: 0.72rem;
-  font-weight: 800;
+  color: var(--deck-viewer-text);
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 .deck-thumbnail:hover,
-.deck-thumbnail:focus-visible,
-.deck-thumbnail.is-active {
-  border-color: color-mix(in srgb, var(--deck-viewer-accent) 74%, white);
+.deck-thumbnail:focus-visible {
   outline: none;
-  box-shadow: 0 0 20px color-mix(in srgb, var(--deck-viewer-glow) 70%, transparent);
   opacity: 1;
-  transform: translateY(-2px);
+  transform: translateY(-4px) scale(1.025);
+}
+
+.deck-thumbnail.is-active {
+  z-index: 2;
+  outline: none;
+  opacity: 1;
+  transform: translateY(-8px) scale(1.07);
+}
+
+.deck-thumbnail:hover img,
+.deck-thumbnail:focus-visible img {
+  border-color: transparent;
+}
+
+.deck-thumbnail:hover .deck-thumbnail__image-clip,
+.deck-thumbnail:focus-visible .deck-thumbnail__image-clip {
+  border-color: color-mix(in srgb, var(--deck-viewer-accent) 74%, white);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--deck-viewer-accent-2) 48%, transparent),
+    0 0 22px color-mix(in srgb, var(--deck-viewer-glow) 86%, transparent);
+}
+
+.deck-thumbnail.is-active img {
+  border-color: transparent;
+}
+
+.deck-thumbnail.is-active .deck-thumbnail__image-clip {
+  border-color: color-mix(in srgb, var(--deck-viewer-accent) 86%, white);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--deck-viewer-accent) 72%, transparent),
+    0 0 0 5px color-mix(in srgb, var(--deck-viewer-accent-2) 30%, transparent),
+    0 0 30px color-mix(in srgb, var(--deck-viewer-glow) 92%, transparent),
+    0 16px 28px rgba(0, 0, 0, 0.36);
+}
+
+.deck-thumbnail.is-active .deck-thumbnail__index {
+  color: color-mix(in srgb, var(--deck-viewer-accent) 72%, var(--deck-viewer-text));
+  font-weight: 900;
 }
 
 .deck-gallery {
@@ -1382,6 +1684,7 @@ body.blood-moon-mode .deck-ritual-feature {
 }
 
 .deck-card img {
+  --tarot-card-radius: 16px;
   display: block;
   width: auto;
   height: auto;
@@ -1390,7 +1693,8 @@ body.blood-moon-mode .deck-ritual-feature {
   object-fit: contain;
   object-position: center;
   border: 1px solid rgba(231, 195, 106, 0.16);
-  border-radius: 16px;
+  border-radius: var(--tarot-card-radius);
+  clip-path: inset(0 round var(--tarot-card-radius));
   background: rgba(4, 3, 8, 0.72);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
 }
@@ -1500,10 +1804,13 @@ body.is-deck-info-open {
 }
 
 .deck-lightbox__image {
+  --tarot-card-radius: 16px;
   display: block;
   width: auto;
   max-width: 96vw;
   max-height: 92vh;
+  border-radius: var(--tarot-card-radius);
+  clip-path: inset(0 round var(--tarot-card-radius));
   object-fit: contain;
   background: transparent;
 }
@@ -1658,12 +1965,14 @@ body.is-deck-info-open {
 }
 
 .deck-modal-card-tilt img {
+  --tarot-card-radius: 16px;
   display: block;
   width: auto;
   max-width: min(100%, 230px);
   max-height: min(58vh, 350px);
   object-fit: contain;
-  border-radius: 16px;
+  border-radius: var(--tarot-card-radius);
+  clip-path: inset(0 round var(--tarot-card-radius));
   border: 1px solid color-mix(in srgb, var(--deck-modal-accent) 42%, rgba(255, 255, 255, 0.16));
   box-shadow:
     0 24px 48px rgba(0, 0, 0, 0.42),
@@ -1939,7 +2248,8 @@ body.is-deck-info-open {
   }
 
   .deck-viewer__stage {
-    grid-template-columns: minmax(190px, 300px) minmax(0, 1fr);
+    grid-template-columns: minmax(250px, 0.82fr) minmax(320px, 1fr);
+    gap: clamp(20px, 3.5vw, 42px);
   }
 
   .deck-gallery {
@@ -1982,18 +2292,31 @@ body.is-deck-info-open {
   }
 
   .deck-viewer {
-    padding: 14px;
-    border-radius: 22px;
+    padding: clamp(14px, 4vw, 22px);
+    border-radius: 0;
+  }
+
+  .deck-viewer__topbar {
+    grid-template-columns: 1fr auto auto;
+  }
+
+  .deck-viewer__brand {
+    display: none;
+  }
+
+  .deck-viewer__sigil {
+    width: 38px;
+    height: 38px;
   }
 
   .deck-viewer__stage {
     grid-template-columns: 1fr;
     justify-items: center;
-    gap: 16px;
+    gap: 18px;
   }
 
   .deck-viewer__image-button {
-    width: min(100%, 250px);
+    width: min(76vw, 285px);
     border-radius: 18px;
   }
 
@@ -2011,24 +2334,46 @@ body.is-deck-info-open {
     text-align: left;
   }
 
-  .deck-viewer__content h2 {
-    font-size: clamp(2rem, 12vw, 3.1rem);
+  .deck-viewer__meaning-card--desktop {
+    display: none;
   }
 
-  .deck-viewer__controls {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: min(100%, 340px);
+  .deck-viewer__meaning-card--mobile {
+    display: block;
+  }
+
+  .deck-viewer__content h2 {
+    font-size: clamp(2.55rem, 11vw, 4rem);
+  }
+
+  .deck-viewer__meaning-summary {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    min-height: 54px;
+    padding: 0.68rem 0.78rem;
+  }
+
+  .deck-viewer__meaning-dot {
+    display: none;
+  }
+
+  .deck-viewer__meaning-card p {
+    padding: 0 0.82rem 0.82rem calc(42px + 1.45rem);
+  }
+
+  .deck-viewer__rail-wrap {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.55rem;
   }
 
   .deck-viewer__nav {
-    width: 100%;
-    padding-inline: 10px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.55rem;
     white-space: nowrap;
   }
 
   .deck-thumbnail {
-    flex-basis: 62px;
+    flex-basis: 68px;
   }
 
   .deck-gallery {
@@ -2047,11 +2392,40 @@ body.is-deck-info-open {
   }
 
   .deck-viewer__image-button {
-    width: min(100%, 220px);
+    width: min(78vw, 250px);
+  }
+
+  .deck-viewer__topbar {
+    grid-template-columns: 1fr auto;
+  }
+
+  .deck-back-button {
+    grid-column: 1 / 2;
+    grid-row: 1;
+  }
+
+  .deck-viewer__counter {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
+  }
+
+  .deck-viewer__sigil {
+    grid-column: 2 / 3;
+    grid-row: 1;
+  }
+
+  .deck-viewer__content > p:not(.deck-viewer__counter):not(.deck-viewer__deck-label):not(.deck-viewer__arcana-label) {
+    font-size: 1rem;
+  }
+
+  .deck-viewer__keywords li {
+    padding-inline: 0.68rem;
+    font-size: 0.75rem;
   }
 
   .deck-thumbnail {
-    flex-basis: 56px;
+    flex-basis: 62px;
   }
 
   .deck-gallery {
@@ -2087,7 +2461,7 @@ body.is-deck-info-open {
 
 .deck-collection-shell {
   display: grid;
-  gap: clamp(2.1rem, 4vw, 3.4rem);
+  gap: clamp(1.55rem, 3.2vw, 2.5rem);
   width: min(100%, 1200px);
   margin: 0 auto;
   overflow: visible;
@@ -2101,7 +2475,7 @@ body.is-deck-info-open {
   gap: 0;
   width: min(100%, 760px);
   max-width: 100%;
-  margin: -0.15rem auto 0;
+  margin: -0.25rem auto 0;
   border: 0;
   border-radius: 0;
   padding: 0;
@@ -3631,11 +4005,13 @@ body.is-deck-info-open {
   }
 
   .deck-modal-card-tilt img {
+    --tarot-card-radius: 14px;
     width: 100%;
     max-width: 100%;
     height: auto;
     max-height: clamp(180px, 34vh, 250px);
-    border-radius: 14px;
+    border-radius: var(--tarot-card-radius);
+    clip-path: inset(0 round var(--tarot-card-radius));
     border: 0;
     box-shadow: none;
   }
@@ -3784,9 +4160,110 @@ body.no-glow .deck-filter-pill.is-active {
 }
 
 @media (min-width: 901px) and (max-width: 1366px), (min-width: 901px) and (max-height: 800px) {
+  .deck-viewer {
+    gap: clamp(12px, 2vh, 18px);
+    width: min(100%, 1120px);
+    margin-top: 0;
+    padding: clamp(14px, 2vw, 20px);
+  }
+
+  .deck-viewer__topbar {
+    gap: clamp(10px, 1.5vw, 18px);
+  }
+
+  .deck-viewer__brand {
+    font-size: 0.68rem;
+  }
+
+  .deck-viewer__brand-mark,
+  .deck-viewer__sigil {
+    width: 36px;
+    height: 36px;
+  }
+
+  .deck-viewer__stage {
+    grid-template-columns: minmax(250px, 0.78fr) minmax(340px, 1fr);
+    gap: clamp(20px, 3vw, 40px);
+  }
+
+  .deck-viewer__image-button {
+    width: min(100%, 340px);
+  }
+
+  .deck-viewer__tilt-hint {
+    font-size: 0.84rem;
+  }
+
+  .deck-viewer__content {
+    gap: 8px;
+  }
+
+  .deck-viewer__deck-label,
+  .deck-viewer__arcana-label {
+    font-size: 0.7rem;
+  }
+
+  .deck-viewer__content h2 {
+    font-size: clamp(2.7rem, 4.4vw, 4.1rem);
+  }
+
+  .deck-viewer__content > p:not(.deck-viewer__counter):not(.deck-viewer__deck-label):not(.deck-viewer__arcana-label) {
+    font-size: 1rem;
+    line-height: 1.42;
+  }
+
+  .deck-viewer__keywords li {
+    padding: 0.34rem 0.68rem;
+    font-size: 0.74rem;
+  }
+
+  .deck-viewer__meaning-grid {
+    gap: 0.45rem;
+    margin-top: 0.12rem;
+  }
+
+  .deck-viewer__meaning-summary {
+    min-height: 52px;
+    padding-block: 0.52rem;
+  }
+
+  .deck-viewer__meaning-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .deck-viewer__meaning-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .deck-viewer__meaning-preview {
+    font-size: 0.9rem;
+    line-height: 1.34;
+  }
+
+  .deck-viewer__rail-wrap {
+    gap: 0.8rem;
+  }
+
+  .deck-viewer__nav {
+    width: 44px;
+    height: 44px;
+    font-size: 1.55rem;
+  }
+
+  .deck-thumbnail {
+    flex-basis: 66px;
+  }
+
+  .deck-thumbnail__index {
+    height: 18px;
+    font-size: 0.72rem;
+  }
+
   .deck-hero {
     width: min(100%, 820px);
-    margin: clamp(4.2rem, 8vh, 6rem) auto clamp(1.8rem, 4vh, 3rem);
+    margin: clamp(2.75rem, 5.5vh, 4.2rem) auto clamp(1.35rem, 3vh, 2.25rem);
   }
 
   .deck-hero__ornament {
@@ -3822,7 +4299,7 @@ body.no-glow .deck-filter-pill.is-active {
 
   .deck-collection-shell {
     width: min(100%, 1080px);
-    gap: clamp(1.4rem, 3vw, 2.4rem);
+    gap: clamp(1.15rem, 2.4vw, 1.9rem);
   }
 
   .deck-filter-row {

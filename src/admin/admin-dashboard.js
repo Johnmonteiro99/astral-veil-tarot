@@ -1,8 +1,9 @@
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
-import { requireAdmin, signOut } from '../services/auth.js';
+import { clearAdminVerified, requireAdmin, requireAdminGate, signOut } from '../services/auth.js';
 
 const countTables = [
-  'journals',
+  'profiles',
+  'noctis_documents',
   'journal_prompts',
   'reader_lines',
   'contact_messages',
@@ -12,6 +13,18 @@ const countTables = [
   'memory_fragments',
   'veilwalkers',
   'veilwalker_notes',
+];
+
+const adminOverviewActivityTables = [
+  { tableName: 'user_journal_entries', timestampColumns: ['updated_at', 'created_at'] },
+  { tableName: 'user_readings', timestampColumns: ['created_at'] },
+  { tableName: 'user_artifacts', timestampColumns: ['unlocked_at', 'created_at'] },
+  { tableName: 'user_room_visits', timestampColumns: ['last_visited_at', 'first_visited_at'] },
+  { tableName: 'user_gallery_recent_records', timestampColumns: ['last_viewed_at', 'created_at'] },
+  { tableName: 'user_gallery_marked_records', timestampColumns: ['marked_at', 'created_at'] },
+  { tableName: 'user_gallery_fragments', timestampColumns: ['collected_at', 'created_at'] },
+  { tableName: 'user_noctis_saved_documents', timestampColumns: ['created_at'] },
+  { tableName: 'user_profile_unlocks', timestampColumns: ['unlocked_at', 'created_at'] },
 ];
 
 // Admin UI checks prevent accidental access in the browser; all admin writes
@@ -32,6 +45,10 @@ const characterLineContexts = [
 ];
 const galleryStorageBucket = 'gallery-records';
 const galleryUploadFolders = ['featured', 'portraits', 'places', 'symbols', 'maps', 'anomalies', 'unknown', 'recovered', 'fragments'];
+const NOCTIS_DOCUMENTS_PAGE_SIZE = 10;
+const ADMIN_USERS_PAGE_SIZE = 10;
+const noctisDocumentTypes = ['journal', 'manuscript', 'letter', 'cipher', 'fragment', 'veil_lore', 'unstable_text', 'blood_moon', 'other'];
+const noctisDocumentModes = ['blood_moon', 'moon', 'sun', 'blue_moon', 'all'];
 
 const accessMessage = document.querySelector('[data-access-message]');
 const loginLink = document.querySelector('[data-login-link]');
@@ -51,22 +68,35 @@ const sidebarScrim = document.querySelector('[data-sidebar-scrim]');
 const mobileNavigationQuery = window.matchMedia('(max-width: 900px)');
 const adminViews = document.querySelectorAll('[data-admin-view]');
 const viewLinks = document.querySelectorAll('[data-admin-view-link]');
-const journalsState = document.querySelector('[data-journals-state]');
-const journalsTableWrap = document.querySelector('[data-journals-table-wrap]');
-const journalsTableBody = document.querySelector('[data-journals-table-body]');
-const journalDetail = document.querySelector('[data-journal-detail]');
-const journalDetailTitle = document.querySelector('[data-journal-detail-title]');
-const journalDetailMeta = document.querySelector('[data-journal-detail-meta]');
-const journalDetailFields = document.querySelector('[data-journal-detail-fields]');
-const journalDetailBody = document.querySelector('[data-journal-detail-body]');
-const journalDetailCloseButton = document.querySelector('[data-journal-detail-close]');
-const journalNewButton = document.querySelector('[data-journal-new]');
-const journalFormPanel = document.querySelector('[data-journal-form-panel]');
-const journalForm = document.querySelector('[data-journal-form]');
-const journalFormTitle = document.querySelector('[data-journal-form-title]');
-const journalFormState = document.querySelector('[data-journal-form-state]');
-const journalFormSubmitButton = document.querySelector('[data-journal-form-submit]');
-const journalFormCancelButtons = document.querySelectorAll('[data-journal-form-cancel], [data-journal-form-cancel-secondary]');
+const overviewStatElements = {
+  totalAccounts: document.querySelector('[data-admin-overview-stat="totalAccounts"]'),
+  activeUsers: document.querySelector('[data-admin-overview-stat="activeUsers"]'),
+  newThisWeek: document.querySelector('[data-admin-overview-stat="newThisWeek"]'),
+  journalEntries: document.querySelector('[data-admin-overview-stat="journalEntries"]'),
+  savedReadings: document.querySelector('[data-admin-overview-stat="savedReadings"]'),
+  recoveredArtifacts: document.querySelector('[data-admin-overview-stat="recoveredArtifacts"]'),
+  sessionStatus: document.querySelector('[data-admin-overview-stat="sessionStatus"]'),
+};
+const noctisDocumentsState = document.querySelector('[data-noctis-documents-state]');
+const noctisDocumentsTableWrap = document.querySelector('[data-noctis-documents-table-wrap]');
+const noctisDocumentsTableBody = document.querySelector('[data-noctis-documents-table-body]');
+const noctisDocumentsPagination = document.querySelector('[data-noctis-documents-pagination]');
+const noctisDocumentsPaginationSummary = document.querySelector('[data-noctis-documents-pagination-summary]');
+const noctisDocumentsPaginationControls = document.querySelector('[data-noctis-documents-pagination-controls]');
+const noctisDocumentDetail = document.querySelector('[data-noctis-document-detail]');
+const noctisDocumentDetailTitle = document.querySelector('[data-noctis-document-detail-title]');
+const noctisDocumentDetailMeta = document.querySelector('[data-noctis-document-detail-meta]');
+const noctisDocumentDetailFields = document.querySelector('[data-noctis-document-detail-fields]');
+const noctisDocumentDetailBody = document.querySelector('[data-noctis-document-detail-body]');
+const noctisDocumentDetailCloseButton = document.querySelector('[data-noctis-document-detail-close]');
+const noctisDocumentNewButton = document.querySelector('[data-noctis-document-new]');
+const noctisDocumentFormPanel = document.querySelector('[data-noctis-document-form-panel]');
+const noctisDocumentForm = document.querySelector('[data-noctis-document-form]');
+const noctisDocumentFormTitle = document.querySelector('[data-noctis-document-form-title]');
+const noctisDocumentFormState = document.querySelector('[data-noctis-document-form-state]');
+const noctisDocumentFormSubmitButton = document.querySelector('[data-noctis-document-form-submit]');
+const noctisDocumentFormCancelButtons = document.querySelectorAll('[data-noctis-document-form-cancel], [data-noctis-document-form-cancel-secondary]');
+const noctisDocumentFilters = Array.from(document.querySelectorAll('[data-noctis-document-filter]'));
 const journalPromptsState = document.querySelector('[data-journal-prompts-state]');
 const journalPromptsTableWrap = document.querySelector('[data-journal-prompts-table-wrap]');
 const journalPromptsTableBody = document.querySelector('[data-journal-prompts-table-body]');
@@ -255,11 +285,29 @@ const userProgressDetailMeta = document.querySelector('[data-user-progress-detai
 const userProgressDetailFields = document.querySelector('[data-user-progress-detail-fields]');
 const userProgressDetailGroups = document.querySelector('[data-user-progress-detail-groups]');
 const userProgressDetailCloseButton = document.querySelector('[data-user-progress-detail-close]');
+const adminUsersState = document.querySelector('[data-admin-users-state]');
+const adminUsersTableWrap = document.querySelector('[data-admin-users-table-wrap]');
+const adminUsersTableBody = document.querySelector('[data-admin-users-table-body]');
+const adminUserSearchInput = document.querySelector('[data-admin-user-search]');
+const adminUserSearchClearButton = document.querySelector('[data-admin-user-search-clear]');
+const adminUsersPagination = document.querySelector('[data-admin-users-pagination]');
+const adminUsersPaginationSummary = document.querySelector('[data-admin-users-pagination-summary]');
+const adminUsersPaginationControls = document.querySelector('[data-admin-users-pagination-controls]');
+const adminUserDetail = document.querySelector('[data-admin-user-detail]');
+const adminUserDetailTitle = document.querySelector('[data-admin-user-detail-title]');
+const adminUserDetailMeta = document.querySelector('[data-admin-user-detail-meta]');
+const adminUserDetailFields = document.querySelector('[data-admin-user-detail-fields]');
+const adminUserDetailCloseButton = document.querySelector('[data-admin-user-detail-close]');
+const userModerationForm = document.querySelector('[data-user-moderation-form]');
+const userModerationStatusSelect = document.querySelector('[data-user-moderation-status]');
+const userModerationReasonField = document.querySelector('[data-user-moderation-reason]');
+const userModerationState = document.querySelector('[data-user-moderation-state]');
+const userModerationSubmitButton = document.querySelector('[data-user-moderation-submit]');
 
 const userProgressSummaryTables = [
   'profiles',
   'user_artifacts',
-  'user_rooms',
+  'user_room_visits',
   'user_fragments',
   'user_discoveries',
   'user_readings',
@@ -280,14 +328,12 @@ const userProgressSections = [
   },
   {
     title: 'Rooms',
-    tableName: 'user_rooms',
+    tableName: 'user_room_visits',
     columns: [
       ['Room Key', ['room_key', 'key']],
-      ['Status', ['status', 'state']],
-      ['Unlock Method', ['unlock_method', 'method']],
-      ['Source Location', ['source_location', 'location', 'source']],
-      ['Unlocked At', ['unlocked_at', 'created_at']],
-      ['Updated At', ['updated_at', 'modified_at']],
+      ['First Visited', ['first_visited_at', 'created_at']],
+      ['Last Visited', ['last_visited_at', 'updated_at']],
+      ['Visit Count', ['visit_count', 'visits']],
     ],
     emptyMessage: 'No room progress recorded.',
   },
@@ -341,9 +387,11 @@ const userProgressSections = [
   },
 ];
 
-let journalsLoaded = false;
-let journalRows = [];
-let editingJournalId = null;
+let noctisDocumentsLoaded = false;
+let noctisDocumentRows = [];
+let noctisDocumentsPage = 1;
+let editingNoctisDocumentId = null;
+let noctisDocumentFiltersInitialized = false;
 let journalPromptsLoaded = false;
 let journalPromptRows = [];
 let editingJournalPromptId = null;
@@ -386,8 +434,14 @@ let editingVeilwalkerId = null;
 let appSettingsLoaded = false;
 let appSettingRows = [];
 let editingAppSettingId = null;
+let adminUsersLoaded = false;
+let adminUserRows = [];
+let filteredAdminUserRows = [];
+let adminUsersCurrentPage = 1;
 let userProgressLoaded = false;
 let profileRows = [];
+let currentAdminUserId = null;
+let adminDashboardBindingsInitialized = false;
 
 function setAccessMessage(text, state = '') {
   accessMessage.textContent = text;
@@ -474,35 +528,84 @@ function formatDate(value) {
   });
 }
 
-function getJournalTitle(row) {
-  return formatValue(getFirstValue(row, ['title', 'name', 'heading']), 'Untitled journal');
+function getNoctisDocumentTitle(row) {
+  return formatValue(getFirstValue(row, ['title', 'name', 'heading']), 'Untitled document');
 }
 
-function getJournalSlug(row) {
+function getNoctisDocumentSlug(row) {
   return formatValue(getFirstValue(row, ['slug']));
 }
 
-function getJournalId(row) {
+function getNoctisDocumentId(row) {
   return getFirstValue(row, ['id']);
 }
 
-function getJournalKey(row) {
-  return formatValue(getFirstValue(row, ['journal_key', 'key', 'id']));
+function getNoctisDocumentKey(row) {
+  return formatValue(getFirstValue(row, ['shelf_mark', 'key', 'id']));
 }
 
-function getJournalType(row) {
-  return formatValue(getFirstValue(row, ['journal_type', 'entry_type', 'type']));
+function getNoctisDocumentType(row) {
+  return normalizeNoctisDocumentType(getFirstValue(row, ['document_type', 'entry_type', 'type']));
 }
 
-function getJournalArchiveSection(row) {
-  return formatValue(getFirstValue(row, ['archive_section', 'section']));
+function getNoctisDocumentArchiveSection(row) {
+  return formatValue(getFirstValue(row, ['category_label', 'category', 'archive_section', 'section']));
 }
 
-function getJournalThemeMode(row) {
-  return formatValue(getFirstValue(row, ['theme_mode', 'mode_key', 'mode', 'site_mode', 'event_mode', 'collection_mode']));
+function getNoctisDocumentThemeMode(row) {
+  return formatValue(getFirstValue(row, ['mode', 'moon_phase', 'theme_mode', 'mode_key', 'site_mode', 'event_mode', 'collection_mode']));
 }
 
-function getJournalPublishedState(row) {
+function normalizeNoctisDocumentFilterMatchValue(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[-\s]+/g, '_');
+}
+
+function isAllFilterValue(value) {
+  return value == null || ['__all', 'all', ''].includes(normalizeNoctisDocumentFilterMatchValue(value));
+}
+
+function getNormalizedNoctisDocumentTypeFilterValue(value) {
+  return isAllFilterValue(value) ? '__all' : normalizeNoctisDocumentType(value);
+}
+
+function getNormalizedNoctisDocumentPublishedFilterValue(value) {
+  const normalized = normalizeNoctisDocumentFilterMatchValue(value);
+
+  if (isAllFilterValue(normalized)) {
+    return '__all';
+  }
+
+  return ['published', 'unpublished'].includes(normalized) ? normalized : '__all';
+}
+
+function getNormalizedNoctisDocumentModeFilterValue(value) {
+  const normalized = normalizeNoctisDocumentFilterMatchValue(value);
+
+  return isAllFilterValue(normalized) ? '__all' : normalized;
+}
+
+function getNormalizedNoctisDocumentBloodMoonFilterValue(value) {
+  const normalized = normalizeNoctisDocumentFilterMatchValue(value);
+
+  if (isAllFilterValue(normalized)) {
+    return '__all';
+  }
+
+  if (['blood_moon', 'blood_moon_only', 'bloodmoon', 'bloodmoon_only'].includes(normalized)) {
+    return 'blood_moon';
+  }
+
+  if (['not_blood_moon', 'non_blood_moon', 'not_bloodmoon', 'non_bloodmoon'].includes(normalized)) {
+    return 'not_blood_moon';
+  }
+
+  return '__all';
+}
+
+function getNoctisDocumentPublishedState(row) {
   const publishedValue = getFirstValue(row, ['is_published', 'published', 'published_at', 'status', 'state', 'visibility']);
 
   if (typeof publishedValue === 'boolean') {
@@ -516,7 +619,7 @@ function getJournalPublishedState(row) {
   return '--';
 }
 
-function getJournalPublishedBoolean(row) {
+function getNoctisDocumentPublishedBoolean(row) {
   const publishedValue = getFirstValue(row, ['is_published', 'published']);
 
   if (typeof publishedValue === 'boolean') {
@@ -526,27 +629,126 @@ function getJournalPublishedBoolean(row) {
   return String(publishedValue || '').toLowerCase() === 'true';
 }
 
-function getJournalMode(row) {
-  return getJournalThemeMode(row);
+function getNoctisDocumentMode(row) {
+  return getNoctisDocumentThemeMode(row);
 }
 
-function getJournalBody(row) {
+function getNoctisDocumentModeForFilter(row) {
+  return normalizeNoctisDocumentFilterMatchValue(getFirstValue(row, ['mode', 'moon_phase', 'theme_mode', 'mode_key', 'site_mode', 'event_mode', 'collection_mode']));
+}
+
+function getNoctisDocumentBody(row) {
   return formatValue(
     getFirstValue(row, ['body', 'content', 'text', 'entry', 'description', 'summary']),
-    'No body/content field available for this journal.',
+    'No body/content field available for this document.',
   );
 }
 
-function getJournalExcerpt(row) {
+function getNoctisDocumentExcerpt(row) {
   return formatValue(getFirstValue(row, ['excerpt', 'summary']));
 }
 
-function getJournalRelatedCharacter(row) {
-  return formatValue(getFirstValue(row, ['related_character', 'character_key', 'veilwalker_key']));
+function getNoctisDocumentRelatedCharacter(row) {
+  return formatValue(getFirstValue(row, ['attribution', 'related_character', 'character_key', 'veilwalker_key']));
 }
 
-function getJournalSortOrder(row) {
+function getNoctisDocumentSortOrder(row) {
   return formatValue(getFirstValue(row, ['sort_order', 'display_order', 'order']));
+}
+
+function normalizeNoctisDocumentType(value) {
+  const normalized = String(value || 'journal').trim().toLowerCase();
+  const typeMap = {
+    journals: 'journal',
+    journal_fragment: 'journal',
+    recovered_journal: 'journal',
+    manuscripts: 'manuscript',
+    letters: 'letter',
+    cryptic_codes: 'cipher',
+    codes: 'cipher',
+    fragments: 'fragment',
+    veil: 'veil_lore',
+    the_veil: 'veil_lore',
+    unstable_texts: 'unstable_text',
+    blood_moon_record: 'blood_moon',
+    bloodmoon: 'blood_moon',
+  };
+  const nextType = typeMap[normalized] || normalized;
+
+  return noctisDocumentTypes.includes(nextType) ? nextType : 'other';
+}
+
+function getNoctisDocumentAuthor(row) {
+  return formatValue(getFirstValue(row, ['author']));
+}
+
+function getNoctisDocumentAttribution(row) {
+  return formatValue(getFirstValue(row, ['attribution']));
+}
+
+function getNoctisDocumentAuthorAttribution(row) {
+  const author = getNoctisDocumentAuthor(row);
+  const attribution = getNoctisDocumentAttribution(row);
+
+  if (author !== '--' && attribution !== '--' && author !== attribution) {
+    return `${author} / ${attribution}`;
+  }
+
+  return author !== '--' ? author : attribution;
+}
+
+function getNoctisDocumentShelfMark(row) {
+  return formatValue(getFirstValue(row, ['shelf_mark']));
+}
+
+function getNoctisDocumentTags(row) {
+  return normalizeAdminListField(getFirstValue(row, ['tags']));
+}
+
+function getNoctisDocumentThemes(row) {
+  return normalizeAdminListField(getFirstValue(row, ['themes']));
+}
+
+function getNoctisDocumentFeaturedBoolean(row) {
+  return Boolean(getFirstValue(row, ['is_featured']));
+}
+
+function getNoctisDocumentNotableBoolean(row) {
+  return Boolean(getFirstValue(row, ['is_notable']));
+}
+
+function getNoctisDocumentBloodMoonBoolean(row) {
+  return Boolean(getFirstValue(row, ['is_blood_moon'])) || getNoctisDocumentModeForFilter(row) === 'blood_moon' || getNoctisDocumentType(row) === 'blood_moon';
+}
+
+function getNoctisDocumentFeaturedNotableState(row) {
+  const states = [];
+
+  if (getNoctisDocumentFeaturedBoolean(row)) {
+    states.push('Featured');
+  }
+
+  if (getNoctisDocumentNotableBoolean(row)) {
+    states.push('Notable');
+  }
+
+  return states.join(' / ') || '--';
+}
+
+function getNoctisDocumentCategory(type) {
+  const categoryMap = {
+    journal: 'journals',
+    manuscript: 'manuscripts',
+    letter: 'letters',
+    cipher: 'cryptic_codes',
+    fragment: 'fragments',
+    veil_lore: 'veil_lore',
+    unstable_text: 'unstable_texts',
+    blood_moon: 'blood_moon',
+    other: 'other',
+  };
+
+  return categoryMap[type] || 'other';
 }
 
 function getJournalPromptId(row) {
@@ -1089,7 +1291,7 @@ function getVeilwalkerKey(row) {
 }
 
 function getVeilwalkerZodiac(row) {
-  return formatValue(getFirstValue(row, ['zodiac_key', 'zodiac', 'sign']));
+  return formatValue(getFirstValue(row, ['zodiac_sign', 'zodiac_key', 'zodiac', 'sign']));
 }
 
 function getVeilwalkerThemeMode(row) {
@@ -1295,6 +1497,43 @@ function getProfileRole(row) {
   return formatValue(getFirstValue(row, ['role', 'account_role']));
 }
 
+function getProfileEmail(row) {
+  return formatValue(getFirstValue(row, ['email', 'user_email']));
+}
+
+function getProfileAccountStatus(row) {
+  const status = String(getFirstValue(row, ['account_status']) || 'active').trim().toLowerCase();
+
+  return status || 'active';
+}
+
+function getProfileAccountStatusLabel(row) {
+  const labels = {
+    active: 'Active',
+    restricted: 'Restricted',
+    banned: 'Banned',
+    pending_deletion: 'Pending Deletion',
+  };
+
+  return labels[getProfileAccountStatus(row)] || formatValue(getProfileAccountStatus(row));
+}
+
+function getProfileBanReason(row) {
+  return formatValue(getFirstValue(row, ['ban_reason']));
+}
+
+function getProfileBannedAt(row) {
+  return formatDate(getFirstValue(row, ['banned_at']));
+}
+
+function getProfileCreatedAt(row) {
+  return formatDate(getFirstValue(row, ['created_at', 'inserted_at']));
+}
+
+function getProfileUpdatedAt(row) {
+  return formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated']));
+}
+
 function getProfileAvatarUrl(row) {
   return formatValue(getFirstValue(row, ['avatar_url', 'avatar', 'image_url']));
 }
@@ -1309,22 +1548,22 @@ function getTruncatedId(value) {
   return formattedValue.length > 14 ? `${formattedValue.slice(0, 8)}...${formattedValue.slice(-4)}` : formattedValue;
 }
 
-function setJournalsState(message, state = '') {
-  journalsState.textContent = message;
-  journalsState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
-  journalsState.hidden = false;
+function setNoctisDocumentsState(message, state = '') {
+  noctisDocumentsState.textContent = message;
+  noctisDocumentsState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  noctisDocumentsState.hidden = false;
 }
 
-function setJournalFormState(message, state = '') {
-  journalFormState.textContent = message;
-  journalFormState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
-  journalFormState.hidden = false;
+function setNoctisDocumentFormState(message, state = '') {
+  noctisDocumentFormState.textContent = message;
+  noctisDocumentFormState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  noctisDocumentFormState.hidden = false;
 }
 
-function hideJournalFormState() {
-  journalFormState.hidden = true;
-  journalFormState.textContent = '';
-  journalFormState.className = 'admin-state';
+function hideNoctisDocumentFormState() {
+  noctisDocumentFormState.hidden = true;
+  noctisDocumentFormState.textContent = '';
+  noctisDocumentFormState.className = 'admin-state';
 }
 
 function setJournalPromptsState(message, state = '') {
@@ -1513,17 +1752,39 @@ function setUserProgressState(message, state = '') {
   userProgressState.hidden = false;
 }
 
-function hideJournalDetail() {
-  journalDetail.hidden = true;
+function setAdminUsersState(message, state = '') {
+  adminUsersState.textContent = message;
+  adminUsersState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  adminUsersState.hidden = false;
 }
 
-function hideJournalForm() {
-  editingJournalId = null;
-  journalForm.reset();
-  hideJournalFormState();
-  journalFormPanel.hidden = true;
-  journalFormSubmitButton.disabled = false;
-  journalFormSubmitButton.textContent = 'Save Journal';
+function setUserModerationState(message, state = '') {
+  if (!userModerationState) {
+    return;
+  }
+
+  userModerationState.textContent = message;
+  userModerationState.className = `admin-state${state ? ` admin-state--${state}` : ''}`;
+  userModerationState.hidden = false;
+}
+
+function hideUserModerationState() {
+  if (userModerationState) {
+    userModerationState.hidden = true;
+  }
+}
+
+function hideNoctisDocumentDetail() {
+  noctisDocumentDetail.hidden = true;
+}
+
+function hideNoctisDocumentForm() {
+  editingNoctisDocumentId = null;
+  noctisDocumentForm.reset();
+  hideNoctisDocumentFormState();
+  noctisDocumentFormPanel.hidden = true;
+  noctisDocumentFormSubmitButton.disabled = false;
+  noctisDocumentFormSubmitButton.textContent = 'Save Document';
 }
 
 function setJournalPromptFormCancelVisible(isVisible) {
@@ -1690,6 +1951,14 @@ function hideAppSettingForm() {
 
 function hideUserProgressDetail() {
   userProgressDetail.hidden = true;
+  userProgressDetail.dataset.profileIndex = '';
+}
+
+function hideAdminUserDetail() {
+  adminUserDetail.hidden = true;
+  adminUserDetail.dataset.userIndex = '';
+  userModerationForm?.setAttribute('hidden', '');
+  hideUserModerationState();
 }
 
 function appendTextCell(rowElement, label, value, className = '') {
@@ -1758,46 +2027,410 @@ function appendCharacterLineBadgeCell(rowElement, label, value, badgeClassName =
   rowElement.append(cell);
 }
 
-function renderJournalRows(rows) {
-  journalsTableBody.replaceChildren();
+function createNoctisDocumentBadge(label, modifier = '') {
+  const badge = document.createElement('span');
 
-  rows.forEach((row) => {
+  badge.className = `noctis-document-badge${modifier ? ` noctis-document-badge--${modifier}` : ''}`;
+  badge.textContent = label || '--';
+  return badge;
+}
+
+function appendNoctisDocumentSummaryCell(rowElement, row) {
+  const cell = document.createElement('td');
+  const wrapper = document.createElement('div');
+  const title = document.createElement('div');
+  const chips = document.createElement('div');
+  const slug = document.createElement('div');
+  const metadata = [
+    [getNoctisDocumentType(row), 'type'],
+    [getNoctisDocumentMode(row), 'mode'],
+    [getNoctisDocumentShelfMark(row), 'shelf'],
+  ].filter(([value]) => value && value !== '--');
+
+  cell.dataset.label = 'Document';
+  wrapper.className = 'noctis-document-cell';
+  title.className = 'noctis-document-cell__title';
+  title.textContent = getNoctisDocumentTitle(row);
+  chips.className = 'noctis-document-chip-row';
+  metadata.forEach(([value, modifier]) => {
+    chips.append(createNoctisDocumentBadge(value, modifier));
+  });
+
+  wrapper.append(title);
+
+  if (chips.childElementCount) {
+    wrapper.append(chips);
+  }
+
+  if (getNoctisDocumentSlug(row) !== '--') {
+    slug.className = 'noctis-document-cell__slug';
+    slug.textContent = getNoctisDocumentSlug(row);
+    wrapper.append(slug);
+  }
+
+  cell.append(wrapper);
+  rowElement.append(cell);
+}
+
+function appendNoctisDocumentStatusCell(rowElement, row) {
+  const cell = document.createElement('td');
+  const statusRow = document.createElement('div');
+  const isPublished = getNoctisDocumentPublishedBoolean(row);
+
+  cell.dataset.label = 'Status';
+  statusRow.className = 'noctis-document-status-row';
+  statusRow.append(createNoctisDocumentBadge(isPublished ? 'Published' : 'Draft', isPublished ? 'published' : 'draft'));
+
+  if (getNoctisDocumentFeaturedBoolean(row)) {
+    statusRow.append(createNoctisDocumentBadge('Featured', 'featured'));
+  }
+
+  if (getNoctisDocumentNotableBoolean(row)) {
+    statusRow.append(createNoctisDocumentBadge('Notable', 'notable'));
+  }
+
+  if (getNoctisDocumentBloodMoonBoolean(row)) {
+    statusRow.append(createNoctisDocumentBadge('Blood Moon', 'blood'));
+  }
+
+  cell.append(statusRow);
+  rowElement.append(cell);
+}
+
+function getNoctisDocumentsTotalPages(rowCount) {
+  return Math.max(1, Math.ceil(rowCount / NOCTIS_DOCUMENTS_PAGE_SIZE));
+}
+
+function getPaginatedNoctisDocumentRows(rows) {
+  const totalPages = getNoctisDocumentsTotalPages(rows.length);
+  noctisDocumentsPage = Math.min(Math.max(noctisDocumentsPage, 1), totalPages);
+  const startIndex = (noctisDocumentsPage - 1) * NOCTIS_DOCUMENTS_PAGE_SIZE;
+
+  return rows.slice(startIndex, startIndex + NOCTIS_DOCUMENTS_PAGE_SIZE);
+}
+
+function renderNoctisDocumentsPagination(totalCount) {
+  noctisDocumentsPaginationControls.replaceChildren();
+
+  if (!totalCount || totalCount <= NOCTIS_DOCUMENTS_PAGE_SIZE) {
+    noctisDocumentsPagination.hidden = true;
+    noctisDocumentsPaginationSummary.textContent = `Showing ${totalCount ? `1-${totalCount}` : '0-0'} of ${totalCount} documents`;
+    return;
+  }
+
+  const totalPages = getNoctisDocumentsTotalPages(totalCount);
+  const from = (noctisDocumentsPage - 1) * NOCTIS_DOCUMENTS_PAGE_SIZE + 1;
+  const to = Math.min(from + NOCTIS_DOCUMENTS_PAGE_SIZE - 1, totalCount);
+  const previousButton = document.createElement('button');
+  const pageIndicator = document.createElement('span');
+  const nextButton = document.createElement('button');
+
+  noctisDocumentsPaginationSummary.textContent = `Showing ${from}-${to} of ${totalCount} documents`;
+
+  previousButton.className = 'admin-pagination__button';
+  previousButton.type = 'button';
+  previousButton.textContent = 'Previous';
+  previousButton.disabled = noctisDocumentsPage <= 1;
+  previousButton.addEventListener('click', () => {
+    if (noctisDocumentsPage > 1) {
+      noctisDocumentsPage -= 1;
+      applyNoctisDocumentFilters({ resetPage: false });
+    }
+  });
+
+  pageIndicator.className = 'admin-pagination__summary';
+  pageIndicator.textContent = `Page ${noctisDocumentsPage} of ${totalPages}`;
+
+  nextButton.className = 'admin-pagination__button';
+  nextButton.type = 'button';
+  nextButton.textContent = 'Next';
+  nextButton.disabled = noctisDocumentsPage >= totalPages;
+  nextButton.addEventListener('click', () => {
+    if (noctisDocumentsPage < totalPages) {
+      noctisDocumentsPage += 1;
+      applyNoctisDocumentFilters({ resetPage: false });
+    }
+  });
+
+  noctisDocumentsPaginationControls.append(previousButton, pageIndicator, nextButton);
+  noctisDocumentsPagination.hidden = false;
+}
+
+function renderNoctisDocumentRows(rows = noctisDocumentRows) {
+  noctisDocumentsTableBody.replaceChildren();
+
+  if (!rows.length) {
+    setNoctisDocumentsState('No Noctis documents found for these filters.');
+    noctisDocumentsTableWrap.hidden = true;
+    return;
+  }
+
+  rows.forEach((row, index) => {
     const tableRow = document.createElement('tr');
     const actionCell = document.createElement('td');
     const actionGroup = document.createElement('div');
     const viewButton = document.createElement('button');
     const editButton = document.createElement('button');
+    const featureButton = document.createElement('button');
     const publishButton = document.createElement('button');
+    const deleteButton = document.createElement('button');
 
-    appendTextCell(tableRow, 'Title', getJournalTitle(row), 'admin-table__title');
-    appendTextCell(tableRow, 'Slug', getJournalSlug(row), 'admin-table__muted');
-    appendTextCell(tableRow, 'Journal Key', getJournalKey(row), 'admin-table__muted');
-    appendTextCell(tableRow, 'Type', getJournalType(row));
-    appendTextCell(tableRow, 'Mode', getJournalMode(row));
-    appendTextCell(tableRow, 'Published', getJournalPublishedState(row));
-    appendTextCell(tableRow, 'Updated', formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated'])));
+    appendNoctisDocumentSummaryCell(tableRow, row);
+    appendTextCell(tableRow, 'Author', getNoctisDocumentAuthorAttribution(row), 'noctis-document-author');
+    appendNoctisDocumentStatusCell(tableRow, row);
+    appendTextCell(tableRow, 'Updated', formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated'])), 'noctis-document-date');
 
-    viewButton.className = 'admin-row-action';
+    viewButton.className = 'admin-row-action admin-row-action--view';
     viewButton.type = 'button';
     viewButton.textContent = 'View';
-    viewButton.addEventListener('click', () => showJournalDetail(index));
+    viewButton.addEventListener('click', () => showNoctisDocumentDetail(row));
 
-    editButton.className = 'admin-row-action';
+    editButton.className = 'admin-row-action admin-row-action--edit';
     editButton.type = 'button';
     editButton.textContent = 'Edit';
-    editButton.addEventListener('click', () => showJournalForm(row));
+    editButton.addEventListener('click', () => showNoctisDocumentForm(row));
 
-    publishButton.className = 'admin-row-action';
+    featureButton.className = 'admin-row-action admin-row-action--feature';
+    featureButton.type = 'button';
+    if (!getNoctisDocumentPublishedBoolean(row)) {
+      featureButton.textContent = 'Publish to Feature';
+      featureButton.disabled = true;
+      featureButton.title = 'Publish this document before featuring it.';
+    } else if (getNoctisDocumentFeaturedBoolean(row)) {
+      featureButton.textContent = 'Current Feature';
+      featureButton.disabled = true;
+      featureButton.setAttribute('aria-current', 'true');
+    } else {
+      featureButton.textContent = 'Make Featured';
+      featureButton.addEventListener('click', () => makeNoctisDocumentFeatured(row, featureButton));
+    }
+
+    publishButton.className = `admin-row-action ${getNoctisDocumentPublishedBoolean(row) ? 'admin-row-action--unpublish' : 'admin-row-action--publish'}`;
     publishButton.type = 'button';
-    publishButton.textContent = getJournalPublishedBoolean(row) ? 'Unpublish' : 'Publish';
-    publishButton.addEventListener('click', () => toggleJournalPublished(row, publishButton));
+    publishButton.textContent = getNoctisDocumentPublishedBoolean(row) ? 'Unpublish' : 'Publish';
+    publishButton.addEventListener('click', () => toggleNoctisDocumentPublished(row, publishButton));
 
-    actionGroup.className = 'admin-action-group';
-    actionCell.dataset.label = 'Action';
-    actionGroup.append(viewButton, editButton, publishButton);
+    deleteButton.className = 'admin-row-action admin-row-action--delete';
+    deleteButton.type = 'button';
+    deleteButton.textContent = 'Delete';
+    deleteButton.addEventListener('click', () => deleteNoctisDocument(row, deleteButton));
+
+    const primaryActionRow = document.createElement('div');
+    const featureActionRow = document.createElement('div');
+    const statusActionRow = document.createElement('div');
+
+    actionGroup.className = 'admin-action-group noctis-doc-actions';
+    primaryActionRow.className = 'noctis-doc-actions__row';
+    featureActionRow.className = 'noctis-doc-actions__row noctis-doc-actions__row--feature';
+    statusActionRow.className = 'noctis-doc-actions__row';
+    actionCell.dataset.label = 'Actions';
+    primaryActionRow.append(viewButton, editButton);
+    featureActionRow.append(featureButton);
+    statusActionRow.append(publishButton, deleteButton);
+    actionGroup.append(primaryActionRow, featureActionRow, statusActionRow);
     actionCell.append(actionGroup);
     tableRow.append(actionCell);
-    journalsTableBody.append(tableRow);
+    noctisDocumentsTableBody.append(tableRow);
+  });
+
+  noctisDocumentsState.hidden = true;
+  noctisDocumentsTableWrap.hidden = false;
+}
+
+function renderNoctisDocuments(rows = noctisDocumentRows) {
+  renderNoctisDocumentRows(rows);
+}
+
+function getNoctisDocumentFilterValue(filterName) {
+  const field = noctisDocumentFilters.find((filter) => filter.dataset.noctisDocumentFilter === filterName);
+
+  if (filterName === 'search') {
+    return isAllFilterValue(field?.value) ? '' : field?.value || '';
+  }
+
+  return isAllFilterValue(field?.value) ? '__all' : field?.value || '__all';
+}
+
+function getNoctisDocumentSearchText(row) {
+  return [
+    getNoctisDocumentTitle(row),
+    getNoctisDocumentAuthor(row),
+    getNoctisDocumentAttribution(row),
+    getNoctisDocumentShelfMark(row),
+    getNoctisDocumentBody(row),
+    getNoctisDocumentExcerpt(row),
+    getNoctisDocumentTags(row).join(' '),
+    getNoctisDocumentThemes(row).join(' '),
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+
+function getFilteredNoctisDocumentRows() {
+  const query = String(getNoctisDocumentFilterValue('search') || '').trim().toLowerCase();
+  const typeFilter = getNormalizedNoctisDocumentTypeFilterValue(getNoctisDocumentFilterValue('document_type'));
+  const publishedFilter = getNormalizedNoctisDocumentPublishedFilterValue(getNoctisDocumentFilterValue('published'));
+  const modeFilter = getNormalizedNoctisDocumentModeFilterValue(getNoctisDocumentFilterValue('mode'));
+  const bloodMoonFilter = getNormalizedNoctisDocumentBloodMoonFilterValue(getNoctisDocumentFilterValue('blood_moon'));
+
+  return noctisDocumentRows.filter((row) => {
+    if (query && !getNoctisDocumentSearchText(row).includes(query)) {
+      return false;
+    }
+
+    if (typeFilter !== '__all' && getNoctisDocumentType(row) !== typeFilter) {
+      return false;
+    }
+
+    if (publishedFilter === 'published' && !getNoctisDocumentPublishedBoolean(row)) {
+      return false;
+    }
+
+    if (publishedFilter === 'unpublished' && getNoctisDocumentPublishedBoolean(row)) {
+      return false;
+    }
+
+    if (modeFilter !== '__all' && getNoctisDocumentModeForFilter(row) !== modeFilter) {
+      return false;
+    }
+
+    if (bloodMoonFilter === 'blood_moon' && !getNoctisDocumentBloodMoonBoolean(row)) {
+      return false;
+    }
+
+    if (bloodMoonFilter === 'not_blood_moon' && getNoctisDocumentBloodMoonBoolean(row)) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+function getNoctisDocumentActiveFilters() {
+  return {
+    search: String(getNoctisDocumentFilterValue('search') || '').trim(),
+    document_type: getNoctisDocumentFilterValue('document_type'),
+    published: getNoctisDocumentFilterValue('published'),
+    mode: getNoctisDocumentFilterValue('mode'),
+    blood_moon: getNoctisDocumentFilterValue('blood_moon'),
+    normalized: {
+      document_type: getNormalizedNoctisDocumentTypeFilterValue(getNoctisDocumentFilterValue('document_type')),
+      published: getNormalizedNoctisDocumentPublishedFilterValue(getNoctisDocumentFilterValue('published')),
+      mode: getNormalizedNoctisDocumentModeFilterValue(getNoctisDocumentFilterValue('mode')),
+      blood_moon: getNormalizedNoctisDocumentBloodMoonFilterValue(getNoctisDocumentFilterValue('blood_moon')),
+    },
+  };
+}
+
+function areNoctisDocumentFiltersDefault() {
+  return !String(getNoctisDocumentFilterValue('search') || '').trim()
+    && getNormalizedNoctisDocumentTypeFilterValue(getNoctisDocumentFilterValue('document_type')) === '__all'
+    && getNormalizedNoctisDocumentPublishedFilterValue(getNoctisDocumentFilterValue('published')) === '__all'
+    && getNormalizedNoctisDocumentModeFilterValue(getNoctisDocumentFilterValue('mode')) === '__all'
+    && getNormalizedNoctisDocumentBloodMoonFilterValue(getNoctisDocumentFilterValue('blood_moon')) === '__all';
+}
+
+function applyNoctisDocumentFilters({ resetPage = false } = {}) {
+  if (resetPage) {
+    noctisDocumentsPage = 1;
+  }
+
+  const currentFilters = getNoctisDocumentActiveFilters();
+  const filteredRows = getFilteredNoctisDocumentRows();
+
+  if (!filteredRows.length && noctisDocumentRows.length && areNoctisDocumentFiltersDefault()) {
+    resetNoctisDocumentFiltersToDefaults();
+    noctisDocumentsPage = 1;
+    renderNoctisDocuments(getPaginatedNoctisDocumentRows(noctisDocumentRows));
+    renderNoctisDocumentsPagination(noctisDocumentRows.length);
+    return;
+  }
+
+  renderNoctisDocuments(getPaginatedNoctisDocumentRows(filteredRows));
+  renderNoctisDocumentsPagination(filteredRows.length);
+}
+
+function resetNoctisDocumentFiltersToDefaults() {
+  noctisDocumentFilters.forEach((filter) => {
+    if (filter.dataset.noctisDocumentFilter === 'search') {
+      filter.value = '';
+      return;
+    }
+
+    filter.value = '__all';
+  });
+}
+
+function sortNoctisDocumentRows(rows) {
+  return rows.slice().sort((first, second) => {
+    const firstOrder = Number(getFirstValue(first, ['sort_order'])) || 0;
+    const secondOrder = Number(getFirstValue(second, ['sort_order'])) || 0;
+
+    if (firstOrder !== secondOrder) {
+      return firstOrder - secondOrder;
+    }
+
+    const firstUpdated = new Date(getFirstValue(first, ['updated_at', 'created_at']) || 0).getTime();
+    const secondUpdated = new Date(getFirstValue(second, ['updated_at', 'created_at']) || 0).getTime();
+
+    if (firstUpdated !== secondUpdated) {
+      return secondUpdated - firstUpdated;
+    }
+
+    return getNoctisDocumentTitle(first).localeCompare(getNoctisDocumentTitle(second));
+  });
+}
+
+async function fetchNoctisDocumentRows(supabase) {
+  const attempts = [
+    {
+      label: 'sort_order_updated_at',
+      query: () => supabase
+        .from('noctis_documents')
+        .select('*')
+        .order('sort_order', { ascending: true })
+        .order('updated_at', { ascending: false })
+        .limit(500),
+    },
+    {
+      label: 'updated_at',
+      query: () => supabase
+        .from('noctis_documents')
+        .select('*')
+        .order('updated_at', { ascending: false })
+        .limit(500),
+    },
+    {
+      label: 'unordered',
+      query: () => supabase
+        .from('noctis_documents')
+        .select('*')
+        .limit(500),
+    },
+  ];
+  let lastError = null;
+
+  for (const attempt of attempts) {
+    const { data, error } = await attempt.query();
+
+    if (!error) {
+      return { data, error: null };
+    }
+
+    lastError = error;
+  }
+
+  return { data: null, error: lastError };
+}
+
+function logNoctisDocumentQueryError(error) {
+  if (!error) {
+    return;
+  }
+
+  console.error('[Noctis Admin] query failed:', {
+    message: error.message || '',
+    details: error.details || '',
+    hint: error.hint || '',
+    code: error.code || '',
   });
 }
 
@@ -2333,39 +2966,47 @@ function appendDetailChip(container, label, value) {
   container.append(chip);
 }
 
-function showJournalDetail(index) {
-  const row = journalRows[index];
+function showNoctisDocumentDetail(rowOrIndex) {
+  const row = typeof rowOrIndex === 'number' ? noctisDocumentRows[rowOrIndex] : rowOrIndex;
 
   if (!row) {
     return;
   }
 
-  journalDetailTitle.textContent = getJournalTitle(row);
-  journalDetailMeta.replaceChildren();
-  journalDetailFields.replaceChildren();
-  journalDetailBody.textContent = getJournalBody(row);
+  noctisDocumentDetailTitle.textContent = getNoctisDocumentTitle(row);
+  noctisDocumentDetailMeta.replaceChildren();
+  noctisDocumentDetailFields.replaceChildren();
+  noctisDocumentDetailBody.textContent = getNoctisDocumentBody(row);
 
-  appendDetailChip(journalDetailMeta, 'Published', getJournalPublishedState(row));
-  appendDetailChip(journalDetailMeta, 'Type', getJournalType(row));
-  appendDetailChip(journalDetailMeta, 'Mode', getJournalMode(row));
-  appendDetailChip(journalDetailMeta, 'Slug', getJournalSlug(row));
-  appendDetailChip(journalDetailMeta, 'Key', getJournalKey(row));
-  appendDetailField(journalDetailFields, 'Slug', getJournalSlug(row));
-  appendDetailField(journalDetailFields, 'Journal Key', getJournalKey(row));
-  appendDetailField(journalDetailFields, 'Type', getJournalType(row));
-  appendDetailField(journalDetailFields, 'Mode', getJournalMode(row));
-  appendDetailField(journalDetailFields, 'Published', getJournalPublishedState(row));
-  appendDetailField(journalDetailFields, 'Source', formatValue(getFirstValue(row, ['source', 'origin', 'author'])));
-  appendDetailField(journalDetailFields, 'Created', formatDate(getFirstValue(row, ['created_at', 'inserted_at'])));
-  appendDetailField(journalDetailFields, 'Updated', formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated'])));
-  appendDetailField(journalDetailFields, 'Metadata', formatValue(getFirstValue(row, ['metadata', 'meta', 'settings'])));
+  appendDetailChip(noctisDocumentDetailMeta, 'Published', getNoctisDocumentPublishedState(row));
+  appendDetailChip(noctisDocumentDetailMeta, 'Type', getNoctisDocumentType(row));
+  appendDetailChip(noctisDocumentDetailMeta, 'Mode', getNoctisDocumentMode(row));
+  appendDetailChip(noctisDocumentDetailMeta, 'Slug', getNoctisDocumentSlug(row));
+  appendDetailChip(noctisDocumentDetailMeta, 'Shelf Mark', getNoctisDocumentShelfMark(row));
+  appendDetailField(noctisDocumentDetailFields, 'Slug', getNoctisDocumentSlug(row));
+  appendDetailField(noctisDocumentDetailFields, 'Shelf Mark', getNoctisDocumentShelfMark(row));
+  appendDetailField(noctisDocumentDetailFields, 'Type', getNoctisDocumentType(row));
+  appendDetailField(noctisDocumentDetailFields, 'Category Label', getNoctisDocumentArchiveSection(row));
+  appendDetailField(noctisDocumentDetailFields, 'Author', getNoctisDocumentAuthor(row));
+  appendDetailField(noctisDocumentDetailFields, 'Attribution', getNoctisDocumentAttribution(row));
+  appendDetailField(noctisDocumentDetailFields, 'Mode', getNoctisDocumentMode(row));
+  appendDetailField(noctisDocumentDetailFields, 'Published', getNoctisDocumentPublishedState(row));
+  appendDetailField(noctisDocumentDetailFields, 'Featured / Notable', getNoctisDocumentFeaturedNotableState(row));
+  appendDetailField(noctisDocumentDetailFields, 'Blood Moon', getNoctisDocumentBloodMoonBoolean(row) ? 'Yes' : 'No');
+  appendDetailField(noctisDocumentDetailFields, 'Tags', formatAdminList(getNoctisDocumentTags(row)) || '--');
+  appendDetailField(noctisDocumentDetailFields, 'Themes', formatAdminList(getNoctisDocumentThemes(row)) || '--');
+  appendDetailField(noctisDocumentDetailFields, 'Unlock Key', formatValue(getFirstValue(row, ['unlock_key'])));
+  appendDetailField(noctisDocumentDetailFields, 'Required Artifact', formatValue(getFirstValue(row, ['required_artifact_key'])));
+  appendDetailField(noctisDocumentDetailFields, 'Required Fragment', formatValue(getFirstValue(row, ['required_fragment_key'])));
+  appendDetailField(noctisDocumentDetailFields, 'Created', formatDate(getFirstValue(row, ['created_at', 'inserted_at'])));
+  appendDetailField(noctisDocumentDetailFields, 'Updated', formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated'])));
 
-  journalDetail.hidden = false;
-  journalDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  noctisDocumentDetail.hidden = false;
+  noctisDocumentDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function setJournalFormValue(fieldName, value) {
-  const field = journalForm.elements[fieldName];
+function setNoctisDocumentFormValue(fieldName, value) {
+  const field = noctisDocumentForm.elements[fieldName];
 
   if (!field) {
     return;
@@ -2379,48 +3020,75 @@ function setJournalFormValue(fieldName, value) {
   field.value = value && value !== '--' ? value : '';
 }
 
-function showJournalForm(row = null) {
-  hideJournalDetail();
-  hideJournalFormState();
-  journalForm.reset();
+function showNoctisDocumentForm(row = null) {
+  hideNoctisDocumentDetail();
+  hideNoctisDocumentFormState();
+  noctisDocumentForm.reset();
 
   if (row) {
-    editingJournalId = getJournalId(row);
-    journalFormTitle.textContent = 'Edit Journal';
-    journalFormSubmitButton.textContent = 'Save Changes';
-    setJournalFormValue('title', getJournalTitle(row));
-    setJournalFormValue('slug', getJournalSlug(row));
-    setJournalFormValue('journal_type', getJournalType(row));
-    setJournalFormValue('archive_section', getJournalArchiveSection(row));
-    setJournalFormValue('theme_mode', getJournalThemeMode(row));
-    setJournalFormValue('excerpt', getJournalExcerpt(row));
-    setJournalFormValue('body', getJournalBody(row));
-    setJournalFormValue('related_character', getJournalRelatedCharacter(row));
-    setJournalFormValue('is_published', getJournalPublishedBoolean(row));
-    setJournalFormValue('sort_order', getJournalSortOrder(row));
+    editingNoctisDocumentId = getNoctisDocumentId(row);
+    noctisDocumentFormTitle.textContent = 'Edit Document';
+    noctisDocumentFormSubmitButton.textContent = 'Save Changes';
+    setNoctisDocumentFormValue('title', getNoctisDocumentTitle(row));
+    setNoctisDocumentFormValue('slug', getNoctisDocumentSlug(row));
+    setNoctisDocumentFormValue('document_type', getNoctisDocumentType(row));
+    setNoctisDocumentFormValue('category_label', getNoctisDocumentArchiveSection(row));
+    setNoctisDocumentFormValue('author', getNoctisDocumentAuthor(row));
+    setNoctisDocumentFormValue('attribution', getNoctisDocumentAttribution(row));
+    setNoctisDocumentFormValue('shelf_mark', getNoctisDocumentShelfMark(row));
+    setNoctisDocumentFormValue('excerpt', getNoctisDocumentExcerpt(row));
+    setNoctisDocumentFormValue('body', getNoctisDocumentBody(row));
+    setNoctisDocumentFormValue('tags', formatAdminList(getNoctisDocumentTags(row)));
+    setNoctisDocumentFormValue('themes', formatAdminList(getNoctisDocumentThemes(row)));
+    setNoctisDocumentFormValue('mode', getNoctisDocumentMode(row) === '--' ? 'blood_moon' : getNoctisDocumentMode(row));
+    setNoctisDocumentFormValue('is_published', getNoctisDocumentPublishedBoolean(row));
+    setNoctisDocumentFormValue('is_featured', getNoctisDocumentFeaturedBoolean(row));
+    setNoctisDocumentFormValue('is_notable', getNoctisDocumentNotableBoolean(row));
+    setNoctisDocumentFormValue('is_blood_moon', getNoctisDocumentBloodMoonBoolean(row));
+    setNoctisDocumentFormValue('sort_order', getNoctisDocumentSortOrder(row));
+    setNoctisDocumentFormValue('unlock_key', formatValue(getFirstValue(row, ['unlock_key'])));
+    setNoctisDocumentFormValue('required_artifact_key', formatValue(getFirstValue(row, ['required_artifact_key'])));
+    setNoctisDocumentFormValue('required_fragment_key', formatValue(getFirstValue(row, ['required_fragment_key'])));
   } else {
-    editingJournalId = null;
-    journalFormTitle.textContent = 'New Journal';
-    journalFormSubmitButton.textContent = 'Create Journal';
+    editingNoctisDocumentId = null;
+    noctisDocumentFormTitle.textContent = 'New Document';
+    noctisDocumentFormSubmitButton.textContent = 'Create Document';
+    setNoctisDocumentFormValue('document_type', 'journal');
+    setNoctisDocumentFormValue('mode', 'blood_moon');
   }
 
-  journalFormPanel.hidden = false;
-  journalForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  noctisDocumentFormPanel.hidden = false;
+  noctisDocumentForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function getJournalFormPayload() {
-  const formData = new FormData(journalForm);
+function getNoctisDocumentFormPayload() {
+  const formData = new FormData(noctisDocumentForm);
   const sortOrderValue = String(formData.get('sort_order') || '').trim();
+  const title = String(formData.get('title') || '').trim();
+  const documentType = normalizeNoctisDocumentType(formData.get('document_type'));
+  const mode = String(formData.get('mode') || 'blood_moon').trim() || 'blood_moon';
   const payload = {
-    title: String(formData.get('title') || '').trim(),
-    slug: String(formData.get('slug') || '').trim(),
-    journal_type: String(formData.get('journal_type') || '').trim() || null,
-    archive_section: String(formData.get('archive_section') || '').trim() || null,
-    theme_mode: String(formData.get('theme_mode') || '').trim() || null,
+    title,
+    slug: String(formData.get('slug') || '').trim() || toKebabCase(title),
+    document_type: documentType,
+    category_label: String(formData.get('category_label') || '').trim() || null,
+    category: getNoctisDocumentCategory(documentType),
+    author: String(formData.get('author') || '').trim() || null,
+    attribution: String(formData.get('attribution') || '').trim() || null,
+    shelf_mark: String(formData.get('shelf_mark') || '').trim() || null,
     excerpt: String(formData.get('excerpt') || '').trim() || null,
     body: String(formData.get('body') || '').trim(),
-    related_character: String(formData.get('related_character') || '').trim() || null,
+    tags: parseAdminList(formData.get('tags')),
+    themes: parseAdminList(formData.get('themes')),
+    mode,
+    moon_phase: mode,
     is_published: formData.has('is_published'),
+    is_featured: formData.has('is_featured'),
+    is_notable: formData.has('is_notable'),
+    is_blood_moon: formData.has('is_blood_moon') || mode === 'blood_moon' || documentType === 'blood_moon',
+    unlock_key: String(formData.get('unlock_key') || '').trim() || null,
+    required_artifact_key: String(formData.get('required_artifact_key') || '').trim() || null,
+    required_fragment_key: String(formData.get('required_fragment_key') || '').trim() || null,
   };
 
   if (sortOrderValue !== '') {
@@ -2434,15 +3102,15 @@ function getJournalFormPayload() {
   return payload;
 }
 
-function validateJournalPayload(payload) {
+function validateNoctisDocumentPayload(payload) {
   const missingFields = [];
 
   if (!payload.title) {
     missingFields.push('title');
   }
 
-  if (!payload.slug) {
-    missingFields.push('slug');
+  if (!payload.document_type) {
+    missingFields.push('document_type');
   }
 
   if (!payload.body) {
@@ -2452,84 +3120,168 @@ function validateJournalPayload(payload) {
   return missingFields;
 }
 
-async function refreshJournals(message = '') {
-  journalsLoaded = false;
-  hideJournalDetail();
-  await loadJournals();
+async function refreshNoctisDocuments(message = '') {
+  noctisDocumentsLoaded = false;
+  hideNoctisDocumentDetail();
+  await loadNoctisDocuments();
 
   if (message) {
-    setJournalsState(message, 'success');
+    setNoctisDocumentsState(message, 'success');
   }
 }
 
-async function handleJournalFormSubmit(event) {
-  event.preventDefault();
-
-  const payload = getJournalFormPayload();
-  const missingFields = validateJournalPayload(payload);
-
-  if (missingFields.length) {
-    setJournalFormState(`Please fill in required fields: ${missingFields.join(', ')}.`, 'error');
-    return;
-  }
-
+async function makeNoctisDocumentFeatured(row, button) {
+  const documentId = getNoctisDocumentId(row);
   const supabase = getSupabaseClient();
 
-  if (!supabase) {
-    setJournalFormState('Journals cannot be saved because the archive connection is not configured.', 'error');
+  if (!documentId) {
+    setNoctisDocumentsState('This document cannot be featured because it is missing an id.', 'error');
     return;
   }
 
-  journalFormSubmitButton.disabled = true;
-  setJournalFormState(editingJournalId ? 'Saving journal changes...' : 'Creating journal...');
-
-  const query = editingJournalId
-    ? supabase.from('journals').update(payload).eq('id', editingJournalId).select('*').single()
-    : supabase.from('journals').insert(payload).select('*').single();
-
-  const { error } = await query;
-
-  if (error) {
-    journalFormSubmitButton.disabled = false;
-    setJournalFormState(`Journal could not be saved. ${error.message || 'Please try again later.'}`, 'error');
-    return;
-  }
-
-  const successMessage = editingJournalId ? 'Journal updated successfully.' : 'Journal created successfully.';
-  hideJournalForm();
-  await refreshJournals(successMessage);
-}
-
-async function toggleJournalPublished(row, button) {
-  const journalId = getJournalId(row);
-  const supabase = getSupabaseClient();
-
-  if (!journalId) {
-    setJournalsState('This journal cannot be updated because it is missing an id.', 'error');
+  if (!getNoctisDocumentPublishedBoolean(row)) {
+    setNoctisDocumentsState('Publish this document before featuring it.', 'error');
     return;
   }
 
   if (!supabase) {
-    setJournalsState('Journals cannot be updated because the archive connection is not configured.', 'error');
+    setNoctisDocumentsState('Noctis documents cannot be updated because the archive connection is not configured.', 'error');
     return;
   }
 
   button.disabled = true;
-  const nextPublishedState = !getJournalPublishedBoolean(row);
+
+  try {
+    const { error: clearError } = await supabase
+      .from('noctis_documents')
+      .update({ is_featured: false, updated_at: new Date().toISOString() })
+      .neq('id', documentId);
+
+    if (clearError) {
+      throw clearError;
+    }
+
+    const { error: featureError } = await supabase
+      .from('noctis_documents')
+      .update({ is_featured: true, updated_at: new Date().toISOString() })
+      .eq('id', documentId)
+      .select('id')
+      .single();
+
+    if (featureError) {
+      throw featureError;
+    }
+
+    await refreshNoctisDocuments('Featured document updated.');
+  } catch (error) {
+    button.disabled = false;
+    setNoctisDocumentsState(`Featured document could not be updated. ${error.message || 'Please try again later.'}`, 'error');
+    await loadNoctisDocuments();
+  }
+}
+
+async function handleNoctisDocumentFormSubmit(event) {
+  event.preventDefault();
+
+  const payload = getNoctisDocumentFormPayload();
+  const missingFields = validateNoctisDocumentPayload(payload);
+
+  if (missingFields.length) {
+    setNoctisDocumentFormState(`Please fill in required fields: ${missingFields.join(', ')}.`, 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setNoctisDocumentFormState('Noctis documents cannot be saved because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  noctisDocumentFormSubmitButton.disabled = true;
+  setNoctisDocumentFormState(editingNoctisDocumentId ? 'Saving document changes...' : 'Creating document...');
+
+  const query = editingNoctisDocumentId
+    ? supabase.from('noctis_documents').update(payload).eq('id', editingNoctisDocumentId).select('*').single()
+    : supabase.from('noctis_documents').insert(payload).select('*').single();
+
+  const { error } = await query;
+
+  if (error) {
+    noctisDocumentFormSubmitButton.disabled = false;
+    setNoctisDocumentFormState(`Document could not be saved. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  const successMessage = editingNoctisDocumentId ? 'Document updated successfully.' : 'Document created successfully.';
+  hideNoctisDocumentForm();
+  await refreshNoctisDocuments(successMessage);
+}
+
+async function toggleNoctisDocumentPublished(row, button) {
+  const documentId = getNoctisDocumentId(row);
+  const supabase = getSupabaseClient();
+
+  if (!documentId) {
+    setNoctisDocumentsState('This document cannot be updated because it is missing an id.', 'error');
+    return;
+  }
+
+  if (!supabase) {
+    setNoctisDocumentsState('Noctis documents cannot be updated because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  const nextPublishedState = !getNoctisDocumentPublishedBoolean(row);
   const { error } = await supabase
-    .from('journals')
+    .from('noctis_documents')
     .update({ is_published: nextPublishedState })
-    .eq('id', journalId)
+    .eq('id', documentId)
     .select('id')
     .single();
 
   if (error) {
     button.disabled = false;
-    setJournalsState(`Publish status could not be updated. ${error.message || 'Please try again later.'}`, 'error');
+    setNoctisDocumentsState(`Publish status could not be updated. ${error.message || 'Please try again later.'}`, 'error');
     return;
   }
 
-  await refreshJournals(nextPublishedState ? 'Journal published.' : 'Journal unpublished.');
+  await refreshNoctisDocuments(nextPublishedState ? 'Document published.' : 'Document unpublished.');
+}
+
+async function deleteNoctisDocument(row, button) {
+  const documentId = getNoctisDocumentId(row);
+  const title = getNoctisDocumentTitle(row);
+  const supabase = getSupabaseClient();
+
+  if (!documentId) {
+    setNoctisDocumentsState('This document cannot be deleted because it is missing an id.', 'error');
+    return;
+  }
+
+  if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) {
+    return;
+  }
+
+  if (!supabase) {
+    setNoctisDocumentsState('Noctis documents cannot be deleted because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  const { error } = await supabase
+    .from('noctis_documents')
+    .delete()
+    .eq('id', documentId);
+
+  if (error) {
+    button.disabled = false;
+    setNoctisDocumentsState(`Document could not be deleted. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  await refreshNoctisDocuments('Document deleted.');
 }
 
 function setJournalPromptFormValue(fieldName, value) {
@@ -3422,8 +4174,20 @@ function parseAdminList(value) {
     .filter(Boolean);
 }
 
+function normalizeAdminListField(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item || '').trim()).filter(Boolean);
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.values(value).map((item) => String(item || '').trim()).filter(Boolean);
+  }
+
+  return parseAdminList(value);
+}
+
 function formatAdminList(value) {
-  return Array.isArray(value) ? value.join(', ') : '';
+  return normalizeAdminListField(value).join(', ');
 }
 
 function normalizeGalleryAdminValue(value) {
@@ -5087,55 +5851,6 @@ async function toggleVeilwalkerNoteActive(row, button) {
   await toggleVeilwalkerNoteBoolean(row, button, 'is_active', getVeilwalkerNoteActiveBoolean, 'Veilwalker note activated.', 'Veilwalker note deactivated.');
 }
 
-function renderVeilwalkerRows(rows) {
-  veilwalkersTableBody.replaceChildren();
-
-  rows.forEach((row, index) => {
-    const tableRow = document.createElement('tr');
-    const actionCell = document.createElement('td');
-    const actionGroup = document.createElement('div');
-    const viewButton = document.createElement('button');
-    const editButton = document.createElement('button');
-    const activeButton = document.createElement('button');
-
-    appendTextCell(tableRow, 'Key', getVeilwalkerKey(row), 'admin-table__muted');
-    appendTextCell(tableRow, 'Name', getVeilwalkerName(row), 'admin-table__title');
-    appendTextCell(tableRow, 'Zodiac', getVeilwalkerZodiac(row));
-    appendTextCell(tableRow, 'Element', getVeilwalkerElement(row));
-    appendTextCell(tableRow, 'Title', getVeilwalkerTitle(row));
-    appendTextCell(tableRow, 'Mode', getVeilwalkerMode(row));
-    appendTextCell(tableRow, 'Active', getVeilwalkerActiveState(row));
-    appendTextCell(tableRow, 'Sort', getVeilwalkerSortOrder(row));
-
-    viewButton.className = 'admin-row-action';
-    viewButton.type = 'button';
-    viewButton.textContent = 'View';
-    viewButton.addEventListener('click', () => showVeilwalkerDetail(index));
-
-    editButton.className = 'admin-row-action';
-    editButton.type = 'button';
-    editButton.textContent = 'Edit';
-    editButton.addEventListener('click', () => showVeilwalkerForm(row));
-
-    activeButton.className = 'admin-row-action';
-    activeButton.type = 'button';
-    activeButton.textContent = getVeilwalkerActiveBoolean(row) ? 'Deactivate' : 'Activate';
-    activeButton.addEventListener('click', () => toggleVeilwalkerActive(row, activeButton));
-
-    actionGroup.className = 'admin-action-group';
-    actionCell.dataset.label = 'Action';
-    actionGroup.append(viewButton, editButton);
-
-    if (Object.prototype.hasOwnProperty.call(row, 'is_active')) {
-      actionGroup.append(activeButton);
-    }
-
-    actionCell.append(actionGroup);
-    tableRow.append(actionCell);
-    veilwalkersTableBody.append(tableRow);
-  });
-}
-
 function appendImagePreview(container, label, value) {
   if (!value || value === '--') {
     return;
@@ -5166,61 +5881,6 @@ function appendImagePreview(container, label, value) {
 
   preview.append(labelElement, image, link);
   container.append(preview);
-}
-
-function showVeilwalkerDetail(index) {
-  const row = veilwalkerRows[index];
-
-  if (!row) {
-    return;
-  }
-
-  veilwalkerDetailTitle.textContent = getVeilwalkerName(row);
-  veilwalkerDetailMeta.replaceChildren();
-  veilwalkerDetailFields.replaceChildren();
-  veilwalkerDetailImages.replaceChildren();
-  veilwalkerDetailBody.textContent = getVeilwalkerDescription(row);
-
-  appendDetailChip(veilwalkerDetailMeta, 'Zodiac', getVeilwalkerZodiac(row));
-  appendDetailChip(veilwalkerDetailMeta, 'Element', getVeilwalkerElement(row));
-  appendDetailChip(veilwalkerDetailMeta, 'Key', getVeilwalkerKey(row));
-  appendDetailChip(veilwalkerDetailMeta, 'Active', getVeilwalkerActiveState(row));
-  appendDetailField(veilwalkerDetailFields, 'Veilwalker Key', getVeilwalkerKey(row));
-  appendDetailField(veilwalkerDetailFields, 'Zodiac/Sign', getVeilwalkerZodiac(row));
-  appendDetailField(veilwalkerDetailFields, 'Theme Mode', getVeilwalkerThemeMode(row));
-  appendDetailField(veilwalkerDetailFields, 'Form Key', getVeilwalkerFormKey(row));
-  appendDetailField(veilwalkerDetailFields, 'Form Label', getVeilwalkerFormLabel(row));
-  appendDetailField(veilwalkerDetailFields, 'Element', getVeilwalkerElement(row));
-  appendDetailField(veilwalkerDetailFields, 'Symbol', getVeilwalkerSymbol(row));
-  appendDetailField(veilwalkerDetailFields, 'Accent Color', getVeilwalkerAccentColor(row));
-  appendDetailField(veilwalkerDetailFields, 'Glow Color', getVeilwalkerGlowColor(row));
-  appendDetailField(veilwalkerDetailFields, 'Title', getVeilwalkerTitle(row));
-  appendDetailField(veilwalkerDetailFields, 'Short Quote', getVeilwalkerTagline(row));
-  appendDetailField(veilwalkerDetailFields, 'Card Description', getVeilwalkerCardDescription(row));
-  appendDetailField(veilwalkerDetailFields, 'Focus Label', getVeilwalkerFocusLabel(row));
-  appendDetailField(veilwalkerDetailFields, 'Focus Text', getVeilwalkerFocus(row));
-  appendDetailField(veilwalkerDetailFields, 'Traits', getVeilwalkerTraits(row));
-  appendDetailField(veilwalkerDetailFields, 'Mode', getVeilwalkerMode(row));
-  appendDetailField(veilwalkerDetailFields, 'Reading Enabled', getVeilwalkerReadingEnabledState(row));
-  appendDetailField(veilwalkerDetailFields, 'Reading Style', getVeilwalkerReadingStyle(row));
-  appendDetailField(veilwalkerDetailFields, 'Has Profile Note', getVeilwalkerHasProfileNoteState(row));
-  appendDetailField(veilwalkerDetailFields, 'Profile Note Key', getVeilwalkerProfileNoteKey(row));
-  appendDetailField(veilwalkerDetailFields, 'Mystery', getVeilwalkerMysteryState(row));
-  appendDetailField(veilwalkerDetailFields, 'Active', getVeilwalkerActiveState(row));
-  appendDetailField(veilwalkerDetailFields, 'Sort Order', getVeilwalkerSortOrder(row));
-  appendDetailField(veilwalkerDetailFields, 'Created', formatDate(getFirstValue(row, ['created_at', 'inserted_at'])));
-  appendDetailField(veilwalkerDetailFields, 'Updated', formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated'])));
-  appendDetailField(veilwalkerDetailFields, 'Metadata', formatValue(getFirstValue(row, ['metadata', 'meta', 'settings'])));
-
-  appendImagePreview(veilwalkerDetailImages, 'Card Image URL', getVeilwalkerCardImageUrl(row));
-  appendImagePreview(veilwalkerDetailImages, 'Profile Image URL', getVeilwalkerProfileImageUrl(row));
-  appendImagePreview(veilwalkerDetailImages, 'Image URL', getVeilwalkerImageValue(row, 'image_url'));
-  appendImagePreview(veilwalkerDetailImages, 'Phase 1 Image', getVeilwalkerImageValue(row, 'phase1_image'));
-  appendImagePreview(veilwalkerDetailImages, 'Phase 2 Image', getVeilwalkerImageValue(row, 'phase2_image'));
-  appendImagePreview(veilwalkerDetailImages, 'Blood Moon Image', getVeilwalkerImageValue(row, 'blood_moon_image'));
-
-  veilwalkerDetail.hidden = false;
-  veilwalkerDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function formatTraitsForForm(value) {
@@ -5278,163 +5938,6 @@ function updateVeilwalkerProfileNoteOptions() {
   setDatalistOptions(veilwalkerProfileNoteOptions, veilwalkerNoteRows.map((row) => getVeilwalkerNoteKey(row)));
 }
 
-function showVeilwalkerForm(row = null) {
-  hideVeilwalkerDetail();
-  hideVeilwalkerFormState();
-  veilwalkerForm.reset();
-  updateVeilwalkerProfileNoteOptions();
-
-  if (row) {
-    editingVeilwalkerId = getVeilwalkerId(row);
-    veilwalkerFormTitle.textContent = 'Edit Veilwalker';
-    veilwalkerFormSubmitButton.textContent = 'Save Changes';
-    setVeilwalkerFormValue('veilwalker_key', getVeilwalkerKey(row));
-    setVeilwalkerFormValue('zodiac_key', getVeilwalkerZodiac(row));
-    setVeilwalkerFormValue('theme_mode', getVeilwalkerThemeMode(row));
-    setVeilwalkerFormValue('form_key', getVeilwalkerFormKey(row));
-    setVeilwalkerFormValue('display_name', getVeilwalkerName(row));
-    setVeilwalkerFormValue('form_label', getVeilwalkerFormLabel(row));
-    setVeilwalkerFormValue('element', getVeilwalkerElement(row));
-    setVeilwalkerFormValue('symbol', getVeilwalkerSymbol(row));
-    setVeilwalkerFormValue('accent_color', getVeilwalkerAccentColor(row));
-    setVeilwalkerFormValue('glow_color', getVeilwalkerGlowColor(row));
-    setVeilwalkerFormValue('card_image_url', getVeilwalkerCardImageUrl(row));
-    setVeilwalkerFormValue('profile_image_url', getVeilwalkerProfileImageUrl(row));
-    setVeilwalkerFormValue('short_quote', getVeilwalkerTagline(row));
-    setVeilwalkerFormValue('card_description', getVeilwalkerCardDescription(row));
-    setVeilwalkerFormValue('profile_title', getVeilwalkerTitle(row));
-    setVeilwalkerFormValue('profile_body', getVeilwalkerDescription(row));
-    setVeilwalkerFormValue('focus_label', getVeilwalkerFocusLabel(row));
-    setVeilwalkerFormValue('focus_text', getVeilwalkerFocus(row));
-    setVeilwalkerFormValue('traits', formatTraitsForForm(getFirstValue(row, ['traits', 'trait_list'])));
-    setVeilwalkerFormValue('reading_enabled', getVeilwalkerReadingEnabledBoolean(row));
-    setVeilwalkerFormValue('reading_style', getVeilwalkerReadingStyle(row));
-    setVeilwalkerFormValue('has_profile_note', getVeilwalkerHasProfileNoteBoolean(row));
-    setVeilwalkerFormValue('profile_note_key', getVeilwalkerProfileNoteKey(row));
-    setVeilwalkerFormValue('is_mystery', getVeilwalkerMysteryBoolean(row));
-    setVeilwalkerFormValue('is_active', getVeilwalkerActiveBoolean(row));
-    setVeilwalkerFormValue('sort_order', getVeilwalkerSortOrder(row));
-  } else {
-    editingVeilwalkerId = null;
-    veilwalkerFormTitle.textContent = 'New Veilwalker';
-    veilwalkerFormSubmitButton.textContent = 'Create Veilwalker';
-  }
-
-  veilwalkerFormPanel.hidden = false;
-  veilwalkerForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function getVeilwalkerFormPayload() {
-  const formData = new FormData(veilwalkerForm);
-  const sortOrderValue = String(formData.get('sort_order') || '').trim();
-  const { value: traitsValue, error: traitsError } = parseVeilwalkerTraits(formData.get('traits'));
-  const payload = {
-    veilwalker_key: String(formData.get('veilwalker_key') || '').trim(),
-    zodiac_key: String(formData.get('zodiac_key') || '').trim(),
-    theme_mode: String(formData.get('theme_mode') || '').trim() || null,
-    form_key: String(formData.get('form_key') || '').trim() || null,
-    display_name: String(formData.get('display_name') || '').trim(),
-    form_label: String(formData.get('form_label') || '').trim() || null,
-    element: String(formData.get('element') || '').trim() || null,
-    symbol: String(formData.get('symbol') || '').trim() || null,
-    accent_color: String(formData.get('accent_color') || '').trim() || null,
-    glow_color: String(formData.get('glow_color') || '').trim() || null,
-    card_image_url: String(formData.get('card_image_url') || '').trim() || null,
-    profile_image_url: String(formData.get('profile_image_url') || '').trim() || null,
-    short_quote: String(formData.get('short_quote') || '').trim() || null,
-    card_description: String(formData.get('card_description') || '').trim() || null,
-    profile_title: String(formData.get('profile_title') || '').trim() || null,
-    profile_body: String(formData.get('profile_body') || '').trim() || null,
-    focus_label: String(formData.get('focus_label') || '').trim() || null,
-    focus_text: String(formData.get('focus_text') || '').trim() || null,
-    traits: traitsValue,
-    reading_enabled: formData.has('reading_enabled'),
-    reading_style: String(formData.get('reading_style') || '').trim() || null,
-    has_profile_note: formData.has('has_profile_note'),
-    profile_note_key: String(formData.get('profile_note_key') || '').trim() || null,
-    is_mystery: formData.has('is_mystery'),
-    is_active: formData.has('is_active'),
-  };
-
-  if (traitsError) {
-    return { payload, error: traitsError };
-  }
-
-  if (sortOrderValue !== '') {
-    const sortOrder = Number(sortOrderValue);
-
-    if (!Number.isNaN(sortOrder)) {
-      payload.sort_order = sortOrder;
-    }
-  }
-
-  return { payload, error: '' };
-}
-
-function validateVeilwalkerPayload(payload) {
-  const missingFields = [];
-
-  if (!payload.veilwalker_key) {
-    missingFields.push('veilwalker_key');
-  }
-
-  if (!payload.zodiac_key) {
-    missingFields.push('zodiac_key');
-  }
-
-  if (!payload.display_name) {
-    missingFields.push('display_name');
-  }
-
-  return missingFields;
-}
-
-async function runVeilwalkerMutation(supabase, payload) {
-  let nextPayload = { ...payload };
-
-  for (let attempt = 0; attempt < 28; attempt += 1) {
-    const query = editingVeilwalkerId
-      ? supabase.from('veilwalkers').update(nextPayload).eq('id', editingVeilwalkerId).select('*').single()
-      : supabase.from('veilwalkers').insert(nextPayload).select('*').single();
-    const { error } = await query;
-
-    if (!error) {
-      return { error: null };
-    }
-
-    const missingColumn = getMissingSchemaColumn(error, 'veilwalkers');
-
-    if (!missingColumn || !Object.prototype.hasOwnProperty.call(nextPayload, missingColumn)) {
-      return { error };
-    }
-
-    const { [missingColumn]: _removedColumn, ...prunedPayload } = nextPayload;
-    nextPayload = prunedPayload;
-  }
-
-  return { error: new Error('Veilwalker could not be saved because too many optional fields are unavailable.') };
-}
-
-async function veilwalkerKeyExists(supabase, veilwalkerKey) {
-  let query = supabase
-    .from('veilwalkers')
-    .select('id')
-    .eq('veilwalker_key', veilwalkerKey)
-    .limit(1);
-
-  if (editingVeilwalkerId) {
-    query = query.neq('id', editingVeilwalkerId);
-  }
-
-  const { data, error } = await query.maybeSingle();
-
-  if (error) {
-    return { exists: false, error };
-  }
-
-  return { exists: Boolean(data), error: null };
-}
-
 async function refreshVeilwalkers(message = '') {
   veilwalkersLoaded = false;
   hideVeilwalkerDetail();
@@ -5443,60 +5946,6 @@ async function refreshVeilwalkers(message = '') {
   if (message) {
     setVeilwalkersState(message, 'success');
   }
-}
-
-async function handleVeilwalkerFormSubmit(event) {
-  event.preventDefault();
-
-  const { payload, error: parseError } = getVeilwalkerFormPayload();
-
-  if (parseError) {
-    setVeilwalkerFormState(parseError, 'error');
-    return;
-  }
-
-  const missingFields = validateVeilwalkerPayload(payload);
-
-  if (missingFields.length) {
-    setVeilwalkerFormState(`Please fill in required fields: ${missingFields.join(', ')}.`, 'error');
-    return;
-  }
-
-  const supabase = getSupabaseClient();
-
-  if (!supabase) {
-    setVeilwalkerFormState('Veilwalkers cannot be saved because the archive connection is not configured.', 'error');
-    return;
-  }
-
-  veilwalkerFormSubmitButton.disabled = true;
-  setVeilwalkerFormState(editingVeilwalkerId ? 'Saving veilwalker changes...' : 'Creating veilwalker...');
-
-  const { exists, error: duplicateError } = await veilwalkerKeyExists(supabase, payload.veilwalker_key);
-
-  if (duplicateError) {
-    veilwalkerFormSubmitButton.disabled = false;
-    setVeilwalkerFormState(`Veilwalker key could not be checked. ${duplicateError.message || 'Please try again later.'}`, 'error');
-    return;
-  }
-
-  if (exists) {
-    veilwalkerFormSubmitButton.disabled = false;
-    setVeilwalkerFormState('A veilwalker with this veilwalker_key already exists.', 'error');
-    return;
-  }
-
-  const { error } = await runVeilwalkerMutation(supabase, payload);
-
-  if (error) {
-    veilwalkerFormSubmitButton.disabled = false;
-    setVeilwalkerFormState(`Veilwalker could not be saved. ${error.message || 'Please try again later.'}`, 'error');
-    return;
-  }
-
-  const successMessage = editingVeilwalkerId ? 'Veilwalker updated successfully.' : 'Veilwalker created successfully.';
-  hideVeilwalkerForm();
-  await refreshVeilwalkers(successMessage);
 }
 
 async function toggleVeilwalkerActive(row, button) {
@@ -5534,6 +5983,382 @@ async function toggleVeilwalkerActive(row, button) {
   }
 
   await refreshVeilwalkers(nextActiveState ? 'Veilwalker activated.' : 'Veilwalker deactivated.');
+}
+
+const veilwalkerVariantFormGroups = [
+  { prefix: 'oracle', defaultKey: 'oracle', defaultMode: 'normal', defaultPhase: 'phase_1' },
+  { prefix: 'ascendant', defaultKey: 'ascendant', defaultMode: 'normal', defaultPhase: 'phase_2' },
+  { prefix: 'bloodmoon', defaultKey: 'bloodmoon', defaultMode: 'blood_moon', defaultPhase: '' },
+];
+
+function getVeilwalkerVariants(row) {
+  const variants = row?.veilwalker_variants || row?.variants || [];
+  return Array.isArray(variants) ? variants : [];
+}
+
+function getVeilwalkerVariantCount(row) {
+  return String(getVeilwalkerVariants(row).length);
+}
+
+function getVariantForFormGroup(row, config) {
+  return getVeilwalkerVariants(row).find((variant) => (
+    variant?.variant_key === config.defaultKey
+    || (config.defaultPhase && variant?.phase === config.defaultPhase)
+    || (config.defaultMode === 'blood_moon' && variant?.mode === 'blood_moon')
+  )) || null;
+}
+
+function parseVeilwalkerTextList(value) {
+  const trimmedValue = String(value || '').trim();
+
+  if (!trimmedValue) {
+    return [];
+  }
+
+  if (trimmedValue.startsWith('[')) {
+    try {
+      const parsedValue = JSON.parse(trimmedValue);
+      return Array.isArray(parsedValue) ? parsedValue.map((item) => String(item).trim()).filter(Boolean) : [];
+    } catch {
+      return trimmedValue.split(',').map((item) => item.trim()).filter(Boolean);
+    }
+  }
+
+  return trimmedValue.split(',').map((item) => item.trim()).filter(Boolean);
+}
+
+function formatVeilwalkerTextList(value) {
+  return Array.isArray(value) ? value.join(', ') : String(value || '');
+}
+
+function getVeilwalkerFormField(name) {
+  return veilwalkerForm.elements[name] || null;
+}
+
+function setVeilwalkerVariantFormValue(name, value) {
+  const field = getVeilwalkerFormField(name);
+
+  if (!field) {
+    return;
+  }
+
+  if (field.type === 'checkbox') {
+    field.checked = Boolean(value);
+    return;
+  }
+
+  field.value = value || '';
+}
+
+function populateVeilwalkerVariantFormGroup(row, config) {
+  const variant = getVariantForFormGroup(row, config);
+  const prefix = `variant_${config.prefix}`;
+
+  setVeilwalkerVariantFormValue(`${prefix}_id`, variant?.id || '');
+  setVeilwalkerVariantFormValue(`${prefix}_key`, variant?.variant_key || config.defaultKey);
+  setVeilwalkerVariantFormValue(`${prefix}_mode`, variant?.mode || config.defaultMode);
+  setVeilwalkerVariantFormValue(`${prefix}_phase`, variant?.phase || config.defaultPhase);
+  setVeilwalkerVariantFormValue(`${prefix}_title`, variant?.title || '');
+  setVeilwalkerVariantFormValue(`${prefix}_description`, variant?.description || '');
+  setVeilwalkerVariantFormValue(`${prefix}_focus`, variant?.focus || '');
+  setVeilwalkerVariantFormValue(`${prefix}_image_url`, variant?.image_url || '');
+  setVeilwalkerVariantFormValue(`${prefix}_profile_image_url`, variant?.profile_image_url || '');
+  setVeilwalkerVariantFormValue(`${prefix}_traits`, formatVeilwalkerTextList(variant?.traits));
+  setVeilwalkerVariantFormValue(`${prefix}_symbolic_traits`, formatVeilwalkerTextList(variant?.symbolic_traits));
+  setVeilwalkerVariantFormValue(`${prefix}_is_available`, variant ? variant.is_available !== false : true);
+}
+
+function resetVeilwalkerVariantFormGroups() {
+  veilwalkerVariantFormGroups.forEach((config) => populateVeilwalkerVariantFormGroup(null, config));
+}
+
+function getVeilwalkerVariantPayloads(formData) {
+  return veilwalkerVariantFormGroups
+    .map((config, index) => {
+      const prefix = `variant_${config.prefix}`;
+      const variantKey = String(formData.get(`${prefix}_key`) || config.defaultKey).trim();
+      const payload = {
+        id: String(formData.get(`${prefix}_id`) || '').trim() || null,
+        variant_key: variantKey,
+        mode: String(formData.get(`${prefix}_mode`) || config.defaultMode).trim() || 'normal',
+        phase: String(formData.get(`${prefix}_phase`) || '').trim() || null,
+        title: String(formData.get(`${prefix}_title`) || '').trim() || null,
+        subtitle: String(formData.get(`${prefix}_subtitle`) || '').trim() || null,
+        description: String(formData.get(`${prefix}_description`) || '').trim() || null,
+        focus: String(formData.get(`${prefix}_focus`) || '').trim() || null,
+        traits: parseVeilwalkerTextList(formData.get(`${prefix}_traits`)),
+        symbolic_traits: parseVeilwalkerTextList(formData.get(`${prefix}_symbolic_traits`)),
+        image_url: String(formData.get(`${prefix}_image_url`) || '').trim() || null,
+        profile_image_url: String(formData.get(`${prefix}_profile_image_url`) || '').trim() || null,
+        is_available: formData.has(`${prefix}_is_available`),
+        sort_order: index,
+      };
+
+      return payload;
+    })
+    .filter((payload) => payload.variant_key);
+}
+
+function renderVeilwalkerRows(rows) {
+  veilwalkersTableBody.replaceChildren();
+
+  rows.forEach((row, index) => {
+    const tableRow = document.createElement('tr');
+    const actionCell = document.createElement('td');
+    const actionGroup = document.createElement('div');
+    const viewButton = document.createElement('button');
+    const editButton = document.createElement('button');
+    const activeButton = document.createElement('button');
+
+    appendTextCell(tableRow, 'Name', getVeilwalkerName(row), 'admin-table__title');
+    appendTextCell(tableRow, 'Zodiac', getVeilwalkerZodiac(row));
+    appendTextCell(tableRow, 'Element', getVeilwalkerElement(row));
+    appendTextCell(tableRow, 'Active', getVeilwalkerActiveState(row));
+    appendTextCell(tableRow, 'Variants', getVeilwalkerVariantCount(row));
+    appendTextCell(tableRow, 'Sort', getVeilwalkerSortOrder(row));
+
+    viewButton.className = 'admin-row-action';
+    viewButton.type = 'button';
+    viewButton.textContent = 'View';
+    viewButton.addEventListener('click', () => showVeilwalkerDetail(index));
+
+    editButton.className = 'admin-row-action';
+    editButton.type = 'button';
+    editButton.textContent = 'Edit';
+    editButton.addEventListener('click', () => showVeilwalkerForm(row));
+
+    activeButton.className = 'admin-row-action';
+    activeButton.type = 'button';
+    activeButton.textContent = getVeilwalkerActiveBoolean(row) ? 'Deactivate' : 'Activate';
+    activeButton.addEventListener('click', () => toggleVeilwalkerActive(row, activeButton));
+
+    actionGroup.className = 'admin-action-group';
+    actionCell.dataset.label = 'Action';
+    actionGroup.append(viewButton, editButton, activeButton);
+    actionCell.append(actionGroup);
+    tableRow.append(actionCell);
+    veilwalkersTableBody.append(tableRow);
+  });
+}
+
+function showVeilwalkerDetail(index) {
+  const row = veilwalkerRows[index];
+
+  if (!row) {
+    return;
+  }
+
+  veilwalkerDetailTitle.textContent = getVeilwalkerName(row);
+  veilwalkerDetailMeta.replaceChildren();
+  veilwalkerDetailFields.replaceChildren();
+  veilwalkerDetailImages.replaceChildren();
+  veilwalkerDetailBody.replaceChildren();
+
+  appendDetailChip(veilwalkerDetailMeta, 'Zodiac', getVeilwalkerZodiac(row));
+  appendDetailChip(veilwalkerDetailMeta, 'Element', getVeilwalkerElement(row));
+  appendDetailChip(veilwalkerDetailMeta, 'Slug', getVeilwalkerKey(row));
+  appendDetailChip(veilwalkerDetailMeta, 'Active', getVeilwalkerActiveState(row));
+  appendDetailField(veilwalkerDetailFields, 'Slug', getVeilwalkerKey(row));
+  appendDetailField(veilwalkerDetailFields, 'Display Name', getVeilwalkerName(row));
+  appendDetailField(veilwalkerDetailFields, 'Zodiac Sign', getVeilwalkerZodiac(row));
+  appendDetailField(veilwalkerDetailFields, 'Element', getVeilwalkerElement(row));
+  appendDetailField(veilwalkerDetailFields, 'Active', getVeilwalkerActiveState(row));
+  appendDetailField(veilwalkerDetailFields, 'Variant Count', getVeilwalkerVariantCount(row));
+  appendDetailField(veilwalkerDetailFields, 'Sort Order', getVeilwalkerSortOrder(row));
+  appendDetailField(veilwalkerDetailFields, 'Created', formatDate(getFirstValue(row, ['created_at', 'inserted_at'])));
+  appendDetailField(veilwalkerDetailFields, 'Updated', formatDate(getFirstValue(row, ['updated_at', 'modified_at', 'last_updated'])));
+
+  getVeilwalkerVariants(row).forEach((variant) => {
+    const section = document.createElement('section');
+    const title = document.createElement('h4');
+    const description = document.createElement('p');
+
+    title.textContent = `${variant.variant_key || 'variant'} / ${variant.mode || 'normal'}${variant.phase ? ` / ${variant.phase}` : ''}`;
+    description.textContent = variant.description || variant.focus || 'No variant copy yet.';
+    section.append(title, description);
+    veilwalkerDetailBody.append(section);
+
+    appendImagePreview(veilwalkerDetailImages, `${variant.variant_key || 'Variant'} Image`, variant.image_url);
+    appendImagePreview(veilwalkerDetailImages, `${variant.variant_key || 'Variant'} Profile Image`, variant.profile_image_url);
+  });
+
+  veilwalkerDetail.hidden = false;
+  veilwalkerDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showVeilwalkerForm(row = null) {
+  hideVeilwalkerDetail();
+  hideVeilwalkerFormState();
+  veilwalkerForm.reset();
+  resetVeilwalkerVariantFormGroups();
+
+  if (row) {
+    editingVeilwalkerId = getVeilwalkerId(row);
+    veilwalkerFormTitle.textContent = 'Edit Veilwalker';
+    veilwalkerFormSubmitButton.textContent = 'Save Changes';
+    setVeilwalkerFormValue('slug', getFirstValue(row, ['slug', 'veilwalker_key', 'reader_key', 'key']));
+    setVeilwalkerFormValue('display_name', getVeilwalkerName(row));
+    setVeilwalkerFormValue('zodiac_sign', getVeilwalkerZodiac(row));
+    setVeilwalkerFormValue('element', getVeilwalkerElement(row));
+    setVeilwalkerFormValue('sort_order', getVeilwalkerSortOrder(row));
+    setVeilwalkerFormValue('is_active', getVeilwalkerActiveBoolean(row));
+    veilwalkerVariantFormGroups.forEach((config) => populateVeilwalkerVariantFormGroup(row, config));
+  } else {
+    editingVeilwalkerId = null;
+    veilwalkerFormTitle.textContent = 'New Veilwalker';
+    veilwalkerFormSubmitButton.textContent = 'Create Veilwalker';
+    setVeilwalkerFormValue('is_active', true);
+  }
+
+  veilwalkerFormPanel.hidden = false;
+  veilwalkerForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function getVeilwalkerFormPayload() {
+  const formData = new FormData(veilwalkerForm);
+  const sortOrderValue = String(formData.get('sort_order') || '').trim();
+  const basePayload = {
+    slug: String(formData.get('slug') || '').trim(),
+    display_name: String(formData.get('display_name') || '').trim(),
+    zodiac_sign: String(formData.get('zodiac_sign') || '').trim() || null,
+    element: String(formData.get('element') || '').trim() || null,
+    is_active: formData.has('is_active'),
+  };
+
+  if (sortOrderValue !== '') {
+    const sortOrder = Number(sortOrderValue);
+
+    if (!Number.isNaN(sortOrder)) {
+      basePayload.sort_order = sortOrder;
+    }
+  }
+
+  return {
+    payload: {
+      base: basePayload,
+      variants: getVeilwalkerVariantPayloads(formData),
+    },
+    error: '',
+  };
+}
+
+function validateVeilwalkerPayload(payload) {
+  const missingFields = [];
+
+  if (!payload.base.slug) {
+    missingFields.push('slug');
+  }
+
+  if (!payload.base.display_name) {
+    missingFields.push('display_name');
+  }
+
+  return missingFields;
+}
+
+async function runVeilwalkerMutation(supabase, payload) {
+  const baseQuery = editingVeilwalkerId
+    ? supabase.from('veilwalkers').update(payload.base).eq('id', editingVeilwalkerId).select('*').single()
+    : supabase.from('veilwalkers').insert(payload.base).select('*').single();
+  const { data: savedVeilwalker, error: baseError } = await baseQuery;
+
+  if (baseError) {
+    return { error: baseError };
+  }
+
+  const veilwalkerId = savedVeilwalker?.id || editingVeilwalkerId;
+
+  for (const variantPayload of payload.variants) {
+    const { id, ...variantFields } = variantPayload;
+    const mutationPayload = {
+      ...variantFields,
+      veilwalker_id: veilwalkerId,
+    };
+    const variantQuery = id
+      ? supabase.from('veilwalker_variants').update(mutationPayload).eq('id', id).select('id').single()
+      : supabase.from('veilwalker_variants').insert(mutationPayload).select('id').single();
+    const { error: variantError } = await variantQuery;
+
+    if (variantError) {
+      return { error: variantError };
+    }
+  }
+
+  return { error: null };
+}
+
+async function veilwalkerKeyExists(supabase, slug) {
+  let query = supabase
+    .from('veilwalkers')
+    .select('id')
+    .eq('slug', slug)
+    .limit(1);
+
+  if (editingVeilwalkerId) {
+    query = query.neq('id', editingVeilwalkerId);
+  }
+
+  const { data, error } = await query.maybeSingle();
+
+  if (error) {
+    return { exists: false, error };
+  }
+
+  return { exists: Boolean(data), error: null };
+}
+
+async function handleVeilwalkerFormSubmit(event) {
+  event.preventDefault();
+
+  const { payload, error: parseError } = getVeilwalkerFormPayload();
+
+  if (parseError) {
+    setVeilwalkerFormState(parseError, 'error');
+    return;
+  }
+
+  const missingFields = validateVeilwalkerPayload(payload);
+
+  if (missingFields.length) {
+    setVeilwalkerFormState(`Please fill in required fields: ${missingFields.join(', ')}.`, 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setVeilwalkerFormState('Veilwalkers cannot be saved because the archive connection is not configured.', 'error');
+    return;
+  }
+
+  veilwalkerFormSubmitButton.disabled = true;
+  setVeilwalkerFormState(editingVeilwalkerId ? 'Saving veilwalker changes...' : 'Creating veilwalker...');
+
+  const { exists, error: duplicateError } = await veilwalkerKeyExists(supabase, payload.base.slug);
+
+  if (duplicateError) {
+    veilwalkerFormSubmitButton.disabled = false;
+    setVeilwalkerFormState(`Slug could not be checked. ${duplicateError.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  if (exists) {
+    veilwalkerFormSubmitButton.disabled = false;
+    setVeilwalkerFormState('A veilwalker with this slug already exists.', 'error');
+    return;
+  }
+
+  const { error } = await runVeilwalkerMutation(supabase, payload);
+
+  if (error) {
+    veilwalkerFormSubmitButton.disabled = false;
+    setVeilwalkerFormState(`Veilwalker could not be saved. ${error.message || 'Please try again later.'}`, 'error');
+    return;
+  }
+
+  const successMessage = editingVeilwalkerId ? 'Veilwalker updated successfully.' : 'Veilwalker created successfully.';
+  hideVeilwalkerForm();
+  await refreshVeilwalkers(successMessage);
 }
 
 function renderAppSettingRows(rows) {
@@ -5878,6 +6703,425 @@ function setUserProgressCount(tableName, value) {
   countElement.textContent = value;
 }
 
+function getAdminUserSearchText(row) {
+  return [
+    getProfileDisplayName(row),
+    getProfileEmail(row),
+    getProfileRole(row),
+    getProfileAccountStatusLabel(row),
+    getProfileId(row),
+  ].join(' ').toLowerCase();
+}
+
+function getFilteredAdminUserRows() {
+  const search = String(adminUserSearchInput?.value || '').trim().toLowerCase();
+
+  if (!search) {
+    return [...adminUserRows];
+  }
+
+  return adminUserRows.filter((row) => getAdminUserSearchText(row).includes(search));
+}
+
+function getAdminUsersTotalPages(rowCount) {
+  return Math.max(1, Math.ceil(rowCount / ADMIN_USERS_PAGE_SIZE));
+}
+
+function getPaginatedAdminUserRows(rows) {
+  const totalPages = getAdminUsersTotalPages(rows.length);
+  adminUsersCurrentPage = Math.min(Math.max(adminUsersCurrentPage, 1), totalPages);
+  const startIndex = (adminUsersCurrentPage - 1) * ADMIN_USERS_PAGE_SIZE;
+
+  return rows.slice(startIndex, startIndex + ADMIN_USERS_PAGE_SIZE);
+}
+
+function renderAdminUsersPagination(totalCount) {
+  if (!adminUsersPagination || !adminUsersPaginationSummary || !adminUsersPaginationControls) {
+    return;
+  }
+
+  adminUsersPaginationControls.replaceChildren();
+
+  if (!totalCount || totalCount <= ADMIN_USERS_PAGE_SIZE) {
+    adminUsersPagination.hidden = true;
+    adminUsersPaginationSummary.textContent = `Showing ${totalCount ? `1-${totalCount}` : '0-0'} of ${totalCount} users`;
+    return;
+  }
+
+  const totalPages = getAdminUsersTotalPages(totalCount);
+  const from = (adminUsersCurrentPage - 1) * ADMIN_USERS_PAGE_SIZE + 1;
+  const to = Math.min(from + ADMIN_USERS_PAGE_SIZE - 1, totalCount);
+  const previousButton = document.createElement('button');
+  const pageIndicator = document.createElement('span');
+  const nextButton = document.createElement('button');
+
+  adminUsersPaginationSummary.textContent = `Showing ${from}-${to} of ${totalCount} users`;
+
+  previousButton.className = 'admin-pagination__button';
+  previousButton.type = 'button';
+  previousButton.textContent = 'Previous';
+  previousButton.disabled = adminUsersCurrentPage <= 1;
+  previousButton.addEventListener('click', () => {
+    if (adminUsersCurrentPage > 1) {
+      adminUsersCurrentPage -= 1;
+      renderAdminUserRows();
+    }
+  });
+
+  pageIndicator.className = 'admin-pagination__summary';
+  pageIndicator.textContent = `Page ${adminUsersCurrentPage} of ${totalPages}`;
+
+  nextButton.className = 'admin-pagination__button';
+  nextButton.type = 'button';
+  nextButton.textContent = 'Next';
+  nextButton.disabled = adminUsersCurrentPage >= totalPages;
+  nextButton.addEventListener('click', () => {
+    if (adminUsersCurrentPage < totalPages) {
+      adminUsersCurrentPage += 1;
+      renderAdminUserRows();
+    }
+  });
+
+  adminUsersPaginationControls.append(previousButton, pageIndicator, nextButton);
+  adminUsersPagination.hidden = false;
+}
+
+function createAdminUserBadge(label, modifier = '') {
+  const badge = document.createElement('span');
+
+  badge.className = `noctis-document-badge${modifier ? ` noctis-document-badge--${modifier}` : ''}`;
+  badge.textContent = label || '--';
+  return badge;
+}
+
+function getAdminUserInitials(row) {
+  return getInitials(getProfileDisplayName(row) || getProfileEmail(row) || 'User');
+}
+
+function appendAdminUserCell(rowElement, row) {
+  const cell = document.createElement('td');
+  const wrapper = document.createElement('div');
+  const avatar = document.createElement('span');
+  const avatarUrl = getProfileAvatarUrl(row);
+  const text = document.createElement('div');
+  const name = document.createElement('div');
+  const email = document.createElement('div');
+
+  cell.dataset.label = 'User';
+  wrapper.className = 'admin-user-cell';
+  avatar.className = 'admin-user-avatar';
+
+  if (avatarUrl && avatarUrl !== '--') {
+    const image = document.createElement('img');
+
+    image.src = avatarUrl;
+    image.alt = '';
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    image.addEventListener('error', () => {
+      avatar.textContent = getAdminUserInitials(row);
+    }, { once: true });
+    avatar.append(image);
+  } else {
+    avatar.textContent = getAdminUserInitials(row);
+  }
+
+  name.className = 'admin-user-name';
+  name.textContent = getProfileDisplayName(row);
+  email.className = 'admin-user-email';
+  email.textContent = getProfileEmail(row) === '--' ? 'Email unavailable' : getProfileEmail(row);
+  text.append(name, email);
+  wrapper.append(avatar, text);
+  cell.append(wrapper);
+  rowElement.append(cell);
+}
+
+function appendAdminUserBadgeCell(rowElement, label, value, modifier) {
+  const cell = document.createElement('td');
+
+  cell.dataset.label = label;
+  cell.append(createAdminUserBadge(value, modifier));
+  rowElement.append(cell);
+}
+
+function appendAdminUserDateCell(rowElement, row) {
+  const cell = document.createElement('td');
+  const wrapper = document.createElement('div');
+  const created = document.createElement('span');
+  const updated = document.createElement('span');
+
+  cell.dataset.label = 'Joined / Updated';
+  wrapper.className = 'admin-user-date';
+  created.textContent = getProfileCreatedAt(row);
+  updated.className = 'admin-user-date__sub';
+  updated.textContent = `Updated ${getProfileUpdatedAt(row)}`;
+  wrapper.append(created, updated);
+  cell.append(wrapper);
+  rowElement.append(cell);
+}
+
+function renderAdminUserRows() {
+  adminUsersTableBody.replaceChildren();
+  filteredAdminUserRows = getFilteredAdminUserRows();
+  const visibleRows = getPaginatedAdminUserRows(filteredAdminUserRows);
+
+  if (adminUserSearchClearButton) {
+    adminUserSearchClearButton.hidden = !String(adminUserSearchInput?.value || '').trim();
+  }
+
+  visibleRows.forEach((row) => {
+    const tableRow = document.createElement('tr');
+    const actionsCell = document.createElement('td');
+    const actions = document.createElement('div');
+    const viewButton = document.createElement('button');
+    const restrictButton = document.createElement('button');
+    const banButton = document.createElement('button');
+    const restoreButton = document.createElement('button');
+    const rowIndex = adminUserRows.indexOf(row);
+    const status = getProfileAccountStatus(row);
+
+    appendAdminUserCell(tableRow, row);
+    appendAdminUserBadgeCell(tableRow, 'Role', getProfileRole(row), getProfileRole(row) === 'admin' ? 'featured' : '');
+    appendAdminUserBadgeCell(tableRow, 'Status', getProfileAccountStatusLabel(row), status === 'active' ? 'published' : status === 'banned' ? 'blood' : 'draft');
+    appendAdminUserDateCell(tableRow, row);
+    appendTextCell(tableRow, 'User ID', getTruncatedId(getProfileId(row)), 'admin-user-id');
+
+    actions.className = 'admin-action-group';
+    viewButton.className = 'admin-row-action admin-row-action--view';
+    viewButton.type = 'button';
+    viewButton.textContent = 'View User';
+    viewButton.addEventListener('click', () => showAdminUserDetail(rowIndex));
+
+    restrictButton.className = 'admin-row-action admin-row-action--restrict';
+    restrictButton.type = 'button';
+    restrictButton.textContent = 'Restrict';
+    restrictButton.disabled = status === 'restricted';
+    restrictButton.addEventListener('click', () => updateAdminUserAccountStatus(rowIndex, 'restricted'));
+
+    banButton.className = 'admin-row-action admin-row-action--ban';
+    banButton.type = 'button';
+    banButton.textContent = 'Ban';
+    banButton.disabled = status === 'banned';
+    banButton.addEventListener('click', () => updateAdminUserAccountStatus(rowIndex, 'banned'));
+
+    restoreButton.className = 'admin-row-action admin-row-action--restore';
+    restoreButton.type = 'button';
+    restoreButton.textContent = 'Restore Active';
+    restoreButton.addEventListener('click', () => updateAdminUserAccountStatus(rowIndex, 'active'));
+
+    actions.append(viewButton);
+
+    if (status === 'active') {
+      actions.append(restrictButton, banButton);
+    } else if (status === 'restricted') {
+      actions.append(restoreButton, banButton);
+    } else {
+      actions.append(restoreButton);
+    }
+
+    actionsCell.dataset.label = 'Actions';
+    actionsCell.append(actions);
+    tableRow.append(actionsCell);
+    adminUsersTableBody.append(tableRow);
+  });
+
+  if (!filteredAdminUserRows.length) {
+    setAdminUsersState(adminUserRows.length ? 'No users match this search.' : 'No users found.');
+    adminUsersTableWrap.hidden = adminUserRows.length === 0;
+
+    if (adminUsersPagination) {
+      adminUsersPagination.hidden = true;
+    }
+
+    return;
+  }
+
+  renderAdminUsersPagination(filteredAdminUserRows.length);
+  adminUsersState.hidden = true;
+  adminUsersTableWrap.hidden = false;
+}
+
+async function fetchAdminUserAggregateStats(supabase, userId) {
+  const statConfigs = [
+    ['Journal Entries', 'user_journal_entries'],
+    ['Readings', 'user_readings'],
+    ['Artifacts', 'user_artifacts'],
+    ['Gallery Fragments', 'user_gallery_fragments'],
+    ['Room Visits', 'user_room_visits'],
+  ];
+  const results = await Promise.allSettled(
+    statConfigs.map(async ([label, tableName]) => {
+      const { count, error } = await supabase
+        .from(tableName)
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', userId);
+
+      return {
+        label,
+        value: error || typeof count !== 'number' ? '—' : count,
+      };
+    }),
+  );
+
+  return results.map((result, index) => (
+    result.status === 'fulfilled'
+      ? result.value
+      : { label: statConfigs[index][0], value: '—' }
+  ));
+}
+
+async function showAdminUserDetail(index) {
+  const row = adminUserRows[index];
+  const userId = getProfileId(row);
+
+  if (!row || !userId) {
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  adminUserDetailTitle.textContent = getProfileDisplayName(row);
+  adminUserDetail.dataset.userIndex = String(index);
+  adminUserDetailMeta.replaceChildren();
+  adminUserDetailFields.replaceChildren();
+
+  appendDetailChip(adminUserDetailMeta, 'Role', getProfileRole(row));
+  appendDetailChip(adminUserDetailMeta, 'Status', getProfileAccountStatusLabel(row));
+  appendDetailChip(adminUserDetailMeta, 'User ID', getTruncatedId(userId));
+  appendDetailField(adminUserDetailFields, 'Display Name', getProfileDisplayName(row));
+  appendDetailField(adminUserDetailFields, 'Email', getProfileEmail(row));
+  appendDetailField(adminUserDetailFields, 'Role', getProfileRole(row));
+  appendDetailField(adminUserDetailFields, 'Account Status', getProfileAccountStatusLabel(row));
+  appendDetailField(adminUserDetailFields, 'User ID', formatValue(userId));
+  appendDetailField(adminUserDetailFields, 'Avatar URL', getProfileAvatarUrl(row));
+  appendDetailField(adminUserDetailFields, 'Created', getProfileCreatedAt(row));
+  appendDetailField(adminUserDetailFields, 'Updated', getProfileUpdatedAt(row));
+  appendDetailField(adminUserDetailFields, 'Ban Reason', getProfileBanReason(row));
+  appendDetailField(adminUserDetailFields, 'Banned At', getProfileBannedAt(row));
+  appendDetailField(adminUserDetailFields, 'Banned By', formatValue(getFirstValue(row, ['banned_by'])));
+
+  if (supabase) {
+    const aggregateStats = await fetchAdminUserAggregateStats(supabase, userId);
+
+    aggregateStats.forEach(({ label, value }) => {
+      appendDetailField(adminUserDetailFields, label, formatValue(value));
+    });
+  }
+
+  populateUserModerationForm(row, index);
+  adminUserDetail.hidden = false;
+  adminUserDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function populateUserModerationForm(row, index) {
+  if (!userModerationForm || !userModerationStatusSelect || !userModerationReasonField) {
+    return;
+  }
+
+  const status = getProfileAccountStatus(row);
+  const editableStatus = ['active', 'restricted', 'banned'].includes(status) ? status : 'active';
+
+  userModerationForm.dataset.userIndex = String(index);
+  userModerationStatusSelect.value = editableStatus;
+  userModerationReasonField.value = getFirstValue(row, ['ban_reason']) || '';
+  userModerationForm.hidden = false;
+  hideUserModerationState();
+}
+
+async function updateAdminUserAccountStatus(index, nextStatus, { reason = null } = {}) {
+  const row = adminUserRows[index];
+  const profileId = getProfileId(row);
+  const detailIsOpen = adminUserDetail && !adminUserDetail.hidden;
+  const setModerationFeedback = (message, state = '') => {
+    if (detailIsOpen) {
+      setUserModerationState(message, state);
+      return;
+    }
+
+    setAdminUsersState(message, state);
+  };
+
+  if (!row || !profileId) {
+    setModerationFeedback('Select a user before changing account status.', 'error');
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setModerationFeedback('The archive connection is not configured.', 'error');
+    return null;
+  }
+
+  const normalizedStatus = ['active', 'restricted', 'banned'].includes(nextStatus) ? nextStatus : 'active';
+
+  if (normalizedStatus === 'banned' && getProfileAccountStatus(row) !== 'banned') {
+    const confirmed = window.confirm('This prevents the account from using protected Astral Veil features. Ban this user?');
+
+    if (!confirmed) {
+      return null;
+    }
+  }
+
+  const moderationReason = typeof reason === 'string' ? reason.trim() : getFirstValue(row, ['ban_reason']) || null;
+  const existingBannedAt = getFirstValue(row, ['banned_at']);
+  const payload = {
+    account_status: normalizedStatus,
+    ban_reason: normalizedStatus === 'active' ? null : moderationReason || null,
+    banned_at: normalizedStatus === 'banned' ? existingBannedAt || new Date().toISOString() : null,
+    banned_by: normalizedStatus === 'banned' ? currentAdminUserId : null,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (userModerationSubmitButton) {
+    userModerationSubmitButton.disabled = true;
+  }
+  setModerationFeedback('Saving account status...');
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(payload)
+    .eq('id', profileId)
+    .select('*')
+    .maybeSingle();
+
+  if (userModerationSubmitButton) {
+    userModerationSubmitButton.disabled = false;
+  }
+
+  if (error) {
+    console.error('Account moderation update failed:', error);
+    setModerationFeedback('Account status could not be saved. Check admin RLS policies and try again.', 'error');
+    return;
+  }
+
+  adminUserRows[index] = data || { ...row, ...payload };
+  profileRows = profileRows.map((profileRow) => (
+    getProfileId(profileRow) === profileId ? { ...profileRow, ...adminUserRows[index] } : profileRow
+  ));
+  if (userProgressLoaded) {
+    renderProfileRows(profileRows);
+  }
+  renderAdminUserRows();
+  if (detailIsOpen) {
+    showAdminUserDetail(index);
+  }
+  setModerationFeedback('Account status saved.', 'success');
+  return adminUserRows[index];
+}
+
+async function handleUserModerationSubmit(event) {
+  event.preventDefault();
+
+  if (!userModerationForm || !userModerationStatusSelect || !userModerationReasonField) {
+    return;
+  }
+
+  await updateAdminUserAccountStatus(Number(userModerationForm.dataset.userIndex), userModerationStatusSelect.value, {
+    reason: userModerationReasonField.value,
+  });
+}
+
 function renderProfileRows(rows) {
   userProgressTableBody.replaceChildren();
 
@@ -5888,6 +7132,7 @@ function renderProfileRows(rows) {
 
     appendTextCell(tableRow, 'User', getProfileDisplayName(row), 'admin-table__title');
     appendTextCell(tableRow, 'Role', getProfileRole(row));
+    appendTextCell(tableRow, 'Status', getProfileAccountStatusLabel(row));
     appendTextCell(tableRow, 'Avatar', getProfileAvatarUrl(row), 'admin-table__muted');
     appendTextCell(tableRow, 'User ID', getTruncatedId(getProfileId(row)), 'admin-table__muted');
     appendTextCell(tableRow, 'Created', formatDate(getFirstValue(row, ['created_at', 'inserted_at'])));
@@ -6018,14 +7263,20 @@ async function showUserProgressDetail(index) {
   }
 
   userProgressDetailTitle.textContent = getProfileDisplayName(row);
+  userProgressDetail.dataset.profileIndex = String(index);
   userProgressDetailMeta.replaceChildren();
   userProgressDetailFields.replaceChildren();
   userProgressDetailGroups.replaceChildren();
 
   appendDetailChip(userProgressDetailMeta, 'Role', getProfileRole(row));
+  appendDetailChip(userProgressDetailMeta, 'Status', getProfileAccountStatusLabel(row));
   appendDetailChip(userProgressDetailMeta, 'User ID', getTruncatedId(userId));
   appendDetailField(userProgressDetailFields, 'Display Name', getProfileDisplayName(row));
   appendDetailField(userProgressDetailFields, 'Role', getProfileRole(row));
+  appendDetailField(userProgressDetailFields, 'Account Status', getProfileAccountStatusLabel(row));
+  appendDetailField(userProgressDetailFields, 'Ban Reason', getProfileBanReason(row));
+  appendDetailField(userProgressDetailFields, 'Banned At', getProfileBannedAt(row));
+  appendDetailField(userProgressDetailFields, 'Banned By', formatValue(getFirstValue(row, ['banned_by'])));
   appendDetailField(userProgressDetailFields, 'Avatar URL', getProfileAvatarUrl(row));
   appendDetailField(userProgressDetailFields, 'User ID', formatValue(userId));
   appendDetailField(userProgressDetailFields, 'Created', formatDate(getFirstValue(row, ['created_at', 'inserted_at'])));
@@ -6038,7 +7289,7 @@ async function showUserProgressDetail(index) {
   userProgressDetail.hidden = false;
   userProgressDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  const progressResults = await Promise.all(
+  const progressResults = await Promise.allSettled(
     userProgressSections.map(async (config) => ({
       config,
       result: await fetchUserProgressRows(supabase, config.tableName, userId),
@@ -6047,9 +7298,21 @@ async function showUserProgressDetail(index) {
 
   userProgressDetailGroups.replaceChildren();
 
-  const totalProgressRows = progressResults.reduce((total, { config, result }) => total + renderProgressGroup(config, result), 0);
+  const resolvedProgressResults = progressResults.map((progressResult, index) => {
+    if (progressResult.status === 'fulfilled') {
+      return progressResult.value;
+    }
 
-  if (!totalProgressRows && progressResults.every(({ result }) => !result.error)) {
+    logAdminMetricWarning('User progress detail', progressResult.reason);
+    return {
+      config: userProgressSections[index],
+      result: { rows: [], error: true },
+    };
+  });
+
+  const totalProgressRows = resolvedProgressResults.reduce((total, { config, result }) => total + renderProgressGroup(config, result), 0);
+
+  if (!totalProgressRows && resolvedProgressResults.every(({ result }) => !result.error)) {
     const state = document.createElement('p');
     state.className = 'admin-state';
     state.textContent = 'No progress recorded yet.';
@@ -6057,50 +7320,43 @@ async function showUserProgressDetail(index) {
   }
 }
 
-async function loadJournals() {
-  if (journalsLoaded) {
-    return;
-  }
-
+async function loadNoctisDocuments() {
   const supabase = getSupabaseClient();
 
   if (!supabase) {
-    setJournalsState('Journals are unavailable because the archive connection is not configured.', 'error');
+    setNoctisDocumentsState('Noctis documents are unavailable because the archive connection is not configured.', 'error');
     return;
   }
 
-  setJournalsState('Loading journals...');
-  journalsTableWrap.hidden = true;
-  hideJournalDetail();
-  hideJournalForm();
+  setNoctisDocumentsState('Loading Noctis documents...');
+  noctisDocumentsTableWrap.hidden = true;
+  hideNoctisDocumentDetail();
+  hideNoctisDocumentForm();
 
-  const { data, error } = await supabase
-    .from('journals')
-    .select('*')
-    .limit(100);
+  if (!noctisDocumentFiltersInitialized) {
+    resetNoctisDocumentFiltersToDefaults();
+    noctisDocumentFiltersInitialized = true;
+  }
+
+  const { data, error } = await fetchNoctisDocumentRows(supabase);
 
   if (error) {
-    setJournalsState('Journals could not be loaded. Please try again later.', 'error');
+    logNoctisDocumentQueryError(error);
+    noctisDocumentsPagination.hidden = true;
+    setNoctisDocumentsState('Noctis documents could not be loaded. Please try again later.', 'error');
     return;
   }
 
-  journalRows = Array.isArray(data) ? data : [];
-  journalsLoaded = true;
+  noctisDocumentRows = sortNoctisDocumentRows(Array.isArray(data) ? data : []);
+  noctisDocumentsLoaded = true;
 
-  if (!journalRows.length) {
-    setJournalsState('No journals found.');
+  if (!noctisDocumentRows.length) {
+    noctisDocumentsPagination.hidden = true;
+    setNoctisDocumentsState('No Noctis documents found.');
     return;
   }
 
-  journalRows.sort((firstRow, secondRow) => {
-    const firstDate = new Date(getFirstValue(firstRow, ['updated_at', 'created_at']) || 0).getTime();
-    const secondDate = new Date(getFirstValue(secondRow, ['updated_at', 'created_at']) || 0).getTime();
-    return secondDate - firstDate;
-  });
-
-  renderJournalRows(journalRows);
-  journalsState.hidden = true;
-  journalsTableWrap.hidden = false;
+  applyNoctisDocumentFilters();
 }
 
 async function loadJournalPrompts() {
@@ -6517,7 +7773,7 @@ async function loadVeilwalkers() {
 
   const { data, error } = await supabase
     .from('veilwalkers')
-    .select('*')
+    .select('*, veilwalker_variants(*)')
     .limit(100);
 
   if (error) {
@@ -6598,15 +7854,20 @@ async function loadAppSettings() {
 }
 
 async function loadUserProgressSummary() {
-  const summaryResults = await Promise.all(
+  const summaryResults = await Promise.allSettled(
     userProgressSummaryTables.map(async (tableName) => ({
       tableName,
       count: await fetchTableCount(tableName),
     })),
   );
 
-  summaryResults.forEach(({ tableName, count }) => {
-    setUserProgressCount(tableName, count);
+  summaryResults.forEach((summaryResult) => {
+    if (summaryResult.status !== 'fulfilled') {
+      logAdminMetricWarning('User progress summary', summaryResult.reason);
+      return;
+    }
+
+    setUserProgressCount(summaryResult.value.tableName, summaryResult.value.count);
   });
 }
 
@@ -6659,6 +7920,61 @@ async function loadUserProgress() {
   renderProfileRows(profileRows);
   userProgressState.hidden = true;
   userProgressTableWrap.hidden = false;
+}
+
+async function loadAdminUsers() {
+  if (adminUsersLoaded) {
+    renderAdminUserRows();
+    return;
+  }
+
+  const supabase = getSupabaseClient();
+
+  if (!supabase) {
+    setAdminUsersState('Users are unavailable because the archive connection is not configured.', 'error');
+    if (adminUsersPagination) {
+      adminUsersPagination.hidden = true;
+    }
+    return;
+  }
+
+  setAdminUsersState('Loading users...');
+  adminUsersTableWrap.hidden = true;
+  if (adminUsersPagination) {
+    adminUsersPagination.hidden = true;
+  }
+  hideAdminUserDetail();
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .limit(250);
+
+  if (error) {
+    console.warn('[Astral Veil admin] Users could not be loaded.');
+    setAdminUsersState('Users could not be loaded. Check admin RLS policies and try again.', 'error');
+    if (adminUsersPagination) {
+      adminUsersPagination.hidden = true;
+    }
+    return;
+  }
+
+  adminUserRows = Array.isArray(data) ? data : [];
+  adminUsersLoaded = true;
+  adminUsersCurrentPage = 1;
+
+  adminUserRows.sort((firstRow, secondRow) => {
+    const firstDate = new Date(getFirstValue(firstRow, ['updated_at', 'created_at']) || 0).getTime();
+    const secondDate = new Date(getFirstValue(secondRow, ['updated_at', 'created_at']) || 0).getTime();
+
+    if (firstDate !== secondDate) {
+      return secondDate - firstDate;
+    }
+
+    return getProfileDisplayName(firstRow).localeCompare(getProfileDisplayName(secondRow));
+  });
+
+  renderAdminUserRows();
 }
 
 function showIdentity(user, profile) {
@@ -6723,8 +8039,175 @@ async function fetchTableCount(tableName) {
   return count;
 }
 
+function formatAdminStatValue(value) {
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    return '—';
+  }
+
+  return new Intl.NumberFormat().format(value);
+}
+
+function setOverviewStat(statName, value) {
+  const statElement = overviewStatElements[statName];
+
+  if (!statElement) {
+    return;
+  }
+
+  statElement.textContent = typeof value === 'string' ? value : formatAdminStatValue(value);
+}
+
+function setOverviewStatsLoading() {
+  Object.entries(overviewStatElements).forEach(([statName, statElement]) => {
+    if (!statElement || statName === 'sessionStatus') {
+      return;
+    }
+
+    statElement.textContent = 'Loading...';
+  });
+
+  setOverviewStat('sessionStatus', 'Live');
+}
+
+function logAdminMetricWarning(label, error) {
+  console.warn(`[Astral Veil admin] ${label} unavailable.`, {
+    message: error?.message || '',
+    code: error?.code || '',
+  });
+}
+
+function getSevenDaySinceIso() {
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  return Number.isNaN(since.getTime()) ? '' : since.toISOString();
+}
+
+async function fetchOverviewCount(supabase, tableName, { sinceColumn = '', sinceDate = '' } = {}) {
+  let query = supabase
+    .from(tableName)
+    .select('id', { count: 'exact', head: true });
+
+  if (sinceColumn && sinceDate && !Number.isNaN(new Date(sinceDate).getTime())) {
+    query = query.gte(sinceColumn, sinceDate);
+  }
+
+  const { count, error } = await query;
+
+  if (error || typeof count !== 'number') {
+    logAdminMetricWarning(`Overview stat for ${tableName}`, error);
+    return null;
+  }
+
+  return count;
+}
+
+async function fetchRecentActiveUsersForTable(supabase, config, sinceDate) {
+  if (!sinceDate || Number.isNaN(new Date(sinceDate).getTime())) {
+    return {
+      isAvailable: false,
+      tableName: config.tableName,
+      userIds: [],
+    };
+  }
+
+  for (const timestampColumn of config.timestampColumns) {
+    const { data, error } = await supabase
+      .from(config.tableName)
+      .select('user_id')
+      .gte(timestampColumn, sinceDate)
+      .limit(500);
+
+    if (!error) {
+      return {
+        isAvailable: true,
+        tableName: config.tableName,
+        userIds: (data || []).map((row) => row?.user_id).filter(Boolean),
+      };
+    }
+
+    logAdminMetricWarning(`Active-user source ${config.tableName}.${timestampColumn}`, error);
+  }
+
+  return {
+    isAvailable: false,
+    tableName: config.tableName,
+    userIds: [],
+  };
+}
+
+async function fetchActiveUserCount(supabase, sinceDate) {
+  const activeUserIds = new Set();
+  let availableSourceCount = 0;
+  const results = await Promise.allSettled(
+    adminOverviewActivityTables.map((config) => fetchRecentActiveUsersForTable(supabase, config, sinceDate)),
+  );
+
+  results.forEach((result) => {
+    if (result.status !== 'fulfilled') {
+      return;
+    }
+
+    if (result.value.isAvailable) {
+      availableSourceCount += 1;
+    }
+
+    result.value.userIds.forEach((userId) => {
+      activeUserIds.add(userId);
+    });
+  });
+
+  if (!availableSourceCount) {
+    return null;
+  }
+
+  return activeUserIds.size;
+}
+
+async function loadAdminOverviewStats() {
+  const supabase = getSupabaseClient();
+
+  setOverviewStatsLoading();
+
+  if (!supabase) {
+    ['totalAccounts', 'activeUsers', 'newThisWeek', 'journalEntries', 'savedReadings', 'recoveredArtifacts'].forEach((statName) => {
+      setOverviewStat(statName, '—');
+    });
+    return;
+  }
+
+  const sinceDate = getSevenDaySinceIso();
+  const statLoaders = {
+    totalAccounts: () => fetchOverviewCount(supabase, 'profiles'),
+    activeUsers: () => fetchActiveUserCount(supabase, sinceDate),
+    newThisWeek: () => fetchOverviewCount(supabase, 'profiles', { sinceColumn: 'created_at', sinceDate }),
+    journalEntries: () => fetchOverviewCount(supabase, 'user_journal_entries'),
+    savedReadings: () => fetchOverviewCount(supabase, 'user_readings'),
+    recoveredArtifacts: () => fetchOverviewCount(supabase, 'user_artifacts'),
+  };
+
+  const results = await Promise.allSettled(
+    Object.entries(statLoaders).map(async ([statName, loader]) => ({
+      statName,
+      value: await loader(),
+    })),
+  );
+
+  results.forEach((result) => {
+    if (result.status !== 'fulfilled' || result.value.value === null) {
+      const statName = result.status === 'fulfilled' ? result.value.statName : '';
+
+      if (statName) {
+        setOverviewStat(statName, '—');
+      }
+      return;
+    }
+
+    setOverviewStat(result.value.statName, result.value.value);
+  });
+}
+
 async function loadAdminCounts() {
-  await Promise.all(
+  await Promise.allSettled(
     countTables.map(async (tableName) => {
       const count = await fetchTableCount(tableName);
       setCount(tableName, count);
@@ -6790,9 +8273,14 @@ function bindNavToggle() {
   setSidebarState();
 }
 
+function normalizeAdminViewName(viewName = 'overview') {
+  return String(viewName || 'overview').trim();
+}
+
 function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
-  const availableViews = ['overview', 'journals', 'journal-prompts', 'character-lines', 'contact-messages', 'archive-rooms', 'gallery-records', 'artifacts', 'memory-fragments', 'veilwalkers', 'veilwalker-notes', 'user-progress', 'app-settings'];
-  const normalizedViewName = availableViews.includes(viewName) ? viewName : 'overview';
+  const availableViews = ['overview', 'noctis-documents', 'journal-prompts', 'character-lines', 'contact-messages', 'archive-rooms', 'gallery-records', 'artifacts', 'memory-fragments', 'veilwalkers', 'veilwalker-notes', 'users', 'user-progress', 'app-settings'];
+  const requestedViewName = normalizeAdminViewName(viewName);
+  const normalizedViewName = availableViews.includes(requestedViewName) ? requestedViewName : 'overview';
 
   adminViews.forEach((view) => {
     view.hidden = view.dataset.adminView !== normalizedViewName;
@@ -6806,8 +8294,8 @@ function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
     window.history.pushState(null, '', `#${normalizedViewName}`);
   }
 
-  if (normalizedViewName === 'journals') {
-    loadJournals();
+  if (normalizedViewName === 'noctis-documents') {
+    loadNoctisDocuments();
   }
 
   if (normalizedViewName === 'journal-prompts') {
@@ -6846,6 +8334,10 @@ function setCurrentView(viewName = 'overview', { updateHistory = true } = {}) {
     loadVeilwalkerNotes();
   }
 
+  if (normalizedViewName === 'users') {
+    loadAdminUsers();
+  }
+
   if (normalizedViewName === 'user-progress') {
     loadUserProgress();
   }
@@ -6878,11 +8370,15 @@ function bindViewLinks() {
     }
   });
 
-  journalDetailCloseButton.addEventListener('click', hideJournalDetail);
-  journalNewButton.addEventListener('click', () => showJournalForm());
-  journalForm.addEventListener('submit', handleJournalFormSubmit);
-  journalFormCancelButtons.forEach((button) => {
-    button.addEventListener('click', hideJournalForm);
+  noctisDocumentDetailCloseButton.addEventListener('click', hideNoctisDocumentDetail);
+  noctisDocumentNewButton.addEventListener('click', () => showNoctisDocumentForm());
+  noctisDocumentForm.addEventListener('submit', handleNoctisDocumentFormSubmit);
+  noctisDocumentFormCancelButtons.forEach((button) => {
+    button.addEventListener('click', hideNoctisDocumentForm);
+  });
+  noctisDocumentFilters.forEach((filter) => {
+    filter.addEventListener('input', () => applyNoctisDocumentFilters({ resetPage: true }));
+    filter.addEventListener('change', () => applyNoctisDocumentFilters({ resetPage: true }));
   });
   journalPromptNewButton.addEventListener('click', () => showJournalPromptForm());
   journalPromptForm.addEventListener('submit', handleJournalPromptFormSubmit);
@@ -7012,6 +8508,23 @@ function bindViewLinks() {
     button.addEventListener('click', hideVeilwalkerNoteForm);
   });
   userProgressDetailCloseButton.addEventListener('click', hideUserProgressDetail);
+  adminUserDetailCloseButton?.addEventListener('click', hideAdminUserDetail);
+  adminUserSearchInput?.addEventListener('input', () => {
+    adminUsersCurrentPage = 1;
+    renderAdminUserRows();
+    hideAdminUserDetail();
+  });
+  adminUserSearchClearButton?.addEventListener('click', () => {
+    if (adminUserSearchInput) {
+      adminUserSearchInput.value = '';
+    }
+
+    adminUsersCurrentPage = 1;
+    renderAdminUserRows();
+    hideAdminUserDetail();
+    adminUserSearchInput?.focus();
+  });
+  userModerationForm?.addEventListener('submit', handleUserModerationSubmit);
   appSettingDetailCloseButton.addEventListener('click', hideAppSettingDetail);
   appSettingNewButton.addEventListener('click', () => showAppSettingForm());
   appSettingForm.addEventListener('submit', handleAppSettingFormSubmit);
@@ -7023,51 +8536,126 @@ function bindViewLinks() {
   });
 }
 
-async function initAdminDashboard() {
+function bindAdminDashboardEvents() {
+  if (adminDashboardBindingsInitialized) {
+    return;
+  }
+
   bindSignOutButtons();
   bindNavToggle();
   bindViewLinks();
+  adminDashboardBindingsInitialized = true;
+}
 
-  if (!isSupabaseConfigured()) {
-    adminLayout.classList.remove('is-auth-checking');
-    adminLayout.classList.add('is-access-denied');
-    setAccessMessage('The archive connection is not configured for this environment.', 'error');
-    loginLink.hidden = false;
+function isAdminInitDebugEnabled() {
+  try {
+    return window.localStorage?.getItem('astral_admin_debug') === 'true'
+      || new URLSearchParams(window.location.search).has('debugAdmin');
+  } catch {
+    return false;
+  }
+}
+
+function logAdminInitDebug(label, value) {
+  if (!isAdminInitDebugEnabled()) {
     return;
   }
 
-  const result = await requireAdmin();
+  console.info(`[Astral Veil admin] ${label}:`, value);
+}
 
-  if (!result.authorized) {
-    if (result.reason === 'not_logged_in') {
-      window.location.replace('admin-login.html');
+function logAdminInitError(error) {
+  console.error('Admin init failed:', {
+    message: error?.message || '',
+    code: error?.code || '',
+    details: error?.details || '',
+    hint: error?.hint || '',
+  });
+}
+
+function redirectToAdminLogin() {
+  window.location.replace('admin-login.html');
+}
+
+function showAdminInitError(message) {
+  adminLayout.classList.remove('is-auth-checking');
+  adminLayout.classList.add('is-access-denied');
+  setAccessMessage(message, 'error');
+  loginLink.hidden = false;
+  accessSignOutButton.hidden = true;
+}
+
+async function initAdminDashboard() {
+  try {
+    if (!isSupabaseConfigured()) {
+      showAdminInitError('The archive connection is not configured for this environment.');
       return;
     }
 
-    adminLayout.classList.remove('is-auth-checking');
-    adminLayout.classList.add('is-access-denied');
+    const gateResult = requireAdminGate();
+    logAdminInitDebug('Admin gate present', gateResult.authorized);
 
-    if (result.reason === 'not_admin') {
-      setAccessMessage('Access denied. This account does not have admin access.', 'error');
-      showIdentity(result.user, result.profile);
-      accessSignOutButton.hidden = false;
-      loginLink.hidden = false;
+    if (!gateResult.authorized) {
+      clearAdminVerified();
+      redirectToAdminLogin();
       return;
     }
 
-    setAccessMessage(result.message, 'error');
-    loginLink.hidden = false;
-    return;
+    const supabase = getSupabaseClient();
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError) {
+      throw sessionError;
+    }
+
+    const hasSession = Boolean(sessionData?.session);
+    logAdminInitDebug('Supabase session present', hasSession);
+
+    if (!hasSession) {
+      clearAdminVerified();
+      redirectToAdminLogin();
+      return;
+    }
+
+    const result = await requireAdmin();
+    logAdminInitDebug('Admin profile check passed', Boolean(result?.authorized));
+
+    if (!result?.authorized) {
+      clearAdminVerified();
+
+      if (!result || result.reason === 'not_logged_in' || result.reason === 'not_admin') {
+        redirectToAdminLogin();
+        return;
+      }
+
+      showAdminInitError(result.message || 'Admin access could not be verified.');
+      return;
+    }
+
+    bindAdminDashboardEvents();
+    adminLayout.classList.remove('is-auth-checking', 'is-access-denied');
+    currentAdminUserId = result.user?.id || null;
+    setAccessMessage('Admin access confirmed.', 'success');
+    showIdentity(result.user, result.profile);
+    shell.classList.add('is-visible');
+    statusStrip.hidden = false;
+    signOutButton.hidden = false;
+    setCurrentView(window.location.hash.replace('#', '') || 'overview');
+    Promise.allSettled([
+      loadAdminOverviewStats(),
+      loadAdminCounts(),
+    ]).then((results) => {
+      results.forEach((metricResult) => {
+        if (metricResult.status === 'rejected') {
+          logAdminMetricWarning('Admin startup metric', metricResult.reason);
+        }
+      });
+    });
+  } catch (error) {
+    logAdminInitError(error);
+    clearAdminVerified();
+    showAdminInitError('Admin access could not be verified. Please return to admin login and try again.');
   }
-
-  adminLayout.classList.remove('is-auth-checking', 'is-access-denied');
-  setAccessMessage('Admin access confirmed.', 'success');
-  showIdentity(result.user, result.profile);
-  shell.classList.add('is-visible');
-  statusStrip.hidden = false;
-  signOutButton.hidden = false;
-  setCurrentView(window.location.hash.replace('#', '') || 'overview');
-  await loadAdminCounts();
 }
 
 initAdminDashboard();

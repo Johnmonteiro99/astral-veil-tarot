@@ -535,7 +535,13 @@
     </main>
 
     <script type="module">
-      import { signIn, signOut, isCurrentUserAdmin } from './src/services/auth.js';
+      import {
+        signIn,
+        isCurrentUserAdmin,
+        setAdminVerified,
+        clearAdminVerified,
+        hasAdminVerified,
+      } from './src/services/auth.js';
       import { isSupabaseConfigured } from './src/services/supabase-client.js';
 
       const form = document.querySelector('[data-admin-login-form]');
@@ -552,6 +558,32 @@
         button.disabled = true;
       }
 
+      async function redirectIfAdminGateIsValid() {
+        try {
+          if (!isSupabaseConfigured() || !hasAdminVerified()) {
+            clearAdminVerified();
+            return;
+          }
+
+          const { isAdmin, error } = await isCurrentUserAdmin();
+
+          if (!error && isAdmin) {
+            window.location.replace('admin.html');
+            return;
+          }
+
+          clearAdminVerified();
+        } catch (error) {
+          console.warn('Admin gate recheck failed:', {
+            message: error?.message || '',
+            code: error?.code || '',
+          });
+          clearAdminVerified();
+        }
+      }
+
+      redirectIfAdminGateIsValid();
+
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -562,30 +594,43 @@
         button.disabled = true;
         setMessage('Checking archive access...');
 
-        const { error } = await signIn(email, password);
+        try {
+          const { error } = await signIn(email, password);
 
-        if (error) {
+          if (error) {
+            clearAdminVerified();
+            button.disabled = false;
+            setMessage('We could not open the archive with those credentials. Please check your email and password.', true);
+            return;
+          }
+
+          const { isAdmin, error: profileError } = await isCurrentUserAdmin();
+
+          if (profileError) {
+            clearAdminVerified();
+            button.disabled = false;
+            setMessage('Your account was found, but the admin profile could not be verified.', true);
+            return;
+          }
+
+          if (!isAdmin) {
+            clearAdminVerified();
+            button.disabled = false;
+            setMessage('This account does not have admin access.', true);
+            return;
+          }
+
+          setAdminVerified();
+          window.location.assign('admin.html');
+        } catch (error) {
+          console.error('Admin login failed:', {
+            message: error?.message || '',
+            code: error?.code || '',
+          });
+          clearAdminVerified();
           button.disabled = false;
-          setMessage('We could not open the archive with those credentials. Please check your email and password.', true);
-          return;
+          setMessage('Admin access could not be verified. Please try again.', true);
         }
-
-        const { isAdmin, error: profileError } = await isCurrentUserAdmin();
-
-        if (profileError) {
-          button.disabled = false;
-          setMessage('Your account was found, but the admin profile could not be verified.', true);
-          return;
-        }
-
-        if (!isAdmin) {
-          await signOut();
-          button.disabled = false;
-          setMessage('This account is signed in, but it does not have admin archive access.', true);
-          return;
-        }
-
-        window.location.assign('admin.html');
       });
     </script>
   </body>

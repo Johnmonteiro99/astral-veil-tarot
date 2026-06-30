@@ -1,5 +1,6 @@
-import { getCurrentUserWithProfile } from '../services/auth.js';
+import { getBannedAccountMessage, getCurrentUserWithProfile, isBannedUser, signOut } from '../services/auth.js';
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
+import { checkGalleryFragmentUnlock } from './progression.js';
 
 const returnToStorageKey = 'astralVeilReturnTo';
 const shell = document.querySelector('[data-journal-shell]');
@@ -11,10 +12,15 @@ const message = document.querySelector('[data-journal-message]');
 const greeting = document.querySelector('[data-journal-greeting]');
 const intro = document.querySelector('[data-journal-intro]');
 const promptOfDay = document.querySelector('[data-prompt-of-day]');
+const promptRefreshButton = document.querySelector('[data-prompt-refresh]');
 const mainPrompt = document.querySelector('[data-main-journal-prompt]');
 const checkInLabel = document.querySelector('[data-check-in-label]');
 const checkInHelper = document.querySelector('[data-check-in-helper]');
 const moodSelect = document.querySelector('[data-mood-select]');
+const mobileMoodSelect = document.querySelector('[data-mobile-mood-select]');
+const mobileMoodTrigger = document.querySelector('[data-mobile-mood-trigger]');
+const mobileMoodLabel = document.querySelector('[data-mobile-mood-label]');
+const mobileMoodMenu = document.querySelector('[data-mobile-mood-menu]');
 const tagWrap = document.querySelector('[data-journal-tags]');
 const guidedHelper = document.querySelector('[data-guided-helper]');
 const guidedToggle = document.querySelector('[data-guided-toggle]');
@@ -99,6 +105,7 @@ const journalVibeOptions = [
   { value: 'velvet', label: 'Velvet' },
 ];
 const journalVibeClassPrefix = 'journal-vibe-';
+const journalMobileAccordionQuery = '(max-width: 680px)';
 let currentJournalVibe = 'default';
 
 let activeUser = null;
@@ -107,9 +114,13 @@ let attachedReading = null;
 let activeQuestions = [];
 let confirmedGuidedAnswers = [];
 let questionCursor = 0;
+let promptOfDayCursor = 0;
 let promptRequestToken = 0;
 let messageClearTimer = null;
 let insertedGuidedBlock = '';
+let journalMobileAccordionMedia = null;
+let mobileMoodMedia = null;
+let lastBloodMoonMode = null;
 
 function normalizeJournalVibe(value) {
   return String(value || '').trim().toLowerCase();
@@ -310,6 +321,12 @@ function getJournalMainPromptText() {
 }
 
 function getGreetingText() {
+  if (isBloodMoonMode()) {
+    const name = getDisplayName();
+
+    return name ? `There you are, ${name}.` : 'There you are.';
+  }
+
   const hour = new Date().getHours();
   const name = getDisplayName();
 
@@ -337,7 +354,7 @@ function applyThemeCopy() {
 
   if (intro) {
     intro.textContent = bloodMoon
-      ? 'The quiet parts of you have been waiting to speak.'
+      ? 'The quiet parts of you are done waiting.'
       : 'A quiet place to check in with yourself.';
   }
 
@@ -385,11 +402,159 @@ function applyThemeCopy() {
       ? 'What has already been recorded.'
       : 'A few echoes from your private archive.';
   }
+
+}
+
+function getJournalMobileAccordionMedia() {
+  if (!journalMobileAccordionMedia && typeof window.matchMedia === 'function') {
+    journalMobileAccordionMedia = window.matchMedia(journalMobileAccordionQuery);
+  }
+
+  return journalMobileAccordionMedia;
+}
+
+function isJournalMobileAccordionViewport() {
+  return Boolean(getJournalMobileAccordionMedia()?.matches);
+}
+
+function getMobileMoodMedia() {
+  if (!mobileMoodMedia && typeof window.matchMedia === 'function') {
+    mobileMoodMedia = window.matchMedia(journalMobileAccordionQuery);
+  }
+
+  return mobileMoodMedia;
+}
+
+function isMobileMoodViewport() {
+  return Boolean(getMobileMoodMedia()?.matches);
+}
+
+function refreshMobileMoodControlMode() {
+  const isMobile = isMobileMoodViewport();
+
+  if (moodSelect) {
+    if (isMobile) {
+      moodSelect.setAttribute('tabindex', '-1');
+      moodSelect.setAttribute('aria-hidden', 'true');
+    } else {
+      moodSelect.removeAttribute('tabindex');
+      moodSelect.removeAttribute('aria-hidden');
+    }
+  }
+
+  if (mobileMoodTrigger) {
+    if (isMobile) {
+      mobileMoodTrigger.removeAttribute('tabindex');
+    } else {
+      mobileMoodTrigger.setAttribute('tabindex', '-1');
+      closeMobileMoodMenu();
+    }
+  }
+}
+
+function initializeMobileMoodControlMode() {
+  const media = getMobileMoodMedia();
+
+  if (media) {
+    if (typeof media.addEventListener === 'function') {
+      media.addEventListener('change', refreshMobileMoodControlMode);
+    } else if (typeof media.addListener === 'function') {
+      media.addListener(refreshMobileMoodControlMode);
+    }
+  }
+
+  refreshMobileMoodControlMode();
+}
+
+function initializeJournalModeSync() {
+  lastBloodMoonMode = isBloodMoonMode();
+
+  if (typeof MutationObserver !== 'function') {
+    return;
+  }
+
+  const observer = new MutationObserver(() => {
+    const nextBloodMoonMode = isBloodMoonMode();
+
+    if (nextBloodMoonMode === lastBloodMoonMode) {
+      return;
+    }
+
+    lastBloodMoonMode = nextBloodMoonMode;
+    closeMobileMoodMenu();
+    applyThemeCopy();
+    renderMoodOptions();
+  });
+
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+}
+
+function setJournalMobileAccordionState(section, isOpen) {
+  const trigger = section.querySelector('[data-journal-mobile-accordion-trigger]');
+  const panel = section.querySelector('[data-journal-mobile-accordion-panel]');
+
+  section.classList.toggle('is-mobile-accordion-open', isOpen);
+  trigger?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+  if (panel) {
+    panel.hidden = isJournalMobileAccordionViewport() ? !isOpen : false;
+  }
+}
+
+function refreshJournalMobileAccordions() {
+  const isMobile = isJournalMobileAccordionViewport();
+
+  document.querySelectorAll('[data-journal-mobile-accordion]').forEach((section) => {
+    const defaultOpen = section.dataset.journalMobileAccordionDefault === 'open';
+    const isOpen = section.dataset.journalMobileAccordionOpen
+      ? section.dataset.journalMobileAccordionOpen === 'true'
+      : defaultOpen;
+    const trigger = section.querySelector('[data-journal-mobile-accordion-trigger]');
+    const panel = section.querySelector('[data-journal-mobile-accordion-panel]');
+
+    if (!isMobile) {
+      panel?.removeAttribute('hidden');
+      trigger?.setAttribute('aria-expanded', 'true');
+      section.classList.remove('is-mobile-accordion-open');
+      return;
+    }
+
+    setJournalMobileAccordionState(section, isOpen);
+  });
+}
+
+function initializeJournalMobileAccordions() {
+  document.querySelectorAll('[data-journal-mobile-accordion]').forEach((section) => {
+    const defaultOpen = section.dataset.journalMobileAccordionDefault === 'open';
+
+    section.dataset.journalMobileAccordionOpen = defaultOpen ? 'true' : 'false';
+    section.querySelector('[data-journal-mobile-accordion-trigger]')?.addEventListener('click', () => {
+      const nextOpen = section.dataset.journalMobileAccordionOpen !== 'true';
+      section.dataset.journalMobileAccordionOpen = nextOpen ? 'true' : 'false';
+      setJournalMobileAccordionState(section, nextOpen);
+    });
+  });
+
+  const media = getJournalMobileAccordionMedia();
+
+  if (media) {
+    if (typeof media.addEventListener === 'function') {
+      media.addEventListener('change', refreshJournalMobileAccordions);
+    } else if (typeof media.addListener === 'function') {
+      media.addListener(refreshJournalMobileAccordions);
+    }
+  }
+
+  refreshJournalMobileAccordions();
 }
 
 function setJournalFieldsLocked(isLocked) {
   const fields = journalForm
     ? Array.from(journalForm.querySelectorAll('input, select, textarea, button'))
+      .filter((field) => !field.matches('[data-journal-mobile-accordion-trigger]'))
     : [];
 
   fields.forEach((field) => {
@@ -527,10 +692,89 @@ function renderMoodOptions() {
   }
 
   const options = isBloodMoonMode() ? bloodMoonMoods : sunMoonMoods;
+  const currentMood = options.includes(moodSelect.value) ? moodSelect.value : '';
   moodSelect.innerHTML = [
     '<option value="">Choose a mood</option>',
     ...options.map((mood) => `<option value="${escapeHtml(mood)}">${escapeHtml(mood)}</option>`),
   ].join('');
+  moodSelect.value = currentMood;
+  renderMobileMoodOptions();
+  updateMobileMoodLabel();
+}
+
+function getCurrentMoodOptions() {
+  return isBloodMoonMode() ? bloodMoonMoods : sunMoonMoods;
+}
+
+function updateMobileMoodLabel() {
+  if (!mobileMoodLabel || !moodSelect) {
+    return;
+  }
+
+  mobileMoodLabel.textContent = moodSelect.value || 'Choose a mood';
+}
+
+function closeMobileMoodMenu() {
+  if (!mobileMoodMenu || !mobileMoodTrigger || !mobileMoodSelect) {
+    return;
+  }
+
+  mobileMoodMenu.hidden = true;
+  mobileMoodTrigger.setAttribute('aria-expanded', 'false');
+  mobileMoodSelect.classList.remove('is-open');
+}
+
+function openMobileMoodMenu() {
+  if (!mobileMoodMenu || !mobileMoodTrigger || !mobileMoodSelect) {
+    return;
+  }
+
+  renderMobileMoodOptions();
+  mobileMoodMenu.hidden = false;
+  mobileMoodTrigger.setAttribute('aria-expanded', 'true');
+  mobileMoodSelect.classList.add('is-open');
+}
+
+function toggleMobileMoodMenu() {
+  if (!mobileMoodMenu) {
+    return;
+  }
+
+  if (mobileMoodMenu.hidden) {
+    openMobileMoodMenu();
+  } else {
+    closeMobileMoodMenu();
+  }
+}
+
+function renderMobileMoodOptions() {
+  if (!mobileMoodMenu || !moodSelect) {
+    return;
+  }
+
+  const selectedMood = moodSelect.value;
+
+  mobileMoodMenu.innerHTML = getCurrentMoodOptions().map((mood) => `
+    <button
+      class="journal-mood-select__option"
+      type="button"
+      role="option"
+      aria-selected="${mood === selectedMood ? 'true' : 'false'}"
+      data-mobile-mood-option="${escapeHtml(mood)}"
+    >${escapeHtml(mood)}</button>
+  `).join('');
+}
+
+function handleMoodValueChange() {
+  activeQuestions = [];
+  questionCursor = 0;
+  updateMobileMoodLabel();
+  renderMobileMoodOptions();
+
+  if (guidedToggle?.checked) {
+    guidedToggle.checked = false;
+    removeInsertedGuidedBlock();
+  }
 }
 
 function renderReflectionReminderQuote() {
@@ -979,10 +1223,14 @@ function getPromptFallbackRows(promptType) {
   }
 
   if (promptType === 'prompt_of_day') {
-    return [{
+    const prompts = isBloodMoonMode()
+      ? [fallbackBloodMoonPromptOfDay, ...fallbackBloodMoonQuestions]
+      : [fallbackPromptOfDay, ...fallbackSunMoonQuestions];
+
+    return prompts.map((promptText) => ({
       mood: 'any',
-      prompt_text: isBloodMoonMode() ? fallbackBloodMoonPromptOfDay : fallbackPromptOfDay,
-    }];
+      prompt_text: promptText,
+    }));
   }
 
   if (promptType === 'reading_reflection') {
@@ -1034,6 +1282,42 @@ async function loadPromptOfDay() {
     || (isBloodMoonMode() ? fallbackBloodMoonPromptOfDay : fallbackPromptOfDay);
 
   promptOfDay.textContent = promptText;
+}
+
+async function askAnotherPromptOfDay() {
+  if (!promptOfDay || !promptRefreshButton) {
+    return;
+  }
+
+  promptRefreshButton.disabled = true;
+
+  try {
+    const promptType = attachedReading ? 'reading_reflection' : 'prompt_of_day';
+    const rows = await fetchPromptRows({ promptType, mood: 'any', includeAllMoods: true });
+    const fallbackRows = getPromptFallbackRows(promptType);
+    const promptTexts = [
+      ...getPromptRowsText(rows),
+      ...getPromptRowsText(fallbackRows),
+    ];
+    const uniquePrompts = [...new Set(promptTexts.map((text) => String(text || '').trim()).filter(Boolean))];
+
+    if (!uniquePrompts.length) {
+      return;
+    }
+
+    const currentPrompt = String(promptOfDay.textContent || '').trim();
+    let nextPrompt = uniquePrompts[promptOfDayCursor % uniquePrompts.length];
+
+    if (uniquePrompts.length > 1 && nextPrompt === currentPrompt) {
+      promptOfDayCursor = (promptOfDayCursor + 1) % uniquePrompts.length;
+      nextPrompt = uniquePrompts[promptOfDayCursor % uniquePrompts.length];
+    }
+
+    promptOfDayCursor = (promptOfDayCursor + 1) % uniquePrompts.length;
+    promptOfDay.textContent = nextPrompt;
+  } finally {
+    promptRefreshButton.disabled = false;
+  }
 }
 
 async function chooseQuestions() {
@@ -1641,11 +1925,17 @@ async function handleSubmit(event) {
 
   resetForm();
   setMessage(isBloodMoonMode() ? 'The shadow has been recorded.' : 'Journal entry saved.', 'success');
+  checkGalleryFragmentUnlock('journal_entry_count', '', { user: activeUser, supabase }).catch((error) => {
+    console.warn('[Astral Veil progression] Journal fragment unlock check failed.', error);
+  });
   loadRecentEntries();
 }
 
 async function initJournalPage() {
   initializeJournalVibe();
+  initializeJournalMobileAccordions();
+  initializeMobileMoodControlMode();
+  initializeJournalModeSync();
 
   if (!isSupabaseConfigured()) {
     if (loadingState) {
@@ -1666,6 +1956,18 @@ async function initJournalPage() {
 
   if (!user) {
     lockJournalForSignedOutUser();
+    return;
+  }
+
+  if (isBannedUser(profile)) {
+    await signOut();
+    if (loadingState) {
+      loadingState.textContent = getBannedAccountMessage();
+      loadingState.hidden = false;
+    }
+    if (shell) {
+      shell.hidden = true;
+    }
     return;
   }
 
@@ -1704,12 +2006,34 @@ clearButton?.addEventListener('click', () => {
 });
 
 moodSelect?.addEventListener('change', () => {
-  activeQuestions = [];
-  questionCursor = 0;
-  if (guidedToggle?.checked) {
-    guidedToggle.checked = false;
-    removeInsertedGuidedBlock();
+  handleMoodValueChange();
+});
+
+promptRefreshButton?.addEventListener('click', () => {
+  promptRefreshButton.classList.remove('is-prompt-refreshing');
+  void promptRefreshButton.offsetWidth;
+  promptRefreshButton.classList.add('is-prompt-refreshing');
+  window.setTimeout(() => {
+    promptRefreshButton?.classList.remove('is-prompt-refreshing');
+  }, 560);
+  askAnotherPromptOfDay();
+});
+
+mobileMoodTrigger?.addEventListener('click', () => {
+  toggleMobileMoodMenu();
+});
+
+mobileMoodMenu?.addEventListener('click', (event) => {
+  const option = event.target.closest('[data-mobile-mood-option]');
+
+  if (!option || !moodSelect) {
+    return;
   }
+
+  moodSelect.value = option.dataset.mobileMoodOption || '';
+  moodSelect.dispatchEvent(new Event('change', { bubbles: true }));
+  closeMobileMoodMenu();
+  mobileMoodTrigger?.focus();
 });
 
 guidedToggle?.addEventListener('change', handleGuidedToggleChange);
@@ -1724,7 +2048,22 @@ guidedCancelButtons.forEach((button) => {
   button.addEventListener('click', () => closeGuidedModal());
 });
 guidedModalBackdrop?.addEventListener('click', () => closeGuidedModal());
+document.addEventListener('click', (event) => {
+  if (!mobileMoodSelect || mobileMoodMenu?.hidden) {
+    return;
+  }
+
+  if (!mobileMoodSelect.contains(event.target)) {
+    closeMobileMoodMenu();
+  }
+});
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && mobileMoodMenu && !mobileMoodMenu.hidden) {
+    closeMobileMoodMenu();
+    mobileMoodTrigger?.focus();
+    return;
+  }
+
   if (document.body.classList.contains('journal-locked')) {
     if (event.key === 'Escape') {
       event.preventDefault();

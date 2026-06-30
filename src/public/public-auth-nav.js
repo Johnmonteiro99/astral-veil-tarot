@@ -98,6 +98,18 @@ function createLoginLink(className, datasetValue, { compact = false } = {}) {
   return link;
 }
 
+function getLoginLinkClassName({ mobile = false, compact = false } = {}) {
+  if (compact) {
+    return mobile
+      ? 'navbar-login-link navbar-login-link--mobile'
+      : 'navbar-login-link navbar-login-link--desktop';
+  }
+
+  return mobile
+    ? 'navbar__mobile-link navbar__mobile-link--account navbar-login-link navbar-login-link--mobile'
+    : 'navbar__link navbar__link--account navbar-login-link navbar-login-link--desktop';
+}
+
 function createAuthPlaceholder(mobile = false) {
   const placeholder = document.createElement('span');
 
@@ -209,7 +221,7 @@ function renderPublicAuthMount(mount, view, { mobile = false, compact = false } 
   }
 
   mount.replaceChildren(createLoginLink(
-    compact ? 'navbar-account__button navbar-account__button--login' : (mobile ? 'navbar__mobile-link navbar__mobile-link--account' : 'navbar__link navbar__link--account'),
+    getLoginLinkClassName({ mobile, compact }),
     mobile ? 'mobile' : 'desktop',
     { compact }
   ));

@@ -1,15 +1,18 @@
-import { getCurrentUser } from '../services/auth.js';
+import { getBannedAccountMessage, requireAllowedAccount } from '../services/auth.js';
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
+import { checkGalleryFragmentUnlock } from './progression.js';
 import { loadCurrentUserPreferences } from './user-preferences.js';
 
 const FREE_SAVED_READING_LIMIT = 25;
 
 const readingSaveState = {
   currentReading: null,
+  currentAccount: undefined,
   currentUser: undefined,
   savedReadingIds: new Map(),
   savedReadingKeys: new Set(),
   savingReadingKeys: new Set(),
+  checkedGalleryUnlockReadingKeys: new Set(),
 };
 
 async function getCachedCurrentUser() {
@@ -18,13 +21,15 @@ async function getCachedCurrentUser() {
   }
 
   if (!isSupabaseConfigured()) {
+    readingSaveState.currentAccount = null;
     readingSaveState.currentUser = null;
     return null;
   }
 
-  const { user, error } = await getCurrentUser();
+  const account = await requireAllowedAccount({ signOutBanned: true });
 
-  readingSaveState.currentUser = error ? null : user;
+  readingSaveState.currentAccount = account;
+  readingSaveState.currentUser = account.allowed ? account.user : null;
   return readingSaveState.currentUser;
 }
 
@@ -80,6 +85,14 @@ function renderLoginPrompt(container) {
     <p class="reading-save-panel__prompt">
       Log in to save this reading.
       <a href="auth.html?returnTo=${encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)}">Log in</a>
+    </p>
+  `;
+}
+
+function renderBannedPrompt(container) {
+  container.innerHTML = `
+    <p class="reading-save-panel__prompt reading-save-panel__prompt--error">
+      ${getBannedAccountMessage()}
     </p>
   `;
 }
@@ -189,6 +202,11 @@ async function renderReadingSavePanel() {
 
   const user = await getCachedCurrentUser();
 
+  if (readingSaveState.currentAccount?.reason === 'banned') {
+    renderBannedPrompt(container);
+    return;
+  }
+
   if (!user) {
     renderLoginPrompt(container);
     return;
@@ -214,6 +232,11 @@ async function saveCurrentReading({ redirectToJournal = false } = {}) {
 
   const user = await getCachedCurrentUser();
   const supabase = getSupabaseClient();
+
+  if (readingSaveState.currentAccount?.reason === 'banned') {
+    renderBannedPrompt(container);
+    return null;
+  }
 
   if (!user || !supabase) {
     renderLoginPrompt(container);
@@ -286,6 +309,12 @@ window.addEventListener('astralveil:reading-completed', (event) => {
   }
 
   readingSaveState.currentReading = reading;
+  if (!readingSaveState.checkedGalleryUnlockReadingKeys.has(reading.reading_key)) {
+    readingSaveState.checkedGalleryUnlockReadingKeys.add(reading.reading_key);
+    checkGalleryFragmentUnlock('bloodmoon_zephyra_death_sun', '', { reading }).catch((error) => {
+      console.warn('[Astral Veil progression] Reading fragment unlock check failed.', error);
+    });
+  }
   renderReadingSavePanel();
 });
 
