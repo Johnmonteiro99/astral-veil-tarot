@@ -222,6 +222,10 @@ function renderReaderDetailRows(reader) {
 }
 
 function isReaderBeginReadingAvailable(reader) {
+  if (reader?.id === "zephyra-noctis") {
+    return true;
+  }
+
   return !reader?.requiresBloodMoon || isBloodMoonActive();
 }
 
@@ -451,17 +455,14 @@ function renderFeaturedVeilwalkerSelector() {
   const title = presentation.tagline || presentation.readingStyle || presentation.title || "";
   const canBeginReading = isReaderBeginReadingAvailable(reader);
   const isZephyraReader = reader.id === "zephyra-noctis";
-  const useZephyraLockedStyle = isZephyraReader && !isBloodMoonActive();
+  const useZephyraTheme = isZephyraReader && !isBloodMoonActive();
   const isProtectedVisual = isProtectedReaderVisual(reader, image);
   const protectedMediaClass = isProtectedVisual ? " protected-media" : "";
   const protectedMediaAttrs = isProtectedVisual ? ' data-protected-media="true" draggable="false"' : "";
   const protectedImageAttr = isProtectedVisual ? ' draggable="false"' : "";
-  const unavailableMessage = reader.requiresBloodMoon && !isBloodMoonActive()
-    ? "Available when the Blood Moon opens."
-    : "";
 
   readersPageList.innerHTML = `
-    <article class="veilwalker-feature${useZephyraLockedStyle ? " veilwalker-feature--zephyra" : ""} reader-profile-card--${escapeHtml(reader.id)}${getReaderElementClass(reader)}${getReaderBloodMoonCardClass(reader)}">
+    <article class="veilwalker-feature${useZephyraTheme ? " veilwalker-feature--zephyra" : ""} reader-profile-card--${escapeHtml(reader.id)}${getReaderElementClass(reader)}${getReaderBloodMoonCardClass(reader)}">
       <button class="veilwalker-feature__nav veilwalker-feature__nav--prev" type="button" data-reader-selector-nav="prev" aria-label="Previous Veilwalker">
         <span aria-hidden="true">‹</span>
       </button>
@@ -480,16 +481,13 @@ function renderFeaturedVeilwalkerSelector() {
         <div class="veilwalker-feature__ornament" aria-hidden="true"></div>
         <p class="veilwalker-feature__description">${escapeHtml(summary)}</p>
         ${renderReaderDetailRows(reader)}
-        ${unavailableMessage ? `<p class="veilwalker-feature__unavailable">${escapeHtml(unavailableMessage)}</p>` : ""}
         <div class="veilwalker-feature__actions">
-          <button class="veilwalker-feature__button ${useZephyraLockedStyle ? "veilwalker-feature__button--zephyra-profile" : "veilwalker-feature__button--secondary"}" type="button" data-reader-profile-id="${escapeHtml(reader.id)}">
+          <button class="veilwalker-feature__button veilwalker-feature__button--secondary" type="button" data-reader-profile-id="${escapeHtml(reader.id)}">
             View Profile <span aria-hidden="true">✦</span>
           </button>
-          ${useZephyraLockedStyle ? "" : `
-            <button class="veilwalker-feature__button veilwalker-feature__button--primary" type="button" data-reader-begin-id="${escapeHtml(reader.id)}" ${canBeginReading ? "" : "disabled"}>
-              Begin Reading <span aria-hidden="true">✦</span>
-            </button>
-          `}
+          <button class="veilwalker-feature__button veilwalker-feature__button--primary" type="button" data-reader-begin-id="${escapeHtml(reader.id)}" ${canBeginReading ? "" : "disabled"}>
+            Begin Reading <span aria-hidden="true">✦</span>
+          </button>
         </div>
       </div>
       <button class="veilwalker-feature__nav veilwalker-feature__nav--next" type="button" data-reader-selector-nav="next" aria-label="Next Veilwalker">

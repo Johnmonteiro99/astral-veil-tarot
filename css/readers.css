@@ -107,10 +107,13 @@ body.moon-mode .veilwalker-feature--zephyra {
 }
 
 .veilwalker-feature--zephyra .veilwalker-feature__details {
-  border-radius: 12px;
-  background:
-    linear-gradient(135deg, rgba(255, 54, 75, 0.1), transparent 52%),
-    rgba(52, 3, 11, 0.3);
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .veilwalker-feature--zephyra .veilwalker-feature__quote,
@@ -1958,6 +1961,10 @@ body.blood-moon-mode .reader-detail__form-button[data-reader-form-id="bloodMoonS
 
   .veilwalker-feature__actions {
     display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .veilwalker-feature--zephyra .veilwalker-feature__actions {
     grid-template-columns: 1fr;
   }
 
