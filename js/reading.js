@@ -57,19 +57,20 @@ const zodiacIconPaths = {
 const readingSectionScrollDelay = 450;
 const forcedFateReaderStorageKey = "astralVeilTestFateReader";
 const selectedReaderStorageKey = "astralVeilSelectedReader";
-const BLOOD_MOON_TRIGGER_CHANCE = 1 / 3;
+// 22.2% chance for Blood Moon activation through Let Fate Choose.
+const BLOOD_MOON_FATE_CHANCE = 0.222;
 const BLOOD_MOON_TRANSITION_COPY = {
   summon: [
-    "The sky bends.",
-    "The Veil answers.",
-    "Zephyra has heard you.",
-    "Blood Moon has opened."
+    "The stars go quiet.",
+    "The Veil opens.",
+    "The red moon answers.",
+    "Blood Moon has begun."
   ],
   fate: [
-    "Fate has shifted.",
-    "The ordinary path is closed.",
-    "A crimson current rises.",
-    "Blood Moon has opened."
+    "The stars go quiet.",
+    "The Veil opens.",
+    "The red moon answers.",
+    "Blood Moon has begun."
   ]
 };
 const fireKeyAnchorCardId = "death";
@@ -105,6 +106,9 @@ let activeReaderIntroRequestId = 0;
 let readerCarouselTouchStartX = 0;
 let readerCarouselTouchStartY = 0;
 let lastReaderCarouselWheelAt = 0;
+let readingDeckTouchStartX = null;
+let readingDeckTouchStartY = null;
+let readingDeckDidSwipe = false;
 let selectedCardCount = 0;
 let currentReadingCards = [];
 let revealedCards = [];
@@ -115,6 +119,7 @@ let bloodMoonTimeout = null;
 let readingFlowStage = "reader";
 let activeReadingMode = null;
 let selectedDeckId = "lumen";
+let activeReadingDeckCarouselId = selectedDeckId;
 let currentAccountUser = null;
 let hasCheckedAccountUser = false;
 let readingPreferences = {
@@ -128,7 +133,7 @@ let readingPreferencesReadyPromise = null;
 const readingDecks = [
   {
     id: "lumen",
-    title: "Lumen Arcana",
+    title: "Verdant",
     label: "Core Collection",
     description: "Original lightwork art and meanings.",
     access: "public",
@@ -140,7 +145,7 @@ const readingDecks = [
   },
   {
     id: "dreambound",
-    title: "Dreambound Arcana",
+    title: "Dreambound",
     label: "Public Deck",
     description: "Dreamlike art with original meanings.",
     access: "public",
@@ -152,7 +157,7 @@ const readingDecks = [
   },
   {
     id: "moonveil",
-    title: "Moonveil Deck",
+    title: "Moonveil",
     label: "Account Deck",
     description: "Moonlit art with original meanings.",
     access: "auth",
@@ -164,9 +169,9 @@ const readingDecks = [
   },
   {
     id: "bloodMoon",
-    title: "Blood Moon Arcana",
-    label: "Blood Moon",
-    description: "Crimson art and Blood Moon meanings.",
+    title: "Crimson Veil",
+    label: "Blood Moon Deck",
+    description: "A forbidden shadow deck revealed beneath the Blood Moon.",
     access: "bloodMoon",
     compatibleModes: ["bloodMoon"],
     meaningSet: "bloodMoon",
@@ -281,8 +286,12 @@ function isReadingReduceMotionEnabled() {
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+function isSmallViewport() {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
 function shouldTriggerBloodMoon() {
-  return Math.random() < BLOOD_MOON_TRIGGER_CHANCE;
+  return Math.random() < BLOOD_MOON_FATE_CHANCE;
 }
 
 function getSelectionModeKey() {
@@ -333,7 +342,8 @@ function waitForBloodMoonTransition(duration) {
 function createBloodMoonTransitionOverlay(type, { reduceMotion = false } = {}) {
   const overlay = document.createElement("div");
   const lines = BLOOD_MOON_TRANSITION_COPY[type] || BLOOD_MOON_TRANSITION_COPY.fate;
-  const lineDelay = reduceMotion ? 110 : 420;
+  const lineDelayStart = reduceMotion ? 0 : 1100;
+  const lineDelayStep = reduceMotion ? 0 : 650;
 
   overlay.className = "bloodmoon-transition";
   overlay.dataset.transitionType = type;
@@ -342,14 +352,12 @@ function createBloodMoonTransitionOverlay(type, { reduceMotion = false } = {}) {
   overlay.setAttribute("aria-live", "assertive");
   overlay.setAttribute("aria-atomic", "true");
   overlay.innerHTML = `
-    <div class="bloodmoon-transition__vignette" aria-hidden="true"></div>
-    <div class="bloodmoon-transition__particles" aria-hidden="true"></div>
+    <div class="bloodmoon-transition__colorwash" aria-hidden="true"></div>
     <div class="bloodmoon-transition__content">
-      <div class="bloodmoon-transition__symbol" aria-hidden="true">◐</div>
       <div class="bloodmoon-transition__lines">
         ${lines
           .map((line, index) => `
-            <p class="bloodmoon-transition__line" style="--line-delay: ${index * lineDelay}ms;">
+            <p class="bloodmoon-transition__line" style="--line-delay: ${lineDelayStart + index * lineDelayStep}ms;">
               ${escapeHtml(line)}
             </p>
           `)
@@ -552,10 +560,15 @@ function ensureSelectedDeckIsAvailable() {
   const selectedDeck = getDeckConfig(selectedDeckId);
 
   if (isDeckCompatible(selectedDeck) && isDeckAccessible(selectedDeck)) {
+    if (!isDeckCompatible(getDeckConfig(activeReadingDeckCarouselId))) {
+      activeReadingDeckCarouselId = selectedDeck.id;
+    }
+
     return selectedDeck;
   }
 
   selectedDeckId = getDefaultAvailableDeckId();
+  activeReadingDeckCarouselId = selectedDeckId;
   return getDeckConfig(selectedDeckId);
 }
 
@@ -579,30 +592,134 @@ function getDeckLockedReason(deck) {
   return "";
 }
 
+function getReadingDeckCtaLabel(deck, isSelected, isAccessible) {
+  if (isSelected) {
+    return "Selected";
+  }
+
+  if (isAccessible) {
+    return "Select Deck";
+  }
+
+  if (deck?.access === "auth" && !currentAccountUser) {
+    return "Create Account";
+  }
+
+  if (deck?.access === "bloodMoon" && !isBloodMoonReadingActive()) {
+    return "Blood Moon Only";
+  }
+
+  return "Locked";
+}
+
+function getReadingDeckCarouselOffset(index, activeIndex, itemCount) {
+  let offset = index - activeIndex;
+
+  if (offset > itemCount / 2) {
+    offset -= itemCount;
+  } else if (offset < -itemCount / 2) {
+    offset += itemCount;
+  }
+
+  return offset;
+}
+
+function getVisibleReadingDeckOffset(offset) {
+  return Math.max(-3, Math.min(3, offset));
+}
+
+function getReadingDeckOffsetClass(offset) {
+  return `deck-selection-card--offset-${offset < 0 ? `neg-${Math.abs(offset)}` : offset}`;
+}
+
+function getActiveReadingDeckCarouselIndex(modeDecks) {
+  const activeIndex = modeDecks.findIndex((deck) => deck.id === activeReadingDeckCarouselId);
+
+  if (activeIndex >= 0) {
+    return activeIndex;
+  }
+
+  const selectedIndex = modeDecks.findIndex((deck) => deck.id === selectedDeckId);
+  activeReadingDeckCarouselId = modeDecks[selectedIndex >= 0 ? selectedIndex : 0]?.id || selectedDeckId;
+
+  return Math.max(0, selectedIndex);
+}
+
+function updateReadingDeckCarouselPosition(nextDeckId) {
+  const modeDecks = getAvailableReadingDecks();
+  const nextIndex = modeDecks.findIndex((deck) => deck.id === nextDeckId);
+
+  if (!deckOptions || nextIndex < 0) {
+    return false;
+  }
+
+  activeReadingDeckCarouselId = nextDeckId;
+
+  deckOptions.querySelectorAll("[data-reading-deck-card]").forEach((card) => {
+    const index = Number(card.dataset.deckIndex || 0);
+    const deck = modeDecks[index];
+    const isActive = deck?.id === nextDeckId;
+    const offset = getReadingDeckCarouselOffset(index, nextIndex, modeDecks.length);
+    const visibleOffset = getVisibleReadingDeckOffset(offset);
+
+    Array.from(card.classList)
+      .filter((className) => className.startsWith("deck-selection-card--offset-"))
+      .forEach((className) => card.classList.remove(className));
+
+    card.classList.add(getReadingDeckOffsetClass(visibleOffset));
+    card.classList.toggle("is-carousel-active", isActive);
+    card.dataset.deckOffset = String(offset);
+  });
+
+  return true;
+}
+
+function moveReadingDeckCarousel(direction) {
+  const modeDecks = getAvailableReadingDecks();
+
+  if (modeDecks.length < 2) {
+    return;
+  }
+
+  const activeIndex = getActiveReadingDeckCarouselIndex(modeDecks);
+  const nextIndex = (activeIndex + direction + modeDecks.length) % modeDecks.length;
+
+  updateReadingDeckCarouselPosition(modeDecks[nextIndex].id);
+}
+
 function renderDeckOptions() {
   if (!deckOptions) {
     return;
   }
 
   const modeDecks = getAvailableReadingDecks();
+  const activeCarouselIndex = getActiveReadingDeckCarouselIndex(modeDecks);
 
   deckOptions.dataset.deckCount = String(modeDecks.length);
 
   deckOptions.innerHTML = modeDecks
-    .map((deck) => {
+    .map((deck, index) => {
       const isSelected = deck.id === selectedDeckId;
       const isAccessible = isDeckAccessible(deck);
       const lockedReason = getDeckLockedReason(deck);
       const themeClass = deck.imageSet || deck.id;
+      const offset = getReadingDeckCarouselOffset(index, activeCarouselIndex, modeDecks.length);
+      const visibleOffset = getVisibleReadingDeckOffset(offset);
+      const isCarouselActive = index === activeCarouselIndex;
       const isProtectedDeckMedia = deck.id === "bloodMoon" || deck.imageSet === "bloodMoon";
       const protectedMediaClass = isProtectedDeckMedia ? " protected-media" : "";
       const protectedMediaAttrs = isProtectedDeckMedia ? ' data-protected-media="true" draggable="false"' : "";
       const protectedImageAttr = isProtectedDeckMedia ? ' draggable="false"' : "";
+      const ctaLabel = getReadingDeckCtaLabel(deck, isSelected, isAccessible);
 
       return `
         <article
-          class="deck-selection-card deck-selection-card--${escapeHtml(themeClass)}${isSelected ? " is-selected" : ""}${isAccessible ? "" : " is-locked"}"
+          class="deck-selection-card deck-selection-card--${escapeHtml(themeClass)} ${getReadingDeckOffsetClass(visibleOffset)}${isSelected ? " is-selected" : ""}${isCarouselActive ? " is-carousel-active" : ""}${isAccessible ? "" : " is-locked"}"
           role="listitem"
+          data-reading-deck-card
+          data-deck-card-id="${escapeHtml(deck.id)}"
+          data-deck-index="${index}"
+          data-deck-offset="${offset}"
           aria-current="${isSelected ? "true" : "false"}"
           aria-disabled="${isAccessible ? "false" : "true"}"
         >
@@ -619,7 +736,7 @@ function renderDeckOptions() {
             </div>
             <div class="deck-selection-card__actions">
               <button class="primary-action deck-selection-card__button" type="button" data-deck-id="${escapeHtml(deck.id)}" ${isAccessible ? "" : "disabled"}>
-                ${isSelected ? "Selected" : "Choose Deck"}
+                ${escapeHtml(ctaLabel)}
               </button>
             </div>
           </div>
@@ -2976,8 +3093,71 @@ spreadButtons.forEach((button) => {
 });
 
 if (deckOptions) {
+  deckOptions.addEventListener("pointerdown", (event) => {
+    if (!isSmallViewport()) {
+      return;
+    }
+
+    readingDeckTouchStartX = event.clientX;
+    readingDeckTouchStartY = event.clientY;
+    readingDeckDidSwipe = false;
+  });
+
+  deckOptions.addEventListener("pointerup", (event) => {
+    if (!isSmallViewport() || readingDeckTouchStartX === null || readingDeckTouchStartY === null) {
+      readingDeckTouchStartX = null;
+      readingDeckTouchStartY = null;
+      return;
+    }
+
+    const deltaX = event.clientX - readingDeckTouchStartX;
+    const deltaY = event.clientY - readingDeckTouchStartY;
+    readingDeckTouchStartX = null;
+    readingDeckTouchStartY = null;
+
+    if (Math.abs(deltaX) < 36 || Math.abs(deltaX) < Math.abs(deltaY) * 1.2) {
+      return;
+    }
+
+    readingDeckDidSwipe = true;
+    moveReadingDeckCarousel(deltaX < 0 ? 1 : -1);
+  });
+
   deckOptions.addEventListener("click", (event) => {
+    if (readingDeckDidSwipe) {
+      readingDeckDidSwipe = false;
+      event.preventDefault();
+      return;
+    }
+
+    const deckCard = event.target.closest("[data-reading-deck-card]");
     const deckButton = event.target.closest("[data-deck-id]");
+
+    if (deckCard && isSmallViewport()) {
+      const deckId = deckCard.dataset.deckCardId;
+      const offset = Number(deckCard.dataset.deckOffset || 0);
+
+      if (offset !== 0) {
+        event.preventDefault();
+        updateReadingDeckCarouselPosition(deckId);
+        return;
+      }
+
+      if (!deckButton) {
+        const deck = getDeckConfig(deckId);
+
+        if (!deck || !isDeckCompatible(deck) || !isDeckAccessible(deck)) {
+          readingStatus.textContent = getDeckLockedReason(deck) || "This deck is locked.";
+          return;
+        }
+
+        selectedDeckId = deck.id;
+        activeReadingDeckCarouselId = deck.id;
+        renderDeckOptions();
+        readingStatus.textContent = `${deck.title} selected. Choose a spread to begin.`;
+        return;
+      }
+    }
 
     if (!deckButton) {
       return;
@@ -2991,6 +3171,7 @@ if (deckOptions) {
     }
 
     selectedDeckId = deck.id;
+    activeReadingDeckCarouselId = deck.id;
     renderDeckOptions();
     readingStatus.textContent = `${deck.title} selected. Choose a spread to begin.`;
   });

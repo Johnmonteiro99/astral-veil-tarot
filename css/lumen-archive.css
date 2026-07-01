@@ -6345,6 +6345,16 @@ body.lumen-archive-page.no-glow .lumen-room-content-grid .lumen-room-action-btn:
   text-shadow: none !important;
 }
 
+@media (max-width: 720px) {
+  body.lumen-archive-page .lumen-room-content-grid .lumen-question-cycle-btn.lumen-room-action-btn {
+    width: fit-content;
+    min-width: 0;
+    max-width: min(100%, 12rem);
+    justify-self: center;
+    padding-inline: 1.05rem;
+  }
+}
+
 html.no-glow body.lumen-archive-page,
 body.lumen-archive-page.no-glow,
 html.no-glow body.lumen-room-page,

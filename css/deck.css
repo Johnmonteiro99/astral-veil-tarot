@@ -3723,9 +3723,10 @@ body.is-deck-info-open {
     z-index: var(--arc-z);
     text-align: center;
     transition:
-      opacity 260ms ease,
-      filter 260ms ease,
-      transform 260ms ease;
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 320ms ease,
+      filter 320ms ease;
+    will-change: transform, opacity, filter;
   }
 
   .deck-mobile-shelf__item--offset-0 {
@@ -3739,43 +3740,59 @@ body.is-deck-info-open {
   }
 
   .deck-mobile-shelf__item--offset-neg-1 {
-    --arc-x: -34vw;
+    --arc-x: clamp(-112px, -26vw, -92px);
     --arc-y: 18px;
-    --arc-rotate: -6deg;
-    --arc-scale: 0.78;
-    --arc-opacity: 0.55;
+    --arc-rotate: -7deg;
+    --arc-scale: 0.72;
+    --arc-opacity: 0.72;
     --arc-z: 4;
     pointer-events: auto;
   }
 
   .deck-mobile-shelf__item--offset-1 {
-    --arc-x: 34vw;
+    --arc-x: clamp(92px, 26vw, 112px);
     --arc-y: 18px;
-    --arc-rotate: 6deg;
-    --arc-scale: 0.78;
-    --arc-opacity: 0.55;
+    --arc-rotate: 7deg;
+    --arc-scale: 0.72;
+    --arc-opacity: 0.72;
     --arc-z: 4;
     pointer-events: auto;
   }
 
   .deck-mobile-shelf__item--offset-neg-2 {
-    --arc-x: -54vw;
+    --arc-x: clamp(-178px, -43vw, -148px);
     --arc-y: 38px;
-    --arc-rotate: -10deg;
-    --arc-scale: 0.62;
-    --arc-opacity: 0.18;
+    --arc-rotate: -12deg;
+    --arc-scale: 0.58;
+    --arc-opacity: 0;
     --arc-z: 3;
-    pointer-events: auto;
   }
 
   .deck-mobile-shelf__item--offset-2 {
-    --arc-x: 54vw;
+    --arc-x: clamp(148px, 43vw, 178px);
     --arc-y: 38px;
-    --arc-rotate: 10deg;
-    --arc-scale: 0.62;
-    --arc-opacity: 0.18;
+    --arc-rotate: 12deg;
+    --arc-scale: 0.58;
+    --arc-opacity: 0;
     --arc-z: 3;
-    pointer-events: auto;
+  }
+
+  .deck-mobile-shelf__item--offset-neg-3 {
+    --arc-x: clamp(-218px, -56vw, -172px);
+    --arc-y: 48px;
+    --arc-rotate: -15deg;
+    --arc-scale: 0.5;
+    --arc-opacity: 0;
+    --arc-z: 1;
+  }
+
+  .deck-mobile-shelf__item--offset-3 {
+    --arc-x: clamp(172px, 56vw, 218px);
+    --arc-y: 48px;
+    --arc-rotate: 15deg;
+    --arc-scale: 0.5;
+    --arc-opacity: 0;
+    --arc-z: 1;
   }
 
   .deck-mobile-shelf__card {

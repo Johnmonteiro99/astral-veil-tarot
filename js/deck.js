@@ -1037,6 +1037,25 @@ function renderMobileDeckShelfItem(collection, sectionId, index, activeIndex, it
   const protectedMediaClass = isBloodMoonCollection(collection) ? " protected-media" : "";
   const protectedMediaAttrs = isBloodMoonCollection(collection) ? ' data-protected-media="true" draggable="false"' : "";
   const protectedImageAttr = isBloodMoonCollection(collection) ? ' draggable="false"' : "";
+  const offset = getDeckCarouselOffset(index, activeIndex, itemCount);
+  const visibleOffset = getVisibleMobileDeckOffset(offset);
+
+  return `
+    <button class="deck-mobile-shelf__item ${getMobileDeckOffsetClass(visibleOffset)}${isSelected ? " is-selected" : ""}${isLocked ? " is-locked" : ""}${protectedMediaClass}" type="button" data-mobile-deck-focus="${escapeHtml(sectionId)}" data-deck-carousel-index="${index}" data-mobile-deck-offset="${offset}" aria-label="${isSelected ? `Open focused view for ${escapeHtml(collection.title)}` : `Bring ${escapeHtml(collection.title)} forward`}" aria-pressed="${isSelected ? "true" : "false"}"${protectedMediaAttrs}>
+      <span class="deck-mobile-shelf__card">
+        <img src="${escapeHtml(previewImage)}" alt="${escapeHtml(collection.title)} card back" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} />
+        ${isLocked ? `<span class="deck-mobile-shelf__status">${escapeHtml(status)}</span>` : ""}
+      </span>
+      <span class="deck-mobile-shelf__name">${escapeHtml(getMobileDeckShelfName(collection))}</span>
+    </button>
+  `;
+}
+
+function getMobileDeckOffsetClass(offset) {
+  return `deck-mobile-shelf__item--offset-${offset < 0 ? `neg-${Math.abs(offset)}` : offset}`;
+}
+
+function getDeckCarouselOffset(index, activeIndex, itemCount) {
   let offset = index - activeIndex;
 
   if (offset > itemCount / 2) {
@@ -1045,17 +1064,61 @@ function renderMobileDeckShelfItem(collection, sectionId, index, activeIndex, it
     offset += itemCount;
   }
 
-  const visibleOffset = Math.max(-3, Math.min(3, offset));
+  return offset;
+}
 
-  return `
-    <button class="deck-mobile-shelf__item deck-mobile-shelf__item--offset-${visibleOffset < 0 ? `neg-${Math.abs(visibleOffset)}` : visibleOffset}${isSelected ? " is-selected" : ""}${isLocked ? " is-locked" : ""}${protectedMediaClass}" type="button" data-mobile-deck-focus="${escapeHtml(sectionId)}" data-deck-carousel-index="${index}" data-mobile-deck-offset="${offset}" aria-label="${isSelected ? `Open focused view for ${escapeHtml(collection.title)}` : `Bring ${escapeHtml(collection.title)} forward`}" aria-pressed="${isSelected ? "true" : "false"}"${protectedMediaAttrs}>
-      <span class="deck-mobile-shelf__card">
-        <img src="${escapeHtml(previewImage)}" alt="${escapeHtml(collection.title)} card back" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} />
-        ${isLocked ? `<span class="deck-mobile-shelf__status">${escapeHtml(status)}</span>` : ""}
-      </span>
-      <span class="deck-mobile-shelf__name">${escapeHtml(getMobileDeckShelfName(collection))}</span>
-    </button>
-  `;
+function getVisibleMobileDeckOffset(offset) {
+  return Math.max(-3, Math.min(3, offset));
+}
+
+function updateMobileDeckShelfPosition(sectionId, nextIndex) {
+  const section = Array.from(deckView?.querySelectorAll("[data-deck-carousel-section]") || [])
+    .find((element) => element.dataset.deckCarouselSection === sectionId);
+  const shelf = section?.querySelector(".deck-mobile-shelf");
+  const sectionCollections = getFilteredDeckCollections();
+  const itemCount = sectionCollections.length;
+
+  if (!shelf || !itemCount) {
+    return false;
+  }
+
+  const activeIndex = getDeckCarouselIndex(sectionId, itemCount);
+  const normalizedNextIndex = ((nextIndex % itemCount) + itemCount) % itemCount;
+
+  if (normalizedNextIndex === activeIndex) {
+    return true;
+  }
+
+  deckCarouselIndexes[sectionId] = normalizedNextIndex;
+  mobileDeckViewMode = "browse";
+
+  shelf.querySelectorAll("[data-mobile-deck-focus]").forEach((item) => {
+    const index = Number(item.dataset.deckCarouselIndex || 0);
+    const collection = sectionCollections[index];
+    const isSelected = index === normalizedNextIndex;
+    const offset = getDeckCarouselOffset(index, normalizedNextIndex, itemCount);
+    const visibleOffset = getVisibleMobileDeckOffset(offset);
+
+    Array.from(item.classList)
+      .filter((className) => className.startsWith("deck-mobile-shelf__item--offset-"))
+      .forEach((className) => item.classList.remove(className));
+
+    item.classList.add(getMobileDeckOffsetClass(visibleOffset));
+    item.classList.toggle("is-selected", isSelected);
+    item.dataset.mobileDeckOffset = String(offset);
+    item.setAttribute("aria-pressed", isSelected ? "true" : "false");
+
+    if (collection) {
+      item.setAttribute(
+        "aria-label",
+        isSelected
+          ? `Open focused view for ${collection.title}`
+          : `Bring ${collection.title} forward`
+      );
+    }
+  });
+
+  return true;
 }
 
 function renderMobileDeckShelf(section, sectionCollections, activeIndex) {
@@ -1203,7 +1266,7 @@ function renderBloodMoonLockedPrompt() {
   const collection = getCollectionById("bloodMoon");
 
   updateDeckHero({
-    eyebrow: collection?.eyebrow || "Blood Moon Arcana",
+    eyebrow: collection?.eyebrow || "Crimson Veil",
     title: collection?.title || "Blood Moon Deck",
     description: "A sealed crimson collection waits at the edge of the Astral Veil."
   });
@@ -1631,9 +1694,13 @@ if (deckView) {
 
     mobileDeckDidSwipe = true;
     const direction = deltaX < 0 ? 1 : -1;
-    deckCarouselIndexes[DECK_BROWSER_SECTION_ID] = Number(deckCarouselIndexes[DECK_BROWSER_SECTION_ID] || 0) + direction;
-    mobileDeckViewMode = "browse";
-    renderDeckCollection();
+    const nextIndex = Number(deckCarouselIndexes[DECK_BROWSER_SECTION_ID] || 0) + direction;
+
+    if (!updateMobileDeckShelfPosition(DECK_BROWSER_SECTION_ID, nextIndex)) {
+      deckCarouselIndexes[DECK_BROWSER_SECTION_ID] = nextIndex;
+      mobileDeckViewMode = "browse";
+      renderDeckCollection();
+    }
   });
 
   deckView.addEventListener("click", (event) => {
@@ -1668,9 +1735,11 @@ if (deckView) {
       const currentIndex = getDeckCarouselIndex(sectionId, getFilteredDeckCollections().length);
 
       if (nextIndex !== currentIndex) {
-        deckCarouselIndexes[sectionId] = nextIndex;
-        mobileDeckViewMode = "browse";
-        renderDeckCollection();
+        if (!updateMobileDeckShelfPosition(sectionId, nextIndex)) {
+          deckCarouselIndexes[sectionId] = nextIndex;
+          mobileDeckViewMode = "browse";
+          renderDeckCollection();
+        }
         return;
       }
 

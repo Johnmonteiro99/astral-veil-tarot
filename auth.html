@@ -49,6 +49,8 @@
 
       body {
         min-height: 100vh;
+        min-height: 100svh;
+        min-height: 100dvh;
         margin: 0;
         display: grid;
         place-items: center;
@@ -1016,20 +1018,44 @@
       @media (max-width: 520px) {
         body {
           align-items: start;
-          background-position: center;
-          padding-top: 1rem;
+          height: auto;
+          min-height: 100svh;
+          min-height: 100dvh;
+          background-attachment: scroll;
+          background-position: center center;
+          background-size: cover;
+          background-repeat: no-repeat;
+          padding: 1rem;
+          padding-block: clamp(1rem, 4vh, 2rem);
+          padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
         }
 
         .auth-shell {
+          width: 100%;
+          max-width: 25rem;
+          min-height: calc(100dvh - 2rem - env(safe-area-inset-bottom));
           gap: 0.9rem;
           margin-top: 0;
+          align-items: center;
+          justify-items: center;
+        }
+
+        .auth-heading,
+        .auth-heading p {
+          width: 100%;
+          max-width: 100%;
+        }
+
+        .auth-heading p {
+          font-size: 1.05rem;
         }
 
         main {
-          width: 100%;
+          width: min(100%, 25rem);
           margin-top: 0;
           min-height: auto;
-          padding: 1.45rem 1.15rem;
+          max-height: none;
+          padding: 1.15rem;
           border-radius: 18px;
         }
 
@@ -1038,8 +1064,10 @@
         }
 
         h1 {
-          font-size: clamp(2.35rem, 12vw, 3.15rem);
-          letter-spacing: 0.12em;
+          max-width: 100%;
+          font-size: 2.1rem;
+          letter-spacing: 0.08em;
+          white-space: nowrap;
         }
 
         .auth-options {
