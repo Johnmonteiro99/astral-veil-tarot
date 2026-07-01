@@ -1641,7 +1641,18 @@ function getStaticActiveReaderQuote(reader, { forceNew = false } = {}) {
   }
 
   if (!isBloodMoonReadingActive()) {
-    return reader.tagline || reader.description || reader.energy || "";
+    const readerLines = window.AstralVeilReaderLines;
+    const localIntroLine = typeof readerLines?.getReaderIntroFallbackLine === "function"
+      ? readerLines.getReaderIntroFallbackLine({
+          reader,
+          mode: getReaderIntroLineModeKey()
+        })
+      : "";
+    const localSelectionLine = Array.isArray(reader.normalSelectionMessages) && reader.normalSelectionMessages.length
+      ? getRandomArrayItem(reader.normalSelectionMessages)
+      : "";
+
+    return localIntroLine || localSelectionLine || reader.heroLine || reader.subtitle || reader.description || reader.energy || "";
   }
 
   const quotePool = Array.isArray(reader.bloodMoonQuotes) ? reader.bloodMoonQuotes : [];

@@ -12,8 +12,10 @@ let lightboxTouchStartX = 0;
 let lastLightboxNavAt = 0;
 let selectorTouchStartX = 0;
 let selectorTouchStartY = 0;
+let featuredReaderHeroLineRequestId = 0;
 const selectedReaderStorageKey = "astralVeilSelectedReader";
 const readingPageHref = "index.html";
+const selectedReaderHeroLines = {};
 const zodiacOrder = [
   "Aries",
   "Taurus",
@@ -189,6 +191,111 @@ function getReaderSummary(reader) {
     presentation.energy ||
     "A trusted Astral Veil guide for reflective tarot readings."
   );
+}
+
+function pickRandomReaderLine(lines) {
+  if (!Array.isArray(lines) || !lines.length) {
+    return "";
+  }
+
+  const usableLines = lines
+    .map((line) => String(line || "").trim())
+    .filter(Boolean);
+
+  if (!usableLines.length) {
+    return "";
+  }
+
+  return usableLines[Math.floor(Math.random() * usableLines.length)];
+}
+
+function getReaderHeroLineModeKey() {
+  return isBloodMoonActive() ? "bloodMoon" : "moon";
+}
+
+function getReaderHeroLineCacheKey(reader) {
+  const readerLines = window.AstralVeilReaderLines;
+  const readerLineId = typeof readerLines?.getReaderLineId === "function"
+    ? readerLines.getReaderLineId(reader)
+    : reader?.id || reader?.name || "";
+
+  return `${readerLineId}:${getReaderHeroLineModeKey()}`;
+}
+
+function getReaderHeroFallbackLine(reader) {
+  if (!reader) {
+    return "";
+  }
+
+  const presentation = getReaderPresentation(reader);
+  const readerSpecificLines = isBloodMoonActive()
+    ? reader.bloodMoonHeroLines || reader.bloodMoonLines || reader.bloodMoonSelectionMessages || reader.bloodMoonQuotes
+    : reader.heroLines || reader.lines || reader.normalSelectionMessages;
+  const fallbackLines = reader.lines || reader.selectionMessages || reader.normalSelectionMessages;
+  const selectedLine =
+    pickRandomReaderLine(readerSpecificLines) ||
+    pickRandomReaderLine(fallbackLines);
+
+  return (
+    selectedLine ||
+    presentation.tagline ||
+    presentation.readingStyle ||
+    presentation.title ||
+    presentation.subtitle ||
+    presentation.description ||
+    ""
+  );
+}
+
+function getReaderHeroLine(reader) {
+  if (!reader) {
+    return "";
+  }
+
+  const cacheKey = getReaderHeroLineCacheKey(reader);
+
+  if (!selectedReaderHeroLines[cacheKey]) {
+    selectedReaderHeroLines[cacheKey] = getReaderHeroFallbackLine(reader);
+  }
+
+  return selectedReaderHeroLines[cacheKey] || getReaderHeroFallbackLine(reader);
+}
+
+async function hydrateFeaturedReaderHeroLine(reader) {
+  const readerLines = window.AstralVeilReaderLines;
+
+  if (!reader || typeof readerLines?.getReaderIntroLine !== "function") {
+    return;
+  }
+
+  const cacheKey = getReaderHeroLineCacheKey(reader);
+  const requestId = featuredReaderHeroLineRequestId + 1;
+  featuredReaderHeroLineRequestId = requestId;
+
+  try {
+    const line = await readerLines.getReaderIntroLine({
+      reader,
+      mode: getReaderHeroLineModeKey()
+    });
+
+    if (
+      requestId !== featuredReaderHeroLineRequestId ||
+      getReaderHeroLineCacheKey(reader) !== cacheKey ||
+      getFeaturedReader()?.id !== reader.id ||
+      !line
+    ) {
+      return;
+    }
+
+    if (selectedReaderHeroLines[cacheKey] === line) {
+      return;
+    }
+
+    selectedReaderHeroLines[cacheKey] = line;
+    renderFeaturedVeilwalkerSelector();
+  } catch (error) {
+    console.warn("Unable to apply Veilwalker hero line.", error);
+  }
 }
 
 function renderReaderDetailRows(reader) {
@@ -452,7 +559,7 @@ function renderFeaturedVeilwalkerSelector() {
   const sign = presentation.sign || presentation.zodiac || "Unknown";
   const zodiacIcon = getZodiacIconPath(sign);
   const summary = getReaderSummary(reader);
-  const title = presentation.tagline || presentation.readingStyle || presentation.title || "";
+  const title = getReaderHeroLine(reader);
   const canBeginReading = isReaderBeginReadingAvailable(reader);
   const isZephyraReader = reader.id === "zephyra-noctis";
   const useZephyraTheme = isZephyraReader && !isBloodMoonActive();
@@ -503,6 +610,7 @@ function renderFeaturedVeilwalkerSelector() {
   }
 
   renderReaderSelectorDots();
+  hydrateFeaturedReaderHeroLine(reader);
 }
 
 function renderZodiacSelector() {
@@ -741,6 +849,10 @@ function closeReaderLightbox() {
 }
 
 renderReaderProfiles();
+
+window.addEventListener("astralveil:reader-lines-ready", () => {
+  hydrateFeaturedReaderHeroLine(getFeaturedReader());
+});
 
 ////////////////////////////////////////////////////
 // Veilwalker Event Listeners

@@ -56,6 +56,81 @@ const readerLineIdMap = {
 
 const selectedLineCache = new Map();
 
+const readerIntroLineFallbacks = {
+  zahira_veyra: {
+    all: [
+      'Stand with me for a moment. We are not here to fear the path. We are here to meet it.',
+      'You made it here. Good. Now let us find the part of you that already knows how to move.',
+    ],
+  },
+  nadia_vale: {
+    all: [
+      'Take a breath. Not every answer needs to arrive running.',
+      'Let the noise settle. What remains may be enough.',
+    ],
+  },
+  eren_astra_auralis: {
+    all: [
+      'Eren says one side of the question is speaking too loudly. Astra says the quiet side is not silent.',
+      'Bring us the contradiction. We will listen for the third truth between it.',
+    ],
+  },
+  meghan_caelia: {
+    all: [
+      'Come closer to the tide. Nothing tender in you has to be rushed.',
+      'Let the feeling rise without naming it too quickly. The water remembers what the mind edits away.',
+    ],
+  },
+  cassian_solari: {
+    all: [
+      'Let yourself be seen for one honest breath. The answer does not need you to perform.',
+      'Stand where the light can reach you. Courage is allowed to be warm.',
+    ],
+  },
+  amara_violeth: {
+    all: [
+      'We will begin with the smallest sign. The path often hides inside what is almost overlooked.',
+      'Set the question down carefully. Clarity does not need to cut in order to be true.',
+    ],
+  },
+  abigail_asteria: {
+    all: [
+      'Let the scales become still. The choice will speak when urgency stops leaning on it.',
+      'There is a graceful answer here, but grace will not ask you to abandon yourself.',
+    ],
+  },
+  zephyra_noctis: {
+    all: [
+      'Do not ask unless you are ready to hear what your shadow has been saying all along.',
+      'Some truths do not knock. They wait until you stop pretending the door is closed.',
+    ],
+  },
+  orion_valehart: {
+    all: [
+      'Look toward the horizon inside the question. It already knows which way your courage is facing.',
+      'The next step does not need the whole map. It needs one honest star to follow.',
+    ],
+  },
+  samira_obsidian: {
+    all: [
+      'Stand steady. The answer that can endure will not need to shout.',
+      'Bring me the weight of it. We will find the structure strong enough to hold the truth.',
+    ],
+  },
+  lyssara_voss: {
+    all: [
+      'Step back until the pattern appears. Distance can reveal what urgency keeps blurring.',
+      'There is a signal beneath the silence. Let us trace it without forcing it to become noise.',
+    ],
+  },
+  malakai_nereon: {
+    all: [
+      'Let the symbol surface in its own shape. Dreams rarely arrive in straight lines.',
+      'The answer may come as feeling before language. Stay with it until it begins to shimmer.',
+    ],
+  },
+};
+
 function normalizeReaderLineMode(mode) {
   if (!mode) {
     return 'moon';
@@ -138,6 +213,50 @@ function pickRandomItem(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
+function getReaderIntroFallbackLines(reader, normalizedMode = 'moon') {
+  const readerId = getReaderLineId(reader);
+  const fallback = readerIntroLineFallbacks[readerId] || {};
+  const modeLines = Array.isArray(fallback[normalizedMode]) ? fallback[normalizedMode] : [];
+  const allLines = Array.isArray(fallback.all) ? fallback.all : [];
+  const readerLines = Array.isArray(reader?.heroLines)
+    ? reader.heroLines
+    : Array.isArray(reader?.lines)
+      ? reader.lines
+      : [];
+
+  if (modeLines.length) {
+    return modeLines;
+  }
+
+  if (allLines.length) {
+    return allLines;
+  }
+
+  return readerLines;
+}
+
+function getReaderIntroFallbackLine({ reader, mode } = {}) {
+  const normalizedMode = normalizeReaderLineMode(mode);
+  const fallbackLines = getReaderIntroFallbackLines(reader, normalizedMode);
+  const selectedFallback = pickRandomItem(fallbackLines);
+
+  if (selectedFallback) {
+    return selectedFallback;
+  }
+
+  if (normalizedMode === 'bloodMoon') {
+    const bloodMoonLine = pickRandomItem(reader?.bloodMoonHeroLines) ||
+      pickRandomItem(reader?.bloodMoonLines) ||
+      pickRandomItem(reader?.bloodMoonQuotes);
+
+    if (bloodMoonLine) {
+      return bloodMoonLine;
+    }
+  }
+
+  return reader?.heroLine || reader?.subtitle || reader?.description || '';
+}
+
 function logReaderLineDebug(details = {}) {
   void details;
 }
@@ -163,16 +282,21 @@ async function fetchReaderIntroLines(supabase, { reader, readerId, rawMode, norm
   });
 
   if (error) {
-    console.warn('Unable to load reader intro line.', {
-      rawReaderId: reader?.id || reader?.slug || reader?.key || '',
-      rawReaderName: reader?.name || '',
-      mappedReaderId: readerId,
-      rawMode,
-      normalizedMode,
-      modes,
-      errorMessage: error.message,
-      error,
-    });
+    const hasPublicFallback = getReaderIntroFallbackLines(reader, normalizedMode).length > 0;
+
+    if (!hasPublicFallback) {
+      console.warn('Unable to load reader intro line.', {
+        rawReaderId: reader?.id || reader?.slug || reader?.key || '',
+        rawReaderName: reader?.name || '',
+        mappedReaderId: readerId,
+        rawMode,
+        normalizedMode,
+        modes,
+        errorMessage: error.message,
+        error,
+      });
+    }
+
     return { lines: [], error };
   }
 
@@ -197,7 +321,7 @@ async function getReaderIntroLine({ reader, mode } = {}) {
       rowsReturned: 0,
       error: isSupabaseConfigured() ? null : 'Supabase is not configured.',
     });
-    return '';
+    return getReaderIntroFallbackLine({ reader, mode });
   }
 
   const cacheKey = `${readerId}:${normalizedMode}`;
@@ -209,7 +333,7 @@ async function getReaderIntroLine({ reader, mode } = {}) {
   const supabase = getSupabaseClient();
 
   if (!supabase) {
-    return '';
+    return getReaderIntroFallbackLine({ reader, mode });
   }
 
   const preferredModes = normalizedMode === 'bloodMoon'
@@ -225,8 +349,7 @@ async function getReaderIntroLine({ reader, mode } = {}) {
   });
 
   if (preferredResult.error) {
-    selectedLineCache.set(cacheKey, '');
-    return '';
+    return getReaderIntroFallbackLine({ reader, mode });
   }
 
   let lines = preferredResult.lines;
@@ -246,21 +369,25 @@ async function getReaderIntroLine({ reader, mode } = {}) {
     });
 
     if (fallbackResult.error) {
-      selectedLineCache.set(cacheKey, '');
-      return '';
+      return getReaderIntroFallbackLine({ reader, mode });
     }
 
     lines = fallbackResult.lines;
   }
 
-  const selectedLine = pickRandomItem(lines)?.line_text || '';
+  const selectedDatabaseLine = pickRandomItem(lines)?.line_text || '';
+  const selectedLine = selectedDatabaseLine || getReaderIntroFallbackLine({ reader, mode });
 
-  selectedLineCache.set(cacheKey, selectedLine);
+  if (selectedDatabaseLine) {
+    selectedLineCache.set(cacheKey, selectedDatabaseLine);
+  }
+
   return selectedLine;
 }
 
 window.AstralVeilReaderLines = {
   getReaderIntroLine,
+  getReaderIntroFallbackLine,
   getReaderLineId,
 };
 
