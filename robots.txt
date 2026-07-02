@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/login
+Disallow: /admin.html
+Disallow: /admin-login.html
+
+Sitemap: https://astralveil.world/sitemap.xml
