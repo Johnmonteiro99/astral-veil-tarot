@@ -101,6 +101,106 @@ textarea,
   font-family: var(--body-font);
 }
 
+.image-load-states-enabled img.image-loading {
+  opacity: 0;
+}
+
+.image-load-states-enabled img.image-loaded {
+  opacity: 1;
+  animation: astralImageLoadedFade 280ms ease;
+}
+
+.image-load-states-enabled img.image-loaded--instant {
+  animation: none;
+}
+
+.image-load-states-enabled img.image-load-error {
+  opacity: 1;
+}
+
+.reader-portrait,
+.reader-card__image,
+.reader-image-carousel__center img,
+.reader-image-carousel__preview img,
+.reader-feature-card__portrait,
+.reader-selection-split__image img,
+.veilwalker-feature__image,
+.deck-collection-card__preview img,
+.deck-focused-carousel__preview-cardback,
+.deck-focused-carousel__focus .deck-collection-card__preview img,
+.deck-selection-card__preview img,
+.deck-viewer__image,
+.deck-thumbnail img,
+.deck-lightbox__image,
+.tarot-card__back img,
+.tarot-card__front img,
+.card-image,
+.combined-reading__thread-card-image img,
+.archive-chamber-card__image img,
+.archive-chamber-thumbnail img,
+.archive-artifact-preview-image,
+.archive-visual-record__preview img,
+.archive-featured-image img,
+.archive-gallery-record__image-button img,
+.gallery-featured-card__image img,
+.gallery-record-card__image img,
+.gallery-record-modal__figure img,
+.gallery-trail-row__thumb img,
+.gallery-mini-thumb img,
+.visual-record-modal__image-frame img,
+.entry-desk-hero__image,
+.lumen-room-hero-img,
+.lumen-room-preview-img,
+.lumen-image-lightbox__image,
+.sanctuary-portal-image,
+.lumen-atrium__image img,
+.image-preview__image {
+  display: block;
+}
+
+.reader-portrait-frame,
+.reader-image-carousel__center,
+.reader-image-carousel__preview,
+.reader-feature-card__portrait-wrap,
+.reader-selection-split__image,
+.deck-collection-card__preview,
+.deck-focused-carousel__preview,
+.deck-selection-card__preview,
+.deck-viewer__image-clip,
+.deck-thumbnail__image-clip,
+.tarot-card__face,
+.combined-reading__thread-card-image,
+.archive-chamber-card__image,
+.archive-visual-record__preview,
+.archive-featured-image,
+.archive-gallery-record__image-button,
+.gallery-featured-card__image,
+.gallery-record-card__image,
+.gallery-record-modal__figure,
+.visual-record-modal__image-frame,
+.entry-desk-hero,
+.lumen-room-hero-card,
+.sanctuary-portal-frame,
+.lumen-atrium__image {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-load-states-enabled img.image-loaded {
+    animation: none;
+  }
+}
+
+@keyframes astralImageLoadedFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 body.sun-mode {
   /* Warm sun mode: gold, amber, and candlelit glass. */
   --theme-accent-primary: #e7c36a;

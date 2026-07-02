@@ -40,6 +40,51 @@ let expandedImagePreview = null;
 let expandedImagePreviewImage = null;
 let angelWindowTimer = null;
 
+const polishedImageSelector = [
+  "[data-expandable-image]",
+  "[data-active-reader-image]",
+  "[data-lightbox-image]",
+  "[data-lightbox-card-image]",
+  "[data-deck-info-image]",
+  "[data-lumen-arrival-hero-img]",
+  "[data-lumen-dashboard-hero-img]",
+  "[data-lumen-dashboard-seal-img]",
+  ".reader-card img",
+  ".reader-selection-orbit img",
+  ".reader-image-carousel img",
+  ".reader-feature-card img",
+  ".active-reader-header img",
+  ".deck-collection-card img",
+  ".deck-selection-card img",
+  ".deck-focused-carousel img",
+  ".deck-viewer img",
+  ".deck-thumbnail img",
+  ".tarot-card img",
+  ".card-image",
+  ".combined-reading__thread-card-image img",
+  ".archive-chamber-card img",
+  ".archive-chamber-thumbnail img",
+  ".archive-artifact-preview-image",
+  ".archive-visual-record img",
+  ".archive-featured-image img",
+  ".archive-gallery-record img",
+  ".gallery-record-card img",
+  ".gallery-featured-card img",
+  ".gallery-record-modal img",
+  ".gallery-trail-row__thumb img",
+  ".gallery-mini-thumb img",
+  ".visual-record-modal img",
+  ".entry-desk-hero__image",
+  ".lumen-room-hero-img",
+  ".lumen-arrival-hero-img",
+  ".lumen-room-preview-img",
+  ".lumen-image-lightbox__image",
+  ".sanctuary-portal-image",
+  ".lumen-atrium__image img",
+  ".veilwalker-feature__image",
+  ".about-living__media img"
+].join(", ");
+
 function isProtectedOrPrivateElement(element) {
   return Boolean(element?.closest?.(
     '[data-private-card="true"], .private-data-card, [data-protected-media="true"], .protected-media'
@@ -48,6 +93,124 @@ function isProtectedOrPrivateElement(element) {
 
 function isProtectedMediaElement(element) {
   return Boolean(element?.closest?.('[data-protected-media="true"], .protected-media'));
+}
+
+////////////////////////////////////////////////////
+// Polished Image Loading
+////////////////////////////////////////////////////
+
+function hasLoadableImageSource(image) {
+  return Boolean(image?.currentSrc || image?.getAttribute?.("src") || image?.getAttribute?.("srcset"));
+}
+
+function isTinyIconImage(image) {
+  const source = image?.currentSrc || image?.getAttribute?.("src") || "";
+
+  return /\.(svg)(?:[?#].*)?$/i.test(source) || /\/assets\/icons\//i.test(source);
+}
+
+function shouldPolishImageLoad(image) {
+  if (!(image instanceof HTMLImageElement) || image.dataset.imageLoadPolish === "off") {
+    return false;
+  }
+
+  if (!hasLoadableImageSource(image) || isTinyIconImage(image)) {
+    return false;
+  }
+
+  if (image.matches(polishedImageSelector) || image.closest("[data-protected-media='true'], .protected-media")) {
+    return true;
+  }
+
+  const source = image.currentSrc || image.getAttribute("src") || "";
+
+  return /\/assets\/(?:images|noctis)\//i.test(source) || /\/public\/assets\/noctis\//i.test(source);
+}
+
+function markImageLoaded(image, { instant = false } = {}) {
+  image.classList.remove("image-loading", "image-load-error");
+  image.classList.add("image-loaded");
+  image.classList.toggle("image-loaded--instant", instant);
+}
+
+function markImageLoadError(image) {
+  image.classList.remove("image-loading", "image-loaded", "image-loaded--instant");
+  image.classList.add("image-load-error");
+}
+
+function markImageLoading(image) {
+  image.classList.remove("image-loaded", "image-loaded--instant", "image-load-error");
+  image.classList.add("image-loading");
+}
+
+function preparePolishedImage(image) {
+  if (!shouldPolishImageLoad(image)) {
+    return;
+  }
+
+  image.dataset.imageLoadPolish = "on";
+  image.decoding = image.decoding || "async";
+
+  if (image.complete && image.naturalWidth > 0) {
+    markImageLoaded(image, { instant: true });
+  } else {
+    markImageLoading(image);
+  }
+
+  if (image.dataset.imageLoadListenersAttached === "true") {
+    return;
+  }
+
+  image.dataset.imageLoadListenersAttached = "true";
+  image.addEventListener("load", () => markImageLoaded(image));
+  image.addEventListener("error", () => markImageLoadError(image));
+}
+
+function preparePolishedImages(root = document) {
+  if (root instanceof HTMLImageElement) {
+    preparePolishedImage(root);
+    return;
+  }
+
+  root.querySelectorAll?.("img").forEach(preparePolishedImage);
+}
+
+function watchPolishedImages() {
+  document.documentElement.classList.add("image-load-states-enabled");
+  preparePolishedImages();
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "attributes") {
+        preparePolishedImage(mutation.target);
+        return;
+      }
+
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          preparePolishedImages(node);
+        }
+      });
+    });
+  });
+
+  observer.observe(document.documentElement, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: ["src", "srcset"]
+  });
+}
+
+window.AstralVeilImages = {
+  prepare: preparePolishedImage,
+  prepareAll: preparePolishedImages
+};
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", watchPolishedImages, { once: true });
+} else {
+  watchPolishedImages();
 }
 
 document.addEventListener("dragstart", (event) => {
@@ -145,6 +308,7 @@ function openExpandedImagePreview(imageData) {
   createExpandedImagePreview();
   expandedImagePreviewImage.src = imageData.src;
   expandedImagePreviewImage.alt = imageData.alt;
+  preparePolishedImage(expandedImagePreviewImage);
   expandedImagePreviewImage.draggable = !imageData.protected;
   expandedImagePreviewImage.classList.toggle("protected-media", Boolean(imageData.protected));
   if (imageData.protected) {
