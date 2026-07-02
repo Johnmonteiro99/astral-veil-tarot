@@ -415,7 +415,9 @@ const lumenNameFields = document.querySelector("[data-lumen-name-fields]");
 const lumenNameInput = document.querySelector("[data-lumen-name-input]");
 const lumenNameMessage = document.querySelector("[data-lumen-name-message]");
 const lumenNameReset = document.querySelector("[data-lumen-name-reset]");
-const isLumenRoomPage = window.location.pathname.split("/").pop() === "lumen-room.html";
+const lumenCleanRouteBase = "/lumen-archive";
+const isLegacyLumenRoomPage = window.location.pathname.split("/").pop() === "lumen-room.html";
+const isLumenRoomPage = isLegacyLumenRoomPage;
 const lumenRoomTitle = document.querySelector("[data-lumen-room-title]");
 const lumenRoomSubtitle = document.querySelector("[data-lumen-room-subtitle]");
 const lumenRoomCopy = document.querySelector("[data-lumen-room-copy]");
@@ -1143,6 +1145,56 @@ function renderLumenInterior() {
   `;
 }
 
+function getLumenCleanRoomPath(roomId) {
+  const normalizedRoomId = String(roomId || "").trim().toLowerCase();
+
+  return normalizedRoomId ? `${lumenCleanRouteBase}/${encodeURIComponent(normalizedRoomId)}` : lumenCleanRouteBase;
+}
+
+function getLumenRoomIdFromPath() {
+  const currentPath = window.location.pathname.replace(/\/$/, "");
+
+  if (!currentPath.startsWith(`${lumenCleanRouteBase}/`)) {
+    return "";
+  }
+
+  const segments = currentPath.split("/").filter(Boolean);
+  return decodeURIComponent(segments[segments.length - 1] || "").trim().toLowerCase();
+}
+
+function getLumenRoomIdFromHash() {
+  return decodeURIComponent(window.location.hash.replace(/^#/, "")).trim().toLowerCase();
+}
+
+function getLumenRoomIdFromQuery() {
+  return (new URLSearchParams(window.location.search).get("room") || "").trim().toLowerCase();
+}
+
+function getLumenDashboardRouteId() {
+  return getLumenRoomIdFromPath() || getLumenRoomIdFromQuery() || getLumenRoomIdFromHash() || "arrival-room";
+}
+
+function normalizeLegacyLumenRoute() {
+  const roomId = getLumenRoomIdFromPath() || getLumenRoomIdFromQuery() || getLumenRoomIdFromHash();
+  const entry = getLumenDashboardEntryById(roomId || "arrival-room");
+  const expectedPath = getLumenCleanRoomPath(entry.id);
+  const currentPath = window.location.pathname.replace(/\/$/, "");
+  const legacyPath = currentPath === "/lumen-archive.html" || isLegacyLumenRoomPage;
+  const hasLegacyFragment = Boolean(getLumenRoomIdFromHash());
+  const hasLegacyRoomQuery = Boolean(getLumenRoomIdFromQuery());
+
+  if ((!legacyPath && !hasLegacyFragment && !hasLegacyRoomQuery) ||
+      (legacyPath && !isLegacyLumenRoomPage && !hasLegacyFragment && !hasLegacyRoomQuery)) {
+    return;
+  }
+
+  if (window.location.pathname === expectedPath && !window.location.search && !window.location.hash) {
+    return;
+  }
+
+  window.history.replaceState(null, "", expectedPath);
+}
+
 function enterLumenSanctuary() {
   const sanctuary = getLumenSanctuaryBySelector(activeLumenSanctuaryIndex);
 
@@ -1150,7 +1202,7 @@ function enterLumenSanctuary() {
     return;
   }
 
-  const roomUrl = `lumen-room.html?room=${encodeURIComponent(sanctuary.id)}`;
+  const roomUrl = getLumenCleanRoomPath(sanctuary.id);
   const visitPromise = trackLumenSanctuaryVisit(sanctuary);
   const fallbackNavigate = () => window.location.assign(roomUrl);
 
@@ -1187,7 +1239,8 @@ function trackLumenSanctuaryVisit(sanctuary) {
 }
 
 function getLumenRoomFromQuery() {
-  const roomKey = new URLSearchParams(window.location.search).get("room") || "";
+  const pathRoomKey = getLumenRoomIdFromPath();
+  const roomKey = pathRoomKey || new URLSearchParams(window.location.search).get("room") || "";
 
   return getLumenSanctuaryBySelector(roomKey.trim().toLowerCase()) || null;
 }
@@ -1209,7 +1262,7 @@ function renderLumenRoomNotFound() {
 
   if (lumenRoomBack) {
     lumenRoomBack.textContent = "Return to Lumen Archive";
-    lumenRoomBack.setAttribute("href", "lumen-archive.html");
+    lumenRoomBack.setAttribute("href", "/lumen-archive");
   }
 
   if (lumenInterior) {
@@ -1257,7 +1310,7 @@ function initializeLumenRoomPage() {
 
   if (lumenRoomBack) {
     lumenRoomBack.textContent = "Return to Sanctuaries";
-    lumenRoomBack.setAttribute("href", "lumen-archive.html");
+    lumenRoomBack.setAttribute("href", "/lumen-archive");
   }
 
   activeLumenInteriorIndex = sanctuaryIndex;
@@ -1267,7 +1320,7 @@ function initializeLumenRoomPage() {
 
 function returnToLumenSanctuaries() {
   if (isLumenRoomPage) {
-    window.location.assign("lumen-archive.html");
+    window.location.assign("/lumen-archive");
     return;
   }
 
@@ -1541,9 +1594,7 @@ function getLumenDashboardSanctuaryIndexById(id) {
 }
 
 function getLumenDashboardInitialIndex() {
-  const hashId = decodeURIComponent(window.location.hash.replace(/^#/, "")).trim().toLowerCase();
-
-  return getLumenDashboardEntryById(hashId || "arrival-room").id;
+  return getLumenDashboardEntryById(getLumenDashboardRouteId()).id;
 }
 
 function getLumenDashboardNavTitle(entry) {
@@ -1911,8 +1962,12 @@ function renderActiveLumenDashboardEntry(entry, options = {}) {
     renderLumenSanctuaryDashboardRoom(entry);
   }
 
-  if (options.updateHash !== false && window.location.hash !== `#${entry.id}`) {
-    window.history.replaceState(null, "", `#${entry.id}`);
+  if (options.updatePath !== false) {
+    const cleanPath = getLumenCleanRoomPath(entry.id);
+
+    if (window.location.pathname !== cleanPath || window.location.search || window.location.hash) {
+      window.history.pushState({ lumenRoom: entry.id }, "", cleanPath);
+    }
   }
 }
 
@@ -2101,7 +2156,10 @@ function initializeLumenDashboard() {
   }
 
   lumenDashboard.dataset.lumenListenersBound = "true";
-  setActiveLumenDashboardRoom(getLumenDashboardInitialIndex());
+  normalizeLegacyLumenRoute();
+  setActiveLumenDashboardRoom(getLumenDashboardInitialIndex(), {
+    updatePath: false
+  });
 
   lumenDashboard.addEventListener("click", (event) => {
     const roomButton = event.target.closest("[data-lumen-dashboard-room]");
@@ -2170,8 +2228,15 @@ function initializeLumenDashboard() {
   });
 
   window.addEventListener("hashchange", () => {
+    normalizeLegacyLumenRoute();
     setActiveLumenDashboardRoom(getLumenDashboardInitialIndex(), {
-      updateHash: false
+      updatePath: false
+    });
+  });
+
+  window.addEventListener("popstate", () => {
+    setActiveLumenDashboardRoom(getLumenDashboardInitialIndex(), {
+      updatePath: false
     });
   });
 

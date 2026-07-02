@@ -16,7 +16,7 @@ const hiddenEvents = {
     navItems: [
       {
         label: "NOCTIS ARCHIVE",
-        href: "archive.html"
+        href: "/noctis-archive"
       }
     ]
   }

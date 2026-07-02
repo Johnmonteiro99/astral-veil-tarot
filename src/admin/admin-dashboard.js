@@ -8219,7 +8219,7 @@ async function handleSignOut() {
   signOutButton.disabled = true;
   accessSignOutButton.disabled = true;
   await signOut();
-  window.location.assign('admin-login.html');
+  window.location.assign('/admin/login');
 }
 
 function bindSignOutButtons() {
@@ -8574,7 +8574,7 @@ function logAdminInitError(error) {
 }
 
 function redirectToAdminLogin() {
-  window.location.replace('admin-login.html');
+  window.location.replace('/admin/login');
 }
 
 function showAdminInitError(message) {

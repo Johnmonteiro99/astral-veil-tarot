@@ -167,7 +167,7 @@
       Boolean(options.user && options.allowAuthenticatedUser);
   }
 
-  function getGateMarkup(redirectTo = "index.html") {
+  function getGateMarkup(redirectTo = "/") {
     return `
       <main class="bloodmoon-gate-wrap">
         <section class="bloodmoon-gate" aria-labelledby="bloodmoon-gate-title">
@@ -181,7 +181,7 @@
   }
 
   function renderGate(options = {}) {
-    const redirectTo = options.redirectTo || "index.html";
+    const redirectTo = options.redirectTo || "/";
 
     document.body.classList.remove("sun-mode", "moon-mode");
     document.body.classList.add("blood-moon-mode", "bloodmoon-access-denied");
@@ -190,7 +190,7 @@
 
   function requireBloodMoonAccess(options = {}) {
     const fallback = options.fallback || "gate";
-    const redirectTo = options.redirectTo || "index.html";
+    const redirectTo = options.redirectTo || "/";
     const allowed = hasBloodMoonAccess(options);
 
     if (allowed) {

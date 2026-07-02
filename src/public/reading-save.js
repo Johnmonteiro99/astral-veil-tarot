@@ -84,7 +84,7 @@ function renderLoginPrompt(container) {
   container.innerHTML = `
     <p class="reading-save-panel__prompt">
       Log in to save this reading.
-      <a href="auth.html?returnTo=${encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)}">Log in</a>
+      <a href="/login?returnTo=${encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)}">Log in</a>
     </p>
   `;
 }
@@ -248,7 +248,7 @@ async function saveCurrentReading({ redirectToJournal = false } = {}) {
   if (existingReadingId) {
     renderSaveButton(container, reading.reading_key);
     if (redirectToJournal) {
-      window.location.href = `journal.html?readingId=${encodeURIComponent(existingReadingId)}`;
+      window.location.href = `/journal?readingId=${encodeURIComponent(existingReadingId)}`;
     }
     return existingReadingId;
   }
@@ -296,7 +296,7 @@ async function saveCurrentReading({ redirectToJournal = false } = {}) {
   readingSaveState.savedReadingKeys.add(reading.reading_key);
   renderSaveButton(container, reading.reading_key);
   if (redirectToJournal && data?.id) {
-    window.location.href = `journal.html?readingId=${encodeURIComponent(data.id)}`;
+    window.location.href = `/journal?readingId=${encodeURIComponent(data.id)}`;
   }
   return data?.id || null;
 }

@@ -355,7 +355,7 @@ function getCollectionMoodKeywords(collection) {
 }
 
 function getDeckReturnToPath() {
-  return `${window.location.pathname}${window.location.search}${window.location.hash}` || "/deck.html";
+  return `${window.location.pathname}${window.location.search}${window.location.hash}` || "/decks";
 }
 
 function getDeckAuthUrl(mode = "login") {
@@ -363,11 +363,8 @@ function getDeckAuthUrl(mode = "login") {
     returnTo: getDeckReturnToPath()
   });
 
-  if (mode === "signup") {
-    params.set("mode", "signup");
-  }
-
-  return `auth.html?${params.toString()}`;
+  const authPath = mode === "signup" ? "/signup" : "/login";
+  return `${authPath}?${params.toString()}`;
 }
 
 function escapeHtml(value) {

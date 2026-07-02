@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
     <meta name="robots" content="noindex, nofollow" />
     <title>Return to the Archive | Astral Veil Admin</title>
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -594,7 +595,7 @@
         <p data-auth-message role="status" aria-live="polite"></p>
       </form>
 
-      <a href="index.html">Return to Astral Veil</a>
+      <a href="/">Return to Astral Veil</a>
     </main>
 
     <script type="module">
@@ -639,7 +640,7 @@
           const { isAdmin, error } = await isCurrentUserAdmin();
 
           if (!error && isAdmin) {
-            window.location.replace('admin.html');
+            window.location.replace('/admin');
             return;
           }
 
@@ -692,7 +693,7 @@
           }
 
           setAdminVerified();
-          window.location.assign('admin.html');
+          window.location.assign('/admin');
         } catch (error) {
           console.error('Admin login failed:', {
             message: error?.message || '',

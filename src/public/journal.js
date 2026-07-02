@@ -198,7 +198,7 @@ function redirectToLogin() {
     // Query string returnTo is still enough when sessionStorage is unavailable.
   }
 
-  window.location.replace(`auth.html?returnTo=${encodeURIComponent(returnTo)}`);
+  window.location.replace(`/login?returnTo=${encodeURIComponent(returnTo)}`);
 }
 
 // Journal entries are private. The page does not render or save entries until
@@ -208,11 +208,7 @@ function getJournalAuthUrl(mode = 'login') {
     returnTo: getCurrentReturnPath(),
   });
 
-  if (mode === 'signup') {
-    params.set('mode', 'signup');
-  }
-
-  return `auth.html?${params.toString()}`;
+  return `${mode === 'signup' ? '/signup' : '/login'}?${params.toString()}`;
 }
 
 function isBloodMoonMode() {
@@ -651,7 +647,7 @@ function renderJournalLockModal() {
     journalLockSignup.href = getJournalAuthUrl('signup');
   }
   if (journalLockReturn) {
-    journalLockReturn.href = 'index.html';
+    journalLockReturn.href = '/';
     journalLockReturn.textContent = copy.returnLabel;
   }
 
@@ -1758,7 +1754,7 @@ function renderRecentEntries(entries = []) {
     const createdLabel = formatEntryTime(entry.created_at);
 
     return `
-      <a class="journal-entry-card journal-vibe-preview-entry private-data-card" href="account.html#journal-entries" aria-label="${escapeHtml(`Open journal archive for ${title}`)}" data-private-card="true" draggable="false">
+      <a class="journal-entry-card journal-vibe-preview-entry private-data-card" href="/account#journal-entries" aria-label="${escapeHtml(`Open journal archive for ${title}`)}" data-private-card="true" draggable="false">
         <span class="journal-entry-card__media" aria-hidden="true"></span>
         <span class="journal-entry-card__date">
           <time datetime="${escapeHtml(entry.entry_date || '')}" class="journal-vibe-preview-date">${escapeHtml(formatEntryDate(entry.entry_date))}</time>

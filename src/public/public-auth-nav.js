@@ -8,11 +8,11 @@ const publicAuthNavCacheKey = 'astralVeilPublicAuthNav';
 function getSafeCurrentPath() {
   const path = `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
-  return path.includes('auth.html') ? 'index.html' : path;
+  return path.includes('auth.html') || path === '/login' || path === '/signup' ? '/' : path;
 }
 
 function getAuthHref() {
-  return `auth.html?returnTo=${encodeURIComponent(getSafeCurrentPath())}`;
+  return `/login?returnTo=${encodeURIComponent(getSafeCurrentPath())}`;
 }
 
 function storeReturnTo() {
@@ -144,7 +144,7 @@ function createAccountControl({ avatarUrl = '', initials = 'AV', mobile = false,
 
   wrap.className = mobile ? 'navbar-account navbar-account--mobile' : 'navbar-account';
   link.className = mobile ? 'navbar-account__button navbar-account__button--mobile' : 'navbar-account__button';
-  link.href = 'account.html#overview';
+  link.href = '/account#overview';
   link.setAttribute('aria-label', 'Open account page');
   link.append(createAvatar({ avatarUrl, initials }));
 

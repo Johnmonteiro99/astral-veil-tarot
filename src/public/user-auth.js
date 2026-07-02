@@ -29,11 +29,14 @@ const signupResendStatus = document.querySelector('[data-signup-resend-status]')
 const termsText = document.querySelector('.terms-text');
 const normalAuthRegions = [loginWelcome, modeSwitch, form, termsText].filter(Boolean);
 const returnToStorageKey = 'astralVeilReturnTo';
-const defaultPublicAuthRedirect = 'index.html';
+const defaultPublicAuthRedirect = '/';
 const blockedPublicReturnPaths = new Set([
   '/account.html',
+  '/account',
   '/admin.html',
+  '/admin',
   '/admin-login.html',
+  '/admin/login',
 ]);
 
 let authMode = 'login';
@@ -61,7 +64,12 @@ function getSafeReturnTo(value) {
 
     const normalizedPath = url.pathname.toLowerCase();
 
-    if (/\/auth\.html$/i.test(normalizedPath) || blockedPublicReturnPaths.has(normalizedPath)) {
+    if (
+      /\/auth\.html$/i.test(normalizedPath) ||
+      normalizedPath === '/login' ||
+      normalizedPath === '/signup' ||
+      blockedPublicReturnPaths.has(normalizedPath)
+    ) {
       return '';
     }
 
@@ -132,7 +140,7 @@ function setSignupResendStatus(text = '', type = '') {
 }
 
 function getEmailConfirmationRedirectUrl() {
-  const redirectUrl = new URL('auth.html', window.location.href);
+  const redirectUrl = new URL('/login', window.location.href);
 
   redirectUrl.searchParams.set('notice', 'email_confirmed');
   return redirectUrl.href;
@@ -287,7 +295,7 @@ function setForgotPasswordModalOpen(isOpen) {
 }
 
 function getPasswordResetRedirectUrl() {
-  const resetUrl = new URL('account.html', window.location.href);
+  const resetUrl = new URL('/account', window.location.href);
 
   resetUrl.searchParams.set('changePassword', '1');
   resetUrl.hash = 'privacy-security';
@@ -501,7 +509,8 @@ if (!isSupabaseConfigured()) {
   submitButton.disabled = true;
   setMessage('Account access is not configured for this environment.', 'error');
 } else {
-  const initialAuthMode = new URLSearchParams(window.location.search).get('mode') === 'signup'
+  const initialAuthMode = window.location.pathname.replace(/\/$/, '') === '/signup' ||
+    new URLSearchParams(window.location.search).get('mode') === 'signup'
     ? 'signup'
     : 'login';
   const noticeMessage = getAuthNoticeMessage();

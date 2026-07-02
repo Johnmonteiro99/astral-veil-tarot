@@ -642,13 +642,7 @@ function getReadingDeckCtaLabel(deck, isSelected, isAccessible) {
 }
 
 function getReadingAuthUrl(mode = "signup") {
-  const params = new URLSearchParams();
-
-  if (mode === "signup") {
-    params.set("mode", "signup");
-  }
-
-  return `auth.html${params.toString() ? `?${params.toString()}` : ""}`;
+  return mode === "signup" ? "/signup" : "/login";
 }
 
 function getReadingDeckCarouselOffset(index, activeIndex, itemCount) {

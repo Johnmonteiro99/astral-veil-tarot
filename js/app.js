@@ -3,14 +3,14 @@ const themeStorageKey = "dailyTarotTheme";
 const bloodMoonEventId = "bloodMoon";
 const bloodMoonEventStorageKey =
   window.AstralVeilEvents?.getEventStorageKey(bloodMoonEventId) || "astralVeilBloodMoonActive";
-const bloodMoonReadingPageHref = "index.html";
+const bloodMoonReadingPageHref = "/";
 const lumenArchiveNavItem = {
   label: "LUMEN ARCHIVE",
-  href: "lumen-archive.html"
+  href: "/lumen-archive"
 };
 const noctisArchiveNavItem = {
   label: "NOCTIS ARCHIVE",
-  href: "archive.html"
+  href: "/noctis-archive"
 };
 const bloodMoonRitualStorageKey = "astralVeilThemeRitualSteps";
 const BLOOD_MOON_TOGGLE_THRESHOLD = 10;
@@ -490,7 +490,7 @@ function updateLumenArchiveNav(isVisible) {
   if (desktopLinks && !existingDesktopLink) {
     const archiveItem = document.createElement("li");
     const targetItem = Array.from(desktopLinks.querySelectorAll("a"))
-      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)))
+      .find((link) => ["/journal", "/about"].includes(getNormalizedNavPath(link.href)))
       ?.closest("li");
 
     archiveItem.innerHTML = `
@@ -504,7 +504,7 @@ function updateLumenArchiveNav(isVisible) {
   if (mobileMenu && !existingMobileLink) {
     const archiveLink = document.createElement("a");
     const targetLink = Array.from(mobileMenu.querySelectorAll("a"))
-      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)));
+      .find((link) => ["/journal", "/about"].includes(getNormalizedNavPath(link.href)));
 
     archiveLink.className = "navbar__mobile-link navbar__mobile-link--featured navbar__mobile-link--lumen-archive";
     archiveLink.href = lumenArchiveNavItem.href;
@@ -539,7 +539,7 @@ function updateBloodMoonNav(isActive) {
   if (desktopLinks && !existingDesktopLink) {
     const archiveItem = document.createElement("li");
     const targetItem = Array.from(desktopLinks.querySelectorAll("a"))
-      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)))
+      .find((link) => ["/journal", "/about"].includes(getNormalizedNavPath(link.href)))
       ?.closest("li");
 
     archiveItem.innerHTML = `
@@ -553,7 +553,7 @@ function updateBloodMoonNav(isActive) {
   if (mobileMenu && !existingMobileLink) {
     const archiveLink = document.createElement("a");
     const targetLink = Array.from(mobileMenu.querySelectorAll("a"))
-      .find((link) => ["journal.html", "about.html"].includes(getNormalizedNavPath(link.href)));
+      .find((link) => ["/journal", "/about"].includes(getNormalizedNavPath(link.href)));
 
     archiveLink.className = "navbar__mobile-link navbar__mobile-link--blood-moon";
     archiveLink.href = archiveNavItem.href;
@@ -947,9 +947,30 @@ window.AstralVeilBloodMoon = {
 
 function getNormalizedNavPath(url) {
   const path = new URL(url, window.location.href).pathname;
-  const filename = path.endsWith("/") ? "index.html" : path.split("/").pop();
+  const cleanPath = path.replace(/\/$/, "") || "/";
+  const cleanPathMap = {
+    "/index.html": "/",
+    "/readers.html": "/veilwalkers",
+    "/deck.html": "/decks",
+    "/about.html": "/about",
+    "/lumen-archive.html": "/lumen-archive",
+    "/archive.html": "/noctis-archive",
+    "/journal.html": "/journal",
+    "/auth.html": "/login",
+    "/account.html": "/account",
+    "/admin-login.html": "/admin/login",
+    "/admin.html": "/admin",
+    "/terms.html": "/terms",
+    "/privacy.html": "/privacy"
+  };
 
-  return filename === "" ? "index.html" : filename;
+  if (cleanPathMap[cleanPath]) {
+    return cleanPathMap[cleanPath];
+  }
+
+  const filename = path.endsWith("/") ? "/" : path.split("/").pop();
+
+  return filename === "" ? "/" : cleanPath;
 }
 
 // Keeps desktop and mobile nav links in sync with the current HTML page.

@@ -5,7 +5,9 @@ const archiveRoomHub = document.querySelector("[data-archive-room-hub]");
 const archiveRoomGrid = document.querySelector("[data-archive-room-grid]");
 const archiveRoomView = document.querySelector("[data-archive-room-view]");
 const archiveRoomToast = document.querySelector("[data-archive-room-toast]");
-const isNoctisRoomPage = window.location.pathname.split("/").pop() === "noctis-room.html";
+const normalizedNoctisPath = window.location.pathname.replace(/\/$/, "");
+const isNoctisRoomPage = window.location.pathname.split("/").pop() === "noctis-room.html" ||
+  normalizedNoctisPath.startsWith("/noctis-archive/");
 const noctisRoomNavbar = document.querySelector("[data-noctis-room-navbar]");
 const noctisRoomPage = document.querySelector("[data-noctis-room-shell]");
 const noctisRoomTitle = document.querySelector("[data-noctis-room-title]");
@@ -1986,7 +1988,10 @@ function isRoomLocked(room) {
 }
 
 function getNoctisRoomFromQuery() {
-  const roomKey = new URLSearchParams(window.location.search).get("room") || "";
+  const pathRoomKey = normalizedNoctisPath.startsWith("/noctis-archive/")
+    ? decodeURIComponent(normalizedNoctisPath.split("/").filter(Boolean).pop() || "")
+    : "";
+  const roomKey = pathRoomKey || new URLSearchParams(window.location.search).get("room") || "";
 
   return getRoomById(roomKey.trim().toLowerCase()) || null;
 }
@@ -2007,7 +2012,7 @@ function renderNoctisRoomNotFound() {
 
   if (noctisRoomBack) {
     noctisRoomBack.textContent = "Return to Noctis Archive";
-    noctisRoomBack.setAttribute("href", "archive.html");
+    noctisRoomBack.setAttribute("href", "/noctis-archive");
   }
 
   if (noctisRoomContent) {
@@ -2016,7 +2021,7 @@ function renderNoctisRoomNotFound() {
 }
 
 function getNoctisRoomHref(roomId) {
-  return `noctis-room.html?room=${encodeURIComponent(roomId)}`;
+  return `/noctis-archive/${encodeURIComponent(roomId)}`;
 }
 
 function getNoctisRoomNavLockedMessage(room) {
@@ -2070,7 +2075,7 @@ function renderNoctisRoomNavbar(currentRoomId = "") {
 
   noctisRoomNavbar.classList.remove("is-open");
   noctisRoomNavbar.innerHTML = `
-    <a class="noctis-room-brand" href="archive.html">
+    <a class="noctis-room-brand" href="/noctis-archive">
       <span class="noctis-room-brand__arrow" aria-hidden="true">‹</span>
       <span>Noctis Archive</span>
     </a>
@@ -2229,7 +2234,7 @@ function renderNoctisRoomByQuery() {
   noctisRoomCopy.classList.remove("archive-room-placeholder__copy--not-found");
   noctisRoomCopy.textContent = room.intro || room.description || "The chamber has awakened.";
   noctisRoomBack.textContent = "Return to Noctis Archive";
-  noctisRoomBack.setAttribute("href", "archive.html");
+  noctisRoomBack.setAttribute("href", "/noctis-archive");
   renderNoctisRoomNavbar(room.id);
 
   if (room.id === "shelves") {
@@ -6122,14 +6127,14 @@ function renderRestrictedWingRitualOverlay() {
 
 function getRestrictedWingAuthHref(mode = "login") {
   const params = new URLSearchParams({
-    returnTo: "archive.html#restricted-wing"
+    returnTo: "/noctis-archive/restricted-wing"
   });
 
   if (mode === "signup") {
     params.set("mode", "signup");
   }
 
-  return `auth.html?${params.toString()}`;
+  return `/login?${params.toString()}`;
 }
 
 function renderRestrictedWingGuestPromptOverlay() {
@@ -6444,7 +6449,7 @@ function closeRestrictedWingRitual() {
   enteredArchiveRoomId = "";
 
   if (isNoctisRoomPage) {
-    window.location.assign("archive.html");
+    window.location.assign("/noctis-archive");
     return;
   }
 
@@ -6478,7 +6483,7 @@ function closeRestrictedWingGuestPrompt() {
   enteredArchiveRoomId = "";
 
   if (isNoctisRoomPage) {
-    window.location.assign("archive.html");
+    window.location.assign("/noctis-archive");
     return;
   }
 
@@ -6538,7 +6543,7 @@ async function enterArchiveRoom(roomId) {
     selected_from: "archive_chamber_viewer"
   });
 
-  window.location.assign(`noctis-room.html?room=${encodeURIComponent(room.id)}`);
+  window.location.assign(getNoctisRoomHref(room.id));
 }
 
 // Clears the hash and restores the chamber selector hub.
@@ -6565,7 +6570,7 @@ function returnToRoomHub({ updateHash = true, scroll = true } = {}) {
   }
 }
 
-// Supports direct links such as archive.html#entry-desk while rejecting locked room hashes.
+// Supports direct links such as /noctis-archive#entry-desk while rejecting locked room hashes.
 async function syncRoomFromHash() {
   const roomId = window.location.hash.replace("#", "");
   const room = getRoomById(roomId);
@@ -6622,7 +6627,7 @@ async function syncRoomFromHash() {
 }
 
 function returnToReaderSelection() {
-  window.location.replace("index.html#reader-selection");
+  window.location.replace("/#reader-selection");
 }
 
 function handleArchiveBloodMoonChange(event) {

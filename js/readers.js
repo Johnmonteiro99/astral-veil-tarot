@@ -14,7 +14,7 @@ let selectorTouchStartX = 0;
 let selectorTouchStartY = 0;
 let featuredReaderHeroLineRequestId = 0;
 const selectedReaderStorageKey = "astralVeilSelectedReader";
-const readingPageHref = "index.html";
+const readingPageHref = "/";
 const selectedReaderHeroLines = {};
 const zodiacOrder = [
   "Aries",

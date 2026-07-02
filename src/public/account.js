@@ -1466,7 +1466,7 @@ function setAccountDeletionModalOpen(isOpen) {
 }
 
 function redirectToSignedOutNotice(notice = 'account_deletion_requested') {
-  window.location.replace(`auth.html?notice=${encodeURIComponent(notice)}`);
+  window.location.replace(`/login?notice=${encodeURIComponent(notice)}`);
 }
 
 async function fetchCurrentProfile(supabase, userId) {
@@ -3897,7 +3897,7 @@ async function loadAccount() {
   }
 
   if (!user) {
-    window.location.replace('auth.html');
+    window.location.replace('/login');
     return;
   }
 
@@ -3963,7 +3963,7 @@ async function handleLogout(event) {
     return;
   }
 
-  window.location.assign('auth.html');
+  window.location.assign('/login');
 }
 
 logoutButtons.forEach((button) => {

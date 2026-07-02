@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
     <meta
       name="description"
       content="Noctis Archive room placeholder page."
@@ -42,7 +43,7 @@
     <script>
       window.requireBloodMoonAccess({
         fallback: "gate",
-        redirectTo: "archive.html"
+        redirectTo: "/noctis-archive"
       });
     </script>
 
@@ -81,7 +82,7 @@
           <p class="archive-room-placeholder__copy" data-noctis-room-copy>
             Choose a valid chamber from the Noctis Archive and return to begin.
           </p>
-          <a class="archive-room-placeholder__back" href="archive.html" data-noctis-room-back>Return to Noctis Archive</a>
+          <a class="archive-room-placeholder__back" href="/noctis-archive" data-noctis-room-back>Return to Noctis Archive</a>
           <section data-noctis-room-content aria-live="polite"></section>
         </article>
       </section>
@@ -109,10 +110,10 @@
           </div>
           <nav class="site-footer__nav" aria-label="Footer navigation">
             <p class="site-footer__label">Explore</p>
-            <a href="index.html">Home</a>
-            <a href="readers.html">Veilwalkers</a>
-            <a href="deck.html">DECKS</a>
-            <a href="about.html">About</a>
+            <a href="/">Home</a>
+            <a href="/veilwalkers">Veilwalkers</a>
+            <a href="/decks">DECKS</a>
+            <a href="/about">About</a>
           </nav>
           <div class="site-footer__creator">
             <p class="site-footer__label">Creator</p>
@@ -122,9 +123,9 @@
           </div>
           <p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p>
           <nav class="site-footer__legal" aria-label="Legal links">
-            <a href="terms.html">Terms of Service</a>
+            <a href="/terms">Terms of Service</a>
             <span aria-hidden="true">·</span>
-            <a href="privacy.html">Privacy Policy</a>
+            <a href="/privacy">Privacy Policy</a>
           </nav>
         </div>
 
