@@ -302,6 +302,23 @@
               </div>
             </div>
           </div>
+          <div class="mobile-reader-card-controls" data-mobile-reader-card-controls>
+            <p class="reader-panel-swipe-hint">Swipe card for image and details</p>
+            <div class="reader-panel-dots" aria-label="Reader card panels">
+              <button class="reader-panel-dot is-active" type="button" data-reader-panel-dot="0" aria-label="Show reader image" aria-current="true"></button>
+              <button class="reader-panel-dot" type="button" data-reader-panel-dot="1" aria-label="Show reader details" aria-current="false"></button>
+            </div>
+            <div class="reader-nav-buttons">
+              <button class="reader-nav-button" type="button" data-reader-nav="prev">
+                <span class="reader-nav-button__arrow" aria-hidden="true">‹</span>
+                <span>Previous Reader</span>
+              </button>
+              <button class="reader-nav-button" type="button" data-reader-nav="next">
+                <span>Next Reader</span>
+                <span class="reader-nav-button__arrow" aria-hidden="true">›</span>
+              </button>
+            </div>
+          </div>
 
           <div class="spread-selection-panel" data-setup-panel>
             <div class="reader-introduction" data-reader-introduction></div>
@@ -331,7 +348,8 @@
                     <button class="spread-option spread-segment" type="button" data-spread="1">
                       <span>1</span>
                       <strong>Daily Glimpse</strong>
-                      <small>1 Card</small>
+                      <em class="spread-card-count">1 Card</em>
+                      <small>A single message for today.</small>
                     </button>
                   </div>
                 </div>
@@ -344,17 +362,20 @@
                     <button class="spread-option spread-segment" type="button" data-spread="3">
                       <span>3</span>
                       <strong>Focused</strong>
-                      <small>A focused glimpse</small>
+                      <em class="spread-card-count">3 Cards</em>
+                      <small>Past, present, and the path forming ahead.</small>
                     </button>
                     <button class="spread-option spread-segment" type="button" data-spread="5">
                       <span>5</span>
                       <strong>Deeper</strong>
-                      <small>A deeper path</small>
+                      <em class="spread-card-count">5 Cards</em>
+                      <small>A fuller look at the forces surrounding your question.</small>
                     </button>
                     <button class="spread-option spread-segment" type="button" data-spread="7">
                       <span>7</span>
                       <strong>Ritual</strong>
-                      <small>A full ritual</small>
+                      <em class="spread-card-count">7 Cards</em>
+                      <small>A layered reading for patterns, shadows, and possible outcomes.</small>
                     </button>
                   </div>
                 </div>

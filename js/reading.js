@@ -23,6 +23,7 @@ const readingStageSubtitle = document.querySelector("[data-reading-stage-subtitl
 const readerPortraitFrame = document.querySelector(".reader-portrait-frame");
 const spreadButtons = document.querySelectorAll("[data-spread]");
 const readerNavButtons = document.querySelectorAll("[data-reader-nav]");
+const readerPanelDots = document.querySelectorAll("[data-reader-panel-dot]");
 const newReadingButton = document.querySelector("[data-new-reading]");
 const cardList = document.getElementById("deck-area");
 const readingSpreadPanel = document.querySelector(".spread-selection-panel");
@@ -288,6 +289,34 @@ function isReadingReduceMotionEnabled() {
 
 function isSmallViewport() {
   return window.matchMedia("(max-width: 768px)").matches;
+}
+
+function updateReaderPanelDots(activePanelIndex = 0) {
+  readerPanelDots.forEach((dot) => {
+    const isActive = Number(dot.dataset.readerPanelDot || 0) === activePanelIndex;
+    dot.classList.toggle("is-active", isActive);
+    dot.setAttribute("aria-current", isActive ? "true" : "false");
+  });
+}
+
+function getActiveReaderPanelIndex() {
+  if (!activeReaderHeader) {
+    return 0;
+  }
+
+  return activeReaderHeader.scrollLeft >= activeReaderHeader.clientWidth / 2 ? 1 : 0;
+}
+
+function scrollActiveReaderPanel(panelIndex, { behavior = getReadingScrollBehavior() } = {}) {
+  if (!activeReaderHeader) {
+    return;
+  }
+
+  activeReaderHeader.scrollTo({
+    left: activeReaderHeader.clientWidth * panelIndex,
+    behavior,
+  });
+  updateReaderPanelDots(panelIndex);
 }
 
 function shouldTriggerBloodMoon() {
@@ -612,6 +641,16 @@ function getReadingDeckCtaLabel(deck, isSelected, isAccessible) {
   return "Locked";
 }
 
+function getReadingAuthUrl(mode = "signup") {
+  const params = new URLSearchParams();
+
+  if (mode === "signup") {
+    params.set("mode", "signup");
+  }
+
+  return `auth.html${params.toString() ? `?${params.toString()}` : ""}`;
+}
+
 function getReadingDeckCarouselOffset(index, activeIndex, itemCount) {
   let offset = index - activeIndex;
 
@@ -711,6 +750,11 @@ function renderDeckOptions() {
       const protectedMediaAttrs = isProtectedDeckMedia ? ' data-protected-media="true" draggable="false"' : "";
       const protectedImageAttr = isProtectedDeckMedia ? ' draggable="false"' : "";
       const ctaLabel = getReadingDeckCtaLabel(deck, isSelected, isAccessible);
+      const actionMarkup = !isAccessible && deck.access === "auth"
+        ? `<a class="primary-action deck-selection-card__button" href="${escapeHtml(getReadingAuthUrl("signup"))}" data-deck-auth-link="${escapeHtml(deck.id)}">${escapeHtml(ctaLabel)}</a>`
+        : `<button class="primary-action deck-selection-card__button" type="button" data-deck-id="${escapeHtml(deck.id)}" ${isAccessible ? "" : "disabled"}>
+                ${escapeHtml(ctaLabel)}
+              </button>`;
 
       return `
         <article
@@ -735,9 +779,7 @@ function renderDeckOptions() {
               <p>${escapeHtml(deck.description)}</p>
             </div>
             <div class="deck-selection-card__actions">
-              <button class="primary-action deck-selection-card__button" type="button" data-deck-id="${escapeHtml(deck.id)}" ${isAccessible ? "" : "disabled"}>
-                ${escapeHtml(ctaLabel)}
-              </button>
+              ${actionMarkup}
             </div>
           </div>
         </article>
@@ -2245,6 +2287,7 @@ function updateActiveReader() {
   activeReaderRole.textContent = getReaderRole(readerPresentation);
   renderActiveReaderQuote(readerPresentation, getActiveReaderQuote(readerPresentation));
   hydrateActiveReaderIntroLine(readerPresentation);
+  scrollActiveReaderPanel(0, { behavior: "auto" });
   readerIntroduction.innerHTML = `
     <p class="reading-section__eyebrow">${preparationTitle}</p>
     <p>${preparationText}</p>
@@ -3191,6 +3234,22 @@ if (deckOptions) {
 readerNavButtons.forEach((button) => {
   button.addEventListener("click", () => {
     moveReader(button.dataset.readerNav);
+  });
+});
+
+if (activeReaderHeader) {
+  activeReaderHeader.addEventListener("scroll", () => {
+    if (!isSmallViewport()) {
+      return;
+    }
+
+    updateReaderPanelDots(getActiveReaderPanelIndex());
+  }, { passive: true });
+}
+
+readerPanelDots.forEach((dot) => {
+  dot.addEventListener("click", () => {
+    scrollActiveReaderPanel(Number(dot.dataset.readerPanelDot || 0));
   });
 });
 
