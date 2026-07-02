@@ -1,0 +1,139 @@
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/readers.html"
+  to = "/veilwalkers"
+  status = 301
+
+[[redirects]]
+  from = "/deck.html"
+  to = "/decks"
+  status = 301
+
+[[redirects]]
+  from = "/about.html"
+  to = "/about"
+  status = 301
+
+[[redirects]]
+  from = "/lumen-archive.html"
+  to = "/lumen-archive"
+  status = 301
+
+[[redirects]]
+  from = "/archive.html"
+  to = "/noctis-archive"
+  status = 301
+
+[[redirects]]
+  from = "/auth.html"
+  to = "/login"
+  status = 301
+
+[[redirects]]
+  from = "/account.html"
+  to = "/account"
+  status = 301
+
+[[redirects]]
+  from = "/journal.html"
+  to = "/journal"
+  status = 301
+
+[[redirects]]
+  from = "/admin-login.html"
+  to = "/admin/login"
+  status = 301
+
+[[redirects]]
+  from = "/admin.html"
+  to = "/admin"
+  status = 301
+
+[[redirects]]
+  from = "/terms.html"
+  to = "/terms"
+  status = 301
+
+[[redirects]]
+  from = "/privacy.html"
+  to = "/privacy"
+  status = 301
+
+[[redirects]]
+  from = "/veilwalkers"
+  to = "/readers.html"
+  status = 200
+
+[[redirects]]
+  from = "/decks"
+  to = "/deck.html"
+  status = 200
+
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+
+[[redirects]]
+  from = "/lumen-archive"
+  to = "/lumen-archive.html"
+  status = 200
+
+[[redirects]]
+  from = "/lumen-archive/*"
+  to = "/lumen-archive.html"
+  status = 200
+
+[[redirects]]
+  from = "/noctis-archive"
+  to = "/archive.html"
+  status = 200
+
+[[redirects]]
+  from = "/noctis-archive/*"
+  to = "/noctis-room.html"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/auth.html"
+  status = 200
+
+[[redirects]]
+  from = "/signup"
+  to = "/auth.html"
+  status = 200
+
+[[redirects]]
+  from = "/account"
+  to = "/account.html"
+  status = 200
+
+[[redirects]]
+  from = "/journal"
+  to = "/journal.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/login"
+  to = "/admin-login.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/terms"
+  to = "/terms.html"
+  status = 200
+
+[[redirects]]
+  from = "/privacy"
+  to = "/privacy.html"
+  status = 200
