@@ -3841,6 +3841,29 @@ body.journal-page.sun-mode .journal-reflection-editor::-webkit-scrollbar-thumb {
   }
 }
 
+@media (max-width: 768px) {
+  body.journal-page .journal-title-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.85rem;
+    width: 100%;
+  }
+
+  body.journal-page .journal-title-row > .journal-field,
+  body.journal-page .journal-title-row > .journal-field:first-child {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  body.journal-page .journal-title-row .journal-field input,
+  body.journal-page .journal-title-row .journal-field input[type="date"] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+}
+
 @media (max-width: 680px) {
   .journal-main {
     width: calc(100vw - 1rem);
