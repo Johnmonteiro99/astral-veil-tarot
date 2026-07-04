@@ -1030,6 +1030,10 @@ function getPreferredThemeMode() {
   return getStoredThemePreference() || getTimeBasedThemeMode();
 }
 
+function getFixedThemeMode() {
+  return normalizeThemeMode(document.body?.dataset?.fixedTheme);
+}
+
 // Persist only manual toggle choices so automatic time-based theme can still run for first visits.
 function storeThemePreference(mode) {
   try {
@@ -1041,12 +1045,16 @@ function storeThemePreference(mode) {
 
 // Applies Sun/Moon without touching Blood Moon; Blood Moon owns its own event class.
 function setTheme(mode, { persist = false } = {}) {
+  const fixedThemeMode = getFixedThemeMode();
+
   if (isBloodMoonActive()) {
-    applyBloodMoonState();
-    return;
+    if (!fixedThemeMode) {
+      applyBloodMoonState();
+      return;
+    }
   }
 
-  const themeMode = normalizeThemeMode(mode) || getTimeBasedThemeMode();
+  const themeMode = fixedThemeMode || normalizeThemeMode(mode) || getTimeBasedThemeMode();
   const isSunMode = themeMode === "sun";
 
   document.body.classList.toggle("sun-mode", isSunMode);
@@ -1057,12 +1065,14 @@ function setTheme(mode, { persist = false } = {}) {
     themeToggleButton.disabled = false;
     themeToggleButton.setAttribute(
       "aria-label",
-      isSunMode ? "Switch to moon mode" : "Switch to sun mode"
+      fixedThemeMode
+        ? "Moon mode is fixed on this page"
+        : isSunMode ? "Switch to moon mode" : "Switch to sun mode"
     );
     themeToggleButton.setAttribute("aria-pressed", String(!isSunMode));
   }
 
-  if (persist) {
+  if (persist && !fixedThemeMode) {
     storeThemePreference(themeMode);
   }
 }

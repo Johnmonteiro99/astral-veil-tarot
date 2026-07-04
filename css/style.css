@@ -3222,6 +3222,690 @@ body.blood-moon-mode .future-omen {
   font-size: 0.88rem;
 }
 
+/* ================================
+   SEO Landing Pages
+================================ */
+
+.seo-landing-stage {
+  align-items: start;
+  padding-top: clamp(68px, 6vw, 92px);
+}
+
+.seo-landing {
+  width: min(100%, 1120px);
+  gap: clamp(22px, 4vw, 42px);
+  color: var(--navbar-text);
+}
+
+.seo-landing * {
+  min-width: 0;
+}
+
+.seo-landing-hero {
+  position: relative;
+  min-height: clamp(440px, 56vh, 600px);
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--navbar-border) 82%, transparent);
+  border-radius: 24px;
+  background:
+    linear-gradient(90deg, rgba(1, 1, 8, 0.88) 0%, rgba(4, 3, 18, 0.76) 38%, rgba(4, 3, 18, 0.24) 70%),
+    linear-gradient(180deg, rgba(5, 8, 14, 0.08) 0%, rgba(5, 8, 14, 0.24) 46%, rgba(5, 8, 14, 0.68) 100%),
+    radial-gradient(circle at 24% 22%, color-mix(in srgb, var(--theme-glow-primary) 50%, transparent), transparent 36%),
+    url("../assets/images/background _images/free-reading-bg.png") right center / cover;
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.34),
+    0 0 34px var(--navbar-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  isolation: isolate;
+}
+
+.seo-landing-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.58), transparent 66%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.42), transparent 46%);
+  z-index: -1;
+}
+
+.seo-landing-hero__content {
+  width: min(100%, 620px);
+  padding: clamp(28px, 4.8vw, 52px);
+  text-shadow:
+    0 2px 16px rgba(0, 0, 0, 0.72),
+    0 0 24px color-mix(in srgb, var(--theme-glow-primary) 32%, transparent);
+}
+
+.seo-landing-kicker {
+  margin: 0 0 0.8rem;
+  color: color-mix(in srgb, var(--theme-accent-primary) 86%, #ffffff);
+  font-family: var(--body-font);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.seo-landing-hero__kicker {
+  color: #d8dde8;
+}
+
+.seo-landing h1,
+.seo-landing h2,
+.seo-landing h3 {
+  max-width: 100%;
+  margin: 0;
+  color: color-mix(in srgb, var(--navbar-text) 94%, #fff4cf);
+  font-family: var(--heading-font);
+  font-weight: 500;
+  line-height: 1.08;
+  overflow-wrap: break-word;
+}
+
+.seo-landing h1 {
+  max-width: 640px;
+  font-size: clamp(3rem, 7vw, 5.8rem);
+  line-height: 0.94;
+}
+
+.seo-landing h2 {
+  font-size: clamp(2rem, 4.4vw, 3.4rem);
+}
+
+.seo-landing h3 {
+  font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+}
+
+.seo-landing p {
+  margin: 0;
+  color: color-mix(in srgb, var(--navbar-muted) 86%, #fff4cf);
+  font-size: clamp(1rem, 1.35vw, 1.18rem);
+  line-height: 1.75;
+}
+
+.seo-landing-hero p:not(.seo-landing-kicker) {
+  max-width: 600px;
+  margin-top: 0.9rem;
+  color: color-mix(in srgb, var(--navbar-text) 86%, #ffffff);
+}
+
+.seo-landing-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 48px;
+  margin-top: 1.4rem;
+  border: 1px solid color-mix(in srgb, var(--theme-accent-primary) 74%, transparent);
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--theme-accent-primary) 88%, #ffffff), var(--theme-accent-secondary));
+  color: #160f08;
+  font-family: var(--body-font);
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 0.9rem 1.35rem;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: uppercase;
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--theme-glow-primary) 64%, transparent),
+    0 14px 32px rgba(0, 0, 0, 0.28);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.seo-landing-button:hover,
+.seo-landing-button:focus-visible {
+  border-color: color-mix(in srgb, var(--navbar-text) 72%, var(--theme-accent-primary));
+  box-shadow:
+    0 0 24px color-mix(in srgb, var(--theme-glow-primary) 78%, transparent),
+    0 18px 38px rgba(0, 0, 0, 0.34);
+  transform: translateY(-2px);
+}
+
+.seo-landing-trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.seo-landing-trust-row li {
+  border: 1px solid rgba(216, 194, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(19, 12, 42, 0.48);
+  color: #e4ddf4;
+  font-family: var(--body-font);
+  font-size: clamp(0.75rem, 1vw, 0.82rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.42rem 0.68rem;
+  text-shadow: none;
+}
+
+.seo-landing-button:focus-visible,
+.seo-landing-link-grid a:focus-visible,
+.seo-landing-faq summary:focus-visible {
+  outline: 2px solid var(--theme-accent-primary);
+  outline-offset: 4px;
+}
+
+.seo-landing-section {
+  display: grid;
+  gap: clamp(0.9rem, 2vw, 1.3rem);
+  padding: clamp(2.2rem, 5vw, 4.4rem) clamp(0.9rem, 3vw, 2rem);
+  border-top: 1px solid color-mix(in srgb, var(--theme-divider-faint) 76%, transparent);
+}
+
+.seo-landing-section--daily {
+  border-top: 0;
+  padding-top: clamp(1.7rem, 3.8vw, 3.2rem);
+}
+
+.seo-landing-section--split {
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: clamp(1.4rem, 4vw, 3.4rem);
+  align-items: start;
+}
+
+.seo-landing-daily-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(120px, 0.32fr);
+  gap: clamp(1.2rem, 3vw, 2rem);
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--navbar-border) 82%, transparent);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
+    radial-gradient(circle at 86% 16%, rgba(183, 140, 255, 0.18), transparent 38%),
+    color-mix(in srgb, var(--navbar-bg) 90%, transparent);
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: clamp(1.35rem, 3vw, 2rem);
+  backdrop-filter: blur(16px) saturate(132%);
+  -webkit-backdrop-filter: blur(16px) saturate(132%);
+}
+
+.seo-landing-daily-card__copy {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.seo-landing-daily-card__accent {
+  display: grid;
+  place-items: center;
+  min-height: 12rem;
+}
+
+.seo-landing-daily-card__accent span {
+  display: grid;
+  width: clamp(6rem, 14vw, 9rem);
+  height: clamp(6rem, 14vw, 9rem);
+  place-items: center;
+  border: 1px solid rgba(216, 194, 255, 0.36);
+  border-radius: 50%;
+  color: #d8c2ff;
+  background:
+    radial-gradient(circle, rgba(183, 140, 255, 0.18), transparent 64%),
+    rgba(9, 6, 24, 0.34);
+  box-shadow:
+    0 0 28px rgba(157, 100, 255, 0.22),
+    inset 0 0 24px rgba(216, 194, 255, 0.1);
+  font-size: clamp(2.4rem, 6vw, 4rem);
+}
+
+.seo-landing-section--explore h2 {
+  justify-self: center;
+  text-align: center;
+}
+
+.seo-landing-steps,
+.seo-landing-link-grid,
+.seo-landing-faq {
+  display: grid;
+  gap: clamp(0.85rem, 2vw, 1.2rem);
+}
+
+.seo-landing-steps {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 0.35rem;
+}
+
+.seo-landing-steps article,
+.seo-landing-faq details,
+.seo-landing-link-grid a {
+  border: 1px solid color-mix(in srgb, var(--navbar-border) 82%, transparent);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
+    color-mix(in srgb, var(--navbar-bg) 90%, transparent);
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px) saturate(132%);
+  -webkit-backdrop-filter: blur(14px) saturate(132%);
+}
+
+.seo-landing-steps article {
+  display: grid;
+  position: relative;
+  min-height: 100%;
+  gap: 0.64rem;
+  padding: clamp(1rem, 2.2vw, 1.35rem);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.seo-landing-steps article:hover,
+.seo-landing-steps article:focus-within {
+  border-color: color-mix(in srgb, var(--theme-accent-primary) 66%, transparent);
+  box-shadow:
+    0 0 20px color-mix(in srgb, var(--theme-glow-primary) 32%, transparent),
+    0 18px 44px rgba(0, 0, 0, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.seo-landing-step-number {
+  color: color-mix(in srgb, var(--theme-accent-primary) 82%, #ffffff);
+  font-family: var(--body-font);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.seo-landing-step-icon {
+  position: absolute;
+  top: 0.95rem;
+  right: 1rem;
+  color: rgba(216, 194, 255, 0.72);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.seo-landing-steps p {
+  font-size: clamp(0.95rem, 1.1vw, 1.02rem);
+  line-height: 1.62;
+}
+
+.seo-landing-section--benefits {
+  text-align: center;
+}
+
+.seo-landing-section--benefits .seo-landing-kicker,
+.seo-landing-section--benefits h2 {
+  justify-self: center;
+}
+
+.seo-landing-benefits {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.85rem, 2vw, 1.2rem);
+  text-align: left;
+}
+
+.seo-landing-benefits article {
+  display: grid;
+  gap: 0.7rem;
+  min-height: 100%;
+  border: 1px solid color-mix(in srgb, var(--navbar-border) 82%, transparent);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
+    color-mix(in srgb, var(--navbar-bg) 90%, transparent);
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: clamp(1rem, 2.2vw, 1.35rem);
+}
+
+.seo-landing-benefits article > span {
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  place-items: center;
+  border: 1px solid rgba(216, 194, 255, 0.34);
+  border-radius: 50%;
+  color: #d8c2ff;
+  background: rgba(24, 15, 52, 0.54);
+  box-shadow: 0 0 16px rgba(157, 100, 255, 0.2);
+}
+
+.seo-landing-benefits p {
+  font-size: clamp(0.96rem, 1.12vw, 1.04rem);
+  line-height: 1.62;
+}
+
+.seo-landing-link-grid {
+  grid-template-columns: repeat(5, minmax(176px, 1fr));
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-top: 0.35rem;
+  padding-bottom: 1.15rem;
+  scroll-padding-inline: 0;
+  scroll-snap-type: inline proximity;
+  scrollbar-color: rgba(183, 140, 255, 0.78) rgba(183, 140, 255, 0.16);
+  -webkit-overflow-scrolling: touch;
+}
+
+.seo-landing-link-grid::-webkit-scrollbar {
+  height: 0.24rem;
+}
+
+.seo-landing-link-grid::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(183, 140, 255, 0.16);
+}
+
+.seo-landing-link-grid::-webkit-scrollbar-thumb {
+  border: 1px solid rgba(12, 8, 28, 0.72);
+  border-radius: 999px;
+  background: linear-gradient(90deg, #8f6fff, #d7c2ff);
+}
+
+.seo-landing-link-grid a {
+  position: relative;
+  display: grid;
+  min-height: clamp(300px, 30vw, 360px);
+  place-items: end center;
+  overflow: hidden;
+  color: var(--navbar-text);
+  font-family: var(--heading-font);
+  font-size: clamp(1.35rem, 2.1vw, 1.9rem);
+  line-height: 1.05;
+  padding: clamp(1rem, 2vw, 1.25rem);
+  text-align: center;
+  background:
+    linear-gradient(180deg, rgba(2, 2, 8, 0.08) 0%, rgba(2, 2, 8, 0.36) 42%, rgba(2, 2, 8, 0.9) 100%),
+    radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--theme-glow-primary) 44%, transparent), transparent 58%),
+    var(--seo-link-card-image) center / cover;
+  isolation: isolate;
+  text-decoration: none;
+  scroll-snap-align: start;
+  text-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.78),
+    0 0 18px color-mix(in srgb, var(--theme-glow-primary) 52%, transparent);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.seo-landing-link-grid a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 46%),
+    linear-gradient(180deg, transparent 42%, color-mix(in srgb, var(--theme-glow-primary) 18%, transparent));
+  opacity: 0.74;
+  transition: opacity 180ms ease;
+  z-index: -1;
+}
+
+.seo-landing-link-card--daily {
+  --seo-link-card-image: url("../assets/images/background _images/daily-read-bg.png");
+}
+
+.seo-landing-link-card--veilwalkers {
+  --seo-link-card-image: url("../assets/images/background _images/veilwalkers-bg.png");
+}
+
+.seo-landing-link-card--decks {
+  --seo-link-card-image: url("../assets/images/background _images/decks-bg.png");
+}
+
+.seo-landing-link-card--lumen {
+  --seo-link-card-image: url("../assets/images/background _images/lumen-bg.png");
+}
+
+.seo-landing-link-card--journal {
+  --seo-link-card-image: url("../assets/images/background _images/journal-bg.png");
+}
+
+.seo-landing-link-grid a:hover,
+.seo-landing-link-grid a:focus-visible {
+  border-color: color-mix(in srgb, var(--theme-accent-primary) 72%, transparent);
+  box-shadow:
+    0 0 22px color-mix(in srgb, var(--theme-glow-primary) 42%, transparent),
+    0 18px 42px rgba(0, 0, 0, 0.26);
+  transform: translateY(-2px);
+}
+
+.seo-landing-link-grid a:hover::before,
+.seo-landing-link-grid a:focus-visible::before {
+  opacity: 1;
+}
+
+.seo-landing-faq details {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.seo-landing-faq details:hover,
+.seo-landing-faq details:focus-within,
+.seo-landing-faq details[open] {
+  border-color: color-mix(in srgb, var(--theme-accent-primary) 62%, transparent);
+  box-shadow:
+    0 0 24px color-mix(in srgb, var(--theme-glow-primary) 34%, transparent),
+    0 18px 42px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.seo-landing-section--faq {
+  text-align: center;
+}
+
+.seo-landing-section--faq .seo-landing-kicker,
+.seo-landing-section--faq h2 {
+  justify-self: center;
+}
+
+.seo-landing-faq {
+  align-items: start;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.35rem);
+  text-align: left;
+}
+
+.seo-landing-faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  color: var(--navbar-text);
+  font-family: var(--body-font);
+  font-size: clamp(1rem, 1.3vw, 1.12rem);
+  font-weight: 700;
+  list-style: none;
+  min-height: 68px;
+  padding: 0.9rem 1.15rem;
+}
+
+.seo-landing-faq summary::marker {
+  content: "";
+}
+
+.seo-landing-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.seo-landing-faq summary::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 0.48rem;
+  height: 0.48rem;
+  border-right: 2px solid color-mix(in srgb, var(--theme-accent-primary) 86%, #ffffff);
+  border-bottom: 2px solid color-mix(in srgb, var(--theme-accent-primary) 86%, #ffffff);
+  transform: translateY(-0.14rem) rotate(45deg);
+  transition: transform 180ms ease;
+}
+
+.seo-landing-faq details[open] summary::after {
+  transform: translateY(0.14rem) rotate(225deg);
+}
+
+.seo-landing-faq details p {
+  margin-top: -0.1rem;
+  padding: 0 1.15rem 1.15rem;
+  font-size: clamp(0.96rem, 1.16vw, 1.04rem);
+  line-height: 1.62;
+}
+
+.seo-landing-faq details[open] p {
+  animation: seoFaqReveal 180ms ease both;
+}
+
+@keyframes seoFaqReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-0.18rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.seo-landing-final-cta {
+  display: grid;
+  min-height: clamp(320px, 38vw, 460px);
+  align-content: center;
+  justify-items: start;
+  gap: 0.95rem;
+  margin-top: clamp(0.3rem, 1vw, 0.8rem);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--navbar-border) 86%, transparent);
+  border-radius: 18px;
+  background:
+    linear-gradient(90deg, rgba(4, 3, 18, 0.9) 0%, rgba(8, 5, 28, 0.76) 42%, rgba(8, 5, 28, 0.14) 72%),
+    linear-gradient(180deg, rgba(4, 3, 18, 0.08), rgba(4, 3, 18, 0.72)),
+    url("../assets/images/about-tarotcards-section.webp") right center / cover;
+  box-shadow:
+    0 22px 58px rgba(0, 0, 0, 0.26),
+    0 0 28px color-mix(in srgb, var(--theme-glow-primary) 24%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  padding: clamp(2rem, 5vw, 3.5rem) clamp(1.2rem, 5vw, 4rem);
+  text-align: left;
+}
+
+.seo-landing-final-cta h2 {
+  max-width: 520px;
+  font-size: clamp(2rem, 4.8vw, 3.6rem);
+}
+
+.seo-landing-final-cta p {
+  max-width: 470px;
+}
+
+.seo-landing-final-cta .seo-landing-button {
+  justify-self: start;
+}
+
+@media (max-width: 980px) {
+  .seo-landing-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .seo-landing-daily-card,
+  .seo-landing-benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-landing-faq {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-landing-faq details {
+    min-height: auto;
+  }
+
+  .seo-landing-faq summary {
+    min-height: 62px;
+  }
+
+  .seo-landing-daily-card__accent {
+    min-height: 7rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .seo-landing-stage {
+    padding-top: 76px;
+  }
+
+  .seo-landing {
+    gap: 18px;
+  }
+
+  .seo-landing-hero {
+    min-height: min(68vh, 520px);
+    border-radius: 18px;
+  }
+
+  .seo-landing-hero__content {
+    padding: clamp(24px, 8vw, 34px);
+  }
+
+  .seo-landing h1 {
+    font-size: clamp(2.65rem, 15vw, 4.4rem);
+  }
+
+  .seo-landing-section {
+    padding: 2rem 0.55rem;
+  }
+
+  .seo-landing-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-landing-trust-row {
+    gap: 0.42rem;
+  }
+
+  .seo-landing-trust-row li {
+    font-size: 0.72rem;
+  }
+
+  .seo-landing-final-cta {
+    min-height: 360px;
+    background:
+      linear-gradient(180deg, rgba(4, 3, 18, 0.9) 0%, rgba(8, 5, 28, 0.76) 58%, rgba(8, 5, 28, 0.38) 100%),
+      url("../assets/images/about-tarotcards-section.webp") center / cover;
+    text-align: left;
+  }
+
+  .seo-landing-link-grid a {
+    min-height: 260px;
+  }
+}
+
 @media (min-width: 901px) and (max-width: 1366px), (min-width: 901px) and (max-height: 800px) {
   .about-page {
     width: min(100%, 1040px);
