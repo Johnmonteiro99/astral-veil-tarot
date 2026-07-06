@@ -1,0 +1,8 @@
+{
+  "name": "astral-veil-tarot",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node dev-server.mjs"
+  }
+}

@@ -105,6 +105,31 @@
   status = 200
 
 [[redirects]]
+  from = "/daily-tarot-reading"
+  to = "/daily-tarot-reading.html"
+  status = 200
+
+[[redirects]]
+  from = "/free-tarot-reading"
+  to = "/free-tarot-reading.html"
+  status = 200
+
+[[redirects]]
+  from = "/one-card-tarot-reading"
+  to = "/one-card-tarot-reading.html"
+  status = 200
+
+[[redirects]]
+  from = "/online-tarot-reading"
+  to = "/online-tarot-reading.html"
+  status = 200
+
+[[redirects]]
+  from = "/choose-reader"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
   from = "/veilwalkers"
   to = "/readers.html"
   status = 200

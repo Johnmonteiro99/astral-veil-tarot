@@ -31,6 +31,7 @@ const readingThreadSection = document.querySelector("[data-reading-thread-sectio
 const readingStatus = document.querySelector("[data-reading-status]");
 const deckStatus = document.querySelector("[data-deck-status]");
 const deckOptions = document.querySelector("[data-deck-options]");
+const spreadChoicePanel = document.querySelector(".spread-choice-panel");
 const readingResultsSection = document.querySelector("[data-reading-results-section]");
 const readingReveals = document.querySelector("[data-reading-reveals]");
 const cardEnergyTypes = [
@@ -123,6 +124,14 @@ let selectedDeckId = "lumen";
 let activeReadingDeckCarouselId = selectedDeckId;
 let currentAccountUser = null;
 let hasCheckedAccountUser = false;
+
+const spreadQueryAliases = {
+  "daily-one-card": 1,
+  "daily-card": 1,
+  "one-card": 1,
+  "single-card": 1,
+  "1": 1
+};
 let readingPreferences = {
   allow_reversed_cards: false,
   save_readings_prompt: true,
@@ -210,6 +219,10 @@ function setReadingFlowStage(stage, { scrollToStart = false } = {}) {
     readingSpreadPanel.classList.toggle("hidden", !isSetupStage);
   }
 
+  if (spreadChoicePanel) {
+    spreadChoicePanel.classList.toggle("hidden", isSetupStage && Boolean(getPreselectedSpreadCardCount()));
+  }
+
   if (readingResultsSection) {
     readingResultsSection.classList.toggle("hidden", !isReadingStage);
   }
@@ -217,7 +230,9 @@ function setReadingFlowStage(stage, { scrollToStart = false } = {}) {
   if (isSetupStage) {
     ensureSelectedDeckIsAvailable();
     renderDeckOptions();
-    readingStatus.textContent = "Choose a deck and spread to shuffle your cards.";
+    readingStatus.textContent = getPreselectedSpreadCardCount()
+      ? "Choose a deck to begin your reading."
+      : "Choose a deck and spread to shuffle your cards.";
   }
 
   if (scrollToStart) {
@@ -622,6 +637,10 @@ function getDeckLockedReason(deck) {
 }
 
 function getReadingDeckCtaLabel(deck, isSelected, isAccessible) {
+  if (getPreselectedSpreadCardCount() && isAccessible) {
+    return isSelected ? "Begin Reading" : "Select Deck";
+  }
+
   if (isSelected) {
     return "Selected";
   }
@@ -639,6 +658,21 @@ function getReadingDeckCtaLabel(deck, isSelected, isAccessible) {
   }
 
   return "Locked";
+}
+
+function completeDeckSelection(deck) {
+  selectedDeckId = deck.id;
+  activeReadingDeckCarouselId = deck.id;
+  renderDeckOptions();
+
+  const preselectedSpreadCardCount = getPreselectedSpreadCardCount();
+
+  if (preselectedSpreadCardCount) {
+    selectSpread(preselectedSpreadCardCount);
+    return;
+  }
+
+  readingStatus.textContent = `${deck.title} selected. Choose a spread to begin.`;
 }
 
 function getReadingAuthUrl(mode = "signup") {
@@ -2127,7 +2161,7 @@ function normalizeForcedFateReaderValue(value) {
 
 function getInitialSelectedReaderId() {
   const queryValue = getSelectedReaderQueryValue();
-  const storedValue = queryValue ? "" : getStoredSelectedReaderValue();
+  const storedValue = queryValue || getPreselectedSpreadCardCount() ? "" : getStoredSelectedReaderValue();
   const selectedValue = queryValue || storedValue;
 
   if (!selectedValue) {
@@ -2149,6 +2183,26 @@ function getSelectedReaderQueryValue() {
     );
   } catch (error) {
     return "";
+  }
+}
+
+function getPreselectedSpreadCardCount() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const requestedSpread = String(params.get("spread") || "").trim().toLowerCase();
+
+    if (!requestedSpread) {
+      return 0;
+    }
+
+    const cardCount = spreadQueryAliases[requestedSpread] || Number(requestedSpread);
+    const spreadExists = typeof getSpreadByCount === "function"
+      ? Boolean(getSpreadByCount(cardCount))
+      : [...spreadButtons].some((button) => Number(button.dataset.spread) === cardCount);
+
+    return spreadExists ? cardCount : 0;
+  } catch (error) {
+    return 0;
   }
 }
 
@@ -3199,10 +3253,7 @@ if (deckOptions) {
           return;
         }
 
-        selectedDeckId = deck.id;
-        activeReadingDeckCarouselId = deck.id;
-        renderDeckOptions();
-        readingStatus.textContent = `${deck.title} selected. Choose a spread to begin.`;
+        completeDeckSelection(deck);
         return;
       }
     }
@@ -3218,10 +3269,7 @@ if (deckOptions) {
       return;
     }
 
-    selectedDeckId = deck.id;
-    activeReadingDeckCarouselId = deck.id;
-    renderDeckOptions();
-    readingStatus.textContent = `${deck.title} selected. Choose a spread to begin.`;
+    completeDeckSelection(deck);
   });
 }
 

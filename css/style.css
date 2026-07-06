@@ -3906,6 +3906,2312 @@ body.blood-moon-mode .future-omen {
   }
 }
 
+/* Softer lavender treatment for the Free Daily Tarot Reading SEO page only. */
+body.seo-daily-page.seo-daily-lavender {
+  --seo-daily-ink: #46316f;
+  --seo-daily-muted: rgba(70, 49, 111, 0.78);
+  --seo-daily-violet: #7e63b7;
+  --seo-daily-lavender: #eee7ff;
+  --seo-daily-panel: rgba(255, 251, 255, 0.76);
+  --seo-daily-border: rgba(151, 120, 198, 0.26);
+  --seo-daily-gold: #d7aa62;
+  background: #f3edff;
+}
+
+body.seo-daily-page.seo-daily-lavender .tarot-background {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.86), transparent 22rem),
+    radial-gradient(circle at 88% 24%, rgba(222, 205, 255, 0.74), transparent 24rem),
+    linear-gradient(180deg, #f6f0ff 0%, #eee7ff 42%, #fbf7ff 78%, #eee6ff 100%);
+}
+
+body.seo-daily-page.seo-daily-lavender .tarot-background .celestial-wash,
+body.seo-daily-page.seo-daily-lavender .tarot-background .botanical-veil,
+body.seo-daily-page.seo-daily-lavender .tarot-background .mystic-mist,
+body.seo-daily-page.seo-daily-lavender .tarot-background .lunar-orb {
+  opacity: 0.18;
+}
+
+body.seo-daily-page.seo-daily-lavender .starfield {
+  opacity: 0.42;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-stage {
+  padding: clamp(74px, 6vw, 96px) clamp(0.9rem, 3vw, 1.6rem) clamp(2.2rem, 5vw, 4rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing {
+  position: relative;
+  width: min(100%, 1180px);
+  gap: 0;
+  color: var(--seo-daily-ink);
+  isolation: isolate;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing::before {
+  content: "";
+  position: absolute;
+  inset: clamp(360px, 42vw, 500px) -8vw 0;
+  border-radius: 48px;
+  background:
+    radial-gradient(circle at 8% 22%, rgba(255, 255, 255, 0.82), transparent 17rem),
+    radial-gradient(circle at 94% 38%, rgba(210, 196, 255, 0.6), transparent 18rem),
+    linear-gradient(180deg, rgba(255, 252, 255, 0.82), rgba(237, 228, 255, 0.8) 42%, rgba(255, 252, 255, 0.88));
+  box-shadow: 0 22px 80px rgba(116, 91, 168, 0.16);
+  z-index: -2;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing::after {
+  content: "✦  ✧  ✦";
+  position: absolute;
+  top: clamp(440px, 51vw, 620px);
+  left: 50%;
+  width: min(90vw, 760px);
+  color: rgba(177, 142, 213, 0.32);
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  letter-spacing: clamp(1.8rem, 8vw, 4.8rem);
+  pointer-events: none;
+  text-align: center;
+  transform: translateX(-50%);
+  z-index: -1;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-hero {
+  min-height: clamp(500px, 62vh, 680px);
+  border-color: rgba(255, 255, 255, 0.44);
+  border-radius: 0 0 34px 34px;
+  background:
+    linear-gradient(90deg, rgba(39, 29, 86, 0.76) 0%, rgba(71, 51, 127, 0.58) 38%, rgba(233, 218, 255, 0.05) 72%),
+    linear-gradient(180deg, rgba(247, 238, 255, 0.08) 0%, rgba(247, 238, 255, 0.18) 58%, rgba(247, 238, 255, 0.72) 100%),
+    url("../assets/images/background _images/seo-reading-heading.png") right center / cover;
+  box-shadow:
+    0 24px 70px rgba(102, 77, 153, 0.28),
+    0 0 42px rgba(224, 205, 255, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-hero::before {
+  content: "";
+  position: absolute;
+  right: -4%;
+  bottom: -1px;
+  left: -4%;
+  height: clamp(72px, 9vw, 118px);
+  background:
+    radial-gradient(70% 120% at 18% 100%, rgba(255, 255, 255, 0.92) 0 42%, transparent 43%),
+    radial-gradient(60% 100% at 55% 100%, rgba(248, 243, 255, 0.92) 0 48%, transparent 49%),
+    radial-gradient(52% 90% at 88% 100%, rgba(239, 231, 255, 0.9) 0 46%, transparent 47%);
+  z-index: 0;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-hero::after {
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.2), transparent 20rem),
+    linear-gradient(90deg, rgba(37, 27, 80, 0.42), transparent 62%);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-hero__content {
+  position: relative;
+  z-index: 1;
+  padding: clamp(2.2rem, 5vw, 4.4rem);
+  text-shadow: 0 2px 20px rgba(31, 20, 69, 0.64);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing h1,
+body.seo-daily-page.seo-daily-lavender .seo-landing h2,
+body.seo-daily-page.seo-daily-lavender .seo-landing h3 {
+  color: var(--seo-daily-ink);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing h1,
+body.seo-daily-page.seo-daily-lavender .seo-landing-hero p:not(.seo-landing-kicker),
+body.seo-daily-page.seo-daily-lavender .seo-landing-hero__kicker {
+  color: #fffaff;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-kicker {
+  color: var(--seo-daily-violet);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing p {
+  color: var(--seo-daily-muted);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: rgba(255, 255, 255, 0.72);
+  background: linear-gradient(135deg, #f0dbff 0%, #fff7e7 100%);
+  color: #48316d;
+  box-shadow:
+    0 12px 28px rgba(100, 73, 151, 0.24),
+    0 0 26px rgba(255, 247, 231, 0.46);
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    color 220ms ease,
+    transform 220ms ease;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button::before,
+body.seo-daily-page.seo-daily-lavender .seo-landing-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 260ms ease,
+    transform 520ms ease;
+  z-index: -1;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button::before {
+  background:
+    radial-gradient(circle at 18% 32%, rgba(255, 242, 201, 0.92) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 38% 68%, rgba(246, 232, 178, 0.82) 0 1px, transparent 1.7px),
+    radial-gradient(circle at 64% 28%, rgba(255, 255, 255, 0.88) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 82% 62%, rgba(255, 242, 201, 0.78) 0 1px, transparent 1.6px),
+    linear-gradient(135deg, #1b1640 0%, #2b1e5f 52%, #45308d 100%);
+  transform: scale(1.02);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button::after {
+  background: linear-gradient(105deg, transparent 0%, rgba(255, 242, 201, 0.24) 42%, transparent 68%);
+  transform: translateX(-120%) skewX(-14deg);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover,
+body.seo-daily-page.seo-daily-lavender .seo-landing-button:focus-visible {
+  border-color: rgba(246, 232, 178, 0.46);
+  color: #fff2c9;
+  box-shadow:
+    0 16px 34px rgba(45, 30, 95, 0.28),
+    0 0 30px rgba(140, 103, 220, 0.22),
+    inset 0 1px 0 rgba(255, 242, 201, 0.22);
+  transform: translateY(-2px);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover::before,
+body.seo-daily-page.seo-daily-lavender .seo-landing-button:focus-visible::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover::after,
+body.seo-daily-page.seo-daily-lavender .seo-landing-button:focus-visible::after {
+  opacity: 1;
+  transform: translateX(120%) skewX(-14deg);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-trust-row li {
+  border-color: rgba(255, 255, 255, 0.38);
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff9ff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section {
+  position: relative;
+  border-top: 0;
+  padding: clamp(2.6rem, 5vw, 4.8rem) clamp(1rem, 4vw, 2.6rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: clamp(1rem, 8vw, 5rem);
+  right: clamp(1rem, 8vw, 5rem);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(151, 120, 198, 0.28), transparent);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section:first-of-type {
+  padding-top: clamp(2.9rem, 6vw, 5.4rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section:first-of-type::before {
+  content: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section::before {
+  content: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section > .seo-landing-kicker,
+body.seo-daily-page.seo-daily-lavender .seo-landing-section > h2 {
+  justify-self: center;
+  text-align: center;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article,
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq details {
+  border-color: var(--seo-daily-border);
+  border-radius: 16px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(246, 238, 255, 0.58)),
+    var(--seo-daily-panel);
+  box-shadow:
+    0 18px 42px rgba(101, 77, 149, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article {
+  gap: 0.7rem;
+  padding: clamp(1.1rem, 2vw, 1.45rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:hover,
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:focus-within,
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq details:hover,
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq details:focus-within,
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq details[open] {
+  border-color: rgba(215, 170, 98, 0.42);
+  box-shadow:
+    0 18px 48px rgba(101, 77, 149, 0.17),
+    0 0 24px rgba(215, 170, 98, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-step-number {
+  color: var(--seo-daily-violet);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-step-icon {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid rgba(215, 170, 98, 0.32);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 249, 232, 0.92), rgba(226, 212, 255, 0.52));
+  color: #7759a8;
+  box-shadow: 0 0 18px rgba(126, 99, 183, 0.18);
+  font-size: 1.05rem;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article {
+  grid-template-columns: auto 1fr;
+  align-items: start;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article > span {
+  grid-row: span 2;
+  width: 3rem;
+  height: 3rem;
+  border-color: rgba(215, 170, 98, 0.34);
+  background:
+    radial-gradient(circle at 35% 28%, #fffdf5, rgba(240, 222, 255, 0.9) 54%, rgba(151, 120, 198, 0.2));
+  color: #7759a8;
+  box-shadow:
+    0 0 18px rgba(126, 99, 183, 0.18),
+    0 0 28px rgba(215, 170, 98, 0.12);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article > span img {
+  display: block;
+  width: 74%;
+  height: 74%;
+  object-fit: contain;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article h3,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article p {
+  grid-column: 2;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid {
+  padding: 0.9rem 0.35rem 1.35rem;
+  scrollbar-color: rgba(126, 99, 183, 0.62) rgba(255, 255, 255, 0.5);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a {
+  min-height: clamp(250px, 25vw, 320px);
+  border: 3px solid rgba(255, 255, 255, 0.68);
+  border-radius: 16px;
+  box-shadow:
+    0 18px 44px rgba(75, 49, 119, 0.22),
+    0 0 0 1px rgba(151, 120, 198, 0.16);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a:hover,
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a:focus-visible {
+  border-color: rgba(255, 247, 231, 0.92);
+  box-shadow:
+    0 20px 48px rgba(75, 49, 119, 0.28),
+    0 0 26px rgba(215, 170, 98, 0.18);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section--faq {
+  padding-top: clamp(2rem, 4vw, 3.2rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq {
+  gap: 0.7rem clamp(1rem, 2vw, 1.35rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq summary {
+  min-height: 54px;
+  color: var(--seo-daily-ink);
+  font-size: clamp(0.94rem, 1.16vw, 1.03rem);
+  padding: 0.75rem 1rem;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq summary::after {
+  border-color: var(--seo-daily-violet);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq details p {
+  padding: 0 1rem 1rem;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-final-cta {
+  min-height: clamp(300px, 34vw, 430px);
+  margin: clamp(0.8rem, 2vw, 1.6rem) clamp(0.9rem, 3vw, 2.2rem) 0;
+  border-color: rgba(255, 255, 255, 0.5);
+  border-radius: 26px;
+  background:
+    linear-gradient(90deg, rgba(55, 39, 103, 0.76) 0%, rgba(72, 49, 115, 0.62) 42%, rgba(245, 235, 255, 0.1) 76%),
+    linear-gradient(180deg, rgba(255, 252, 255, 0.06), rgba(43, 31, 85, 0.56)),
+    url("../assets/images/background _images/seo-reading-footer.png") right center / cover;
+  box-shadow:
+    0 22px 60px rgba(86, 62, 137, 0.26),
+    0 0 40px rgba(224, 205, 255, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-final-cta h2,
+body.seo-daily-page.seo-daily-lavender .seo-landing-final-cta p {
+  color: #fffaff;
+  text-shadow: 0 2px 18px rgba(42, 29, 86, 0.58);
+}
+
+@media (max-width: 980px) {
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article {
+    grid-template-columns: 1fr;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article > span,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article h3,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article p {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  body.seo-daily-page.seo-daily-lavender .seo-landing-stage {
+    padding-inline: 0.65rem;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-hero {
+    min-height: min(72vh, 560px);
+    border-radius: 0 0 24px 24px;
+    background:
+      linear-gradient(180deg, rgba(43, 30, 88, 0.76) 0%, rgba(68, 48, 120, 0.62) 48%, rgba(244, 235, 255, 0.32) 100%),
+      url("../assets/images/background _images/seo-reading-heading.png") 62% center / cover;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-section {
+    padding-inline: 0.45rem;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid {
+    grid-template-columns: repeat(5, minmax(168px, 1fr));
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a {
+    min-height: 230px;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-final-cta {
+    margin-inline: 0;
+    background:
+      linear-gradient(180deg, rgba(55, 39, 103, 0.82) 0%, rgba(72, 49, 115, 0.68) 56%, rgba(72, 49, 115, 0.38) 100%),
+      url("../assets/images/background _images/seo-reading-footer.png") center / cover;
+  }
+}
+
+/* Full-bleed moon-lavender SEO page refinement. */
+body.seo-daily-page.seo-daily-lavender .free-daily-main {
+  padding: 0;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(183, 148, 255, 0.18), transparent 30rem),
+    linear-gradient(180deg, #f6efff 0%, #eee4fa 48%, #f3ecfb 100%);
+  color: #4a3670;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing {
+  width: 100%;
+  max-width: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing::before,
+body.seo-daily-page.seo-daily-lavender .seo-landing::after {
+  content: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero {
+  width: 100vw;
+  min-height: clamp(560px, 72vh, 820px);
+  margin-inline: calc(50% - 50vw);
+  padding: clamp(6rem, 9vw, 9rem) clamp(1.25rem, 6vw, 7rem) clamp(5rem, 8vw, 8rem);
+  align-items: center;
+  border: 0;
+  border-radius: 0;
+  background-image:
+    linear-gradient(90deg, rgba(36, 24, 74, 0.78) 0%, rgba(62, 43, 111, 0.48) 38%, rgba(62, 43, 111, 0.08) 72%),
+    url("../assets/images/background _images/seo-reading-heading.png");
+  background-position: center right;
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 28%, rgba(244, 229, 255, 0.18), transparent 24rem),
+    linear-gradient(90deg, rgba(37, 25, 80, 0.16), transparent 58%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 34%;
+  background: linear-gradient(180deg, transparent, rgba(246, 239, 255, 0.92));
+  pointer-events: none;
+  z-index: 1;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-hero__content {
+  width: min(100%, 560px);
+  padding: 0;
+  text-shadow: 0 2px 22px rgba(28, 18, 64, 0.68);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-hero__kicker {
+  color: rgba(255, 250, 255, 0.9);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-trust-row {
+  max-width: 620px;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-hero-wave {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  z-index: 2;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-hero-wave svg {
+  display: block;
+  width: 100%;
+  height: clamp(70px, 8vw, 130px);
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-hero-wave path {
+  fill: #f6efff;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section,
+body.seo-daily-page.seo-daily-lavender .daily-final-cta {
+  width: min(100% - clamp(1.25rem, 5vw, 7rem), 1180px);
+  margin-inline: auto;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section:first-of-type {
+  padding-top: clamp(2rem, 4vw, 3.7rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps {
+  gap: clamp(0.9rem, 1.8vw, 1.25rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article,
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq details {
+  border-color: rgba(128, 96, 178, 0.2);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(246, 239, 255, 0.68));
+  box-shadow:
+    0 12px 34px rgba(91, 63, 148, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid {
+  grid-template-columns: repeat(5, minmax(170px, 1fr));
+  gap: clamp(0.95rem, 1.8vw, 1.35rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a {
+  min-height: clamp(235px, 23vw, 300px);
+  border-color: rgba(255, 255, 255, 0.72);
+  background:
+    linear-gradient(180deg, rgba(2, 2, 8, 0.04) 0%, rgba(24, 14, 54, 0.28) 43%, rgba(15, 9, 35, 0.9) 100%),
+    radial-gradient(circle at 50% 100%, rgba(183, 148, 255, 0.34), transparent 58%),
+    var(--seo-link-card-image) center / cover;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq {
+  gap: 0.58rem clamp(0.85rem, 1.8vw, 1.15rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq summary {
+  min-height: 48px;
+  padding-block: 0.62rem;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-final-cta {
+  min-height: clamp(260px, 32vw, 390px);
+  margin-top: clamp(1rem, 2vw, 1.8rem);
+  margin-bottom: 0;
+  border-radius: clamp(22px, 3vw, 38px);
+  background-image:
+    linear-gradient(90deg, rgba(71, 45, 122, 0.88) 0%, rgba(91, 63, 148, 0.58) 44%, rgba(91, 63, 148, 0.18) 78%),
+    url("../assets/images/background _images/seo-reading-footer.png");
+  background-position: center right;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer {
+  margin-top: clamp(1.4rem, 3vw, 2.4rem);
+  background: linear-gradient(180deg, rgba(116, 104, 132, 0.88), rgba(94, 84, 110, 0.96));
+  color: rgba(255, 255, 255, 0.86);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__mark,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__tagline,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__toggle,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__share {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__toggle,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__share {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+@media (min-width: 1800px) {
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero {
+    min-height: 780px;
+    background-position: center right;
+  }
+}
+
+@media (max-width: 980px) {
+  body.seo-daily-page.seo-daily-lavender .seo-landing-section,
+  body.seo-daily-page.seo-daily-lavender .daily-final-cta {
+    width: min(100% - 2rem, 760px);
+  }
+}
+
+@media (max-width: 760px) {
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero {
+    min-height: auto;
+    padding: 7rem 1.25rem 6rem;
+    background-image:
+      linear-gradient(180deg, rgba(36, 24, 74, 0.82), rgba(36, 24, 74, 0.56)),
+      url("../assets/images/background _images/seo-reading-heading.png");
+    background-position: 62% center;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero::before {
+    background: linear-gradient(180deg, rgba(36, 24, 74, 0.34), rgba(36, 24, 74, 0.16));
+  }
+
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-trust-row {
+    gap: 0.46rem;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-section,
+  body.seo-daily-page.seo-daily-lavender .daily-final-cta {
+    width: min(100% - 1.25rem, 560px);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid {
+    grid-template-columns: repeat(5, minmax(165px, 1fr));
+  }
+
+  body.seo-daily-page.seo-daily-lavender .daily-final-cta {
+    min-height: 320px;
+    background-image:
+      linear-gradient(180deg, rgba(71, 45, 122, 0.86) 0%, rgba(91, 63, 148, 0.6) 58%, rgba(91, 63, 148, 0.28) 100%),
+      url("../assets/images/background _images/seo-reading-footer.png");
+    background-position: 68% center;
+  }
+}
+
+/* Free daily hero clarity pass: crisp header, shorter hero, cleaner wave join. */
+body.seo-daily-page.seo-daily-lavender .site-header {
+  padding-inline: clamp(14px, 4vw, 56px);
+}
+
+body.seo-daily-page.seo-daily-lavender .navbar {
+  background: rgba(42, 30, 74, 0.28);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+body.seo-daily-page.seo-daily-lavender .navbar__brand,
+body.seo-daily-page.seo-daily-lavender .navbar__link {
+  text-shadow: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .navbar__brand-text {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .logo-eye__image {
+  filter: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .navbar__link {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+body.seo-daily-page.seo-daily-lavender .navbar__link::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.82), transparent);
+  box-shadow: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .navbar__link:hover,
+body.seo-daily-page.seo-daily-lavender .navbar__link:focus-visible,
+body.seo-daily-page.seo-daily-lavender .navbar__link.is-active,
+body.seo-daily-page.seo-daily-lavender .navbar__link[aria-current="page"] {
+  color: #ffffff;
+  text-shadow: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero {
+  min-height: clamp(500px, 62vh, 680px);
+  padding-top: clamp(5.6rem, 7.5vw, 7.5rem);
+  padding-bottom: clamp(4.2rem, 6vw, 6.2rem);
+  border-bottom: 0;
+  background-image: url("../assets/images/background _images/seo-reading-heading.png");
+  background-position: center right;
+  background-size: cover;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero::before {
+  background:
+    linear-gradient(90deg, rgba(42, 28, 82, 0.72) 0%, rgba(74, 52, 126, 0.38) 38%, rgba(74, 52, 126, 0.05) 72%);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero::after {
+  height: 18%;
+  background: linear-gradient(180deg, transparent, rgba(246, 239, 255, 0.72));
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-hero__content {
+  text-shadow: 0 2px 16px rgba(24, 15, 58, 0.46);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-trust-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.65rem;
+  max-width: none;
+  margin-top: 1rem;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-trust-row li {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(39, 26, 75, 0.42);
+  color: rgba(255, 255, 255, 0.94);
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.45rem 0.75rem;
+  text-shadow: none;
+  white-space: nowrap;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-hero-wave {
+  bottom: -2px;
+  margin-bottom: -1px;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section,
+body.seo-daily-page.seo-daily-lavender .seo-landing-section:first-of-type {
+  border-top: 0;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section::before,
+body.seo-daily-page.seo-daily-lavender .seo-landing-section:first-of-type::before {
+  content: none;
+}
+
+/* Free daily soft glass step and benefit cards. */
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  transform: translateY(0);
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    background 220ms ease;
+  isolation: isolate;
+  backdrop-filter: blur(16px) saturate(135%);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article {
+  border: 1px solid rgba(189, 168, 235, 0.55);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.72), transparent 34%),
+    linear-gradient(145deg, rgba(245, 238, 255, 0.72) 0%, rgba(214, 196, 238, 0.52) 100%);
+  color: #35224f;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 0 18px rgba(255, 255, 255, 0.05),
+    0 10px 30px rgba(124, 92, 191, 0.14),
+    0 0 0 1px rgba(214, 198, 247, 0.22),
+    0 0 24px rgba(171, 145, 232, 0.18);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article {
+  border: 1px solid rgba(193, 176, 238, 0.5);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.68), transparent 34%),
+    linear-gradient(145deg, rgba(238, 239, 255, 0.72) 0%, rgba(201, 205, 242, 0.5) 100%);
+  color: #2c2554;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 0 16px rgba(255, 255, 255, 0.04),
+    0 10px 28px rgba(130, 103, 194, 0.12),
+    0 0 0 1px rgba(224, 210, 250, 0.2),
+    0 0 20px rgba(188, 164, 238, 0.16);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article::before,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article::before {
+  display: none;
+  content: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article::after,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 18px;
+  left: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(226, 204, 255, 0.58), rgba(240, 202, 141, 0.24), transparent);
+  pointer-events: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.62), rgba(214, 196, 238, 0.42), transparent);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.58), rgba(201, 205, 242, 0.48), transparent);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article h3 {
+  color: #35224f;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article p {
+  color: #4d3a69;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article h3 {
+  color: #2c2554;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article p {
+  color: #443c68;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-step-number {
+  color: #765ca4;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:hover,
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:focus-within {
+  border-color: rgba(189, 168, 235, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 0 20px rgba(255, 255, 255, 0.06),
+    0 16px 40px rgba(118, 88, 192, 0.18),
+    0 0 0 1px rgba(221, 206, 250, 0.3),
+    0 0 32px rgba(176, 150, 238, 0.26);
+  transform: translateY(-4px);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:hover,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:focus-within {
+  border-color: rgba(193, 176, 238, 0.68);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 0 20px rgba(255, 255, 255, 0.05),
+    0 16px 36px rgba(121, 95, 194, 0.16),
+    0 0 0 1px rgba(228, 214, 252, 0.28),
+    0 0 28px rgba(191, 169, 239, 0.22);
+  transform: translateY(-4px);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:hover::before,
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:focus-within::before,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:hover::before,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:focus-within::before {
+  opacity: 0;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-step-icon {
+  border: 1px solid rgba(141, 108, 190, 0.24);
+  background: rgba(255, 255, 255, 0.32);
+  color: #6d4fa2;
+  box-shadow: 0 0 22px rgba(141, 108, 190, 0.14);
+  transform: rotate(0deg) scale(1);
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article > span {
+  border: 1px solid rgba(132, 137, 210, 0.24);
+  background: rgba(255, 255, 255, 0.32);
+  color: #6d68b4;
+  box-shadow: 0 0 22px rgba(88, 89, 164, 0.14);
+  transform: rotate(0deg) scale(1);
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:hover .seo-landing-step-icon,
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:focus-within .seo-landing-step-icon {
+  border-color: rgba(141, 108, 190, 0.38);
+  box-shadow: 0 0 28px rgba(141, 108, 190, 0.2);
+  transform: scale(1.05);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:hover > span,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:focus-within > span {
+  border-color: transparent;
+  box-shadow: none;
+  transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button::before,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button::after {
+    transition: none;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:focus-visible,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover::before,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:focus-visible::before,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover::after,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:focus-visible::after {
+    transform: none;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover::after,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:focus-visible::after {
+    opacity: 0;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article::before,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article::before,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-step-icon,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article > span {
+    transition: none;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:focus-within,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:focus-within,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:hover .seo-landing-step-icon,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:focus-within .seo-landing-step-icon,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:hover > span,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:focus-within > span {
+    transform: none;
+  }
+}
+
+@media (min-width: 1800px) {
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero {
+    min-height: 680px;
+  }
+}
+
+@media (max-width: 760px) {
+  body.seo-daily-page.seo-daily-lavender .navbar {
+    background: rgba(42, 30, 74, 0.42);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero {
+    min-height: auto;
+    padding: 6.5rem 1.25rem 5rem;
+    background-image: url("../assets/images/background _images/seo-reading-heading.png");
+    background-position: 62% center;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero::before {
+    background:
+      linear-gradient(180deg, rgba(36, 24, 74, 0.82), rgba(36, 24, 74, 0.56)),
+      linear-gradient(90deg, rgba(42, 28, 82, 0.66), rgba(74, 52, 126, 0.14) 76%);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero::after {
+    height: 20%;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-trust-row {
+    flex-wrap: wrap;
+  }
+}
+
+/* Free daily connected CTA/footer stage. */
+body.seo-daily-page.seo-daily-lavender .daily-final-cta {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 0 !important;
+  border: 0 !important;
+  border-bottom: 0 !important;
+  border-radius: clamp(24px, 3vw, 38px) clamp(24px, 3vw, 38px) 0 0 !important;
+  box-shadow: none !important;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-final-cta::after {
+  display: none;
+  content: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-final-cta > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-final-cta img,
+body.seo-daily-page.seo-daily-lavender .daily-final-cta-media,
+body.seo-daily-page.seo-daily-lavender .daily-final-cta-bg {
+  border-radius: clamp(24px, 3vw, 38px) clamp(24px, 3vw, 38px) 0 0 !important;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-final-cta {
+  background-image:
+    linear-gradient(90deg, rgba(42, 28, 82, 0.68) 0%, rgba(74, 52, 126, 0.28) 42%, rgba(74, 52, 126, 0) 72%),
+    url("../assets/images/background _images/seo-reading-footer.png") !important;
+  background-position: center right !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  filter: none !important;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-final-cta::before,
+body.seo-daily-page.seo-daily-lavender .daily-final-cta::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Free daily layered lavender section waves. */
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section,
+body.seo-daily-page.seo-daily-lavender .seo-difference-section,
+body.seo-daily-page.seo-daily-lavender .seo-explore-section,
+body.seo-daily-page.seo-daily-lavender .seo-faq-section,
+body.seo-daily-page.seo-daily-lavender .seo-final-cta-section {
+  position: relative;
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  box-sizing: border-box;
+  padding-inline: max(clamp(1rem, 4vw, 2.6rem), calc((100vw - 1180px) / 2));
+  border-top: 0;
+  overflow: visible;
+  isolation: isolate;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section {
+  --daily-section-bg: #e8def4;
+  --daily-section-wave: #efe8f7;
+  background: linear-gradient(180deg, #efe8f7 0%, #e8def4 100%);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section {
+  --daily-section-bg: #ead7ee;
+  --daily-section-wave: #f1e2f4;
+  --daily-section-next-wave: #ece4f6;
+  background: linear-gradient(180deg, #f1e2f4 0%, #ead7ee 100%);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-explore-section {
+  --daily-section-bg: #e5dbf2;
+  --daily-section-wave: #ece4f6;
+  background: linear-gradient(180deg, #ece4f6 0%, #e5dbf2 100%);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-difference-section {
+  --daily-section-bg: #ece4f6;
+  background: linear-gradient(180deg, #ece4f6 0%, #e8def4 100%);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-faq-section {
+  --daily-section-bg: #ded2ec;
+  --daily-section-wave: #e7ddf2;
+  background: linear-gradient(180deg, #e7ddf2 0%, #ded2ec 100%);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-final-cta-section {
+  --daily-section-bg: #ead7ee;
+  --daily-section-wave: #f1e2f4;
+  display: grid;
+  justify-items: center;
+  padding-block: clamp(4.8rem, 8vw, 7.2rem) 0;
+  background: linear-gradient(180deg, #f1e2f4 0%, #ead7ee 100%);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section,
+body.seo-daily-page.seo-daily-lavender .seo-difference-section,
+body.seo-daily-page.seo-daily-lavender .seo-explore-section,
+body.seo-daily-page.seo-daily-lavender .seo-faq-section {
+  padding-top: clamp(5.8rem, 8.5vw, 8rem);
+  padding-bottom: clamp(4rem, 6vw, 6rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section {
+  padding-top: clamp(4.8rem, 7vw, 6.2rem);
+  padding-bottom: clamp(5.4rem, 8vw, 7.6rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section::before,
+body.seo-daily-page.seo-daily-lavender .seo-explore-section::before,
+body.seo-daily-page.seo-daily-lavender .seo-faq-section::before,
+body.seo-daily-page.seo-daily-lavender .seo-final-cta-section::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: calc(100% - 1px);
+  left: 0;
+  height: clamp(68px, 8vw, 128px);
+  background: var(--daily-section-wave);
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 140' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,70 C220,130 420,20 720,72 C990,120 1180,42 1440,86 L1440,140 L0,140 Z' fill='black'/%3E%3C/svg%3E") center bottom / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 140' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,70 C220,130 420,20 720,72 C990,120 1180,42 1440,86 L1440,140 L0,140 Z' fill='black'/%3E%3C/svg%3E") center bottom / 100% 100% no-repeat;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section::before {
+  content: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-reading-top-wave {
+  width: 100vw;
+  height: clamp(82px, 9vw, 132px);
+  margin: 0 calc(50% - 50vw) -1px;
+  color: #d9c8e2;
+  line-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-reading-top-wave svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-reading-top-wave path {
+  fill: currentColor;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section::after,
+body.seo-daily-page.seo-daily-lavender .seo-explore-section::after,
+body.seo-daily-page.seo-daily-lavender .seo-faq-section::after,
+body.seo-daily-page.seo-daily-lavender .seo-final-cta-section::after {
+  content: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: clamp(68px, 8vw, 128px);
+  background: var(--daily-section-next-wave);
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 140' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,70 C220,130 420,20 720,72 C990,120 1180,42 1440,86 L1440,140 L0,140 Z' fill='black'/%3E%3C/svg%3E") center bottom / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 140' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,70 C220,130 420,20 720,72 C990,120 1180,42 1440,86 L1440,140 L0,140 Z' fill='black'/%3E%3C/svg%3E") center bottom / 100% 100% no-repeat;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section > *,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section > *,
+body.seo-daily-page.seo-daily-lavender .seo-difference-section > *,
+body.seo-daily-page.seo-daily-lavender .seo-explore-section > *,
+body.seo-daily-page.seo-daily-lavender .seo-faq-section > *,
+body.seo-daily-page.seo-daily-lavender .seo-final-cta-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section > * {
+  z-index: 2;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-final-cta-section .daily-final-cta {
+  width: min(100%, 1180px);
+  margin-top: 0;
+  margin-inline: auto;
+}
+
+@media (min-width: 1600px) {
+  body.seo-daily-page.seo-daily-lavender .seo-ritual-section,
+  body.seo-daily-page.seo-daily-lavender .seo-benefits-section,
+  body.seo-daily-page.seo-daily-lavender .seo-explore-section,
+  body.seo-daily-page.seo-daily-lavender .seo-faq-section,
+  body.seo-daily-page.seo-daily-lavender .seo-final-cta-section {
+    padding-inline: max(clamp(1rem, 4vw, 2.6rem), calc((100vw - 1440px) / 2));
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-benefits-section,
+  body.seo-daily-page.seo-daily-lavender .seo-explore-section,
+  body.seo-daily-page.seo-daily-lavender .seo-faq-section {
+    padding-top: clamp(6.4rem, 5.5vw, 8.5rem);
+  }
+}
+
+@media (max-width: 760px) {
+  body.seo-daily-page.seo-daily-lavender .seo-ritual-section,
+  body.seo-daily-page.seo-daily-lavender .seo-benefits-section,
+  body.seo-daily-page.seo-daily-lavender .seo-explore-section,
+  body.seo-daily-page.seo-daily-lavender .seo-faq-section,
+  body.seo-daily-page.seo-daily-lavender .seo-final-cta-section {
+    padding-inline: clamp(0.75rem, 4vw, 1.25rem);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-benefits-section,
+  body.seo-daily-page.seo-daily-lavender .seo-explore-section,
+  body.seo-daily-page.seo-daily-lavender .seo-faq-section {
+    padding-top: clamp(4.8rem, 17vw, 6rem);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-benefits-section {
+    padding-bottom: clamp(4.8rem, 16vw, 6.2rem);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-final-cta-section {
+    padding-top: clamp(4.4rem, 17vw, 5.8rem);
+  }
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-main {
+  padding-bottom: 0;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(183, 148, 255, 0.18), transparent 30rem),
+    linear-gradient(180deg, #f6efff 0%, #eee4fa 48%, #f3ecfb 86%, #74677f 100%);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  border-top: 0 !important;
+  background: linear-gradient(180deg, #463063 0%, #38264f 100%);
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: none !important;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer::before,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer::after {
+  display: none;
+  content: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__shell {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__compact,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__inner {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: transparent;
+  box-shadow: none !important;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer h2,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__mark,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__label {
+  color: rgba(255, 255, 255, 0.96);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer p,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer a,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__tagline,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__copyright,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__legal span {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__poem {
+  color: rgba(255, 244, 214, 0.86);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer a:hover,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer a:focus-visible {
+  color: #ffffff;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__toggle,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__share {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__toggle:hover,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__toggle:focus-visible,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__share:hover,
+body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__share:focus-visible {
+  border-color: rgba(255, 255, 255, 0.34);
+  background: rgba(255, 255, 255, 0.13);
+  color: #ffffff;
+}
+
+/* Free daily typography and readability refinement. */
+body.seo-daily-page.seo-daily-lavender {
+  --hero-title: #fff8ff;
+  --hero-body: rgba(255, 249, 255, 0.94);
+  --hero-label: #ead7ff;
+  --section-title: #4d3270;
+  --section-body: #6c5a85;
+  --section-label: #7b639d;
+  --card-title: #fff7ff;
+  --card-body: rgba(255, 248, 255, 0.82);
+  --card-label: #d9c0ff;
+  --daily-ui-font: "Quicksand", var(--body-font);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero::before {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(24, 12, 48, 0.42) 0%,
+      rgba(36, 20, 66, 0.28) 28%,
+      rgba(60, 38, 100, 0.1) 56%,
+      rgba(60, 38, 100, 0) 78%
+    );
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-hero__content {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 620px);
+  padding: clamp(1.6rem, 3.4vw, 2.25rem) clamp(1.6rem, 3.4vw, 2.25rem) clamp(1.75rem, 3vw, 2.4rem);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 28px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(32, 18, 62, 0.72) 0%,
+      rgba(48, 28, 84, 0.64) 100%
+    );
+  box-shadow:
+    0 20px 50px rgba(20, 8, 40, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 26px rgba(170, 128, 240, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero h1 {
+  color: var(--hero-title);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  line-height: 0.92;
+  letter-spacing: 0;
+  text-shadow: 0 3px 28px rgba(32, 16, 62, 0.52);
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero p:not(.seo-landing-kicker) {
+  max-width: 590px;
+  color: var(--hero-body);
+  font-family: "Lora", Georgia, serif;
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.75;
+  text-shadow: 0 2px 18px rgba(24, 12, 48, 0.55);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-kicker {
+  color: var(--section-label);
+  font-family: var(--daily-ui-font);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-hero__kicker {
+  color: var(--hero-label);
+  text-shadow: 0 2px 14px rgba(28, 14, 54, 0.5);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section > h2 {
+  color: var(--section-title);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  line-height: 1.08;
+  letter-spacing: 0;
+  overflow: visible;
+  padding-bottom: 0.08em;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-section p {
+  color: var(--section-body);
+  font-family: "Lora", Georgia, serif;
+  line-height: 1.7;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-final-cta h2 {
+  color: #fffaff;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  letter-spacing: 0;
+}
+
+body.seo-daily-page.seo-daily-lavender .daily-final-cta p {
+  color: rgba(255, 249, 255, 0.9);
+  font-family: "Lora", Georgia, serif;
+  line-height: 1.7;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article h3,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article h3 {
+  color: var(--card-title);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  letter-spacing: 0;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article p,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article p {
+  color: var(--card-body);
+  font-family: "Lora", Georgia, serif;
+  line-height: 1.65;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-step-number {
+  color: var(--card-label);
+  font-family: var(--daily-ui-font);
+}
+
+/* Light glass card readability fix. Keep these after the typography variables. */
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article,
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:hover,
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:focus-within {
+  color: #35224f;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article h3,
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:hover h3,
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:focus-within h3 {
+  color: #35224f;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article p,
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:hover p,
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:focus-within p {
+  color: #4d3a69;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-step-number,
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:hover .seo-landing-step-number,
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:focus-within .seo-landing-step-number {
+  color: #765ca4;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-step-icon,
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:hover .seo-landing-step-icon,
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:focus-within .seo-landing-step-icon {
+  border-color: rgba(141, 108, 190, 0.28);
+  background: rgba(255, 255, 255, 0.42);
+  color: #6d4fa2;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article:hover,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article:focus-within {
+  color: #2c2554;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article h3,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article:hover h3,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article:focus-within h3 {
+  color: #2c2554;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article p,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article:hover p,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article:focus-within p {
+  color: #443c68;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article > span,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article:hover > span,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article:focus-within > span {
+  border-color: rgba(132, 137, 210, 0.28);
+  background: rgba(255, 255, 255, 0.42);
+  color: #6d68b4;
+}
+
+/* Final Amethyst Haze palette for the two intro card sections. */
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section {
+  --daily-section-bg: #ede7f4;
+  --daily-section-wave: #e7e2ee;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.48), transparent 34rem),
+    linear-gradient(180deg, #e7e2ee 0%, #ede7f4 100%);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section {
+  --daily-section-bg: #d9c8e2;
+  --daily-section-wave: #d9c8e2;
+  background: #d9c8e2;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section > h2,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section > h2 {
+  color: #44285f;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section > .seo-landing-kicker,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section > .seo-landing-kicker {
+  color: #7c629a;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article {
+  border: 1px solid rgba(154, 111, 196, 0.45);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.78), transparent 34%),
+    linear-gradient(145deg, rgba(241, 237, 247, 0.92) 0%, rgba(229, 219, 239, 0.76) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.66),
+    0 14px 34px rgba(94, 78, 111, 0.11),
+    0 0 26px rgba(196, 167, 216, 0.24);
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article {
+  border: 1px solid rgba(154, 111, 196, 0.45);
+  background: #ece3f2;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.64),
+    0 14px 34px rgba(94, 69, 111, 0.12),
+    0 0 28px rgba(196, 167, 216, 0.26);
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article::after {
+  display: none;
+  content: none;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article h3,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article h3 {
+  color: #342047;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article p,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article p {
+  color: #5e456f;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article h3 {
+  color: #44285f;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-step-number {
+  color: #7a5ba2;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-step-icon,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article > span {
+  border: 1px solid rgba(196, 167, 216, 0.6);
+  background: rgba(255, 255, 255, 0.48);
+  color: #7650a3;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.76),
+    0 0 22px rgba(196, 167, 216, 0.22);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article > span {
+  width: clamp(3.7rem, 5vw, 4.7rem);
+  height: clamp(3.7rem, 5vw, 4.7rem);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #4f257a;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article > span img {
+  width: 100%;
+  height: 100%;
+  filter: brightness(0) saturate(100%) invert(19%) sepia(54%) saturate(1518%) hue-rotate(252deg) brightness(91%) contrast(91%);
+  opacity: 1;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section .seo-landing-steps,
+body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section .seo-landing-steps {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: clamp(1.25rem, 2vw, 2rem);
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section .seo-landing-steps article,
+body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section .seo-landing-steps article {
+  display: grid;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 340px;
+  gap: 0.82rem;
+  align-content: start;
+  border: 1px solid rgba(154, 111, 196, 0.45);
+  background: rgba(236, 227, 242, 0.92);
+  color: #5e456f;
+  box-shadow: 0 18px 42px rgba(68, 40, 95, 0.12);
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section .seo-landing-steps article h3,
+body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section .seo-landing-steps article h3 {
+  color: #44285f;
+  margin: 0;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section .seo-landing-steps article p,
+body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section .seo-landing-steps article p {
+  color: #5e456f;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section .seo-landing-step-icon,
+body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section .seo-landing-step-icon {
+  position: static;
+  justify-self: start;
+  width: 2.6rem;
+  height: 2.6rem;
+  display: inline-grid;
+  place-items: center;
+  color: #7650a3;
+  font-size: 1.2rem;
+  line-height: 1;
+  margin-bottom: 0.15rem;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:hover,
+body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps article:focus-within,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article:hover,
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section .seo-landing-benefits article:focus-within,
+body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section .seo-landing-steps article:hover,
+body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section .seo-landing-steps article:focus-within,
+body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section .seo-landing-steps article:hover,
+body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section .seo-landing-steps article:focus-within {
+  border-color: #d8b4fe;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 0 14px rgba(216, 180, 254, 0.55),
+    0 0 30px rgba(196, 167, 216, 0.35),
+    0 18px 45px rgba(68, 40, 95, 0.16);
+  transform: translateY(-4px);
+}
+
+@media (max-width: 768px) {
+  body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section,
+  body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section {
+    overflow: visible;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section .seo-landing-steps,
+  body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section .seo-landing-steps {
+    justify-content: flex-start;
+    max-width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    padding-inline: 1rem;
+    overflow-x: auto;
+    scroll-padding-inline: 1rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section .seo-landing-steps::-webkit-scrollbar,
+  body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section .seo-landing-steps::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section .seo-landing-steps::-webkit-scrollbar-thumb,
+  body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section .seo-landing-steps::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(118, 80, 163, 0.22);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-free-tarot-page .seo-difference-section .seo-landing-steps article,
+  body.seo-daily-page.seo-daily-lavender.seo-free-tarot-page .seo-difference-section .seo-landing-steps article {
+    flex: 0 0 84vw;
+    max-width: 84vw;
+    scroll-snap-align: center;
+  }
+}
+
+/* Shared SEO card animation system. Keep this late so it smooths older page-specific hover rules. */
+body.seo-daily-page.seo-daily-lavender {
+  --seo-card-border: rgba(154, 111, 196, 0.42);
+  --seo-card-border-hover: rgba(216, 180, 254, 0.95);
+  --seo-motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --seo-motion-fast: 200ms;
+  --seo-motion-medium: 260ms;
+  --seo-card-shadow: 0 14px 32px rgba(68, 40, 95, 0.1);
+  --seo-card-shadow-hover:
+    0 0 12px rgba(216, 180, 254, 0.38),
+    0 18px 40px rgba(68, 40, 95, 0.16);
+  --seo-card-transition:
+    transform var(--seo-motion-medium) var(--seo-motion-ease),
+    box-shadow var(--seo-motion-medium) var(--seo-motion-ease),
+    border-color var(--seo-motion-fast) ease;
+  --seo-button-shadow: 0 10px 24px rgba(100, 73, 151, 0.18);
+  --seo-button-shadow-hover:
+    0 0 14px rgba(140, 103, 220, 0.18),
+    0 14px 30px rgba(45, 30, 95, 0.22);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article,
+body.seo-daily-page.seo-daily-lavender .seo-difference-section .seo-landing-steps article,
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq details {
+  border-color: var(--seo-card-border);
+  box-shadow: var(--seo-card-shadow);
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform;
+  transition: var(--seo-card-transition);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a {
+  border-color: rgba(255, 255, 255, 0.64);
+  background:
+    linear-gradient(180deg, rgba(2, 2, 8, 0.08) 0%, rgba(2, 2, 8, 0.36) 42%, rgba(2, 2, 8, 0.9) 100%),
+    radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--theme-glow-primary) 44%, transparent), transparent 58%);
+  box-shadow:
+    0 18px 42px rgba(68, 40, 95, 0.16),
+    0 0 0 1px rgba(154, 111, 196, 0.16);
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform;
+  transition: var(--seo-card-transition);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button {
+  box-shadow: var(--seo-button-shadow);
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform;
+  transition:
+    transform var(--seo-motion-fast) var(--seo-motion-ease),
+    box-shadow var(--seo-motion-fast) var(--seo-motion-ease),
+    border-color var(--seo-motion-fast) ease,
+    color var(--seo-motion-fast) ease;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button::before,
+body.seo-daily-page.seo-daily-lavender .seo-landing-button::after {
+  transition:
+    opacity 200ms ease,
+    transform 300ms var(--seo-motion-ease);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-step-icon,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article > span {
+  transform: translate3d(0, 0, 0);
+  transition:
+    border-color var(--seo-motion-fast) ease,
+    box-shadow var(--seo-motion-fast) var(--seo-motion-ease);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--seo-link-card-image) center / cover no-repeat;
+  pointer-events: none;
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 400ms var(--seo-motion-ease);
+  will-change: transform;
+  z-index: -2;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:focus-within,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:focus-within,
+body.seo-daily-page.seo-daily-lavender .seo-difference-section .seo-landing-steps article:focus-within,
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a:focus-visible {
+  outline: 2px solid rgba(216, 180, 254, 0.85);
+  outline-offset: 4px;
+  border-color: var(--seo-card-border-hover);
+  box-shadow: var(--seo-card-shadow-hover);
+  transform: translate3d(0, -4px, 0);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button:focus-visible {
+  border-color: rgba(246, 232, 178, 0.46);
+  color: #fff2c9;
+  box-shadow: var(--seo-button-shadow-hover);
+  transform: translate3d(0, -2px, 0);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq details:focus-within,
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq details[open] {
+  border-color: var(--seo-card-border-hover);
+  box-shadow: var(--seo-card-shadow-hover);
+  transform: translate3d(0, 0, 0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-difference-section .seo-landing-steps article:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-faq details:hover {
+    border-color: var(--seo-card-border-hover);
+    box-shadow: var(--seo-card-shadow-hover);
+    transform: translate3d(0, -4px, 0);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-faq details:hover {
+    transform: translate3d(0, 0, 0);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover {
+    border-color: rgba(246, 232, 178, 0.46);
+    color: #fff2c9;
+    box-shadow: var(--seo-button-shadow-hover);
+    transform: translate3d(0, -2px, 0);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a:hover::after,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a:focus-visible::after {
+    transform: scale(1.035);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:hover .seo-landing-step-icon,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:focus-within .seo-landing-step-icon,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:hover > span,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:focus-within > span {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-difference-section .seo-landing-steps article:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-faq details:hover {
+    border-color: var(--seo-card-border);
+    box-shadow: var(--seo-card-shadow);
+    transform: translate3d(0, 0, 0);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover {
+    border-color: rgba(255, 255, 255, 0.72);
+    color: #48316d;
+    box-shadow: var(--seo-button-shadow);
+    transform: translate3d(0, 0, 0);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button--secondary:hover {
+    border-color: rgba(255, 255, 255, 0.28);
+    color: #fff8ff;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 10px 24px rgba(32, 18, 62, 0.18);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover::before,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover::after {
+    opacity: 0;
+    transform: none;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a:hover::after {
+    transform: scale(1);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:hover .seo-landing-step-icon,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:focus-within .seo-landing-step-icon,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:hover > span,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:focus-within > span {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article,
+  body.seo-daily-page.seo-daily-lavender .seo-difference-section .seo-landing-steps article,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a::after,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button::before,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button::after,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-faq details,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-faq details p,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-step-icon,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article > span {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-steps article:focus-within,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:focus-within,
+  body.seo-daily-page.seo-daily-lavender .seo-difference-section .seo-landing-steps article:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-difference-section .seo-landing-steps article:focus-within,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid a:focus-visible,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-button:focus-visible,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-faq details:hover,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-faq details:focus-within {
+    transform: none !important;
+  }
+}
+
+body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-section {
+  overflow: visible;
+}
+
+body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-section > p:not(.seo-landing-kicker) {
+  justify-self: center;
+  max-width: 820px;
+  text-align: center;
+}
+
+body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-cards {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: clamp(1.25rem, 2vw, 2rem);
+  max-width: 1080px;
+  margin: 2rem auto 0;
+}
+
+body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-card {
+  display: grid;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 340px;
+  gap: 0.82rem;
+  align-content: start;
+  border: 1px solid rgba(154, 111, 196, 0.45);
+  border-radius: 16px;
+  background: #ece3f2;
+  color: #5e456f;
+  box-shadow: 0 14px 32px rgba(68, 40, 95, 0.1);
+}
+
+body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-card h3 {
+  color: #44285f;
+  margin: 0;
+}
+
+body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-card p {
+  color: #5e456f;
+}
+
+body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-card .seo-landing-step-icon {
+  position: static;
+  justify-self: start;
+  display: inline-grid;
+  width: 2.6rem;
+  height: 2.6rem;
+  place-items: center;
+  border: 1px solid rgba(154, 111, 196, 0.28);
+  border-radius: 50%;
+  background: rgba(248, 243, 255, 0.72);
+  color: #7b5ea7;
+  font-size: 1.2rem;
+  line-height: 1;
+  margin-bottom: 0.15rem;
+  box-shadow: 0 0 18px rgba(154, 111, 196, 0.12);
+}
+
+body.seo-daily-page.seo-daily-lavender.seo-online-page .seo-difference-section .seo-landing-steps article {
+  border: 1px solid rgba(154, 111, 196, 0.45);
+  background: #ece3f2;
+  color: #5e456f;
+  box-shadow: 0 14px 32px rgba(68, 40, 95, 0.1);
+}
+
+body.seo-daily-page.seo-daily-lavender.seo-online-page .seo-difference-section .seo-landing-steps article h3 {
+  color: #44285f;
+}
+
+body.seo-daily-page.seo-daily-lavender.seo-online-page .seo-difference-section .seo-landing-steps article p {
+  color: #5e456f;
+}
+
+body.seo-daily-page.seo-daily-lavender.seo-online-page .seo-difference-section .seo-landing-step-icon {
+  position: static;
+  justify-self: start;
+  display: inline-grid;
+  width: 2.6rem;
+  height: 2.6rem;
+  place-items: center;
+  border: 1px solid rgba(154, 111, 196, 0.28);
+  border-radius: 50%;
+  background: rgba(248, 243, 255, 0.72);
+  color: #7b5ea7;
+  font-size: 1.2rem;
+  line-height: 1;
+  margin-bottom: 0.15rem;
+  box-shadow: 0 0 18px rgba(154, 111, 196, 0.12);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-card:hover {
+    border-color: var(--seo-card-border-hover);
+    box-shadow: var(--seo-card-shadow-hover);
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-cards {
+    justify-content: flex-start;
+    width: calc(100% + 2rem);
+    max-width: none;
+    margin-inline: -1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-inline: 1rem;
+    padding-bottom: 0.7rem;
+    scroll-padding-inline: 1rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-cards::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-cards::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(154, 111, 196, 0.35);
+  }
+
+  body.seo-daily-page.seo-daily-lavender.seo-one-card-page .one-card-reflect-card {
+    flex: 0 0 min(84vw, 360px);
+    max-width: min(84vw, 360px);
+    scroll-snap-align: center;
+  }
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: clamp(1.25rem, 2vw, 2rem);
+  max-width: 1180px;
+  margin-inline: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(154, 111, 196, 0.38) transparent;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps > article,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits > article {
+  flex: 1 1 260px;
+  max-width: 360px;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: clamp(0.95rem, 1.8vw, 1.35rem);
+  max-width: 1180px;
+  margin-inline: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(154, 111, 196, 0.38) transparent;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid > a {
+  flex: 1 1 180px;
+  max-width: 240px;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps::-webkit-scrollbar,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits::-webkit-scrollbar,
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps::-webkit-scrollbar-track,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits::-webkit-scrollbar-track,
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-steps::-webkit-scrollbar-thumb,
+body.seo-daily-page.seo-daily-lavender .seo-landing-benefits::-webkit-scrollbar-thumb,
+body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid::-webkit-scrollbar-thumb {
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(154, 111, 196, 0.32), rgba(216, 180, 254, 0.5));
+}
+
+@media (max-width: 1100px) {
+  body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid {
+    justify-content: flex-start;
+    width: calc(100% + 2rem);
+    max-width: none;
+    margin-inline: -1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-inline: 1rem;
+    padding-bottom: 0.7rem;
+    scroll-padding-inline: 1rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-ritual-section .seo-landing-steps > article {
+    flex: 0 0 min(82vw, 330px);
+    max-width: min(82vw, 330px);
+    scroll-snap-align: center;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-link-grid > a {
+    flex: 0 0 min(72vw, 260px);
+    max-width: min(72vw, 260px);
+    scroll-snap-align: center;
+  }
+}
+
+@media (max-width: 900px) {
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits,
+  body.seo-daily-page.seo-daily-lavender .seo-difference-section .seo-landing-steps {
+    justify-content: flex-start;
+    width: calc(100% + 2rem);
+    max-width: none;
+    margin-inline: -1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-inline: 1rem;
+    padding-bottom: 0.7rem;
+    scroll-padding-inline: 1rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .seo-landing-benefits > article,
+  body.seo-daily-page.seo-daily-lavender .seo-difference-section .seo-landing-steps > article {
+    flex: 0 0 min(84vw, 360px);
+    max-width: min(84vw, 360px);
+    scroll-snap-align: center;
+  }
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button,
+body.seo-daily-page.seo-daily-lavender .seo-landing-trust-row li,
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq summary {
+  font-family: var(--daily-ui-font);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-explore-intro {
+  justify-self: center;
+  max-width: 680px;
+  margin: -0.2rem auto 0.35rem;
+  text-align: center;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-explore-intro a {
+  color: #4a2c73;
+  font-weight: 700;
+  text-decoration-color: rgba(122, 91, 162, 0.42);
+  text-underline-offset: 0.18em;
+}
+
+body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-trust-row li {
+  justify-content: center;
+  min-height: 34px;
+  padding: 0.48rem 0.95rem;
+  border-color: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(56, 36, 96, 0.58);
+  color: #fff7ff;
+  font-size: clamp(0.78rem, 0.82vw, 0.9rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-button--secondary {
+  background: rgba(255, 248, 255, 0.14);
+  color: #fff8ff;
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 10px 24px rgba(32, 18, 62, 0.18);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section > h2 {
+  color: #44285f;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section > .seo-landing-kicker {
+  color: #7c629a;
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-benefits-section > p:not(.seo-landing-kicker) {
+  color: #5e456f;
+}
+
+@media (max-width: 760px) {
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero::before {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(36, 21, 70, 0.82) 0%,
+        rgba(46, 28, 82, 0.72) 52%,
+        rgba(46, 28, 82, 0.36) 100%
+      );
+  }
+
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero p:not(.seo-landing-kicker) {
+    font-size: 1rem;
+    line-height: 1.72;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-hero__content {
+    width: 100%;
+    padding: clamp(1.25rem, 6vw, 1.65rem) clamp(1.25rem, 6vw, 1.65rem) clamp(1.45rem, 7vw, 1.9rem);
+    border-radius: 22px;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(32, 18, 62, 0.78) 0%,
+        rgba(48, 28, 84, 0.7) 100%
+      );
+  }
+
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-trust-row {
+    gap: 0.55rem;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .free-daily-hero .seo-landing-trust-row li {
+    min-height: 32px;
+    padding: 0.45rem 0.78rem;
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 760px) {
+  body.seo-daily-page.seo-daily-lavender .daily-final-cta {
+    min-height: clamp(260px, 72vw, 320px);
+    border-radius: clamp(22px, 7vw, 30px) clamp(22px, 7vw, 30px) 0 0 !important;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .daily-final-cta::before {
+    display: block !important;
+    content: "" !important;
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(28, 13, 56, 0.86) 0%,
+        rgba(44, 24, 82, 0.74) 48%,
+        rgba(44, 24, 82, 0.48) 100%
+      );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .daily-final-cta > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .daily-final-cta h2,
+  body.seo-daily-page.seo-daily-lavender .daily-final-cta p {
+    text-shadow: 0 2px 12px rgba(18, 8, 38, 0.75);
+  }
+
+  body.seo-daily-page.seo-daily-lavender .daily-final-cta h2 {
+    color: #fff7e8;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .daily-final-cta p {
+    color: #f8f3ff;
+  }
+
+  body.seo-daily-page.seo-daily-lavender .free-daily-footer {
+    margin-top: 0 !important;
+  }
+}
+
 @media (min-width: 901px) and (max-width: 1366px), (min-width: 901px) and (max-height: 800px) {
   .about-page {
     width: min(100%, 1040px);

@@ -156,7 +156,13 @@ js/
   deck.js
   archive.js
 
-Open `index.html` directly in a browser, or serve the folder with any static server. No backend, build step, or API key is required.
+Open `index.html` directly in a browser for simple file checks. To test clean SEO routes such as `/free-tarot-reading` or `/choose-reader?spread=one-card` locally, run:
+
+```bash
+npm run dev
+```
+
+The local server mirrors the static rewrites used in production so the clean routes resolve to the correct HTML files and the reading flow preserves query parameters. Plain static servers and Live Server may show `Cannot GET /clean-route` because they do not read Netlify redirects.
 
 ## Testing Hooks
 
