@@ -314,6 +314,18 @@ function getCollectionActionLabel(collection) {
     : collection.actionLabel;
 }
 
+function getCollectionCardBadge(collection) {
+  if (!collection) {
+    return "";
+  }
+
+  if (isBloodMoonCollection(collection) && !canViewBloodMoonDeck()) {
+    return collection.categoryLabel || "Blood Moon Deck";
+  }
+
+  return getCollectionStatus(collection);
+}
+
 function getCollectionTypeLabel(collection) {
   if (!collection) {
     return "Archive Deck";
@@ -452,7 +464,7 @@ function getDeckInfoModalThemeClass(collection) {
     return "deck-modal--cyber-hacked";
   }
 
-  if (collection.id === "bloodMoon") {
+  if (isBloodMoonCollection(collection)) {
     return "deck-modal--bloodmoon";
   }
 
@@ -680,6 +692,10 @@ function renderDeckCardMeanings(card) {
 }
 
 function getDeckDetailThemeClass(collection) {
+  if (isBloodMoonCollection(collection)) {
+    return "deck-detail--bloodmoon";
+  }
+
   const themeSource = String(collection?.id || collection?.theme || "")
     .trim()
     .toLowerCase();
@@ -891,6 +907,10 @@ function moveDeckFilter(direction) {
 }
 
 function getCollectionIdClass(collection) {
+  if (isBloodMoonCollection(collection)) {
+    return "bloodMoon";
+  }
+
   return String(collection?.id || "")
     .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
     .replace(/[^a-zA-Z0-9]+/g, "-")
@@ -903,11 +923,13 @@ function getCarouselDeckLabel(collection) {
     original: "VERDANT",
     dreambound: "DREAMBOUND",
     moonveil: "MOONVEIL",
-    bloodMoon: "BLOOD MOON",
+    bloodMoon: "Crimson Veil",
+    astralVeilTarot: "Veilrise Arcana",
+    astralVeilCrimson: "Veilfall Arcana",
     cyberpunkArcana: "CYBER-HACKED"
   };
 
-  return labels[collection?.id] || getCollectionCategory(collection);
+  return labels[collection?.id] || collection?.title || collection?.name || getCollectionCategory(collection);
 }
 
 function getCarouselDeckIntention(collection) {
@@ -935,7 +957,7 @@ function renderDeckCollectionCard(collection, options = {}) {
   const isAuthLocked = isAuthLockedCollection(collection) && isLocked;
   const canOpenLockedPrompt = false;
   const isComingSoon = collection?.accessType === "comingSoon";
-  const status = getCollectionStatus(collection);
+  const badge = getCollectionCardBadge(collection);
   const actionLabel = getCollectionActionLabel(collection);
   const category = getCollectionCategory(collection);
   const visibleLabel = labelText || category;
@@ -963,7 +985,7 @@ function renderDeckCollectionCard(collection, options = {}) {
 
   return `
       <article class="deck-collection-card deck-collection-card--${escapeHtml(theme)}${escapeHtml(deckIdClass)}${isLocked ? " is-locked" : ""}${isComingSoon ? " is-coming-soon" : ""}${escapeHtml(modifierClass)}${protectedMediaClass}" ${tileBackgroundStyle} data-deck-card data-deck-category="${escapeHtml(category)}" ${protectedMediaAttrs} ${cardDeckAttribute} aria-disabled="${isLocked}">
-      <span class="deck-collection-card__badge">${escapeHtml(status)}</span>
+      <span class="deck-collection-card__badge">${escapeHtml(badge)}</span>
       <button class="deck-collection-card__preview" type="button" data-deck-details="${escapeHtml(collection.id)}" aria-label="View details for ${escapeHtml(collection.title)}">
         <img src="${escapeHtml(previewImage)}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} />
         <span class="deck-collection-card__detail-hint">View Details</span>
@@ -1029,7 +1051,7 @@ function getMobileDeckShelfName(collection) {
 function renderMobileDeckShelfItem(collection, sectionId, index, activeIndex, itemCount) {
   const previewImage = collection?.previewImage || collection?.coverImage || "";
   const isLocked = isCollectionLocked(collection);
-  const status = getCollectionStatus(collection);
+  const badge = getCollectionCardBadge(collection);
   const isSelected = index === activeIndex;
   const protectedMediaClass = isBloodMoonCollection(collection) ? " protected-media" : "";
   const protectedMediaAttrs = isBloodMoonCollection(collection) ? ' data-protected-media="true" draggable="false"' : "";
@@ -1041,7 +1063,7 @@ function renderMobileDeckShelfItem(collection, sectionId, index, activeIndex, it
     <button class="deck-mobile-shelf__item ${getMobileDeckOffsetClass(visibleOffset)}${isSelected ? " is-selected" : ""}${isLocked ? " is-locked" : ""}${protectedMediaClass}" type="button" data-mobile-deck-focus="${escapeHtml(sectionId)}" data-deck-carousel-index="${index}" data-mobile-deck-offset="${offset}" aria-label="${isSelected ? `Open focused view for ${escapeHtml(collection.title)}` : `Bring ${escapeHtml(collection.title)} forward`}" aria-pressed="${isSelected ? "true" : "false"}"${protectedMediaAttrs}>
       <span class="deck-mobile-shelf__card">
         <img src="${escapeHtml(previewImage)}" alt="${escapeHtml(collection.title)} card back" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} />
-        ${isLocked ? `<span class="deck-mobile-shelf__status">${escapeHtml(status)}</span>` : ""}
+        ${isLocked ? `<span class="deck-mobile-shelf__status">${escapeHtml(badge)}</span>` : ""}
       </span>
       <span class="deck-mobile-shelf__name">${escapeHtml(getMobileDeckShelfName(collection))}</span>
     </button>
@@ -1534,6 +1556,7 @@ function openDeckLightbox(cardId) {
   lightboxCardImage.dataset.imagePreviewCaption = getCardDescription(card);
   lightboxCardImage.draggable = !isBloodMoonCollection(activeCollection);
   lightboxCardImage.classList.toggle("protected-media", isBloodMoonCollection(activeCollection));
+  deckLightbox.classList.toggle("deck-lightbox--bloodmoon", isBloodMoonCollection(activeCollection));
   if (isBloodMoonCollection(activeCollection)) {
     lightboxCardImage.setAttribute("data-protected-media", "true");
   } else {
@@ -1552,6 +1575,7 @@ function closeDeckLightbox() {
   }
 
   deckLightbox.classList.remove("is-open");
+  deckLightbox.classList.remove("deck-lightbox--bloodmoon");
   deckLightbox.setAttribute("aria-hidden", "true");
   document.body.classList.remove("is-lightbox-open");
 }

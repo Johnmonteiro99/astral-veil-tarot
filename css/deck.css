@@ -1047,6 +1047,7 @@ body.blood-moon-mode .deck-ritual-feature {
   --deck-viewer-glow: rgba(101, 247, 255, 0.34);
 }
 
+.deck-detail--bloodmoon,
 .deck-viewer--bloodMoon {
   --deck-viewer-panel: var(--panel-bg, rgba(32, 3, 7, 0.78));
 }
@@ -1281,6 +1282,13 @@ body.blood-moon-mode .deck-ritual-feature {
   line-height: 0.95;
   letter-spacing: 0;
   text-shadow: 0 0 28px rgba(255, 255, 255, 0.08);
+}
+
+.deck-detail--bloodmoon .deck-viewer__content h2 {
+  color: color-mix(in srgb, var(--deck-viewer-accent) 82%, #fff0f2);
+  text-shadow:
+    0 0 18px color-mix(in srgb, var(--deck-viewer-glow) 74%, transparent),
+    0 0 42px color-mix(in srgb, var(--deck-viewer-accent-2) 40%, transparent);
 }
 
 .deck-viewer__content > p:not(.deck-viewer__counter):not(.deck-viewer__deck-label):not(.deck-viewer__arcana-label) {
@@ -1729,6 +1737,8 @@ body.is-deck-info-open {
 ================================ */
 
 .deck-lightbox {
+  --deck-lightbox-accent: var(--deck-viewer-accent, var(--navbar-glow));
+  --deck-lightbox-glow: var(--deck-viewer-glow, var(--navbar-glow));
   position: fixed;
   inset: 0;
   z-index: 40;
@@ -1738,6 +1748,11 @@ body.is-deck-info-open {
   opacity: 0;
   pointer-events: none;
   transition: opacity 250ms ease;
+}
+
+.deck-lightbox--bloodmoon {
+  --deck-lightbox-accent: #ff405d;
+  --deck-lightbox-glow: rgba(255, 35, 65, 0.38);
 }
 
 .deck-lightbox.is-open {
@@ -1799,7 +1814,7 @@ body.is-deck-info-open {
 
 .deck-lightbox__close:hover,
 .deck-lightbox__close:focus-visible {
-  box-shadow: 0 0 22px var(--navbar-glow);
+  box-shadow: 0 0 22px var(--deck-lightbox-glow);
   transform: translateY(-1px);
 }
 
@@ -1813,10 +1828,18 @@ body.is-deck-info-open {
   clip-path: inset(0 round var(--tarot-card-radius));
   object-fit: contain;
   background: transparent;
+  box-shadow: 0 0 34px color-mix(in srgb, var(--deck-lightbox-glow) 78%, transparent);
 }
 
 .deck-lightbox__content {
   display: none;
+}
+
+.deck-lightbox--bloodmoon .deck-lightbox__content h2 {
+  color: color-mix(in srgb, var(--deck-lightbox-accent) 84%, #fff0f2);
+  text-shadow:
+    0 0 18px color-mix(in srgb, var(--deck-lightbox-glow) 72%, transparent),
+    0 0 40px color-mix(in srgb, var(--deck-lightbox-accent) 34%, transparent);
 }
 
 .deck-info-modal {

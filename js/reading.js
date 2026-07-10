@@ -167,9 +167,9 @@ const readingDecks = [
   },
   {
     id: "astralVeilTarot",
-    title: "Astral Veil Tarot",
+    title: "Veilrise Arcana",
     label: "Full Tarot Deck",
-    description: "A full 78-card Astral Veil tarot deck.",
+    description: "A full 78-card deck of becoming, choice, growth, joy, pain, and the soul's rise through the Veil.",
     access: "public",
     compatibleModes: ["sun", "moon"],
     meaningSet: "astralVeilTarot",
@@ -203,9 +203,9 @@ const readingDecks = [
   },
   {
     id: "astralVeilCrimson",
-    title: "Astral Veil Crimson",
+    title: "Veilfall Arcana",
     label: "Blood Moon Full Deck",
-    description: "A full 78-card Blood Moon deck prepared for shadow readings.",
+    description: "A full 78-card Blood Moon deck of shadow, fracture, craving, deception, and the truths revealed when illusion falls.",
     access: "bloodMoon",
     compatibleModes: ["bloodMoon"],
     meaningSet: "astralVeilCrimson",
