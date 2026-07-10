@@ -537,28 +537,28 @@ const shelvesFindingAids = [
     title: "Shelf Index",
     description: "Browse by shelf mark and classification.",
     action: "Open Index",
-    image: "assets/images/noctis/shelf_index.png"
+    image: "assets/images/archive/noctis/shelf_index.png"
   },
   {
     id: "code-ledger",
     title: "Code Ledger",
     description: "Track cipher keys, coded phrases, and recovered symbols.",
     action: "Open Ledger",
-    image: "assets/images/noctis/code_ledger.png"
+    image: "assets/images/archive/noctis/code_ledger.png"
   },
   {
     id: "cross-references",
     title: "Cross-References",
     description: "Find connections between documents, authors, rooms, and events.",
     action: "Explore",
-    image: "assets/images/noctis/cross_reference.png"
+    image: "assets/images/archive/noctis/cross_reference.png"
   },
   {
     id: "recent-discoveries",
     title: "Recent Discoveries",
     description: "The latest records and pieces recovered from the Archive.",
     action: "View New",
-    image: "assets/images/noctis/recent_discoveries.png"
+    image: "assets/images/archive/noctis/recent_discoveries.png"
   }
 ];
 
@@ -636,7 +636,7 @@ const galleryVisualRecords = [
     id: "trio-study",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     width: 1120,
     height: 1400,
     caption: "The Archive has recovered the image, but not its name."
@@ -645,7 +645,7 @@ const galleryVisualRecords = [
     id: "castle-black",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     width: 1400,
     height: 1050,
     caption: "The Archive has recovered the image, but not its name."
@@ -654,7 +654,7 @@ const galleryVisualRecords = [
     id: "ufo-landing",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     width: 1400,
     height: 1050,
     caption: "The Archive has recovered the image, but not its name."
@@ -663,7 +663,7 @@ const galleryVisualRecords = [
     id: "the-veil-trine",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     width: 1120,
     height: 1400,
     caption: "The Archive has recovered the image, but not its name."
@@ -672,7 +672,7 @@ const galleryVisualRecords = [
     id: "lost-city",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     width: 1400,
     height: 1052,
     caption: "The Archive has recovered the image, but not its name."
@@ -711,7 +711,7 @@ const galleryRecordPlaceholders = [
     id: "glr-prt-017",
     title: "Sealed Portrait No. 17",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     marked: true,
     recovered: true,
     variant: "portrait"
@@ -720,7 +720,7 @@ const galleryRecordPlaceholders = [
     id: "glr-sym-004",
     title: "Astral Seal / Symbol Record",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     marked: true,
     recovered: true,
     variant: "square"
@@ -729,7 +729,7 @@ const galleryRecordPlaceholders = [
     id: "glr-plc-009",
     title: "Watcher Estate Landscape",
     category: "Places",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true,
     variant: "wide"
   },
@@ -737,7 +737,7 @@ const galleryRecordPlaceholders = [
     id: "glr-unk-001",
     title: "Unknown Visual Record 01",
     category: "Unknown Records",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     sealed: true,
     fragments: "2 / 4 fragments recovered",
     progress: 50,
@@ -747,21 +747,21 @@ const galleryRecordPlaceholders = [
     id: "glr-anm-004",
     title: "Blood Moon Eclipse",
     category: "Anomalies",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     recovered: true
   },
   {
     id: "glr-sym-008",
     title: "Winged Statue / Watcher Record",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     variant: "tall"
   },
   {
     id: "glr-prt-022",
     title: "Red Veiled Portrait",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     marked: true,
     recovered: true,
     variant: "featured-small"
@@ -770,21 +770,21 @@ const galleryRecordPlaceholders = [
     id: "glr-anm-012",
     title: "Chalice / Impossible Reflection",
     category: "Anomalies",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     recovered: true
   },
   {
     id: "glr-map-003",
     title: "Map / Diagram Record",
     category: "Maps",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     variant: "featured-small"
   },
   {
     id: "glr-sym-017",
     title: "Red Sigil / Seal Record",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     marked: true,
     variant: "square"
   },
@@ -792,7 +792,7 @@ const galleryRecordPlaceholders = [
     id: "glr-prt-031",
     title: "Portrait of the Veiled Scribe",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true,
     variant: "portrait"
   },
@@ -800,14 +800,14 @@ const galleryRecordPlaceholders = [
     id: "glr-plc-014",
     title: "The Observatory Before Rain",
     category: "Places",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     variant: "square"
   },
   {
     id: "glr-anm-019",
     title: "Doorway in the Red Sky",
     category: "Anomalies",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     marked: true,
     variant: "wide"
   },
@@ -815,7 +815,7 @@ const galleryRecordPlaceholders = [
     id: "glr-unk-007",
     title: "Unknown Visual Record 07",
     category: "Unknown Records",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     sealed: true,
     fragments: "1 / 5 fragments recovered",
     progress: 20,
@@ -825,21 +825,21 @@ const galleryRecordPlaceholders = [
     id: "glr-map-011",
     title: "Cartographer's Warning",
     category: "Maps",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     recovered: true
   },
   {
     id: "glr-sym-025",
     title: "Aster Gate Marking",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     variant: "tall"
   },
   {
     id: "glr-prt-038",
     title: "The Watcher Who Blinked",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     marked: true,
     variant: "featured-small"
   },
@@ -847,21 +847,21 @@ const galleryRecordPlaceholders = [
     id: "glr-plc-021",
     title: "Lost Stair Beneath the Gallery",
     category: "Places",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true
   },
   {
     id: "glr-anm-030",
     title: "The Moon Appears Twice",
     category: "Anomalies",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     variant: "featured-small"
   },
   {
     id: "glr-sym-033",
     title: "Red Archive Diagram",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     recovered: true,
     variant: "square"
   },
@@ -869,7 +869,7 @@ const galleryRecordPlaceholders = [
     id: "glr-map-018",
     title: "Map of the Sealed Coast",
     category: "Maps",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     marked: true,
     variant: "portrait"
   },
@@ -877,7 +877,7 @@ const galleryRecordPlaceholders = [
     id: "glr-unk-013",
     title: "Unknown Visual Record 13",
     category: "Unknown Records",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     sealed: true,
     fragments: "3 / 6 fragments recovered",
     progress: 50,
@@ -887,7 +887,7 @@ const galleryRecordPlaceholders = [
     id: "glr-plc-027",
     title: "Courtyard of Red Lanterns",
     category: "Places",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true,
     variant: "wide"
   },
@@ -895,21 +895,21 @@ const galleryRecordPlaceholders = [
     id: "glr-anm-044",
     title: "Static Figure at the Horizon",
     category: "Anomalies",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     variant: "fragment"
   },
   {
     id: "glr-prt-046",
     title: "Mirror Portrait Fragment",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true
   },
   {
     id: "glr-sym-052",
     title: "Sixfold Blood Star",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     marked: true,
     variant: "tall"
   },
@@ -917,21 +917,21 @@ const galleryRecordPlaceholders = [
     id: "glr-map-029",
     title: "Unlabeled Vault Map",
     category: "Maps",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     variant: "featured-small"
   },
   {
     id: "glr-plc-035",
     title: "The Watcher's Estate",
     category: "Places",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true
   },
   {
     id: "glr-unk-021",
     title: "Unknown Visual Record 21",
     category: "Unknown Records",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     sealed: true,
     fragments: "0 / 4 fragments recovered",
     progress: 8,
@@ -941,7 +941,7 @@ const galleryRecordPlaceholders = [
     id: "glr-sym-061",
     title: "Seal of the Returning Moon",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     recovered: true,
     variant: "square"
   }
@@ -2645,7 +2645,7 @@ function renderEntryDeskRoom(room) {
 }
 
 function renderEntryDeskHero(room) {
-  const entryDeskHeroImage = "assets/images/noctis/entry_desk_bg.png";
+  const entryDeskHeroImage = "assets/images/archive/noctis/entry_desk_bg.png";
 
   return `
     <section class="entry-desk-hero" aria-labelledby="entry-desk-title">
@@ -3761,7 +3761,7 @@ function renderShelvesReadingDesk(document, documents) {
         </div>
       </div>
       <figure class="shelves-reading-desk__art" aria-hidden="true">
-        <img src="${escapeHtml(document.cover_image || "assets/images/noctis/recovered-code.png")}" alt="" width="900" height="600" loading="lazy" decoding="async" />
+        <img src="${escapeHtml(document.cover_image || "assets/images/archive/noctis/recovered-code.png")}" alt="" width="900" height="600" loading="lazy" decoding="async" />
       </figure>
       <div class="shelves-reading-desk__controls shelves-reading-controls" aria-label="Browse current document results">
         <button type="button" data-shelves-nav="previous" ${readingDeskDocuments.length <= 1 ? "disabled" : ""}>Previous</button>
@@ -5467,7 +5467,7 @@ function renderGalleryRecordsState(pagination) {
 
 function renderGalleryFeaturedRecord(featuredRecord) {
   const featuredRecords = getGalleryFeaturedRecords();
-  const image = featuredRecord?.previewImage || featuredRecord?.preview_image_url || featuredRecord?.fullImage || featuredRecord?.full_image_url || featuredRecord?.image || "assets/images/noctis/visual-records/castle-black.webp";
+  const image = featuredRecord?.previewImage || featuredRecord?.preview_image_url || featuredRecord?.fullImage || featuredRecord?.full_image_url || featuredRecord?.image || "assets/images/archive/noctis/visual-records/castle-black.webp";
   const title = featuredRecord?.title || "Sealed Landscape";
   const note = featuredRecord?.lore_note || featuredRecord?.description || "The Archive has recovered this visual record, but its meaning remains uncertain.";
   const relatedRoom = featuredRecord?.relatedRoom || featuredRecord?.related_room || "";

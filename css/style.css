@@ -1945,7 +1945,7 @@ body.reduce-motion .deck-selection-card {
   overflow: hidden;
   border: 0;
   border-radius: 18px;
-  background-image: url("../assets/images/concepts-ideas/meet-the-veilwalkers.webp");
+  background-image: url("../assets/images/concepts/meet-the-veilwalkers.webp");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -2030,7 +2030,7 @@ body.sun-mode .readers-page .page-hero {
 }
 
 body.sun-mode .readers-hero-letter {
-  background-image: url("../assets/images/concepts-ideas/meet-the-veilwalkers.webp");
+  background-image: url("../assets/images/concepts/meet-the-veilwalkers.webp");
   box-shadow:
     0 24px 72px rgba(0, 0, 0, 0.26),
     0 0 46px rgba(228, 169, 70, 0.28);
@@ -2063,7 +2063,7 @@ body.blood-moon-mode .readers-page .page-hero {
 }
 
 body.blood-moon-mode .readers-hero-letter {
-  background-image: url("../assets/images/concepts-ideas/bloodmoon-veilwalker-section.webp");
+  background-image: url("../assets/images/concepts/bloodmoon-veilwalker-section.webp");
   box-shadow:
     0 24px 76px rgba(0, 0, 0, 0.34),
     0 0 48px rgba(255, 40, 64, 0.32);
@@ -3253,7 +3253,7 @@ body.blood-moon-mode .future-omen {
     linear-gradient(90deg, rgba(1, 1, 8, 0.88) 0%, rgba(4, 3, 18, 0.76) 38%, rgba(4, 3, 18, 0.24) 70%),
     linear-gradient(180deg, rgba(5, 8, 14, 0.08) 0%, rgba(5, 8, 14, 0.24) 46%, rgba(5, 8, 14, 0.68) 100%),
     radial-gradient(circle at 24% 22%, color-mix(in srgb, var(--theme-glow-primary) 50%, transparent), transparent 36%),
-    url("../assets/images/background _images/free-reading-bg.png") right center / cover;
+    url("../assets/images/backgrounds/free-reading-bg.png") right center / cover;
   box-shadow:
     0 28px 80px rgba(0, 0, 0, 0.34),
     0 0 34px var(--navbar-glow),
@@ -3659,23 +3659,23 @@ body.blood-moon-mode .future-omen {
 }
 
 .seo-landing-link-card--daily {
-  --seo-link-card-image: url("../assets/images/background _images/daily-read-bg.png");
+  --seo-link-card-image: url("../assets/images/backgrounds/daily-read-bg.png");
 }
 
 .seo-landing-link-card--veilwalkers {
-  --seo-link-card-image: url("../assets/images/background _images/veilwalkers-bg.png");
+  --seo-link-card-image: url("../assets/images/backgrounds/veilwalkers-bg.png");
 }
 
 .seo-landing-link-card--decks {
-  --seo-link-card-image: url("../assets/images/background _images/decks-bg.png");
+  --seo-link-card-image: url("../assets/images/backgrounds/decks-bg.png");
 }
 
 .seo-landing-link-card--lumen {
-  --seo-link-card-image: url("../assets/images/background _images/lumen-bg.png");
+  --seo-link-card-image: url("../assets/images/backgrounds/lumen-bg.png");
 }
 
 .seo-landing-link-card--journal {
-  --seo-link-card-image: url("../assets/images/background _images/journal-bg.png");
+  --seo-link-card-image: url("../assets/images/backgrounds/journal-bg.png");
 }
 
 .seo-landing-link-grid a:hover,
@@ -3983,7 +3983,7 @@ body.seo-daily-page.seo-daily-lavender .seo-landing-hero {
   background:
     linear-gradient(90deg, rgba(39, 29, 86, 0.76) 0%, rgba(71, 51, 127, 0.58) 38%, rgba(233, 218, 255, 0.05) 72%),
     linear-gradient(180deg, rgba(247, 238, 255, 0.08) 0%, rgba(247, 238, 255, 0.18) 58%, rgba(247, 238, 255, 0.72) 100%),
-    url("../assets/images/background _images/seo-reading-heading.png") right center / cover;
+    url("../assets/images/backgrounds/seo-reading-heading.png") right center / cover;
   box-shadow:
     0 24px 70px rgba(102, 77, 153, 0.28),
     0 0 42px rgba(224, 205, 255, 0.42),
@@ -4278,7 +4278,7 @@ body.seo-daily-page.seo-daily-lavender .seo-landing-final-cta {
   background:
     linear-gradient(90deg, rgba(55, 39, 103, 0.76) 0%, rgba(72, 49, 115, 0.62) 42%, rgba(245, 235, 255, 0.1) 76%),
     linear-gradient(180deg, rgba(255, 252, 255, 0.06), rgba(43, 31, 85, 0.56)),
-    url("../assets/images/background _images/seo-reading-footer.png") right center / cover;
+    url("../assets/images/backgrounds/seo-reading-footer.png") right center / cover;
   box-shadow:
     0 22px 60px rgba(86, 62, 137, 0.26),
     0 0 40px rgba(224, 205, 255, 0.34),
@@ -4314,7 +4314,7 @@ body.seo-daily-page.seo-daily-lavender .seo-landing-final-cta p {
     border-radius: 0 0 24px 24px;
     background:
       linear-gradient(180deg, rgba(43, 30, 88, 0.76) 0%, rgba(68, 48, 120, 0.62) 48%, rgba(244, 235, 255, 0.32) 100%),
-      url("../assets/images/background _images/seo-reading-heading.png") 62% center / cover;
+      url("../assets/images/backgrounds/seo-reading-heading.png") 62% center / cover;
   }
 
   body.seo-daily-page.seo-daily-lavender .seo-landing-section {
@@ -4333,7 +4333,7 @@ body.seo-daily-page.seo-daily-lavender .seo-landing-final-cta p {
     margin-inline: 0;
     background:
       linear-gradient(180deg, rgba(55, 39, 103, 0.82) 0%, rgba(72, 49, 115, 0.68) 56%, rgba(72, 49, 115, 0.38) 100%),
-      url("../assets/images/background _images/seo-reading-footer.png") center / cover;
+      url("../assets/images/backgrounds/seo-reading-footer.png") center / cover;
   }
 }
 
@@ -4366,7 +4366,7 @@ body.seo-daily-page.seo-daily-lavender .free-daily-hero {
   border-radius: 0;
   background-image:
     linear-gradient(90deg, rgba(36, 24, 74, 0.78) 0%, rgba(62, 43, 111, 0.48) 38%, rgba(62, 43, 111, 0.08) 72%),
-    url("../assets/images/background _images/seo-reading-heading.png");
+    url("../assets/images/backgrounds/seo-reading-heading.png");
   background-position: center right;
   background-repeat: no-repeat;
   background-size: cover;
@@ -4481,7 +4481,7 @@ body.seo-daily-page.seo-daily-lavender .daily-final-cta {
   border-radius: clamp(22px, 3vw, 38px);
   background-image:
     linear-gradient(90deg, rgba(71, 45, 122, 0.88) 0%, rgba(91, 63, 148, 0.58) 44%, rgba(91, 63, 148, 0.18) 78%),
-    url("../assets/images/background _images/seo-reading-footer.png");
+    url("../assets/images/backgrounds/seo-reading-footer.png");
   background-position: center right;
   background-repeat: no-repeat;
   background-size: cover;
@@ -4527,7 +4527,7 @@ body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__share {
     padding: 7rem 1.25rem 6rem;
     background-image:
       linear-gradient(180deg, rgba(36, 24, 74, 0.82), rgba(36, 24, 74, 0.56)),
-      url("../assets/images/background _images/seo-reading-heading.png");
+      url("../assets/images/backgrounds/seo-reading-heading.png");
     background-position: 62% center;
   }
 
@@ -4552,7 +4552,7 @@ body.seo-daily-page.seo-daily-lavender .free-daily-footer .site-footer__share {
     min-height: 320px;
     background-image:
       linear-gradient(180deg, rgba(71, 45, 122, 0.86) 0%, rgba(91, 63, 148, 0.6) 58%, rgba(91, 63, 148, 0.28) 100%),
-      url("../assets/images/background _images/seo-reading-footer.png");
+      url("../assets/images/backgrounds/seo-reading-footer.png");
     background-position: 68% center;
   }
 }
@@ -4609,7 +4609,7 @@ body.seo-daily-page.seo-daily-lavender .free-daily-hero {
   padding-top: clamp(5.6rem, 7.5vw, 7.5rem);
   padding-bottom: clamp(4.2rem, 6vw, 6.2rem);
   border-bottom: 0;
-  background-image: url("../assets/images/background _images/seo-reading-heading.png");
+  background-image: url("../assets/images/backgrounds/seo-reading-heading.png");
   background-position: center right;
   background-size: cover;
 }
@@ -4884,7 +4884,7 @@ body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article:focus-withi
   body.seo-daily-page.seo-daily-lavender .free-daily-hero {
     min-height: auto;
     padding: 6.5rem 1.25rem 5rem;
-    background-image: url("../assets/images/background _images/seo-reading-heading.png");
+    background-image: url("../assets/images/backgrounds/seo-reading-heading.png");
     background-position: 62% center;
   }
 
@@ -4933,7 +4933,7 @@ body.seo-daily-page.seo-daily-lavender .daily-final-cta-bg {
 body.seo-daily-page.seo-daily-lavender .daily-final-cta {
   background-image:
     linear-gradient(90deg, rgba(42, 28, 82, 0.68) 0%, rgba(74, 52, 126, 0.28) 42%, rgba(74, 52, 126, 0) 72%),
-    url("../assets/images/background _images/seo-reading-footer.png") !important;
+    url("../assets/images/backgrounds/seo-reading-footer.png") !important;
   background-position: center right !important;
   background-repeat: no-repeat !important;
   background-size: cover !important;
@@ -12793,7 +12793,7 @@ body.blood-moon-mode .active-reader-header__quote {
   --reading-stage-line: rgba(231, 195, 106, 0.3);
   --reading-stage-text-bg: rgba(3, 2, 8, 0.42);
   --reading-stage-text-bg-strong: rgba(3, 2, 8, 0.58);
-  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-moon-section.webp");
+  --reading-stage-hero-image: url("../assets/images/concepts/reading-moon-section.webp");
   border: 0;
   border-radius: 0;
   padding: 0;
@@ -12806,7 +12806,7 @@ body.blood-moon-mode .active-reader-header__quote {
 
 body.sun-mode .reading-stage,
 body.sun-mode .reading-results-section {
-  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-sun-section.webp");
+  --reading-stage-hero-image: url("../assets/images/concepts/reading-sun-section.webp");
   --reading-stage-accent: #e7c36a;
   --reading-stage-glow: rgba(231, 195, 106, 0.3);
   --reading-stage-line: rgba(231, 195, 106, 0.34);
@@ -12816,7 +12816,7 @@ body.sun-mode .reading-results-section {
 
 body.moon-mode .reading-stage,
 body.moon-mode .reading-results-section {
-  --reading-stage-hero-image: url("../assets/images/concepts-ideas/reading-moon-section.webp");
+  --reading-stage-hero-image: url("../assets/images/concepts/reading-moon-section.webp");
   --reading-stage-accent: #d6b36a;
   --reading-stage-glow: rgba(166, 132, 230, 0.3);
   --reading-stage-line: rgba(214, 179, 106, 0.3);
@@ -12826,7 +12826,7 @@ body.moon-mode .reading-results-section {
 
 body.blood-moon-mode .reading-stage,
 body.blood-moon-mode .reading-results-section {
-  --reading-stage-hero-image: url("../assets/images/concepts-ideas/bloodmoon-reading-section.webp");
+  --reading-stage-hero-image: url("../assets/images/concepts/bloodmoon-reading-section.webp");
   --reading-stage-accent: #ff5266;
   --reading-stage-glow: rgba(255, 40, 64, 0.34);
   --reading-stage-line: rgba(255, 82, 102, 0.34);

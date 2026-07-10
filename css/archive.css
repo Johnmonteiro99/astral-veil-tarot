@@ -282,7 +282,7 @@ body.blood-moon-mode .archive-invitation {
   background:
     linear-gradient(90deg, rgba(7, 0, 3, 0.97) 0%, rgba(10, 0, 4, 0.86) 35%, rgba(12, 0, 5, 0.32) 58%, rgba(8, 0, 3, 0.08) 100%),
     radial-gradient(circle at 14% 74%, rgba(255, 35, 65, 0.18), transparent 34%),
-    url("../assets/images/noctis-header.webp") center right / cover no-repeat;
+    url("../assets/images/archive/noctis/noctis-header.webp") center right / cover no-repeat;
   box-shadow:
     0 28px 72px rgba(0, 0, 0, 0.34),
     0 0 32px rgba(255, 35, 65, 0.1),
@@ -1339,14 +1339,14 @@ body.blood-moon-mode .archive-code-panel__field input {
   background:
     linear-gradient(90deg, rgba(7, 0, 4, 0.82), rgba(7, 0, 4, 0.34) 48%, rgba(7, 0, 4, 0.82)),
     linear-gradient(180deg, rgba(7, 0, 4, 0.2), rgba(7, 0, 4, 0.74)),
-    url("../assets/images/noctis/noctis-archive-footer-background.png") center / cover no-repeat;
+    url("../assets/images/archive/noctis/noctis-archive-footer-background.png") center / cover no-repeat;
 }
 
 body.blood-moon-mode .archive-remembers-panel {
   background:
     linear-gradient(90deg, rgba(7, 0, 4, 0.84), rgba(7, 0, 4, 0.34) 48%, rgba(7, 0, 4, 0.84)),
     linear-gradient(180deg, rgba(7, 0, 4, 0.18), rgba(7, 0, 4, 0.76)),
-    url("../assets/images/noctis/noctis-archive-footer-background.png") center / cover no-repeat;
+    url("../assets/images/archive/noctis/noctis-archive-footer-background.png") center / cover no-repeat;
 }
 
 .archive-remembers-panel > * {
@@ -1376,7 +1376,7 @@ body.blood-moon-mode .archive-remembers-panel {
     background:
       linear-gradient(180deg, rgba(7, 0, 3, 0.96) 0%, rgba(10, 0, 4, 0.88) 48%, rgba(8, 0, 3, 0.36) 100%),
       radial-gradient(circle at 20% 28%, rgba(255, 35, 65, 0.18), transparent 38%),
-      url("../assets/images/noctis-header.webp") 70% center / cover no-repeat;
+      url("../assets/images/archive/noctis/noctis-header.webp") 70% center / cover no-repeat;
   }
 
   body.blood-moon-mode .archive-invitation__content {
@@ -1450,7 +1450,7 @@ body.blood-moon-mode .archive-remembers-panel {
     background:
       linear-gradient(180deg, rgba(7, 0, 3, 0.98) 0%, rgba(10, 0, 4, 0.9) 48%, rgba(8, 0, 3, 0.42) 100%),
       radial-gradient(circle at 24% 22%, rgba(255, 35, 65, 0.16), transparent 42%),
-      url("../assets/images/noctis-header.webp") 78% center / cover no-repeat;
+      url("../assets/images/archive/noctis/noctis-header.webp") 78% center / cover no-repeat;
   }
 
   body.blood-moon-mode .archive-invitation__content {
@@ -4961,7 +4961,7 @@ body.restricted-wing-page.noctis-room-page .archive-room-placeholder__back {
 
 body.shelves-page .shelves-hero {
   background:
-    url("../assets/images/noctis/shelves-hero.png") center right / cover no-repeat;
+    url("../assets/images/archive/noctis/shelves-hero.png") center right / cover no-repeat;
   background-position: center right;
   border-color: transparent;
 }
@@ -5112,7 +5112,7 @@ body.shelves-page .shelves-filter-chip::before {
 }
 
 body.shelves-page .shelves-filter-chip[data-shelves-filter="all"] {
-  --shelves-filter-icon: url("../assets/icons/noctis_icons/all-star.svg");
+  --shelves-filter-icon: url("../assets/icons/noctis/all-star.svg");
 }
 
 body.shelves-page .shelves-filter-chip[data-shelves-filter="featured"]::before {
@@ -5120,35 +5120,35 @@ body.shelves-page .shelves-filter-chip[data-shelves-filter="featured"]::before {
 }
 
 body.shelves-page .shelves-filter-chip[data-shelves-filter="journals"] {
-  --shelves-filter-icon: url("../assets/icons/noctis_icons/feather.svg");
+  --shelves-filter-icon: url("../assets/icons/noctis/feather.svg");
 }
 
 body.shelves-page .shelves-filter-chip[data-shelves-filter="manuscripts"] {
-  --shelves-filter-icon: url("../assets/icons/noctis_icons/tied-scroll.svg");
+  --shelves-filter-icon: url("../assets/icons/noctis/tied-scroll.svg");
 }
 
 body.shelves-page .shelves-filter-chip[data-shelves-filter="letters"] {
-  --shelves-filter-icon: url("../assets/icons/noctis_icons/letter.svg");
+  --shelves-filter-icon: url("../assets/icons/noctis/letter.svg");
 }
 
 body.shelves-page .shelves-filter-chip[data-shelves-filter="cryptic-codes"] {
-  --shelves-filter-icon: url("../assets/icons/noctis_icons/cryptic.svg");
+  --shelves-filter-icon: url("../assets/icons/noctis/cryptic.svg");
 }
 
 body.shelves-page .shelves-filter-chip[data-shelves-filter="fragments"] {
-  --shelves-filter-icon: url("../assets/icons/noctis_icons/fragments.svg");
+  --shelves-filter-icon: url("../assets/icons/noctis/fragments.svg");
 }
 
 body.shelves-page .shelves-filter-chip[data-shelves-filter="blood-moon"] {
-  --shelves-filter-icon: url("../assets/icons/noctis_icons/bloodmoon.svg");
+  --shelves-filter-icon: url("../assets/icons/noctis/bloodmoon.svg");
 }
 
 body.shelves-page .shelves-filter-chip[data-shelves-filter="the-veil"] {
-  --shelves-filter-icon: url("../assets/icons/noctis_icons/veil.svg");
+  --shelves-filter-icon: url("../assets/icons/noctis/veil.svg");
 }
 
 body.shelves-page .shelves-filter-chip[data-shelves-filter="unstable-texts"] {
-  --shelves-filter-icon: url("../assets/icons/noctis_icons/unstable-text.svg");
+  --shelves-filter-icon: url("../assets/icons/noctis/unstable-text.svg");
 }
 
 body.shelves-page .shelves-filter-chip.is-active::before,
@@ -5591,7 +5591,7 @@ body.shelves-page .shelves-search-panel .shelves-filter-chip[aria-pressed="true"
 body.shelves-page .shelves-reading-desk {
   position: relative;
   background-color: transparent;
-  background-image: url("../assets/images/noctis/reading-desk-bg.png");
+  background-image: url("../assets/images/archive/noctis/reading-desk-bg.png");
   background-size: cover;
   background-position: center right;
   background-repeat: no-repeat;
@@ -5601,7 +5601,7 @@ body.shelves-page .shelves-reading-desk {
 
 body.shelves-page .shelves-reading-desk.is-empty {
   background-color: transparent;
-  background-image: url("../assets/images/noctis/reading-desk-bg.png");
+  background-image: url("../assets/images/archive/noctis/reading-desk-bg.png");
   background-size: cover;
   background-position: center right;
   background-repeat: no-repeat;
@@ -7310,43 +7310,43 @@ body.shelves-page .shelves-category-card[data-shelves-browse="journals"]::before
 }
 
 body.shelves-page .shelves-category-card[data-shelves-browse="manuscripts"]::before {
-  -webkit-mask-image: url("../assets/icons/noctis_icons/scroll.svg");
-  mask-image: url("../assets/icons/noctis_icons/scroll.svg");
+  -webkit-mask-image: url("../assets/icons/noctis/scroll.svg");
+  mask-image: url("../assets/icons/noctis/scroll.svg");
 }
 
 body.shelves-page .shelves-category-card[data-shelves-browse="letters"]::before {
-  -webkit-mask-image: url("../assets/icons/noctis_icons/feather.svg");
-  mask-image: url("../assets/icons/noctis_icons/feather.svg");
+  -webkit-mask-image: url("../assets/icons/noctis/feather.svg");
+  mask-image: url("../assets/icons/noctis/feather.svg");
 }
 
 body.shelves-page .shelves-category-card[data-shelves-browse="cryptic-codes"]::before {
-  -webkit-mask-image: url("../assets/icons/noctis_icons/cryptic.svg");
-  mask-image: url("../assets/icons/noctis_icons/cryptic.svg");
+  -webkit-mask-image: url("../assets/icons/noctis/cryptic.svg");
+  mask-image: url("../assets/icons/noctis/cryptic.svg");
 }
 
 body.shelves-page .shelves-category-card[data-shelves-browse="cryptic_codes"]::before {
-  -webkit-mask-image: url("../assets/icons/noctis_icons/cryptic.svg");
-  mask-image: url("../assets/icons/noctis_icons/cryptic.svg");
+  -webkit-mask-image: url("../assets/icons/noctis/cryptic.svg");
+  mask-image: url("../assets/icons/noctis/cryptic.svg");
 }
 
 body.shelves-page .shelves-category-card[data-shelves-browse="fragments"]::before {
-  -webkit-mask-image: url("../assets/icons/noctis_icons/scroll-quil.svg");
-  mask-image: url("../assets/icons/noctis_icons/scroll-quil.svg");
+  -webkit-mask-image: url("../assets/icons/noctis/scroll-quil.svg");
+  mask-image: url("../assets/icons/noctis/scroll-quil.svg");
 }
 
 body.shelves-page .shelves-category-card[data-shelves-browse="unstable_texts"]::before {
-  -webkit-mask-image: url("../assets/icons/noctis_icons/scroll-quil.svg");
-  mask-image: url("../assets/icons/noctis_icons/scroll-quil.svg");
+  -webkit-mask-image: url("../assets/icons/noctis/scroll-quil.svg");
+  mask-image: url("../assets/icons/noctis/scroll-quil.svg");
 }
 
 body.shelves-page .shelves-category-card[data-shelves-browse="the-veil"]::before {
-  -webkit-mask-image: url("../assets/icons/noctis_icons/veil.svg");
-  mask-image: url("../assets/icons/noctis_icons/veil.svg");
+  -webkit-mask-image: url("../assets/icons/noctis/veil.svg");
+  mask-image: url("../assets/icons/noctis/veil.svg");
 }
 
 body.shelves-page .shelves-category-card[data-shelves-browse="veil_lore"]::before {
-  -webkit-mask-image: url("../assets/icons/noctis_icons/veil.svg");
-  mask-image: url("../assets/icons/noctis_icons/veil.svg");
+  -webkit-mask-image: url("../assets/icons/noctis/veil.svg");
+  mask-image: url("../assets/icons/noctis/veil.svg");
 }
 
 body.shelves-page .shelves-category-card h3,
@@ -8035,7 +8035,7 @@ body.shelves-page .shelves-reading-desk {
   background:
     linear-gradient(90deg, rgba(5, 0, 4, 0.92) 0%, rgba(18, 0, 7, 0.78) 34%, rgba(35, 0, 10, 0.28) 64%, rgba(35, 0, 10, 0.08) 100%),
     linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.5) 100%),
-    url("../assets/images/background _images/gallery_title_bg.png") center right / cover no-repeat;
+    url("../assets/images/backgrounds/gallery_title_bg.png") center right / cover no-repeat;
   box-shadow: none;
 }
 
@@ -8539,7 +8539,7 @@ body.shelves-page .shelves-reading-desk {
   border-radius: 50%;
   background:
     linear-gradient(rgba(12, 0, 7, 0.12), rgba(12, 0, 7, 0.44)),
-    url("../assets/images/noctis/visual-records/lost-city.webp") center / cover no-repeat;
+    url("../assets/images/archive/noctis/visual-records/lost-city.webp") center / cover no-repeat;
   box-shadow: 0 0 24px rgba(255, 35, 65, 0.18);
 }
 
@@ -10400,7 +10400,7 @@ body.reduce-motion .gallery-trail-reveal-button {
     background:
       linear-gradient(90deg, rgba(5, 0, 4, 0.94) 0%, rgba(18, 0, 7, 0.76) 48%, rgba(35, 0, 10, 0.2) 100%),
       linear-gradient(180deg, rgba(0, 0, 0, 0.14) 0%, rgba(0, 0, 0, 0.58) 100%),
-      url("../assets/images/background _images/gallery_title_bg.png") center right / cover no-repeat;
+      url("../assets/images/backgrounds/gallery_title_bg.png") center right / cover no-repeat;
   }
 
   .gallery-bottom-grid {
@@ -10494,7 +10494,7 @@ body.reduce-motion .gallery-trail-reveal-button {
     background:
       linear-gradient(180deg, rgba(5, 0, 4, 0.74) 0%, rgba(5, 0, 4, 0.96) 100%),
       linear-gradient(90deg, rgba(5, 0, 4, 0.8), rgba(35, 0, 10, 0.32)),
-      url("../assets/images/background _images/gallery_title_bg.png") center right / cover no-repeat;
+      url("../assets/images/backgrounds/gallery_title_bg.png") center right / cover no-repeat;
   }
 
   .gallery-hero__copy h1 {
@@ -11678,7 +11678,7 @@ body.entry-desk-page .entry-desk-code-section::after {
 
 body.entry-desk-page .entry-desk-code-section::before {
   z-index: 0;
-  background: url("../assets/images/noctis/recovered-code.png") center / cover no-repeat;
+  background: url("../assets/images/archive/noctis/recovered-code.png") center / cover no-repeat;
   opacity: 1;
 }
 
@@ -11730,7 +11730,7 @@ body.entry-desk-page .entry-desk-code-section .archive-code-entry button {
 }
 
 body.entry-desk-page .entry-desk-reveal-section {
-  --reveal-feature-image: url("../assets/images/concepts-ideas/bloodmoon-veilwalker-section.webp") center / cover no-repeat;
+  --reveal-feature-image: url("../assets/images/concepts/bloodmoon-veilwalker-section.webp") center / cover no-repeat;
   position: relative;
   overflow: hidden;
   border-radius: 26px;

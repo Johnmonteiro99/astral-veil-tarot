@@ -1,5 +1,5 @@
-const CARD_BACK_IMAGE = "assets/images/cards/original/card-back.webp";
-const BLOOD_MOON_CARD_BACK_IMAGE = "assets/images/cards/blood-moon/bloodmoon-card-back.webp";
+const CARD_BACK_IMAGE = "assets/images/cards/legacy/original/card-back.webp";
+const BLOOD_MOON_CARD_BACK_IMAGE = "assets/images/cards/legacy/blood-moon/bloodmoon-card-back.webp";
 const CARD_IMAGE_WIDTH = 800;
 const CARD_IMAGE_HEIGHT = 1200;
 const READER_IMAGE_WIDTH = 900;
@@ -150,7 +150,7 @@ const readingDecks = [
     compatibleModes: ["sun", "moon"],
     meaningSet: "lumen",
     imageSet: "lumen",
-    previewImage: "assets/images/cards/original/card-back.webp",
+    previewImage: "assets/images/cards/legacy/original/card-back.webp",
     cards: () => tarotDeck
   },
   {
@@ -162,7 +162,7 @@ const readingDecks = [
     compatibleModes: ["sun", "moon", "bloodMoon"],
     meaningSet: "lumen",
     imageSet: "dreambound",
-    previewImage: "assets/images/cards/dreamy/dreams_card_back.png",
+    previewImage: "assets/images/cards/legacy/dreamy/dreams_card_back.png",
     cards: () => dreamboundDeck.cards
   },
   {
@@ -174,7 +174,7 @@ const readingDecks = [
     compatibleModes: ["sun", "moon", "bloodMoon"],
     meaningSet: "lumen",
     imageSet: "moonveil",
-    previewImage: "assets/images/cards/moonveil/moonveil_card_back.png",
+    previewImage: "assets/images/cards/legacy/moonveil/moonveil_card_back.png",
     cards: () => moonveilDeck.cards
   },
   {
@@ -186,7 +186,7 @@ const readingDecks = [
     compatibleModes: ["bloodMoon"],
     meaningSet: "bloodMoon",
     imageSet: "bloodMoon",
-    previewImage: "assets/images/cards/blood-moon/bloodmoon-card-back.webp",
+    previewImage: "assets/images/cards/legacy/blood-moon/bloodmoon-card-back.webp",
     cards: () => bloodMoonDeck.cards
   }
 ];

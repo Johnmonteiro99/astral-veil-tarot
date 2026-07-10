@@ -195,7 +195,7 @@ body.blood-moon-mode .deck-hero {
   color: var(--deck-ritual-text);
   background-image:
     linear-gradient(90deg, rgba(5, 8, 10, 0.86), rgba(5, 8, 10, 0.5) 47%, rgba(5, 8, 10, 0.12)),
-    url("../assets/images/concepts-ideas/deck-page-card.webp");
+    url("../assets/images/concepts/deck-page-card.webp");
   background-position: center;
   background-size: cover;
   box-shadow:
@@ -292,7 +292,7 @@ body.blood-moon-mode .deck-ritual-feature {
   border-color: color-mix(in srgb, var(--accent-color, #d41f3a) 70%, rgba(255, 240, 223, 0.16));
   background-image:
     linear-gradient(90deg, rgba(10, 0, 3, 0.9), rgba(10, 0, 3, 0.52) 48%, rgba(10, 0, 3, 0.16)),
-    url("../assets/images/concepts-ideas/bloodmoon-deck-page-card.webp");
+    url("../assets/images/concepts/bloodmoon-deck-page-card.webp");
   box-shadow:
     0 26px 78px rgba(0, 0, 0, 0.48),
     0 0 38px color-mix(in srgb, var(--accent-glow, rgba(255, 35, 65, 0.45)) 66%, transparent),
@@ -322,14 +322,14 @@ body.blood-moon-mode .deck-ritual-feature {
     margin-bottom: 1.7rem;
     background-image:
       linear-gradient(180deg, rgba(5, 8, 10, 0.82), rgba(5, 8, 10, 0.5) 56%, rgba(5, 8, 10, 0.2)),
-      url("../assets/images/concepts-ideas/deck-page-card.webp");
+      url("../assets/images/concepts/deck-page-card.webp");
     background-position: 62% center;
   }
 
   body.blood-moon-mode .deck-ritual-feature {
     background-image:
       linear-gradient(180deg, rgba(10, 0, 3, 0.86), rgba(10, 0, 3, 0.52) 58%, rgba(10, 0, 3, 0.22)),
-      url("../assets/images/concepts-ideas/bloodmoon-deck-page-card.webp");
+      url("../assets/images/concepts/bloodmoon-deck-page-card.webp");
     background-position: 62% center;
   }
 
@@ -589,7 +589,7 @@ body.blood-moon-mode .deck-ritual-feature {
   --deck-card-panel: rgba(44, 30, 16, 0.74);
   --deck-card-text: #f5e9d5;
   --deck-card-muted: rgba(225, 202, 170, 0.86);
-  --deck-collection-cover: url("/assets/images/background _images/dreams_deck_bg.png");
+  --deck-collection-cover: url("/assets/images/backgrounds/dreams_deck_bg.png");
   border-color: color-mix(in srgb, var(--deck-card-accent-strong) 72%, rgba(255, 255, 255, 0.18));
   color: var(--deck-card-text);
   background:
@@ -3138,7 +3138,7 @@ body.is-deck-info-open {
   background:
     linear-gradient(180deg, rgba(7, 18, 12, 0.08), rgba(7, 18, 12, 0.34)),
     linear-gradient(160deg, rgba(217, 189, 120, 0.06), rgba(0, 0, 0, 0.16) 56%, rgba(0, 0, 0, 0.3)),
-    url("../assets/images/background _images/original_deck_bg.png") center / cover no-repeat,
+    url("../assets/images/backgrounds/original_deck_bg.png") center / cover no-repeat,
     var(--deck-card-panel);
 }
 
@@ -3160,7 +3160,7 @@ body.is-deck-info-open {
   background:
     linear-gradient(180deg, rgba(10, 0, 4, 0.1), rgba(10, 0, 4, 0.38)),
     linear-gradient(160deg, rgba(255, 80, 100, 0.06), rgba(0, 0, 0, 0.18) 56%, rgba(0, 0, 0, 0.34)),
-    url("../assets/images/background _images/bloodmoon_deck_bg.png") center / cover no-repeat,
+    url("../assets/images/backgrounds/bloodmoon_deck_bg.png") center / cover no-repeat,
     var(--deck-card-panel);
 }
 
@@ -3181,7 +3181,7 @@ body.is-deck-info-open {
   --deck-card-panel: rgba(44, 30, 16, 0.74);
   --deck-card-text: #f5e9d5;
   --deck-card-muted: rgba(225, 202, 170, 0.86);
-  --deck-collection-cover: url("/assets/images/background _images/dreams_deck_bg.png");
+  --deck-collection-cover: url("/assets/images/backgrounds/dreams_deck_bg.png");
   background:
     radial-gradient(circle at 16% 12%, rgba(255, 232, 191, 0.22), transparent 42%),
     linear-gradient(160deg, rgba(216, 180, 111, 0.08), rgba(0, 0, 0, 0.18) 56%, rgba(0, 0, 0, 0.28)),
@@ -3217,7 +3217,7 @@ body.is-deck-info-open {
   background:
     linear-gradient(180deg, rgba(8, 12, 30, 0.08), rgba(8, 12, 30, 0.34)),
     linear-gradient(160deg, rgba(141, 176, 255, 0.12), rgba(0, 0, 0, 0.16) 56%, rgba(0, 0, 0, 0.3)),
-    url("../assets/images/background _images/moonveil_card_bg.png") center / cover no-repeat,
+    url("../assets/images/backgrounds/moonveil_card_bg.png") center / cover no-repeat,
     var(--deck-card-panel);
 }
 

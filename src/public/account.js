@@ -1949,8 +1949,8 @@ function resolveSavedReadingCardArt(card, reading) {
   }
 
   return isBloodMoon
-    ? 'assets/images/cards/blood-moon/bloodmoon-card-back.webp'
-    : 'assets/images/cards/original/card-back.webp';
+    ? 'assets/images/cards/legacy/blood-moon/bloodmoon-card-back.webp'
+    : 'assets/images/cards/legacy/original/card-back.webp';
 }
 
 function formatSavedCardVisual(card, reading, index) {
@@ -1959,8 +1959,8 @@ function formatSavedCardVisual(card, reading, index) {
   const orientation = formatOrientation(card) || 'Upright';
   const image = resolveSavedReadingCardArt(card, reading);
   const fallbackImage = isBloodMoonReading(reading)
-    ? 'assets/images/cards/blood-moon/bloodmoon-card-back.webp'
-    : 'assets/images/cards/original/card-back.webp';
+    ? 'assets/images/cards/legacy/blood-moon/bloodmoon-card-back.webp'
+    : 'assets/images/cards/legacy/original/card-back.webp';
   const isReversed = orientation.toLowerCase() === 'reversed';
   const altParts = [toTitleLabel(position, `Card ${index + 1}`), title, orientation].filter(Boolean);
   const protectedMediaClass = isBloodMoonReading(reading) ? ' protected-media' : '';
@@ -3008,14 +3008,14 @@ function getJournalCoverImage(entryOrMode) {
   const mode = typeof entryOrMode === 'string' ? entryOrMode : getJournalModeClass(entryOrMode);
 
   if (mode === 'sun') {
-    return 'assets/images/background _images/sun_journal.png';
+    return 'assets/images/backgrounds/sun_journal.png';
   }
 
   if (mode === 'bloodmoon') {
-    return 'assets/images/background _images/bloodmoon_journal.png';
+    return 'assets/images/backgrounds/bloodmoon_journal.png';
   }
 
-  return 'assets/images/background _images/moon_journal.png';
+  return 'assets/images/backgrounds/moon_journal.png';
 }
 
 function getJournalModeLabel(entry) {
@@ -3469,7 +3469,7 @@ function renderJournalEntries() {
 
       return `
         <article class="journal-entry-card private-data-card${protectedMediaClass} journal-entry-card--${escapeHtml(modeClass)}" data-private-card="true"${protectedMediaAttrs} draggable="false">
-          <img class="journal-entry-card__cover" src="${coverImage}" alt="" loading="lazy" draggable="false" onerror="this.onerror=null; this.src='assets/images/background _images/moon_journal.png'">
+          <img class="journal-entry-card__cover" src="${coverImage}" alt="" loading="lazy" draggable="false" onerror="this.onerror=null; this.src='assets/images/backgrounds/moon_journal.png'">
           <div class="journal-entry-card__overlay" aria-hidden="true"></div>
           <div class="journal-entry-card__content">
             <p class="journal-entry-card__meta">${escapeHtml(formatEntryDate(entry.entry_date))}</p>

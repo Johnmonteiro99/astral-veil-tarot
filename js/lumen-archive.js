@@ -1,4 +1,4 @@
-const LUMEN_ROOM_IMAGE_BASE = "assets/images/lumen_archive_rooms/";
+const LUMEN_ROOM_IMAGE_BASE = "assets/images/archive/lumen/rooms/";
 const LUMEN_ROOM_IMAGES = {
   arrivalHero: "dawn_atium.png",
   reflectionHero: "reflection_pool.png",
