@@ -7768,6 +7768,14 @@ body.blood-moon-mode .zodiac-icon-badge,
   transition: transform 260ms ease;
 }
 
+.tarot-card__front img.card-image--full-frame,
+.reading-viewer__image.card-image--full-frame,
+.combined-reading__thread-card-image img.card-image--full-frame {
+  object-fit: contain;
+  object-position: center;
+  background: rgba(5, 4, 9, 0.72);
+}
+
 .card-image.is-reversed,
 .is-reversed {
   transform: rotate(180deg);
@@ -13137,7 +13145,7 @@ body.blood-moon-mode .reading-results-section {
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-rows: auto minmax(210px, 1fr) auto auto;
+  grid-template-rows: minmax(210px, 1fr) auto;
   gap: clamp(14px, 2vw, 18px);
   height: 100%;
   min-height: inherit;
@@ -13158,7 +13166,7 @@ body.blood-moon-mode .reading-results-section {
 .deck-selection-card:hover .deck-selection-card__surface,
 .deck-selection-card:focus-within .deck-selection-card__surface {
   box-shadow: none;
-  transform: translateY(-6px) translateZ(16px);
+  transform: none;
 }
 
 .deck-selection-card.is-selected .deck-selection-card__surface {
@@ -13167,6 +13175,24 @@ body.blood-moon-mode .reading-results-section {
 
 .deck-selection-card--bloodMoon.is-selected .deck-selection-card__surface {
   box-shadow: none;
+}
+
+body.moon-mode .deck-selection-panel {
+  --deck-selected-border: rgba(176, 145, 255, 0.9);
+  --deck-selected-glow: rgba(137, 96, 230, 0.34);
+  --deck-selected-glow-soft: rgba(97, 65, 170, 0.16);
+}
+
+body.sun-mode .deck-selection-panel {
+  --deck-selected-border: rgba(237, 200, 104, 0.92);
+  --deck-selected-glow: rgba(215, 169, 66, 0.32);
+  --deck-selected-glow-soft: rgba(142, 100, 32, 0.16);
+}
+
+body.blood-moon-mode .deck-selection-panel {
+  --deck-selected-border: rgba(255, 84, 122, 0.94);
+  --deck-selected-glow: rgba(232, 46, 86, 0.36);
+  --deck-selected-glow-soft: rgba(138, 18, 48, 0.18);
 }
 
 .deck-selection-card.is-locked .deck-selection-card__surface {
@@ -13212,12 +13238,44 @@ body.blood-moon-mode .reading-results-section {
   border-radius: 18px;
   transform: translateY(0) translateZ(28px);
   transition:
-    transform 220ms ease;
+    transform 320ms cubic-bezier(.2, .7, .2, 1),
+    filter 320ms ease,
+    box-shadow 320ms ease,
+    border-color 320ms ease;
 }
 
 .deck-selection-card:hover .deck-selection-card__preview img,
 .deck-selection-card:focus-within .deck-selection-card__preview img {
-  transform: translateY(-8px) translateZ(48px) scale(1.035);
+  transform: translateZ(48px) scale(1.025) rotateZ(0.4deg);
+  filter: brightness(1.05);
+}
+
+.deck-selection-card.is-selected.deck-selection-card--offset-0 .deck-selection-card__preview img {
+  border: 1px solid var(--deck-selected-border, rgba(176, 145, 255, 0.9));
+  box-shadow:
+    0 0 10px var(--deck-selected-glow, rgba(137, 96, 230, 0.34)),
+    0 0 22px var(--deck-selected-glow-soft, rgba(97, 65, 170, 0.16));
+}
+
+.deck-selection-card__selected-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.15rem;
+  margin-top: 0.45rem;
+  opacity: 0;
+  color: var(--deck-selected-border, var(--deck-selector-accent));
+  font-family: var(--font-body-sans);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: opacity 180ms ease;
+}
+
+.deck-selection-card.is-selected.deck-selection-card--offset-0 .deck-selection-card__selected-label,
+.deck-selection-card__selected-label.is-visible {
+  opacity: 1;
 }
 
 .deck-selection-card__content {
@@ -13249,10 +13307,14 @@ body.blood-moon-mode .reading-results-section {
   line-height: 1.52;
 }
 
-.deck-selection-card__actions {
-  display: flex;
-  justify-content: center;
-  align-items: end;
+.deck-selection-card__locked-status {
+  color: #ff9eae !important;
+  font-family: var(--font-body-sans) !important;
+  font-size: 0.74rem !important;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .deck-selection-card__button {
@@ -15594,9 +15656,61 @@ body.no-glow .veil-glow::after {
 
 /* One shared layered deck carousel: mobile is the source design, scaled for tablet and desktop. */
 .deck-selection-card__format,
-.deck-selection-card__guidance,
 .deck-selection-carousel__footer {
   display: none;
+}
+
+.deck-selection-card__guidance {
+  display: block;
+  font-size: 0.88rem !important;
+  font-style: italic;
+}
+
+.deck-format-filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 auto clamp(0.75rem, 1.5vw, 1rem);
+}
+
+.deck-format-filter button {
+  min-height: 34px;
+  border: 1px solid color-mix(in srgb, var(--deck-selected-border, var(--reading-stage-accent)) 34%, transparent);
+  border-radius: 999px;
+  padding: 0.38rem 0.7rem;
+  color: var(--navbar-muted);
+  background: rgba(255, 255, 255, 0.025);
+  cursor: pointer;
+  font-family: var(--font-body-sans);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.deck-format-filter button:hover,
+.deck-format-filter button:focus-visible,
+.deck-format-filter button.is-active,
+.deck-format-filter button[aria-pressed="true"] {
+  outline: none;
+  border-color: var(--deck-selected-border, var(--reading-stage-accent));
+  color: var(--deck-selected-border, var(--reading-stage-accent));
+  background: color-mix(in srgb, var(--deck-selected-glow, var(--reading-stage-glow)) 16%, transparent);
+  box-shadow: inset 0 -2px 0 var(--deck-selected-border, var(--reading-stage-accent));
+}
+
+.deck-format-filter button:focus-visible { outline: 2px solid var(--deck-selected-border, var(--reading-stage-accent)); outline-offset: 3px; }
+
+.deck-selection-carousel__empty {
+  display: grid;
+  min-height: 180px;
+  place-items: center;
+  padding: 1.5rem;
+  color: var(--navbar-muted);
+  font-family: var(--font-body-serif);
+  font-style: italic;
+  text-align: center;
 }
 
 @media (min-width: 769px) {
@@ -15641,7 +15755,7 @@ body.no-glow .veil-glow::after {
   .deck-selection-card--offset-3 { --reading-deck-x: 450px; --reading-deck-y: 80px; --reading-deck-scale: 0.5; --reading-deck-rotate: 16deg; }
 
   .deck-selection-card__surface {
-    grid-template-rows: minmax(290px, 1fr) auto auto;
+    grid-template-rows: minmax(290px, 1fr) auto;
     gap: 0.7rem;
     padding: 14px 18px 18px;
   }
@@ -15651,8 +15765,7 @@ body.no-glow .veil-glow::after {
     max-height: 330px;
   }
 
-  .deck-selection-card:not(.deck-selection-card--offset-0) .deck-selection-card__content,
-  .deck-selection-card:not(.deck-selection-card--offset-0) .deck-selection-card__actions {
+  .deck-selection-card:not(.deck-selection-card--offset-0) .deck-selection-card__content {
     opacity: 0;
     pointer-events: none;
   }
@@ -15710,12 +15823,27 @@ body.no-glow .veil-glow::after {
   .deck-selection-card { width: clamp(270px, 39vw, 320px); min-height: 505px; }
   .deck-selection-card--offset-neg-1 { --reading-deck-x: clamp(-210px, -25vw, -175px); }
   .deck-selection-card--offset-1 { --reading-deck-x: clamp(175px, 25vw, 210px); }
-  .deck-selection-card__surface { grid-template-rows: minmax(255px, 1fr) auto auto; }
+  .deck-selection-card__surface { grid-template-rows: minmax(255px, 1fr) auto; }
   .deck-selection-card__preview img { max-height: 285px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .deck-selection-card { transition: none !important; }
+}
+
+@media (max-width: 768px) {
+  .deck-format-filter {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 0 0.75rem 0.3rem;
+    scrollbar-width: none;
+  }
+
+  .deck-format-filter::-webkit-scrollbar { display: none; }
+  .deck-format-filter button { flex: 0 0 auto; }
+
 }
 
 /* The compact desktop pass must not compress the reader orbit's image/overlay card. */

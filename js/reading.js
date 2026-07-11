@@ -31,6 +31,7 @@ const readingThreadSection = document.querySelector("[data-reading-thread-sectio
 const readingStatus = document.querySelector("[data-reading-status]");
 const deckStatus = document.querySelector("[data-deck-status]");
 const deckOptions = document.querySelector("[data-deck-options]");
+const deckFormatFilter = document.querySelector("[data-deck-format-filter]");
 const spreadChoicePanel = document.querySelector(".spread-choice-panel");
 const readingResultsSection = document.querySelector("[data-reading-results-section]");
 const readingReveals = document.querySelector("[data-reading-reveals]");
@@ -125,6 +126,10 @@ let readingFlowStage = "reader";
 let activeReadingMode = null;
 let selectedDeckId = "lumen";
 let activeReadingDeckCarouselId = selectedDeckId;
+let activeReadingDeckFilter = "all";
+let readingDeckSelectionTimer = null;
+let readingDeckSelectionSequence = 0;
+let isReadingDeckCarouselTransitioning = false;
 let currentAccountUser = null;
 let hasCheckedAccountUser = false;
 
@@ -705,14 +710,36 @@ function getReadingDeckCtaLabel(deck, isSelected, isAccessible) {
   return "Locked";
 }
 
-function completeDeckSelection(deck) {
+function patchDeckSelectionState(deckId) {
+  if (!deckOptions) {
+    return;
+  }
+
+  deckOptions.querySelectorAll("[data-reading-deck-card]").forEach((card) => {
+    const isSelected = card.dataset.deckCardId === deckId;
+    const isCentered = card.dataset.deckOffset === "0";
+    const selectedLabel = card.querySelector(".deck-selection-card__selected-label");
+
+    card.classList.toggle("is-selected", isSelected);
+    card.dataset.selected = String(isSelected);
+    card.setAttribute("aria-current", String(isSelected));
+    selectedLabel?.classList.toggle("is-visible", isSelected && isCentered);
+  });
+}
+
+function completeDeckSelection(deck, { startReading = false, render = true } = {}) {
   selectedDeckId = deck.id;
   activeReadingDeckCarouselId = deck.id;
-  renderDeckOptions();
+
+  if (render) {
+    renderDeckOptions();
+  } else {
+    patchDeckSelectionState(deck.id);
+  }
 
   const preselectedSpreadCardCount = getPreselectedSpreadCardCount();
 
-  if (preselectedSpreadCardCount) {
+  if (preselectedSpreadCardCount && startReading) {
     selectSpread(preselectedSpreadCardCount);
     return;
   }
@@ -757,11 +784,68 @@ function getActiveReadingDeckCarouselIndex(modeDecks) {
   return Math.max(0, selectedIndex);
 }
 
-function updateReadingDeckCarouselPosition(nextDeckId) {
-  const modeDecks = getAvailableReadingDecks();
-  const nextIndex = modeDecks.findIndex((deck) => deck.id === nextDeckId);
+function getFilteredReadingDecks() {
+  const allDecks = getAvailableReadingDecks();
 
-  if (!deckOptions || nextIndex < 0) {
+  if (activeReadingDeckFilter === "all") {
+    return allDecks;
+  }
+
+  return allDecks.filter((deck) => deck.deckFormat === activeReadingDeckFilter);
+}
+
+function setReadingDeckFilter(filter) {
+  window.clearTimeout(readingDeckSelectionTimer);
+  readingDeckSelectionSequence += 1;
+  isReadingDeckCarouselTransitioning = false;
+  activeReadingDeckFilter = ["all", "major-arcana", "full"].includes(filter) ? filter : "all";
+  const filteredDecks = getFilteredReadingDecks();
+
+  if (!filteredDecks.some((deck) => deck.id === activeReadingDeckCarouselId)) {
+    activeReadingDeckCarouselId = filteredDecks.find((deck) => isDeckAccessible(deck))?.id || filteredDecks[0]?.id || "";
+  }
+
+  renderDeckOptions();
+  queueCenteredDeckSelection(activeReadingDeckCarouselId, 0);
+}
+
+function queueCenteredDeckSelection(deckId, delay = 420) {
+  window.clearTimeout(readingDeckSelectionTimer);
+  const sequence = ++readingDeckSelectionSequence;
+  const deck = getDeckConfig(deckId);
+  const selectionDelay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : delay;
+
+  isReadingDeckCarouselTransitioning = selectionDelay > 0;
+
+  const finishTransition = () => {
+    if (sequence === readingDeckSelectionSequence && activeReadingDeckCarouselId === deckId) {
+      isReadingDeckCarouselTransitioning = false;
+    }
+  };
+
+  if (!deck || !isDeckCompatible(deck) || !isDeckAccessible(deck)) {
+    if (deck) {
+      readingStatus.textContent = getDeckLockedReason(deck) || `${deck.title} is currently unavailable.`;
+    }
+    readingDeckSelectionTimer = window.setTimeout(finishTransition, selectionDelay);
+    return;
+  }
+
+  readingDeckSelectionTimer = window.setTimeout(() => {
+    if (sequence !== readingDeckSelectionSequence || activeReadingDeckCarouselId !== deckId) {
+      return;
+    }
+
+    isReadingDeckCarouselTransitioning = false;
+    completeDeckSelection(deck, { render: false });
+  }, selectionDelay);
+}
+
+function updateReadingDeckCarouselPosition(nextDeckId) {
+  const filteredDecks = getFilteredReadingDecks();
+  const nextIndex = filteredDecks.findIndex((deck) => deck.id === nextDeckId);
+
+  if (!deckOptions || nextIndex < 0 || isReadingDeckCarouselTransitioning) {
     return false;
   }
 
@@ -769,9 +853,9 @@ function updateReadingDeckCarouselPosition(nextDeckId) {
 
   deckOptions.querySelectorAll("[data-reading-deck-card]").forEach((card) => {
     const index = Number(card.dataset.deckIndex || 0);
-    const deck = modeDecks[index];
+    const deck = filteredDecks[index];
     const isActive = deck?.id === nextDeckId;
-    const offset = getReadingDeckCarouselOffset(index, nextIndex, modeDecks.length);
+    const offset = getReadingDeckCarouselOffset(index, nextIndex, filteredDecks.length);
     const visibleOffset = getVisibleReadingDeckOffset(offset);
 
     Array.from(card.classList)
@@ -789,7 +873,7 @@ function updateReadingDeckCarouselPosition(nextDeckId) {
     const progress = carouselFooter.querySelector("span");
 
     if (progress) {
-      progress.textContent = `${nextIndex + 1} of ${modeDecks.length}`;
+      progress.textContent = `${nextIndex + 1} of ${filteredDecks.length}`;
     }
 
     carouselFooter.querySelectorAll("[data-carousel-deck-id]").forEach((dot) => {
@@ -799,13 +883,15 @@ function updateReadingDeckCarouselPosition(nextDeckId) {
     });
   }
 
+  queueCenteredDeckSelection(nextDeckId);
+
   return true;
 }
 
 function moveReadingDeckCarousel(direction) {
-  const modeDecks = getAvailableReadingDecks();
+  const modeDecks = getFilteredReadingDecks();
 
-  if (modeDecks.length < 2) {
+  if (modeDecks.length < 2 || isReadingDeckCarouselTransitioning) {
     return;
   }
 
@@ -821,12 +907,26 @@ function getReadingDeckFormatLabel(deck) {
     : "Major Arcana · 22 Cards";
 }
 
+function isFullDeckFoolCard(card) {
+  const activeDeck = getActiveDeckConfig();
+
+  return (
+    ["astralVeilTarot", "astralVeilCrimson"].includes(activeDeck?.id) &&
+    (card?.originalCardId || card?.id) === "the-fool"
+  );
+}
+
 function renderDeckOptions() {
   if (!deckOptions) {
     return;
   }
 
-  const modeDecks = getAvailableReadingDecks();
+  const modeDecks = getFilteredReadingDecks();
+
+  if (!modeDecks.some((deck) => deck.id === activeReadingDeckCarouselId)) {
+    activeReadingDeckCarouselId = modeDecks[0]?.id || "";
+  }
+
   const activeCarouselIndex = getActiveReadingDeckCarouselIndex(modeDecks);
 
   deckOptions.dataset.deckCount = String(modeDecks.length);
@@ -844,12 +944,6 @@ function renderDeckOptions() {
       const protectedMediaClass = isProtectedDeckMedia ? " protected-media" : "";
       const protectedMediaAttrs = isProtectedDeckMedia ? ' data-protected-media="true" draggable="false"' : "";
       const protectedImageAttr = isProtectedDeckMedia ? ' draggable="false"' : "";
-      const ctaLabel = getReadingDeckCtaLabel(deck, isSelected, isAccessible);
-      const actionMarkup = !isAccessible && deck.access === "auth"
-        ? `<a class="primary-action deck-selection-card__button" href="${escapeHtml(getReadingAuthUrl("signup"))}" data-deck-auth-link="${escapeHtml(deck.id)}">${escapeHtml(ctaLabel)}</a>`
-        : `<button class="primary-action deck-selection-card__button" type="button" data-deck-id="${escapeHtml(deck.id)}" ${isAccessible ? "" : "disabled"}>
-                ${escapeHtml(ctaLabel)}
-              </button>`;
 
       return `
         <article
@@ -859,6 +953,7 @@ function renderDeckOptions() {
           data-deck-card-id="${escapeHtml(deck.id)}"
           data-deck-index="${index}"
           data-deck-offset="${offset}"
+          data-selected="${isSelected ? "true" : "false"}"
           aria-current="${isSelected ? "true" : "false"}"
           aria-disabled="${isAccessible ? "false" : "true"}"
         >
@@ -868,15 +963,12 @@ function renderDeckOptions() {
             </div>
             <div class="deck-selection-card__preview${protectedMediaClass}"${protectedMediaAttrs}>
               <img src="${escapeHtml(deck.previewImage)}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} onerror="this.style.visibility='hidden'" />
+              <span class="deck-selection-card__selected-label${isSelected && isCarouselActive ? " is-visible" : ""}" aria-hidden="true">✓ Selected</span>
             </div>
             <div class="deck-selection-card__content">
               <h3>${escapeHtml(deck.title)}</h3>
-              <p>${escapeHtml(deck.description)}</p>
-              <span class="deck-selection-card__format">${escapeHtml(getReadingDeckFormatLabel(deck))}</span>
               <p class="deck-selection-card__guidance"><span>Choose this deck when…</span> ${escapeHtml(deck.chooseWhen || "its symbols feel right for this reading.")}</p>
-            </div>
-            <div class="deck-selection-card__actions">
-              ${actionMarkup}
+              ${isAccessible ? "" : `<p class="deck-selection-card__locked-status">${escapeHtml(lockedReason || "Locked")}</p>`}
             </div>
           </div>
         </article>
@@ -884,13 +976,13 @@ function renderDeckOptions() {
     })
     .join("");
 
-  deckOptions.innerHTML = `${deckCardsMarkup}
+  deckOptions.innerHTML = modeDecks.length ? `${deckCardsMarkup}
     <div class="deck-selection-carousel__footer" aria-label="Deck position">
       <span>${activeCarouselIndex + 1} of ${modeDecks.length}</span>
       <div class="deck-selection-carousel__dots">
         ${modeDecks.map((deck, index) => `<button class="deck-selection-carousel__dot${index === activeCarouselIndex ? " is-active" : ""}" type="button" data-carousel-deck-id="${escapeHtml(deck.id)}" aria-label="View ${escapeHtml(deck.title)}" aria-current="${index === activeCarouselIndex ? "true" : "false"}"></button>`).join("")}
       </div>
-    </div>`;
+    </div>` : `<div class="deck-selection-carousel__empty" role="status">No decks of this type are currently available.</div>`;
 
   if (deckStatus) {
     const activeDeck = getActiveDeckConfig();
@@ -1229,11 +1321,12 @@ function renderThreadPositionBlocks(spread) {
         const cardName = getCardDisplayName(card);
         const interpretation = getThreadCardInterpretation(card);
         const reversedClass = isCardReversed(card) ? " is-reversed" : "";
+        const fullFrameClass = isFullDeckFoolCard(card) ? " card-image--full-frame" : "";
 
         return `
           <section class="combined-reading__thread-card">
             <div class="combined-reading__thread-card-image${protectedMediaClass}"${protectedMediaAttrs}>
-              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} onerror="this.src='${getActiveCardBackImage()}'" />
+              <img class="card-image${reversedClass}${fullFrameClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} onerror="this.src='${getActiveCardBackImage()}'" />
             </div>
             <div>
               <span class="combined-reading__position-pill">${escapeHtml(positionLabel)}</span>
@@ -2739,6 +2832,7 @@ function renderReadingCards(cards) {
       const cardName = getCardDisplayName(card);
       const orientationLabel = getCardOrientationLabel(card);
       const reversedClass = isCardReversed(card) ? " is-reversed" : "";
+      const fullFrameClass = isFullDeckFoolCard(card) ? " card-image--full-frame" : "";
 
       return `
         <button class="tarot-card energy-${energy}${protectedMediaClass}" type="button" data-card-index="${index}" aria-label="Reveal ${escapeHtml(cardName)}"${protectedMediaAttrs}>
@@ -2747,7 +2841,7 @@ function renderReadingCards(cards) {
               <img src="${cardBackImage}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} />
             </span>
             <span class="tarot-card__face tarot-card__front">
-              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} onerror="this.src='${cardBackImage}'" />
+              <img class="card-image${reversedClass}${fullFrameClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} onerror="this.src='${cardBackImage}'" />
               <span class="card-orientation-badge">${escapeHtml(orientationLabel)}</span>
             </span>
           </span>
@@ -2967,6 +3061,7 @@ function renderReadingResults() {
   const activePositionLabel = getCardPositionLabel(activeCard, activeRevealedCardIndex);
   const cardName = getCardDisplayName(activeCard);
   const cardTitle = getCardDisplayName(activeCard, { includeOrientation: true });
+  const fullFrameClass = isFullDeckFoolCard(activeCard) ? " card-image--full-frame" : "";
   const orientationLabel = getCardOrientationLabel(activeCard);
   const reversedClass = isCardReversed(activeCard) ? " is-reversed" : "";
   const protectedMediaClass = isBloodMoonReadingActive() ? " protected-media" : "";
@@ -2989,7 +3084,7 @@ function renderReadingResults() {
         aria-label="Expand ${escapeHtml(cardTitle)} image"
       >
         <img
-          class="reading-viewer__image card-image${reversedClass}"
+          class="reading-viewer__image card-image${reversedClass}${fullFrameClass}"
           src="${escapeHtml(activeCard.image)}"
           alt="${escapeHtml(cardName)}"
           width="${CARD_IMAGE_WIDTH}"
@@ -3450,14 +3545,6 @@ if (deckOptions) {
       }
 
       if (!deckButton) {
-        const deck = getDeckConfig(deckId);
-
-        if (!deck || !isDeckCompatible(deck) || !isDeckAccessible(deck)) {
-          readingStatus.textContent = getDeckLockedReason(deck) || "This deck is locked.";
-          return;
-        }
-
-        completeDeckSelection(deck);
         return;
       }
     }
@@ -3488,6 +3575,23 @@ if (deckOptions) {
       event.preventDefault();
       moveReadingDeckCarousel(1);
     }
+  });
+}
+
+if (deckFormatFilter) {
+  deckFormatFilter.addEventListener("click", (event) => {
+    const filterButton = event.target.closest("[data-deck-filter]");
+
+    if (!filterButton) {
+      return;
+    }
+
+    setReadingDeckFilter(filterButton.dataset.deckFilter);
+    deckFormatFilter.querySelectorAll("[data-deck-filter]").forEach((button) => {
+      const isActive = button === filterButton;
+      button.setAttribute("aria-pressed", String(isActive));
+      button.classList.toggle("is-active", isActive);
+    });
   });
 }
 

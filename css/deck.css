@@ -997,6 +997,10 @@ body.blood-moon-mode .deck-ritual-feature {
   --deck-viewer-panel: var(--navbar-bg, rgba(255, 255, 255, 0.055));
   --deck-viewer-text: var(--theme-text-main, var(--navbar-text, #fff7e8));
   --deck-viewer-muted: var(--theme-text-muted, var(--navbar-muted, rgba(232, 223, 247, 0.78)));
+  --keyword-bg: rgba(12, 9, 28, 0.96);
+  --keyword-border: rgba(147, 119, 218, 0.5);
+  --keyword-text: #eee7ff;
+  --keyword-inner-glow: rgba(105, 74, 174, 0.12);
   position: relative;
   display: grid;
   gap: clamp(18px, 2.5vw, 28px);
@@ -1011,6 +1015,28 @@ body.blood-moon-mode .deck-ritual-feature {
   background: transparent;
   box-shadow: none;
   isolation: auto;
+}
+
+body.moon-mode .deck-viewer {
+  --keyword-bg: rgba(12, 9, 28, 0.96);
+  --keyword-border: rgba(147, 119, 218, 0.5);
+  --keyword-text: #eee7ff;
+  --keyword-inner-glow: rgba(105, 74, 174, 0.12);
+}
+
+body.sun-mode .deck-viewer {
+  --keyword-bg: rgba(16, 26, 20, 0.96);
+  --keyword-border: rgba(213, 176, 87, 0.52);
+  --keyword-text: #fff5d4;
+  --keyword-inner-glow: rgba(164, 118, 39, 0.12);
+}
+
+body.blood-moon-mode .deck-viewer,
+.deck-detail--bloodmoon {
+  --keyword-bg: rgba(28, 4, 10, 0.96);
+  --keyword-border: rgba(232, 66, 101, 0.55);
+  --keyword-text: #ffe7ec;
+  --keyword-inner-glow: rgba(164, 24, 55, 0.12);
 }
 
 .deck-viewer::before {
@@ -1226,6 +1252,13 @@ body.blood-moon-mode .deck-ritual-feature {
   background: transparent;
 }
 
+.deck-viewer__image.deck-card-image--full-frame,
+.deck-thumbnail img.deck-card-image--full-frame {
+  object-fit: contain;
+  object-position: center;
+  background: rgba(5, 4, 9, 0.72);
+}
+
 .deck-viewer__image-button .deck-card-shine {
   border-radius: var(--tarot-card-radius);
   background:
@@ -1327,17 +1360,22 @@ body.blood-moon-mode .deck-ritual-feature {
 }
 
 .deck-viewer__keywords li {
-  border: 1px solid color-mix(in srgb, var(--theme-divider-accent, var(--deck-viewer-accent)) 32%, rgba(255, 255, 255, 0.14));
+  border: 1px solid var(--keyword-border);
   border-radius: 999px;
   padding: 0.44rem 0.88rem;
-  color: var(--deck-viewer-text);
+  color: var(--keyword-text);
   background:
-    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--deck-viewer-glow) 30%, transparent), transparent 70%),
-    rgba(255, 255, 255, 0.055);
+    radial-gradient(circle at 50% 0%, var(--keyword-inner-glow), transparent 72%),
+    var(--keyword-bg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
   font-size: 0.82rem;
   font-weight: 700;
   line-height: 1;
   text-transform: capitalize;
+}
+
+.deck-viewer__keywords li:hover {
+  border-color: color-mix(in srgb, var(--keyword-border) 84%, white);
 }
 
 .deck-viewer__meaning-grid {

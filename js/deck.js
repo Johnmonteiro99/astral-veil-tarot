@@ -728,6 +728,13 @@ function getDeckDetailThemeClass(collection) {
   return "deck-detail--verdant";
 }
 
+function isFullDeckFoolCard(collection, card) {
+  return (
+    ["astralVeilTarot", "astralVeilCrimson"].includes(collection?.id) &&
+    (card?.originalCardId || card?.id) === "the-fool"
+  );
+}
+
 function initializeDeckCardTilt() {
   const tiltCards = deckView?.querySelectorAll("[data-tilt-card]");
 
@@ -1399,6 +1406,7 @@ function renderDeckGallery(collectionId) {
   activeCardIndex = Math.min(Math.max(activeCardIndex, 0), collectionCards.length - 1);
   const activeCard = collectionCards[activeCardIndex];
   const cardDescription = getCardDescription(activeCard);
+  const activeCardImageClass = isFullDeckFoolCard(collection, activeCard) ? " deck-card-image--full-frame" : "";
   const isProtectedDeckMedia = isBloodMoonCollection(collection);
   const protectedMediaClass = isProtectedDeckMedia ? " protected-media" : "";
   const protectedMediaAttrs = isProtectedDeckMedia ? ' data-protected-media="true" draggable="false"' : "";
@@ -1443,7 +1451,7 @@ function renderDeckGallery(collectionId) {
         <button class="deck-viewer__image-button deck-card-tilt${protectedMediaClass}" type="button" data-featured-card-image="${escapeHtml(activeCard.id)}" data-tilt-card aria-label="Expand ${escapeHtml(activeCard.name)}"${protectedMediaAttrs}>
           <span class="deck-viewer__image-clip">
             <img
-              class="deck-viewer__image"
+              class="deck-viewer__image${activeCardImageClass}"
               src="${escapeHtml(activeCard.image)}"
               alt="${escapeHtml(activeCard.name)}"
               width="${DECK_CARD_IMAGE_WIDTH}"
@@ -1482,11 +1490,12 @@ function renderDeckGallery(collectionId) {
               (card, index) => {
                 const shouldLoadThumbnail =
                   index <= 11 || Math.abs(index - activeCardIndex) <= 6;
+                const cardImageClass = isFullDeckFoolCard(collection, card) ? " deck-card-image--full-frame" : "";
 
                 return `
                 <button class="deck-thumbnail${index === activeCardIndex ? " is-active" : ""}${protectedMediaClass}" type="button" data-card-index="${index}" aria-label="Show ${escapeHtml(card.name)}" aria-current="${index === activeCardIndex ? "true" : "false"}"${protectedMediaAttrs}>
                   <span class="deck-thumbnail__image-clip">
-                    <img
+                    <img${cardImageClass ? ` class="${cardImageClass.trim()}"` : ""}
                       src="${shouldLoadThumbnail ? escapeHtml(card.image) : thumbnailPlaceholder}"
                       ${shouldLoadThumbnail ? "" : `data-thumbnail-src="${escapeHtml(card.image)}"`}
                       alt=""
@@ -1564,6 +1573,7 @@ function openDeckLightbox(cardId) {
 
   lightboxCardImage.src = card.image;
   lightboxCardImage.alt = card.name;
+  lightboxCardImage.classList.toggle("deck-card-image--full-frame", isFullDeckFoolCard(activeCollection, card));
   lightboxCardImage.dataset.imagePreviewTitle = card.name;
   lightboxCardImage.dataset.imagePreviewCaption = getCardDescription(card);
   lightboxCardImage.draggable = !isBloodMoonCollection(activeCollection);
