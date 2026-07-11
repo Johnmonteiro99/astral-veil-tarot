@@ -38,22 +38,22 @@ update public.noctis_documents
 set
   document_type = case
     when nullif(trim(document_type), '') is null then 'journal'
-    when lower(document_type) in ('journal_fragment', 'recovered_journal', 'journals') then 'journal'
+    when lower(document_type) in ('recovered_journal', 'journals') then 'journal'
     when lower(document_type) in ('manuscripts') then 'manuscript'
     when lower(document_type) in ('letters') then 'letter'
     when lower(document_type) in ('cryptic_codes', 'codes') then 'cipher'
     when lower(document_type) in ('fragments') then 'fragment'
     when lower(document_type) in ('veil', 'the_veil') then 'veil_lore'
     when lower(document_type) in ('unstable_texts') then 'unstable_text'
-    when lower(document_type) in ('blood_moon_record', 'bloodmoon') then 'blood_moon'
-    when lower(document_type) in ('journal', 'manuscript', 'letter', 'cipher', 'fragment', 'veil_lore', 'unstable_text', 'blood_moon', 'other') then lower(document_type)
+    when lower(document_type) in ('bloodmoon') then 'blood_moon'
+    when lower(document_type) in ('journal', 'journal_fragment', 'manuscript', 'letter', 'cipher', 'fragment', 'veil_lore', 'unstable_text', 'blood_moon', 'blood_moon_record', 'other') then lower(document_type)
     else 'other'
   end,
   category_label = coalesce(category_label, subtitle, category),
   mode = coalesce(nullif(trim(mode), ''), nullif(trim(moon_phase), ''), 'blood_moon'),
   is_blood_moon = coalesce(is_blood_moon, false)
     or lower(coalesce(mode, moon_phase, '')) in ('blood_moon', 'bloodmoon')
-    or lower(coalesce(document_type, '')) = 'blood_moon',
+    or lower(coalesce(document_type, '')) in ('blood_moon', 'blood_moon_record'),
   tags = coalesce(tags, '{}'),
   themes = coalesce(themes, '{}'),
   sort_order = coalesce(sort_order, 0),
@@ -107,29 +107,24 @@ on public.noctis_documents using gin (tags);
 create index if not exists noctis_documents_themes_gin_idx
 on public.noctis_documents using gin (themes);
 
-do $$
-begin
-  if not exists (
-    select 1
-    from pg_constraint
-    where conname = 'noctis_documents_document_type_allowed'
-      and conrelid = 'public.noctis_documents'::regclass
-  ) then
-    alter table public.noctis_documents
-      add constraint noctis_documents_document_type_allowed
-      check (document_type in (
-        'journal',
-        'manuscript',
-        'letter',
-        'cipher',
-        'fragment',
-        'veil_lore',
-        'unstable_text',
-        'blood_moon',
-        'other'
-      ));
-  end if;
-end $$;
+alter table public.noctis_documents
+  drop constraint if exists noctis_documents_document_type_allowed;
+
+alter table public.noctis_documents
+  add constraint noctis_documents_document_type_allowed
+  check (document_type in (
+    'journal',
+    'journal_fragment',
+    'manuscript',
+    'letter',
+    'cipher',
+    'fragment',
+    'veil_lore',
+    'unstable_text',
+    'blood_moon',
+    'blood_moon_record',
+    'other'
+  ));
 
 create or replace function public.set_updated_at()
 returns trigger

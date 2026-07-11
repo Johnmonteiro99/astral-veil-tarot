@@ -241,4 +241,4 @@ values
   ('What is one honest sentence you can write without pushing further?', 'shadow_question', 'bloodmoon', 'avoidant', 'steady', 'shadow', 560),
   ('What are you ready to face with care?', 'shadow_question', 'bloodmoon', 'ready', 'deep', 'shadow', 570),
   ('What support, boundary, or next step would help you stay steady as you face it?', 'shadow_question', 'bloodmoon', 'ready', 'steady', 'shadow', 580)
-on conflict do nothing;
+on conflict (prompt_text, prompt_type, mode, mood) do nothing;

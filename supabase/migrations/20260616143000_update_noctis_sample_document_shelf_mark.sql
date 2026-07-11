@@ -77,6 +77,28 @@ before update on public.noctis_documents
 for each row
 execute function public.set_updated_at();
 
+-- Existing deployments may have the later generic-only constraint already.
+-- Install the complete canonical type set before this migration's detailed
+-- journal-fragment and Blood Moon record seeds are inserted.
+alter table public.noctis_documents
+  drop constraint if exists noctis_documents_document_type_allowed;
+
+alter table public.noctis_documents
+  add constraint noctis_documents_document_type_allowed
+  check (document_type in (
+    'journal',
+    'journal_fragment',
+    'manuscript',
+    'letter',
+    'cipher',
+    'fragment',
+    'veil_lore',
+    'unstable_text',
+    'blood_moon',
+    'blood_moon_record',
+    'other'
+  ));
+
 insert into public.noctis_documents (
   slug,
   title,
