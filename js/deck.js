@@ -54,6 +54,7 @@ const deckFilterTitles = {
 };
 const deckInfoModalThemeClasses = [
   "deck-modal--verdant",
+  "deck-modal--veilrise",
   "deck-modal--dreambound",
   "deck-modal--moonveil",
   "deck-modal--bloodmoon",
@@ -464,6 +465,10 @@ function getDeckInfoModalThemeClass(collection) {
     return "deck-modal--cyber-hacked";
   }
 
+  if (collection.id === "astralVeilTarot") {
+    return "deck-modal--veilrise";
+  }
+
   if (isBloodMoonCollection(collection)) {
     return "deck-modal--bloodmoon";
   }
@@ -704,6 +709,10 @@ function getDeckDetailThemeClass(collection) {
     return "deck-detail--bloodmoon";
   }
 
+  if (collection?.id === "astralVeilTarot") {
+    return "deck-detail--veilrise";
+  }
+
   if (themeSource.includes("moonveil")) {
     return "deck-detail--moonveil";
   }
@@ -938,6 +947,8 @@ function getCarouselDeckIntention(collection) {
     dreambound: "For those who follow wonder, courage, and the language of dreams.",
     moonveil: "For those seeking emotional balance within.",
     bloodMoon: "For those ready to face the truth beneath the surface.",
+    astralVeilTarot: "For those following the light beyond what they know.",
+    astralVeilCrimson: "For those finding their truth beneath the pressure.",
     cyberpunkArcana: "For those drawn to synthetic souls, neon omens, and fractured futures."
   };
 
@@ -969,7 +980,8 @@ function renderDeckCollectionCard(collection, options = {}) {
     : collection?.subtitle || "";
   const previewImage = collection?.previewImage || collection?.coverImage;
   const tileBackgroundImage = collection?.backgroundImage || collection?.coverImage || "";
-  const tileBackgroundStyle = tileBackgroundImage
+  const usesCssTileBackground = collection?.id === "astralVeilCrimson";
+  const tileBackgroundStyle = tileBackgroundImage && !usesCssTileBackground
     ? `style='--deck-collection-cover: url("${tileBackgroundImage}")'`
     : "";
   const cardDeckAttribute = isComingSoon || !includeCardDeckTrigger ? "" : `data-view-deck="${escapeHtml(collection.id)}"`;
@@ -984,7 +996,7 @@ function renderDeckCollectionCard(collection, options = {}) {
   const protectedImageAttr = isBloodMoonCollection(collection) ? ' draggable="false"' : "";
 
   return `
-      <article class="deck-collection-card deck-collection-card--${escapeHtml(theme)}${escapeHtml(deckIdClass)}${isLocked ? " is-locked" : ""}${isComingSoon ? " is-coming-soon" : ""}${escapeHtml(modifierClass)}${protectedMediaClass}" ${tileBackgroundStyle} data-deck-card data-deck-category="${escapeHtml(category)}" ${protectedMediaAttrs} ${cardDeckAttribute} aria-disabled="${isLocked}">
+      <article class="deck-collection-card deck-collection-card--${escapeHtml(theme)}${escapeHtml(deckIdClass)}${isLocked ? " is-locked" : ""}${isComingSoon ? " is-coming-soon" : ""}${escapeHtml(modifierClass)}${protectedMediaClass}" ${tileBackgroundStyle} data-deck-card data-deck="${escapeHtml(collection.id)}" data-deck-category="${escapeHtml(category)}" ${protectedMediaAttrs} ${cardDeckAttribute} aria-disabled="${isLocked}">
       <span class="deck-collection-card__badge">${escapeHtml(badge)}</span>
       <button class="deck-collection-card__preview" type="button" data-deck-details="${escapeHtml(collection.id)}" aria-label="View details for ${escapeHtml(collection.title)}">
         <img src="${escapeHtml(previewImage)}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} />
@@ -1452,7 +1464,7 @@ function renderDeckGallery(collectionId) {
 
         <div class="deck-viewer__content">
           <p class="deck-viewer__deck-label">${escapeHtml(collection.title || collection.name || "Astral Veil")}</p>
-          <p class="deck-viewer__arcana-label">Major Arcana</p>
+          <p class="deck-viewer__arcana-label">${escapeHtml(collection.cardViewerLabel || "Major Arcana")}</p>
           <h2>${escapeHtml(activeCard.name)}</h2>
           <p>${escapeHtml(cardDescription)}</p>
           ${renderDeckKeywords(activeCard)}

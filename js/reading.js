@@ -117,6 +117,9 @@ let revealedCards = [];
 let activeRevealedCardIndex = -1;
 let readingSectionScrollTimeout = null;
 let isRenderingReading = false;
+let isDealingReadingCards = false;
+let readingDealSequence = 0;
+let readingDealTimerIds = [];
 let bloodMoonTimeout = null;
 let readingFlowStage = "reader";
 let activeReadingMode = null;
@@ -145,6 +148,9 @@ const readingDecks = [
     id: "lumen",
     title: "Verdant",
     label: "Core Collection",
+    cardCount: 22,
+    deckFormat: "major-arcana",
+    chooseWhen: "you need patience, grounding, or room to grow.",
     description: "Original lightwork art and meanings.",
     access: "public",
     compatibleModes: ["sun", "moon"],
@@ -157,6 +163,9 @@ const readingDecks = [
     id: "dreambound",
     title: "Dreambound",
     label: "Public Deck",
+    cardCount: 22,
+    deckFormat: "major-arcana",
+    chooseWhen: "imagination, memory, or possibility is calling.",
     description: "Dreamlike art with original meanings.",
     access: "public",
     compatibleModes: ["sun", "moon", "bloodMoon"],
@@ -169,6 +178,9 @@ const readingDecks = [
     id: "astralVeilTarot",
     title: "Veilrise Arcana",
     label: "Full Tarot Deck",
+    cardCount: 78,
+    deckFormat: "full",
+    chooseWhen: "you are ready to follow the light beyond what you know.",
     description: "A full 78-card deck of becoming, choice, growth, joy, pain, and the soul's rise through the Veil.",
     access: "public",
     compatibleModes: ["sun", "moon"],
@@ -181,6 +193,9 @@ const readingDecks = [
     id: "moonveil",
     title: "Moonveil",
     label: "Account Deck",
+    cardCount: 22,
+    deckFormat: "major-arcana",
+    chooseWhen: "intuition speaks more clearly than certainty.",
     description: "Moonlit art with original meanings.",
     access: "auth",
     compatibleModes: ["sun", "moon", "bloodMoon"],
@@ -193,6 +208,9 @@ const readingDecks = [
     id: "bloodMoon",
     title: "Crimson Veil",
     label: "Blood Moon Deck",
+    cardCount: 22,
+    deckFormat: "major-arcana",
+    chooseWhen: "the truth beneath the surface refuses to stay buried.",
     description: "A forbidden shadow deck revealed beneath the Blood Moon.",
     access: "bloodMoon",
     compatibleModes: ["bloodMoon"],
@@ -205,6 +223,9 @@ const readingDecks = [
     id: "astralVeilCrimson",
     title: "Veilfall Arcana",
     label: "Blood Moon Full Deck",
+    cardCount: 78,
+    deckFormat: "full",
+    chooseWhen: "pressure is revealing what comfort could not.",
     description: "A full 78-card Blood Moon deck of shadow, fracture, craving, deception, and the truths revealed when illusion falls.",
     access: "bloodMoon",
     compatibleModes: ["bloodMoon"],
@@ -762,6 +783,22 @@ function updateReadingDeckCarouselPosition(nextDeckId) {
     card.dataset.deckOffset = String(offset);
   });
 
+  const carouselFooter = deckOptions.querySelector(".deck-selection-carousel__footer");
+
+  if (carouselFooter) {
+    const progress = carouselFooter.querySelector("span");
+
+    if (progress) {
+      progress.textContent = `${nextIndex + 1} of ${modeDecks.length}`;
+    }
+
+    carouselFooter.querySelectorAll("[data-carousel-deck-id]").forEach((dot) => {
+      const isActive = dot.dataset.carouselDeckId === nextDeckId;
+      dot.classList.toggle("is-active", isActive);
+      dot.setAttribute("aria-current", String(isActive));
+    });
+  }
+
   return true;
 }
 
@@ -778,6 +815,12 @@ function moveReadingDeckCarousel(direction) {
   updateReadingDeckCarouselPosition(modeDecks[nextIndex].id);
 }
 
+function getReadingDeckFormatLabel(deck) {
+  return deck?.deckFormat === "full" && deck?.cardCount === 78
+    ? "Full Deck · 78 Cards"
+    : "Major Arcana · 22 Cards";
+}
+
 function renderDeckOptions() {
   if (!deckOptions) {
     return;
@@ -788,7 +831,7 @@ function renderDeckOptions() {
 
   deckOptions.dataset.deckCount = String(modeDecks.length);
 
-  deckOptions.innerHTML = modeDecks
+  const deckCardsMarkup = modeDecks
     .map((deck, index) => {
       const isSelected = deck.id === selectedDeckId;
       const isAccessible = isDeckAccessible(deck);
@@ -829,6 +872,8 @@ function renderDeckOptions() {
             <div class="deck-selection-card__content">
               <h3>${escapeHtml(deck.title)}</h3>
               <p>${escapeHtml(deck.description)}</p>
+              <span class="deck-selection-card__format">${escapeHtml(getReadingDeckFormatLabel(deck))}</span>
+              <p class="deck-selection-card__guidance"><span>Choose this deck when…</span> ${escapeHtml(deck.chooseWhen || "its symbols feel right for this reading.")}</p>
             </div>
             <div class="deck-selection-card__actions">
               ${actionMarkup}
@@ -838,6 +883,14 @@ function renderDeckOptions() {
       `;
     })
     .join("");
+
+  deckOptions.innerHTML = `${deckCardsMarkup}
+    <div class="deck-selection-carousel__footer" aria-label="Deck position">
+      <span>${activeCarouselIndex + 1} of ${modeDecks.length}</span>
+      <div class="deck-selection-carousel__dots">
+        ${modeDecks.map((deck, index) => `<button class="deck-selection-carousel__dot${index === activeCarouselIndex ? " is-active" : ""}" type="button" data-carousel-deck-id="${escapeHtml(deck.id)}" aria-label="View ${escapeHtml(deck.title)}" aria-current="${index === activeCarouselIndex ? "true" : "false"}"></button>`).join("")}
+      </div>
+    </div>`;
 
   if (deckStatus) {
     const activeDeck = getActiveDeckConfig();
@@ -2452,6 +2505,119 @@ function moveReader(direction) {
 // Spread Selection and Card Drawing
 ////////////////////////////////////////////////////
 
+const READING_DEAL_STAGGER_MS = 170;
+const READING_DEAL_DURATION_MS = 720;
+const READING_DEAL_START_DELAY_MS = 90;
+
+function prefersReducedReadingMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function clearReadingDealTimers() {
+  readingDealTimerIds.forEach((timerId) => window.clearTimeout(timerId));
+  readingDealTimerIds = [];
+}
+
+function cancelReadingCardDeal() {
+  readingDealSequence += 1;
+  clearReadingDealTimers();
+  isDealingReadingCards = false;
+
+  if (!cardList) {
+    return;
+  }
+
+  cardList.classList.remove("is-dealing", "is-ready");
+  cardList.removeAttribute("aria-busy");
+}
+
+function getReadingRevealPrompt() {
+  const activeDeck = getActiveDeckConfig();
+  const cardCount = currentReadingCards.length;
+
+  if (!selectedReader || !activeDeck || !cardCount) {
+    return "Your cards are ready to reveal.";
+  }
+
+  return `${selectedReader.name} has drawn ${cardCount} ${cardCount === 1 ? "card" : "cards"} from ${activeDeck.title}. Click ${cardCount === 1 ? "the card" : "each card"} in Your Reading to reveal its message.`;
+}
+
+function finishReadingCardDeal(sequence) {
+  if (sequence !== readingDealSequence || !cardList) {
+    return;
+  }
+
+  isDealingReadingCards = false;
+  readingDealTimerIds = [];
+  cardList.classList.remove("is-dealing");
+  cardList.classList.add("is-ready");
+  cardList.removeAttribute("aria-busy");
+
+  cardList.querySelectorAll(".tarot-card").forEach((cardButton) => {
+    cardButton.classList.remove("is-dealing");
+    cardButton.classList.add("is-ready");
+    cardButton.disabled = false;
+    cardButton.setAttribute("aria-disabled", "false");
+  });
+
+  readingStatus.textContent = getReadingRevealPrompt();
+}
+
+// Deals the already-rendered cards in their existing DOM/spread order without changing layout placement.
+function dealReadingCards() {
+  if (!cardList) {
+    return;
+  }
+
+  cancelReadingCardDeal();
+
+  const cardButtons = Array.from(cardList.querySelectorAll(".tarot-card"));
+  const sequence = ++readingDealSequence;
+
+  if (!cardButtons.length || prefersReducedReadingMotion()) {
+    cardList.classList.add("is-ready");
+    cardButtons.forEach((cardButton) => {
+      cardButton.classList.add("is-ready", "is-dealt");
+      cardButton.disabled = false;
+      cardButton.setAttribute("aria-disabled", "false");
+    });
+    readingStatus.textContent = getReadingRevealPrompt();
+    return;
+  }
+
+  isDealingReadingCards = true;
+  cardList.classList.add("is-dealing");
+  cardList.setAttribute("aria-busy", "true");
+
+  cardButtons.forEach((cardButton, index) => {
+    const direction = index % 2 === 0 ? -1 : 1;
+    const variation = index % 3;
+
+    cardButton.style.setProperty("--deal-x", `${direction * (10 + variation * 4)}px`);
+    cardButton.style.setProperty("--deal-y", `${-64 - variation * 8}px`);
+    cardButton.style.setProperty("--deal-z", `${150 + variation * 24}px`);
+    cardButton.style.setProperty("--deal-rotate", `${direction * (2.2 + variation * 0.45)}deg`);
+    cardButton.classList.add("is-dealing");
+    cardButton.disabled = true;
+    cardButton.setAttribute("aria-disabled", "true");
+
+    const timerId = window.setTimeout(() => {
+      if (sequence === readingDealSequence) {
+        cardButton.classList.add("is-dealt");
+      }
+    }, READING_DEAL_START_DELAY_MS + index * READING_DEAL_STAGGER_MS);
+
+    readingDealTimerIds.push(timerId);
+  });
+
+  const completionTimerId = window.setTimeout(
+    () => finishReadingCardDeal(sequence),
+    READING_DEAL_START_DELAY_MS + (cardButtons.length - 1) * READING_DEAL_STAGGER_MS + READING_DEAL_DURATION_MS
+  );
+
+  readingDealTimerIds.push(completionTimerId);
+}
+
 // Creates a new reading: chooses cards, assigns orientation, and renders the facedown spread.
 async function selectSpread(cardCount) {
   if (isRenderingReading) {
@@ -2490,7 +2656,9 @@ async function selectSpread(cardCount) {
     }
     setReadingFlowStage("reading", { scrollToStart: true });
     renderReadingCards(currentReadingCards);
-    readingStatus.textContent = `${selectedReader.name} has drawn ${cardCount} ${cardCount === 1 ? "card" : "cards"} from ${activeDeck.title}. Click ${cardCount === 1 ? "the card" : "each card"} in Your Reading to reveal its message.`;
+    readingStatus.textContent = isDealingReadingCards
+      ? `${selectedReader.name} is placing ${cardCount} ${cardCount === 1 ? "card" : "cards"} from ${activeDeck.title}.`
+      : getReadingRevealPrompt();
   } catch (error) {
     isRenderingReading = false;
     throw error;
@@ -2556,6 +2724,7 @@ function getRandomCards(cardCount) {
 
 // Renders the clickable facedown cards. The front image already knows its saved upright/reversed state.
 function renderReadingCards(cards) {
+  cancelReadingCardDeal();
   cardList.classList.remove("hidden");
   cardList.innerHTML = "";
   cardList.dataset.cardCount = String(cards.length);
@@ -2572,7 +2741,7 @@ function renderReadingCards(cards) {
       const reversedClass = isCardReversed(card) ? " is-reversed" : "";
 
       return `
-        <button class="tarot-card energy-${energy} fade-slide-in${protectedMediaClass}" type="button" data-card-index="${index}" aria-label="Reveal ${escapeHtml(cardName)}"${protectedMediaAttrs}>
+        <button class="tarot-card energy-${energy}${protectedMediaClass}" type="button" data-card-index="${index}" aria-label="Reveal ${escapeHtml(cardName)}"${protectedMediaAttrs}>
           <span class="tarot-card__inner">
             <span class="tarot-card__face tarot-card__back">
               <img src="${cardBackImage}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} />
@@ -2586,6 +2755,8 @@ function renderReadingCards(cards) {
       `;
     })
     .join("");
+
+  dealReadingCards();
 }
 
 function isReadingCardRevealed(cardIndex) {
@@ -2673,6 +2844,10 @@ function scrollToActiveReadingDetail() {
 }
 
 function revealNextReadingCard() {
+  if (isDealingReadingCards) {
+    return;
+  }
+
   const nextCardIndex = getNextUnrevealedCardIndex();
   const nextCardButton = cardList?.querySelector(`[data-card-index="${nextCardIndex}"]`);
 
@@ -2729,7 +2904,7 @@ function renderReadingStickyNav(activeCard) {
 
 // Reveals one card once, stores it in revealedCards, and keeps its orientation stable for this reading.
 function revealCard(cardButton, { scrollToDetail = false } = {}) {
-  if (cardButton.classList.contains("is-revealed")) {
+  if (isDealingReadingCards || cardButton.disabled || cardButton.classList.contains("is-revealed")) {
     return;
   }
 
@@ -2988,6 +3163,7 @@ if (readingThreadSection) {
 function clearCurrentReading() {
   window.clearTimeout(readingSectionScrollTimeout);
   window.clearTimeout(bloodMoonTimeout);
+  cancelReadingCardDeal();
   isRenderingReading = false;
 
   selectedCardCount = 0;
@@ -3220,17 +3396,13 @@ spreadButtons.forEach((button) => {
 
 if (deckOptions) {
   deckOptions.addEventListener("pointerdown", (event) => {
-    if (!isSmallViewport()) {
-      return;
-    }
-
     readingDeckTouchStartX = event.clientX;
     readingDeckTouchStartY = event.clientY;
     readingDeckDidSwipe = false;
   });
 
   deckOptions.addEventListener("pointerup", (event) => {
-    if (!isSmallViewport() || readingDeckTouchStartX === null || readingDeckTouchStartY === null) {
+    if (readingDeckTouchStartX === null || readingDeckTouchStartY === null) {
       readingDeckTouchStartX = null;
       readingDeckTouchStartY = null;
       return;
@@ -3250,6 +3422,14 @@ if (deckOptions) {
   });
 
   deckOptions.addEventListener("click", (event) => {
+    const carouselDot = event.target.closest("[data-carousel-deck-id]");
+
+    if (carouselDot) {
+      event.preventDefault();
+      updateReadingDeckCarouselPosition(carouselDot.dataset.carouselDeckId);
+      return;
+    }
+
     if (readingDeckDidSwipe) {
       readingDeckDidSwipe = false;
       event.preventDefault();
@@ -3259,7 +3439,7 @@ if (deckOptions) {
     const deckCard = event.target.closest("[data-reading-deck-card]");
     const deckButton = event.target.closest("[data-deck-id]");
 
-    if (deckCard && isSmallViewport()) {
+    if (deckCard) {
       const deckId = deckCard.dataset.deckCardId;
       const offset = Number(deckCard.dataset.deckOffset || 0);
 
@@ -3294,6 +3474,20 @@ if (deckOptions) {
     }
 
     completeDeckSelection(deck);
+  });
+
+  deckOptions.addEventListener("keydown", (event) => {
+    if (isSmallViewport() || !event.target.closest("[data-reading-deck-card]")) {
+      return;
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      moveReadingDeckCarousel(-1);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      moveReadingDeckCarousel(1);
+    }
   });
 }
 
@@ -3335,7 +3529,7 @@ document.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
 
 if (cardList) {
   cardList.addEventListener("click", (event) => {
-    if (readingFlowStage !== "reading") {
+    if (readingFlowStage !== "reading" || isDealingReadingCards) {
       return;
     }
 

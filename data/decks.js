@@ -88,6 +88,7 @@ const deckCollections = [
     status: "Core Collection",
     actionLabel: "View Deck",
     eyebrow: "Full Tarot Deck",
+    cardViewerLabel: "Full Tarot Deck",
     viewTitle: "Veilrise Arcana",
     viewDescription: "A full 78-card deck of becoming, choice, growth, joy, pain, and the soul's rise through the Veil.",
     detailDescription: "A complete Astral Veil tarot deck exploring the soul as it grows, chooses, grieves, loves, acts, heals, and becomes.",
@@ -99,6 +100,7 @@ const deckCollections = [
     coverImage: "assets/images/cards/astral-veil-tarot/back/back-deck.png",
     cardBackImage: "assets/images/cards/astral-veil-tarot/back/back-deck.png",
     previewImage: "assets/images/cards/astral-veil-tarot/back/back-deck.png",
+    backgroundImage: "/assets/images/veilrise-deck-bg.png",
     imagePath: "assets/images/cards/astral-veil-tarot/",
     cards: () => astralVeilTarotDeck.cards
   },
@@ -172,6 +174,7 @@ const deckCollections = [
     coverImage: "assets/images/cards/astral-veil-crimson/back/back-deck.png",
     cardBackImage: "assets/images/cards/astral-veil-crimson/back/back-deck.png",
     previewImage: "assets/images/cards/astral-veil-crimson/back/back-deck.png",
+    backgroundImage: "/assets/images/veilfall-deck-bg.png",
     imagePath: "assets/images/cards/astral-veil-crimson/",
     unlockCondition: "Blood Moon event active",
     price: null,
