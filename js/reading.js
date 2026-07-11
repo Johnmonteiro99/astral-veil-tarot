@@ -125,7 +125,7 @@ let bloodMoonTimeout = null;
 let readingFlowStage = "reader";
 let activeReadingMode = null;
 let selectedDeckId = "lumen";
-let activeReadingDeckCarouselId = selectedDeckId;
+let centeredDeckId = selectedDeckId;
 let activeReadingDeckFilter = "all";
 let readingDeckSelectionTimer = null;
 let readingDeckSelectionSequence = 0;
@@ -654,20 +654,24 @@ function ensureSelectedDeckIsAvailable() {
   const selectedDeck = getDeckConfig(selectedDeckId);
 
   if (isDeckCompatible(selectedDeck) && isDeckAccessible(selectedDeck)) {
-    if (!isDeckCompatible(getDeckConfig(activeReadingDeckCarouselId))) {
-      activeReadingDeckCarouselId = selectedDeck.id;
+    if (!isDeckCompatible(getDeckConfig(centeredDeckId))) {
+      centeredDeckId = selectedDeck.id;
     }
 
     return selectedDeck;
   }
 
   selectedDeckId = getDefaultAvailableDeckId();
-  activeReadingDeckCarouselId = selectedDeckId;
+  centeredDeckId = selectedDeckId;
   return getDeckConfig(selectedDeckId);
 }
 
 function getActiveDeckConfig() {
-  return ensureSelectedDeckIsAvailable();
+  const selectedDeck = getDeckConfig(selectedDeckId);
+
+  return selectedDeck?.id === centeredDeckId && isDeckCompatible(selectedDeck) && isDeckAccessible(selectedDeck)
+    ? selectedDeck
+    : null;
 }
 
 function getDeckLockedReason(deck) {
@@ -727,9 +731,24 @@ function patchDeckSelectionState(deckId) {
   });
 }
 
+function setSpreadSelectionAvailability(isAvailable, message = "") {
+  spreadButtons.forEach((button) => {
+    button.disabled = !isAvailable;
+    button.setAttribute("aria-disabled", String(!isAvailable));
+  });
+
+  if (deckOptions) {
+    deckOptions.dataset.centeredDeckUnavailable = String(!isAvailable);
+  }
+
+  if (deckStatus && message) {
+    deckStatus.textContent = message;
+  }
+}
+
 function completeDeckSelection(deck, { startReading = false, render = true } = {}) {
   selectedDeckId = deck.id;
-  activeReadingDeckCarouselId = deck.id;
+  centeredDeckId = deck.id;
 
   if (render) {
     renderDeckOptions();
@@ -772,14 +791,14 @@ function getReadingDeckOffsetClass(offset) {
 }
 
 function getActiveReadingDeckCarouselIndex(modeDecks) {
-  const activeIndex = modeDecks.findIndex((deck) => deck.id === activeReadingDeckCarouselId);
+  const activeIndex = modeDecks.findIndex((deck) => deck.id === centeredDeckId);
 
   if (activeIndex >= 0) {
     return activeIndex;
   }
 
   const selectedIndex = modeDecks.findIndex((deck) => deck.id === selectedDeckId);
-  activeReadingDeckCarouselId = modeDecks[selectedIndex >= 0 ? selectedIndex : 0]?.id || selectedDeckId;
+  centeredDeckId = modeDecks[selectedIndex >= 0 ? selectedIndex : 0]?.id || selectedDeckId;
 
   return Math.max(0, selectedIndex);
 }
@@ -801,12 +820,12 @@ function setReadingDeckFilter(filter) {
   activeReadingDeckFilter = ["all", "major-arcana", "full"].includes(filter) ? filter : "all";
   const filteredDecks = getFilteredReadingDecks();
 
-  if (!filteredDecks.some((deck) => deck.id === activeReadingDeckCarouselId)) {
-    activeReadingDeckCarouselId = filteredDecks.find((deck) => isDeckAccessible(deck))?.id || filteredDecks[0]?.id || "";
+  if (!filteredDecks.some((deck) => deck.id === centeredDeckId)) {
+    centeredDeckId = filteredDecks.find((deck) => isDeckAccessible(deck))?.id || filteredDecks[0]?.id || "";
   }
 
   renderDeckOptions();
-  queueCenteredDeckSelection(activeReadingDeckCarouselId, 0);
+  queueCenteredDeckSelection(centeredDeckId, 0);
 }
 
 function queueCenteredDeckSelection(deckId, delay = 420) {
@@ -818,12 +837,16 @@ function queueCenteredDeckSelection(deckId, delay = 420) {
   isReadingDeckCarouselTransitioning = selectionDelay > 0;
 
   const finishTransition = () => {
-    if (sequence === readingDeckSelectionSequence && activeReadingDeckCarouselId === deckId) {
+    if (sequence === readingDeckSelectionSequence && centeredDeckId === deckId) {
       isReadingDeckCarouselTransitioning = false;
     }
   };
 
   if (!deck || !isDeckCompatible(deck) || !isDeckAccessible(deck)) {
+    selectedDeckId = "";
+    patchDeckSelectionState(selectedDeckId);
+    setSpreadSelectionAvailability(false, deck ? getDeckLockedReason(deck) || `${deck.title} is currently unavailable.` : "Deck unavailable.");
+
     if (deck) {
       readingStatus.textContent = getDeckLockedReason(deck) || `${deck.title} is currently unavailable.`;
     }
@@ -831,13 +854,18 @@ function queueCenteredDeckSelection(deckId, delay = 420) {
     return;
   }
 
+  // A new accessible deck is centered before its animation completes. Do not
+  // allow a spread to use the previously selected deck during that interval.
+  setSpreadSelectionAvailability(false, `Selecting ${deck.title}…`);
+
   readingDeckSelectionTimer = window.setTimeout(() => {
-    if (sequence !== readingDeckSelectionSequence || activeReadingDeckCarouselId !== deckId) {
+    if (sequence !== readingDeckSelectionSequence || centeredDeckId !== deckId) {
       return;
     }
 
     isReadingDeckCarouselTransitioning = false;
     completeDeckSelection(deck, { render: false });
+    setSpreadSelectionAvailability(true, `${deck.title} selected.`);
   }, selectionDelay);
 }
 
@@ -849,12 +877,13 @@ function updateReadingDeckCarouselPosition(nextDeckId) {
     return false;
   }
 
-  activeReadingDeckCarouselId = nextDeckId;
+  centeredDeckId = nextDeckId;
 
   deckOptions.querySelectorAll("[data-reading-deck-card]").forEach((card) => {
     const index = Number(card.dataset.deckIndex || 0);
     const deck = filteredDecks[index];
     const isActive = deck?.id === nextDeckId;
+    const isUnavailableCentered = isActive && (!isDeckCompatible(deck) || !isDeckAccessible(deck));
     const offset = getReadingDeckCarouselOffset(index, nextIndex, filteredDecks.length);
     const visibleOffset = getVisibleReadingDeckOffset(offset);
 
@@ -864,7 +893,10 @@ function updateReadingDeckCarouselPosition(nextDeckId) {
 
     card.classList.add(getReadingDeckOffsetClass(visibleOffset));
     card.classList.toggle("is-carousel-active", isActive);
+    card.classList.toggle("is-centered-unavailable", isUnavailableCentered);
     card.dataset.deckOffset = String(offset);
+    card.dataset.centered = String(isActive);
+    card.dataset.unavailable = String(isUnavailableCentered);
   });
 
   const carouselFooter = deckOptions.querySelector(".deck-selection-carousel__footer");
@@ -923,8 +955,8 @@ function renderDeckOptions() {
 
   const modeDecks = getFilteredReadingDecks();
 
-  if (!modeDecks.some((deck) => deck.id === activeReadingDeckCarouselId)) {
-    activeReadingDeckCarouselId = modeDecks[0]?.id || "";
+  if (!modeDecks.some((deck) => deck.id === centeredDeckId)) {
+    centeredDeckId = modeDecks[0]?.id || "";
   }
 
   const activeCarouselIndex = getActiveReadingDeckCarouselIndex(modeDecks);
@@ -940,6 +972,7 @@ function renderDeckOptions() {
       const offset = getReadingDeckCarouselOffset(index, activeCarouselIndex, modeDecks.length);
       const visibleOffset = getVisibleReadingDeckOffset(offset);
       const isCarouselActive = index === activeCarouselIndex;
+      const isUnavailableCentered = isCarouselActive && !isAccessible;
       const isProtectedDeckMedia = deck.id === "bloodMoon" || deck.imageSet === "bloodMoon";
       const protectedMediaClass = isProtectedDeckMedia ? " protected-media" : "";
       const protectedMediaAttrs = isProtectedDeckMedia ? ' data-protected-media="true" draggable="false"' : "";
@@ -947,12 +980,14 @@ function renderDeckOptions() {
 
       return `
         <article
-          class="deck-selection-card deck-selection-card--${escapeHtml(themeClass)} ${getReadingDeckOffsetClass(visibleOffset)}${isSelected ? " is-selected" : ""}${isCarouselActive ? " is-carousel-active" : ""}${isAccessible ? "" : " is-locked"}"
+          class="deck-selection-card deck-selection-card--${escapeHtml(themeClass)} ${getReadingDeckOffsetClass(visibleOffset)}${isSelected ? " is-selected" : ""}${isCarouselActive ? " is-carousel-active" : ""}${isAccessible ? "" : " is-locked"}${isUnavailableCentered ? " is-centered-unavailable" : ""}"
           role="listitem"
           data-reading-deck-card
           data-deck-card-id="${escapeHtml(deck.id)}"
           data-deck-index="${index}"
           data-deck-offset="${offset}"
+          data-centered="${isCarouselActive ? "true" : "false"}"
+          data-unavailable="${isUnavailableCentered ? "true" : "false"}"
           data-selected="${isSelected ? "true" : "false"}"
           aria-current="${isSelected ? "true" : "false"}"
           aria-disabled="${isAccessible ? "false" : "true"}"
@@ -985,11 +1020,19 @@ function renderDeckOptions() {
     </div>` : `<div class="deck-selection-carousel__empty" role="status">No decks of this type are currently available.</div>`;
 
   if (deckStatus) {
+    const centeredDeck = getDeckConfig(centeredDeckId);
     const activeDeck = getActiveDeckConfig();
     deckStatus.textContent = activeDeck
       ? `${activeDeck.title} selected.`
-      : "Choose an available deck before selecting a spread.";
+      : centeredDeck
+        ? `${getDeckLockedReason(centeredDeck) || `${centeredDeck.title} is being selected.`}`
+        : "Choose an available deck before selecting a spread.";
   }
+
+  const centeredDeck = getDeckConfig(centeredDeckId);
+  setSpreadSelectionAvailability(
+    Boolean(centeredDeck && centeredDeck.id === selectedDeckId && isDeckCompatible(centeredDeck) && isDeckAccessible(centeredDeck))
+  );
 }
 
 async function hydrateAccountDeckAccess() {
@@ -1016,7 +1059,7 @@ function getActiveDeck() {
   const activeDeck = getActiveDeckConfig();
   const cards = activeDeck?.cards?.();
 
-  return Array.isArray(cards) && cards.length ? cards : tarotDeck;
+  return Array.isArray(cards) && cards.length ? cards : [];
 }
 
 function getActiveCardBackImage() {
@@ -2723,10 +2766,13 @@ async function selectSpread(cardCount) {
     await readingPreferencesReadyPromise;
   }
 
+  const centeredDeck = getDeckConfig(centeredDeckId);
   const activeDeck = getActiveDeckConfig();
 
-  if (!activeDeck || !isDeckAccessible(activeDeck)) {
-    readingStatus.textContent = "Choose an available deck before starting your reading.";
+  if (!activeDeck || !centeredDeck || activeDeck.id !== centeredDeck.id) {
+    readingStatus.textContent = centeredDeck
+      ? `${getDeckLockedReason(centeredDeck) || `${centeredDeck.title} must finish selecting before you begin.`}`
+      : "Choose an available deck before starting your reading.";
     renderDeckOptions();
     isRenderingReading = false;
     return;
