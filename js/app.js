@@ -352,6 +352,7 @@ window.AstralVeilImagePreview = {
 
 let astralToastRegion = null;
 let astralToastSequence = 0;
+const astralToastsByKey = new Map();
 
 function getAstralToastRegion() {
   if (astralToastRegion?.isConnected) {
@@ -367,66 +368,88 @@ function getAstralToastRegion() {
   return astralToastRegion;
 }
 
-function removeAstralToast(toast, timerId) {
+function removeAstralToast(toast) {
   if (!toast?.isConnected) {
     return;
   }
 
-  window.clearTimeout(timerId);
+  window.clearTimeout(toast._astralToastTimer);
+  if (toast._astralToastKey && astralToastsByKey.get(toast._astralToastKey) === toast) {
+    astralToastsByKey.delete(toast._astralToastKey);
+  }
   toast.classList.add("is-leaving");
 
   window.setTimeout(() => {
-    toast.remove();
+    if (toast.classList.contains("is-leaving")) {
+      toast.remove();
+    }
   }, 180);
 }
 
-function showAstralToast({ title = "", message = "", type = "default", duration = 6000 } = {}) {
+function showAstralToast({ key = "", title = "", message = "", type = "default", duration = 6000 } = {}) {
   if (!document.body) {
     return null;
   }
 
   const normalizedType = String(type || "default").replace(/[^a-z0-9_-]/gi, "").toLowerCase() || "default";
-  const toast = document.createElement("article");
-  const toastId = `astral-toast-${astralToastSequence += 1}`;
-  const titleId = `${toastId}-title`;
-  const messageId = `${toastId}-message`;
+  const normalizedKey = String(key || "").trim();
+  let toast = normalizedKey ? astralToastsByKey.get(normalizedKey) : null;
+
+  if (!toast?.isConnected) {
+    toast = document.createElement("article");
+    const toastId = `astral-toast-${astralToastSequence += 1}`;
+    const titleId = `${toastId}-title`;
+    const messageId = `${toastId}-message`;
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    toast.setAttribute("aria-atomic", "true");
+    toast.setAttribute("aria-labelledby", titleId);
+    toast.setAttribute("aria-describedby", messageId);
+
+    const content = document.createElement("div");
+    content.className = "astral-toast__content";
+
+    const titleElement = document.createElement("p");
+    titleElement.className = "astral-toast__title";
+    titleElement.id = titleId;
+    titleElement.dataset.astralToastTitle = "";
+
+    const messageElement = document.createElement("p");
+    messageElement.className = "astral-toast__message";
+    messageElement.id = messageId;
+    messageElement.dataset.astralToastMessage = "";
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "astral-toast__close";
+    closeButton.type = "button";
+    closeButton.setAttribute("aria-label", "Dismiss message");
+    closeButton.textContent = "×";
+    closeButton.addEventListener("click", () => removeAstralToast(toast));
+
+    content.append(titleElement, messageElement);
+    toast.append(content, closeButton);
+    toast._astralToastKey = normalizedKey;
+    if (normalizedKey) {
+      astralToastsByKey.set(normalizedKey, toast);
+    }
+    getAstralToastRegion().appendChild(toast);
+  }
+
   toast.className = `astral-toast astral-toast--${normalizedType}`;
-  toast.setAttribute("role", "status");
-  toast.setAttribute("aria-labelledby", titleId);
-  toast.setAttribute("aria-describedby", messageId);
-
-  const content = document.createElement("div");
-  content.className = "astral-toast__content";
-
-  const titleElement = document.createElement("p");
-  titleElement.className = "astral-toast__title";
-  titleElement.id = titleId;
-  titleElement.textContent = title || "Fragment Recovered";
-
-  const messageElement = document.createElement("p");
-  messageElement.className = "astral-toast__message";
-  messageElement.id = messageId;
-  messageElement.textContent = message || "A hidden piece has answered from the dark.";
-
-  const closeButton = document.createElement("button");
-  closeButton.className = "astral-toast__close";
-  closeButton.type = "button";
-  closeButton.setAttribute("aria-label", "Dismiss message");
-  closeButton.textContent = "×";
-
-  content.append(titleElement, messageElement);
-  toast.append(content, closeButton);
+  toast.classList.remove("is-leaving");
+  toast.querySelector("[data-astral-toast-title]").textContent = title || "Fragment Recovered";
+  toast.querySelector("[data-astral-toast-message]").textContent = message || "A hidden piece has answered from the dark.";
 
   const normalizedDuration = Number.isFinite(Number(duration))
-    ? Math.min(Math.max(Number(duration), 5000), 7000)
+    ? Math.min(Math.max(Number(duration), 1000), 7000)
     : 6000;
-  const timerId = window.setTimeout(() => removeAstralToast(toast, timerId), normalizedDuration);
-
-  closeButton.addEventListener("click", () => removeAstralToast(toast, timerId));
-  getAstralToastRegion().appendChild(toast);
+  window.clearTimeout(toast._astralToastTimer);
+  toast._astralToastTimer = window.setTimeout(() => removeAstralToast(toast), normalizedDuration);
 
   window.requestAnimationFrame(() => {
-    toast.classList.add("is-visible");
+    if (toast.isConnected) {
+      toast.classList.add("is-visible");
+    }
   });
 
   return toast;
