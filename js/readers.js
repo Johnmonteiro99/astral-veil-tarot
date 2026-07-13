@@ -574,7 +574,7 @@ function renderFeaturedVeilwalkerSelector() {
         <span aria-hidden="true">‹</span>
       </button>
       <div class="veilwalker-feature__image-wrap${protectedMediaClass}"${protectedMediaAttrs}>
-        <img class="veilwalker-feature__image" src="${escapeHtml(image)}" alt="${escapeHtml(presentation.name)}" loading="eager" decoding="async"${protectedImageAttr} onerror="this.style.visibility='hidden'" />
+        <img class="veilwalker-feature__image" src="${escapeHtml(image)}" alt="${escapeHtml(presentation.name)}" loading="eager" decoding="async"${protectedImageAttr} data-image-error-hide />
       </div>
       <div class="veilwalker-feature__details">
         <div class="veilwalker-feature__meta">
@@ -760,6 +760,7 @@ function renderOpenReader(reader) {
       </div>
     </div>
   `;
+  readersPageList.querySelectorAll('[data-image-error-hide]').forEach((image) => image.addEventListener('error', () => { image.style.visibility = 'hidden'; }, { once: true }));
 }
 
 // Opens a reader profile and resets the active form to the starting portrait.

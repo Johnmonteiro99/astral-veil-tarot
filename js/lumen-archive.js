@@ -925,7 +925,7 @@ function renderLumenViewer() {
           <div class="sanctuary-room-showcase__visual">
             <figure class="sanctuary-portal-frame sanctuary-portal-frame--${escapeLumenHtml(sanctuary.id)}">
               <button class="sanctuary-portal-image-button" type="button" data-lumen-image-open data-lumen-image-src="${escapeLumenHtml(sanctuary.image)}" data-lumen-image-alt="${escapeLumenHtml(`${sanctuary.title} sanctuary artwork`)}" data-lumen-image-title="${escapeLumenHtml(sanctuary.title)}" aria-label="${escapeLumenHtml(`View ${sanctuary.title} image larger`)}">
-                <img class="sanctuary-portal-image sanctuary-room-showcase__image" src="${escapeLumenHtml(sanctuary.image)}" alt="${escapeLumenHtml(sanctuary.title)} sanctuary artwork" width="${LUMEN_SANCTUARY_IMAGE_WIDTH}" height="${LUMEN_SANCTUARY_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" onerror="this.closest('.sanctuary-portal-frame').classList.add('is-missing'); this.closest('.sanctuary-portal-image-button').remove();" />
+                <img class="sanctuary-portal-image sanctuary-room-showcase__image" src="${escapeLumenHtml(sanctuary.image)}" alt="${escapeLumenHtml(sanctuary.title)} sanctuary artwork" width="${LUMEN_SANCTUARY_IMAGE_WIDTH}" height="${LUMEN_SANCTUARY_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" data-lumen-image-error />
               </button>
               <figcaption aria-hidden="true">
                 <span>${escapeLumenHtml(getLumenSanctuaryInitial(sanctuary))}</span>
@@ -973,6 +973,10 @@ function renderLumenViewer() {
       </div>
     </div>
   `;
+  lumenViewer.querySelectorAll('[data-lumen-image-error]').forEach((image) => image.addEventListener('error', () => {
+    image.closest('.sanctuary-portal-frame')?.classList.add('is-missing');
+    image.closest('.sanctuary-portal-image-button')?.remove();
+  }, { once: true }));
 
   initializeLumenPortalViewer();
 }

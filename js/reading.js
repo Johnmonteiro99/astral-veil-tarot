@@ -997,7 +997,7 @@ function renderDeckOptions() {
               <span class="deck-selection-card__badge">${escapeHtml(isAccessible ? deck.label : lockedReason)}</span>
             </div>
             <div class="deck-selection-card__preview${protectedMediaClass}"${protectedMediaAttrs}>
-              <img src="${escapeHtml(deck.previewImage)}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} onerror="this.style.visibility='hidden'" />
+              <img src="${escapeHtml(deck.previewImage)}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} data-image-error-hide />
               <span class="deck-selection-card__selected-label${isSelected && isCarouselActive ? " is-visible" : ""}" aria-hidden="true">✓ Selected</span>
             </div>
             <div class="deck-selection-card__content">
@@ -1076,6 +1076,24 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
+function bindReadingImageErrorHandlers(container = document) {
+  container.querySelectorAll('[data-image-error-hide]').forEach((image) => image.addEventListener('error', () => { image.style.visibility = 'hidden'; }, { once: true }));
+  container.querySelectorAll('[data-image-error-fallback]').forEach((image) => image.addEventListener('error', () => {
+    const fallback = image.dataset.imageErrorFallback;
+    if (fallback && image.dataset.fallbackApplied !== 'true') { image.dataset.fallbackApplied = 'true'; image.src = fallback; }
+  }, { once: true }));
+}
+
+document.addEventListener('error', (event) => {
+  const image = event.target;
+  if (!(image instanceof HTMLImageElement)) return;
+  if (image.matches('[data-image-error-hide]')) image.style.visibility = 'hidden';
+  if (image.matches('[data-image-error-fallback]') && image.dataset.fallbackApplied !== 'true') {
+    image.dataset.fallbackApplied = 'true';
+    image.src = image.dataset.imageErrorFallback;
+  }
+}, true);
 
 function getRandomArrayItem(items) {
   if (!Array.isArray(items) || !items.length) {
@@ -1369,7 +1387,7 @@ function renderThreadPositionBlocks(spread) {
         return `
           <section class="combined-reading__thread-card">
             <div class="combined-reading__thread-card-image${protectedMediaClass}"${protectedMediaAttrs}>
-              <img class="card-image${reversedClass}${fullFrameClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} onerror="this.src='${getActiveCardBackImage()}'" />
+              <img class="card-image${reversedClass}${fullFrameClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} data-image-error-fallback="${escapeHtml(getActiveCardBackImage())}" />
             </div>
             <div>
               <span class="combined-reading__position-pill">${escapeHtml(positionLabel)}</span>
@@ -2178,11 +2196,11 @@ function renderFeaturedReader() {
   featuredReaderPanel.innerHTML = `
     <article class="reader-selection-orbit" aria-live="polite">
       <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker">
-        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.visibility='hidden'" />
+        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" data-image-error-hide />
       </button>
       <div class="reader-orbit-card reader-orbit-card--featured">
         <button class="reader-selection-split__image" type="button" data-reader-carousel-message aria-label="Refresh this Veilwalker's preview message">
-          <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" onerror="this.style.visibility='hidden'" />
+          <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" data-image-error-hide />
           <span class="reader-card-overlay" aria-hidden="true">
             <span class="reader-card-overlay__name">${escapeHtml(getReaderCardDisplayName(featuredReader))}</span>
             <span class="reader-card-overlay__zodiac">
@@ -2211,7 +2229,7 @@ function renderFeaturedReader() {
       <button class="reader-carousel__nav reader-carousel__nav--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker"></button>
       <button class="reader-carousel__nav reader-carousel__nav--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker"></button>
       <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker">
-        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.visibility='hidden'" />
+        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" data-image-error-hide />
       </button>
       <div class="mobile-reader-swipe-hint" aria-hidden="true">
         <p><span aria-hidden="true">‹</span> Swipe to meet the other Veilwalkers <span aria-hidden="true">›</span></p>
@@ -2887,7 +2905,7 @@ function renderReadingCards(cards) {
               <img src="${cardBackImage}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} />
             </span>
             <span class="tarot-card__face tarot-card__front">
-              <img class="card-image${reversedClass}${fullFrameClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} onerror="this.src='${cardBackImage}'" />
+              <img class="card-image${reversedClass}${fullFrameClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} data-image-error-fallback="${escapeHtml(cardBackImage)}" />
               <span class="card-orientation-badge">${escapeHtml(orientationLabel)}</span>
             </span>
           </span>
@@ -3140,7 +3158,7 @@ function renderReadingResults() {
           data-image-preview-title="${escapeHtml(cardTitle)}"
           data-image-preview-caption="${escapeHtml(`${activePositionLabel} • ${orientationLabel}`)}"
           ${protectedImageAttr}
-          onerror="this.src='${getActiveCardBackImage()}'"
+          data-image-error-fallback="${escapeHtml(getActiveCardBackImage())}"
         />
         <span class="card-orientation-badge reading-viewer__orientation-badge">${escapeHtml(orientationLabel)}</span>
       </div>

@@ -3422,7 +3422,7 @@ function renderJournalEntries() {
 
       return `
         <article class="journal-entry-card private-data-card${protectedMediaClass} journal-entry-card--${escapeHtml(modeClass)}" data-private-card="true"${protectedMediaAttrs} draggable="false">
-          <img class="journal-entry-card__cover" src="${coverImage}" alt="" loading="lazy" draggable="false" onerror="this.onerror=null; this.src='assets/images/backgrounds/moon_journal.png'">
+          <img class="journal-entry-card__cover" src="${coverImage}" alt="" loading="lazy" draggable="false" data-image-error-fallback="assets/images/backgrounds/moon_journal.png">
           <div class="journal-entry-card__overlay" aria-hidden="true"></div>
           <div class="journal-entry-card__content">
             <p class="journal-entry-card__meta">${escapeHtml(formatEntryDate(entry.entry_date))}</p>
@@ -3435,6 +3435,10 @@ function renderJournalEntries() {
       `;
     })
     .join('');
+  journalList.querySelectorAll('[data-image-error-fallback]').forEach((image) => image.addEventListener('error', () => {
+    const fallback = image.dataset.imageErrorFallback;
+    if (fallback && image.dataset.fallbackApplied !== 'true') { image.dataset.fallbackApplied = 'true'; image.src = fallback; }
+  }, { once: true }));
   renderJournalPagination();
 }
 
