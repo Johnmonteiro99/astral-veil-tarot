@@ -23,6 +23,7 @@ const mobileMoodTrigger = document.querySelector('[data-mobile-mood-trigger]');
 const mobileMoodLabel = document.querySelector('[data-mobile-mood-label]');
 const mobileMoodMenu = document.querySelector('[data-mobile-mood-menu]');
 const tagWrap = document.querySelector('[data-journal-tags]');
+let tagWrapClickListeners;
 const guidedHelper = document.querySelector('[data-guided-helper]');
 const guidedToggle = document.querySelector('[data-guided-toggle]');
 const guidedSection = document.querySelector('[data-guided-section]');
@@ -841,7 +842,9 @@ function renderTags(selectedTags = []) {
     }
   };
 
-  tagWrap.onclick = (event) => {
+  tagWrapClickListeners?.abort();
+  tagWrapClickListeners = new AbortController();
+  tagWrap.addEventListener('click', (event) => {
     const toggleButton = event.target.closest('[data-journal-tags-toggle]');
 
     if (!toggleButton) {
@@ -850,7 +853,7 @@ function renderTags(selectedTags = []) {
 
     const isOpen = tagWrap.classList.toggle('is-open');
     toggleButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  };
+  }, { signal: tagWrapClickListeners.signal });
   tagWrap.querySelector('[data-journal-tags-options]')?.addEventListener('change', updateToggleLabel);
 }
 

@@ -13,6 +13,7 @@ let lastLightboxNavAt = 0;
 let selectorTouchStartX = 0;
 let selectorTouchStartY = 0;
 let featuredReaderHeroLineRequestId = 0;
+let lightboxImageListeners;
 const selectedReaderStorageKey = "astralVeilSelectedReader";
 const readingPageHref = "/";
 const selectedReaderHeroLines = {};
@@ -713,15 +714,20 @@ function renderOpenReader(reader) {
 
   lightboxImage.hidden = false;
   lightboxImage.dataset.fallbackApplied = "false";
-  lightboxImage.onerror = () => {
+  lightboxImageListeners?.abort();
+  lightboxImageListeners = new AbortController();
+  lightboxImage.addEventListener('error', () => {
     if (lightboxImage.dataset.fallbackApplied !== "true" && fallbackImage) {
       lightboxImage.dataset.fallbackApplied = "true";
+      lightboxImage.addEventListener('error', () => {
+        lightboxImage.hidden = true;
+      }, { once: true, signal: lightboxImageListeners.signal });
       lightboxImage.src = fallbackImage;
       return;
     }
 
     lightboxImage.hidden = true;
-  };
+  }, { once: true, signal: lightboxImageListeners.signal });
   lightboxImage.src = activeImage;
   lightboxImage.alt = presentation.name;
   lightboxImage.dataset.imagePreviewTitle = presentation.name;

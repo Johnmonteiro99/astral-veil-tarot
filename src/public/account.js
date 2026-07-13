@@ -95,6 +95,8 @@ const zodiacPreview = document.querySelector('[data-zodiac-preview]');
 const zodiacDates = document.querySelector('[data-zodiac-dates]');
 const birthdayInput = document.querySelector('[data-birthday-input]');
 const settingsZodiacImage = document.querySelector('[data-settings-zodiac-image]');
+let settingsZodiacImageListeners;
+let zodiacIconListeners;
 const journalStatus = document.querySelector('[data-journal-status]');
 const journalForm = document.querySelector('[data-journal-form]');
 const journalSaveButton = document.querySelector('[data-journal-save]');
@@ -1022,7 +1024,7 @@ function updateSettingsZodiacPreview(sign) {
 
   settingsZodiacImage.hidden = !iconName;
   settingsZodiacImage.removeAttribute('src');
-  settingsZodiacImage.onerror = null;
+  settingsZodiacImageListeners?.abort();
   previewFrame?.classList.remove('is-fallback');
   if (previewFrame) {
     previewFrame.hidden = !iconName;
@@ -1032,13 +1034,14 @@ function updateSettingsZodiacPreview(sign) {
     return;
   }
 
-  settingsZodiacImage.onerror = () => {
-    settingsZodiacImage.onerror = () => {
-      settingsZodiacImage.hidden = true;
-    };
+  settingsZodiacImageListeners = new AbortController();
+  settingsZodiacImage.addEventListener('error', () => {
     previewFrame?.classList.add('is-fallback');
+    settingsZodiacImage.addEventListener('error', () => {
+      settingsZodiacImage.hidden = true;
+    }, { once: true, signal: settingsZodiacImageListeners.signal });
     settingsZodiacImage.src = `assets/icons/zodiac/${iconName}.svg`;
-  };
+  }, { once: true, signal: settingsZodiacImageListeners.signal });
   settingsZodiacImage.src = getZodiacCardImagePath(sign);
 }
 
@@ -1060,9 +1063,11 @@ function updateZodiacDisplay(sign) {
 
     zodiacIcon.hidden = !iconName;
     zodiacIcon.removeAttribute('src');
-    zodiacIcon.onerror = () => {
+    zodiacIconListeners?.abort();
+    zodiacIconListeners = new AbortController();
+    zodiacIcon.addEventListener('error', () => {
       zodiacIcon.hidden = true;
-    };
+    }, { once: true, signal: zodiacIconListeners.signal });
 
     if (iconName) {
       zodiacIcon.src = `assets/icons/zodiac/${iconName}.svg`;
@@ -1582,14 +1587,14 @@ function loadImageForAvatar(file) {
     const image = new Image();
     const objectUrl = URL.createObjectURL(file);
 
-    image.onload = () => {
+    image.addEventListener('load', () => {
       URL.revokeObjectURL(objectUrl);
       resolve(image);
-    };
-    image.onerror = () => {
+    }, { once: true });
+    image.addEventListener('error', () => {
       URL.revokeObjectURL(objectUrl);
       reject(new Error('The selected image could not be loaded.'));
-    };
+    }, { once: true });
     image.src = objectUrl;
   });
 }
