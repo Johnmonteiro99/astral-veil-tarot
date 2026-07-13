@@ -176,3 +176,13 @@ All paths are relative and domain-ready for static hosting. Large card and reade
 ## Disclaimer
 
 Astral Veil is for entertainment and reflective purposes only. It is not intended to predict the future with certainty or provide professional advice.
+
+## License
+
+Astral Veil uses a split-license model.
+
+The original software source code is licensed under the MIT License unless otherwise stated.
+
+Astral Veil artwork, card imagery, deck designs, written meanings, journal prompts, characters, lore, branding, and other creative content are copyright © 2026 Joao J. Monteiro. All rights reserved.
+
+See [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for details.
