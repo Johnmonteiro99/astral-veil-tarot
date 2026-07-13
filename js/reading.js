@@ -1,5 +1,5 @@
-const CARD_BACK_IMAGE = "assets/images/cards/original/card-back.webp";
-const BLOOD_MOON_CARD_BACK_IMAGE = "assets/images/cards/blood-moon/bloodmoon-card-back.webp";
+const CARD_BACK_IMAGE = "assets/images/cards/legacy/original/card-back.webp";
+const BLOOD_MOON_CARD_BACK_IMAGE = "assets/images/cards/legacy/blood-moon/bloodmoon-card-back.webp";
 const CARD_IMAGE_WIDTH = 800;
 const CARD_IMAGE_HEIGHT = 1200;
 const READER_IMAGE_WIDTH = 900;
@@ -31,6 +31,7 @@ const readingThreadSection = document.querySelector("[data-reading-thread-sectio
 const readingStatus = document.querySelector("[data-reading-status]");
 const deckStatus = document.querySelector("[data-deck-status]");
 const deckOptions = document.querySelector("[data-deck-options]");
+const deckFormatFilter = document.querySelector("[data-deck-format-filter]");
 const spreadChoicePanel = document.querySelector(".spread-choice-panel");
 const readingResultsSection = document.querySelector("[data-reading-results-section]");
 const readingReveals = document.querySelector("[data-reading-reveals]");
@@ -117,11 +118,18 @@ let revealedCards = [];
 let activeRevealedCardIndex = -1;
 let readingSectionScrollTimeout = null;
 let isRenderingReading = false;
+let isDealingReadingCards = false;
+let readingDealSequence = 0;
+let readingDealTimerIds = [];
 let bloodMoonTimeout = null;
 let readingFlowStage = "reader";
 let activeReadingMode = null;
 let selectedDeckId = "lumen";
-let activeReadingDeckCarouselId = selectedDeckId;
+let centeredDeckId = selectedDeckId;
+let activeReadingDeckFilter = "all";
+let readingDeckSelectionTimer = null;
+let readingDeckSelectionSequence = 0;
+let isReadingDeckCarouselTransitioning = false;
 let currentAccountUser = null;
 let hasCheckedAccountUser = false;
 
@@ -145,49 +153,91 @@ const readingDecks = [
     id: "lumen",
     title: "Verdant",
     label: "Core Collection",
+    cardCount: 22,
+    deckFormat: "major-arcana",
+    chooseWhen: "you need patience, grounding, or room to grow.",
     description: "Original lightwork art and meanings.",
     access: "public",
     compatibleModes: ["sun", "moon"],
     meaningSet: "lumen",
     imageSet: "lumen",
-    previewImage: "assets/images/cards/original/card-back.webp",
+    previewImage: "assets/images/cards/legacy/original/card-back.webp",
     cards: () => tarotDeck
   },
   {
     id: "dreambound",
     title: "Dreambound",
     label: "Public Deck",
+    cardCount: 22,
+    deckFormat: "major-arcana",
+    chooseWhen: "imagination, memory, or possibility is calling.",
     description: "Dreamlike art with original meanings.",
     access: "public",
     compatibleModes: ["sun", "moon", "bloodMoon"],
     meaningSet: "lumen",
     imageSet: "dreambound",
-    previewImage: "assets/images/cards/dreamy/dreams_card_back.png",
+    previewImage: "assets/images/cards/legacy/dreamy/dreams_card_back.png",
     cards: () => dreamboundDeck.cards
+  },
+  {
+    id: "astralVeilTarot",
+    title: "Veilrise Arcana",
+    label: "Full Tarot Deck",
+    cardCount: 78,
+    deckFormat: "full",
+    chooseWhen: "you are ready to follow the light beyond what you know.",
+    description: "A full 78-card deck of becoming, choice, growth, joy, pain, and the soul's rise through the Veil.",
+    access: "public",
+    compatibleModes: ["sun", "moon"],
+    meaningSet: "astralVeilTarot",
+    imageSet: "astralVeilTarot",
+    previewImage: "assets/images/cards/astral-veil-tarot/back/back-deck.png",
+    cards: () => astralVeilTarotDeck.cards
   },
   {
     id: "moonveil",
     title: "Moonveil",
     label: "Account Deck",
+    cardCount: 22,
+    deckFormat: "major-arcana",
+    chooseWhen: "intuition speaks more clearly than certainty.",
     description: "Moonlit art with original meanings.",
     access: "auth",
     compatibleModes: ["sun", "moon", "bloodMoon"],
     meaningSet: "lumen",
     imageSet: "moonveil",
-    previewImage: "assets/images/cards/moonveil/moonveil_card_back.png",
+    previewImage: "assets/images/cards/legacy/moonveil/moonveil_card_back.png",
     cards: () => moonveilDeck.cards
   },
   {
     id: "bloodMoon",
     title: "Crimson Veil",
     label: "Blood Moon Deck",
+    cardCount: 22,
+    deckFormat: "major-arcana",
+    chooseWhen: "the truth beneath the surface refuses to stay buried.",
     description: "A forbidden shadow deck revealed beneath the Blood Moon.",
     access: "bloodMoon",
     compatibleModes: ["bloodMoon"],
     meaningSet: "bloodMoon",
     imageSet: "bloodMoon",
-    previewImage: "assets/images/cards/blood-moon/bloodmoon-card-back.webp",
+    previewImage: "assets/images/cards/legacy/blood-moon/bloodmoon-card-back.webp",
     cards: () => bloodMoonDeck.cards
+  },
+  {
+    id: "astralVeilCrimson",
+    title: "Veilfall Arcana",
+    label: "Blood Moon Full Deck",
+    cardCount: 78,
+    deckFormat: "full",
+    chooseWhen: "pressure is revealing what comfort could not.",
+    description: "A full 78-card Blood Moon deck of shadow, fracture, craving, deception, and the truths revealed when illusion falls.",
+    access: "bloodMoon",
+    compatibleModes: ["bloodMoon"],
+    meaningSet: "astralVeilCrimson",
+    imageSet: "astralVeilCrimson",
+    previewImage: "assets/images/cards/astral-veil-crimson/back/back-deck.png",
+    cards: () => astralVeilCrimsonDeck.cards
   }
 ];
 
@@ -604,20 +654,24 @@ function ensureSelectedDeckIsAvailable() {
   const selectedDeck = getDeckConfig(selectedDeckId);
 
   if (isDeckCompatible(selectedDeck) && isDeckAccessible(selectedDeck)) {
-    if (!isDeckCompatible(getDeckConfig(activeReadingDeckCarouselId))) {
-      activeReadingDeckCarouselId = selectedDeck.id;
+    if (!isDeckCompatible(getDeckConfig(centeredDeckId))) {
+      centeredDeckId = selectedDeck.id;
     }
 
     return selectedDeck;
   }
 
   selectedDeckId = getDefaultAvailableDeckId();
-  activeReadingDeckCarouselId = selectedDeckId;
+  centeredDeckId = selectedDeckId;
   return getDeckConfig(selectedDeckId);
 }
 
 function getActiveDeckConfig() {
-  return ensureSelectedDeckIsAvailable();
+  const selectedDeck = getDeckConfig(selectedDeckId);
+
+  return selectedDeck?.id === centeredDeckId && isDeckCompatible(selectedDeck) && isDeckAccessible(selectedDeck)
+    ? selectedDeck
+    : null;
 }
 
 function getDeckLockedReason(deck) {
@@ -660,14 +714,51 @@ function getReadingDeckCtaLabel(deck, isSelected, isAccessible) {
   return "Locked";
 }
 
-function completeDeckSelection(deck) {
+function patchDeckSelectionState(deckId) {
+  if (!deckOptions) {
+    return;
+  }
+
+  deckOptions.querySelectorAll("[data-reading-deck-card]").forEach((card) => {
+    const isSelected = card.dataset.deckCardId === deckId;
+    const isCentered = card.dataset.deckOffset === "0";
+    const selectedLabel = card.querySelector(".deck-selection-card__selected-label");
+
+    card.classList.toggle("is-selected", isSelected);
+    card.dataset.selected = String(isSelected);
+    card.setAttribute("aria-current", String(isSelected));
+    selectedLabel?.classList.toggle("is-visible", isSelected && isCentered);
+  });
+}
+
+function setSpreadSelectionAvailability(isAvailable, message = "") {
+  spreadButtons.forEach((button) => {
+    button.disabled = !isAvailable;
+    button.setAttribute("aria-disabled", String(!isAvailable));
+  });
+
+  if (deckOptions) {
+    deckOptions.dataset.centeredDeckUnavailable = String(!isAvailable);
+  }
+
+  if (deckStatus && message) {
+    deckStatus.textContent = message;
+  }
+}
+
+function completeDeckSelection(deck, { startReading = false, render = true } = {}) {
   selectedDeckId = deck.id;
-  activeReadingDeckCarouselId = deck.id;
-  renderDeckOptions();
+  centeredDeckId = deck.id;
+
+  if (render) {
+    renderDeckOptions();
+  } else {
+    patchDeckSelectionState(deck.id);
+  }
 
   const preselectedSpreadCardCount = getPreselectedSpreadCardCount();
 
-  if (preselectedSpreadCardCount) {
+  if (preselectedSpreadCardCount && startReading) {
     selectSpread(preselectedSpreadCardCount);
     return;
   }
@@ -700,33 +791,100 @@ function getReadingDeckOffsetClass(offset) {
 }
 
 function getActiveReadingDeckCarouselIndex(modeDecks) {
-  const activeIndex = modeDecks.findIndex((deck) => deck.id === activeReadingDeckCarouselId);
+  const activeIndex = modeDecks.findIndex((deck) => deck.id === centeredDeckId);
 
   if (activeIndex >= 0) {
     return activeIndex;
   }
 
   const selectedIndex = modeDecks.findIndex((deck) => deck.id === selectedDeckId);
-  activeReadingDeckCarouselId = modeDecks[selectedIndex >= 0 ? selectedIndex : 0]?.id || selectedDeckId;
+  centeredDeckId = modeDecks[selectedIndex >= 0 ? selectedIndex : 0]?.id || selectedDeckId;
 
   return Math.max(0, selectedIndex);
 }
 
-function updateReadingDeckCarouselPosition(nextDeckId) {
-  const modeDecks = getAvailableReadingDecks();
-  const nextIndex = modeDecks.findIndex((deck) => deck.id === nextDeckId);
+function getFilteredReadingDecks() {
+  const allDecks = getAvailableReadingDecks();
 
-  if (!deckOptions || nextIndex < 0) {
+  if (activeReadingDeckFilter === "all") {
+    return allDecks;
+  }
+
+  return allDecks.filter((deck) => deck.deckFormat === activeReadingDeckFilter);
+}
+
+function setReadingDeckFilter(filter) {
+  window.clearTimeout(readingDeckSelectionTimer);
+  readingDeckSelectionSequence += 1;
+  isReadingDeckCarouselTransitioning = false;
+  activeReadingDeckFilter = ["all", "major-arcana", "full"].includes(filter) ? filter : "all";
+  const filteredDecks = getFilteredReadingDecks();
+
+  if (!filteredDecks.some((deck) => deck.id === centeredDeckId)) {
+    centeredDeckId = filteredDecks.find((deck) => isDeckAccessible(deck))?.id || filteredDecks[0]?.id || "";
+  }
+
+  renderDeckOptions();
+  queueCenteredDeckSelection(centeredDeckId, 0);
+}
+
+function queueCenteredDeckSelection(deckId, delay = 420) {
+  window.clearTimeout(readingDeckSelectionTimer);
+  const sequence = ++readingDeckSelectionSequence;
+  const deck = getDeckConfig(deckId);
+  const selectionDelay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : delay;
+
+  isReadingDeckCarouselTransitioning = selectionDelay > 0;
+
+  const finishTransition = () => {
+    if (sequence === readingDeckSelectionSequence && centeredDeckId === deckId) {
+      isReadingDeckCarouselTransitioning = false;
+    }
+  };
+
+  if (!deck || !isDeckCompatible(deck) || !isDeckAccessible(deck)) {
+    selectedDeckId = "";
+    patchDeckSelectionState(selectedDeckId);
+    setSpreadSelectionAvailability(false, deck ? getDeckLockedReason(deck) || `${deck.title} is currently unavailable.` : "Deck unavailable.");
+
+    if (deck) {
+      readingStatus.textContent = getDeckLockedReason(deck) || `${deck.title} is currently unavailable.`;
+    }
+    readingDeckSelectionTimer = window.setTimeout(finishTransition, selectionDelay);
+    return;
+  }
+
+  // A new accessible deck is centered before its animation completes. Do not
+  // allow a spread to use the previously selected deck during that interval.
+  setSpreadSelectionAvailability(false, `Selecting ${deck.title}…`);
+
+  readingDeckSelectionTimer = window.setTimeout(() => {
+    if (sequence !== readingDeckSelectionSequence || centeredDeckId !== deckId) {
+      return;
+    }
+
+    isReadingDeckCarouselTransitioning = false;
+    completeDeckSelection(deck, { render: false });
+    setSpreadSelectionAvailability(true, `${deck.title} selected.`);
+  }, selectionDelay);
+}
+
+function updateReadingDeckCarouselPosition(nextDeckId) {
+  const filteredDecks = getFilteredReadingDecks();
+  const nextIndex = filteredDecks.findIndex((deck) => deck.id === nextDeckId);
+
+  if (!deckOptions || nextIndex < 0 || isReadingDeckCarouselTransitioning) {
     return false;
   }
 
-  activeReadingDeckCarouselId = nextDeckId;
+  centeredDeckId = nextDeckId;
 
   deckOptions.querySelectorAll("[data-reading-deck-card]").forEach((card) => {
     const index = Number(card.dataset.deckIndex || 0);
-    const deck = modeDecks[index];
+    const deck = filteredDecks[index];
     const isActive = deck?.id === nextDeckId;
-    const offset = getReadingDeckCarouselOffset(index, nextIndex, modeDecks.length);
+    const isUnavailableCentered = isActive && (!isDeckCompatible(deck) || !isDeckAccessible(deck));
+    const offset = getReadingDeckCarouselOffset(index, nextIndex, filteredDecks.length);
     const visibleOffset = getVisibleReadingDeckOffset(offset);
 
     Array.from(card.classList)
@@ -735,16 +893,37 @@ function updateReadingDeckCarouselPosition(nextDeckId) {
 
     card.classList.add(getReadingDeckOffsetClass(visibleOffset));
     card.classList.toggle("is-carousel-active", isActive);
+    card.classList.toggle("is-centered-unavailable", isUnavailableCentered);
     card.dataset.deckOffset = String(offset);
+    card.dataset.centered = String(isActive);
+    card.dataset.unavailable = String(isUnavailableCentered);
   });
+
+  const carouselFooter = deckOptions.querySelector(".deck-selection-carousel__footer");
+
+  if (carouselFooter) {
+    const progress = carouselFooter.querySelector("span");
+
+    if (progress) {
+      progress.textContent = `${nextIndex + 1} of ${filteredDecks.length}`;
+    }
+
+    carouselFooter.querySelectorAll("[data-carousel-deck-id]").forEach((dot) => {
+      const isActive = dot.dataset.carouselDeckId === nextDeckId;
+      dot.classList.toggle("is-active", isActive);
+      dot.setAttribute("aria-current", String(isActive));
+    });
+  }
+
+  queueCenteredDeckSelection(nextDeckId);
 
   return true;
 }
 
 function moveReadingDeckCarousel(direction) {
-  const modeDecks = getAvailableReadingDecks();
+  const modeDecks = getFilteredReadingDecks();
 
-  if (modeDecks.length < 2) {
+  if (modeDecks.length < 2 || isReadingDeckCarouselTransitioning) {
     return;
   }
 
@@ -754,17 +933,37 @@ function moveReadingDeckCarousel(direction) {
   updateReadingDeckCarouselPosition(modeDecks[nextIndex].id);
 }
 
+function getReadingDeckFormatLabel(deck) {
+  return deck?.deckFormat === "full" && deck?.cardCount === 78
+    ? "Full Deck · 78 Cards"
+    : "Major Arcana · 22 Cards";
+}
+
+function isFullDeckFoolCard(card) {
+  const activeDeck = getActiveDeckConfig();
+
+  return (
+    ["astralVeilTarot", "astralVeilCrimson"].includes(activeDeck?.id) &&
+    (card?.originalCardId || card?.id) === "the-fool"
+  );
+}
+
 function renderDeckOptions() {
   if (!deckOptions) {
     return;
   }
 
-  const modeDecks = getAvailableReadingDecks();
+  const modeDecks = getFilteredReadingDecks();
+
+  if (!modeDecks.some((deck) => deck.id === centeredDeckId)) {
+    centeredDeckId = modeDecks[0]?.id || "";
+  }
+
   const activeCarouselIndex = getActiveReadingDeckCarouselIndex(modeDecks);
 
   deckOptions.dataset.deckCount = String(modeDecks.length);
 
-  deckOptions.innerHTML = modeDecks
+  const deckCardsMarkup = modeDecks
     .map((deck, index) => {
       const isSelected = deck.id === selectedDeckId;
       const isAccessible = isDeckAccessible(deck);
@@ -773,25 +972,23 @@ function renderDeckOptions() {
       const offset = getReadingDeckCarouselOffset(index, activeCarouselIndex, modeDecks.length);
       const visibleOffset = getVisibleReadingDeckOffset(offset);
       const isCarouselActive = index === activeCarouselIndex;
+      const isUnavailableCentered = isCarouselActive && !isAccessible;
       const isProtectedDeckMedia = deck.id === "bloodMoon" || deck.imageSet === "bloodMoon";
       const protectedMediaClass = isProtectedDeckMedia ? " protected-media" : "";
       const protectedMediaAttrs = isProtectedDeckMedia ? ' data-protected-media="true" draggable="false"' : "";
       const protectedImageAttr = isProtectedDeckMedia ? ' draggable="false"' : "";
-      const ctaLabel = getReadingDeckCtaLabel(deck, isSelected, isAccessible);
-      const actionMarkup = !isAccessible && deck.access === "auth"
-        ? `<a class="primary-action deck-selection-card__button" href="${escapeHtml(getReadingAuthUrl("signup"))}" data-deck-auth-link="${escapeHtml(deck.id)}">${escapeHtml(ctaLabel)}</a>`
-        : `<button class="primary-action deck-selection-card__button" type="button" data-deck-id="${escapeHtml(deck.id)}" ${isAccessible ? "" : "disabled"}>
-                ${escapeHtml(ctaLabel)}
-              </button>`;
 
       return `
         <article
-          class="deck-selection-card deck-selection-card--${escapeHtml(themeClass)} ${getReadingDeckOffsetClass(visibleOffset)}${isSelected ? " is-selected" : ""}${isCarouselActive ? " is-carousel-active" : ""}${isAccessible ? "" : " is-locked"}"
+          class="deck-selection-card deck-selection-card--${escapeHtml(themeClass)} ${getReadingDeckOffsetClass(visibleOffset)}${isSelected ? " is-selected" : ""}${isCarouselActive ? " is-carousel-active" : ""}${isAccessible ? "" : " is-locked"}${isUnavailableCentered ? " is-centered-unavailable" : ""}"
           role="listitem"
           data-reading-deck-card
           data-deck-card-id="${escapeHtml(deck.id)}"
           data-deck-index="${index}"
           data-deck-offset="${offset}"
+          data-centered="${isCarouselActive ? "true" : "false"}"
+          data-unavailable="${isUnavailableCentered ? "true" : "false"}"
+          data-selected="${isSelected ? "true" : "false"}"
           aria-current="${isSelected ? "true" : "false"}"
           aria-disabled="${isAccessible ? "false" : "true"}"
         >
@@ -800,14 +997,13 @@ function renderDeckOptions() {
               <span class="deck-selection-card__badge">${escapeHtml(isAccessible ? deck.label : lockedReason)}</span>
             </div>
             <div class="deck-selection-card__preview${protectedMediaClass}"${protectedMediaAttrs}>
-              <img src="${escapeHtml(deck.previewImage)}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} onerror="this.style.visibility='hidden'" />
+              <img src="${escapeHtml(deck.previewImage)}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} data-image-error-hide />
+              <span class="deck-selection-card__selected-label${isSelected && isCarouselActive ? " is-visible" : ""}" aria-hidden="true">✓ Selected</span>
             </div>
             <div class="deck-selection-card__content">
               <h3>${escapeHtml(deck.title)}</h3>
-              <p>${escapeHtml(deck.description)}</p>
-            </div>
-            <div class="deck-selection-card__actions">
-              ${actionMarkup}
+              <p class="deck-selection-card__guidance"><span>Choose this deck when…</span> ${escapeHtml(deck.chooseWhen || "its symbols feel right for this reading.")}</p>
+              ${isAccessible ? "" : `<p class="deck-selection-card__locked-status">${escapeHtml(lockedReason || "Locked")}</p>`}
             </div>
           </div>
         </article>
@@ -815,12 +1011,28 @@ function renderDeckOptions() {
     })
     .join("");
 
+  deckOptions.innerHTML = modeDecks.length ? `${deckCardsMarkup}
+    <div class="deck-selection-carousel__footer" aria-label="Deck position">
+      <span>${activeCarouselIndex + 1} of ${modeDecks.length}</span>
+      <div class="deck-selection-carousel__dots">
+        ${modeDecks.map((deck, index) => `<button class="deck-selection-carousel__dot${index === activeCarouselIndex ? " is-active" : ""}" type="button" data-carousel-deck-id="${escapeHtml(deck.id)}" aria-label="View ${escapeHtml(deck.title)}" aria-current="${index === activeCarouselIndex ? "true" : "false"}"></button>`).join("")}
+      </div>
+    </div>` : `<div class="deck-selection-carousel__empty" role="status">No decks of this type are currently available.</div>`;
+
   if (deckStatus) {
+    const centeredDeck = getDeckConfig(centeredDeckId);
     const activeDeck = getActiveDeckConfig();
     deckStatus.textContent = activeDeck
       ? `${activeDeck.title} selected.`
-      : "Choose an available deck before selecting a spread.";
+      : centeredDeck
+        ? `${getDeckLockedReason(centeredDeck) || `${centeredDeck.title} is being selected.`}`
+        : "Choose an available deck before selecting a spread.";
   }
+
+  const centeredDeck = getDeckConfig(centeredDeckId);
+  setSpreadSelectionAvailability(
+    Boolean(centeredDeck && centeredDeck.id === selectedDeckId && isDeckCompatible(centeredDeck) && isDeckAccessible(centeredDeck))
+  );
 }
 
 async function hydrateAccountDeckAccess() {
@@ -847,7 +1059,7 @@ function getActiveDeck() {
   const activeDeck = getActiveDeckConfig();
   const cards = activeDeck?.cards?.();
 
-  return Array.isArray(cards) && cards.length ? cards : tarotDeck;
+  return Array.isArray(cards) && cards.length ? cards : [];
 }
 
 function getActiveCardBackImage() {
@@ -864,6 +1076,24 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
+function bindReadingImageErrorHandlers(container = document) {
+  container.querySelectorAll('[data-image-error-hide]').forEach((image) => image.addEventListener('error', () => { image.style.visibility = 'hidden'; }, { once: true }));
+  container.querySelectorAll('[data-image-error-fallback]').forEach((image) => image.addEventListener('error', () => {
+    const fallback = image.dataset.imageErrorFallback;
+    if (fallback && image.dataset.fallbackApplied !== 'true') { image.dataset.fallbackApplied = 'true'; image.src = fallback; }
+  }, { once: true }));
+}
+
+document.addEventListener('error', (event) => {
+  const image = event.target;
+  if (!(image instanceof HTMLImageElement)) return;
+  if (image.matches('[data-image-error-hide]')) image.style.visibility = 'hidden';
+  if (image.matches('[data-image-error-fallback]') && image.dataset.fallbackApplied !== 'true') {
+    image.dataset.fallbackApplied = 'true';
+    image.src = image.dataset.imageErrorFallback;
+  }
+}, true);
 
 function getRandomArrayItem(items) {
   if (!Array.isArray(items) || !items.length) {
@@ -1152,11 +1382,12 @@ function renderThreadPositionBlocks(spread) {
         const cardName = getCardDisplayName(card);
         const interpretation = getThreadCardInterpretation(card);
         const reversedClass = isCardReversed(card) ? " is-reversed" : "";
+        const fullFrameClass = isFullDeckFoolCard(card) ? " card-image--full-frame" : "";
 
         return `
           <section class="combined-reading__thread-card">
             <div class="combined-reading__thread-card-image${protectedMediaClass}"${protectedMediaAttrs}>
-              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} onerror="this.src='${getActiveCardBackImage()}'" />
+              <img class="card-image${reversedClass}${fullFrameClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} data-image-error-fallback="${escapeHtml(getActiveCardBackImage())}" />
             </div>
             <div>
               <span class="combined-reading__position-pill">${escapeHtml(positionLabel)}</span>
@@ -1965,11 +2196,11 @@ function renderFeaturedReader() {
   featuredReaderPanel.innerHTML = `
     <article class="reader-selection-orbit" aria-live="polite">
       <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker">
-        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.visibility='hidden'" />
+        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" data-image-error-hide />
       </button>
       <div class="reader-orbit-card reader-orbit-card--featured">
         <button class="reader-selection-split__image" type="button" data-reader-carousel-message aria-label="Refresh this Veilwalker's preview message">
-          <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" onerror="this.style.visibility='hidden'" />
+          <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" data-image-error-hide />
           <span class="reader-card-overlay" aria-hidden="true">
             <span class="reader-card-overlay__name">${escapeHtml(getReaderCardDisplayName(featuredReader))}</span>
             <span class="reader-card-overlay__zodiac">
@@ -1998,7 +2229,7 @@ function renderFeaturedReader() {
       <button class="reader-carousel__nav reader-carousel__nav--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker"></button>
       <button class="reader-carousel__nav reader-carousel__nav--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker"></button>
       <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker">
-        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.visibility='hidden'" />
+        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" data-image-error-hide />
       </button>
       <div class="mobile-reader-swipe-hint" aria-hidden="true">
         <p><span aria-hidden="true">‹</span> Swipe to meet the other Veilwalkers <span aria-hidden="true">›</span></p>
@@ -2428,6 +2659,119 @@ function moveReader(direction) {
 // Spread Selection and Card Drawing
 ////////////////////////////////////////////////////
 
+const READING_DEAL_STAGGER_MS = 170;
+const READING_DEAL_DURATION_MS = 720;
+const READING_DEAL_START_DELAY_MS = 90;
+
+function prefersReducedReadingMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function clearReadingDealTimers() {
+  readingDealTimerIds.forEach((timerId) => window.clearTimeout(timerId));
+  readingDealTimerIds = [];
+}
+
+function cancelReadingCardDeal() {
+  readingDealSequence += 1;
+  clearReadingDealTimers();
+  isDealingReadingCards = false;
+
+  if (!cardList) {
+    return;
+  }
+
+  cardList.classList.remove("is-dealing", "is-ready");
+  cardList.removeAttribute("aria-busy");
+}
+
+function getReadingRevealPrompt() {
+  const activeDeck = getActiveDeckConfig();
+  const cardCount = currentReadingCards.length;
+
+  if (!selectedReader || !activeDeck || !cardCount) {
+    return "Your cards are ready to reveal.";
+  }
+
+  return `${selectedReader.name} has drawn ${cardCount} ${cardCount === 1 ? "card" : "cards"} from ${activeDeck.title}. Click ${cardCount === 1 ? "the card" : "each card"} in Your Reading to reveal its message.`;
+}
+
+function finishReadingCardDeal(sequence) {
+  if (sequence !== readingDealSequence || !cardList) {
+    return;
+  }
+
+  isDealingReadingCards = false;
+  readingDealTimerIds = [];
+  cardList.classList.remove("is-dealing");
+  cardList.classList.add("is-ready");
+  cardList.removeAttribute("aria-busy");
+
+  cardList.querySelectorAll(".tarot-card").forEach((cardButton) => {
+    cardButton.classList.remove("is-dealing");
+    cardButton.classList.add("is-ready");
+    cardButton.disabled = false;
+    cardButton.setAttribute("aria-disabled", "false");
+  });
+
+  readingStatus.textContent = getReadingRevealPrompt();
+}
+
+// Deals the already-rendered cards in their existing DOM/spread order without changing layout placement.
+function dealReadingCards() {
+  if (!cardList) {
+    return;
+  }
+
+  cancelReadingCardDeal();
+
+  const cardButtons = Array.from(cardList.querySelectorAll(".tarot-card"));
+  const sequence = ++readingDealSequence;
+
+  if (!cardButtons.length || prefersReducedReadingMotion()) {
+    cardList.classList.add("is-ready");
+    cardButtons.forEach((cardButton) => {
+      cardButton.classList.add("is-ready", "is-dealt");
+      cardButton.disabled = false;
+      cardButton.setAttribute("aria-disabled", "false");
+    });
+    readingStatus.textContent = getReadingRevealPrompt();
+    return;
+  }
+
+  isDealingReadingCards = true;
+  cardList.classList.add("is-dealing");
+  cardList.setAttribute("aria-busy", "true");
+
+  cardButtons.forEach((cardButton, index) => {
+    const direction = index % 2 === 0 ? -1 : 1;
+    const variation = index % 3;
+
+    cardButton.style.setProperty("--deal-x", `${direction * (10 + variation * 4)}px`);
+    cardButton.style.setProperty("--deal-y", `${-64 - variation * 8}px`);
+    cardButton.style.setProperty("--deal-z", `${150 + variation * 24}px`);
+    cardButton.style.setProperty("--deal-rotate", `${direction * (2.2 + variation * 0.45)}deg`);
+    cardButton.classList.add("is-dealing");
+    cardButton.disabled = true;
+    cardButton.setAttribute("aria-disabled", "true");
+
+    const timerId = window.setTimeout(() => {
+      if (sequence === readingDealSequence) {
+        cardButton.classList.add("is-dealt");
+      }
+    }, READING_DEAL_START_DELAY_MS + index * READING_DEAL_STAGGER_MS);
+
+    readingDealTimerIds.push(timerId);
+  });
+
+  const completionTimerId = window.setTimeout(
+    () => finishReadingCardDeal(sequence),
+    READING_DEAL_START_DELAY_MS + (cardButtons.length - 1) * READING_DEAL_STAGGER_MS + READING_DEAL_DURATION_MS
+  );
+
+  readingDealTimerIds.push(completionTimerId);
+}
+
 // Creates a new reading: chooses cards, assigns orientation, and renders the facedown spread.
 async function selectSpread(cardCount) {
   if (isRenderingReading) {
@@ -2440,10 +2784,13 @@ async function selectSpread(cardCount) {
     await readingPreferencesReadyPromise;
   }
 
+  const centeredDeck = getDeckConfig(centeredDeckId);
   const activeDeck = getActiveDeckConfig();
 
-  if (!activeDeck || !isDeckAccessible(activeDeck)) {
-    readingStatus.textContent = "Choose an available deck before starting your reading.";
+  if (!activeDeck || !centeredDeck || activeDeck.id !== centeredDeck.id) {
+    readingStatus.textContent = centeredDeck
+      ? `${getDeckLockedReason(centeredDeck) || `${centeredDeck.title} must finish selecting before you begin.`}`
+      : "Choose an available deck before starting your reading.";
     renderDeckOptions();
     isRenderingReading = false;
     return;
@@ -2466,7 +2813,9 @@ async function selectSpread(cardCount) {
     }
     setReadingFlowStage("reading", { scrollToStart: true });
     renderReadingCards(currentReadingCards);
-    readingStatus.textContent = `${selectedReader.name} has drawn ${cardCount} ${cardCount === 1 ? "card" : "cards"} from ${activeDeck.title}. Click ${cardCount === 1 ? "the card" : "each card"} in Your Reading to reveal its message.`;
+    readingStatus.textContent = isDealingReadingCards
+      ? `${selectedReader.name} is placing ${cardCount} ${cardCount === 1 ? "card" : "cards"} from ${activeDeck.title}.`
+      : getReadingRevealPrompt();
   } catch (error) {
     isRenderingReading = false;
     throw error;
@@ -2532,6 +2881,7 @@ function getRandomCards(cardCount) {
 
 // Renders the clickable facedown cards. The front image already knows its saved upright/reversed state.
 function renderReadingCards(cards) {
+  cancelReadingCardDeal();
   cardList.classList.remove("hidden");
   cardList.innerHTML = "";
   cardList.dataset.cardCount = String(cards.length);
@@ -2546,15 +2896,16 @@ function renderReadingCards(cards) {
       const cardName = getCardDisplayName(card);
       const orientationLabel = getCardOrientationLabel(card);
       const reversedClass = isCardReversed(card) ? " is-reversed" : "";
+      const fullFrameClass = isFullDeckFoolCard(card) ? " card-image--full-frame" : "";
 
       return `
-        <button class="tarot-card energy-${energy} fade-slide-in${protectedMediaClass}" type="button" data-card-index="${index}" aria-label="Reveal ${escapeHtml(cardName)}"${protectedMediaAttrs}>
+        <button class="tarot-card energy-${energy}${protectedMediaClass}" type="button" data-card-index="${index}" aria-label="Reveal ${escapeHtml(cardName)}"${protectedMediaAttrs}>
           <span class="tarot-card__inner">
             <span class="tarot-card__face tarot-card__back">
               <img src="${cardBackImage}" alt="" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} />
             </span>
             <span class="tarot-card__face tarot-card__front">
-              <img class="card-image${reversedClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} onerror="this.src='${cardBackImage}'" />
+              <img class="card-image${reversedClass}${fullFrameClass}" src="${escapeHtml(card.image)}" alt="${escapeHtml(cardName)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low"${protectedImageAttr} data-image-error-fallback="${escapeHtml(cardBackImage)}" />
               <span class="card-orientation-badge">${escapeHtml(orientationLabel)}</span>
             </span>
           </span>
@@ -2562,6 +2913,8 @@ function renderReadingCards(cards) {
       `;
     })
     .join("");
+
+  dealReadingCards();
 }
 
 function isReadingCardRevealed(cardIndex) {
@@ -2649,6 +3002,10 @@ function scrollToActiveReadingDetail() {
 }
 
 function revealNextReadingCard() {
+  if (isDealingReadingCards) {
+    return;
+  }
+
   const nextCardIndex = getNextUnrevealedCardIndex();
   const nextCardButton = cardList?.querySelector(`[data-card-index="${nextCardIndex}"]`);
 
@@ -2705,7 +3062,7 @@ function renderReadingStickyNav(activeCard) {
 
 // Reveals one card once, stores it in revealedCards, and keeps its orientation stable for this reading.
 function revealCard(cardButton, { scrollToDetail = false } = {}) {
-  if (cardButton.classList.contains("is-revealed")) {
+  if (isDealingReadingCards || cardButton.disabled || cardButton.classList.contains("is-revealed")) {
     return;
   }
 
@@ -2768,6 +3125,7 @@ function renderReadingResults() {
   const activePositionLabel = getCardPositionLabel(activeCard, activeRevealedCardIndex);
   const cardName = getCardDisplayName(activeCard);
   const cardTitle = getCardDisplayName(activeCard, { includeOrientation: true });
+  const fullFrameClass = isFullDeckFoolCard(activeCard) ? " card-image--full-frame" : "";
   const orientationLabel = getCardOrientationLabel(activeCard);
   const reversedClass = isCardReversed(activeCard) ? " is-reversed" : "";
   const protectedMediaClass = isBloodMoonReadingActive() ? " protected-media" : "";
@@ -2790,7 +3148,7 @@ function renderReadingResults() {
         aria-label="Expand ${escapeHtml(cardTitle)} image"
       >
         <img
-          class="reading-viewer__image card-image${reversedClass}"
+          class="reading-viewer__image card-image${reversedClass}${fullFrameClass}"
           src="${escapeHtml(activeCard.image)}"
           alt="${escapeHtml(cardName)}"
           width="${CARD_IMAGE_WIDTH}"
@@ -2800,7 +3158,7 @@ function renderReadingResults() {
           data-image-preview-title="${escapeHtml(cardTitle)}"
           data-image-preview-caption="${escapeHtml(`${activePositionLabel} • ${orientationLabel}`)}"
           ${protectedImageAttr}
-          onerror="this.src='${getActiveCardBackImage()}'"
+          data-image-error-fallback="${escapeHtml(getActiveCardBackImage())}"
         />
         <span class="card-orientation-badge reading-viewer__orientation-badge">${escapeHtml(orientationLabel)}</span>
       </div>
@@ -2964,6 +3322,7 @@ if (readingThreadSection) {
 function clearCurrentReading() {
   window.clearTimeout(readingSectionScrollTimeout);
   window.clearTimeout(bloodMoonTimeout);
+  cancelReadingCardDeal();
   isRenderingReading = false;
 
   selectedCardCount = 0;
@@ -3196,17 +3555,13 @@ spreadButtons.forEach((button) => {
 
 if (deckOptions) {
   deckOptions.addEventListener("pointerdown", (event) => {
-    if (!isSmallViewport()) {
-      return;
-    }
-
     readingDeckTouchStartX = event.clientX;
     readingDeckTouchStartY = event.clientY;
     readingDeckDidSwipe = false;
   });
 
   deckOptions.addEventListener("pointerup", (event) => {
-    if (!isSmallViewport() || readingDeckTouchStartX === null || readingDeckTouchStartY === null) {
+    if (readingDeckTouchStartX === null || readingDeckTouchStartY === null) {
       readingDeckTouchStartX = null;
       readingDeckTouchStartY = null;
       return;
@@ -3226,6 +3581,14 @@ if (deckOptions) {
   });
 
   deckOptions.addEventListener("click", (event) => {
+    const carouselDot = event.target.closest("[data-carousel-deck-id]");
+
+    if (carouselDot) {
+      event.preventDefault();
+      updateReadingDeckCarouselPosition(carouselDot.dataset.carouselDeckId);
+      return;
+    }
+
     if (readingDeckDidSwipe) {
       readingDeckDidSwipe = false;
       event.preventDefault();
@@ -3235,7 +3598,7 @@ if (deckOptions) {
     const deckCard = event.target.closest("[data-reading-deck-card]");
     const deckButton = event.target.closest("[data-deck-id]");
 
-    if (deckCard && isSmallViewport()) {
+    if (deckCard) {
       const deckId = deckCard.dataset.deckCardId;
       const offset = Number(deckCard.dataset.deckOffset || 0);
 
@@ -3246,14 +3609,6 @@ if (deckOptions) {
       }
 
       if (!deckButton) {
-        const deck = getDeckConfig(deckId);
-
-        if (!deck || !isDeckCompatible(deck) || !isDeckAccessible(deck)) {
-          readingStatus.textContent = getDeckLockedReason(deck) || "This deck is locked.";
-          return;
-        }
-
-        completeDeckSelection(deck);
         return;
       }
     }
@@ -3270,6 +3625,37 @@ if (deckOptions) {
     }
 
     completeDeckSelection(deck);
+  });
+
+  deckOptions.addEventListener("keydown", (event) => {
+    if (isSmallViewport() || !event.target.closest("[data-reading-deck-card]")) {
+      return;
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      moveReadingDeckCarousel(-1);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      moveReadingDeckCarousel(1);
+    }
+  });
+}
+
+if (deckFormatFilter) {
+  deckFormatFilter.addEventListener("click", (event) => {
+    const filterButton = event.target.closest("[data-deck-filter]");
+
+    if (!filterButton) {
+      return;
+    }
+
+    setReadingDeckFilter(filterButton.dataset.deckFilter);
+    deckFormatFilter.querySelectorAll("[data-deck-filter]").forEach((button) => {
+      const isActive = button === filterButton;
+      button.setAttribute("aria-pressed", String(isActive));
+      button.classList.toggle("is-active", isActive);
+    });
   });
 }
 
@@ -3311,7 +3697,7 @@ document.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
 
 if (cardList) {
   cardList.addEventListener("click", (event) => {
-    if (readingFlowStage !== "reading") {
+    if (readingFlowStage !== "reading" || isDealingReadingCards) {
       return;
     }
 

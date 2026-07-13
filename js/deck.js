@@ -54,6 +54,7 @@ const deckFilterTitles = {
 };
 const deckInfoModalThemeClasses = [
   "deck-modal--verdant",
+  "deck-modal--veilrise",
   "deck-modal--dreambound",
   "deck-modal--moonveil",
   "deck-modal--bloodmoon",
@@ -314,6 +315,18 @@ function getCollectionActionLabel(collection) {
     : collection.actionLabel;
 }
 
+function getCollectionCardBadge(collection) {
+  if (!collection) {
+    return "";
+  }
+
+  if (isBloodMoonCollection(collection) && !canViewBloodMoonDeck()) {
+    return collection.categoryLabel || "Blood Moon Deck";
+  }
+
+  return getCollectionStatus(collection);
+}
+
 function getCollectionTypeLabel(collection) {
   if (!collection) {
     return "Archive Deck";
@@ -452,7 +465,11 @@ function getDeckInfoModalThemeClass(collection) {
     return "deck-modal--cyber-hacked";
   }
 
-  if (collection.id === "bloodMoon") {
+  if (collection.id === "astralVeilTarot") {
+    return "deck-modal--veilrise";
+  }
+
+  if (isBloodMoonCollection(collection)) {
     return "deck-modal--bloodmoon";
   }
 
@@ -680,12 +697,20 @@ function renderDeckCardMeanings(card) {
 }
 
 function getDeckDetailThemeClass(collection) {
+  if (isBloodMoonCollection(collection)) {
+    return "deck-detail--bloodmoon";
+  }
+
   const themeSource = String(collection?.id || collection?.theme || "")
     .trim()
     .toLowerCase();
 
   if (themeSource.includes("blood")) {
     return "deck-detail--bloodmoon";
+  }
+
+  if (collection?.id === "astralVeilTarot") {
+    return "deck-detail--veilrise";
   }
 
   if (themeSource.includes("moonveil")) {
@@ -701,6 +726,13 @@ function getDeckDetailThemeClass(collection) {
   }
 
   return "deck-detail--verdant";
+}
+
+function isFullDeckFoolCard(collection, card) {
+  return (
+    ["astralVeilTarot", "astralVeilCrimson"].includes(collection?.id) &&
+    (card?.originalCardId || card?.id) === "the-fool"
+  );
 }
 
 function initializeDeckCardTilt() {
@@ -891,6 +923,10 @@ function moveDeckFilter(direction) {
 }
 
 function getCollectionIdClass(collection) {
+  if (isBloodMoonCollection(collection)) {
+    return "bloodMoon";
+  }
+
   return String(collection?.id || "")
     .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
     .replace(/[^a-zA-Z0-9]+/g, "-")
@@ -903,11 +939,13 @@ function getCarouselDeckLabel(collection) {
     original: "VERDANT",
     dreambound: "DREAMBOUND",
     moonveil: "MOONVEIL",
-    bloodMoon: "BLOOD MOON",
+    bloodMoon: "Crimson Veil",
+    astralVeilTarot: "Veilrise Arcana",
+    astralVeilCrimson: "Veilfall Arcana",
     cyberpunkArcana: "CYBER-HACKED"
   };
 
-  return labels[collection?.id] || getCollectionCategory(collection);
+  return labels[collection?.id] || collection?.title || collection?.name || getCollectionCategory(collection);
 }
 
 function getCarouselDeckIntention(collection) {
@@ -916,6 +954,8 @@ function getCarouselDeckIntention(collection) {
     dreambound: "For those who follow wonder, courage, and the language of dreams.",
     moonveil: "For those seeking emotional balance within.",
     bloodMoon: "For those ready to face the truth beneath the surface.",
+    astralVeilTarot: "For those following the light beyond what they know.",
+    astralVeilCrimson: "For those finding their truth beneath the pressure.",
     cyberpunkArcana: "For those drawn to synthetic souls, neon omens, and fractured futures."
   };
 
@@ -935,7 +975,7 @@ function renderDeckCollectionCard(collection, options = {}) {
   const isAuthLocked = isAuthLockedCollection(collection) && isLocked;
   const canOpenLockedPrompt = false;
   const isComingSoon = collection?.accessType === "comingSoon";
-  const status = getCollectionStatus(collection);
+  const badge = getCollectionCardBadge(collection);
   const actionLabel = getCollectionActionLabel(collection);
   const category = getCollectionCategory(collection);
   const visibleLabel = labelText || category;
@@ -947,7 +987,8 @@ function renderDeckCollectionCard(collection, options = {}) {
     : collection?.subtitle || "";
   const previewImage = collection?.previewImage || collection?.coverImage;
   const tileBackgroundImage = collection?.backgroundImage || collection?.coverImage || "";
-  const tileBackgroundStyle = tileBackgroundImage
+  const usesCssTileBackground = collection?.id === "astralVeilCrimson";
+  const tileBackgroundStyle = tileBackgroundImage && !usesCssTileBackground
     ? `style='--deck-collection-cover: url("${tileBackgroundImage}")'`
     : "";
   const cardDeckAttribute = isComingSoon || !includeCardDeckTrigger ? "" : `data-view-deck="${escapeHtml(collection.id)}"`;
@@ -962,8 +1003,8 @@ function renderDeckCollectionCard(collection, options = {}) {
   const protectedImageAttr = isBloodMoonCollection(collection) ? ' draggable="false"' : "";
 
   return `
-      <article class="deck-collection-card deck-collection-card--${escapeHtml(theme)}${escapeHtml(deckIdClass)}${isLocked ? " is-locked" : ""}${isComingSoon ? " is-coming-soon" : ""}${escapeHtml(modifierClass)}${protectedMediaClass}" ${tileBackgroundStyle} data-deck-card data-deck-category="${escapeHtml(category)}" ${protectedMediaAttrs} ${cardDeckAttribute} aria-disabled="${isLocked}">
-      <span class="deck-collection-card__badge">${escapeHtml(status)}</span>
+      <article class="deck-collection-card deck-collection-card--${escapeHtml(theme)}${escapeHtml(deckIdClass)}${isLocked ? " is-locked" : ""}${isComingSoon ? " is-coming-soon" : ""}${escapeHtml(modifierClass)}${protectedMediaClass}" ${tileBackgroundStyle} data-deck-card data-deck="${escapeHtml(collection.id)}" data-deck-category="${escapeHtml(category)}" ${protectedMediaAttrs} ${cardDeckAttribute} aria-disabled="${isLocked}">
+      <span class="deck-collection-card__badge">${escapeHtml(badge)}</span>
       <button class="deck-collection-card__preview" type="button" data-deck-details="${escapeHtml(collection.id)}" aria-label="View details for ${escapeHtml(collection.title)}">
         <img src="${escapeHtml(previewImage)}" alt="" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} />
         <span class="deck-collection-card__detail-hint">View Details</span>
@@ -1029,7 +1070,7 @@ function getMobileDeckShelfName(collection) {
 function renderMobileDeckShelfItem(collection, sectionId, index, activeIndex, itemCount) {
   const previewImage = collection?.previewImage || collection?.coverImage || "";
   const isLocked = isCollectionLocked(collection);
-  const status = getCollectionStatus(collection);
+  const badge = getCollectionCardBadge(collection);
   const isSelected = index === activeIndex;
   const protectedMediaClass = isBloodMoonCollection(collection) ? " protected-media" : "";
   const protectedMediaAttrs = isBloodMoonCollection(collection) ? ' data-protected-media="true" draggable="false"' : "";
@@ -1041,7 +1082,7 @@ function renderMobileDeckShelfItem(collection, sectionId, index, activeIndex, it
     <button class="deck-mobile-shelf__item ${getMobileDeckOffsetClass(visibleOffset)}${isSelected ? " is-selected" : ""}${isLocked ? " is-locked" : ""}${protectedMediaClass}" type="button" data-mobile-deck-focus="${escapeHtml(sectionId)}" data-deck-carousel-index="${index}" data-mobile-deck-offset="${offset}" aria-label="${isSelected ? `Open focused view for ${escapeHtml(collection.title)}` : `Bring ${escapeHtml(collection.title)} forward`}" aria-pressed="${isSelected ? "true" : "false"}"${protectedMediaAttrs}>
       <span class="deck-mobile-shelf__card">
         <img src="${escapeHtml(previewImage)}" alt="${escapeHtml(collection.title)} card back" width="${DECK_CARD_IMAGE_WIDTH}" height="${DECK_CARD_IMAGE_HEIGHT}" loading="lazy" decoding="async"${protectedImageAttr} />
-        ${isLocked ? `<span class="deck-mobile-shelf__status">${escapeHtml(status)}</span>` : ""}
+        ${isLocked ? `<span class="deck-mobile-shelf__status">${escapeHtml(badge)}</span>` : ""}
       </span>
       <span class="deck-mobile-shelf__name">${escapeHtml(getMobileDeckShelfName(collection))}</span>
     </button>
@@ -1365,6 +1406,7 @@ function renderDeckGallery(collectionId) {
   activeCardIndex = Math.min(Math.max(activeCardIndex, 0), collectionCards.length - 1);
   const activeCard = collectionCards[activeCardIndex];
   const cardDescription = getCardDescription(activeCard);
+  const activeCardImageClass = isFullDeckFoolCard(collection, activeCard) ? " deck-card-image--full-frame" : "";
   const isProtectedDeckMedia = isBloodMoonCollection(collection);
   const protectedMediaClass = isProtectedDeckMedia ? " protected-media" : "";
   const protectedMediaAttrs = isProtectedDeckMedia ? ' data-protected-media="true" draggable="false"' : "";
@@ -1409,7 +1451,7 @@ function renderDeckGallery(collectionId) {
         <button class="deck-viewer__image-button deck-card-tilt${protectedMediaClass}" type="button" data-featured-card-image="${escapeHtml(activeCard.id)}" data-tilt-card aria-label="Expand ${escapeHtml(activeCard.name)}"${protectedMediaAttrs}>
           <span class="deck-viewer__image-clip">
             <img
-              class="deck-viewer__image"
+              class="deck-viewer__image${activeCardImageClass}"
               src="${escapeHtml(activeCard.image)}"
               alt="${escapeHtml(activeCard.name)}"
               width="${DECK_CARD_IMAGE_WIDTH}"
@@ -1430,7 +1472,7 @@ function renderDeckGallery(collectionId) {
 
         <div class="deck-viewer__content">
           <p class="deck-viewer__deck-label">${escapeHtml(collection.title || collection.name || "Astral Veil")}</p>
-          <p class="deck-viewer__arcana-label">Major Arcana</p>
+          <p class="deck-viewer__arcana-label">${escapeHtml(collection.cardViewerLabel || "Major Arcana")}</p>
           <h2>${escapeHtml(activeCard.name)}</h2>
           <p>${escapeHtml(cardDescription)}</p>
           ${renderDeckKeywords(activeCard)}
@@ -1448,11 +1490,12 @@ function renderDeckGallery(collectionId) {
               (card, index) => {
                 const shouldLoadThumbnail =
                   index <= 11 || Math.abs(index - activeCardIndex) <= 6;
+                const cardImageClass = isFullDeckFoolCard(collection, card) ? " deck-card-image--full-frame" : "";
 
                 return `
                 <button class="deck-thumbnail${index === activeCardIndex ? " is-active" : ""}${protectedMediaClass}" type="button" data-card-index="${index}" aria-label="Show ${escapeHtml(card.name)}" aria-current="${index === activeCardIndex ? "true" : "false"}"${protectedMediaAttrs}>
                   <span class="deck-thumbnail__image-clip">
-                    <img
+                    <img${cardImageClass ? ` class="${cardImageClass.trim()}"` : ""}
                       src="${shouldLoadThumbnail ? escapeHtml(card.image) : thumbnailPlaceholder}"
                       ${shouldLoadThumbnail ? "" : `data-thumbnail-src="${escapeHtml(card.image)}"`}
                       alt=""
@@ -1530,10 +1573,12 @@ function openDeckLightbox(cardId) {
 
   lightboxCardImage.src = card.image;
   lightboxCardImage.alt = card.name;
+  lightboxCardImage.classList.toggle("deck-card-image--full-frame", isFullDeckFoolCard(activeCollection, card));
   lightboxCardImage.dataset.imagePreviewTitle = card.name;
   lightboxCardImage.dataset.imagePreviewCaption = getCardDescription(card);
   lightboxCardImage.draggable = !isBloodMoonCollection(activeCollection);
   lightboxCardImage.classList.toggle("protected-media", isBloodMoonCollection(activeCollection));
+  deckLightbox.classList.toggle("deck-lightbox--bloodmoon", isBloodMoonCollection(activeCollection));
   if (isBloodMoonCollection(activeCollection)) {
     lightboxCardImage.setAttribute("data-protected-media", "true");
   } else {
@@ -1552,6 +1597,7 @@ function closeDeckLightbox() {
   }
 
   deckLightbox.classList.remove("is-open");
+  deckLightbox.classList.remove("deck-lightbox--bloodmoon");
   deckLightbox.setAttribute("aria-hidden", "true");
   document.body.classList.remove("is-lightbox-open");
 }

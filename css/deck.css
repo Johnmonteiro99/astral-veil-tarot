@@ -195,7 +195,7 @@ body.blood-moon-mode .deck-hero {
   color: var(--deck-ritual-text);
   background-image:
     linear-gradient(90deg, rgba(5, 8, 10, 0.86), rgba(5, 8, 10, 0.5) 47%, rgba(5, 8, 10, 0.12)),
-    url("../assets/images/concepts-ideas/deck-page-card.webp");
+    url("../assets/images/concepts/deck-page-card.webp");
   background-position: center;
   background-size: cover;
   box-shadow:
@@ -292,7 +292,7 @@ body.blood-moon-mode .deck-ritual-feature {
   border-color: color-mix(in srgb, var(--accent-color, #d41f3a) 70%, rgba(255, 240, 223, 0.16));
   background-image:
     linear-gradient(90deg, rgba(10, 0, 3, 0.9), rgba(10, 0, 3, 0.52) 48%, rgba(10, 0, 3, 0.16)),
-    url("../assets/images/concepts-ideas/bloodmoon-deck-page-card.webp");
+    url("../assets/images/concepts/bloodmoon-deck-page-card.webp");
   box-shadow:
     0 26px 78px rgba(0, 0, 0, 0.48),
     0 0 38px color-mix(in srgb, var(--accent-glow, rgba(255, 35, 65, 0.45)) 66%, transparent),
@@ -322,14 +322,14 @@ body.blood-moon-mode .deck-ritual-feature {
     margin-bottom: 1.7rem;
     background-image:
       linear-gradient(180deg, rgba(5, 8, 10, 0.82), rgba(5, 8, 10, 0.5) 56%, rgba(5, 8, 10, 0.2)),
-      url("../assets/images/concepts-ideas/deck-page-card.webp");
+      url("../assets/images/concepts/deck-page-card.webp");
     background-position: 62% center;
   }
 
   body.blood-moon-mode .deck-ritual-feature {
     background-image:
       linear-gradient(180deg, rgba(10, 0, 3, 0.86), rgba(10, 0, 3, 0.52) 58%, rgba(10, 0, 3, 0.22)),
-      url("../assets/images/concepts-ideas/bloodmoon-deck-page-card.webp");
+      url("../assets/images/concepts/bloodmoon-deck-page-card.webp");
     background-position: 62% center;
   }
 
@@ -589,7 +589,7 @@ body.blood-moon-mode .deck-ritual-feature {
   --deck-card-panel: rgba(44, 30, 16, 0.74);
   --deck-card-text: #f5e9d5;
   --deck-card-muted: rgba(225, 202, 170, 0.86);
-  --deck-collection-cover: url("/assets/images/background _images/dreams_deck_bg.png");
+  --deck-collection-cover: url("/assets/images/backgrounds/dreams_deck_bg.png");
   border-color: color-mix(in srgb, var(--deck-card-accent-strong) 72%, rgba(255, 255, 255, 0.18));
   color: var(--deck-card-text);
   background:
@@ -601,7 +601,7 @@ body.blood-moon-mode .deck-ritual-feature {
 
 .deck-collection-card--dreambound .deck-collection-card__preview img {
   border: 1px solid color-mix(in srgb, var(--deck-card-accent) 44%, rgba(255, 255, 255, 0.18));
-  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.38);
+  box-shadow: none;
 }
 
 .deck-collection-card--dreambound .deck-collection-card__badge {
@@ -997,6 +997,10 @@ body.blood-moon-mode .deck-ritual-feature {
   --deck-viewer-panel: var(--navbar-bg, rgba(255, 255, 255, 0.055));
   --deck-viewer-text: var(--theme-text-main, var(--navbar-text, #fff7e8));
   --deck-viewer-muted: var(--theme-text-muted, var(--navbar-muted, rgba(232, 223, 247, 0.78)));
+  --keyword-bg: rgba(12, 9, 28, 0.96);
+  --keyword-border: rgba(147, 119, 218, 0.5);
+  --keyword-text: #eee7ff;
+  --keyword-inner-glow: rgba(105, 74, 174, 0.12);
   position: relative;
   display: grid;
   gap: clamp(18px, 2.5vw, 28px);
@@ -1013,6 +1017,28 @@ body.blood-moon-mode .deck-ritual-feature {
   isolation: auto;
 }
 
+body.moon-mode .deck-viewer {
+  --keyword-bg: rgba(12, 9, 28, 0.96);
+  --keyword-border: rgba(147, 119, 218, 0.5);
+  --keyword-text: #eee7ff;
+  --keyword-inner-glow: rgba(105, 74, 174, 0.12);
+}
+
+body.sun-mode .deck-viewer {
+  --keyword-bg: rgba(16, 26, 20, 0.96);
+  --keyword-border: rgba(213, 176, 87, 0.52);
+  --keyword-text: #fff5d4;
+  --keyword-inner-glow: rgba(164, 118, 39, 0.12);
+}
+
+body.blood-moon-mode .deck-viewer,
+.deck-detail--bloodmoon {
+  --keyword-bg: rgba(28, 4, 10, 0.96);
+  --keyword-border: rgba(232, 66, 101, 0.55);
+  --keyword-text: #ffe7ec;
+  --keyword-inner-glow: rgba(164, 24, 55, 0.12);
+}
+
 .deck-viewer::before {
   content: none;
 }
@@ -1021,6 +1047,23 @@ body.blood-moon-mode .deck-ritual-feature {
   --deck-viewer-accent: #d5b351;
   --deck-viewer-accent-2: #7eb64a;
   --deck-viewer-glow: rgba(126, 182, 74, 0.38);
+}
+
+.deck-detail--veilrise {
+  --deck-viewer-accent: #e5bd62;
+  --deck-viewer-accent-2: #8ecbff;
+  --deck-viewer-glow: rgba(229, 189, 98, 0.36);
+}
+
+.deck-detail--veilrise .deck-viewer__image-clip {
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.5),
+    0 0 32px rgba(229, 189, 98, 0.48),
+    0 0 68px rgba(142, 203, 255, 0.34);
+}
+
+.deck-detail--veilrise .deck-viewer__deck-label {
+  color: #9ed8ff;
 }
 
 .deck-detail--bloodmoon {
@@ -1047,6 +1090,7 @@ body.blood-moon-mode .deck-ritual-feature {
   --deck-viewer-glow: rgba(101, 247, 255, 0.34);
 }
 
+.deck-detail--bloodmoon,
 .deck-viewer--bloodMoon {
   --deck-viewer-panel: var(--panel-bg, rgba(32, 3, 7, 0.78));
 }
@@ -1208,6 +1252,13 @@ body.blood-moon-mode .deck-ritual-feature {
   background: transparent;
 }
 
+.deck-viewer__image.deck-card-image--full-frame,
+.deck-thumbnail img.deck-card-image--full-frame {
+  object-fit: contain;
+  object-position: center;
+  background: rgba(5, 4, 9, 0.72);
+}
+
 .deck-viewer__image-button .deck-card-shine {
   border-radius: var(--tarot-card-radius);
   background:
@@ -1283,6 +1334,13 @@ body.blood-moon-mode .deck-ritual-feature {
   text-shadow: 0 0 28px rgba(255, 255, 255, 0.08);
 }
 
+.deck-detail--bloodmoon .deck-viewer__content h2 {
+  color: color-mix(in srgb, var(--deck-viewer-accent) 82%, #fff0f2);
+  text-shadow:
+    0 0 18px color-mix(in srgb, var(--deck-viewer-glow) 74%, transparent),
+    0 0 42px color-mix(in srgb, var(--deck-viewer-accent-2) 40%, transparent);
+}
+
 .deck-viewer__content > p:not(.deck-viewer__counter):not(.deck-viewer__deck-label):not(.deck-viewer__arcana-label) {
   max-width: 54ch;
   margin: 0;
@@ -1302,17 +1360,22 @@ body.blood-moon-mode .deck-ritual-feature {
 }
 
 .deck-viewer__keywords li {
-  border: 1px solid color-mix(in srgb, var(--theme-divider-accent, var(--deck-viewer-accent)) 32%, rgba(255, 255, 255, 0.14));
+  border: 1px solid var(--keyword-border);
   border-radius: 999px;
   padding: 0.44rem 0.88rem;
-  color: var(--deck-viewer-text);
+  color: var(--keyword-text);
   background:
-    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--deck-viewer-glow) 30%, transparent), transparent 70%),
-    rgba(255, 255, 255, 0.055);
+    radial-gradient(circle at 50% 0%, var(--keyword-inner-glow), transparent 72%),
+    var(--keyword-bg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
   font-size: 0.82rem;
   font-weight: 700;
   line-height: 1;
   text-transform: capitalize;
+}
+
+.deck-viewer__keywords li:hover {
+  border-color: color-mix(in srgb, var(--keyword-border) 84%, white);
 }
 
 .deck-viewer__meaning-grid {
@@ -1729,6 +1792,8 @@ body.is-deck-info-open {
 ================================ */
 
 .deck-lightbox {
+  --deck-lightbox-accent: var(--deck-viewer-accent, var(--navbar-glow));
+  --deck-lightbox-glow: var(--deck-viewer-glow, var(--navbar-glow));
   position: fixed;
   inset: 0;
   z-index: 40;
@@ -1738,6 +1803,11 @@ body.is-deck-info-open {
   opacity: 0;
   pointer-events: none;
   transition: opacity 250ms ease;
+}
+
+.deck-lightbox--bloodmoon {
+  --deck-lightbox-accent: #ff405d;
+  --deck-lightbox-glow: rgba(255, 35, 65, 0.38);
 }
 
 .deck-lightbox.is-open {
@@ -1799,7 +1869,7 @@ body.is-deck-info-open {
 
 .deck-lightbox__close:hover,
 .deck-lightbox__close:focus-visible {
-  box-shadow: 0 0 22px var(--navbar-glow);
+  box-shadow: 0 0 22px var(--deck-lightbox-glow);
   transform: translateY(-1px);
 }
 
@@ -1813,10 +1883,18 @@ body.is-deck-info-open {
   clip-path: inset(0 round var(--tarot-card-radius));
   object-fit: contain;
   background: transparent;
+  box-shadow: 0 0 34px color-mix(in srgb, var(--deck-lightbox-glow) 78%, transparent);
 }
 
 .deck-lightbox__content {
   display: none;
+}
+
+.deck-lightbox--bloodmoon .deck-lightbox__content h2 {
+  color: color-mix(in srgb, var(--deck-lightbox-accent) 84%, #fff0f2);
+  text-shadow:
+    0 0 18px color-mix(in srgb, var(--deck-lightbox-glow) 72%, transparent),
+    0 0 40px color-mix(in srgb, var(--deck-lightbox-accent) 34%, transparent);
 }
 
 .deck-info-modal {
@@ -2142,6 +2220,13 @@ body.is-deck-info-open {
   --deck-modal-accent-2: #8fa36a;
   --deck-modal-glow: rgba(136, 158, 93, 0.2);
   --deck-modal-panel: rgba(13, 28, 18, 0.94);
+}
+
+.deck-modal--veilrise {
+  --deck-modal-accent: #9ed8ff;
+  --deck-modal-accent-2: #c8ebff;
+  --deck-modal-glow: rgba(142, 203, 255, 0.24);
+  --deck-modal-panel: rgba(10, 22, 42, 0.94);
 }
 
 .deck-modal--dreambound {
@@ -2706,9 +2791,7 @@ body.is-deck-info-open {
 }
 
 .deck-focused-carousel {
-  --deck-carousel-preview-shadow:
-    0 18px 46px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --deck-carousel-preview-shadow: none;
   --deck-carousel-nav-shadow: 0 0 18px color-mix(in srgb, var(--theme-divider-accent) 16%, transparent);
   --deck-carousel-nav-hover-shadow: 0 0 24px color-mix(in srgb, var(--theme-divider-accent) 24%, transparent);
   --deck-carousel-focus-shadow:
@@ -3138,7 +3221,7 @@ body.is-deck-info-open {
   background:
     linear-gradient(180deg, rgba(7, 18, 12, 0.08), rgba(7, 18, 12, 0.34)),
     linear-gradient(160deg, rgba(217, 189, 120, 0.06), rgba(0, 0, 0, 0.16) 56%, rgba(0, 0, 0, 0.3)),
-    url("../assets/images/background _images/original_deck_bg.png") center / cover no-repeat,
+    url("../assets/images/backgrounds/original_deck_bg.png") center / cover no-repeat,
     var(--deck-card-panel);
 }
 
@@ -3160,7 +3243,34 @@ body.is-deck-info-open {
   background:
     linear-gradient(180deg, rgba(10, 0, 4, 0.1), rgba(10, 0, 4, 0.38)),
     linear-gradient(160deg, rgba(255, 80, 100, 0.06), rgba(0, 0, 0, 0.18) 56%, rgba(0, 0, 0, 0.34)),
-    url("../assets/images/background _images/bloodmoon_deck_bg.png") center / cover no-repeat,
+    url("../assets/images/backgrounds/bloodmoon_deck_bg.png") center / cover no-repeat,
+    var(--deck-card-panel);
+}
+
+.deck-collection-card--astral-veil-tarot {
+  --deck-card-accent: #d7be82;
+  --deck-card-accent-strong: #75613f;
+  --deck-card-accent-soft: rgba(215, 190, 130, 0.28);
+  --deck-card-glow: rgba(215, 190, 130, 0.24);
+  --deck-card-panel: rgba(17, 24, 31, 0.76);
+  --deck-collection-cover: url("/assets/images/veilrise-deck-bg.png");
+  background:
+    linear-gradient(180deg, rgba(5, 12, 18, 0.1), rgba(5, 12, 18, 0.42)),
+    linear-gradient(135deg, rgba(215, 190, 130, 0.1), rgba(0, 0, 0, 0.18) 56%, rgba(0, 0, 0, 0.38)),
+    var(--deck-collection-cover) center / cover no-repeat,
+    var(--deck-card-panel);
+}
+
+article.deck-collection-card[data-deck="astralVeilCrimson"] {
+  --deck-card-accent: #d45a6b;
+  --deck-card-accent-strong: #852d3a;
+  --deck-card-accent-soft: rgba(212, 90, 107, 0.3);
+  --deck-card-glow: rgba(212, 90, 107, 0.28);
+  --deck-card-panel: rgba(29, 6, 11, 0.8);
+  background:
+    linear-gradient(180deg, rgba(15, 1, 5, 0.12), rgba(15, 1, 5, 0.44)),
+    linear-gradient(135deg, rgba(212, 90, 107, 0.11), rgba(0, 0, 0, 0.18) 56%, rgba(0, 0, 0, 0.4)),
+    url("/assets/images/veilfall-deck-bg.png") center / cover no-repeat,
     var(--deck-card-panel);
 }
 
@@ -3181,7 +3291,7 @@ body.is-deck-info-open {
   --deck-card-panel: rgba(44, 30, 16, 0.74);
   --deck-card-text: #f5e9d5;
   --deck-card-muted: rgba(225, 202, 170, 0.86);
-  --deck-collection-cover: url("/assets/images/background _images/dreams_deck_bg.png");
+  --deck-collection-cover: url("/assets/images/backgrounds/dreams_deck_bg.png");
   background:
     radial-gradient(circle at 16% 12%, rgba(255, 232, 191, 0.22), transparent 42%),
     linear-gradient(160deg, rgba(216, 180, 111, 0.08), rgba(0, 0, 0, 0.18) 56%, rgba(0, 0, 0, 0.28)),
@@ -3217,7 +3327,7 @@ body.is-deck-info-open {
   background:
     linear-gradient(180deg, rgba(8, 12, 30, 0.08), rgba(8, 12, 30, 0.34)),
     linear-gradient(160deg, rgba(141, 176, 255, 0.12), rgba(0, 0, 0, 0.16) 56%, rgba(0, 0, 0, 0.3)),
-    url("../assets/images/background _images/moonveil_card_bg.png") center / cover no-repeat,
+    url("../assets/images/backgrounds/moonveil_card_bg.png") center / cover no-repeat,
     var(--deck-card-panel);
 }
 
@@ -3392,8 +3502,7 @@ body.is-deck-info-open {
   max-height: 282px;
   border-radius: 14px;
   border: 1px solid color-mix(in srgb, var(--deck-card-accent) 44%, rgba(255, 255, 255, 0.14));
-  box-shadow:
-    0 18px 38px rgba(0, 0, 0, 0.38);
+  box-shadow: none;
   filter: saturate(1.08) contrast(1.04);
   transform: scale(1);
   transition:

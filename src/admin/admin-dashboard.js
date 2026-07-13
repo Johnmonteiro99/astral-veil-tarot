@@ -47,7 +47,7 @@ const galleryStorageBucket = 'gallery-records';
 const galleryUploadFolders = ['featured', 'portraits', 'places', 'symbols', 'maps', 'anomalies', 'unknown', 'recovered', 'fragments'];
 const NOCTIS_DOCUMENTS_PAGE_SIZE = 10;
 const ADMIN_USERS_PAGE_SIZE = 10;
-const noctisDocumentTypes = ['journal', 'manuscript', 'letter', 'cipher', 'fragment', 'veil_lore', 'unstable_text', 'blood_moon', 'other'];
+const noctisDocumentTypes = ['journal', 'journal_fragment', 'manuscript', 'letter', 'cipher', 'fragment', 'veil_lore', 'unstable_text', 'blood_moon', 'blood_moon_record', 'other'];
 const noctisDocumentModes = ['blood_moon', 'moon', 'sun', 'blue_moon', 'all'];
 
 const accessMessage = document.querySelector('[data-access-message]');
@@ -660,7 +660,6 @@ function normalizeNoctisDocumentType(value) {
   const normalized = String(value || 'journal').trim().toLowerCase();
   const typeMap = {
     journals: 'journal',
-    journal_fragment: 'journal',
     recovered_journal: 'journal',
     manuscripts: 'manuscript',
     letters: 'letter',
@@ -670,7 +669,6 @@ function normalizeNoctisDocumentType(value) {
     veil: 'veil_lore',
     the_veil: 'veil_lore',
     unstable_texts: 'unstable_text',
-    blood_moon_record: 'blood_moon',
     bloodmoon: 'blood_moon',
   };
   const nextType = typeMap[normalized] || normalized;

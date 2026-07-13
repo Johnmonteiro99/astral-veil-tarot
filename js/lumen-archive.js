@@ -1,4 +1,4 @@
-const LUMEN_ROOM_IMAGE_BASE = "assets/images/lumen_archive_rooms/";
+const LUMEN_ROOM_IMAGE_BASE = "assets/images/archive/lumen/rooms/";
 const LUMEN_ROOM_IMAGES = {
   arrivalHero: "dawn_atium.png",
   reflectionHero: "reflection_pool.png",
@@ -554,6 +554,8 @@ const lumenReflectionIndexes = {};
 let lumenImageLightbox = null;
 let lumenImageLightboxImage = null;
 let lumenImageLightboxTitle = null;
+let lumenArrivalContentModal = null;
+let lumenArrivalContentReturnTarget = null;
 let lumenImageLightboxReturnTarget = null;
 let lumenRailLoopResetTimeout = null;
 let isLumenRailLoopListenerReady = false;
@@ -923,7 +925,7 @@ function renderLumenViewer() {
           <div class="sanctuary-room-showcase__visual">
             <figure class="sanctuary-portal-frame sanctuary-portal-frame--${escapeLumenHtml(sanctuary.id)}">
               <button class="sanctuary-portal-image-button" type="button" data-lumen-image-open data-lumen-image-src="${escapeLumenHtml(sanctuary.image)}" data-lumen-image-alt="${escapeLumenHtml(`${sanctuary.title} sanctuary artwork`)}" data-lumen-image-title="${escapeLumenHtml(sanctuary.title)}" aria-label="${escapeLumenHtml(`View ${sanctuary.title} image larger`)}">
-                <img class="sanctuary-portal-image sanctuary-room-showcase__image" src="${escapeLumenHtml(sanctuary.image)}" alt="${escapeLumenHtml(sanctuary.title)} sanctuary artwork" width="${LUMEN_SANCTUARY_IMAGE_WIDTH}" height="${LUMEN_SANCTUARY_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" onerror="this.closest('.sanctuary-portal-frame').classList.add('is-missing'); this.closest('.sanctuary-portal-image-button').remove();" />
+                <img class="sanctuary-portal-image sanctuary-room-showcase__image" src="${escapeLumenHtml(sanctuary.image)}" alt="${escapeLumenHtml(sanctuary.title)} sanctuary artwork" width="${LUMEN_SANCTUARY_IMAGE_WIDTH}" height="${LUMEN_SANCTUARY_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" data-lumen-image-error />
               </button>
               <figcaption aria-hidden="true">
                 <span>${escapeLumenHtml(getLumenSanctuaryInitial(sanctuary))}</span>
@@ -971,6 +973,10 @@ function renderLumenViewer() {
       </div>
     </div>
   `;
+  lumenViewer.querySelectorAll('[data-lumen-image-error]').forEach((image) => image.addEventListener('error', () => {
+    image.closest('.sanctuary-portal-frame')?.classList.add('is-missing');
+    image.closest('.sanctuary-portal-image-button')?.remove();
+  }, { once: true }));
 
   initializeLumenPortalViewer();
 }
@@ -2146,6 +2152,93 @@ function renderLumenSanctuaryDashboardRoom(sanctuary) {
   scheduleLumenSidebarQuoteAlignment();
 }
 
+function closeLumenArrivalContentModal() {
+  if (!lumenArrivalContentModal) {
+    return;
+  }
+
+  lumenArrivalContentModal.hidden = true;
+  document.body.classList.remove("lumen-content-modal-open");
+  lumenArrivalContentReturnTarget?.focus();
+  lumenArrivalContentReturnTarget = null;
+}
+
+function ensureLumenArrivalContentModal() {
+  if (lumenArrivalContentModal) {
+    return lumenArrivalContentModal;
+  }
+
+  const modal = document.createElement("div");
+  modal.className = "lumen-content-modal";
+  modal.hidden = true;
+  modal.innerHTML = `
+    <div class="lumen-content-modal__backdrop" data-lumen-content-modal-close></div>
+    <section class="lumen-content-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="lumen-content-modal-title" tabindex="-1">
+      <button class="lumen-content-modal__close" type="button" data-lumen-content-modal-close aria-label="Close full guidance">×</button>
+      <p class="lumen-room-panel__label">Lumen Archive</p>
+      <h2 id="lumen-content-modal-title"></h2>
+      <div class="lumen-content-modal__body"></div>
+    </section>`;
+  document.body.append(modal);
+  lumenArrivalContentModal = modal;
+
+  modal.addEventListener("click", (event) => {
+    if (event.target.closest("[data-lumen-content-modal-close]")) {
+      closeLumenArrivalContentModal();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (lumenArrivalContentModal?.hidden) {
+      return;
+    }
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeLumenArrivalContentModal();
+      return;
+    }
+
+    if (event.key === "Tab") {
+      const focusable = Array.from(lumenArrivalContentModal.querySelectorAll("button, [href], [tabindex]:not([tabindex='-1'])"));
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (!first || !last) {
+        return;
+      }
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  return modal;
+}
+
+function openLumenArrivalContentModal(trigger) {
+  const panel = trigger.closest(".lumen-arrival-panel");
+  const title = panel?.querySelector(".lumen-room-panel__label")?.textContent?.trim();
+  const content = panel?.querySelector(".lumen-arrival-panel__body")?.innerHTML;
+
+  if (!title || !content) {
+    return;
+  }
+
+  const modal = ensureLumenArrivalContentModal();
+  modal.querySelector("#lumen-content-modal-title").textContent = title;
+  modal.querySelector(".lumen-content-modal__body").innerHTML = content;
+  lumenArrivalContentReturnTarget = trigger;
+  modal.hidden = false;
+  document.body.classList.add("lumen-content-modal-open");
+  modal.querySelector(".lumen-content-modal__close").focus();
+}
+
 function initializeLumenDashboard() {
   if (!lumenDashboard) {
     return;
@@ -2162,6 +2255,7 @@ function initializeLumenDashboard() {
   });
 
   lumenDashboard.addEventListener("click", (event) => {
+    const arrivalReadMoreButton = event.target.closest("[data-lumen-arrival-read-more]");
     const roomButton = event.target.closest("[data-lumen-dashboard-room]");
     const exploreButton = event.target.closest("[data-lumen-arrival-explore]");
     const scrollButton = event.target.closest("[data-lumen-open-scroll]");
@@ -2171,6 +2265,11 @@ function initializeLumenDashboard() {
     const sanctuaryCardNextButton = event.target.closest("[data-lumen-sanctuary-card-next]");
     const arrivalIntroPrevButton = event.target.closest("[data-lumen-arrival-intro-prev]");
     const arrivalIntroNextButton = event.target.closest("[data-lumen-arrival-intro-next]");
+
+    if (arrivalReadMoreButton) {
+      openLumenArrivalContentModal(arrivalReadMoreButton);
+      return;
+    }
 
     if (exploreButton) {
       lumenArrivalPreviews?.scrollIntoView({

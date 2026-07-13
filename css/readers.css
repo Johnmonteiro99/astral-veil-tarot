@@ -881,6 +881,24 @@ body.blood-moon-mode .veilwalker-selector__closing p {
   }
 }
 
+/* Keep the Veilwalker feature content-led on short desktop screens. */
+@media (min-width: 769px) and (max-height: 800px) {
+  .veilwalker-feature {
+    align-items: start;
+  }
+
+  .veilwalker-feature__image-wrap,
+  .veilwalker-feature__image {
+    height: auto;
+    max-height: none;
+  }
+
+  .veilwalker-feature__image {
+    min-height: 0;
+    aspect-ratio: 4 / 5;
+  }
+}
+
 /* ================================
    Veilwalker Grid Cards
 ================================ */

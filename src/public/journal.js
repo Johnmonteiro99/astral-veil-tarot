@@ -1,6 +1,7 @@
 import { getBannedAccountMessage, getCurrentUserWithProfile, isBannedUser, signOut } from '../services/auth.js';
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
 import { checkGalleryFragmentUnlock } from './progression.js';
+import { getGuidedReflectionQuestionNumber } from './journal-guided-reflection.js';
 
 const returnToStorageKey = 'astralVeilReturnTo';
 const shell = document.querySelector('[data-journal-shell]');
@@ -22,6 +23,7 @@ const mobileMoodTrigger = document.querySelector('[data-mobile-mood-trigger]');
 const mobileMoodLabel = document.querySelector('[data-mobile-mood-label]');
 const mobileMoodMenu = document.querySelector('[data-mobile-mood-menu]');
 const tagWrap = document.querySelector('[data-journal-tags]');
+let tagWrapClickListeners;
 const guidedHelper = document.querySelector('[data-guided-helper]');
 const guidedToggle = document.querySelector('[data-guided-toggle]');
 const guidedSection = document.querySelector('[data-guided-section]');
@@ -840,7 +842,9 @@ function renderTags(selectedTags = []) {
     }
   };
 
-  tagWrap.onclick = (event) => {
+  tagWrapClickListeners?.abort();
+  tagWrapClickListeners = new AbortController();
+  tagWrap.addEventListener('click', (event) => {
     const toggleButton = event.target.closest('[data-journal-tags-toggle]');
 
     if (!toggleButton) {
@@ -849,7 +853,7 @@ function renderTags(selectedTags = []) {
 
     const isOpen = tagWrap.classList.toggle('is-open');
     toggleButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  };
+  }, { signal: tagWrapClickListeners.signal });
   tagWrap.querySelector('[data-journal-tags-options]')?.addEventListener('change', updateToggleLabel);
 }
 
@@ -1450,14 +1454,10 @@ function formatGuidedReflectionText(answers) {
   ].join('\n').trim();
 }
 
-function toRomanNumeral(index) {
-  return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][index] || `${index + 1}`;
-}
-
 function formatGuidedQuestionBlock(questions) {
   const heading = isBloodMoonMode() ? 'Shadow Reflection' : 'Guided Reflection';
   const questionLines = questions.flatMap((question, index) => [
-    `${toRomanNumeral(index)}. ${question}`,
+    `${getGuidedReflectionQuestionNumber(index)}. ${question}`,
     'Answer:',
     '',
   ]);

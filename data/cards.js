@@ -14,7 +14,7 @@ const majorArcanaCards = [
     themes: ["beginning", "risk", "freedom", "unknown"],
     archetype: "The Wanderer",
     energy: "positive",
-    image: "assets/images/cards/original/the-fool.webp",
+    image: "assets/images/cards/legacy/original/the-fool.webp",
     bloodMoon: {
       shortMeaning: "A step into the unknown becomes a step toward the Veil.",
       summary: "Beneath the Blood Moon, The Fool is the moment before the hidden world notices your movement. Every leap carries a shadow, and every doorway asks what part of you is willing to disappear.",
@@ -35,7 +35,7 @@ const majorArcanaCards = [
     themes: ["manifestation", "skill", "intention", "power"],
     archetype: "The Weaver",
     energy: "positive",
-    image: "assets/images/cards/original/the-magician.webp",
+    image: "assets/images/cards/legacy/original/the-magician.webp",
     bloodMoon: {
       shortMeaning: "Intention becomes ritual under crimson light.",
       summary: "Under the Blood Moon, The Magician works with forbidden fire, old symbols, and forces that answer only precise desire. Power is available, but it listens closely to motive.",
@@ -56,7 +56,7 @@ const majorArcanaCards = [
     themes: ["intuition", "mystery", "secrets", "wisdom"],
     archetype: "The Oracle",
     energy: "mysterious",
-    image: "assets/images/cards/original/high-priestess.webp",
+    image: "assets/images/cards/legacy/original/high-priestess.webp",
     bloodMoon: {
       shortMeaning: "A secret behind the Veil begins breathing.",
       summary: "Beneath the Blood Moon, The High Priestess guards the door where old myths, spirits, and hidden entities whisper through symbols. The truth is present, but it may not arrive in a human shape.",
@@ -77,7 +77,7 @@ const majorArcanaCards = [
     themes: ["creation", "nurture", "abundance", "body"],
     archetype: "The Garden",
     energy: "positive",
-    image: "assets/images/cards/original/the-empress.webp",
+    image: "assets/images/cards/legacy/original/the-empress.webp",
     bloodMoon: {
       shortMeaning: "The dark garden blooms with beautiful warnings.",
       summary: "Under the Blood Moon, The Empress is fertile shadow: folklore forests, hungry roots, and the strange life that grows where grief is buried. Creation asks to be fed with truth, not innocence.",
@@ -98,7 +98,7 @@ const majorArcanaCards = [
     themes: ["structure", "authority", "boundaries", "discipline"],
     archetype: "The Sovereign",
     energy: "balanced",
-    image: "assets/images/cards/original/the-emperor.webp",
+    image: "assets/images/cards/legacy/original/the-emperor.webp",
     bloodMoon: {
       shortMeaning: "A throne of oath and bone demands honest rule.",
       summary: "Beneath the Blood Moon, The Emperor guards a haunted kingdom of laws, bloodlines, and old bargains. Order can protect you, but fear disguised as authority becomes a fortress with no door.",
@@ -119,7 +119,7 @@ const majorArcanaCards = [
     themes: ["tradition", "belief", "learning", "ritual"],
     archetype: "The Keeper",
     energy: "neutral",
-    image: "assets/images/cards/original/the-hierophant.webp",
+    image: "assets/images/cards/legacy/original/the-hierophant.webp",
     bloodMoon: {
       shortMeaning: "The old rites wake and ask who taught you fear.",
       summary: "Under the Blood Moon, The Hierophant becomes a keeper of forbidden scripture, village warnings, ancestral rites, and doors sealed for a reason. Sacred knowledge is powerful, but obedience is not the same as truth.",
@@ -140,7 +140,7 @@ const majorArcanaCards = [
     themes: ["choice", "love", "alignment", "values"],
     archetype: "The Mirror",
     energy: "positive",
-    image: "assets/images/cards/original/the-lovers.webp",
+    image: "assets/images/cards/legacy/original/the-lovers.webp",
     bloodMoon: {
       shortMeaning: "Desire becomes a mirror with something behind it.",
       summary: "Beneath the Blood Moon, The Lovers reveals devotion, temptation, vampire hunger, and the old folklore truth that not every beautiful invitation is safe. Love shows both the bond and the shadow it awakens.",
@@ -161,7 +161,7 @@ const majorArcanaCards = [
     themes: ["movement", "willpower", "direction", "control"],
     archetype: "The Victor",
     energy: "transformative",
-    image: "assets/images/cards/original/the-chariot.webp",
+    image: "assets/images/cards/legacy/original/the-chariot.webp",
     bloodMoon: {
       shortMeaning: "The blood-lit road opens for the one who holds the reins.",
       summary: "Under the Blood Moon, The Chariot races through haunted roads, strange lights, and beasts of impulse pulling in opposite directions. Victory requires command of the inner creatures, not denial of them.",
@@ -182,7 +182,7 @@ const majorArcanaCards = [
     themes: ["courage", "compassion", "instinct", "resilience"],
     archetype: "The Tamer",
     energy: "balanced",
-    image: "assets/images/cards/original/strength.webp",
+    image: "assets/images/cards/legacy/original/strength.webp",
     bloodMoon: {
       shortMeaning: "The beast within lowers its head, but remembers everything.",
       summary: "Beneath the Blood Moon, Strength meets the wolf, the monster, and the feared self from old stories. The task is not to kill the beast, but to understand the wound that made it snarl.",
@@ -203,7 +203,7 @@ const majorArcanaCards = [
     themes: ["solitude", "wisdom", "search", "guidance"],
     archetype: "The Seeker",
     energy: "mysterious",
-    image: "assets/images/cards/original/the-hermit.webp",
+    image: "assets/images/cards/legacy/original/the-hermit.webp",
     bloodMoon: {
       shortMeaning: "A lone lantern burns where maps become unreliable.",
       summary: "Under the Blood Moon, The Hermit enters caves, abandoned towers, and places where folklore says not to look too long. Solitude can reveal hidden truth, but it can also become a locked room.",
@@ -224,7 +224,7 @@ const majorArcanaCards = [
     themes: ["change", "cycles", "fate", "pattern"],
     archetype: "The Turning Wheel",
     energy: "transformative",
-    image: "assets/images/cards/original/wheel-of-fortune.webp",
+    image: "assets/images/cards/legacy/original/wheel-of-fortune.webp",
     bloodMoon: {
       shortMeaning: "The wheel turns through omen, eclipse, and old consequence.",
       summary: "Beneath the Blood Moon, fortune feels less random and more like an ancient mechanism beneath the world. Strange coincidences, watchers, and returning myths point toward a pattern asking to be named.",
@@ -245,7 +245,7 @@ const majorArcanaCards = [
     themes: ["truth", "balance", "choice", "accountability"],
     archetype: "The Scales",
     energy: "balanced",
-    image: "assets/images/cards/original/justice.webp",
+    image: "assets/images/cards/legacy/original/justice.webp",
     bloodMoon: {
       shortMeaning: "The crimson scales weigh what was hidden.",
       summary: "Under the Blood Moon, Justice is the blade that cuts through glamour, false memory, secret pacts, and beautiful excuses. The Veil does not punish truth; it reveals what denial has cost.",
@@ -266,7 +266,7 @@ const majorArcanaCards = [
     themes: ["pause", "surrender", "perspective", "release"],
     archetype: "The Suspended One",
     energy: "neutral",
-    image: "assets/images/cards/original/the-hanged-man.webp",
+    image: "assets/images/cards/legacy/original/the-hanged-man.webp",
     bloodMoon: {
       shortMeaning: "Suspended beneath the red moon, the world finally turns honest.",
       summary: "Beneath the Blood Moon, The Hanged Man hangs between worlds, like a soul caught in a folk tale bargain. The inverted view reveals the door, but only if you stop bargaining with the sacrifice.",
@@ -287,7 +287,7 @@ const majorArcanaCards = [
     themes: ["ending", "transformation", "release", "rebirth"],
     archetype: "The Threshold",
     energy: "transformative",
-    image: "assets/images/cards/original/death.webp",
+    image: "assets/images/cards/legacy/original/death.webp",
     bloodMoon: {
       shortMeaning: "The black gate opens, and the old self cannot enter whole.",
       summary: "Under the Blood Moon, Death is a crossing of body, soul, and story. Folklore ferrymen, grave paths, and spirit doors gather around this card to ask what must be released before rebirth can begin.",
@@ -308,7 +308,7 @@ const majorArcanaCards = [
     themes: ["balance", "healing", "integration", "harmony"],
     archetype: "The Alchemist",
     energy: "balanced",
-    image: "assets/images/cards/original/temperance.webp",
+    image: "assets/images/cards/legacy/original/temperance.webp",
     bloodMoon: {
       shortMeaning: "Crimson and silver are poured into one forbidden cup.",
       summary: "Beneath the Blood Moon, Temperance becomes shadow alchemy: venom into medicine, grief into wisdom, myth into warning. Healing begins where opposing forces are allowed to speak without devouring each other.",
@@ -329,7 +329,7 @@ const majorArcanaCards = [
     themes: ["attachment", "shadow", "desire", "limitation"],
     archetype: "The Chain",
     energy: "challenging",
-    image: "assets/images/cards/original/the-devil.webp",
+    image: "assets/images/cards/legacy/original/the-devil.webp",
     bloodMoon: {
       shortMeaning: "The chain glitters beautifully under the eclipse.",
       summary: "Under the Blood Moon, The Devil speaks through vampires, bargains, beautiful traps, and the monsters humans create from hunger. This card asks you to face the contract beneath the craving.",
@@ -350,7 +350,7 @@ const majorArcanaCards = [
     themes: ["collapse", "revelation", "awakening", "truth"],
     archetype: "The Lightning",
     energy: "challenging",
-    image: "assets/images/cards/original/the-tower.webp",
+    image: "assets/images/cards/legacy/original/the-tower.webp",
     bloodMoon: {
       shortMeaning: "The Veil cracks, and the false sky falls.",
       summary: "Beneath the Blood Moon, The Tower is the moment the world secret leaks through the wall. Lightning exposes hidden entities, false histories, and realities that were never as solid as they seemed.",
@@ -371,7 +371,7 @@ const majorArcanaCards = [
     themes: ["hope", "healing", "guidance", "renewal"],
     archetype: "The Beacon",
     energy: "positive",
-    image: "assets/images/cards/original/the-star.webp",
+    image: "assets/images/cards/legacy/original/the-star.webp",
     bloodMoon: {
       shortMeaning: "A strange light survives above the crimson dark.",
       summary: "Under the Blood Moon, The Star becomes distant watchers, impossible lights in the sky, and guidance from beyond the known world. Hope is not soft tonight; it is a signal that something still sees you.",
@@ -392,7 +392,7 @@ const majorArcanaCards = [
     themes: ["illusion", "fear", "intuition", "unknown"],
     archetype: "The Dream",
     energy: "mysterious",
-    image: "assets/images/cards/original/the-moon.webp",
+    image: "assets/images/cards/legacy/original/the-moon.webp",
     bloodMoon: {
       shortMeaning: "Every shadow learns your name beneath the bleeding moon.",
       summary: "Beneath the Blood Moon, The Moon is the dream-path where spirits, folklore beings, hidden watchers, and half-remembered fears move behind perception. Intuition matters, but every shape must be questioned.",
@@ -413,7 +413,7 @@ const majorArcanaCards = [
     themes: ["clarity", "joy", "vitality", "truth"],
     archetype: "The Radiance",
     energy: "positive",
-    image: "assets/images/cards/original/the-sun.webp",
+    image: "assets/images/cards/legacy/original/the-sun.webp",
     bloodMoon: {
       shortMeaning: "A fierce light pierces the red veil.",
       summary: "Under the Blood Moon, The Sun is truth returning through crimson atmosphere, exposing what fear made monstrous. Even strange worlds and hidden beings cannot remain distorted forever in this light.",
@@ -434,7 +434,7 @@ const majorArcanaCards = [
     themes: ["awakening", "reckoning", "calling", "renewal"],
     archetype: "The Summoning",
     energy: "transformative",
-    image: "assets/images/cards/original/judgement.webp",
+    image: "assets/images/cards/legacy/original/judgement.webp",
     bloodMoon: {
       shortMeaning: "A red trumpet sounds from beyond the Veil.",
       summary: "Beneath the Blood Moon, Judgement is a summons from ancestors, spirits, buried selves, and forgotten promises. The soul is asked to answer for what it has become and what it still may choose.",
@@ -455,7 +455,7 @@ const majorArcanaCards = [
     themes: ["completion", "integration", "wholeness", "cycle"],
     archetype: "The Circle",
     energy: "positive",
-    image: "assets/images/cards/original/the-world.webp",
+    image: "assets/images/cards/legacy/original/the-world.webp",
     bloodMoon: {
       shortMeaning: "The circle closes, whole and haunted.",
       summary: "Under the Blood Moon, The World is the completed crossing: myth, shadow, strange knowledge, and every threshold carried as part of the crown. You do not return unchanged from the Veil.",
@@ -1160,7 +1160,7 @@ const bloodMoonDeck = {
     ...card,
     id: `blood-moon-${card.id}`,
     originalCardId: card.id,
-    image: `assets/images/cards/blood-moon/${bloodMoonCardImages[card.id]}`,
+    image: `assets/images/cards/legacy/blood-moon/${bloodMoonCardImages[card.id]}`,
     meaning: card.bloodMoon.shortMeaning,
     isBloodMoonCard: true
   }))
@@ -1173,7 +1173,7 @@ const moonveilDeck = {
     ...card,
     id: `moonveil-${card.id}`,
     originalCardId: card.id,
-    image: `assets/images/cards/moonveil/${moonveilCardImages[card.id] || card.image?.split("/").pop()}`,
+    image: `assets/images/cards/legacy/moonveil/${moonveilCardImages[card.id] || card.image?.split("/").pop()}`,
     meaning: card.shortMeaning
   }))
 };
@@ -1185,7 +1185,7 @@ const dreamboundDeck = {
     ...card,
     id: `dreambound-${card.id}`,
     originalCardId: card.id,
-    image: `assets/images/cards/dreamy/${dreamboundCardImages[card.id] || "dreams_card_back.png"}`
+    image: `assets/images/cards/legacy/dreamy/${dreamboundCardImages[card.id] || "dreams_card_back.png"}`
   }))
 };
 

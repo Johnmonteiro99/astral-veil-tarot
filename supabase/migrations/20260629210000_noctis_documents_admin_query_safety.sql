@@ -44,20 +44,20 @@ set
   title = coalesce(nullif(trim(title), ''), 'Untitled Document'),
   document_type = case
     when nullif(trim(document_type), '') is null then 'journal'
-    when lower(document_type) in ('journal_fragment', 'recovered_journal', 'journals') then 'journal'
+    when lower(document_type) in ('recovered_journal', 'journals') then 'journal'
     when lower(document_type) in ('manuscripts') then 'manuscript'
     when lower(document_type) in ('letters') then 'letter'
     when lower(document_type) in ('cryptic_codes', 'codes') then 'cipher'
     when lower(document_type) in ('fragments') then 'fragment'
     when lower(document_type) in ('veil', 'the_veil') then 'veil_lore'
     when lower(document_type) in ('unstable_texts') then 'unstable_text'
-    when lower(document_type) in ('blood_moon_record', 'bloodmoon') then 'blood_moon'
-    when lower(document_type) in ('journal', 'manuscript', 'letter', 'cipher', 'fragment', 'veil_lore', 'unstable_text', 'blood_moon', 'other') then lower(document_type)
+    when lower(document_type) in ('bloodmoon') then 'blood_moon'
+    when lower(document_type) in ('journal', 'journal_fragment', 'manuscript', 'letter', 'cipher', 'fragment', 'veil_lore', 'unstable_text', 'blood_moon', 'blood_moon_record', 'other') then lower(document_type)
     else 'other'
   end,
   author = coalesce(nullif(trim(author), ''), nullif(trim(attribution), '')),
   attribution = coalesce(nullif(trim(attribution), ''), nullif(trim(author), '')),
-  category = coalesce(nullif(trim(category), ''), case when lower(coalesce(document_type, '')) = 'journal' then 'journals' end),
+  category = coalesce(nullif(trim(category), ''), case when lower(coalesce(document_type, '')) in ('journal', 'journal_fragment') then 'journals' end),
   category_label = coalesce(nullif(trim(category_label), ''), nullif(trim(subtitle), ''), nullif(trim(category), '')),
   tags = coalesce(tags, '{}'),
   themes = coalesce(themes, '{}'),
@@ -69,7 +69,7 @@ set
   is_notable = coalesce(is_notable, false),
   is_blood_moon = coalesce(is_blood_moon, false)
     or lower(coalesce(mode, moon_phase, '')) in ('blood_moon', 'bloodmoon')
-    or lower(coalesce(document_type, '')) = 'blood_moon',
+    or lower(coalesce(document_type, '')) in ('blood_moon', 'blood_moon_record'),
   sort_order = coalesce(sort_order, 0),
   updated_at = coalesce(updated_at, now()),
   created_at = coalesce(created_at, now());

@@ -16,26 +16,6 @@ function getSessionStorage() {
   }
 }
 
-function profileHasAdminRole(profile) {
-  if (!profile) {
-    return false;
-  }
-
-  if (profile.is_admin === true) {
-    return true;
-  }
-
-  if (profile.role === 'admin') {
-    return true;
-  }
-
-  if (Array.isArray(profile.roles) && profile.roles.includes('admin')) {
-    return true;
-  }
-
-  return false;
-}
-
 const bannedAccountMessage =
   'This account has been restricted from using Astral Veil. If you believe this is a mistake, contact support@astralveil.world.';
 
@@ -226,10 +206,17 @@ export async function getCurrentUserWithProfile() {
 export async function isCurrentUserAdmin() {
   const { profile, error } = await getCurrentProfile();
 
+  if (error) {
+    return { isAdmin: false, profile, error };
+  }
+
+  const supabase = getSupabaseClient();
+  const { data: isAdmin, error: adminError } = await supabase.rpc('is_admin');
+
   return {
-    isAdmin: profileHasAdminRole(profile),
+    isAdmin: isAdmin === true,
     profile,
-    error,
+    error: adminError,
   };
 }
 

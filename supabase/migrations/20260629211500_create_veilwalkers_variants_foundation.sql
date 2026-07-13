@@ -4,46 +4,44 @@
 create extension if not exists pgcrypto;
 
 create table if not exists public.veilwalkers (
-  id uuid primary key default gen_random_uuid()
+  id uuid primary key default gen_random_uuid(),
+  veilwalker_key text not null unique,
+  zodiac_key text not null,
+  theme_mode text not null default 'standard',
+  form_key text not null default 'oracle',
+  display_name text not null,
+  element text not null default 'unknown',
+  is_active boolean not null default true,
+  sort_order integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 );
 
-alter table public.veilwalkers
-  add column if not exists slug text,
-  add column if not exists display_name text,
-  add column if not exists zodiac_sign text,
-  add column if not exists element text,
-  add column if not exists sort_order integer default 0,
-  add column if not exists is_active boolean default true,
-  add column if not exists created_at timestamptz default now(),
-  add column if not exists updated_at timestamptz default now();
-
-update public.veilwalkers
-set
-  slug = coalesce(
-    nullif(trim(slug), ''),
-    lower(regexp_replace(coalesce(nullif(trim(display_name), ''), id::text), '[^a-zA-Z0-9]+', '-', 'g'))
-  ),
-  display_name = coalesce(nullif(trim(display_name), ''), 'Unnamed Veilwalker'),
-  zodiac_sign = nullif(trim(zodiac_sign), ''),
-  element = nullif(trim(element), ''),
-  sort_order = coalesce(sort_order, 0),
-  is_active = coalesce(is_active, true),
-  created_at = coalesce(created_at, now()),
-  updated_at = coalesce(updated_at, now());
-
-alter table public.veilwalkers
-  alter column slug set not null,
-  alter column display_name set not null,
-  alter column sort_order set default 0,
-  alter column is_active set default true,
-  alter column created_at set default now(),
-  alter column updated_at set default now();
-
-create unique index if not exists veilwalkers_slug_unique_idx
-on public.veilwalkers (slug);
-
-create index if not exists veilwalkers_active_sort_idx
-on public.veilwalkers (is_active, sort_order, display_name);
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'veilwalkers'
+      and column_name = 'is_active'
+  ) and exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'veilwalkers'
+      and column_name = 'sort_order'
+  ) and exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'veilwalkers'
+      and column_name = 'display_name'
+  ) then
+    create index if not exists veilwalkers_active_sort_idx
+    on public.veilwalkers (is_active, sort_order, display_name);
+  end if;
+end $$;
 
 create table if not exists public.veilwalker_variants (
   id uuid primary key default gen_random_uuid(),
@@ -134,14 +132,58 @@ before update on public.veilwalker_variants
 for each row
 execute function public.set_updated_at();
 
-insert into public.veilwalkers (slug, display_name, zodiac_sign, element, sort_order, is_active)
-select 'zahira-veyra', 'Zahira Veyra', 'Aries', 'Fire', 0, true
-where not exists (
-  select 1 from public.veilwalkers where slug = 'zahira-veyra'
-);
+-- Verify the canonical columns (including sort_order) before seeding an
+-- existing table. This migration uses only veilwalker_key for identity.
+do $$
+declare
+  missing_columns text[];
+begin
+  select array_agg(expected.column_name order by expected.column_name)
+  into missing_columns
+  from unnest(array[
+    'veilwalker_key', 'zodiac_key', 'theme_mode', 'form_key',
+    'display_name', 'element', 'is_active', 'sort_order'
+  ]) as expected(column_name)
+  where not exists (
+    select 1
+    from information_schema.columns as column_info
+    where column_info.table_schema = 'public'
+      and column_info.table_name = 'veilwalkers'
+      and column_info.column_name = expected.column_name
+  );
+
+  if missing_columns is not null then
+    raise exception
+      'Cannot safely seed Zahira: public.veilwalkers is missing required columns: %',
+      array_to_string(missing_columns, ', ');
+  end if;
+end;
+$$;
+
+insert into public.veilwalkers (
+  veilwalker_key,
+  zodiac_key,
+  theme_mode,
+  form_key,
+  display_name,
+  element,
+  is_active,
+  sort_order
+)
+values (
+  'zahira-veyra',
+  'aries',
+  'standard',
+  'oracle',
+  'Zahira Veyra',
+  'fire',
+  true,
+  0
+)
+on conflict (veilwalker_key) do nothing;
 
 with zahira as (
-  select id from public.veilwalkers where slug = 'zahira-veyra' limit 1
+  select id from public.veilwalkers where veilwalker_key = 'zahira-veyra' limit 1
 )
 insert into public.veilwalker_variants (
   veilwalker_id,

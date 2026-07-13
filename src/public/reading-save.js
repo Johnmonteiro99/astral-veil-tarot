@@ -2,6 +2,7 @@ import { getBannedAccountMessage, requireAllowedAccount } from '../services/auth
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
 import { checkGalleryFragmentUnlock } from './progression.js';
 import { loadCurrentUserPreferences } from './user-preferences.js';
+import { getReadingDeckByKey, normalizeReadingDeckKey } from './reading-deck-resolver.js';
 
 const FREE_SAVED_READING_LIMIT = 25;
 
@@ -119,11 +120,16 @@ function renderSaveButton(container, readingKey) {
 }
 
 function buildReadingInsert(reading, userId) {
+  const deckKey = normalizeReadingDeckKey(reading.deck_key || reading.deck_id || reading.metadata?.deck?.id);
+  const deck = getReadingDeckByKey(deckKey);
+
   return {
     user_id: userId,
     reader_key: reading.reader_key || null,
     reader_name: reading.reader_name || null,
     mode_key: reading.mode_key || null,
+    deck_key: deckKey || null,
+    deck_name: reading.deck_name || deck?.name || null,
     spread_type: reading.spread_type || null,
     card_count: reading.card_count || null,
     cards: Array.isArray(reading.cards) ? reading.cards : [],

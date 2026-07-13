@@ -74,6 +74,117 @@ begin
   end if;
 end $$;
 
+-- Historical SQL-editor deployments and the mode normalizations above can
+-- leave multiple rows that now represent the same prompt. Retain the oldest
+-- row as canonical and remove only exact duplicates of the unique-index key.
+create temporary table journal_prompt_duplicate_map
+on commit drop
+as
+with ranked_prompts as (
+  select
+    id,
+    first_value(id) over (
+      partition by prompt_text, prompt_type, mode, mood
+      order by created_at asc nulls last, id asc
+    ) as canonical_id,
+    row_number() over (
+      partition by prompt_text, prompt_type, mode, mood
+      order by created_at asc nulls last, id asc
+    ) as duplicate_rank
+  from public.journal_prompts
+)
+select id as duplicate_id, canonical_id
+from ranked_prompts
+where duplicate_rank > 1;
+
+-- Remap every single-column foreign key to the canonical prompt before the
+-- duplicate rows are removed. Composite references are deliberately rejected:
+-- they need an explicit, data-model-specific migration rather than a lossy
+-- generic rewrite. The transaction rolls back if a dependent unique/check
+-- constraint makes a remap unsafe.
+do $$
+declare
+  dependent record;
+  journal_prompts_id_attnum smallint;
+begin
+  select attnum
+  into journal_prompts_id_attnum
+  from pg_catalog.pg_attribute
+  where attrelid = 'public.journal_prompts'::regclass
+    and attname = 'id'
+    and not attisdropped;
+
+  if exists (
+    select 1
+    from pg_catalog.pg_constraint as con
+    where con.contype = 'f'
+      and con.confrelid = 'public.journal_prompts'::regclass
+      and (
+        cardinality(con.conkey) <> 1
+        or cardinality(con.confkey) <> 1
+        or con.confkey[1] <> journal_prompts_id_attnum
+      )
+  ) then
+    raise exception
+      'Cannot safely deduplicate journal_prompts: a composite or non-id foreign key references it';
+  end if;
+
+  for dependent in
+    select
+      dependent_schema.nspname as schema_name,
+      dependent_table.relname as table_name,
+      dependent_column.attname as column_name
+    from pg_catalog.pg_constraint as con
+    join pg_catalog.pg_class as dependent_table
+      on dependent_table.oid = con.conrelid
+    join pg_catalog.pg_namespace as dependent_schema
+      on dependent_schema.oid = dependent_table.relnamespace
+    join pg_catalog.pg_attribute as dependent_column
+      on dependent_column.attrelid = con.conrelid
+      and dependent_column.attnum = con.conkey[1]
+    where con.contype = 'f'
+      and con.confrelid = 'public.journal_prompts'::regclass
+      and cardinality(con.conkey) = 1
+      and cardinality(con.confkey) = 1
+      and con.confkey[1] = journal_prompts_id_attnum
+  loop
+    execute format(
+      'update %I.%I as dependent set %I = duplicate_map.canonical_id from pg_temp.journal_prompt_duplicate_map as duplicate_map where dependent.%I = duplicate_map.duplicate_id',
+      dependent.schema_name,
+      dependent.table_name,
+      dependent.column_name,
+      dependent.column_name
+    );
+  end loop;
+end;
+$$;
+
+delete from public.journal_prompts as prompt
+using pg_temp.journal_prompt_duplicate_map as duplicate_map
+where prompt.id = duplicate_map.duplicate_id;
+
+-- Verification query: this must return zero rows before the unique index is
+-- created. It is kept as a result-producing query for deploy logs as well as
+-- being enforced by the guard below.
+select prompt_text, prompt_type, mode, mood, count(*) as duplicate_count
+from public.journal_prompts
+group by prompt_text, prompt_type, mode, mood
+having count(*) > 1;
+
+-- Raise rather than silently proceed if the verification query is non-empty.
+do $$
+begin
+  if exists (
+    select 1
+    from public.journal_prompts
+    group by prompt_text, prompt_type, mode, mood
+    having count(*) > 1
+  ) then
+    raise exception 'journal_prompts still contains duplicate unique-index keys after cleanup';
+  end if;
+end;
+$$;
+
 create unique index if not exists journal_prompts_unique_prompt_idx
 on public.journal_prompts (prompt_text, prompt_type, mode, mood);
 

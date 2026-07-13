@@ -13,6 +13,7 @@ let lastLightboxNavAt = 0;
 let selectorTouchStartX = 0;
 let selectorTouchStartY = 0;
 let featuredReaderHeroLineRequestId = 0;
+let lightboxImageListeners;
 const selectedReaderStorageKey = "astralVeilSelectedReader";
 const readingPageHref = "/";
 const selectedReaderHeroLines = {};
@@ -574,7 +575,7 @@ function renderFeaturedVeilwalkerSelector() {
         <span aria-hidden="true">‹</span>
       </button>
       <div class="veilwalker-feature__image-wrap${protectedMediaClass}"${protectedMediaAttrs}>
-        <img class="veilwalker-feature__image" src="${escapeHtml(image)}" alt="${escapeHtml(presentation.name)}" loading="eager" decoding="async"${protectedImageAttr} onerror="this.style.visibility='hidden'" />
+        <img class="veilwalker-feature__image" src="${escapeHtml(image)}" alt="${escapeHtml(presentation.name)}" loading="eager" decoding="async"${protectedImageAttr} data-image-error-hide />
       </div>
       <div class="veilwalker-feature__details">
         <div class="veilwalker-feature__meta">
@@ -713,15 +714,20 @@ function renderOpenReader(reader) {
 
   lightboxImage.hidden = false;
   lightboxImage.dataset.fallbackApplied = "false";
-  lightboxImage.onerror = () => {
+  lightboxImageListeners?.abort();
+  lightboxImageListeners = new AbortController();
+  lightboxImage.addEventListener('error', () => {
     if (lightboxImage.dataset.fallbackApplied !== "true" && fallbackImage) {
       lightboxImage.dataset.fallbackApplied = "true";
+      lightboxImage.addEventListener('error', () => {
+        lightboxImage.hidden = true;
+      }, { once: true, signal: lightboxImageListeners.signal });
       lightboxImage.src = fallbackImage;
       return;
     }
 
     lightboxImage.hidden = true;
-  };
+  }, { once: true, signal: lightboxImageListeners.signal });
   lightboxImage.src = activeImage;
   lightboxImage.alt = presentation.name;
   lightboxImage.dataset.imagePreviewTitle = presentation.name;
@@ -760,6 +766,7 @@ function renderOpenReader(reader) {
       </div>
     </div>
   `;
+  readersPageList.querySelectorAll('[data-image-error-hide]').forEach((image) => image.addEventListener('error', () => { image.style.visibility = 'hidden'; }, { once: true }));
 }
 
 // Opens a reader profile and resets the active form to the starting portrait.

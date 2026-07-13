@@ -50,7 +50,7 @@ update public.noctis_documents
 set
   slug = 'the-tide-that-moves-within',
   title = coalesce(nullif(trim(title), ''), 'The Tide That Moves Within'),
-  document_type = 'journal',
+  document_type = 'journal_fragment',
   category = coalesce(nullif(trim(category), ''), 'journals'),
   category_label = coalesce(nullif(trim(category_label), ''), 'Recovered Journal'),
   author = case
@@ -101,7 +101,7 @@ values (
   'Zephyra Noctis',
   'Zephyra Noctis',
   'Scorpio',
-  'journal',
+  'journal_fragment',
   'journals',
   'Recovered Journal',
   'A recovered journal fragment about memory, water, resistance, and the quiet strength of yielding.',
@@ -190,7 +190,7 @@ set
   end,
   attribution = coalesce(nullif(trim(public.noctis_documents.attribution), ''), 'Zephyra Noctis'),
   zodiac = coalesce(nullif(trim(public.noctis_documents.zodiac), ''), excluded.zodiac),
-  document_type = 'journal',
+  document_type = 'journal_fragment',
   category = coalesce(nullif(trim(public.noctis_documents.category), ''), 'journals'),
   category_label = coalesce(nullif(trim(public.noctis_documents.category_label), ''), 'Recovered Journal'),
   summary = coalesce(nullif(trim(public.noctis_documents.summary), ''), excluded.summary),

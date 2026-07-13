@@ -2516,19 +2516,60 @@
 
       .journal-entry-view__guided {
         display: grid;
-        gap: 0.72rem;
+        color: rgba(47, 35, 25, 0.98);
         border: 1px solid rgba(104, 69, 30, 0.23);
         border-radius: 12px;
         background: linear-gradient(150deg, rgba(255, 248, 230, 0.16), transparent);
-        padding: 0.65rem;
+        padding: 0.85rem;
       }
 
-      .journal-entry-view__guided .journal-entry-view__section strong {
-        color: rgba(104, 69, 30, 0.9);
+      .journal-guided-reflection h4 {
+        margin: 0;
+        color: inherit;
+        font-family: var(--font-ui);
+        font-size: 0.86rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
       }
 
-      .journal-entry-view__guided .journal-entry-view__section p {
-        color: rgba(47, 35, 25, 0.9);
+      .journal-guided-reflection__item {
+        margin-block: 1rem;
+      }
+
+      .journal-guided-reflection__question,
+      .journal-guided-reflection__answer {
+        display: block;
+        color: inherit;
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(1.05rem, 2vw, 1.2rem);
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+      }
+
+      .journal-guided-reflection__question {
+        margin: 0 0 0.35rem;
+        font-weight: 600;
+        letter-spacing: normal;
+        text-transform: none;
+      }
+
+      .journal-guided-reflection__answer {
+        margin: 0;
+      }
+
+      .journal-guided-reflection__answer strong {
+        color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: 600;
+        letter-spacing: normal;
+        text-transform: none;
+      }
+
+      .journal-guided-reflection__answer span {
+        color: inherit;
+        white-space: pre-wrap;
       }
 
       .journal-entry-view__dialog .card-action {
@@ -3563,6 +3604,14 @@
         font-family: var(--font-ui);
         font-size: 0.76rem;
         font-weight: 700;
+      }
+
+      .saved-reading-card__artwork-note {
+        margin: 0.35rem 0 0;
+        color: inherit;
+        font-size: 0.82rem;
+        line-height: 1.45;
+        opacity: 0.82;
       }
 
       .saved-reading-card__detail-header p,

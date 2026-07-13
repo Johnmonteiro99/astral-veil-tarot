@@ -18,3 +18,5 @@ build/
 .env
 .env.local
 .env.*.local
+# Local Netlify folder
+.netlify

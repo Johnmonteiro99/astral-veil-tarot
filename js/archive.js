@@ -537,28 +537,28 @@ const shelvesFindingAids = [
     title: "Shelf Index",
     description: "Browse by shelf mark and classification.",
     action: "Open Index",
-    image: "assets/images/noctis/shelf_index.png"
+    image: "assets/images/archive/noctis/shelf_index.png"
   },
   {
     id: "code-ledger",
     title: "Code Ledger",
     description: "Track cipher keys, coded phrases, and recovered symbols.",
     action: "Open Ledger",
-    image: "assets/images/noctis/code_ledger.png"
+    image: "assets/images/archive/noctis/code_ledger.png"
   },
   {
     id: "cross-references",
     title: "Cross-References",
     description: "Find connections between documents, authors, rooms, and events.",
     action: "Explore",
-    image: "assets/images/noctis/cross_reference.png"
+    image: "assets/images/archive/noctis/cross_reference.png"
   },
   {
     id: "recent-discoveries",
     title: "Recent Discoveries",
     description: "The latest records and pieces recovered from the Archive.",
     action: "View New",
-    image: "assets/images/noctis/recent_discoveries.png"
+    image: "assets/images/archive/noctis/recent_discoveries.png"
   }
 ];
 
@@ -636,7 +636,7 @@ const galleryVisualRecords = [
     id: "trio-study",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     width: 1120,
     height: 1400,
     caption: "The Archive has recovered the image, but not its name."
@@ -645,7 +645,7 @@ const galleryVisualRecords = [
     id: "castle-black",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     width: 1400,
     height: 1050,
     caption: "The Archive has recovered the image, but not its name."
@@ -654,7 +654,7 @@ const galleryVisualRecords = [
     id: "ufo-landing",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     width: 1400,
     height: 1050,
     caption: "The Archive has recovered the image, but not its name."
@@ -663,7 +663,7 @@ const galleryVisualRecords = [
     id: "the-veil-trine",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     width: 1120,
     height: 1400,
     caption: "The Archive has recovered the image, but not its name."
@@ -672,7 +672,7 @@ const galleryVisualRecords = [
     id: "lost-city",
     title: "Unknown",
     label: "Visual Record",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     width: 1400,
     height: 1052,
     caption: "The Archive has recovered the image, but not its name."
@@ -711,7 +711,7 @@ const galleryRecordPlaceholders = [
     id: "glr-prt-017",
     title: "Sealed Portrait No. 17",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     marked: true,
     recovered: true,
     variant: "portrait"
@@ -720,7 +720,7 @@ const galleryRecordPlaceholders = [
     id: "glr-sym-004",
     title: "Astral Seal / Symbol Record",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     marked: true,
     recovered: true,
     variant: "square"
@@ -729,7 +729,7 @@ const galleryRecordPlaceholders = [
     id: "glr-plc-009",
     title: "Watcher Estate Landscape",
     category: "Places",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true,
     variant: "wide"
   },
@@ -737,7 +737,7 @@ const galleryRecordPlaceholders = [
     id: "glr-unk-001",
     title: "Unknown Visual Record 01",
     category: "Unknown Records",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     sealed: true,
     fragments: "2 / 4 fragments recovered",
     progress: 50,
@@ -747,21 +747,21 @@ const galleryRecordPlaceholders = [
     id: "glr-anm-004",
     title: "Blood Moon Eclipse",
     category: "Anomalies",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     recovered: true
   },
   {
     id: "glr-sym-008",
     title: "Winged Statue / Watcher Record",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     variant: "tall"
   },
   {
     id: "glr-prt-022",
     title: "Red Veiled Portrait",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     marked: true,
     recovered: true,
     variant: "featured-small"
@@ -770,21 +770,21 @@ const galleryRecordPlaceholders = [
     id: "glr-anm-012",
     title: "Chalice / Impossible Reflection",
     category: "Anomalies",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     recovered: true
   },
   {
     id: "glr-map-003",
     title: "Map / Diagram Record",
     category: "Maps",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     variant: "featured-small"
   },
   {
     id: "glr-sym-017",
     title: "Red Sigil / Seal Record",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     marked: true,
     variant: "square"
   },
@@ -792,7 +792,7 @@ const galleryRecordPlaceholders = [
     id: "glr-prt-031",
     title: "Portrait of the Veiled Scribe",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true,
     variant: "portrait"
   },
@@ -800,14 +800,14 @@ const galleryRecordPlaceholders = [
     id: "glr-plc-014",
     title: "The Observatory Before Rain",
     category: "Places",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     variant: "square"
   },
   {
     id: "glr-anm-019",
     title: "Doorway in the Red Sky",
     category: "Anomalies",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     marked: true,
     variant: "wide"
   },
@@ -815,7 +815,7 @@ const galleryRecordPlaceholders = [
     id: "glr-unk-007",
     title: "Unknown Visual Record 07",
     category: "Unknown Records",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     sealed: true,
     fragments: "1 / 5 fragments recovered",
     progress: 20,
@@ -825,21 +825,21 @@ const galleryRecordPlaceholders = [
     id: "glr-map-011",
     title: "Cartographer's Warning",
     category: "Maps",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     recovered: true
   },
   {
     id: "glr-sym-025",
     title: "Aster Gate Marking",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     variant: "tall"
   },
   {
     id: "glr-prt-038",
     title: "The Watcher Who Blinked",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     marked: true,
     variant: "featured-small"
   },
@@ -847,21 +847,21 @@ const galleryRecordPlaceholders = [
     id: "glr-plc-021",
     title: "Lost Stair Beneath the Gallery",
     category: "Places",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true
   },
   {
     id: "glr-anm-030",
     title: "The Moon Appears Twice",
     category: "Anomalies",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     variant: "featured-small"
   },
   {
     id: "glr-sym-033",
     title: "Red Archive Diagram",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     recovered: true,
     variant: "square"
   },
@@ -869,7 +869,7 @@ const galleryRecordPlaceholders = [
     id: "glr-map-018",
     title: "Map of the Sealed Coast",
     category: "Maps",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     marked: true,
     variant: "portrait"
   },
@@ -877,7 +877,7 @@ const galleryRecordPlaceholders = [
     id: "glr-unk-013",
     title: "Unknown Visual Record 13",
     category: "Unknown Records",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     sealed: true,
     fragments: "3 / 6 fragments recovered",
     progress: 50,
@@ -887,7 +887,7 @@ const galleryRecordPlaceholders = [
     id: "glr-plc-027",
     title: "Courtyard of Red Lanterns",
     category: "Places",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true,
     variant: "wide"
   },
@@ -895,21 +895,21 @@ const galleryRecordPlaceholders = [
     id: "glr-anm-044",
     title: "Static Figure at the Horizon",
     category: "Anomalies",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     variant: "fragment"
   },
   {
     id: "glr-prt-046",
     title: "Mirror Portrait Fragment",
     category: "Portraits",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true
   },
   {
     id: "glr-sym-052",
     title: "Sixfold Blood Star",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     marked: true,
     variant: "tall"
   },
@@ -917,21 +917,21 @@ const galleryRecordPlaceholders = [
     id: "glr-map-029",
     title: "Unlabeled Vault Map",
     category: "Maps",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     variant: "featured-small"
   },
   {
     id: "glr-plc-035",
     title: "The Watcher's Estate",
     category: "Places",
-    image: "assets/images/noctis/visual-records/castle-black.webp",
+    image: "assets/images/archive/noctis/visual-records/castle-black.webp",
     recovered: true
   },
   {
     id: "glr-unk-021",
     title: "Unknown Visual Record 21",
     category: "Unknown Records",
-    image: "assets/images/noctis/visual-records/ufo-landing.webp",
+    image: "assets/images/archive/noctis/visual-records/ufo-landing.webp",
     sealed: true,
     fragments: "0 / 4 fragments recovered",
     progress: 8,
@@ -941,7 +941,7 @@ const galleryRecordPlaceholders = [
     id: "glr-sym-061",
     title: "Seal of the Returning Moon",
     category: "Symbols",
-    image: "assets/images/noctis/visual-records/lost-city.webp",
+    image: "assets/images/archive/noctis/visual-records/lost-city.webp",
     recovered: true,
     variant: "square"
   }
@@ -1394,13 +1394,106 @@ function normalizeGalleryRecord(row, index = 0) {
   };
 }
 
-function getGalleryImageErrorHandler(imageUrl) {
-  return `console.warn('Gallery image failed to load:', '${escapeHtml(imageUrl)}')`;
+function renderArchiveImagePlaceholder({
+  source,
+  alt = "",
+  width = "",
+  height = "",
+  loading = "lazy",
+  decoding = "async",
+  draggable = false,
+  className = "",
+  errorAction = "gallery",
+  errorClass = "is-image-missing",
+  expandable = false,
+  previewTitle = "",
+  previewCaption = "",
+  role = "",
+  tabIndex = "",
+  ariaLabel = "",
+} = {}) {
+  if (!source) {
+    return "";
+  }
+
+  return `<span data-archive-managed-image data-image-source="${escapeHtml(source)}" data-image-alt="${escapeHtml(alt)}" data-image-width="${escapeHtml(width)}" data-image-height="${escapeHtml(height)}" data-image-loading="${escapeHtml(loading)}" data-image-decoding="${escapeHtml(decoding)}" data-image-draggable="${draggable ? "true" : "false"}" data-image-class="${escapeHtml(className)}" data-image-error-action="${escapeHtml(errorAction)}" data-image-error-class="${escapeHtml(errorClass)}"${expandable ? " data-image-expandable=\"true\"" : ""} data-image-preview-title="${escapeHtml(previewTitle)}" data-image-preview-caption="${escapeHtml(previewCaption)}" data-image-role="${escapeHtml(role)}" data-image-tabindex="${escapeHtml(tabIndex)}" data-image-aria-label="${escapeHtml(ariaLabel)}"></span>`;
 }
 
-function getVisualTrailImageErrorHandler(imageUrl) {
-  return `console.warn('Visual trail image failed to load:', '${escapeHtml(imageUrl)}');this.closest('.gallery-trail-restored, .gallery-trail-lightbox__figure')?.classList.add('is-image-missing');`;
+function hydrateArchiveManagedImages(root = document) {
+  const placeholders = root.querySelectorAll?.("[data-archive-managed-image]") || [];
+
+  placeholders.forEach((placeholder) => {
+    const image = document.createElement("img");
+    const source = placeholder.dataset.imageSource || "";
+    const errorAction = placeholder.dataset.imageErrorAction || "gallery";
+    const width = Number(placeholder.dataset.imageWidth);
+    const height = Number(placeholder.dataset.imageHeight);
+
+    image.className = placeholder.dataset.imageClass || "";
+    image.alt = placeholder.dataset.imageAlt || "";
+    image.loading = placeholder.dataset.imageLoading || "lazy";
+    image.decoding = placeholder.dataset.imageDecoding || "async";
+    image.draggable = placeholder.dataset.imageDraggable === "true";
+
+    if (Number.isFinite(width) && width > 0) {
+      image.width = width;
+    }
+
+    if (Number.isFinite(height) && height > 0) {
+      image.height = height;
+    }
+
+    if (placeholder.dataset.imageExpandable === "true") {
+      image.dataset.expandableImage = "";
+      image.dataset.imagePreviewTitle = placeholder.dataset.imagePreviewTitle || "";
+      image.dataset.imagePreviewCaption = placeholder.dataset.imagePreviewCaption || "";
+    }
+
+    if (placeholder.dataset.imageRole) {
+      image.setAttribute("role", placeholder.dataset.imageRole);
+    }
+
+    if (placeholder.dataset.imageTabindex) {
+      image.tabIndex = Number(placeholder.dataset.imageTabindex);
+    }
+
+    if (placeholder.dataset.imageAriaLabel) {
+      image.setAttribute("aria-label", placeholder.dataset.imageAriaLabel);
+    }
+
+    image.addEventListener("error", () => {
+      if (errorAction === "trail") {
+        image.closest(".gallery-trail-restored, .gallery-trail-lightbox__figure")?.classList.add("is-image-missing");
+      } else if (errorAction !== "gallery") {
+        image.closest(errorAction)?.classList.add(placeholder.dataset.imageErrorClass || "is-image-missing");
+        image.remove();
+      } else {
+        console.warn("Gallery image failed to load:", source);
+      }
+    });
+
+    // Assigning through the DOM property prevents URL text from becoming an
+    // executable inline handler, even when it contains quotes or entities.
+    image.src = source;
+    placeholder.replaceWith(image);
+  });
 }
+
+const archiveImageObserver = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    mutation.addedNodes.forEach((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.matches?.("[data-archive-managed-image]")) {
+          hydrateArchiveManagedImages(node.parentElement || document);
+        } else {
+          hydrateArchiveManagedImages(node);
+        }
+      }
+    });
+  });
+});
+
+archiveImageObserver.observe(document.documentElement, { childList: true, subtree: true });
 
 async function fetchGalleryRecordsFromSupabase(supabase) {
   const selectedFields = [
@@ -2419,22 +2512,21 @@ function renderFeaturedRoomImage(room) {
 
   return `
     <figure class="archive-chamber-feature-art archive-chamber-feature-art--${escapeHtml(getRoomStatusClass(room))}${isLocked ? " is-locked" : ""}">
-      <img
-        src="${escapeHtml(room.image)}"
-        alt="${escapeHtml(getRoomImageAlt(room))}"
-        width="${ARCHIVE_ARTWORK_WIDTH}"
-        height="${ARCHIVE_ARTWORK_HEIGHT}"
-        loading="eager"
-        decoding="async"
-        fetchpriority="high"
-        data-expandable-image
-        data-image-preview-title="${escapeHtml(room.title)}"
-        data-image-preview-caption="${escapeHtml(`${getRoomSubtitle(room)} • ${status}`)}"
-        role="button"
-        tabindex="0"
-        aria-label="View ${escapeHtml(room.title)} full size"
-        onerror="this.closest('.archive-chamber-feature-art').classList.add('is-missing'); this.remove();"
-      />
+      ${renderArchiveImagePlaceholder({
+        source: room.image,
+        alt: getRoomImageAlt(room),
+        width: ARCHIVE_ARTWORK_WIDTH,
+        height: ARCHIVE_ARTWORK_HEIGHT,
+        loading: "eager",
+        errorAction: ".archive-chamber-feature-art",
+        errorClass: "is-missing",
+        expandable: true,
+        previewTitle: room.title,
+        previewCaption: `${getRoomSubtitle(room)} • ${status}`,
+        role: "button",
+        tabIndex: "0",
+        ariaLabel: `View ${room.title} full size`,
+      })}
       <figcaption>
         <span>${escapeHtml(getRoomInitial(room))}</span>
         ${escapeHtml(actionLabel)}
@@ -2502,7 +2594,7 @@ function renderRoomThumbnail(room, index, selectedRoomId) {
   return `
     <button class="archive-chamber-card archive-chamber-card--${escapeHtml(statusClass)}${isSelected ? " is-active" : ""}${isLocked ? " is-locked" : ""}" type="button" data-select-room="${escapeHtml(room.id)}" aria-label="Select ${escapeHtml(room.title)}" aria-current="${isSelected ? "true" : "false"}">
       <span class="archive-chamber-card__image">
-        <img src="${escapeHtml(room.image)}" alt="${escapeHtml(getRoomImageAlt(room))}" width="${ARCHIVE_ARTWORK_WIDTH}" height="${ARCHIVE_ARTWORK_HEIGHT}" loading="lazy" decoding="async" onerror="this.closest('.archive-chamber-card__image').classList.add('is-missing'); this.remove();" />
+        ${renderArchiveImagePlaceholder({ source: room.image, alt: getRoomImageAlt(room), width: ARCHIVE_ARTWORK_WIDTH, height: ARCHIVE_ARTWORK_HEIGHT, errorAction: ".archive-chamber-card__image", errorClass: "is-missing" })}
       </span>
       <span class="archive-chamber-card__body">
         <strong>${escapeHtml(room.title)}</strong>
@@ -2645,7 +2737,7 @@ function renderEntryDeskRoom(room) {
 }
 
 function renderEntryDeskHero(room) {
-  const entryDeskHeroImage = "assets/images/noctis/entry_desk_bg.png";
+  const entryDeskHeroImage = "assets/images/archive/noctis/entry_desk_bg.png";
 
   return `
     <section class="entry-desk-hero" aria-labelledby="entry-desk-title">
@@ -2940,7 +3032,7 @@ function getSelectedRecoveredObject(recoveredObjects) {
 
 function renderRecoveredObjectIcon(object) {
   if (object.image) {
-    return `<img src="${escapeHtml(object.image)}" alt="${escapeHtml(object.title)} artifact" width="${ARCHIVE_ARTIFACT_SIZE}" height="${ARCHIVE_ARTIFACT_SIZE}" loading="lazy" decoding="async" draggable="false" onerror="this.closest('.archive-recovered-object-card__icon').classList.add('is-missing'); this.remove();" />`;
+    return renderArchiveImagePlaceholder({ source: object.image, alt: `${object.title} artifact`, width: ARCHIVE_ARTIFACT_SIZE, height: ARCHIVE_ARTIFACT_SIZE, errorAction: ".archive-recovered-object-card__icon", errorClass: "is-missing" });
   }
 
   return `<span aria-hidden="true">${escapeHtml(object.name?.charAt(0) || "K")}</span>`;
@@ -3761,7 +3853,7 @@ function renderShelvesReadingDesk(document, documents) {
         </div>
       </div>
       <figure class="shelves-reading-desk__art" aria-hidden="true">
-        <img src="${escapeHtml(document.cover_image || "assets/images/noctis/recovered-code.png")}" alt="" width="900" height="600" loading="lazy" decoding="async" />
+        <img src="${escapeHtml(document.cover_image || "assets/images/archive/noctis/recovered-code.png")}" alt="" width="900" height="600" loading="lazy" decoding="async" />
       </figure>
       <div class="shelves-reading-desk__controls shelves-reading-controls" aria-label="Browse current document results">
         <button type="button" data-shelves-nav="previous" ${readingDeskDocuments.length <= 1 ? "disabled" : ""}>Previous</button>
@@ -4392,7 +4484,7 @@ function renderVisualRecordCard(record) {
   return `
     <figure class="archive-visual-record protected-media" data-protected-media="true" draggable="false">
       <button class="archive-visual-record__preview" type="button" data-visual-record="${escapeHtml(record.id)}" aria-label="${escapeHtml(`View ${record.title} full size`)}">
-        <img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)} visual record" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="lazy" decoding="async" draggable="false" onerror="this.closest('.archive-visual-record').classList.add('is-image-missing'); this.remove();" />
+        ${renderArchiveImagePlaceholder({ source: record.image, alt: `${record.title} visual record`, width: record.width || ARCHIVE_ARTWORK_WIDTH, height: record.height || ARCHIVE_ARTWORK_HEIGHT, errorAction: ".archive-visual-record" })}
         <span class="archive-visual-record__missing">Record unavailable</span>
       </button>
       <figcaption>
@@ -4438,7 +4530,7 @@ function renderGalleryRecordViewer() {
       <button class="archive-gallery-viewer__nav" type="button" data-gallery-record-nav="previous" aria-label="Previous visual record">‹</button>
       <figure class="archive-gallery-record protected-media" data-protected-media="true" draggable="false">
         <button class="archive-gallery-record__image-button" type="button" data-visual-record="${escapeHtml(record.id)}" aria-label="${escapeHtml(`Open visual record ${selectedGalleryRecordIndex + 1} full size`)}">
-          <img src="${escapeHtml(record.image)}" alt="${escapeHtml(`Unknown visual record ${selectedGalleryRecordIndex + 1}`)}" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="lazy" decoding="async" draggable="false" />
+          ${renderArchiveImagePlaceholder({ source: record.image, alt: `Unknown visual record ${selectedGalleryRecordIndex + 1}`, width: record.width || ARCHIVE_ARTWORK_WIDTH, height: record.height || ARCHIVE_ARTWORK_HEIGHT })}
         </button>
         <figcaption>
           <span>Visual Record</span>
@@ -4488,7 +4580,7 @@ function renderVisualRecordModal() {
           <span class="close-circle-icon" aria-hidden="true"></span>
         </button>
         <figure class="visual-record-modal__image-frame protected-media" data-protected-media="true">
-          <img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)} visual record" width="${record.width || ARCHIVE_ARTWORK_WIDTH}" height="${record.height || ARCHIVE_ARTWORK_HEIGHT}" loading="eager" decoding="async" draggable="false" />
+          ${renderArchiveImagePlaceholder({ source: record.image, alt: `${record.title} visual record`, width: record.width || ARCHIVE_ARTWORK_WIDTH, height: record.height || ARCHIVE_ARTWORK_HEIGHT, loading: "eager" })}
         </figure>
       </article>
     </div>
@@ -5467,7 +5559,7 @@ function renderGalleryRecordsState(pagination) {
 
 function renderGalleryFeaturedRecord(featuredRecord) {
   const featuredRecords = getGalleryFeaturedRecords();
-  const image = featuredRecord?.previewImage || featuredRecord?.preview_image_url || featuredRecord?.fullImage || featuredRecord?.full_image_url || featuredRecord?.image || "assets/images/noctis/visual-records/castle-black.webp";
+  const image = featuredRecord?.previewImage || featuredRecord?.preview_image_url || featuredRecord?.fullImage || featuredRecord?.full_image_url || featuredRecord?.image || "assets/images/archive/noctis/visual-records/castle-black.webp";
   const title = featuredRecord?.title || "Sealed Landscape";
   const note = featuredRecord?.lore_note || featuredRecord?.description || "The Archive has recovered this visual record, but its meaning remains uncertain.";
   const relatedRoom = featuredRecord?.relatedRoom || featuredRecord?.related_room || "";
@@ -5487,7 +5579,7 @@ function renderGalleryFeaturedRecord(featuredRecord) {
       <div class="gallery-featured-card__visual protected-media" data-protected-media="true" draggable="false">
         <div class="gallery-featured-card__image">
           <button class="gallery-featured-card__open" type="button" data-gallery-open-record="${escapeHtml(safeRecordId)}" aria-label="${escapeHtml(`Open ${title}`)}">
-            <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" decoding="async" draggable="false" onerror="${getGalleryImageErrorHandler(image)}" />
+            ${renderArchiveImagePlaceholder({ source: image, alt: title })}
           </button>
         </div>
         <div class="gallery-featured-card__dots" aria-label="Featured visual record position">
@@ -5541,7 +5633,7 @@ function renderGalleryRecordPlaceholder(record) {
     <article class="gallery-record-card protected-media${record.sealed ? " is-sealed" : ""}${record.variant ? ` gallery-record-card--${escapeHtml(record.variant)}` : ""}" aria-label="${escapeHtml(`${record.title}, ${record.category}`)}" data-protected-media="true" draggable="false">
       <button class="gallery-record-card__open" type="button" data-gallery-open-record="${escapeHtml(recordId)}" aria-label="${escapeHtml(`Open ${record.title}`)}">
       <span class="gallery-record-card__image">
-        ${gridImage ? `<img src="${escapeHtml(gridImage)}" alt="${escapeHtml(record.title)}" loading="eager" decoding="async" draggable="false" onerror="${getGalleryImageErrorHandler(gridImage)}" />` : ""}
+        ${gridImage ? renderArchiveImagePlaceholder({ source: gridImage, alt: record.title, loading: "eager" }) : ""}
       </span>
       </button>
       ${canMarkRecord ? `<button class="gallery-record-card__mark${galleryMarkedRecordIds.has(recordId) ? " is-marked" : ""}" type="button" data-gallery-mark-record="${escapeHtml(recordId)}" aria-label="${escapeHtml(`${galleryMarkedRecordIds.has(recordId) ? "Unmark" : "Mark"} ${record.title}`)}"></button>` : ""}
@@ -5781,7 +5873,7 @@ function renderGalleryVisualTrailRow(trail, { asListItem = false } = {}) {
 
   return `
     <button class="gallery-trail-row${asListItem ? " gallery-trail-row--list" : " gallery-trail-row--summary"}" type="button" data-gallery-open-trail="${escapeHtml(trail?.id || "")}">
-      ${asListItem ? "" : `<span class="gallery-trail-row__thumb protected-media ${thumbState}" aria-hidden="true" data-protected-media="true">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" decoding="async" draggable="false" onerror="${getVisualTrailImageErrorHandler(image)}" />` : ""}</span>`}
+      ${asListItem ? "" : `<span class="gallery-trail-row__thumb protected-media ${thumbState}" aria-hidden="true" data-protected-media="true">${image ? renderArchiveImagePlaceholder({ source: image, alt: "", errorAction: "trail" }) : ""}</span>`}
       <span class="gallery-trail-row__main">
         <span class="gallery-trail-row__copy">
           <strong>${escapeHtml(trailView.title || "Visual Trail")}</strong>
@@ -5806,7 +5898,7 @@ function renderGalleryMiniRecordRow(item, { includeUnmark = false } = {}) {
   return `
     <div class="gallery-mini-row-wrap">
       <button class="gallery-mini-row" type="button" data-gallery-open-record="${escapeHtml(recordId)}">
-        <span class="gallery-mini-thumb protected-media" aria-hidden="true" data-protected-media="true">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" decoding="async" draggable="false" onerror="${getGalleryImageErrorHandler(image)}" />` : ""}</span>
+        <span class="gallery-mini-thumb protected-media" aria-hidden="true" data-protected-media="true">${image ? renderArchiveImagePlaceholder({ source: image, alt: "" }) : ""}</span>
         <span>
           <strong>${escapeHtml(record?.title || "Unknown Visual Record")}</strong>
           <em>${escapeHtml(subtext)}</em>
@@ -5886,7 +5978,7 @@ function renderGalleryRecordModal() {
       <article class="gallery-record-modal__dialog" role="dialog" aria-modal="true" aria-label="Expanded visual record">
         <button class="gallery-record-modal__close" type="button" data-gallery-modal-close aria-label="Close visual record">×</button>
         <figure class="gallery-record-modal__figure protected-media" data-protected-media="true">
-          ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="eager" decoding="async" draggable="false" onerror="${getGalleryImageErrorHandler(image)}" />` : ""}
+          ${image ? renderArchiveImagePlaceholder({ source: image, alt: title, loading: "eager" }) : ""}
         </figure>
       </article>
     </div>
@@ -5930,7 +6022,7 @@ function renderGalleryVisualTrailModalContent() {
           <figure class="gallery-trail-fragment protected-media${fragment.recovered ? " is-recovered" : " is-locked"}" data-protected-media="true" draggable="false">
             <span class="gallery-trail-fragment__media" aria-hidden="${fragment.recovered ? "false" : "true"}">
               ${fragment.recovered && fragment.image
-                ? `<img src="${escapeHtml(fragment.image)}" alt="${escapeHtml(fragment.title)}" loading="lazy" decoding="async" draggable="false" onerror="${getVisualTrailImageErrorHandler(fragment.image)}" />`
+                ? renderArchiveImagePlaceholder({ source: fragment.image, alt: fragment.title, errorAction: "trail" })
                 : `<span>Fragment locked</span>${fragment.hint ? `<small>${escapeHtml(fragment.hint)}</small>` : ""}`}
             </span>
             <figcaption class="gallery-trail-fragment__meta">
@@ -5973,7 +6065,7 @@ function renderGalleryVisualTrailRestoredOverlay() {
       <article class="gallery-trail-lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="gallery-trail-lightbox-title">
         <button class="gallery-trail-lightbox__close" type="button" data-gallery-trail-restored-close aria-label="Close restored image">Close</button>
         <figure class="gallery-trail-lightbox__figure protected-media" data-protected-media="true">
-          <img src="${escapeHtml(trailView.fullImage)}" alt="${escapeHtml(`${trailView.title} restored image`)}" loading="eager" decoding="async" draggable="false" onerror="${getVisualTrailImageErrorHandler(trailView.fullImage)}" />
+          ${renderArchiveImagePlaceholder({ source: trailView.fullImage, alt: `${trailView.title} restored image`, loading: "eager", errorAction: "trail" })}
           <figcaption id="gallery-trail-lightbox-title">${escapeHtml(trailView.restoredCaption)}</figcaption>
           <p>Restored image could not be loaded.</p>
         </figure>
