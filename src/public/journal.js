@@ -1,6 +1,7 @@
 import { getBannedAccountMessage, getCurrentUserWithProfile, isBannedUser, signOut } from '../services/auth.js';
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
 import { checkGalleryFragmentUnlock } from './progression.js';
+import { getGuidedReflectionQuestionNumber } from './journal-guided-reflection.js';
 
 const returnToStorageKey = 'astralVeilReturnTo';
 const shell = document.querySelector('[data-journal-shell]');
@@ -1450,14 +1451,10 @@ function formatGuidedReflectionText(answers) {
   ].join('\n').trim();
 }
 
-function toRomanNumeral(index) {
-  return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][index] || `${index + 1}`;
-}
-
 function formatGuidedQuestionBlock(questions) {
   const heading = isBloodMoonMode() ? 'Shadow Reflection' : 'Guided Reflection';
   const questionLines = questions.flatMap((question, index) => [
-    `${toRomanNumeral(index)}. ${question}`,
+    `${getGuidedReflectionQuestionNumber(index)}. ${question}`,
     'Answer:',
     '',
   ]);

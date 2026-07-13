@@ -14,6 +14,15 @@ import {
 } from './profile-unlocks.js';
 import { getUserProgressStats } from './progression.js';
 import {
+  getCardImageForReadingDeck,
+  getReadingDeckIdentity,
+  loadReadingDeckData,
+} from './reading-deck-resolver.js';
+import {
+  parseGuidedReflectionText,
+  renderGuidedReflection,
+} from './journal-guided-reflection.js';
+import {
   applyGlowEffectsPreference,
   applyReduceMotionPreference,
   normalizeUserPreferences,
@@ -142,7 +151,6 @@ let savedReadingsLoaded = false;
 let savedReadingsCache = [];
 let activeReadingFilter = 'all';
 let activeReadingPage = 1;
-let savedReadingDeckDataPromise = null;
 let activeSavedReadingModalId = '';
 
 function preventPrivateCardDrag(event) {
@@ -1866,91 +1874,8 @@ function isBloodMoonReading(reading) {
   return String(getReadingModeValue(reading)).toLowerCase().includes('blood');
 }
 
-function loadSavedReadingDeckData() {
-  if (window.tarotDeck && window.bloodMoonDeck) {
-    return Promise.resolve();
-  }
-
-  if (savedReadingDeckDataPromise) {
-    return savedReadingDeckDataPromise;
-  }
-
-  savedReadingDeckDataPromise = new Promise((resolve, reject) => {
-    const existingScript = document.querySelector('script[src="data/cards.js"]');
-
-    if (existingScript) {
-      existingScript.addEventListener('load', () => resolve(), { once: true });
-      existingScript.addEventListener('error', () => reject(new Error('Card data failed to load.')), { once: true });
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'data/cards.js';
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Card data failed to load.'));
-    document.head.appendChild(script);
-  });
-
-  return savedReadingDeckDataPromise;
-}
-
-function normalizeCardLookupKey(value) {
-  return String(value || '')
-    .toLowerCase()
-    .replace(/^blood[-_\s]*moon[-_\s]*/, '')
-    .replace(/\breversed\b/g, '')
-    .replace(/\bupright\b/g, '')
-    .replace(/^the\s+high\s+priestess$/, 'the-high-priestess')
-    .replace(/&/g, 'and')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-function getCardLookupCandidates(card) {
-  return [
-    card?.card_key,
-    card?.originalCardId,
-    card?.id,
-    card?.key,
-    card?.name,
-    card?.title,
-  ]
-    .map(normalizeCardLookupKey)
-    .filter(Boolean);
-}
-
 function resolveSavedReadingCardArt(card, reading) {
-  const isBloodMoon = isBloodMoonReading(reading);
-  const activeDeck = isBloodMoon ? window.bloodMoonDeck?.cards : window.tarotDeck;
-  const standardDeck = window.tarotDeck || [];
-  const deckCards = Array.isArray(activeDeck) ? activeDeck : standardDeck;
-  const candidates = getCardLookupCandidates(card);
-
-  const matchedCard = deckCards.find((deckCard) => {
-    const deckKeys = [
-      deckCard?.id,
-      deckCard?.originalCardId,
-      deckCard?.name,
-    ].map(normalizeCardLookupKey);
-
-    return deckKeys.some((key) => candidates.includes(key));
-  }) || standardDeck.find((deckCard) => {
-    const deckKeys = [
-      deckCard?.id,
-      deckCard?.name,
-    ].map(normalizeCardLookupKey);
-
-    return deckKeys.some((key) => candidates.includes(key));
-  });
-
-  if (matchedCard?.image) {
-    return matchedCard.image;
-  }
-
-  return isBloodMoon
-    ? 'assets/images/cards/legacy/blood-moon/bloodmoon-card-back.webp'
-    : 'assets/images/cards/legacy/original/card-back.webp';
+  return getCardImageForReadingDeck(getReadingDeckIdentity(reading), card);
 }
 
 function formatSavedCardVisual(card, reading, index) {
@@ -1958,9 +1883,9 @@ function formatSavedCardVisual(card, reading, index) {
   const title = card?.name || card?.title || 'Unknown card';
   const orientation = formatOrientation(card) || 'Upright';
   const image = resolveSavedReadingCardArt(card, reading);
-  const fallbackImage = isBloodMoonReading(reading)
-    ? 'assets/images/cards/legacy/blood-moon/bloodmoon-card-back.webp'
-    : 'assets/images/cards/legacy/original/card-back.webp';
+  const deck = getReadingDeckIdentity(reading);
+  const fallbackImage = deck?.back || 'assets/images/cards/legacy/original/card-back.webp';
+  const artworkUnavailable = !image;
   const isReversed = orientation.toLowerCase() === 'reversed';
   const altParts = [toTitleLabel(position, `Card ${index + 1}`), title, orientation].filter(Boolean);
   const protectedMediaClass = isBloodMoonReading(reading) ? ' protected-media' : '';
@@ -1971,20 +1896,21 @@ function formatSavedCardVisual(card, reading, index) {
       <div class="saved-reading-card__visual-frame">
         <img
           class="saved-reading-card__visual-image${isReversed ? ' is-reversed' : ''}"
-          src="${escapeHtml(image)}"
+          src="${escapeHtml(image || fallbackImage)}"
           alt="${escapeHtml(altParts.join(' / '))}"
           width="240"
           height="420"
           loading="lazy"
           decoding="async"
           draggable="false"
-          onerror="this.src='${escapeHtml(fallbackImage)}'"
+          data-saved-reading-card-fallback="${escapeHtml(fallbackImage)}"
         />
       </div>
       <div class="saved-reading-card__visual-copy">
         <span>${escapeHtml(toTitleLabel(position, `Card ${index + 1}`))}</span>
         <strong>${escapeHtml(title)}</strong>
         <p>${escapeHtml(orientation)}</p>
+        ${artworkUnavailable ? '<p class="saved-reading-card__artwork-note">Original deck artwork unavailable.</p>' : ''}
       </div>
     </article>
   `;
@@ -1992,6 +1918,7 @@ function formatSavedCardVisual(card, reading, index) {
 
 function renderSavedCardCarousel(reading) {
   const cards = Array.isArray(reading.cards) ? reading.cards : [];
+  const deck = getReadingDeckIdentity(reading);
 
   if (!cards.length) {
     return `
@@ -2008,11 +1935,36 @@ function renderSavedCardCarousel(reading) {
         <span>Cards Drawn</span>
         <h4>Reopened from the spread</h4>
       </div>
+      ${deck ? '' : '<p class="saved-reading-card__artwork-note">This reading’s original deck artwork is unavailable.</p>'}
       <div class="saved-reading-card__visual-row${cards.length <= 3 ? ' is-centered' : ''}" tabindex="0">
         ${cards.map((card, index) => formatSavedCardVisual(card, reading, index)).join('')}
       </div>
     </section>
   `;
+}
+
+function bindSavedReadingCardImageFallbacks(container) {
+  container?.querySelectorAll('[data-saved-reading-card-fallback]').forEach((image) => {
+    image.addEventListener('error', () => {
+      const fallback = image.dataset.savedReadingCardFallback;
+
+      if (!fallback || image.src.endsWith(fallback)) {
+        return;
+      }
+
+      console.warn('Saved reading card artwork could not be loaded.', { src: image.currentSrc || image.src });
+      image.src = fallback;
+      const card = image.closest('.saved-reading-card__visual');
+      card?.classList.add('is-artwork-unavailable');
+
+      if (card && !card.querySelector('.saved-reading-card__artwork-note')) {
+        const note = document.createElement('p');
+        note.className = 'saved-reading-card__artwork-note';
+        note.textContent = 'Original deck artwork unavailable.';
+        card.querySelector('.saved-reading-card__visual-copy')?.append(note);
+      }
+    }, { once: true });
+  });
 }
 
 function getReadableTextItems(value) {
@@ -2355,7 +2307,7 @@ async function loadSavedReadings() {
 
   const { data, error } = await supabase
     .from('user_readings')
-    .select('id, created_at, reader_name, mode_key, spread_type, card_count, is_saved, cards, result_summary, metadata')
+    .select('id, created_at, reader_name, mode_key, deck_key, deck_name, spread_type, card_count, is_saved, cards, result_summary, metadata')
     .eq('user_id', activeUser.id)
     .eq('is_saved', true)
     .order('created_at', { ascending: false });
@@ -2463,7 +2415,7 @@ async function openSavedReadingModal(readingId) {
   }
 
   try {
-    await loadSavedReadingDeckData();
+    await loadReadingDeckData();
   } catch (error) {
     console.error('Saved reading card art load failed:', error);
   }
@@ -2473,6 +2425,7 @@ async function openSavedReadingModal(readingId) {
   }
 
   savedReadingModalContent.innerHTML = renderSavedReadingDetails(reading, `modal-${readingId}`);
+  bindSavedReadingCardImageFallbacks(savedReadingModalContent);
   savedReadingModal.querySelector('[data-saved-reading-modal-close]')?.focus({ preventScroll: true });
 }
 
@@ -3174,7 +3127,16 @@ function showJournalEntryView(entry) {
   const updatedLabel = entry.updated_at && entry.updated_at !== entry.created_at
     ? `Updated ${formatDateTime(entry.updated_at)}`
     : '';
-  const guidedAnswers = getJournalGuidedAnswers(entry.guided_answers);
+  const structuredGuidedAnswers = getJournalGuidedAnswers(entry.guided_answers);
+  const parsedGuidedReflection = parseGuidedReflectionText(entry.body);
+  const guidedAnswers = structuredGuidedAnswers.length
+    ? structuredGuidedAnswers
+    : parsedGuidedReflection?.items || [];
+  const reflectionBody = parsedGuidedReflection
+    ? parsedGuidedReflection.body
+    : structuredGuidedAnswers.length
+      ? getJournalBodyPreviewSource(entry)
+      : String(entry?.body || '').replace(/\r\n?/g, '\n').trim();
   const sourceReadingLabel = entry.source_reading_id || entry.linked_reading_id
     ? 'Attached reading'
     : entry.source_type && entry.source_type !== 'journal'
@@ -3194,24 +3156,15 @@ function showJournalEntryView(entry) {
   appendJournalViewSection('Attached Reading', getJournalAttachedReadingSummary(entry));
   appendJournalViewSection('Check-in', entry.check_in);
   appendJournalViewSection('Prompt', entry.prompt || entry.metadata?.prompt);
-  appendJournalViewSection('Reflection', getJournalBodyPreviewSource(entry), 'reflection');
+  appendJournalViewSection('Reflection', reflectionBody, 'reflection');
 
   if (guidedAnswers.length) {
-    const guidedWrapper = document.createElement('div');
-
-    guidedWrapper.className = 'journal-entry-view__guided';
-    guidedAnswers.forEach((item) => {
-      const section = document.createElement('div');
-      const question = document.createElement('strong');
-      const answer = document.createElement('p');
-
-      section.className = 'journal-entry-view__section';
-      question.textContent = item.question || 'Guided answer';
-      answer.textContent = item.answer;
-      section.append(question, answer);
-      guidedWrapper.append(section);
+    renderGuidedReflection(journalViewContent, {
+      heading: parsedGuidedReflection?.heading || (resolveJournalMode(entry) === 'bloodmoon'
+        ? 'Shadow Reflection'
+        : 'Guided Reflection'),
+      items: guidedAnswers,
     });
-    journalViewContent.append(guidedWrapper);
   }
 
   if (!journalViewContent.children.length) {
