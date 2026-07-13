@@ -2,7 +2,6 @@ import { getBannedAccountMessage, requireAllowedAccount } from '../services/auth
 import { getSupabaseClient, isSupabaseConfigured } from '../services/supabase-client.js';
 import { checkGalleryFragmentUnlock } from './progression.js';
 import { loadCurrentUserPreferences } from './user-preferences.js';
-import { getReadingDeckByKey, normalizeReadingDeckKey } from './reading-deck-resolver.js';
 
 const FREE_SAVED_READING_LIMIT = 25;
 
@@ -29,6 +28,21 @@ async function getCachedCurrentUser() {
 
   const account = await requireAllowedAccount({ signOutBanned: true });
 
+  readingSaveState.currentAccount = account;
+  readingSaveState.currentUser = account.allowed ? account.user : null;
+  return readingSaveState.currentUser;
+}
+
+async function getAuthenticatedUserForSave() {
+  if (!isSupabaseConfigured()) {
+    readingSaveState.currentAccount = null;
+    readingSaveState.currentUser = null;
+    return null;
+  }
+
+  // Resolve the user again immediately before a private write. This validates
+  // the current Supabase session instead of relying on page or storage state.
+  const account = await requireAllowedAccount({ signOutBanned: true });
   readingSaveState.currentAccount = account;
   readingSaveState.currentUser = account.allowed ? account.user : null;
   return readingSaveState.currentUser;
@@ -120,16 +134,11 @@ function renderSaveButton(container, readingKey) {
 }
 
 function buildReadingInsert(reading, userId) {
-  const deckKey = normalizeReadingDeckKey(reading.deck_key || reading.deck_id || reading.metadata?.deck?.id);
-  const deck = getReadingDeckByKey(deckKey);
-
   return {
     user_id: userId,
     reader_key: reading.reader_key || null,
     reader_name: reading.reader_name || null,
     mode_key: reading.mode_key || null,
-    deck_key: deckKey || null,
-    deck_name: reading.deck_name || deck?.name || null,
     spread_type: reading.spread_type || null,
     card_count: reading.card_count || null,
     cards: Array.isArray(reading.cards) ? reading.cards : [],
@@ -236,44 +245,57 @@ async function saveCurrentReading({ redirectToJournal = false } = {}) {
     return null;
   }
 
-  const user = await getCachedCurrentUser();
+  const readingKey = reading.reading_key;
+
+  // This lock must happen before any awaited lookup. Rendering the disabled
+  // state alone cannot prevent two rapid delegated click events from starting
+  // separate requests.
+  if (readingSaveState.savingReadingKeys.has(readingKey)) {
+    return null;
+  }
+
+  readingSaveState.savingReadingKeys.add(readingKey);
+  renderSaveButton(container, readingKey);
+
+  const user = await getAuthenticatedUserForSave();
   const supabase = getSupabaseClient();
 
   if (readingSaveState.currentAccount?.reason === 'banned') {
+    readingSaveState.savingReadingKeys.delete(readingKey);
     renderBannedPrompt(container);
     return null;
   }
 
   if (!user || !supabase) {
+    readingSaveState.savingReadingKeys.delete(readingKey);
     renderLoginPrompt(container);
     return null;
   }
 
-  const existingReadingId = await findSavedReadingId(supabase, user.id, reading.reading_key);
+  const existingReadingId = await findSavedReadingId(supabase, user.id, readingKey);
 
   if (existingReadingId) {
-    renderSaveButton(container, reading.reading_key);
+    readingSaveState.savingReadingKeys.delete(readingKey);
+    renderSaveButton(container, readingKey);
     if (redirectToJournal) {
       window.location.href = `/journal?readingId=${encodeURIComponent(existingReadingId)}`;
     }
     return existingReadingId;
   }
 
-  readingSaveState.savingReadingKeys.add(reading.reading_key);
-  renderSaveButton(container, reading.reading_key);
-
   const { count, error: countError } = await getSavedReadingCount(supabase, user.id);
 
   if (countError) {
-    readingSaveState.savingReadingKeys.delete(reading.reading_key);
-    renderSaveButton(container, reading.reading_key);
+    console.error('Saved reading count failed:', countError);
+    readingSaveState.savingReadingKeys.delete(readingKey);
+    renderSaveButton(container, readingKey);
     showSaveStatus(container, 'We could not check your Archive space. Please try again.', { isError: true });
     return null;
   }
 
   if (count >= FREE_SAVED_READING_LIMIT) {
-    readingSaveState.savingReadingKeys.delete(reading.reading_key);
-    renderSaveButton(container, reading.reading_key);
+    readingSaveState.savingReadingKeys.delete(readingKey);
+    renderSaveButton(container, readingKey);
     showSaveStatus(
       container,
       'Your Archive can hold 25 saved readings for now. Delete older readings or expand your Archive when upgrades become available.',
@@ -286,25 +308,37 @@ async function saveCurrentReading({ redirectToJournal = false } = {}) {
     .from('user_readings')
     .insert(buildReadingInsert(reading, user.id))
     .select('id')
-    .maybeSingle();
+    .single();
 
-  readingSaveState.savingReadingKeys.delete(reading.reading_key);
+  readingSaveState.savingReadingKeys.delete(readingKey);
 
   if (error) {
-    renderSaveButton(container, reading.reading_key);
+    console.error('Saved reading insert failed', {
+      code: error?.code,
+      message: error?.message,
+      details: error?.details,
+      hint: error?.hint,
+      status: error?.status,
+    });
+    renderSaveButton(container, readingKey);
     showSaveStatus(container, 'We could not save this reading. Please try again.', { isError: true });
     return null;
   }
 
-  if (data?.id) {
-    readingSaveState.savedReadingIds.set(reading.reading_key, data.id);
+  if (!data?.id) {
+    console.error('Saved reading insert returned no row:', { readingKey, userId: user.id });
+    renderSaveButton(container, readingKey);
+    showSaveStatus(container, 'We could not confirm this reading was saved. Please try again.', { isError: true });
+    return null;
   }
-  readingSaveState.savedReadingKeys.add(reading.reading_key);
-  renderSaveButton(container, reading.reading_key);
-  if (redirectToJournal && data?.id) {
+
+  readingSaveState.savedReadingIds.set(readingKey, data.id);
+  readingSaveState.savedReadingKeys.add(readingKey);
+  renderSaveButton(container, readingKey);
+  if (redirectToJournal) {
     window.location.href = `/journal?readingId=${encodeURIComponent(data.id)}`;
   }
-  return data?.id || null;
+  return data.id;
 }
 
 window.addEventListener('astralveil:reading-completed', (event) => {

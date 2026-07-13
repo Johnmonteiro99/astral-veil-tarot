@@ -1921,6 +1921,13 @@ async function handleSubmit(event) {
 
   resetForm();
   setMessage(isBloodMoonMode() ? 'The shadow has been recorded.' : 'Journal entry saved.', 'success');
+  window.AstralVeilToast?.show({
+    key: 'journal-save',
+    title: 'Journal',
+    message: 'Journal entry saved.',
+    type: 'success',
+    duration: 4000,
+  });
   checkGalleryFragmentUnlock('journal_entry_count', '', { user: activeUser, supabase }).catch((error) => {
     console.warn('[Astral Veil progression] Journal fragment unlock check failed.', error);
   });

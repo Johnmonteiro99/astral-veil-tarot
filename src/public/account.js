@@ -2312,7 +2312,7 @@ async function loadSavedReadings() {
 
   const { data, error } = await supabase
     .from('user_readings')
-    .select('id, created_at, reader_name, mode_key, deck_key, deck_name, spread_type, card_count, is_saved, cards, result_summary, metadata')
+    .select('id, created_at, reader_name, mode_key, spread_type, card_count, is_saved, cards, result_summary, metadata')
     .eq('user_id', activeUser.id)
     .eq('is_saved', true)
     .order('created_at', { ascending: false });
@@ -4672,6 +4672,13 @@ journalForm?.addEventListener('submit', async (event) => {
     entry.id === response.data.id ? response.data : entry
   )));
   setJournalStatus('Journal entry updated.', 'success');
+  window.AstralVeilToast?.show({
+    key: 'journal-save',
+    title: 'Journal',
+    message: 'Journal entry saved.',
+    type: 'success',
+    duration: 4000,
+  });
 
   journalEntriesLoaded = true;
   resetJournalForm();

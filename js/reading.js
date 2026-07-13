@@ -1637,6 +1637,7 @@ function dispatchCompletedReadingEvent() {
   const eventKey = JSON.stringify({
     reader: payload.reader_key,
     mode: payload.mode_key,
+    deck: payload.deck_id,
     spread: payload.spread_type,
     cards: payload.cards.map((card) => `${card.position}:${card.card_key}:${card.orientation}`),
   });
