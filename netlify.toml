@@ -18,6 +18,11 @@
   [headers.values]
     X-Robots-Tag = "noindex, nofollow, noarchive, nosnippet"
 
+[[headers]]
+  for = "/templates/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive, nosnippet"
+
 [[redirects]]
   from = "/*"
   to = "https://astralveil.world/:splat"
@@ -48,6 +53,21 @@
   from = "/deck.html"
   to = "/decks"
   status = 301
+
+[[redirects]]
+from = "/tarot.html"
+to = "/tarot"
+status = 301
+
+[[redirects]]
+from = "/tarot-card.html"
+to = "/tarot/the-fool/"
+status = 301
+
+[[redirects]]
+from = "/tarot/cards/the-fool"
+to = "/tarot/the-fool/"
+status = 301
 
 [[redirects]]
   from = "/about.html"
@@ -138,6 +158,11 @@
   from = "/decks"
   to = "/deck.html"
   status = 200
+
+[[redirects]]
+from = "/tarot"
+to = "/tarot.html"
+status = 200
 
 [[redirects]]
   from = "/about"

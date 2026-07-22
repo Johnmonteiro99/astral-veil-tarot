@@ -14,6 +14,8 @@ const cleanRoutes = new Map([
   ["/choose-reader", "index.html"],
   ["/veilwalkers", "readers.html"],
   ["/decks", "deck.html"],
+  ["/tarot", "tarot.html"],
+  ["/tarot/cards/the-fool", "tarot/the-fool/index.html"],
   ["/about", "about.html"],
   ["/lumen-archive", "lumen-archive.html"],
   ["/noctis-archive", "archive.html"],

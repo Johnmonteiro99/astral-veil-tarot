@@ -38,6 +38,9 @@ let navLinks = document.querySelectorAll(".navbar__link, .navbar__mobile-link");
 let mobileMenuLinks = document.querySelectorAll(".navbar__mobile-link");
 let expandedImagePreview = null;
 let expandedImagePreviewImage = null;
+let expandedImagePreviewTitle = null;
+let expandedImagePreviewCaption = null;
+let lastExpandedImagePreviewTrigger = null;
 let angelWindowTimer = null;
 
 const polishedImageSelector = [
@@ -235,6 +238,39 @@ function refreshNavCollections() {
   mobileMenuLinks = document.querySelectorAll(".navbar__mobile-link");
 }
 
+// Tarot is a permanent shared destination. It is injected here because the
+// static pages all consume this navigation controller, while archive links are
+// inserted dynamically according to the active celestial event.
+function ensureTarotNav() {
+  const desktopLinks = document.querySelector(".navbar__links");
+  const existingDesktopLink = document.querySelector("[data-tarot-nav-link]");
+  const existingMobileLink = document.querySelector("[data-tarot-mobile-nav-link]");
+
+  if (desktopLinks && !existingDesktopLink) {
+    const item = document.createElement("li");
+    const decksItem = Array.from(desktopLinks.querySelectorAll("a"))
+      .find((link) => getNormalizedNavPath(link.href) === "/decks")
+      ?.closest("li");
+
+    item.innerHTML = '<a class="navbar__link" href="/tarot" data-tarot-nav-link>TAROT</a>';
+    decksItem?.insertAdjacentElement("afterend", item);
+  }
+
+  if (mobileMenu && !existingMobileLink) {
+    const link = document.createElement("a");
+    const decksLink = Array.from(mobileMenu.querySelectorAll("a"))
+      .find((item) => getNormalizedNavPath(item.href) === "/decks");
+
+    link.className = "navbar__mobile-link";
+    link.href = "/tarot";
+    link.textContent = "TAROT";
+    link.dataset.tarotMobileNavLink = "";
+    decksLink?.insertAdjacentElement("afterend", link);
+  }
+
+  refreshNavCollections();
+}
+
 // Builds the reusable image preview dialog the first time any expandable image is opened.
 function createExpandedImagePreview() {
   if (expandedImagePreview) {
@@ -244,18 +280,27 @@ function createExpandedImagePreview() {
   expandedImagePreview = document.createElement("div");
   expandedImagePreview.className = "image-preview";
   expandedImagePreview.setAttribute("aria-hidden", "true");
+  expandedImagePreview.inert = true;
   expandedImagePreview.innerHTML = `
     <button class="image-preview__backdrop" type="button" data-close-image-preview aria-label="Close expanded image"></button>
-    <div class="image-preview__dialog" role="dialog" aria-modal="true" aria-label="Expanded image">
+    <div class="image-preview__dialog" role="dialog" aria-modal="true" aria-label="Expanded image" tabindex="-1">
       <button class="image-preview__close" type="button" data-close-image-preview aria-label="Close expanded image">
         <span class="close-circle-icon" aria-hidden="true"></span>
       </button>
-      <img class="image-preview__image" alt="" data-image-preview-image />
+      <figure class="image-preview__figure">
+        <img class="image-preview__image" alt="" data-image-preview-image />
+        <figcaption class="image-preview__caption" data-image-preview-meta hidden>
+          <p class="image-preview__title" id="image-preview-title" data-image-preview-title></p>
+          <p class="image-preview__caption-text" id="image-preview-caption" data-image-preview-caption></p>
+        </figcaption>
+      </figure>
     </div>
   `;
 
   document.body.appendChild(expandedImagePreview);
   expandedImagePreviewImage = expandedImagePreview.querySelector("[data-image-preview-image]");
+  expandedImagePreviewTitle = expandedImagePreview.querySelector("[data-image-preview-title]");
+  expandedImagePreviewCaption = expandedImagePreview.querySelector("[data-image-preview-caption]");
 
   expandedImagePreview.addEventListener("click", (event) => {
     if (event.target.closest("[data-close-image-preview]")) {
@@ -280,6 +325,7 @@ function getExpandableImageData(trigger) {
       alt: trigger.dataset.imagePreviewAlt || trigger.dataset.imagePreviewTitle || "Expanded image",
       title: trigger.dataset.imagePreviewTitle || "Expanded image",
       caption: trigger.dataset.imagePreviewCaption || "",
+      showMeta: trigger.dataset.imagePreviewShowMeta === "true",
       minimal,
       protected: isProtectedMediaElement(trigger)
     };
@@ -294,20 +340,37 @@ function getExpandableImageData(trigger) {
     alt: image.alt || trigger.dataset.imagePreviewTitle || "Expanded image",
     title: trigger.dataset.imagePreviewTitle || image.dataset.imagePreviewTitle || image.alt || "Expanded image",
     caption: trigger.dataset.imagePreviewCaption || image.dataset.imagePreviewCaption || "",
+    showMeta: trigger.dataset.imagePreviewShowMeta === "true" || image.dataset.imagePreviewShowMeta === "true",
     minimal,
     protected: isProtectedMediaElement(trigger) || isProtectedMediaElement(image)
   };
 }
 
 // Opens the shared lightbox for card art, reader portraits, and archive images.
-function openExpandedImagePreview(imageData) {
+function openExpandedImagePreview(imageData, trigger = null) {
   if (!imageData?.src) {
     return;
   }
 
   createExpandedImagePreview();
+  const dialog = expandedImagePreview.querySelector(".image-preview__dialog");
+  const meta = expandedImagePreview.querySelector("[data-image-preview-meta]");
+  const showMeta = Boolean(imageData.showMeta);
+  if (trigger instanceof HTMLElement) lastExpandedImagePreviewTrigger = trigger;
   expandedImagePreviewImage.src = imageData.src;
   expandedImagePreviewImage.alt = imageData.alt;
+  expandedImagePreviewTitle.textContent = imageData.title || "Expanded image";
+  expandedImagePreviewCaption.textContent = imageData.caption || "";
+  meta.hidden = !showMeta;
+  if (showMeta) {
+    dialog.removeAttribute("aria-label");
+    dialog.setAttribute("aria-labelledby", "image-preview-title");
+    dialog.setAttribute("aria-describedby", "image-preview-caption");
+  } else {
+    dialog.setAttribute("aria-label", "Expanded image");
+    dialog.removeAttribute("aria-labelledby");
+    dialog.removeAttribute("aria-describedby");
+  }
   preparePolishedImage(expandedImagePreviewImage);
   expandedImagePreviewImage.draggable = !imageData.protected;
   expandedImagePreviewImage.classList.toggle("protected-media", Boolean(imageData.protected));
@@ -319,7 +382,9 @@ function openExpandedImagePreview(imageData) {
   expandedImagePreview.classList.toggle("image-preview--minimal", Boolean(imageData.minimal));
   expandedImagePreview.classList.add("is-open");
   expandedImagePreview.setAttribute("aria-hidden", "false");
+  expandedImagePreview.inert = false;
   document.body.classList.add("is-image-preview-open");
+  window.requestAnimationFrame(() => expandedImagePreview.querySelector(".image-preview__close")?.focus({ preventScroll: true }));
 }
 
 // Clears the lightbox image source when closed so large images do not remain active unnecessarily.
@@ -330,6 +395,7 @@ function closeExpandedImagePreview() {
 
   expandedImagePreview.classList.remove("is-open");
   expandedImagePreview.setAttribute("aria-hidden", "true");
+  expandedImagePreview.inert = true;
   document.body.classList.remove("is-image-preview-open");
 
   if (expandedImagePreviewImage) {
@@ -339,6 +405,10 @@ function closeExpandedImagePreview() {
     expandedImagePreviewImage.classList.remove("protected-media");
     expandedImagePreviewImage.removeAttribute("data-protected-media");
   }
+  expandedImagePreviewTitle.textContent = "";
+  expandedImagePreviewCaption.textContent = "";
+  if (lastExpandedImagePreviewTrigger?.isConnected) lastExpandedImagePreviewTrigger.focus({ preventScroll: true });
+  lastExpandedImagePreviewTrigger = null;
 }
 
 window.AstralVeilImagePreview = {
@@ -612,7 +682,7 @@ function updateBloodMoonControl(isActive) {
   control.setAttribute("aria-label", "Seal the Veil and return to normal mode");
   control.title = "Seal the Veil";
   control.innerHTML = `
-    <img class="blood-moon-nav-control__sigil" src="assets/icons/symbols/seal-button-transparent.png" alt="" aria-hidden="true" width="512" height="512" />
+    <img class="blood-moon-nav-control__sigil" src="/assets/icons/symbols/seal-button-transparent.png" alt="" aria-hidden="true" width="512" height="512" />
     <span class="blood-moon-nav-control__label">bloodmoon</span>
   `;
 
@@ -975,6 +1045,7 @@ function getNormalizedNavPath(url) {
     "/index.html": "/",
     "/readers.html": "/veilwalkers",
     "/deck.html": "/decks",
+    "/tarot.html": "/tarot",
     "/about.html": "/about",
     "/lumen-archive.html": "/lumen-archive",
     "/archive.html": "/noctis-archive",
@@ -1001,7 +1072,9 @@ function setActiveNavLink(activeHref) {
   const activePath = getNormalizedNavPath(activeHref);
 
   navLinks.forEach((link) => {
-    const isActive = getNormalizedNavPath(link.href) === activePath;
+    const linkPath = getNormalizedNavPath(link.href);
+    const isTarotSection = linkPath === "/tarot" && (activePath === "/tarot" || activePath.startsWith("/tarot/"));
+    const isActive = linkPath === activePath || isTarotSection;
 
     link.classList.toggle("is-active", isActive);
 
@@ -1014,6 +1087,7 @@ function setActiveNavLink(activeHref) {
 }
 
 if (navLinks.length) {
+  ensureTarotNav();
   updateBloodMoonNav(isBloodMoonActive());
   setActiveNavLink(window.location.href);
 
@@ -1162,7 +1236,7 @@ document.addEventListener("click", (event) => {
 
   event.preventDefault();
   event.stopPropagation();
-  openExpandedImagePreview(imageData);
+  openExpandedImagePreview(imageData, previewTrigger);
 });
 
 document.addEventListener(
@@ -1175,6 +1249,25 @@ document.addEventListener(
       return;
     }
 
+    if (event.key === "Tab" && expandedImagePreview?.classList.contains("is-open")) {
+      const dialog = expandedImagePreview.querySelector(".image-preview__dialog");
+      const focusable = Array.from(dialog.querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'))
+        .filter((element) => !element.hidden);
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (!first) {
+        event.preventDefault();
+        dialog.focus({ preventScroll: true });
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+      return;
+    }
+
     if (
       (event.key === "Enter" || event.key === " ") &&
       event.target instanceof Element &&
@@ -1183,7 +1276,7 @@ document.addEventListener(
       const imageData = getExpandableImageData(event.target);
 
       if (imageData) {
-        openExpandedImagePreview(imageData);
+        openExpandedImagePreview(imageData, event.target);
         event.preventDefault();
         event.stopPropagation();
       }

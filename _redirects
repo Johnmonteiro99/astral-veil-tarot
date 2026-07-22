@@ -4,3 +4,6 @@
 /one-card-tarot-reading /one-card-tarot-reading.html 200
 /online-tarot-reading /online-tarot-reading.html 200
 /choose-reader /index.html 200
+/tarot /tarot.html 200
+/tarot-card.html /tarot/the-fool/ 301
+/tarot/cards/the-fool /tarot/the-fool/ 301
