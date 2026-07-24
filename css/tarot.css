@@ -30,6 +30,14 @@
   --tarot-glow: rgba(241, 181, 73, 0.34);
   --tarot-button-text: #2d2519;
   --tarot-search-icon-filter: invert(43%) sepia(62%) saturate(793%) hue-rotate(354deg) brightness(88%) contrast(85%);
+  --tarot-sun-action-border: #f1c56f;
+  --tarot-sun-action-text: #2d2519;
+  --tarot-sun-action-background: linear-gradient(135deg,#f8d990,#eab454);
+  --tarot-sun-action-shadow: 0 8px 22px rgba(113,72,21,.2);
+  --tarot-sun-action-hover-border: #ffe4a5;
+  --tarot-sun-action-hover-text: #211a11;
+  --tarot-sun-action-hover-background: linear-gradient(135deg,#ffe6a7,#f1c56f);
+  --tarot-sun-action-hover-shadow: 0 0 22px rgba(241,181,73,.42);
 }
 
 .tarot-meanings-page.blood-moon-mode {
@@ -141,8 +149,8 @@ body.blood-moon-mode .tarot-filter:hover,body.blood-moon-mode .tarot-filter:focu
 .tarot-card-detail__meaning>p { max-width: 600px; margin: 0; color: var(--tarot-muted); font: clamp(.95rem,1.25vw,1.08rem)/1.62 var(--font-body-serif); }
 .tarot-read-meaning { align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 50px; margin-top: 28px; border: 1px solid var(--tarot-border); border-radius: 999px; padding: 0 20px; color: var(--tarot-gold); background: color-mix(in srgb,var(--tarot-panel) 38%,transparent); font: 600 .72rem/1 var(--logo-font); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: border-color .2s ease,background .2s ease,box-shadow .2s ease,transform .2s ease; }
 .tarot-read-meaning:hover,.tarot-read-meaning:focus-visible { border-color: var(--tarot-gold); background: color-mix(in srgb,var(--tarot-panel) 66%,transparent); box-shadow: 0 0 20px color-mix(in srgb,var(--tarot-glow) 50%,transparent); transform: translateY(-1px); }
-body.sun-mode.tarot-meanings-page .tarot-read-meaning { border-color: #f1c56f; color: #2d2519; background: linear-gradient(135deg,#f8d990,#eab454); box-shadow: 0 8px 22px rgba(113,72,21,.2); }
-body.sun-mode.tarot-meanings-page .tarot-read-meaning:hover,body.sun-mode.tarot-meanings-page .tarot-read-meaning:focus-visible { border-color: #ffe4a5; color: #211a11; background: linear-gradient(135deg,#ffe6a7,#f1c56f); box-shadow: 0 0 22px rgba(241,181,73,.42); }
+body.sun-mode.tarot-meanings-page .tarot-read-meaning { border-color: var(--tarot-sun-action-border); color: var(--tarot-sun-action-text); background: var(--tarot-sun-action-background); box-shadow: var(--tarot-sun-action-shadow); }
+body.sun-mode.tarot-meanings-page .tarot-read-meaning:hover,body.sun-mode.tarot-meanings-page .tarot-read-meaning:focus-visible { border-color: var(--tarot-sun-action-hover-border); color: var(--tarot-sun-action-hover-text); background: var(--tarot-sun-action-hover-background); box-shadow: var(--tarot-sun-action-hover-shadow); }
 .tarot-empty { padding: 70px 0 50px; text-align: center; color: var(--tarot-muted); }
 .tarot-empty h2 { margin: 0 0 6px; color: var(--tarot-text); font: 500 2rem var(--heading-font); }
 .tarot-empty p { margin: 0; font: .82rem/1.5 var(--body-font); }
@@ -589,15 +597,20 @@ body.tarot-codex-open { overflow: hidden; }
 body.sun-mode.tarot-meanings-page .tarot-codex {
   --codex-surface: linear-gradient(145deg,#fbf4e5,#eee1c7);
   --codex-border: rgba(151,102,38,.48);
-  --codex-title: #34283a;
-  --codex-text: #493d32;
-  --codex-muted: #6c5b4a;
-  --codex-label: #96601c;
+  --codex-title: #2f2030;
+  --codex-text: #4a3c36;
+  --codex-muted: #4a3c36;
+  --codex-label: #805a2c;
+  --codex-divider: rgba(143,106,56,.28);
   --codex-glow: rgba(176,113,28,.22);
   box-shadow: 0 34px 100px rgba(45,28,10,.38),0 0 40px rgba(195,134,50,.2),inset 0 0 42px rgba(255,255,255,.2);
 }
 body.sun-mode.tarot-meanings-page .tarot-codex__close { background: rgba(255,248,231,.92); }
-body.sun-mode.tarot-meanings-page .tarot-codex__meaning-link { color: #3e3329; background: rgba(174,112,31,.08); }
+body.sun-mode.tarot-meanings-page .tarot-codex__meaning-block { border-color: var(--codex-divider); }
+body.sun-mode.tarot-meanings-page .tarot-codex__reflection { border-color: var(--codex-divider); }
+body.sun-mode.tarot-meanings-page .tarot-codex__meaning-link { border-color: var(--tarot-sun-action-border); color: var(--tarot-sun-action-text); background: var(--tarot-sun-action-background); box-shadow: var(--tarot-sun-action-shadow); }
+body.sun-mode.tarot-meanings-page .tarot-codex__meaning-link:hover,body.sun-mode.tarot-meanings-page .tarot-codex__meaning-link:focus-visible { border-color: var(--tarot-sun-action-hover-border); color: var(--tarot-sun-action-hover-text); background: var(--tarot-sun-action-hover-background); box-shadow: var(--tarot-sun-action-hover-shadow); transform: translateY(-1px); }
+body.sun-mode.tarot-meanings-page .tarot-codex button:focus-visible,body.sun-mode.tarot-meanings-page .tarot-codex a:focus-visible { outline-color: var(--codex-label); }
 
 body.blood-moon-mode.tarot-meanings-page .tarot-codex {
   --codex-surface: linear-gradient(145deg,rgba(43,5,12,.99),rgba(10,1,3,.99));

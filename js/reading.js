@@ -109,6 +109,8 @@ let activeReaderIntroRequestId = 0;
 let readerCarouselTouchStartX = 0;
 let readerCarouselTouchStartY = 0;
 let lastReaderCarouselWheelAt = 0;
+let readerCarouselIntervalId = null;
+let readerCarouselMotionQuery = null;
 let readingDeckTouchStartX = null;
 let readingDeckTouchStartY = null;
 let readingDeckDidSwipe = false;
@@ -531,6 +533,7 @@ function applyReadingPreferences(preferences = {}) {
   readingPreferences = normalizeReadingPreferences(preferences);
   document.body.classList.toggle("reduce-motion", readingPreferences.reduce_motion);
   document.documentElement.dataset.reduceMotion = readingPreferences.reduce_motion ? "true" : "false";
+  syncReaderCarouselAutoRotation();
 }
 
 function applyDefaultReadingModePreference() {
@@ -1081,7 +1084,10 @@ function bindReadingImageErrorHandlers(container = document) {
   container.querySelectorAll('[data-image-error-hide]').forEach((image) => image.addEventListener('error', () => { image.style.visibility = 'hidden'; }, { once: true }));
   container.querySelectorAll('[data-image-error-fallback]').forEach((image) => image.addEventListener('error', () => {
     const fallback = image.dataset.imageErrorFallback;
-    if (fallback && image.dataset.fallbackApplied !== 'true') { image.dataset.fallbackApplied = 'true'; image.src = fallback; }
+    if (fallback && image.dataset.fallbackApplied !== 'true') {
+      image.dataset.fallbackApplied = 'true';
+      updateReadingImageIfChanged(image, fallback);
+    }
   }, { once: true }));
 }
 
@@ -1091,7 +1097,7 @@ document.addEventListener('error', (event) => {
   if (image.matches('[data-image-error-hide]')) image.style.visibility = 'hidden';
   if (image.matches('[data-image-error-fallback]') && image.dataset.fallbackApplied !== 'true') {
     image.dataset.fallbackApplied = 'true';
-    image.src = image.dataset.imageErrorFallback;
+    updateReadingImageIfChanged(image, image.dataset.imageErrorFallback);
   }
 }, true);
 
@@ -1691,11 +1697,14 @@ function renderReaders() {
 
   featuredReaderIndex = Math.min(featuredReaderIndex, visibleGuidePool.length - 1);
   readerList.classList.add("reader-carousel");
-  readerList.innerHTML = `
-    <div class="reader-carousel__stage" data-reader-carousel-stage>
-      <div class="reader-carousel__featured" data-featured-reader></div>
-    </div>
-  `;
+
+  if (!readerList.querySelector("[data-featured-reader]")) {
+    readerList.innerHTML = `
+      <div class="reader-carousel__stage" data-reader-carousel-stage>
+        <div class="reader-carousel__featured" data-featured-reader></div>
+      </div>
+    `;
+  }
 
   renderFeaturedReader();
 }
@@ -1866,25 +1875,51 @@ function getReaderSelectionImage(reader) {
   return reader?.phase1Image || reader?.image || "";
 }
 
-function preloadImage(src) {
-  if (!src) {
-    return;
+function updateReadingImageIfChanged(image, nextSource) {
+  if (!image || !nextSource) {
+    return Promise.resolve({ ok: false, changed: false, skipped: true });
   }
 
-  const image = new Image();
-  image.decoding = "async";
-  image.src = src;
+  const imageHelper = window.AstralVeilImages;
+
+  if (typeof imageHelper?.updateIfChanged === "function") {
+    return imageHelper.updateIfChanged(image, nextSource).then((result) => {
+      if (result.ok && !result.stale) {
+        image.style.visibility = "";
+      }
+
+      return result;
+    });
+  }
+
+  if (image.getAttribute("src") !== nextSource) {
+    image.setAttribute("src", nextSource);
+    return Promise.resolve({ ok: true, changed: true });
+  }
+
+  return Promise.resolve({ ok: true, changed: false });
 }
 
-function preloadReaderSelectionNeighbors(visibleGuidePool, activeIndex) {
-  if (!Array.isArray(visibleGuidePool) || visibleGuidePool.length < 2) {
+function preloadReaderSelectionWindow(visibleGuidePool, activeIndex) {
+  const imageHelper = window.AstralVeilImages;
+
+  if (
+    typeof imageHelper?.preload !== "function" ||
+    !Array.isArray(visibleGuidePool) ||
+    !visibleGuidePool.length
+  ) {
     return;
   }
 
-  [
+  const windowIndexes = [
+    activeIndex,
     (activeIndex - 1 + visibleGuidePool.length) % visibleGuidePool.length,
     (activeIndex + 1) % visibleGuidePool.length
-  ].forEach((index) => preloadImage(getReaderSelectionImage(visibleGuidePool[index])));
+  ];
+
+  new Set(windowIndexes).forEach((index) => {
+    imageHelper.preload(getReaderSelectionImage(visibleGuidePool[index]));
+  });
 }
 
 function getReaderZodiacLabel(reader) {
@@ -2151,6 +2186,71 @@ function revealFeaturedReaderMessage() {
   renderFeaturedReader();
 }
 
+function ensureFeaturedReaderStructure({
+  featuredReaderPanel,
+  visibleGuidePool,
+  featuredReader,
+  previousReader,
+  nextReader,
+  zodiacIconPath
+}) {
+  let orbit = featuredReaderPanel.querySelector("[data-reader-selection-orbit]");
+
+  if (orbit) {
+    return orbit;
+  }
+
+  const swipeDots = visibleGuidePool
+    .map(() => '<span class="mobile-reader-swipe-hint__dot" aria-hidden="true"></span>')
+    .join("");
+
+  featuredReaderPanel.innerHTML = `
+    <article class="reader-selection-orbit" aria-live="polite" data-reader-selection-orbit>
+      <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker">
+        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" data-reader-previous-image data-image-error-hide />
+      </button>
+      <div class="reader-orbit-card reader-orbit-card--featured">
+        <button class="reader-selection-split__image" type="button" data-reader-carousel-message aria-label="Refresh this Veilwalker's preview message">
+          <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" data-reader-featured-image data-image-error-hide />
+          <span class="reader-card-overlay" aria-hidden="true">
+            <span class="reader-card-overlay__name" data-reader-overlay-name></span>
+            <span class="reader-card-overlay__zodiac">
+              <span data-reader-overlay-zodiac></span>
+              <img class="zodiac-icon" src="${escapeHtml(zodiacIconPath)}" alt="" width="20" height="20" loading="eager" decoding="async" data-reader-overlay-zodiac-icon />
+            </span>
+            <span class="reader-card-overlay__quote" data-reader-overlay-quote hidden></span>
+          </span>
+        </button>
+        <p class="reader-feature-card__locked-message" data-reader-lock-message hidden></p>
+        <div class="reader-selection-button-row">
+          <button class="reader-feature-card__choose reader-mystery-option reader-card--veil reader-action-button reader-action-button--primary" type="button" data-reader-id>
+            <span class="reader-action-button__icon" aria-hidden="true">✧</span>
+            <span class="reader-mystery-option__title" data-reader-choose-label></span>
+          </button>
+          <button class="reader-mystery-option reader-card--veil reader-action-button reader-action-button--secondary" type="button" data-reader-id="mystery">
+            <span class="reader-action-button__icon" aria-hidden="true">☾</span>
+            <span class="reader-mystery-option__title">Let Fate Choose</span>
+          </button>
+        </div>
+      </div>
+      <button class="reader-carousel__nav reader-carousel__nav--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker"></button>
+      <button class="reader-carousel__nav reader-carousel__nav--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker"></button>
+      <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker">
+        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" data-reader-next-image data-image-error-hide />
+      </button>
+      <div class="mobile-reader-swipe-hint" aria-hidden="true">
+        <p><span aria-hidden="true">‹</span> Swipe to meet the other Veilwalkers <span aria-hidden="true">›</span></p>
+        <div class="mobile-reader-swipe-hint__track" data-reader-swipe-dots>
+          ${swipeDots}
+        </div>
+      </div>
+    </article>
+  `;
+
+  orbit = featuredReaderPanel.querySelector("[data-reader-selection-orbit]");
+  return orbit;
+}
+
 function renderFeaturedReader() {
   if (!readerList) {
     return;
@@ -2179,71 +2279,59 @@ function renderFeaturedReader() {
     ? "Summon"
     : "Begin Your Reading";
   const zodiacIconPath = getReaderZodiacIconPath(featuredReader);
-  const readerDescription = isBloodMoonActive() && featuredReader.bloodMoonProfile?.description
-    ? featuredReader.bloodMoonProfile.description
-    : featuredReader.description || getReaderFocus(featuredReader);
-  const swipeDots = visibleGuidePool
-    .map((reader, index) => `
-      <span
-        class="mobile-reader-swipe-hint__dot${index === featuredReaderIndex ? " is-active" : ""}"
-        aria-hidden="true"
-      ></span>
-    `)
-    .join("");
-
   const readerQuote = previewMessage || featuredReader.tagline || featuredReader.description || getReaderFocus(featuredReader);
 
   featuredReaderPanel.className = `reader-carousel__featured ${accentClass}${isLocked ? " is-unavailable" : ""}${isSelected ? " is-active" : ""}`;
-  featuredReaderPanel.innerHTML = `
-    <article class="reader-selection-orbit" aria-live="polite">
-      <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker">
-        <img src="${escapeHtml(getReaderSelectionImage(previousReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" data-image-error-hide />
-      </button>
-      <div class="reader-orbit-card reader-orbit-card--featured">
-        <button class="reader-selection-split__image" type="button" data-reader-carousel-message aria-label="Refresh this Veilwalker's preview message">
-          <img src="${escapeHtml(getReaderSelectionImage(featuredReader))}" alt="Current Veilwalker" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="eager" decoding="async" fetchpriority="high" data-image-error-hide />
-          <span class="reader-card-overlay" aria-hidden="true">
-            <span class="reader-card-overlay__name">${escapeHtml(getReaderCardDisplayName(featuredReader))}</span>
-            <span class="reader-card-overlay__zodiac">
-              ${escapeHtml(getReaderZodiacLabel(featuredReader))}
-              ${
-                zodiacIconPath
-                  ? `<img class="zodiac-icon" src="${escapeHtml(zodiacIconPath)}" alt="" width="20" height="20" loading="eager" decoding="async" />`
-                  : ""
-              }
-            </span>
-            ${readerQuote ? `<span class="reader-card-overlay__quote">“${escapeHtml(readerQuote)}”</span>` : ""}
-          </span>
-        </button>
-        ${isLocked ? `<p class="reader-feature-card__locked-message" data-reader-lock-message="${escapeHtml(featuredReader.id)}"></p>` : ""}
-        <div class="reader-selection-button-row">
-          <button class="reader-feature-card__choose reader-mystery-option reader-card--veil reader-action-button reader-action-button--primary" type="button" data-reader-id="${escapeHtml(featuredReader.id)}" ${isSelectable ? "" : "data-reader-unavailable=\"true\""}>
-            <span class="reader-action-button__icon" aria-hidden="true">✧</span>
-            <span class="reader-mystery-option__title">${chooseButtonText}</span>
-          </button>
-          <button class="reader-mystery-option reader-card--veil reader-action-button reader-action-button--secondary${selectedReader?.isMystery && selectedReaderIndex === -1 ? " is-active" : ""}" type="button" data-reader-id="mystery">
-            <span class="reader-action-button__icon" aria-hidden="true">☾</span>
-            <span class="reader-mystery-option__title">Let Fate Choose</span>
-          </button>
-        </div>
-      </div>
-      <button class="reader-carousel__nav reader-carousel__nav--prev" type="button" data-reader-carousel-nav="prev" aria-label="Previous Veilwalker"></button>
-      <button class="reader-carousel__nav reader-carousel__nav--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker"></button>
-      <button class="reader-orbit-card reader-orbit-card--side reader-orbit-card--next" type="button" data-reader-carousel-nav="next" aria-label="Next Veilwalker">
-        <img src="${escapeHtml(getReaderSelectionImage(nextReader))}" alt="" width="${READER_IMAGE_WIDTH}" height="${READER_IMAGE_HEIGHT}" loading="lazy" decoding="async" fetchpriority="low" data-image-error-hide />
-      </button>
-      <div class="mobile-reader-swipe-hint" aria-hidden="true">
-        <p><span aria-hidden="true">‹</span> Swipe to meet the other Veilwalkers <span aria-hidden="true">›</span></p>
-        <div class="mobile-reader-swipe-hint__track">
-          ${swipeDots}
-        </div>
-      </div>
-    </article>
-  `;
-  preloadReaderSelectionNeighbors(visibleGuidePool, featuredReaderIndex);
+  const orbit = ensureFeaturedReaderStructure({
+    featuredReaderPanel,
+    visibleGuidePool,
+    featuredReader,
+    previousReader,
+    nextReader,
+    zodiacIconPath
+  });
+  const previousImage = orbit.querySelector("[data-reader-previous-image]");
+  const featuredImage = orbit.querySelector("[data-reader-featured-image]");
+  const nextImage = orbit.querySelector("[data-reader-next-image]");
+  const zodiacIcon = orbit.querySelector("[data-reader-overlay-zodiac-icon]");
+  const quote = orbit.querySelector("[data-reader-overlay-quote]");
+  const lockMessage = orbit.querySelector("[data-reader-lock-message]");
+  const chooseButton = orbit.querySelector(".reader-feature-card__choose");
+  const fateButton = orbit.querySelector('[data-reader-id="mystery"]');
+  const swipeDots = orbit.querySelector("[data-reader-swipe-dots]");
+
+  updateReadingImageIfChanged(previousImage, getReaderSelectionImage(previousReader));
+  updateReadingImageIfChanged(featuredImage, getReaderSelectionImage(featuredReader));
+  updateReadingImageIfChanged(nextImage, getReaderSelectionImage(nextReader));
+  updateReadingImageIfChanged(zodiacIcon, zodiacIconPath);
+  orbit.querySelector("[data-reader-overlay-name]").textContent = getReaderCardDisplayName(featuredReader);
+  orbit.querySelector("[data-reader-overlay-zodiac]").textContent = getReaderZodiacLabel(featuredReader);
+  quote.hidden = !readerQuote;
+  quote.textContent = readerQuote ? `“${readerQuote}”` : "";
+  lockMessage.hidden = !isLocked;
+  lockMessage.dataset.readerLockMessage = isLocked ? featuredReader.id : "";
+  chooseButton.dataset.readerId = featuredReader.id;
+  chooseButton.toggleAttribute("data-reader-unavailable", !isSelectable);
+  orbit.querySelector("[data-reader-choose-label]").textContent = chooseButtonText;
+  fateButton.classList.toggle(
+    "is-active",
+    Boolean(selectedReader?.isMystery && selectedReaderIndex === -1)
+  );
+
+  if (swipeDots.children.length !== visibleGuidePool.length) {
+    swipeDots.innerHTML = visibleGuidePool
+      .map(() => '<span class="mobile-reader-swipe-hint__dot" aria-hidden="true"></span>')
+      .join("");
+  }
+
+  Array.from(swipeDots.children).forEach((dot, index) => {
+    dot.classList.toggle("is-active", index === featuredReaderIndex);
+  });
+
+  preloadReaderSelectionWindow(visibleGuidePool, featuredReaderIndex);
 }
 
-function moveFeaturedReader(direction) {
+function moveFeaturedReader(direction, { restartAutoRotation = true } = {}) {
   const visibleGuidePool = getVisibleGuidePool();
 
   if (!visibleGuidePool.length) {
@@ -2256,6 +2344,10 @@ function moveFeaturedReader(direction) {
   clearReaderSelectionPreview();
 
   renderFeaturedReader();
+
+  if (restartAutoRotation) {
+    startReaderCarouselAutoRotation();
+  }
 }
 
 function updateReaderSelectionConfirmation(readerId) {
@@ -2559,7 +2651,7 @@ function updateActiveReader() {
 
   updateReaderSelectionConfirmation(selectedReaderIndex === -1 ? "mystery" : selectedReader.id);
 
-  activeReaderImage.src = readerPresentation.image;
+  updateReadingImageIfChanged(activeReaderImage, readerPresentation.image);
   activeReaderImage.alt = readerPresentation.name;
   activeReaderImage.dataset.imagePreviewTitle = readerPresentation.name;
   activeReaderImage.dataset.imagePreviewCaption = getStaticActiveReaderQuote(readerPresentation);
@@ -3361,7 +3453,11 @@ function clearSelectedReaderState({ scrollToSelection = false } = {}) {
   selectedReaderIndex = -1;
   resetZephyraSummonRoll();
   activeReaderHeader?.classList.remove("active-reader-header--aquarius-bloodmoon");
-  activeReaderImage.src = "";
+  if (window.AstralVeilImages?.clear) {
+    window.AstralVeilImages.clear(activeReaderImage);
+  } else if (activeReaderImage.hasAttribute("src")) {
+    activeReaderImage.removeAttribute("src");
+  }
   activeReaderImage.alt = "";
   delete activeReaderImage.dataset.imagePreviewTitle;
   delete activeReaderImage.dataset.imagePreviewCaption;
@@ -3448,11 +3544,46 @@ window.addEventListener("astralVeilBloodMoonActivationMessage", (event) => {
   }
 });
 
-window.setInterval(() => {
-  if (!readerSelection?.classList.contains("is-minimized")) {
-    renderFeaturedReader();
+function stopReaderCarouselAutoRotation() {
+  if (readerCarouselIntervalId !== null) {
+    window.clearInterval(readerCarouselIntervalId);
+    readerCarouselIntervalId = null;
   }
-}, 30000);
+}
+
+function startReaderCarouselAutoRotation() {
+  stopReaderCarouselAutoRotation();
+
+  if (!readerList || isReadingReduceMotionEnabled()) {
+    return;
+  }
+
+  readerCarouselIntervalId = window.setInterval(() => {
+    if (
+      document.hidden ||
+      readerSelection?.classList.contains("is-minimized") ||
+      isBloodMoonTransitionRunning
+    ) {
+      return;
+    }
+
+    moveFeaturedReader("next", { restartAutoRotation: false });
+  }, 30000);
+}
+
+function syncReaderCarouselAutoRotation() {
+  startReaderCarouselAutoRotation();
+}
+
+readerCarouselMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+if (typeof readerCarouselMotionQuery.addEventListener === "function") {
+  readerCarouselMotionQuery.addEventListener("change", syncReaderCarouselAutoRotation);
+} else {
+  readerCarouselMotionQuery.addListener(syncReaderCarouselAutoRotation);
+}
+
+startReaderCarouselAutoRotation();
 
 if (readerList) {
   readerList.addEventListener("click", (event) => {

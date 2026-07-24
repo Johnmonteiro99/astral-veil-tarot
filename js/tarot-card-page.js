@@ -654,64 +654,7 @@
   }
 
   function enableTilt() {
-    const tiltCard = document.querySelector("[data-tarot-card-tilt]");
-    const hint = document.querySelector("[data-tarot-card-tilt-hint]");
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
-
-    if (!tiltCard || reducedMotion.matches || !finePointer.matches) {
-      hint?.setAttribute("hidden", "");
-      return;
-    }
-
-    function resetTilt() {
-      tiltCard.style.setProperty("--tilt-x", "0deg");
-      tiltCard.style.setProperty("--tilt-y", "0deg");
-      tiltCard.style.setProperty("--shine-x", "50%");
-      tiltCard.style.setProperty("--shine-y", "50%");
-    }
-
-    function updateTilt(event) {
-      if (reducedMotion.matches) {
-        return;
-      }
-      const rect = tiltCard.getBoundingClientRect();
-      const relativeX = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
-      const relativeY = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
-      tiltCard.style.setProperty("--tilt-x", `${((0.5 - relativeY) * 10).toFixed(2)}deg`);
-      tiltCard.style.setProperty("--tilt-y", `${((relativeX - 0.5) * 10).toFixed(2)}deg`);
-      tiltCard.style.setProperty("--shine-x", `${(relativeX * 100).toFixed(1)}%`);
-      tiltCard.style.setProperty("--shine-y", `${(relativeY * 100).toFixed(1)}%`);
-    }
-
-    function startTilt(event) {
-      if (event.pointerType === "touch") {
-        return;
-      }
-      tiltCard.setPointerCapture?.(event.pointerId);
-      updateTilt(event);
-    }
-
-    function endTilt(event) {
-      try {
-        tiltCard.releasePointerCapture?.(event.pointerId);
-      } catch (error) {
-        // Capture can be released by the browser before this handler runs.
-      }
-      resetTilt();
-    }
-
-    tiltCard.addEventListener("pointerdown", startTilt);
-    tiltCard.addEventListener("pointermove", updateTilt);
-    tiltCard.addEventListener("pointerleave", resetTilt);
-    tiltCard.addEventListener("pointerup", endTilt);
-    tiltCard.addEventListener("pointercancel", endTilt);
-    reducedMotion.addEventListener?.("change", () => {
-      if (reducedMotion.matches) {
-        resetTilt();
-        hint?.setAttribute("hidden", "");
-      }
-    });
+    window.AstralVeilCardTilt?.initialize(document);
   }
 
   function enableMobileCardCarousels() {

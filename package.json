@@ -4,11 +4,13 @@
   "type": "module",
   "scripts": {
     "dev": "node dev-server.mjs",
+    "generate:topics": "node scripts/generate-topic-pages.mjs",
     "generate:cards": "node scripts/generate-card-pages.mjs",
     "validate:cards": "node scripts/validate-card-data.mjs",
-    "build": "npm run generate:cards && npm run validate:cards",
+    "validate:topics": "node scripts/validate-topic-pages.mjs",
+    "build": "npm run generate:topics && npm run generate:cards && npm run validate:topics && npm run validate:cards",
     "validate:modal-routes": "node scripts/validate-tarot-modal-routes.mjs",
-    "test": "npm run validate:cards && npm run validate:modal-routes"
+    "test": "npm run validate:cards && npm run validate:modal-routes && npm run validate:topics"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

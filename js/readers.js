@@ -13,9 +13,10 @@ let lastLightboxNavAt = 0;
 let selectorTouchStartX = 0;
 let selectorTouchStartY = 0;
 let featuredReaderHeroLineRequestId = 0;
-let lightboxImageListeners;
 const selectedReaderStorageKey = "astralVeilSelectedReader";
 const readingPageHref = "/";
+const readerImageWidth = 900;
+const readerImageHeight = 1200;
 const selectedReaderHeroLines = {};
 const zodiacOrder = [
   "Aries",
@@ -176,6 +177,67 @@ function getReaderPreviewImage(reader) {
   const presentation = getReaderPresentation(reader);
 
   return presentation?.image || reader?.phase1Image || reader?.image || "";
+}
+
+function updateReaderImageIfChanged(image, nextSource, fallbackSource = "") {
+  if (!image || !nextSource) {
+    return Promise.resolve({ ok: false, changed: false, skipped: true });
+  }
+
+  const imageHelper = window.AstralVeilImages;
+
+  if (typeof imageHelper?.updateIfChanged !== "function") {
+    const currentSource = image.getAttribute("src") || "";
+
+    if (currentSource !== nextSource) {
+      image.setAttribute("src", nextSource);
+      return Promise.resolve({ ok: true, changed: true });
+    }
+
+    return Promise.resolve({ ok: true, changed: false });
+  }
+
+  return imageHelper.updateIfChanged(image, nextSource).then((result) => {
+    if (result.ok && !result.stale) {
+      image.hidden = false;
+      image.style.visibility = "";
+      return result;
+    }
+
+    if (
+      !result.stale &&
+      fallbackSource &&
+      !image.getAttribute("src") &&
+      imageHelper.resolve(fallbackSource) !== imageHelper.resolve(nextSource)
+    ) {
+      return imageHelper.updateIfChanged(image, fallbackSource);
+    }
+
+    return result;
+  });
+}
+
+function preloadReaderImageWindow(activeIndex) {
+  const imageHelper = window.AstralVeilImages;
+
+  if (
+    typeof imageHelper?.preload !== "function" ||
+    !orderedReaderProfiles.length ||
+    activeIndex < 0
+  ) {
+    return;
+  }
+
+  const readerCount = orderedReaderProfiles.length;
+  const windowIndexes = [
+    activeIndex,
+    (activeIndex - 1 + readerCount) % readerCount,
+    (activeIndex + 1) % readerCount
+  ];
+
+  new Set(windowIndexes).forEach((index) => {
+    imageHelper.preload(getReaderPreviewImage(orderedReaderProfiles[index]));
+  });
 }
 
 function getZodiacIconPath(sign) {
@@ -548,6 +610,71 @@ function renderReaderProfiles() {
   renderFeaturedVeilwalkerSelector();
 }
 
+function ensureFeaturedVeilwalkerStructure({
+  image,
+  name,
+  isProtectedVisual
+}) {
+  let feature = readersPageList.querySelector("[data-featured-veilwalker]");
+
+  if (feature) {
+    return feature;
+  }
+
+  feature = document.createElement("article");
+  feature.dataset.featuredVeilwalker = "";
+  feature.innerHTML = `
+    <button class="veilwalker-feature__nav veilwalker-feature__nav--prev" type="button" data-reader-selector-nav="prev" aria-label="Previous Veilwalker">
+      <span aria-hidden="true">‹</span>
+    </button>
+    <div class="veilwalker-feature__image-wrap" data-feature-image-wrap>
+      <img
+        class="veilwalker-feature__image"
+        src="${escapeHtml(image)}"
+        alt="${escapeHtml(name)}"
+        width="${readerImageWidth}"
+        height="${readerImageHeight}"
+        loading="eager"
+        decoding="async"
+        ${isProtectedVisual ? 'draggable="false"' : ""}
+        data-feature-image
+        data-image-error-hide
+      />
+    </div>
+    <div class="veilwalker-feature__details">
+      <div class="veilwalker-feature__meta">
+        <span class="veilwalker-feature__glyph" data-feature-glyph aria-hidden="true"></span>
+        <span data-feature-sign></span>
+        <span aria-hidden="true">•</span>
+        <span data-feature-element></span>
+      </div>
+      <h2 data-feature-name></h2>
+      <p class="veilwalker-feature__quote" data-feature-quote hidden></p>
+      <div class="veilwalker-feature__ornament" aria-hidden="true"></div>
+      <p class="veilwalker-feature__description" data-feature-description></p>
+      <div data-feature-detail-rows></div>
+      <div class="veilwalker-feature__actions">
+        <button class="veilwalker-feature__button veilwalker-feature__button--secondary" type="button" data-reader-profile-id>
+          View Profile <span aria-hidden="true">✦</span>
+        </button>
+        <button class="veilwalker-feature__button veilwalker-feature__button--primary" type="button" data-reader-begin-id>
+          Begin Reading <span aria-hidden="true">✦</span>
+        </button>
+      </div>
+    </div>
+    <button class="veilwalker-feature__nav veilwalker-feature__nav--next" type="button" data-reader-selector-nav="next" aria-label="Next Veilwalker">
+      <span aria-hidden="true">›</span>
+    </button>
+  `;
+
+  const featureImage = feature.querySelector("[data-feature-image]");
+  featureImage.addEventListener("error", () => {
+    featureImage.style.visibility = "hidden";
+  });
+  readersPageList.replaceChildren(feature);
+  return feature;
+}
+
 function renderFeaturedVeilwalkerSelector() {
   const reader = getFeaturedReader();
 
@@ -566,43 +693,44 @@ function renderFeaturedVeilwalkerSelector() {
   const useZephyraTheme = isZephyraReader && !isBloodMoonActive();
   const isProtectedVisual = isProtectedReaderVisual(reader, image);
   const protectedMediaClass = isProtectedVisual ? " protected-media" : "";
-  const protectedMediaAttrs = isProtectedVisual ? ' data-protected-media="true" draggable="false"' : "";
-  const protectedImageAttr = isProtectedVisual ? ' draggable="false"' : "";
+  const feature = ensureFeaturedVeilwalkerStructure({
+    image,
+    name: presentation.name,
+    isProtectedVisual
+  });
+  const imageWrap = feature.querySelector("[data-feature-image-wrap]");
+  const featureImage = feature.querySelector("[data-feature-image]");
+  const quote = feature.querySelector("[data-feature-quote]");
+  const profileButton = feature.querySelector("[data-reader-profile-id]");
+  const beginButton = feature.querySelector("[data-reader-begin-id]");
 
-  readersPageList.innerHTML = `
-    <article class="veilwalker-feature${useZephyraTheme ? " veilwalker-feature--zephyra" : ""} reader-profile-card--${escapeHtml(reader.id)}${getReaderElementClass(reader)}${getReaderBloodMoonCardClass(reader)}">
-      <button class="veilwalker-feature__nav veilwalker-feature__nav--prev" type="button" data-reader-selector-nav="prev" aria-label="Previous Veilwalker">
-        <span aria-hidden="true">‹</span>
-      </button>
-      <div class="veilwalker-feature__image-wrap${protectedMediaClass}"${protectedMediaAttrs}>
-        <img class="veilwalker-feature__image" src="${escapeHtml(image)}" alt="${escapeHtml(presentation.name)}" loading="eager" decoding="async"${protectedImageAttr} data-image-error-hide />
-      </div>
-      <div class="veilwalker-feature__details">
-        <div class="veilwalker-feature__meta">
-          <span class="veilwalker-feature__glyph" style="--zodiac-icon: url('${escapeHtml(zodiacIcon)}')" aria-hidden="true"></span>
-          <span>${escapeHtml(sign)}</span>
-          <span aria-hidden="true">•</span>
-          <span>${escapeHtml(presentation.element || "The Veil")}</span>
-        </div>
-        <h2>${escapeHtml(presentation.name)}</h2>
-        ${title ? `<p class="veilwalker-feature__quote">“${escapeHtml(title)}”</p>` : ""}
-        <div class="veilwalker-feature__ornament" aria-hidden="true"></div>
-        <p class="veilwalker-feature__description">${escapeHtml(summary)}</p>
-        ${renderReaderDetailRows(reader)}
-        <div class="veilwalker-feature__actions">
-          <button class="veilwalker-feature__button veilwalker-feature__button--secondary" type="button" data-reader-profile-id="${escapeHtml(reader.id)}">
-            View Profile <span aria-hidden="true">✦</span>
-          </button>
-          <button class="veilwalker-feature__button veilwalker-feature__button--primary" type="button" data-reader-begin-id="${escapeHtml(reader.id)}" ${canBeginReading ? "" : "disabled"}>
-            Begin Reading <span aria-hidden="true">✦</span>
-          </button>
-        </div>
-      </div>
-      <button class="veilwalker-feature__nav veilwalker-feature__nav--next" type="button" data-reader-selector-nav="next" aria-label="Next Veilwalker">
-        <span aria-hidden="true">›</span>
-      </button>
-    </article>
-  `;
+  feature.className =
+    `veilwalker-feature${useZephyraTheme ? " veilwalker-feature--zephyra" : ""} ` +
+    `reader-profile-card--${reader.id}${getReaderElementClass(reader)}${getReaderBloodMoonCardClass(reader)}`;
+  imageWrap.className = `veilwalker-feature__image-wrap${protectedMediaClass}`;
+  imageWrap.draggable = !isProtectedVisual;
+  featureImage.draggable = !isProtectedVisual;
+
+  if (isProtectedVisual) {
+    imageWrap.setAttribute("data-protected-media", "true");
+  } else {
+    imageWrap.removeAttribute("data-protected-media");
+  }
+
+  updateReaderImageIfChanged(featureImage, image);
+  featureImage.alt = presentation.name;
+  feature.querySelector("[data-feature-glyph]").style.setProperty("--zodiac-icon", `url("${zodiacIcon}")`);
+  feature.querySelector("[data-feature-sign]").textContent = sign;
+  feature.querySelector("[data-feature-element]").textContent = presentation.element || "The Veil";
+  feature.querySelector("[data-feature-name]").textContent = presentation.name;
+  quote.hidden = !title;
+  quote.textContent = title ? `“${title}”` : "";
+  feature.querySelector("[data-feature-description]").textContent = summary;
+  feature.querySelector("[data-feature-detail-rows]").innerHTML = renderReaderDetailRows(reader);
+  profileButton.dataset.readerProfileId = reader.id;
+  beginButton.dataset.readerBeginId = reader.id;
+  beginButton.disabled = !canBeginReading;
+  preloadReaderImageWindow(featuredReaderIndex);
 
   const reusedZodiacSelector = renderZodiacSelector();
 
@@ -675,22 +803,29 @@ function renderReaderSelectorDots() {
 
   const activeReader = getFeaturedReader();
 
-  readerSelectorDots.innerHTML = orderedReaderProfiles
-    .map((reader) => {
-      const isActive = activeReader?.id === reader.id;
-      const sign = reader.sign || reader.zodiac || reader.name;
+  if (readerSelectorDots.children.length !== orderedReaderProfiles.length) {
+    readerSelectorDots.innerHTML = orderedReaderProfiles
+      .map((reader) => {
+        const sign = reader.sign || reader.zodiac || reader.name;
 
-      return `
-        <button
-          class="veilwalker-selector-dot${isActive ? " is-active" : ""}"
-          type="button"
-          data-reader-dot-id="${escapeHtml(reader.id)}"
-          aria-label="Select ${escapeHtml(sign)} Veilwalker"
-          aria-current="${isActive ? "true" : "false"}"
-        ></button>
-      `;
-    })
-    .join("");
+        return `
+          <button
+            class="veilwalker-selector-dot"
+            type="button"
+            data-reader-dot-id="${escapeHtml(reader.id)}"
+            aria-label="Select ${escapeHtml(sign)} Veilwalker"
+            aria-current="false"
+          ></button>
+        `;
+      })
+      .join("");
+  }
+
+  readerSelectorDots.querySelectorAll("[data-reader-dot-id]").forEach((dot) => {
+    const isActive = activeReader?.id === dot.dataset.readerDotId;
+    dot.classList.toggle("is-active", isActive);
+    dot.setAttribute("aria-current", String(isActive));
+  });
 }
 
 // Updates the open lightbox without closing it, so form and next/previous navigation feel immediate.
@@ -714,21 +849,11 @@ function renderOpenReader(reader) {
 
   lightboxImage.hidden = false;
   lightboxImage.dataset.fallbackApplied = "false";
-  lightboxImageListeners?.abort();
-  lightboxImageListeners = new AbortController();
-  lightboxImage.addEventListener('error', () => {
-    if (lightboxImage.dataset.fallbackApplied !== "true" && fallbackImage) {
-      lightboxImage.dataset.fallbackApplied = "true";
-      lightboxImage.addEventListener('error', () => {
-        lightboxImage.hidden = true;
-      }, { once: true, signal: lightboxImageListeners.signal });
-      lightboxImage.src = fallbackImage;
-      return;
+  updateReaderImageIfChanged(lightboxImage, activeImage, fallbackImage).then((result) => {
+    if (!result.ok && !lightboxImage.getAttribute("src")) {
+      lightboxImage.hidden = true;
     }
-
-    lightboxImage.hidden = true;
-  }, { once: true, signal: lightboxImageListeners.signal });
-  lightboxImage.src = activeImage;
+  });
   lightboxImage.alt = presentation.name;
   lightboxImage.dataset.imagePreviewTitle = presentation.name;
   lightboxImage.dataset.imagePreviewCaption = getReaderImagePreviewCaption(activeForm, title);
@@ -766,7 +891,7 @@ function renderOpenReader(reader) {
       </div>
     </div>
   `;
-  readersPageList.querySelectorAll('[data-image-error-hide]').forEach((image) => image.addEventListener('error', () => { image.style.visibility = 'hidden'; }, { once: true }));
+  preloadReaderImageWindow(activeReaderIndex);
 }
 
 // Opens a reader profile and resets the active form to the starting portrait.
@@ -859,6 +984,14 @@ renderReaderProfiles();
 
 window.addEventListener("astralveil:reader-lines-ready", () => {
   hydrateFeaturedReaderHeroLine(getFeaturedReader());
+});
+
+window.addEventListener("astralVeilBloodMoonChange", () => {
+  renderFeaturedVeilwalkerSelector();
+
+  if (activeReaderIndex !== -1) {
+    renderOpenReader(orderedReaderProfiles[activeReaderIndex]);
+  }
 });
 
 ////////////////////////////////////////////////////

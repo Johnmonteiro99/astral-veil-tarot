@@ -10,7 +10,7 @@
     { label: "Pentacles", value: "pentacles" }
   ];
   const tarotQuestionPaths = [
-    { key: "love", title: "Love & Relationships", description: "Explore tarot meanings for love, connection, trust, distance, reconciliation, and harmony.", route: "/tarot/meanings/love", available: false, regularImage: "/assets/images/background%20_images/love-relationships.png", bloodMoonImage: "/assets/images/background%20_images/bloodmoon-love-relationships.png", alt: "Astral Veil artwork representing love, relationships, and emotional connection" },
+    { key: "love", title: "Love & Relationships", description: "Explore tarot meanings for love, connection, trust, distance, reconciliation, and harmony.", route: "/tarot/topics/love-relationships/", available: true, regularImage: "/assets/images/background%20_images/love-relationships.png", bloodMoonImage: "/assets/images/background%20_images/bloodmoon-love-relationships.png", alt: "Astral Veil artwork representing love, relationships, and emotional connection" },
     { key: "career", title: "Career & Purpose", description: "Gain clarity with tarot meanings for career: your work, direction, opportunities, ambition, and next steps.", route: "/tarot/meanings/career", available: false, regularImage: "/assets/images/background%20_images/career-purpose.png", bloodMoonImage: "/assets/images/background%20_images/bloodmoon-career-purpose.png", alt: "Astral Veil artwork representing career, purpose, ambition, and direction" },
     { key: "feelings", title: "Feelings & Intentions", description: "Uncover hidden feelings, developing emotions, motives, and tarot cards as feelings and intentions behind them.", route: "/tarot/meanings/feelings", available: false, regularImage: "/assets/images/background%20_images/feelings-intuitions.png", bloodMoonImage: "/assets/images/background%20_images/bloodmoon-feelings-intuitions.png", alt: "Astral Veil artwork representing hidden feelings, emotions, motives, and intentions" },
     { key: "advice", title: "Advice & Personal Growth", description: "Receive tarot advice to evolve, heal, overcome challenges, and step into your power.", route: "/tarot/meanings/advice", available: false, regularImage: "/assets/images/background%20_images/advice-personal-growth.png", bloodMoonImage: "/assets/images/background%20_images/bloodmoon-advice-personal-growth.png", alt: "Astral Veil artwork representing guidance, healing, growth, and personal power" },
@@ -156,12 +156,14 @@
       image.height = imageHeight;
       image.alt = path.alt;
       if (!path.available || !content) return;
-      const link = document.createElement("a");
+      const link = content.matches("a") ? content : document.createElement("a");
       link.className = "tarot-question-path__link";
       link.href = path.route;
       link.setAttribute("aria-label", `${path.title}: ${path.description}`);
-      while (content.firstChild) link.append(content.firstChild);
-      content.replaceWith(link);
+      if (link !== content) {
+        while (content.firstChild) link.append(content.firstChild);
+        content.replaceWith(link);
+      }
       item.dataset.available = "true";
     });
   }

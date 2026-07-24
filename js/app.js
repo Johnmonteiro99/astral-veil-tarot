@@ -102,6 +102,147 @@ function isProtectedMediaElement(element) {
 // Polished Image Loading
 ////////////////////////////////////////////////////
 
+const imagePreloadCache = new Map();
+const loadedImageSources = new Set();
+const imageSwapVersions = new WeakMap();
+
+function getResolvedImageSource(source) {
+  if (!source) {
+    return "";
+  }
+
+  try {
+    return new URL(source, document.baseURI).href;
+  } catch (error) {
+    return String(source);
+  }
+}
+
+function getImageAttributeSource(image) {
+  return getResolvedImageSource(image?.getAttribute?.("src") || "");
+}
+
+function rememberLoadedImageSource(source) {
+  const resolvedSource = getResolvedImageSource(source);
+
+  if (resolvedSource) {
+    loadedImageSources.add(resolvedSource);
+  }
+}
+
+// Shares in-flight and completed image work so carousel renders never create duplicate preloads.
+function preloadImageOnce(source) {
+  const resolvedSource = getResolvedImageSource(source);
+
+  if (!resolvedSource) {
+    return Promise.resolve({ ok: false, source: "", resolvedSource: "" });
+  }
+
+  if (loadedImageSources.has(resolvedSource)) {
+    return Promise.resolve({ ok: true, source, resolvedSource, cached: true });
+  }
+
+  if (imagePreloadCache.has(resolvedSource)) {
+    return imagePreloadCache.get(resolvedSource);
+  }
+
+  const preloadPromise = new Promise((resolve) => {
+    const preload = new Image();
+    let hasSettled = false;
+
+    const finish = async (ok) => {
+      if (hasSettled) {
+        return;
+      }
+
+      hasSettled = true;
+
+      if (ok && typeof preload.decode === "function") {
+        try {
+          await preload.decode();
+        } catch (error) {
+          // A successful load remains usable when decode() is unsupported or rejects.
+        }
+      }
+
+      if (ok) {
+        loadedImageSources.add(resolvedSource);
+      }
+
+      resolve({ ok, source, resolvedSource, cached: false });
+    };
+
+    preload.decoding = "async";
+    preload.addEventListener("load", () => finish(true), { once: true });
+    preload.addEventListener("error", () => finish(false), { once: true });
+    preload.src = source;
+
+    if (preload.complete) {
+      window.queueMicrotask(() => finish(preload.naturalWidth > 0));
+    }
+  });
+
+  imagePreloadCache.set(resolvedSource, preloadPromise);
+  return preloadPromise;
+}
+
+// Keeps the current pixels visible until the requested replacement is loaded and decoded.
+// The per-element version prevents a slower, stale request from winning after rapid navigation.
+function updateImageIfChanged(image, nextSource) {
+  if (!(image instanceof HTMLImageElement) || !nextSource) {
+    return Promise.resolve({ ok: false, changed: false, skipped: true });
+  }
+
+  const version = (imageSwapVersions.get(image) || 0) + 1;
+  const resolvedNextSource = getResolvedImageSource(nextSource);
+  imageSwapVersions.set(image, version);
+
+  if (getImageAttributeSource(image) === resolvedNextSource) {
+    if (image.complete && image.naturalWidth > 0) {
+      rememberLoadedImageSource(nextSource);
+    }
+
+    return Promise.resolve({ ok: true, changed: false, source: nextSource });
+  }
+
+  return preloadImageOnce(nextSource).then((result) => {
+    if (
+      !result.ok ||
+      imageSwapVersions.get(image) !== version ||
+      !image.isConnected
+    ) {
+      return {
+        ...result,
+        changed: false,
+        stale: imageSwapVersions.get(image) !== version
+      };
+    }
+
+    if (getImageAttributeSource(image) === resolvedNextSource) {
+      return { ...result, changed: false };
+    }
+
+    image.setAttribute("src", nextSource);
+    return { ...result, changed: true };
+  });
+}
+
+function clearImageSource(image) {
+  if (!(image instanceof HTMLImageElement)) {
+    return;
+  }
+
+  imageSwapVersions.set(image, (imageSwapVersions.get(image) || 0) + 1);
+
+  if (image.hasAttribute("src")) {
+    image.removeAttribute("src");
+  }
+
+  if (image.hasAttribute("srcset")) {
+    image.removeAttribute("srcset");
+  }
+}
+
 function hasLoadableImageSource(image) {
   return Boolean(image?.currentSrc || image?.getAttribute?.("src") || image?.getAttribute?.("srcset"));
 }
@@ -131,6 +272,7 @@ function shouldPolishImageLoad(image) {
 }
 
 function markImageLoaded(image, { instant = false } = {}) {
+  rememberLoadedImageSource(image.currentSrc || image.getAttribute("src"));
   image.classList.remove("image-loading", "image-load-error");
   image.classList.add("image-loaded");
   image.classList.toggle("image-loaded--instant", instant);
@@ -207,7 +349,11 @@ function watchPolishedImages() {
 
 window.AstralVeilImages = {
   prepare: preparePolishedImage,
-  prepareAll: preparePolishedImages
+  prepareAll: preparePolishedImages,
+  preload: preloadImageOnce,
+  updateIfChanged: updateImageIfChanged,
+  clear: clearImageSource,
+  resolve: getResolvedImageSource
 };
 
 if (document.readyState === "loading") {
@@ -357,7 +503,7 @@ function openExpandedImagePreview(imageData, trigger = null) {
   const meta = expandedImagePreview.querySelector("[data-image-preview-meta]");
   const showMeta = Boolean(imageData.showMeta);
   if (trigger instanceof HTMLElement) lastExpandedImagePreviewTrigger = trigger;
-  expandedImagePreviewImage.src = imageData.src;
+  updateImageIfChanged(expandedImagePreviewImage, imageData.src);
   expandedImagePreviewImage.alt = imageData.alt;
   expandedImagePreviewTitle.textContent = imageData.title || "Expanded image";
   expandedImagePreviewCaption.textContent = imageData.caption || "";
@@ -399,7 +545,7 @@ function closeExpandedImagePreview() {
   document.body.classList.remove("is-image-preview-open");
 
   if (expandedImagePreviewImage) {
-    expandedImagePreviewImage.removeAttribute("src");
+    clearImageSource(expandedImagePreviewImage);
     expandedImagePreviewImage.alt = "";
     expandedImagePreviewImage.draggable = true;
     expandedImagePreviewImage.classList.remove("protected-media");

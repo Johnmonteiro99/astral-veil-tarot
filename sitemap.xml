@@ -104,6 +104,14 @@
     <loc>https://astralveil.world/privacy</loc>
     <lastmod>2026-07-02</lastmod>
   </url>
+  <!-- GENERATED:TAROT_TOPIC_PAGES:START -->
+  <url>
+    <loc>https://astralveil.world/tarot/topics/love-relationships/</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <!-- GENERATED:TAROT_TOPIC_PAGES:END -->
   <!-- GENERATED:TAROT_CARD_PAGES:START -->
   <url>
     <loc>https://astralveil.world/tarot/the-fool/</loc>
