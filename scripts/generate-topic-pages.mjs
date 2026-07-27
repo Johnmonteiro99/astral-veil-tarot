@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { tarotTopicNavigation } from "../data/tarot-topic-navigation.mjs";
 import { tarotTopics } from "../data/tarot-topics.mjs";
 import { escapeHtml, serializeForInlineScript, SITE_ORIGIN } from "./card-page-helpers.mjs";
 import {
@@ -24,7 +25,7 @@ function renderSchema(topic) {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_ORIGIN}/` },
       { "@type": "ListItem", position: 2, name: "Tarot", item: `${SITE_ORIGIN}/tarot` },
-      { "@type": "ListItem", position: 3, name: "Love & Relationships", item: canonicalUrl }
+      { "@type": "ListItem", position: 3, name: topic.breadcrumbLabel, item: canonicalUrl }
     ]
   };
 
@@ -42,7 +43,7 @@ function renderSchema(topic) {
     },
     about: {
       "@type": "Thing",
-      name: "Tarot for love and relationships"
+      name: topic.schemaAbout
     }
   };
 
@@ -115,7 +116,54 @@ function renderBenefits(topic) {
           </article>`).join("");
 }
 
+function renderSignalSection(topic) {
+  const section = topic.signalSection;
+  const items = section.items.map((item) => {
+    const examples = item.examples.map((example) => `<li><span aria-hidden="true">✦</span>${escapeHtml(example)}</li>`).join("");
+    return `<article class="tarot-topic-signal tarot-topic-signal--${escapeHtml(item.id)}">
+            ${renderCelestialIcon(item.icon, "tarot-topic-signal__icon")}
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.definition)}</p>
+            <ul>${examples}</ul>
+          </article>`;
+  }).join("");
+
+  return `<section class="tarot-topic-signals tarot-topic-section" aria-labelledby="${escapeHtml(topic.sectionKey)}-signals-heading">
+        <header class="tarot-topic-signals__introduction tarot-topic-section-heading">
+          <p class="tarot-topic-kicker">${escapeHtml(section.eyebrow)}</p>
+          <h2 id="${escapeHtml(topic.sectionKey)}-signals-heading">${escapeHtml(section.heading)}</h2>
+          <p>${escapeHtml(section.introduction)}</p>
+        </header>
+        <div class="tarot-topic-signals__grid">${items}</div>
+        <p class="tarot-topic-signals__closing">${escapeHtml(section.closing)}</p>
+      </section>`;
+}
+
+function renderProcessSection(topic) {
+  const section = topic.processSection;
+  const items = section.items.map((item) => `<li class="tarot-topic-process__step tarot-topic-process__step--${escapeHtml(item.id)}">
+          <div class="tarot-topic-process__marker">
+            <span>${escapeHtml(item.number)}</span>
+            ${renderCelestialIcon(item.icon, "tarot-topic-process__icon")}
+          </div>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.definition)}</p>
+          <p class="tarot-topic-process__prompt">${escapeHtml(item.prompt)}</p>
+        </li>`).join("");
+
+  return `<section class="tarot-topic-process tarot-topic-section" aria-labelledby="${escapeHtml(topic.sectionKey)}-process-heading">
+        <header class="tarot-topic-process__introduction tarot-topic-section-heading">
+          <p class="tarot-topic-kicker">${escapeHtml(section.eyebrow)}</p>
+          <h2 id="${escapeHtml(topic.sectionKey)}-process-heading">${escapeHtml(section.heading)}</h2>
+          <p>${escapeHtml(section.introduction)}</p>
+        </header>
+        <ol class="tarot-topic-process__steps">${items}</ol>
+        <p class="tarot-topic-process__closing">${escapeHtml(section.closing)}</p>
+      </section>`;
+}
+
 function renderChapters(topic) {
+  const sectionKey = topic.sectionKey;
   const chapters = topic.chapters.map((chapter, index) => {
     const card = resolveTopicCard(chapter.featuredCardSlug);
     if (!card) throw new Error(`Missing chapter card: ${chapter.featuredCardSlug}`);
@@ -157,10 +205,10 @@ function renderChapters(topic) {
           </article>`;
   }).join("");
 
-  return `<section class="tarot-topic-chapters tarot-topic-section" id="important-love-cards" aria-labelledby="love-chapters-heading">
+  return `<section class="tarot-topic-chapters tarot-topic-section" id="important-${escapeHtml(sectionKey)}-cards" aria-labelledby="${escapeHtml(sectionKey)}-chapters-heading">
         <header class="tarot-topic-chapters__introduction tarot-topic-section-heading">
           <p class="tarot-topic-kicker">${escapeHtml(topic.chapterSection.eyebrow)}</p>
-          <h2 id="love-chapters-heading">${escapeHtml(topic.chapterSection.heading)}</h2>
+          <h2 id="${escapeHtml(sectionKey)}-chapters-heading">${escapeHtml(topic.chapterSection.heading)}</h2>
           <p>${escapeHtml(topic.chapterSection.introduction)}</p>
         </header>
         <div class="tarot-topic-chapters__sequence">${chapters}
@@ -181,6 +229,7 @@ function renderCelestialIcon(icon, className) {
 }
 
 function renderOrientation(topic) {
+  const sectionKey = topic.sectionKey;
   const exampleCard = resolveTopicCard(topic.orientation.exampleCardSlug);
   if (!exampleCard) {
     throw new Error(`Missing orientation example card: ${topic.orientation.exampleCardSlug}`);
@@ -196,10 +245,10 @@ function renderOrientation(topic) {
     ? `<a class="tarot-topic-text-link" href="${escapeHtml(topic.orientation.guideRoute)}">Explore upright and reversed meanings <span aria-hidden="true">→</span></a>`
     : `<p class="tarot-topic-availability">${escapeHtml(topic.orientation.archiveNote)}</p>`;
 
-  return `<section class="tarot-topic-orientation tarot-topic-section" aria-labelledby="upright-reversed-love" data-topic-orientation="upright">
+  return `<section class="tarot-topic-orientation tarot-topic-section" aria-labelledby="upright-reversed-${escapeHtml(sectionKey)}" data-topic-orientation="upright">
           <header class="tarot-topic-section-heading">
             <p class="tarot-topic-kicker">Reading the Cards</p>
-            <h2 id="upright-reversed-love">${escapeHtml(topic.orientation.heading)}</h2>
+            <h2 id="upright-reversed-${escapeHtml(sectionKey)}">${escapeHtml(topic.orientation.heading)}</h2>
             <p>${escapeHtml(topic.orientation.introduction)}</p>
           </header>
           <div class="tarot-topic-orientation-toggle" role="group" aria-label="Choose card orientation">
@@ -208,7 +257,7 @@ function renderOrientation(topic) {
           </div>
           <div class="tarot-topic-orientation-module" id="tarot-topic-orientation-module" data-topic-orientation-module>
             <figure class="tarot-topic-orientation__visual">
-              <button class="tarot-topic-orientation-card" type="button" aria-label="Drag to tilt The Lovers upright example" data-astral-card-tilt data-topic-orientation-card>
+              <button class="tarot-topic-orientation-card" type="button" aria-label="Drag to tilt ${escapeHtml(exampleCard.title)} upright example" data-astral-card-tilt data-topic-orientation-card>
                 <span class="tarot-topic-orientation-card__frame tarot-topic-orientation-card__frame--upright" data-topic-orientation-frame>
                   ${renderThemeImage({
                     className: "tarot-topic-orientation-card__image",
@@ -237,6 +286,7 @@ function renderOrientation(topic) {
 }
 
 function renderEthics(topic) {
+  const sectionKey = topic.sectionKey;
   const principles = topic.ethics.principles.map((principle, index) => `
             <li class="tarot-topic-principle${index === topic.ethics.principles.length - 1 ? " tarot-topic-principle--wide" : ""}">
               ${renderCelestialIcon(principle.icon, "tarot-topic-principle__icon")}
@@ -245,12 +295,12 @@ function renderEthics(topic) {
                 <span>${escapeHtml(principle.copy)}</span>
               </span>
             </li>`).join("");
-  return `<section class="tarot-topic-responsible tarot-topic-section" aria-labelledby="responsible-love-tarot">
+  return `<section class="tarot-topic-responsible tarot-topic-section" aria-labelledby="responsible-${escapeHtml(sectionKey)}-tarot">
           <div class="tarot-topic-chapter-divider" aria-hidden="true"><span>✦</span></div>
           <div class="tarot-topic-responsible__layout">
             <div class="tarot-topic-responsible__introduction">
               <p class="tarot-topic-kicker">Reflection with Agency</p>
-              <h2 id="responsible-love-tarot">${escapeHtml(topic.ethics.heading)}</h2>
+              <h2 id="responsible-${escapeHtml(sectionKey)}-tarot">${escapeHtml(topic.ethics.heading)}</h2>
               <p>${escapeHtml(topic.ethics.introduction)}</p>
               <blockquote>${escapeHtml(topic.ethics.pullQuote)}</blockquote>
             </div>
@@ -275,11 +325,39 @@ function renderRelatedLinks(topic) {
   return topic.relatedLinks.map((link) => `<a class="tarot-topic-related__link" href="${escapeHtml(link.route)}"><strong>${escapeHtml(link.label)}</strong><span>${escapeHtml(link.copy)}</span><span aria-hidden="true">→</span></a>`).join("");
 }
 
+function renderTopicNavigation(topic) {
+  const completedTopics = new Map(tarotTopics.map((completedTopic) => [completedTopic.id, completedTopic]));
+  const items = tarotTopicNavigation.map((item) => {
+    const completedTopic = completedTopics.get(item.topicId);
+    const isActive = item.topicId === topic.id;
+    const className = `tarot-topic-ribbon__item${isActive ? " is-active" : ""}${completedTopic ? "" : " is-disabled"}`;
+    const icon = `<span class="tarot-topic-ribbon__icon" style="--topic-ribbon-icon: url('${escapeHtml(item.icon)}')" aria-hidden="true"></span>`;
+    const labels = `<span class="tarot-topic-ribbon__label tarot-topic-ribbon__label--full">${escapeHtml(item.label)}</span><span class="tarot-topic-ribbon__label tarot-topic-ribbon__label--short" aria-hidden="true">${escapeHtml(item.shortLabel)}</span>`;
+
+    if (completedTopic) {
+      return `<a class="${className}" href="${getTopicRoute(completedTopic)}" aria-label="${escapeHtml(item.label)}"${isActive ? ' aria-current="page"' : ""} data-topic-ribbon-item="${escapeHtml(item.topicId)}">${icon}${labels}</a>`;
+    }
+
+    return `<span class="${className}" role="link" aria-disabled="true" aria-label="${escapeHtml(item.label)} — Coming Soon" tabindex="0" data-topic-ribbon-item="${escapeHtml(item.topicId)}">${icon}${labels}</span>`;
+  }).join("");
+
+  return `<nav class="tarot-topic-ribbon" aria-label="Tarot topics">
+        <span class="tarot-topic-ribbon__heading">Tarot Topics</span>
+        <div class="tarot-topic-ribbon__viewport">
+          <div class="tarot-topic-ribbon__track">${items}</div>
+        </div>
+      </nav>`;
+}
+
 function renderMain(topic) {
   const hero = topic.hero;
   const cta = topic.readingCta;
+  const sectionKey = topic.sectionKey;
+  const visualClass = topic.visualClass ? ` ${escapeHtml(topic.visualClass)}` : "";
 
-  return `<main id="main-content" class="tarot-topic">
+  return `<main id="main-content" class="tarot-topic${visualClass}">
+      ${renderTopicNavigation(topic)}
+
       <section class="tarot-topic-hero" aria-labelledby="tarot-topic-title">
         <div class="tarot-topic-hero__copy">
           <p class="tarot-topic-eyebrow">${escapeHtml(topic.eyebrow)}</p>
@@ -293,6 +371,7 @@ function renderMain(topic) {
             standardImage: hero.standardImage,
             bloodMoonImage: hero.bloodMoonImage,
             standardAlt: hero.alt,
+            bloodMoonAlt: hero.bloodMoonAlt || hero.alt,
             width: hero.width,
             height: hero.height,
             bloodMoonWidth: hero.bloodMoonWidth,
@@ -303,7 +382,7 @@ function renderMain(topic) {
         </figure>
       </section>
 
-      <section class="tarot-topic-overview tarot-topic-section" aria-labelledby="love-questions-heading">
+      <section class="tarot-topic-overview tarot-topic-section" aria-labelledby="${escapeHtml(sectionKey)}-questions-heading">
         <figure class="tarot-topic-overview__art" aria-hidden="true">
           ${renderThemeImage({
             className: "tarot-topic-overview__image",
@@ -318,32 +397,36 @@ function renderMain(topic) {
         </figure>
         <div class="tarot-topic-section-heading tarot-topic-overview__copy">
           <p class="tarot-topic-kicker">A Reflective Language</p>
-          <h2 id="love-questions-heading">${escapeHtml(topic.overview.heading)}</h2>
+          <h2 id="${escapeHtml(sectionKey)}-questions-heading">${escapeHtml(topic.overview.heading)}</h2>
           <p>${escapeHtml(topic.overview.copy)}</p>
         </div>
         <div class="tarot-topic-benefits">${renderBenefits(topic)}
         </div>
-      </section>
+      </section>${topic.signalSection ? `
+
+      ${renderSignalSection(topic)}` : ""}${topic.processSection ? `
+
+      ${renderProcessSection(topic)}` : ""}
 
       ${renderChapters(topic)}
 
-      <section class="tarot-topic-reading-row tarot-topic-section" aria-label="Love Tarot questions and reading invitation">
-        <section class="tarot-topic-questions" aria-labelledby="love-reading-questions-heading">
+      <section class="tarot-topic-reading-row tarot-topic-section" aria-label="${escapeHtml(topic.questionsSection.rowAriaLabel)}">
+        <section class="tarot-topic-questions" aria-labelledby="${escapeHtml(sectionKey)}-reading-questions-heading">
           <div class="tarot-topic-section-heading tarot-topic-section-heading--compact">
             <p class="tarot-topic-kicker">Ask with Awareness</p>
-            <h2 id="love-reading-questions-heading">Questions to Ask in a Love Reading</h2>
+            <h2 id="${escapeHtml(sectionKey)}-reading-questions-heading">${escapeHtml(topic.questionsSection.heading)}</h2>
           </div>
-          <div class="tarot-topic-question-viewport" aria-label="Reflective questions for a love Tarot reading">
+          <div class="tarot-topic-question-viewport" aria-label="${escapeHtml(topic.questionsSection.viewportAriaLabel)}">
             <div class="tarot-topic-question-track">${renderQuestions(topic)}
             </div>
           </div>
           <p class="tarot-topic-swipe-hint" aria-hidden="true">Scroll for more questions <span>→</span></p>
         </section>
 
-        <section class="tarot-topic-cta" aria-labelledby="love-reading-cta-heading">
+        <section class="tarot-topic-cta" aria-labelledby="${escapeHtml(sectionKey)}-reading-cta-heading">
           <div class="tarot-topic-cta__copy">
             <p class="tarot-topic-kicker">Step Through the Veil</p>
-            <h2 id="love-reading-cta-heading">${escapeHtml(cta.heading)}</h2>
+            <h2 id="${escapeHtml(sectionKey)}-reading-cta-heading">${escapeHtml(cta.heading)}</h2>
             <p>${escapeHtml(cta.copy)}</p>
             <div class="tarot-topic-cta__actions">
               <a class="tarot-topic-button tarot-topic-button--primary" href="${escapeHtml(cta.primaryRoute)}">${escapeHtml(cta.primaryLabel)} <span aria-hidden="true">→</span></a>
@@ -360,10 +443,10 @@ function renderMain(topic) {
 
       ${renderEthics(topic)}
 
-      <section class="tarot-topic-faq tarot-topic-section" aria-labelledby="love-tarot-faq-heading">
+      <section class="tarot-topic-faq tarot-topic-section" aria-labelledby="${escapeHtml(sectionKey)}-tarot-faq-heading">
         <div class="tarot-topic-section-heading tarot-topic-section-heading--compact">
-          <p class="tarot-topic-kicker">Love Tarot FAQ</p>
-          <h2 id="love-tarot-faq-heading">Questions About Tarot and Relationships</h2>
+          <p class="tarot-topic-kicker">${escapeHtml(topic.faqSection.eyebrow)}</p>
+          <h2 id="${escapeHtml(sectionKey)}-tarot-faq-heading">${escapeHtml(topic.faqSection.heading)}</h2>
         </div>
         <div class="tarot-topic-faq__list">${renderFaq(topic)}</div>
       </section>

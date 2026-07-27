@@ -326,6 +326,7 @@ body.blood-moon-mode.tarot-meanings-page .tarot-question-paths { --question-titl
 .tarot-guide[data-tarot-guide="tarot-vs-oracle"] { grid-area: oracle; }
 .tarot-guide[data-tarot-guide="tarot-vs-lenormand"] { grid-area: lenormand; }
 .tarot-guide__link { display: flex; flex: 1; flex-direction: column; min-height: 0; color: inherit; text-decoration: none; }
+.tarot-guide__link:focus-visible { outline: 0; border-radius: inherit; box-shadow: inset 0 0 0 2px color-mix(in srgb,var(--guides-accent) 74%,transparent); }
 .tarot-guide__media { position: relative; flex: 0 0 auto; overflow: hidden; background: var(--guides-media); }
 .tarot-guide__media--portrait { aspect-ratio: 4/5; }
 .tarot-guide__media--landscape { aspect-ratio: 4/3; }
@@ -350,6 +351,11 @@ body.blood-moon-mode.tarot-meanings-page .tarot-question-paths { --question-titl
 .tarot-guide--wide,.tarot-guide--comparison { display: grid; grid-template-columns: minmax(220px,.75fr) minmax(0,1.35fr); min-height: 0; }
 .tarot-guide--wide .tarot-guide__media,.tarot-guide--comparison .tarot-guide__media { grid-column: 2; grid-row: 1; height: 100%; aspect-ratio: auto; }
 .tarot-guide--wide .tarot-guide__content,.tarot-guide--comparison .tarot-guide__content { grid-column: 1; grid-row: 1; position: relative; z-index: 1; justify-content: center; }
+.tarot-guide--comparison>.tarot-guide__link { display: grid; grid-column: 1/-1; grid-row: 1; grid-template-columns: minmax(220px,.75fr) minmax(0,1.35fr); min-width: 0; }
+.tarot-guide--comparison.tarot-guide--image-left>.tarot-guide__link>.tarot-guide__media { grid-column: 1; }
+.tarot-guide--comparison.tarot-guide--image-left>.tarot-guide__link>.tarot-guide__content { grid-column: 2; }
+.tarot-guide--comparison.tarot-guide--image-right>.tarot-guide__link>.tarot-guide__media { grid-column: 2; }
+.tarot-guide--comparison.tarot-guide--image-right>.tarot-guide__link>.tarot-guide__content { grid-column: 1; }
 
 body.sun-mode.tarot-meanings-page .tarot-guides { --guides-title: #fff5dc; --guides-copy: #ead8b4; --guides-accent: #f1c56f; --guides-surface: rgba(4,17,18,.3); --guides-media: rgba(12,26,23,.44); --guides-edge: rgba(255,245,216,.045); --guides-shadow-near: rgba(14,29,24,.22); --guides-shadow-mid: rgba(6,18,15,.25); --guides-shadow-far: rgba(3,10,9,.28); --guides-feature-overlay: linear-gradient(to top,rgba(8,20,18,.96) 0%,rgba(8,20,18,.72) 52%,rgba(8,20,18,.08) 100%); }
 body.blood-moon-mode.tarot-meanings-page .tarot-guides { --guides-title: #f8e5dd; --guides-copy: #d9bfba; --guides-accent: #d98a72; --guides-surface: rgba(18,3,7,.34); --guides-media: rgba(32,5,10,.42); --guides-edge: rgba(255,225,216,.04); --guides-shadow-near: rgba(15,0,4,.24); --guides-shadow-mid: rgba(10,0,3,.28); --guides-shadow-far: rgba(5,0,1,.32); --guides-feature-overlay: linear-gradient(to top,rgba(18,2,6,.96) 0%,rgba(18,2,6,.74) 52%,rgba(18,2,6,.08) 100%); }
@@ -759,6 +765,7 @@ body.blood-moon-mode.tarot-meanings-page .tarot-codex__close { background: rgba(
   .tarot-guide--standard .tarot-guide__media { height: clamp(190px,56vw,240px); aspect-ratio: auto; }
   .tarot-guide--standard .tarot-guide__content { justify-content: flex-start; padding: 16px 18px 18px; }
   .tarot-guide--wide,.tarot-guide--comparison { display: flex; min-height: 0; }
+  .tarot-guide--comparison>.tarot-guide__link { display: flex; flex-direction: column; min-width: 0; }
   .tarot-guide--wide .tarot-guide__media,.tarot-guide--comparison .tarot-guide__media { height: clamp(170px,50vw,210px); max-height: none; aspect-ratio: auto; }
   .tarot-guide--wide .tarot-guide__content,.tarot-guide--comparison .tarot-guide__content { position: static; justify-content: flex-start; padding: 16px 18px 18px; }
   .tarot-guide__content { padding: 18px; }

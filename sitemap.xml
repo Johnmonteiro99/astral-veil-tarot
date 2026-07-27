@@ -111,7 +111,69 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
+  <url>
+    <loc>https://astralveil.world/tarot/topics/career-purpose/</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://astralveil.world/tarot/topics/feelings-intentions/</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://astralveil.world/tarot/topics/advice-personal-growth/</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://astralveil.world/tarot/topics/spiritual-guidance/</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
   <!-- GENERATED:TAROT_TOPIC_PAGES:END -->
+  <!-- GENERATED:MINOR_ARCANA_PAGE:START -->
+  <url>
+    <loc>https://astralveil.world/tarot/minor-arcana/</loc>
+    <lastmod>2026-07-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+<!-- GENERATED:MINOR_ARCANA_PAGE:END -->
+  <!-- GENERATED:MAJOR_ARCANA_PAGE:START -->
+  <url>
+    <loc>https://astralveil.world/tarot/major-arcana/</loc>
+    <lastmod>2026-07-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+<!-- GENERATED:MAJOR_ARCANA_PAGE:END -->
+  <!-- GENERATED:TAROT_HISTORY_PAGE:START -->
+  <url>
+    <loc>https://astralveil.world/tarot/history/</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+<!-- GENERATED:TAROT_HISTORY_PAGE:END -->
+  <!-- GENERATED:TAROT_COMPARISON_PAGES:START -->
+  <url>
+    <loc>https://astralveil.world/tarot/compare/tarot-vs-oracle-cards/</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.84</priority>
+  </url>
+  <url>
+    <loc>https://astralveil.world/tarot/compare/tarot-vs-lenormand/</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.84</priority>
+  </url>
+  <!-- GENERATED:TAROT_COMPARISON_PAGES:END -->
   <!-- GENERATED:TAROT_CARD_PAGES:START -->
   <url>
     <loc>https://astralveil.world/tarot/the-fool/</loc>

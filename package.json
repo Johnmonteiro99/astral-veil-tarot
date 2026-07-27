@@ -5,12 +5,20 @@
   "scripts": {
     "dev": "node dev-server.mjs",
     "generate:topics": "node scripts/generate-topic-pages.mjs",
+    "generate:comparisons": "node scripts/generate-comparison-pages.mjs",
+    "generate:history": "node scripts/generate-history-page.mjs",
+    "generate:major-arcana": "node scripts/generate-major-arcana-page.mjs",
+    "generate:minor-arcana": "node scripts/generate-minor-arcana-page.mjs",
     "generate:cards": "node scripts/generate-card-pages.mjs",
     "validate:cards": "node scripts/validate-card-data.mjs",
     "validate:topics": "node scripts/validate-topic-pages.mjs",
-    "build": "npm run generate:topics && npm run generate:cards && npm run validate:topics && npm run validate:cards",
+    "validate:comparisons": "node scripts/validate-comparison-pages.mjs",
+    "validate:history": "node scripts/validate-history-page.mjs",
+    "validate:major-arcana": "node scripts/validate-major-arcana-page.mjs",
+    "validate:minor-arcana": "node scripts/validate-minor-arcana-page.mjs",
+    "build": "npm run generate:topics && npm run generate:comparisons && npm run generate:history && npm run generate:major-arcana && npm run generate:minor-arcana && npm run generate:cards && npm run validate:topics && npm run validate:comparisons && npm run validate:history && npm run validate:major-arcana && npm run validate:minor-arcana && npm run validate:cards",
     "validate:modal-routes": "node scripts/validate-tarot-modal-routes.mjs",
-    "test": "npm run validate:cards && npm run validate:modal-routes && npm run validate:topics"
+    "test": "npm run validate:cards && npm run validate:modal-routes && npm run validate:topics && npm run validate:comparisons && npm run validate:history && npm run validate:major-arcana && npm run validate:minor-arcana"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

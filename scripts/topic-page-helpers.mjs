@@ -67,6 +67,14 @@ export function validateTopicData(topics, { rootDir, checkGenerated = false } = 
     requireText("title");
     requireText("eyebrow");
     requireText("introduction");
+    requireText("sectionKey");
+    requireText("breadcrumbLabel");
+    requireText("schemaAbout");
+    requireText("questionsSection.heading", topic?.questionsSection?.heading);
+    requireText("questionsSection.rowAriaLabel", topic?.questionsSection?.rowAriaLabel);
+    requireText("questionsSection.viewportAriaLabel", topic?.questionsSection?.viewportAriaLabel);
+    requireText("faqSection.eyebrow", topic?.faqSection?.eyebrow);
+    requireText("faqSection.heading", topic?.faqSection?.heading);
     requireText("seo.title", topic?.seo?.title);
     requireText("seo.description", topic?.seo?.description);
     requireText("seo.lastModified", topic?.seo?.lastModified);
@@ -80,6 +88,41 @@ export function validateTopicData(topics, { rootDir, checkGenerated = false } = 
     if (!Array.isArray(topic.benefits) || topic.benefits.length !== 4) errors.push(`${label}.benefits: expected four benefits`);
     if (!Array.isArray(topic.themes) || topic.themes.length < 1) errors.push(`${label}.themes: expected at least one theme`);
     if (!Array.isArray(topic.featuredCards) || topic.featuredCards.length < 3) errors.push(`${label}.featuredCards: expected at least three cards`);
+    if (topic.signalSection) {
+      requireText("signalSection.eyebrow", topic.signalSection.eyebrow);
+      requireText("signalSection.heading", topic.signalSection.heading);
+      requireText("signalSection.introduction", topic.signalSection.introduction);
+      requireText("signalSection.closing", topic.signalSection.closing);
+      if (!Array.isArray(topic.signalSection.items) || topic.signalSection.items.length !== 3) {
+        errors.push(`${label}.signalSection.items: expected three signals`);
+      } else {
+        topic.signalSection.items.forEach((item, itemIndex) => {
+          const itemLabel = `${label}.signalSection.items[${itemIndex}]`;
+          ["id", "title", "definition", "icon"].forEach((field) => {
+            if (!hasText(item?.[field])) errors.push(`${itemLabel}.${field}: required text is missing`);
+          });
+          if (!Array.isArray(item.examples) || item.examples.length !== 5) {
+            errors.push(`${itemLabel}.examples: expected five examples`);
+          }
+        });
+      }
+    }
+    if (topic.processSection) {
+      requireText("processSection.eyebrow", topic.processSection.eyebrow);
+      requireText("processSection.heading", topic.processSection.heading);
+      requireText("processSection.introduction", topic.processSection.introduction);
+      requireText("processSection.closing", topic.processSection.closing);
+      if (!Array.isArray(topic.processSection.items) || topic.processSection.items.length !== 4) {
+        errors.push(`${label}.processSection.items: expected four stages`);
+      } else {
+        topic.processSection.items.forEach((item, itemIndex) => {
+          const itemLabel = `${label}.processSection.items[${itemIndex}]`;
+          ["id", "number", "title", "definition", "prompt", "icon"].forEach((field) => {
+            if (!hasText(item?.[field])) errors.push(`${itemLabel}.${field}: required text is missing`);
+          });
+        });
+      }
+    }
     requireText("chapterSection.eyebrow", topic?.chapterSection?.eyebrow);
     requireText("chapterSection.heading", topic?.chapterSection?.heading);
     requireText("chapterSection.introduction", topic?.chapterSection?.introduction);
@@ -140,6 +183,8 @@ export function validateTopicData(topics, { rootDir, checkGenerated = false } = 
       topic.hero?.bloodMoonImage,
       topic.readingCta?.image,
       ...(topic.benefits || []).map((benefit) => benefit.icon),
+      ...(topic.signalSection?.items || []).map((item) => item.icon),
+      ...(topic.processSection?.items || []).map((item) => item.icon),
       topic.orientation?.upright?.icon,
       topic.orientation?.reversed?.icon,
       orientationExampleCard?.variants?.veilrise?.image,

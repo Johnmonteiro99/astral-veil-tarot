@@ -18,20 +18,28 @@
     return card.closest("figure")?.querySelector("[data-astral-card-tilt-hint]") || null;
   }
 
+  function canTilt(event) {
+    return !reducedMotion.matches && finePointer.matches && event?.pointerType !== "touch";
+  }
+
+  function syncInteractionMode(card) {
+    reset(card);
+    const hint = findHint(card);
+    if (reducedMotion.matches || !finePointer.matches) {
+      hint?.setAttribute("hidden", "");
+    } else {
+      hint?.removeAttribute("hidden");
+    }
+  }
+
   function initializeCard(card) {
     if (!card || initializedCards.has(card)) return false;
     initializedCards.add(card);
     activeCards.add(card);
-
-    const hint = findHint(card);
-    if (reducedMotion.matches || !finePointer.matches) {
-      hint?.setAttribute("hidden", "");
-      reset(card);
-      return true;
-    }
+    syncInteractionMode(card);
 
     function update(event) {
-      if (reducedMotion.matches || event.pointerType === "touch") return;
+      if (!canTilt(event)) return;
       const bounds = card.getBoundingClientRect();
       if (!bounds.width || !bounds.height) return;
       const relativeX = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
@@ -44,7 +52,7 @@
     }
 
     function start(event) {
-      if (event.pointerType === "touch" || reducedMotion.matches) return;
+      if (!canTilt(event)) return;
       card.setPointerCapture?.(event.pointerId);
       update(event);
     }
@@ -75,11 +83,11 @@
   }
 
   reducedMotion.addEventListener?.("change", () => {
-    activeCards.forEach((card) => {
-      reset(card);
-      const hint = findHint(card);
-      if (reducedMotion.matches) hint?.setAttribute("hidden", "");
-    });
+    activeCards.forEach(syncInteractionMode);
+  });
+
+  finePointer.addEventListener?.("change", () => {
+    activeCards.forEach(syncInteractionMode);
   });
 
   window.AstralVeilCardTilt = { initialize, reset };

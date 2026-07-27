@@ -1441,21 +1441,33 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-benefit__icon {
   border: 0;
   border-radius: 14px;
   padding: 22px 20px;
-  background: linear-gradient(145deg,color-mix(in srgb,var(--topic-panel) 52%,transparent),color-mix(in srgb,var(--topic-panel-strong) 24%,transparent));
+  background:
+    linear-gradient(145deg,
+      color-mix(in srgb,var(--topic-panel-strong) 74%,transparent) 0%,
+      color-mix(in srgb,var(--topic-panel) 60%,transparent) 54%,
+      color-mix(in srgb,var(--topic-panel-strong) 58%,transparent) 100%);
   box-shadow:
-    0 16px 34px color-mix(in srgb,var(--topic-shadow) 40%,transparent),
-    inset 0 1px 0 color-mix(in srgb,var(--topic-heading) 8%,transparent);
-  -webkit-backdrop-filter: blur(16px) saturate(1.04);
-  backdrop-filter: blur(16px) saturate(1.04);
+    0 18px 38px color-mix(in srgb,var(--topic-shadow) 52%,transparent),
+    0 5px 14px color-mix(in srgb,var(--topic-shadow) 28%,transparent),
+    inset 0 1px 0 color-mix(in srgb,var(--topic-heading) 10%,transparent),
+    inset 0 -1px 0 rgba(0,0,0,.16);
+  -webkit-backdrop-filter: blur(17px) saturate(1.06);
+  backdrop-filter: blur(17px) saturate(1.06);
   transition: background .22s ease,box-shadow .22s ease,transform .22s ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .tarot-topic-reading-row .tarot-topic-question:hover {
-    background: linear-gradient(145deg,color-mix(in srgb,var(--topic-panel) 62%,transparent),color-mix(in srgb,var(--topic-panel-strong) 30%,transparent));
+    background:
+      linear-gradient(145deg,
+        color-mix(in srgb,var(--topic-panel-strong) 82%,transparent) 0%,
+        color-mix(in srgb,var(--topic-panel) 68%,transparent) 54%,
+        color-mix(in srgb,var(--topic-panel-strong) 64%,transparent) 100%);
     box-shadow:
-      0 19px 38px color-mix(in srgb,var(--topic-shadow) 46%,transparent),
-      inset 0 1px 0 color-mix(in srgb,var(--topic-heading) 10%,transparent);
+      0 22px 44px color-mix(in srgb,var(--topic-shadow) 58%,transparent),
+      0 7px 16px color-mix(in srgb,var(--topic-shadow) 30%,transparent),
+      inset 0 1px 0 color-mix(in srgb,var(--topic-heading) 12%,transparent),
+      inset 0 -1px 0 rgba(0,0,0,.18);
     transform: translateY(-2px);
   }
 }
@@ -1476,12 +1488,18 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-benefit__icon {
   min-height: 100%;
   border: 0;
   border-radius: 18px;
-  background: linear-gradient(145deg,color-mix(in srgb,var(--topic-panel) 72%,transparent),color-mix(in srgb,var(--topic-panel-strong) 54%,transparent));
+  background:
+    linear-gradient(145deg,
+      color-mix(in srgb,var(--topic-panel-strong) 92%,transparent) 0%,
+      color-mix(in srgb,var(--topic-panel) 76%,transparent) 48%,
+      color-mix(in srgb,var(--topic-panel-strong) 82%,transparent) 100%);
   box-shadow:
-    0 25px 58px color-mix(in srgb,var(--topic-shadow) 52%,transparent),
-    inset 0 1px 0 color-mix(in srgb,var(--topic-heading) 10%,transparent);
-  -webkit-backdrop-filter: blur(14px) saturate(1.06);
-  backdrop-filter: blur(14px) saturate(1.06);
+    0 28px 62px color-mix(in srgb,var(--topic-shadow) 62%,transparent),
+    0 8px 22px color-mix(in srgb,var(--topic-shadow) 34%,transparent),
+    inset 0 1px 0 color-mix(in srgb,var(--topic-heading) 12%,transparent),
+    inset 0 -1px 0 rgba(0,0,0,.2);
+  -webkit-backdrop-filter: blur(17px) saturate(1.08);
+  backdrop-filter: blur(17px) saturate(1.08);
 }
 
 .tarot-topic-reading-row .tarot-topic-cta::before {
@@ -1491,7 +1509,10 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-benefit__icon {
   z-index: 1;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(180deg,color-mix(in srgb,var(--topic-panel-strong) 62%,transparent),color-mix(in srgb,var(--topic-panel-strong) 92%,transparent));
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--topic-panel-strong) 70%,transparent),
+      color-mix(in srgb,var(--topic-panel-strong) 96%,transparent));
   pointer-events: none;
 }
 
@@ -1535,12 +1556,24 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-benefit__icon {
   color: #1a110a;
 }
 
+.tarot-topic-reading-row .tarot-topic-button--primary {
+  box-shadow:
+    0 10px 24px color-mix(in srgb,var(--topic-shadow) 62%,transparent),
+    inset 0 1px 0 rgba(255,255,255,.3);
+}
+
+.tarot-topic-reading-row .tarot-topic-button--primary:hover {
+  box-shadow:
+    0 13px 28px color-mix(in srgb,var(--topic-shadow) 68%,transparent),
+    inset 0 1px 0 rgba(255,255,255,.34);
+}
+
 .tarot-topic-reading-row .tarot-topic-cta__art {
   z-index: 0;
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: .46;
+  opacity: .4;
 }
 
 .tarot-topic-reading-row .tarot-topic-cta__art::before {
@@ -1853,6 +1886,7 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-benefit__icon {
 .tarot-topic-chapters__sequence {
   position: relative;
   margin-top: clamp(54px,7vw,88px);
+  overflow: visible;
 }
 
 .tarot-topic-chapter {
@@ -1872,6 +1906,7 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-benefit__icon {
   box-shadow: none;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+  overflow: visible;
 }
 
 .tarot-topic-chapter + .tarot-topic-chapter {
@@ -2042,6 +2077,7 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-chapter--shadow {
   box-shadow: none;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+  overflow: visible;
 }
 
 .tarot-topic-chapter--reverse .tarot-topic-chapter__visual {
@@ -2054,6 +2090,7 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-chapter--shadow {
   display: grid;
   justify-items: center;
   gap: 12px;
+  overflow: visible;
   perspective: 900px;
 }
 
@@ -2082,13 +2119,16 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-chapter--shadow {
   z-index: 1;
   display: block;
   width: min(100%,244px);
+  height: auto;
+  max-height: none;
+  aspect-ratio: 2/3;
   border: 0;
   border-radius: 15px;
   padding: 0;
   color: inherit;
   background: transparent;
   cursor: grab;
-  touch-action: none;
+  touch-action: pan-y;
   user-select: none;
   transform: perspective(900px) translateY(var(--card-lift)) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
   transform-style: preserve-3d;
@@ -2106,10 +2146,12 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-chapter--shadow {
 }
 
 .tarot-topic-chapter__card-frame {
-  position: relative;
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
-  aspect-ratio: 2/3;
+  height: 100%;
+  max-height: none;
   overflow: hidden;
   border: 0;
   border-radius: 15px;
@@ -2196,11 +2238,36 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-chapter--shadow {
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .tarot-topic-chapter__card {
+    touch-action: none;
+  }
+
   .tarot-topic-chapter__card:hover {
     --card-lift: -5px;
     filter:
       drop-shadow(0 23px 31px color-mix(in srgb,var(--topic-shadow) 56%,transparent))
       drop-shadow(0 7px 11px color-mix(in srgb,var(--topic-shadow) 30%,transparent));
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .tarot-topic-chapter__exhibit {
+    perspective: none;
+  }
+
+  .tarot-topic-chapter__card {
+    cursor: default;
+    transform: none;
+    transform-style: flat;
+    filter: none;
+    transition: none;
+  }
+
+  .tarot-topic-chapter__card-frame {
+    box-shadow:
+      0 24px 48px color-mix(in srgb,var(--topic-shadow) 48%,transparent),
+      0 8px 17px color-mix(in srgb,var(--topic-shadow) 32%,transparent),
+      0 0 0 1px color-mix(in srgb,var(--chapter-accent) 7%,transparent);
   }
 }
 
@@ -2782,6 +2849,1298 @@ body.blood-moon-mode.tarot-topic-page .tarot-topic-orientation {
   .tarot-topic-principle--wide {
     grid-column: auto;
     min-height: 0;
+  }
+}
+
+/* Career & Purpose keeps the shared editorial system while shifting the
+   atmosphere toward observatory green, antique gold, bronze, and steel-blue. */
+.tarot-topic--career-purpose {
+  --topic-heading: #f5eedc;
+  --topic-text: rgba(234,232,216,.92);
+  --topic-muted: rgba(187,198,189,.82);
+  --topic-accent: #c5a363;
+  --topic-accent-strong: #dfbf7d;
+  --topic-line: rgba(197,163,99,.23);
+  --topic-line-strong: rgba(197,163,99,.42);
+  --topic-panel: rgba(5,24,21,.56);
+  --topic-panel-strong: rgba(3,15,15,.84);
+  --topic-button-text: #1e160b;
+  --topic-button-surface: linear-gradient(135deg,#e0c37f,#a97b3e);
+  --topic-shadow: rgba(0,7,7,.4);
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--career-purpose {
+  --topic-heading: #fff0cf;
+  --topic-text: rgba(247,236,208,.93);
+  --topic-muted: rgba(214,214,190,.82);
+  --topic-accent: #d0a553;
+  --topic-accent-strong: #e7c477;
+  --topic-line: rgba(208,165,83,.24);
+  --topic-line-strong: rgba(208,165,83,.44);
+  --topic-panel: rgba(4,25,19,.58);
+  --topic-panel-strong: rgba(3,17,14,.86);
+  --topic-button-text: #211709;
+  --topic-button-surface: linear-gradient(135deg,#e8ca7d,#b7833d);
+  --topic-shadow: rgba(0,8,5,.38);
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--career-purpose {
+  --topic-heading: #f5e9df;
+  --topic-text: rgba(235,222,214,.92);
+  --topic-muted: rgba(199,185,185,.82);
+  --topic-accent: #b9845f;
+  --topic-accent-strong: #d3a071;
+  --topic-line: rgba(185,132,95,.25);
+  --topic-line-strong: rgba(185,132,95,.45);
+  --topic-panel: rgba(20,10,12,.64);
+  --topic-panel-strong: rgba(11,7,10,.88);
+  --topic-button-text: #1d0e09;
+  --topic-button-surface: linear-gradient(135deg,#d4a16f,#9a5b42);
+  --topic-shadow: rgba(7,2,4,.48);
+}
+
+.tarot-topic--career-purpose .tarot-topic-hero__image {
+  object-position: 52% 40%;
+  filter: saturate(.82) contrast(1.07);
+}
+
+.tarot-topic--career-purpose .tarot-topic-overview__image {
+  object-position: 52% 35%;
+  filter: saturate(.78) contrast(1.08);
+}
+
+.tarot-topic--career-purpose .tarot-topic-cta__art img {
+  object-position: 55% 52%;
+  filter: saturate(.7) contrast(1.12);
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--career-purpose .tarot-topic-hero__image {
+  object-position: 50% 45%;
+  filter: saturate(.72) contrast(1.1);
+}
+
+.tarot-topic--career-purpose .tarot-topic-chapter--calling {
+  --chapter-accent: #c7a45d;
+}
+
+.tarot-topic--career-purpose .tarot-topic-chapter--craft {
+  --chapter-accent: #a9825b;
+}
+
+.tarot-topic--career-purpose .tarot-topic-chapter--contribution {
+  --chapter-accent: #7895a1;
+}
+
+.tarot-topic--career-purpose .tarot-topic-chapter--realignment {
+  --chapter-accent: #82937d;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--career-purpose .tarot-topic-chapter--calling {
+  --chapter-accent: #d0a34e;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--career-purpose .tarot-topic-chapter--craft {
+  --chapter-accent: #b17f4f;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--career-purpose .tarot-topic-chapter--contribution {
+  --chapter-accent: #708d95;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--career-purpose .tarot-topic-chapter--realignment {
+  --chapter-accent: #789078;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--career-purpose .tarot-topic-chapter--calling {
+  --chapter-accent: #bd845c;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--career-purpose .tarot-topic-chapter--craft {
+  --chapter-accent: #9f7058;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--career-purpose .tarot-topic-chapter--contribution {
+  --chapter-accent: #73808f;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--career-purpose .tarot-topic-chapter--realignment {
+  --chapter-accent: #876f70;
+}
+
+.tarot-topic--career-purpose .tarot-topic-orientation {
+  --topic-expression-upright: #c8aa64;
+  --topic-expression-reversed: #778f9d;
+}
+
+.tarot-topic--career-purpose .tarot-topic-orientation__visual {
+  overflow: visible;
+}
+
+.tarot-topic--career-purpose .tarot-topic-orientation-card {
+  height: auto;
+  max-height: none;
+  aspect-ratio: 2/3;
+  touch-action: pan-y;
+}
+
+.tarot-topic--career-purpose .tarot-topic-orientation-card__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--career-purpose .tarot-topic-orientation {
+  --topic-expression-upright: #bd825b;
+  --topic-expression-reversed: #7e788b;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tarot-topic--career-purpose .tarot-topic-orientation-card {
+    touch-action: none;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .tarot-topic--career-purpose .tarot-topic-orientation__visual {
+    perspective: none;
+  }
+
+  .tarot-topic--career-purpose .tarot-topic-orientation-card {
+    cursor: default;
+    transform: none;
+    transform-style: flat;
+    filter: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .tarot-topic--career-purpose .tarot-topic-hero__image {
+    object-position: 52% 38%;
+  }
+
+  body.blood-moon-mode.tarot-topic-page .tarot-topic--career-purpose .tarot-topic-hero__image {
+    object-position: 50% 42%;
+  }
+}
+
+/* Feelings & Intentions shifts the shared editorial system toward ink-blue
+   water, dusty violet, muted lunar gold, and restrained silver-blue. */
+.tarot-topic--feelings-intentions {
+  --topic-heading: #f2eee5;
+  --topic-text: rgba(230, 232, 229, .92);
+  --topic-muted: rgba(180, 193, 198, .82);
+  --topic-accent: #c4ae70;
+  --topic-accent-strong: #d8c387;
+  --topic-line: rgba(139, 168, 178, .22);
+  --topic-line-strong: rgba(196, 174, 112, .4);
+  --topic-panel: rgba(5, 22, 29, .6);
+  --topic-panel-strong: rgba(3, 13, 22, .86);
+  --topic-button-text: #17150e;
+  --topic-button-surface: linear-gradient(135deg, #dfce95, #a58a52);
+  --topic-shadow: rgba(0, 5, 12, .46);
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--feelings-intentions {
+  --topic-heading: #f8eed8;
+  --topic-text: rgba(238, 235, 220, .93);
+  --topic-muted: rgba(194, 203, 196, .82);
+  --topic-accent: #c8ab67;
+  --topic-accent-strong: #dfc47f;
+  --topic-line: rgba(124, 164, 160, .23);
+  --topic-line-strong: rgba(200, 171, 103, .43);
+  --topic-panel: rgba(4, 27, 31, .6);
+  --topic-panel-strong: rgba(3, 17, 23, .88);
+  --topic-button-text: #19160d;
+  --topic-button-surface: linear-gradient(135deg, #e3ce91, #a98a4c);
+  --topic-shadow: rgba(0, 7, 10, .43);
+}
+
+body.moon-mode.tarot-topic-page .tarot-topic--feelings-intentions {
+  --topic-heading: #f2eef5;
+  --topic-text: rgba(229, 229, 238, .93);
+  --topic-muted: rgba(183, 187, 207, .82);
+  --topic-accent: #c1ad78;
+  --topic-accent-strong: #d6c38e;
+  --topic-line: rgba(141, 150, 187, .23);
+  --topic-line-strong: rgba(193, 173, 120, .42);
+  --topic-panel: rgba(8, 14, 35, .62);
+  --topic-panel-strong: rgba(5, 8, 25, .88);
+  --topic-shadow: rgba(0, 2, 12, .5);
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--feelings-intentions {
+  --topic-heading: #f4e9e6;
+  --topic-text: rgba(235, 220, 222, .93);
+  --topic-muted: rgba(196, 177, 192, .82);
+  --topic-accent: #b98d76;
+  --topic-accent-strong: #d2aa8c;
+  --topic-line: rgba(145, 106, 139, .24);
+  --topic-line-strong: rgba(185, 141, 118, .44);
+  --topic-panel: rgba(24, 7, 24, .66);
+  --topic-panel-strong: rgba(13, 3, 17, .9);
+  --topic-button-text: #1b0d0d;
+  --topic-button-surface: linear-gradient(135deg, #d5b08e, #986455);
+  --topic-shadow: rgba(8, 0, 7, .52);
+}
+
+.tarot-topic--feelings-intentions .tarot-topic-hero__image {
+  object-position: 50% 43%;
+  filter: saturate(.76) contrast(1.08);
+}
+
+.tarot-topic--feelings-intentions .tarot-topic-overview__image {
+  object-position: 50% 66%;
+  filter: saturate(.72) contrast(1.09);
+}
+
+.tarot-topic--feelings-intentions .tarot-topic-reading-row .tarot-topic-cta__art img {
+  object-position: 50% 73%;
+  filter: saturate(.68) contrast(1.12);
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-hero__image {
+  object-position: 50% 34%;
+  filter: saturate(.68) contrast(1.12);
+}
+
+.tarot-topic--feelings-intentions .tarot-topic-chapter--awareness {
+  --chapter-accent: #8ea8b1;
+}
+
+.tarot-topic--feelings-intentions .tarot-topic-chapter--expression {
+  --chapter-accent: #9d8bab;
+}
+
+.tarot-topic--feelings-intentions .tarot-topic-chapter--intention {
+  --chapter-accent: #bea86f;
+}
+
+.tarot-topic--feelings-intentions .tarot-topic-chapter--discernment {
+  --chapter-accent: #719393;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-chapter--awareness {
+  --chapter-accent: #85a9aa;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-chapter--expression {
+  --chapter-accent: #998ca6;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-chapter--intention {
+  --chapter-accent: #c2a25d;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-chapter--discernment {
+  --chapter-accent: #6e9490;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-chapter--awareness {
+  --chapter-accent: #8c819d;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-chapter--expression {
+  --chapter-accent: #a1768d;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-chapter--intention {
+  --chapter-accent: #b88a6e;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-chapter--discernment {
+  --chapter-accent: #766f8c;
+}
+
+.tarot-topic--feelings-intentions .tarot-topic-orientation {
+  --topic-expression-upright: #bcae79;
+  --topic-expression-reversed: #7f86aa;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-orientation {
+  --topic-expression-upright: #c4a55f;
+  --topic-expression-reversed: #668d93;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-orientation {
+  --topic-expression-upright: #b78369;
+  --topic-expression-reversed: #815e83;
+}
+
+/* Topic-only educational chapter: open columns, fine dividers, and no boxed
+   card treatment so feelings, intentions, and observable actions stay distinct. */
+.tarot-topic-signals__introduction {
+  max-width: 850px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.tarot-topic-signals__introduction > p:last-child {
+  max-width: 790px;
+  margin: 18px auto 0;
+}
+
+.tarot-topic-signals__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: clamp(42px, 5vw, 64px);
+  border-block: 1px solid var(--topic-line);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--topic-panel) 14%, transparent), transparent 58%);
+}
+
+.tarot-topic-signal {
+  position: relative;
+  min-height: 100%;
+  padding: clamp(30px, 4vw, 48px) clamp(24px, 3.5vw, 42px);
+}
+
+.tarot-topic-signal + .tarot-topic-signal {
+  border-left: 1px solid var(--topic-line);
+}
+
+.tarot-topic-signal__icon {
+  display: block;
+  width: 34px;
+  height: 34px;
+  color: var(--topic-accent);
+  background: currentColor;
+  -webkit-mask: var(--topic-icon) center / contain no-repeat;
+  mask: var(--topic-icon) center / contain no-repeat;
+  opacity: .82;
+}
+
+.tarot-topic-signal--feelings .tarot-topic-signal__icon {
+  color: #8ea8b1;
+}
+
+.tarot-topic-signal--intentions .tarot-topic-signal__icon {
+  color: #a08eae;
+}
+
+.tarot-topic-signal--actions .tarot-topic-signal__icon {
+  color: var(--topic-accent);
+}
+
+.tarot-topic-signal h3 {
+  margin: 18px 0 0;
+  color: var(--topic-heading);
+  font: 600 clamp(1.8rem, 3vw, 2.55rem)/1 var(--heading-font, "Cormorant Garamond", serif);
+}
+
+.tarot-topic-signal > p {
+  min-height: 4.8em;
+  margin: 13px 0 0;
+  color: var(--topic-text);
+  font: .95rem/1.6 var(--font-body-serif, Lora, serif);
+}
+
+.tarot-topic-signal ul {
+  display: grid;
+  gap: 8px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tarot-topic-signal li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--topic-muted);
+  font-size: .8rem;
+  letter-spacing: .035em;
+}
+
+.tarot-topic-signal li span {
+  color: var(--topic-accent);
+  font-size: .54rem;
+}
+
+.tarot-topic-signals__closing {
+  position: relative;
+  max-width: 900px;
+  margin: clamp(34px, 4vw, 50px) auto 0;
+  padding-top: 24px;
+  color: var(--topic-heading);
+  font: italic clamp(1.04rem, 1.7vw, 1.22rem)/1.72 var(--font-body-serif, Lora, serif);
+  text-align: center;
+}
+
+.tarot-topic-signals__closing::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(160px, 36%);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--topic-line-strong), transparent);
+  transform: translateX(-50%);
+}
+
+@media (max-width: 820px) {
+  .tarot-topic-signals__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tarot-topic-signal {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    column-gap: 16px;
+    padding: 28px 8px;
+  }
+
+  .tarot-topic-signal + .tarot-topic-signal {
+    border-top: 1px solid var(--topic-line);
+    border-left: 0;
+  }
+
+  .tarot-topic-signal__icon {
+    grid-row: 1 / span 3;
+    width: 30px;
+    height: 30px;
+    margin-top: 2px;
+  }
+
+  .tarot-topic-signal h3 {
+    margin-top: 0;
+  }
+
+  .tarot-topic-signal > p {
+    min-height: 0;
+  }
+
+  .tarot-topic-signal ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .tarot-topic--feelings-intentions .tarot-topic-hero__image {
+    object-position: 50% 48%;
+  }
+
+  body.blood-moon-mode.tarot-topic-page .tarot-topic--feelings-intentions .tarot-topic-hero__image {
+    object-position: 50% 31%;
+  }
+
+  .tarot-topic-signals__introduction {
+    text-align: left;
+  }
+
+  .tarot-topic-signals__introduction > p:last-child {
+    margin-inline: 0;
+  }
+
+  .tarot-topic-signal {
+    grid-template-columns: 32px minmax(0, 1fr);
+    column-gap: 12px;
+  }
+
+  .tarot-topic-signal ul {
+    grid-template-columns: 1fr;
+    margin-top: 20px;
+  }
+
+  .tarot-topic-signals__closing {
+    text-align: left;
+  }
+
+  .tarot-topic-signals__closing::before {
+    left: 0;
+    transform: none;
+  }
+}
+
+/* Advice & Personal Growth uses rooted forest green, dark teal, antique gold,
+   warm amber, and a restrained violet shadow state. */
+.tarot-topic--advice-personal-growth {
+  --topic-heading: #f3eddf;
+  --topic-text: rgba(235, 232, 216, .92);
+  --topic-muted: rgba(190, 200, 181, .82);
+  --topic-accent: #c3a35f;
+  --topic-accent-strong: #dcc079;
+  --topic-line: rgba(126, 156, 124, .23);
+  --topic-line-strong: rgba(195, 163, 95, .43);
+  --topic-panel: rgba(5, 28, 24, .6);
+  --topic-panel-strong: rgba(3, 18, 17, .88);
+  --topic-button-text: #19140b;
+  --topic-button-surface: linear-gradient(135deg, #e2c981, #a77a3e);
+  --topic-shadow: rgba(0, 8, 6, .46);
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--advice-personal-growth {
+  --topic-heading: #fff0d2;
+  --topic-text: rgba(244, 235, 211, .93);
+  --topic-muted: rgba(204, 207, 178, .83);
+  --topic-accent: #d0a654;
+  --topic-accent-strong: #e8c374;
+  --topic-line: rgba(124, 155, 107, .24);
+  --topic-line-strong: rgba(208, 166, 84, .45);
+  --topic-panel: rgba(5, 31, 23, .61);
+  --topic-panel-strong: rgba(3, 20, 16, .89);
+  --topic-button-text: #1e1608;
+  --topic-button-surface: linear-gradient(135deg, #e8cc7d, #b17d38);
+  --topic-shadow: rgba(0, 9, 5, .44);
+}
+
+body.moon-mode.tarot-topic-page .tarot-topic--advice-personal-growth {
+  --topic-heading: #f0eee4;
+  --topic-text: rgba(230, 232, 218, .93);
+  --topic-muted: rgba(183, 197, 187, .82);
+  --topic-accent: #bda66c;
+  --topic-accent-strong: #d5bf84;
+  --topic-line: rgba(109, 151, 143, .24);
+  --topic-line-strong: rgba(189, 166, 108, .43);
+  --topic-panel: rgba(4, 23, 27, .63);
+  --topic-panel-strong: rgba(3, 13, 21, .9);
+  --topic-shadow: rgba(0, 4, 12, .5);
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--advice-personal-growth {
+  --topic-heading: #f3e9df;
+  --topic-text: rgba(232, 220, 211, .93);
+  --topic-muted: rgba(194, 179, 184, .82);
+  --topic-accent: #b98b69;
+  --topic-accent-strong: #d1a47c;
+  --topic-line: rgba(116, 117, 104, .25);
+  --topic-line-strong: rgba(185, 139, 105, .44);
+  --topic-panel: rgba(20, 10, 15, .67);
+  --topic-panel-strong: rgba(11, 5, 11, .91);
+  --topic-button-text: #1b0e09;
+  --topic-button-surface: linear-gradient(135deg, #d3ac80, #925a43);
+  --topic-shadow: rgba(8, 1, 4, .54);
+}
+
+.tarot-topic--advice-personal-growth .tarot-topic-hero__image {
+  object-position: 50% 44%;
+  filter: saturate(.78) contrast(1.07);
+}
+
+.tarot-topic--advice-personal-growth .tarot-topic-overview__image {
+  object-position: 50% 64%;
+  filter: saturate(.74) contrast(1.08);
+}
+
+.tarot-topic--advice-personal-growth .tarot-topic-reading-row .tarot-topic-cta__art img {
+  object-position: 50% 71%;
+  filter: saturate(.72) contrast(1.1);
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-hero__image {
+  object-position: 57% 36%;
+  filter: saturate(.65) contrast(1.1);
+}
+
+.tarot-topic--advice-personal-growth .tarot-topic-chapter--reflection {
+  --chapter-accent: #8fa187;
+}
+
+.tarot-topic--advice-personal-growth .tarot-topic-chapter--courage {
+  --chapter-accent: #bd9559;
+}
+
+.tarot-topic--advice-personal-growth .tarot-topic-chapter--transformation {
+  --chapter-accent: #8c768f;
+}
+
+.tarot-topic--advice-personal-growth .tarot-topic-chapter--integration {
+  --chapter-accent: #6f948b;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-chapter--reflection {
+  --chapter-accent: #859d76;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-chapter--courage {
+  --chapter-accent: #c39a4f;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-chapter--transformation {
+  --chapter-accent: #8f788b;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-chapter--integration {
+  --chapter-accent: #679286;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-chapter--reflection {
+  --chapter-accent: #7f8671;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-chapter--courage {
+  --chapter-accent: #b28260;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-chapter--transformation {
+  --chapter-accent: #866779;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-chapter--integration {
+  --chapter-accent: #697f77;
+}
+
+.tarot-topic--advice-personal-growth .tarot-topic-orientation {
+  --topic-expression-upright: #bea86d;
+  --topic-expression-reversed: #84758d;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-orientation {
+  --topic-expression-upright: #c8a154;
+  --topic-expression-reversed: #7a6783;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-orientation {
+  --topic-expression-upright: #b48160;
+  --topic-expression-reversed: #795d78;
+}
+
+/* Topic-only process chapter: a connected path rather than four card panels. */
+.tarot-topic-process__introduction {
+  max-width: 860px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.tarot-topic-process__introduction > p:last-child {
+  max-width: 790px;
+  margin: 18px auto 0;
+}
+
+.tarot-topic-process__steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 40px);
+  margin: clamp(44px, 6vw, 72px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tarot-topic-process__steps::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 29px;
+  left: 9%;
+  right: 9%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--topic-line-strong) 12%, var(--topic-line-strong) 88%, transparent);
+}
+
+.tarot-topic-process__step {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  padding-inline: clamp(4px, 1vw, 12px);
+}
+
+.tarot-topic-process__marker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+}
+
+.tarot-topic-process__marker > span {
+  color: var(--topic-muted);
+  font: 700 .58rem/1 var(--logo-font, Cinzel, serif);
+  letter-spacing: .12em;
+}
+
+.tarot-topic-process__icon {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--topic-line);
+  border-radius: 50%;
+  color: var(--topic-accent);
+  background:
+    var(--topic-accent);
+  box-shadow:
+    0 12px 24px color-mix(in srgb, var(--topic-shadow) 42%, transparent),
+    0 0 0 7px color-mix(in srgb, var(--topic-panel-strong) 72%, transparent);
+  -webkit-mask: var(--topic-icon) center / 48% no-repeat;
+  mask: var(--topic-icon) center / 48% no-repeat;
+}
+
+.tarot-topic-process__step h3 {
+  margin: 22px 0 0;
+  color: var(--topic-heading);
+  font: 600 clamp(1.9rem, 2.8vw, 2.55rem)/1 var(--heading-font, "Cormorant Garamond", serif);
+}
+
+.tarot-topic-process__step > p:not(.tarot-topic-process__prompt) {
+  margin: 13px 0 0;
+  color: var(--topic-text);
+  font: .94rem/1.64 var(--font-body-serif, Lora, serif);
+}
+
+.tarot-topic-process__prompt {
+  margin: 20px 0 0;
+  padding-top: 15px;
+  border-top: 1px solid var(--topic-line);
+  color: var(--topic-accent-strong);
+  font: italic .88rem/1.6 var(--font-body-serif, Lora, serif);
+}
+
+.tarot-topic-process__closing {
+  position: relative;
+  max-width: 860px;
+  margin: clamp(40px, 5vw, 58px) auto 0;
+  padding-top: 24px;
+  color: var(--topic-heading);
+  font: italic clamp(1.04rem, 1.7vw, 1.22rem)/1.72 var(--font-body-serif, Lora, serif);
+  text-align: center;
+}
+
+.tarot-topic-process__closing::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(170px, 38%);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--topic-line-strong), transparent);
+  transform: translateX(-50%);
+}
+
+@media (max-width: 820px) {
+  .tarot-topic-process__steps {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 40px;
+  }
+
+  .tarot-topic-process__steps::before {
+    top: 36px;
+    right: auto;
+    bottom: 36px;
+    left: 27px;
+    width: 1px;
+    height: auto;
+    background: linear-gradient(180deg, transparent, var(--topic-line-strong) 10%, var(--topic-line-strong) 90%, transparent);
+  }
+
+  .tarot-topic-process__step {
+    display: grid;
+    grid-template-columns: 62px minmax(0, 1fr);
+    column-gap: 18px;
+    padding: 22px 0 28px;
+  }
+
+  .tarot-topic-process__marker {
+    grid-row: 1 / span 3;
+    align-self: start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .tarot-topic-process__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .tarot-topic-process__step h3 {
+    margin-top: 0;
+  }
+
+  .tarot-topic-process__prompt {
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 620px) {
+  .tarot-topic--advice-personal-growth .tarot-topic-hero__image {
+    object-position: 50% 50%;
+  }
+
+  body.blood-moon-mode.tarot-topic-page .tarot-topic--advice-personal-growth .tarot-topic-hero__image {
+    object-position: 59% 33%;
+  }
+
+  .tarot-topic-process__introduction,
+  .tarot-topic-process__closing {
+    text-align: left;
+  }
+
+  .tarot-topic-process__introduction > p:last-child {
+    margin-inline: 0;
+  }
+
+  .tarot-topic-process__closing::before {
+    left: 0;
+    transform: none;
+  }
+}
+
+/* Spiritual Guidance uses moonlit midnight blue, dark blue-green, muted
+   violet, lunar gold, and restrained silver-blue accents. */
+.tarot-topic--spiritual-guidance {
+  --topic-heading: #f2eee5;
+  --topic-text: rgba(229, 231, 229, .93);
+  --topic-muted: rgba(179, 192, 205, .82);
+  --topic-accent: #c8b57a;
+  --topic-accent-strong: #e0cf98;
+  --topic-line: rgba(132, 158, 181, .24);
+  --topic-line-strong: rgba(200, 181, 122, .43);
+  --topic-panel: rgba(6, 24, 34, .62);
+  --topic-panel-strong: rgba(4, 13, 27, .89);
+  --topic-button-text: #17150f;
+  --topic-button-surface: linear-gradient(135deg, #e4d39c, #a98e58);
+  --topic-shadow: rgba(0, 5, 16, .5);
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--spiritual-guidance {
+  --topic-heading: #fff1d6;
+  --topic-text: rgba(241, 234, 218, .93);
+  --topic-muted: rgba(197, 201, 198, .83);
+  --topic-accent: #d0ae67;
+  --topic-accent-strong: #e7c985;
+  --topic-line: rgba(101, 148, 144, .25);
+  --topic-line-strong: rgba(208, 174, 103, .45);
+  --topic-panel: rgba(5, 29, 31, .62);
+  --topic-panel-strong: rgba(3, 18, 25, .9);
+  --topic-button-text: #1d170c;
+  --topic-button-surface: linear-gradient(135deg, #ebd28f, #b28b4e);
+  --topic-shadow: rgba(0, 7, 12, .47);
+}
+
+body.moon-mode.tarot-topic-page .tarot-topic--spiritual-guidance {
+  --topic-heading: #f1eff3;
+  --topic-text: rgba(226, 231, 237, .94);
+  --topic-muted: rgba(177, 192, 211, .84);
+  --topic-accent: #b8b6cf;
+  --topic-accent-strong: #d5c797;
+  --topic-line: rgba(131, 160, 193, .27);
+  --topic-line-strong: rgba(184, 182, 207, .46);
+  --topic-panel: rgba(5, 18, 35, .65);
+  --topic-panel-strong: rgba(3, 9, 23, .92);
+  --topic-button-text: #15131a;
+  --topic-button-surface: linear-gradient(135deg, #dad4b5, #9c91b0);
+  --topic-shadow: rgba(0, 2, 13, .56);
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--spiritual-guidance {
+  --topic-heading: #f1e9e6;
+  --topic-text: rgba(230, 221, 224, .93);
+  --topic-muted: rgba(191, 178, 193, .83);
+  --topic-accent: #b99889;
+  --topic-accent-strong: #d3b798;
+  --topic-line: rgba(131, 111, 139, .27);
+  --topic-line-strong: rgba(185, 152, 137, .45);
+  --topic-panel: rgba(18, 9, 25, .69);
+  --topic-panel-strong: rgba(9, 5, 18, .93);
+  --topic-button-text: #1b1110;
+  --topic-button-surface: linear-gradient(135deg, #d7bea4, #9a747d);
+  --topic-shadow: rgba(6, 1, 11, .58);
+}
+
+.tarot-topic--spiritual-guidance .tarot-topic-hero__image {
+  object-position: 50% 43%;
+  filter: saturate(.66) contrast(1.08);
+}
+
+.tarot-topic--spiritual-guidance .tarot-topic-overview__image {
+  object-position: 50% 68%;
+  filter: saturate(.58) contrast(1.1);
+}
+
+.tarot-topic--spiritual-guidance .tarot-topic-reading-row .tarot-topic-cta__art img {
+  object-position: 50% 72%;
+  filter: saturate(.6) contrast(1.1);
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-hero__image {
+  filter: saturate(.72) contrast(1.07) sepia(.05);
+}
+
+body.moon-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-hero__image {
+  filter: saturate(.55) contrast(1.1) hue-rotate(4deg);
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-hero__image {
+  filter: saturate(.5) contrast(1.12) sepia(.08) hue-rotate(318deg);
+}
+
+.tarot-topic--spiritual-guidance .tarot-topic-chapter--awakening {
+  --chapter-accent: #c8b76f;
+}
+
+.tarot-topic--spiritual-guidance .tarot-topic-chapter--practice {
+  --chapter-accent: #769ca0;
+}
+
+.tarot-topic--spiritual-guidance .tarot-topic-chapter--trust {
+  --chapter-accent: #9a89b4;
+}
+
+.tarot-topic--spiritual-guidance .tarot-topic-chapter--discernment {
+  --chapter-accent: #8197b1;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-chapter--awakening {
+  --chapter-accent: #d0ad5f;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-chapter--practice {
+  --chapter-accent: #6f9a90;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-chapter--trust {
+  --chapter-accent: #9b83a7;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-chapter--discernment {
+  --chapter-accent: #7896a7;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-chapter--awakening {
+  --chapter-accent: #b68f75;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-chapter--practice {
+  --chapter-accent: #718889;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-chapter--trust {
+  --chapter-accent: #8c718e;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-chapter--discernment {
+  --chapter-accent: #7c8098;
+}
+
+.tarot-topic--spiritual-guidance .tarot-topic-orientation {
+  --topic-expression-upright: #c6b77d;
+  --topic-expression-reversed: #8e82aa;
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-orientation {
+  --topic-expression-upright: #d0ab5f;
+  --topic-expression-reversed: #8c76a0;
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic--spiritual-guidance .tarot-topic-orientation {
+  --topic-expression-upright: #b78e75;
+  --topic-expression-reversed: #806783;
+}
+
+.tarot-topic--spiritual-guidance .tarot-topic-process__steps::before {
+  height: 2px;
+  background:
+    radial-gradient(circle, var(--topic-line-strong) 0 1px, transparent 1.6px)
+    left center / 18px 2px repeat-x;
+  opacity: .82;
+}
+
+.tarot-topic--spiritual-guidance .tarot-topic-process__icon {
+  box-shadow:
+    0 12px 25px color-mix(in srgb, var(--topic-shadow) 44%, transparent),
+    0 0 0 7px color-mix(in srgb, var(--topic-panel-strong) 76%, transparent);
+}
+
+@media (max-width: 820px) {
+  .tarot-topic--spiritual-guidance .tarot-topic-process__steps::before {
+    width: 2px;
+    height: auto;
+    background:
+      radial-gradient(circle, var(--topic-line-strong) 0 1px, transparent 1.6px)
+      center top / 2px 18px repeat-y;
+  }
+}
+
+@media (max-width: 620px) {
+  .tarot-topic--spiritual-guidance .tarot-topic-hero__image {
+    object-position: 50% 46%;
+  }
+}
+
+/* Reusable topic navigation ribbon. It remains in normal flow so the absolute
+   global header and the page hero never compete for a sticky offset. */
+.tarot-topic-ribbon {
+  --topic-ribbon-text: rgba(244, 237, 223, .82);
+  --topic-ribbon-muted: rgba(212, 202, 220, .58);
+  --topic-ribbon-active: #ddb76a;
+  --topic-ribbon-line: rgba(224, 199, 146, .13);
+  --topic-ribbon-highlight: rgba(242, 226, 255, .07);
+  --topic-ribbon-fade: rgba(8, 7, 24, .98);
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: stretch;
+  width: 100%;
+  min-height: 64px;
+  margin: 0 0 clamp(24px, 3vw, 40px);
+  overflow: hidden;
+  border: 1px solid rgba(224, 199, 146, .09);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 14% -45%, rgba(132, 95, 177, .18), transparent 46%),
+    linear-gradient(180deg, rgba(18, 14, 43, .82), rgba(7, 6, 23, .88));
+  box-shadow:
+    0 20px 48px -34px rgba(0, 0, 0, .86),
+    inset 0 1px 0 var(--topic-ribbon-highlight);
+  -webkit-backdrop-filter: blur(18px) saturate(122%);
+  backdrop-filter: blur(18px) saturate(122%);
+}
+
+body.sun-mode.tarot-topic-page .tarot-topic-ribbon {
+  --topic-ribbon-text: rgba(250, 238, 215, .84);
+  --topic-ribbon-muted: rgba(218, 207, 183, .58);
+  --topic-ribbon-active: #e3b85c;
+  --topic-ribbon-line: rgba(227, 184, 92, .14);
+  --topic-ribbon-highlight: rgba(255, 237, 196, .07);
+  --topic-ribbon-fade: rgba(4, 18, 15, .98);
+  border-color: rgba(227, 184, 92, .09);
+  background:
+    radial-gradient(circle at 14% -45%, rgba(107, 126, 78, .2), transparent 46%),
+    linear-gradient(180deg, rgba(8, 33, 27, .84), rgba(3, 17, 14, .9));
+}
+
+body.blood-moon-mode.tarot-topic-page .tarot-topic-ribbon {
+  --topic-ribbon-text: rgba(249, 228, 218, .86);
+  --topic-ribbon-muted: rgba(216, 175, 173, .6);
+  --topic-ribbon-active: #d2956c;
+  --topic-ribbon-line: rgba(205, 111, 91, .16);
+  --topic-ribbon-highlight: rgba(255, 220, 207, .065);
+  --topic-ribbon-fade: rgba(25, 2, 7, .98);
+  border-color: rgba(205, 111, 91, .1);
+  background:
+    radial-gradient(circle at 14% -45%, rgba(139, 45, 53, .25), transparent 47%),
+    linear-gradient(180deg, rgba(48, 7, 15, .88), rgba(21, 1, 6, .94));
+  box-shadow:
+    0 20px 48px -34px rgba(7, 0, 2, .94),
+    inset 0 1px 0 var(--topic-ribbon-highlight);
+}
+
+.tarot-topic-ribbon__heading {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 clamp(17px, 2vw, 28px);
+  color: var(--topic-ribbon-active);
+  font: 700 .58rem/1 var(--logo-font, Cinzel, serif);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tarot-topic-ribbon__heading::after {
+  content: "";
+  position: absolute;
+  top: 18px;
+  right: 0;
+  bottom: 18px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--topic-ribbon-line), transparent);
+}
+
+.tarot-topic-ribbon__viewport {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.tarot-topic-ribbon__viewport::before,
+.tarot-topic-ribbon__viewport::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tarot-topic-ribbon__viewport::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--topic-ribbon-fade), transparent);
+}
+
+.tarot-topic-ribbon__viewport::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--topic-ribbon-fade), transparent);
+}
+
+.tarot-topic-ribbon__track {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(10px, 1.45vw, 22px);
+  min-width: 100%;
+  min-height: 62px;
+  padding: 0 clamp(12px, 1.8vw, 24px);
+}
+
+.tarot-topic-ribbon__item {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 62px;
+  padding: 1px clamp(5px, .7vw, 10px) 0;
+  color: var(--topic-ribbon-text);
+  font: 600 clamp(.56rem, .51rem + .08vw, .64rem)/1.2 var(--logo-font, Cinzel, serif);
+  letter-spacing: .065em;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+.tarot-topic-ribbon__item::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--topic-ribbon-active), transparent);
+  transform: translateX(-50%);
+  transition: width 180ms ease;
+}
+
+.tarot-topic-ribbon__item:hover,
+.tarot-topic-ribbon__item:focus-visible {
+  color: color-mix(in srgb, var(--topic-ribbon-active) 66%, #fff);
+  transform: translateY(-1px);
+}
+
+.tarot-topic-ribbon__item:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--topic-ribbon-active) 72%, transparent);
+  outline-offset: -5px;
+  border-radius: 5px;
+}
+
+.tarot-topic-ribbon__item.is-active {
+  color: var(--topic-ribbon-active);
+}
+
+.tarot-topic-ribbon__item.is-active::after {
+  width: 34px;
+}
+
+.tarot-topic-ribbon__item.is-disabled {
+  color: var(--topic-ribbon-muted);
+  cursor: default;
+  opacity: .66;
+}
+
+.tarot-topic-ribbon__item.is-disabled:hover,
+.tarot-topic-ribbon__item.is-disabled:focus-visible {
+  color: var(--topic-ribbon-muted);
+  transform: none;
+}
+
+.tarot-topic-ribbon__icon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  background: currentColor;
+  -webkit-mask: var(--topic-ribbon-icon) center / contain no-repeat;
+  mask: var(--topic-ribbon-icon) center / contain no-repeat;
+  opacity: .86;
+}
+
+.tarot-topic-ribbon__item[data-topic-ribbon-item="spiritual-guidance"] .tarot-topic-ribbon__icon {
+  width: 19px;
+  height: 19px;
+  flex-basis: 19px;
+  background: var(--topic-ribbon-icon) center / contain no-repeat;
+  -webkit-mask: none;
+  mask: none;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .42));
+  opacity: .94;
+}
+
+.tarot-topic-ribbon__label--short {
+  display: none;
+}
+
+@media (max-width: 1120px) {
+  .tarot-topic-ribbon__track {
+    gap: clamp(8px, 1.2vw, 16px);
+  }
+
+  .tarot-topic-ribbon__label--full {
+    display: none;
+  }
+
+  .tarot-topic-ribbon__label--short {
+    display: inline;
+  }
+}
+
+@media (max-width: 820px) {
+  .tarot-topic-ribbon {
+    min-height: 62px;
+    margin-bottom: 28px;
+    border-radius: 12px;
+  }
+
+  .tarot-topic-ribbon__heading {
+    padding-inline: 14px;
+    font-size: .53rem;
+    letter-spacing: .145em;
+  }
+
+  .tarot-topic-ribbon__heading::after {
+    top: 15px;
+    bottom: 15px;
+  }
+
+  .tarot-topic-ribbon__viewport::before,
+  .tarot-topic-ribbon__viewport::after {
+    opacity: 1;
+  }
+
+  .tarot-topic-ribbon__track {
+    justify-content: flex-start;
+    gap: 8px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding: 0 48px 0 14px;
+    scroll-padding-inline: 14px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tarot-topic-ribbon__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tarot-topic-ribbon__item {
+    min-height: 62px;
+    padding-inline: 9px;
+    font-size: .59rem;
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 420px) {
+  .tarot-topic-ribbon__heading {
+    padding-inline: 11px;
+    font-size: .5rem;
+    letter-spacing: .11em;
+  }
+
+  .tarot-topic-ribbon__track {
+    padding-left: 10px;
+    scroll-padding-inline: 10px;
+  }
+
+  .tarot-topic-ribbon__item {
+    gap: 6px;
+    padding-inline: 7px;
   }
 }
 

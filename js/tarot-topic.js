@@ -6,6 +6,8 @@
   const faqButtons = Array.from(document.querySelectorAll("[data-topic-faq-button]"));
   const orientationRoot = document.querySelector("[data-topic-orientation]");
   const orientationDataElement = document.querySelector("#tarot-topic-orientation-data");
+  const topicRibbonTrack = document.querySelector(".tarot-topic-ribbon__track");
+  const activeTopicRibbonItem = topicRibbonTrack?.querySelector('[aria-current="page"]');
 
   function isBloodMoonActive(event) {
     return typeof event?.detail?.isActive === "boolean"
@@ -39,6 +41,24 @@
     });
   }
 
+  function positionActiveTopicInRibbon() {
+    if (!topicRibbonTrack
+      || !activeTopicRibbonItem
+      || !window.matchMedia("(max-width: 820px)").matches) return;
+
+    const maximumScroll = Math.max(0, topicRibbonTrack.scrollWidth - topicRibbonTrack.clientWidth);
+    if (maximumScroll <= 1) {
+      topicRibbonTrack.scrollLeft = 0;
+      return;
+    }
+
+    const trackRect = topicRibbonTrack.getBoundingClientRect();
+    const activeRect = activeTopicRibbonItem.getBoundingClientRect();
+    const activeCenter = activeRect.left - trackRect.left + topicRibbonTrack.scrollLeft + (activeRect.width / 2);
+    const desiredScroll = activeCenter - (topicRibbonTrack.clientWidth / 2);
+    topicRibbonTrack.scrollLeft = Math.min(maximumScroll, Math.max(0, desiredScroll));
+  }
+
   function setFaqState(button, expanded) {
     const panel = document.getElementById(button.getAttribute("aria-controls"));
     if (!panel) return;
@@ -64,6 +84,10 @@
     const copy = orientationRoot.querySelector("[data-topic-orientation-copy]");
     const concepts = orientationRoot.querySelector("[data-topic-orientation-concepts]");
     if (!options.length || !frame || !card || !stateLabel || !title || !copy || !concepts) return;
+    const orientationCardTitle = card.getAttribute("aria-label")
+      ?.replace(/^Drag to tilt /, "")
+      .replace(/\s+(?:upright|reversed) example$/, "")
+      || "tarot card";
 
     function setOrientation(nextOrientation) {
       const state = states[nextOrientation];
@@ -73,7 +97,7 @@
       orientationRoot.dataset.topicOrientation = nextOrientation;
       frame.classList.toggle("tarot-topic-orientation-card__frame--upright", !reversed);
       frame.classList.toggle("tarot-topic-orientation-card__frame--reversed", reversed);
-      card.setAttribute("aria-label", `Drag to tilt The Lovers ${nextOrientation} example`);
+      card.setAttribute("aria-label", `Drag to tilt ${orientationCardTitle} ${nextOrientation} example`);
       stateLabel.textContent = reversed ? "Reversed" : "Upright";
       title.textContent = state.label;
       copy.textContent = state.copy;
@@ -114,7 +138,9 @@
   });
 
   window.addEventListener("astralVeilBloodMoonChange", updateThemeImages);
+  window.addEventListener("load", positionActiveTopicInRibbon, { once: true });
   initializeOrientationToggle();
   window.AstralVeilCardTilt?.initialize(document);
   updateThemeImages();
+  window.requestAnimationFrame(() => window.requestAnimationFrame(positionActiveTopicInRibbon));
 })();
