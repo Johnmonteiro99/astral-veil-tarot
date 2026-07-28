@@ -39,80 +39,216 @@ body.tarot-spreads-page .tarot-spreads-section__heading > p:last-child {
   font: clamp(.96rem, 1.25vw, 1.08rem)/1.7 var(--font-body-serif, Lora, serif);
 }
 
-body.tarot-spreads-page .tarot-spreads-hero {
+body.tarot-spreads-page #tarot-spreads-hero {
   position: relative;
-  display: grid;
-  min-height: clamp(570px, 68vw, 720px);
-  align-items: center;
+  display: flex;
+  height: clamp(540px, 56vw, 640px);
+  flex-direction: column;
   overflow: hidden;
   background: transparent;
+  isolation: isolate;
 }
 
-body.tarot-spreads-page .tarot-spreads-hero__visual,
-body.tarot-spreads-page .tarot-spreads-hero__overlay {
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__stage {
+  position: relative;
+  display: grid;
+  min-height: 0;
+  flex: 1 1 auto;
+  align-items: center;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__visual,
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__overlay {
   position: absolute;
   inset: 0;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 80%, rgba(0, 0, 0, .92) 90%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 80%, rgba(0, 0, 0, .92) 90%, transparent 100%);
 }
 
-body.tarot-spreads-page .tarot-spreads-hero__visual img {
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__visual {
+  z-index: 0;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__visual img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 58% center;
-  filter: saturate(.88) contrast(.98);
+  object-position: 64% center;
+  filter: saturate(.9) contrast(1.01);
 }
 
-body.tarot-spreads-page .tarot-spreads-hero__overlay {
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__overlay {
+  z-index: 1;
   background:
-    linear-gradient(90deg, rgba(3, 17, 17, .93) 0%, rgba(3, 17, 17, .78) 38%, rgba(3, 17, 17, .22) 76%, rgba(3, 17, 17, .42)),
-    linear-gradient(180deg, rgba(3, 17, 17, .14), rgba(3, 17, 17, .62));
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--major-surface-strong) 96%, transparent) 0%,
+      color-mix(in srgb, var(--major-surface-strong) 88%, transparent) 24%,
+      color-mix(in srgb, var(--major-surface-strong) 72%, transparent) 42%,
+      color-mix(in srgb, var(--major-surface-strong) 20%, transparent) 62%,
+      transparent 78%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--major-surface-strong) 18%, transparent) 0%,
+      transparent 56%,
+      color-mix(in srgb, var(--major-surface-strong) 68%, transparent) 100%
+    );
 }
 
-body.moon-mode.tarot-spreads-page .tarot-spreads-hero__overlay {
-  background:
-    linear-gradient(90deg, rgba(3, 10, 22, .94) 0%, rgba(3, 10, 22, .8) 38%, rgba(3, 10, 22, .24) 76%, rgba(3, 10, 22, .45)),
-    linear-gradient(180deg, rgba(3, 10, 22, .16), rgba(3, 10, 22, .66));
-}
-
-body.blood-moon-mode.tarot-spreads-page .tarot-spreads-hero__overlay {
-  background:
-    linear-gradient(90deg, rgba(18, 2, 7, .95) 0%, rgba(18, 2, 7, .81) 38%, rgba(18, 2, 7, .24) 76%, rgba(18, 2, 7, .48)),
-    linear-gradient(180deg, rgba(18, 2, 7, .18), rgba(18, 2, 7, .68));
-}
-
-body.tarot-spreads-page .tarot-spreads-hero__content {
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__content {
   position: relative;
   z-index: 2;
-  max-width: 680px;
-  margin-inline: max(28px, calc((100vw - 1180px) / 2));
-  padding-block: clamp(4rem, 8vw, 7rem);
+  padding-block: clamp(2rem, 3.7vw, 2.8rem);
 }
 
-body.tarot-spreads-page .tarot-spreads-hero h1 {
-  max-width: 10ch;
-  margin: .8rem 0 0;
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__content > * {
+  width: min(44%, 620px);
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .major-arcana-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .major-arcana-eyebrow::after {
+  width: clamp(40px, 5vw, 72px);
+  height: 1px;
+  background: linear-gradient(90deg, var(--major-accent), transparent);
+  content: "";
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__title {
+  margin: .5rem 0 0;
   color: var(--major-heading);
-  font: 500 clamp(4rem, 8.2vw, 7.2rem)/.82 var(--heading-font, "Cormorant Garamond", serif);
-  letter-spacing: -.035em;
-  text-wrap: balance;
+  font-family: var(--heading-font, "Cormorant Garamond", serif);
+  font-weight: 500;
 }
 
-body.tarot-spreads-page .tarot-spreads-hero__copy {
-  max-width: 62ch;
-  margin-top: 1.8rem;
-  border-left: 1px solid var(--major-line-strong);
-  padding: .35rem 0 .35rem 1.25rem;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--major-surface) 34%, transparent), transparent 88%);
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__title-main {
+  display: block;
+  font-size: clamp(4.4rem, 6.6vw, 6.6rem);
+  letter-spacing: -.04em;
+  line-height: .84;
+  white-space: nowrap;
 }
 
-body.tarot-spreads-page .tarot-spreads-hero__copy p {
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__title-secondary {
+  display: block;
+  width: fit-content;
+  margin: -.04em 0 0 clamp(.8rem, 2.5vw, 2.5rem);
+  color: var(--major-accent);
+  font-size: clamp(2.1rem, 3.2vw, 3.35rem);
+  letter-spacing: .015em;
+  line-height: .92;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy {
+  background: transparent;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy--primary {
+  max-width: min(44%, 600px);
+  margin-top: 1rem;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy p {
   margin: 0;
   color: var(--major-text);
-  font: clamp(.94rem, 1.2vw, 1.06rem)/1.7 var(--font-body-serif, Lora, serif);
+  font: clamp(.92rem, 1.1vw, 1.02rem)/1.62 var(--font-body-serif, Lora, serif);
 }
 
-body.tarot-spreads-page .tarot-spreads-hero__copy p + p {
-  margin-top: .85rem;
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__actions--primary {
+  margin-top: 1.1rem;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__actions--primary .tarot-spreads-button--primary {
+  min-height: 44px;
+  border-color: color-mix(in srgb, var(--major-accent-strong) 82%, transparent);
+  padding: 10px 18px;
+  color: color-mix(in srgb, var(--major-surface-strong) 86%, #150f08);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--major-accent-strong) 84%, #fff0c5), var(--major-accent));
+  box-shadow: 0 10px 24px -18px color-mix(in srgb, var(--major-accent-strong) 65%, transparent);
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__actions--primary .tarot-spreads-button--primary::after {
+  content: "→";
+  font-size: .85rem;
+  line-height: 1;
+  transition: transform .2s ease;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__actions--primary .tarot-spreads-button--primary:hover {
+  border-color: var(--major-accent-strong);
+  color: color-mix(in srgb, var(--major-surface-strong) 90%, #100b06);
+  box-shadow: 0 14px 28px -18px color-mix(in srgb, var(--major-accent-strong) 72%, transparent);
+  transform: translateY(-2px);
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__actions--primary .tarot-spreads-button--primary:hover::after {
+  transform: translateX(2px);
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__editorial {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  padding-block: clamp(1.75rem, 2.6vw, 2.35rem);
+  background: transparent;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__editorial-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 58fr) minmax(0, 42fr);
+  align-items: center;
+  gap: clamp(2.5rem, 5vw, 5.5rem);
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy--secondary {
+  max-width: 68ch;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy--secondary p {
+  color: var(--major-muted);
+  font-size: clamp(.88rem, .9vw, .96rem);
+  line-height: 1.62;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__editorial-meta {
+  display: grid;
+  min-width: 0;
+  justify-items: start;
+  gap: .9rem;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem .9rem;
+  margin: 0;
+  padding: 0;
+  color: var(--major-muted);
+  font: 700 .52rem/1.45 var(--logo-font, Cinzel, serif);
+  letter-spacing: .09em;
+  list-style: none;
+  text-transform: uppercase;
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__facts li:not(:last-child)::after {
+  margin-left: .9rem;
+  color: var(--major-accent);
+  content: "✦";
+}
+
+body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__secondary-action {
+  min-height: 38px;
+  border-color: var(--major-line);
+  padding: 8px 14px;
+  color: var(--major-muted);
+  background: transparent;
+  font-size: .53rem;
 }
 
 body.tarot-spreads-page .tarot-spreads-hero__actions,
@@ -162,25 +298,6 @@ body.tarot-spreads-page .tarot-spreads-coming-soon {
 body.tarot-spreads-page .tarot-spreads-coming-soon small {
   color: var(--major-accent);
   font-size: .46rem;
-}
-
-body.tarot-spreads-page .tarot-spreads-hero__facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .55rem 1.1rem;
-  margin: 1.5rem 0 0;
-  padding: 0;
-  color: var(--major-muted);
-  font: 700 .54rem/1.4 var(--logo-font, Cinzel, serif);
-  letter-spacing: .08em;
-  list-style: none;
-  text-transform: uppercase;
-}
-
-body.tarot-spreads-page .tarot-spreads-hero__facts li:not(:last-child)::after {
-  margin-left: 1.1rem;
-  color: var(--major-accent);
-  content: "✦";
 }
 
 body.tarot-spreads-page .tarot-spreads-prose {
@@ -764,6 +881,58 @@ body.tarot-spreads-page [role="link"][tabindex="0"]:focus-visible {
 }
 
 @media (max-width: 1000px) {
+  body.tarot-spreads-page #tarot-spreads-hero {
+    height: clamp(560px, 64vw, 580px);
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__content {
+    padding-block: 1.6rem;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__content > * {
+    width: min(47%, 620px);
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__title-main {
+    font-size: clamp(3.75rem, 7vw, 4.5rem);
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__title-secondary {
+    font-size: clamp(2rem, 3.6vw, 2.5rem);
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy--primary {
+    max-width: min(47%, 560px);
+    margin-top: .8rem;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy p {
+    font-size: .9rem;
+    line-height: 1.56;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__actions--primary {
+    margin-top: .9rem;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__editorial {
+    padding-block: 1.4rem;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__editorial-inner {
+    grid-template-columns: minmax(0, 56fr) minmax(0, 44fr);
+    gap: 2rem;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy--secondary p {
+    font-size: .86rem;
+    line-height: 1.56;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__facts {
+    font-size: .49rem;
+  }
+
   body.tarot-spreads-page .tarot-spreads-explorer__workspace {
     grid-template-columns: 1fr;
   }
@@ -810,39 +979,124 @@ body.tarot-spreads-page [role="link"][tabindex="0"]:focus-visible {
     margin-inline: 0;
   }
 
-  body.tarot-spreads-page .tarot-spreads-hero {
+  body.tarot-spreads-page #tarot-spreads-hero {
+    height: auto;
     min-height: 680px;
-    align-items: end;
-  }
-
-  body.tarot-spreads-page .tarot-spreads-hero__visual img {
-    object-position: 62% center;
-  }
-
-  body.tarot-spreads-page .tarot-spreads-hero__overlay,
-  body.moon-mode.tarot-spreads-page .tarot-spreads-hero__overlay,
-  body.blood-moon-mode.tarot-spreads-page .tarot-spreads-hero__overlay {
-    background: linear-gradient(180deg, rgba(3, 12, 17, .2), rgba(3, 12, 17, .83) 45%, rgba(3, 12, 17, .96));
-  }
-
-  body.blood-moon-mode.tarot-spreads-page .tarot-spreads-hero__overlay {
-    background: linear-gradient(180deg, rgba(18, 2, 7, .22), rgba(18, 2, 7, .85) 45%, rgba(18, 2, 7, .97));
-  }
-
-  body.tarot-spreads-page .tarot-spreads-hero__content {
-    width: min(calc(100% - 32px), 620px);
-    margin-inline: auto;
+    align-items: stretch;
+    justify-content: flex-end;
     padding-block: 4rem 3rem;
   }
 
-  body.tarot-spreads-page .tarot-spreads-hero h1 {
-    font-size: clamp(4rem, 19vw, 6rem);
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__stage,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__content,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__editorial,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__editorial-inner,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__editorial-meta {
+    display: contents;
   }
 
-  body.tarot-spreads-page .tarot-spreads-hero__actions,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__visual,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__overlay {
+    position: absolute;
+    inset: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__visual img {
+    object-position: 62% center;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__overlay,
+  body.moon-mode.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__overlay {
+    background: linear-gradient(180deg, rgba(3, 12, 17, .2), rgba(3, 12, 17, .83) 45%, rgba(3, 12, 17, .96));
+  }
+
+  body.blood-moon-mode.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__overlay {
+    background: linear-gradient(180deg, rgba(18, 2, 7, .22), rgba(18, 2, 7, .85) 45%, rgba(18, 2, 7, .97));
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .major-arcana-eyebrow,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__title,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__actions,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__facts,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__secondary-action {
+    position: relative;
+    z-index: 2;
+    width: min(calc(100% - 32px), 620px);
+    margin-inline: auto;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .major-arcana-eyebrow {
+    order: 1;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .major-arcana-eyebrow::after {
+    display: none;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__title {
+    max-width: 10ch;
+    order: 2;
+    margin-block: .8rem 0;
+    font-size: clamp(4rem, 19vw, 6rem);
+    letter-spacing: -.035em;
+    line-height: .82;
+    text-wrap: balance;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__title-main,
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__title-secondary {
+    display: inline;
+    width: auto;
+    margin: 0;
+    color: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+    white-space: normal;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy--primary {
+    max-width: 620px;
+    order: 3;
+    margin-top: 1.8rem;
+    border-left: 1px solid var(--major-line-strong);
+    padding: .35rem 0 0 1.25rem;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--major-surface) 34%, transparent), transparent 88%);
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy--secondary {
+    max-width: 620px;
+    order: 4;
+    margin-top: 0;
+    border-left: 1px solid var(--major-line-strong);
+    padding: .85rem 0 .35rem 1.25rem;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--major-surface) 34%, transparent), transparent 88%);
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__copy--secondary p {
+    color: var(--major-text);
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__actions--primary {
+    order: 5;
+    margin-top: 1.5rem;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__actions,
   body.tarot-spreads-page .major-arcana-closing__actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__secondary-action {
+    min-height: 46px;
+    order: 6;
+    margin-top: .75rem;
+    border-color: var(--major-line-strong);
+    background: color-mix(in srgb, var(--major-surface-strong) 58%, transparent);
   }
 
   body.tarot-spreads-page .tarot-spreads-button,
@@ -850,12 +1104,16 @@ body.tarot-spreads-page [role="link"][tabindex="0"]:focus-visible {
     width: 100%;
   }
 
-  body.tarot-spreads-page .tarot-spreads-hero__facts {
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__facts {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    order: 7;
+    gap: .55rem 1.1rem;
+    margin-top: 1.5rem;
+    font-size: .54rem;
   }
 
-  body.tarot-spreads-page .tarot-spreads-hero__facts li::after {
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__facts li::after {
     display: none;
   }
 

@@ -149,18 +149,28 @@ function renderThemeCardImage(card, className) {
 
 function renderHero(page) {
   const hero = page.hero;
-  return `<section class="tarot-spreads-hero" aria-labelledby="tarot-spreads-title">
-        <div class="tarot-spreads-hero__visual" aria-hidden="true"><img src="${escapeHtml(hero.image.src)}" alt="" width="${hero.image.width}" height="${hero.image.height}" loading="eager" decoding="async" fetchpriority="high" /></div>
-        <div class="tarot-spreads-hero__overlay"></div>
-        <div class="tarot-spreads-shell tarot-spreads-hero__content">
-          <p class="major-arcana-eyebrow">${escapeHtml(hero.eyebrow)}</p>
-          <h1 id="tarot-spreads-title">${escapeHtml(hero.title)}</h1>
-          <div class="tarot-spreads-hero__copy">${hero.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>
-          <div class="tarot-spreads-hero__actions">
-            <a class="tarot-spreads-button tarot-spreads-button--primary" href="#explore-tarot-spreads">Explore Tarot Spreads</a>
-            <span class="tarot-spreads-coming-soon" role="link" aria-disabled="true" tabindex="0">How to Read Tarot Spreads <small>Coming Soon</small></span>
+  const [primaryParagraph, secondaryParagraph] = hero.paragraphs;
+  return `<section id="tarot-spreads-hero" class="tarot-spreads-hero" aria-labelledby="tarot-spreads-title">
+        <div class="tarot-spreads-hero__stage">
+          <div class="tarot-spreads-hero__visual" aria-hidden="true"><img src="${escapeHtml(hero.image.src)}" alt="" width="${hero.image.width}" height="${hero.image.height}" loading="eager" decoding="async" fetchpriority="high" /></div>
+          <div class="tarot-spreads-hero__overlay"></div>
+          <div class="tarot-spreads-shell tarot-spreads-hero__content">
+            <p class="major-arcana-eyebrow">${escapeHtml(hero.eyebrow)}</p>
+            <h1 id="tarot-spreads-title" class="tarot-spreads-hero__title"><span class="tarot-spreads-hero__title-main">Tarot Spreads</span> <span class="tarot-spreads-hero__title-secondary">Explained</span></h1>
+            <div class="tarot-spreads-hero__copy tarot-spreads-hero__copy--primary"><p>${escapeHtml(primaryParagraph)}</p></div>
+            <div class="tarot-spreads-hero__actions tarot-spreads-hero__actions--primary">
+              <a class="tarot-spreads-button tarot-spreads-button--primary" href="#explore-tarot-spreads">Explore Tarot Spreads</a>
+            </div>
           </div>
-          <ul class="tarot-spreads-hero__facts">${hero.facts.map((fact) => `<li>${escapeHtml(fact)}</li>`).join("")}</ul>
+        </div>
+        <div class="tarot-spreads-hero__editorial">
+          <div class="tarot-spreads-shell tarot-spreads-hero__editorial-inner">
+            <div class="tarot-spreads-hero__copy tarot-spreads-hero__copy--secondary"><p>${escapeHtml(secondaryParagraph)}</p></div>
+            <div class="tarot-spreads-hero__editorial-meta">
+              <ul class="tarot-spreads-hero__facts">${hero.facts.map((fact) => `<li>${escapeHtml(fact)}</li>`).join("")}</ul>
+              <span class="tarot-spreads-coming-soon tarot-spreads-hero__secondary-action" role="link" aria-disabled="true" tabindex="0">How to Read Tarot Spreads <small>Coming Soon</small></span>
+            </div>
+          </div>
         </div>
       </section>`;
 }

@@ -22,6 +22,8 @@ if (!existsSync(outputPath)) {
   const robots = readFileSync(resolve(rootDir, "robots.txt"), "utf8");
   const canonical = `${SITE_ORIGIN}${tarotSpreadsPage.route}`;
   const countMatches = (pattern, value = html) => (value.match(pattern) || []).length;
+  const h1Match = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/);
+  const h1Text = h1Match?.[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
   const parseSchema = (id) => {
     const match = html.match(new RegExp(`<script id="${id}" type="application/ld\\+json">([\\s\\S]*?)<\\/script>`));
@@ -36,7 +38,7 @@ if (!existsSync(outputPath)) {
 
   if (
     countMatches(/<h1(?:\s|>)/g) !== 1 ||
-    !html.includes('<h1 id="tarot-spreads-title">Tarot Spreads Explained</h1>')
+    h1Text !== tarotSpreadsPage.hero.title
   ) {
     errors.push("headings: expected exactly one Tarot Spreads H1");
   }
@@ -158,6 +160,10 @@ if (!existsSync(outputPath)) {
     if (!html.includes(fact)) errors.push(`hero: fact is missing (${fact})`);
   });
   if (
+    !html.includes('id="tarot-spreads-hero"') ||
+    !html.includes('class="tarot-spreads-hero__title-main">Tarot Spreads</span>') ||
+    !html.includes('class="tarot-spreads-hero__title-secondary">Explained</span>') ||
+    !html.includes('class="tarot-spreads-hero__editorial"') ||
     !html.includes('loading="eager" decoding="async" fetchpriority="high"') ||
     !html.includes('href="#explore-tarot-spreads">Explore Tarot Spreads</a>') ||
     !html.includes("How to Read Tarot Spreads <small>Coming Soon</small>")

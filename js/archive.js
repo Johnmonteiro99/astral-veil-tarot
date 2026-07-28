@@ -117,6 +117,9 @@ let openShelvesAidModalId = "";
 let isShelvesNotableModalOpen = false;
 let isShelvesResearchModalOpen = false;
 let isShelvesRecentModalOpen = false;
+let shelvesModalReturnFocus = null;
+let shelvesModalPageScroll = null;
+let shelvesModalBackgroundElements = [];
 let shelvesAidPageIndex = 0;
 let shelvesNotablePageIndex = 0;
 let shelvesActiveResearchTrailId = "";
@@ -3429,7 +3432,211 @@ function getShelvesRecentlyReadDocuments(limit = 3) {
     .slice(0, limit);
 }
 
+function hasOpenShelvesModal() {
+  return Boolean(
+    openShelvesReadDocumentId ||
+    openShelvesDetailsDocumentId ||
+    openShelvesAidModalId ||
+    isShelvesNotableModalOpen ||
+    isShelvesResearchModalOpen ||
+    isShelvesRecentModalOpen
+  );
+}
+
+function describeShelvesModalTrigger(trigger) {
+  if (!(trigger instanceof HTMLElement)) {
+    return null;
+  }
+
+  const stableAttributeNames = [
+    "data-action",
+    "data-shelves-document-id",
+    "data-shelves-recent-open",
+    "data-shelves-recent-view-all",
+    "data-shelves-notable-open",
+    "data-shelves-notable-view-all",
+    "data-shelves-research-explore-all",
+    "data-aid-action",
+    "data-shelves-aid-document"
+  ];
+  const attributes = stableAttributeNames.reduce((result, name) => {
+    if (trigger.hasAttribute(name)) {
+      result[name] = trigger.getAttribute(name);
+    }
+
+    return result;
+  }, {});
+
+  return {
+    element: trigger,
+    id: trigger.id || "",
+    attributes
+  };
+}
+
+function findShelvesModalReturnTarget(descriptor) {
+  if (!descriptor) {
+    return null;
+  }
+
+  if (descriptor.element?.isConnected) {
+    return descriptor.element;
+  }
+
+  if (descriptor.id) {
+    const idTarget = document.getElementById(descriptor.id);
+
+    if (idTarget) {
+      return idTarget;
+    }
+  }
+
+  const attributeNames = Object.keys(descriptor.attributes || {});
+
+  if (!attributeNames.length) {
+    return null;
+  }
+
+  const selector = attributeNames.map((name) => `[${name}]`).join("");
+
+  return [...document.querySelectorAll(selector)].find((candidate) => (
+    attributeNames.every((name) => candidate.getAttribute(name) === descriptor.attributes[name])
+  )) || null;
+}
+
+function prepareShelvesModalOpen(trigger) {
+  if (hasOpenShelvesModal()) {
+    return;
+  }
+
+  shelvesModalReturnFocus = describeShelvesModalTrigger(trigger);
+  shelvesModalPageScroll = {
+    x: window.scrollX,
+    y: window.scrollY
+  };
+}
+
+function getOpenShelvesModalElements() {
+  const modal = document.querySelector(
+    ".shelves-read-modal, .shelves-details-modal, .shelves-aid-modal, .shelves-recent-modal, .shelves-notable-modal, .shelves-research-modal"
+  );
+  const dialog = modal?.querySelector("[role='dialog']") || null;
+  const closeButton = dialog?.querySelector(
+    "[data-close-shelves-modal], [data-close-shelves-aid], [data-close-shelves-recent-modal], [data-close-shelves-notable-modal], [data-close-shelves-research-modal]"
+  ) || null;
+
+  return { modal, dialog, closeButton };
+}
+
+function resetOpenShelvesModalPosition() {
+  const { modal, dialog } = getOpenShelvesModalElements();
+
+  if (modal) {
+    modal.scrollTop = 0;
+    modal.scrollLeft = 0;
+  }
+
+  if (dialog) {
+    dialog.scrollTop = 0;
+    dialog.scrollLeft = 0;
+  }
+}
+
+function restoreShelvesModalBackground() {
+  shelvesModalBackgroundElements.forEach(({ element, wasInert }) => {
+    if (!wasInert) {
+      element.removeAttribute("inert");
+    }
+  });
+  shelvesModalBackgroundElements = [];
+}
+
+function setShelvesModalBackgroundInert(modal) {
+  restoreShelvesModalBackground();
+
+  if (!modal) {
+    return;
+  }
+
+  let activeBranch = modal;
+
+  while (activeBranch && activeBranch !== document.body) {
+    const parent = activeBranch.parentElement;
+
+    if (!parent) {
+      break;
+    }
+
+    [...parent.children]
+      .filter((element) => element !== activeBranch)
+      .forEach((element) => {
+        const wasInert = element.hasAttribute("inert");
+
+        if (!wasInert) {
+          element.setAttribute("inert", "");
+        }
+
+        shelvesModalBackgroundElements.push({ element, wasInert });
+      });
+
+    activeBranch = parent;
+  }
+}
+
+function presentOpenShelvesModal() {
+  setShelvesModalBackgroundInert(getOpenShelvesModalElements().modal);
+  resetOpenShelvesModalPosition();
+
+  window.requestAnimationFrame(() => {
+    resetOpenShelvesModalPosition();
+    getOpenShelvesModalElements().closeButton?.focus({ preventScroll: true });
+
+    window.requestAnimationFrame(() => {
+      resetOpenShelvesModalPosition();
+    });
+  });
+}
+
+function trapOpenShelvesModalFocus(event) {
+  const { dialog } = getOpenShelvesModalElements();
+
+  if (!dialog) {
+    return false;
+  }
+
+  const focusableElements = [...dialog.querySelectorAll(
+    "button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])"
+  )];
+
+  if (!focusableElements.length) {
+    return false;
+  }
+
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+  const focusIsInside = dialog.contains(document.activeElement);
+
+  if (event.shiftKey && (!focusIsInside || document.activeElement === firstElement)) {
+    event.preventDefault();
+    lastElement.focus({ preventScroll: true });
+    return true;
+  }
+
+  if (!event.shiftKey && (!focusIsInside || document.activeElement === lastElement)) {
+    event.preventDefault();
+    firstElement.focus({ preventScroll: true });
+    return true;
+  }
+
+  return false;
+}
+
 function closeShelvesModals() {
+  const shouldRestoreModalContext = hasOpenShelvesModal();
+  const returnFocus = shelvesModalReturnFocus;
+  const pageScroll = shelvesModalPageScroll;
+
+  restoreShelvesModalBackground();
   openShelvesReadDocumentId = "";
   openShelvesDetailsDocumentId = "";
   openShelvesAidModalId = "";
@@ -3438,9 +3645,26 @@ function closeShelvesModals() {
   isShelvesRecentModalOpen = false;
   shelvesAidPageIndex = 0;
   shelvesNotablePageIndex = 0;
+  shelvesModalReturnFocus = null;
+  shelvesModalPageScroll = null;
+
+  if (shouldRestoreModalContext) {
+    window.requestAnimationFrame(() => {
+      if (pageScroll) {
+        window.scrollTo(pageScroll.x, pageScroll.y);
+      }
+
+      findShelvesModalReturnTarget(returnFocus)?.focus({ preventScroll: true });
+
+      if (pageScroll) {
+        window.scrollTo(pageScroll.x, pageScroll.y);
+      }
+    });
+  }
 }
 
-function openShelvesReadModal(documentId) {
+function openShelvesReadModal(documentId, trigger = null) {
+  prepareShelvesModalOpen(trigger);
   setShelvesSavedNotice("");
   recordShelvesDocumentRead(documentId);
   openShelvesReadDocumentId = documentId || "";
@@ -3452,9 +3676,11 @@ function openShelvesReadModal(documentId) {
   shelvesAidPageIndex = 0;
   shelvesNotablePageIndex = 0;
   renderCurrentArchiveSurface();
+  presentOpenShelvesModal();
 }
 
-function openShelvesDetailsModal(documentId) {
+function openShelvesDetailsModal(documentId, trigger = null) {
+  prepareShelvesModalOpen(trigger);
   openShelvesDetailsDocumentId = documentId || "";
   openShelvesReadDocumentId = "";
   openShelvesAidModalId = "";
@@ -3464,9 +3690,11 @@ function openShelvesDetailsModal(documentId) {
   shelvesAidPageIndex = 0;
   shelvesNotablePageIndex = 0;
   renderCurrentArchiveSurface();
+  presentOpenShelvesModal();
 }
 
-function openShelvesAidModal(aidId) {
+function openShelvesAidModal(aidId, trigger = null) {
+  prepareShelvesModalOpen(trigger);
   openShelvesAidModalId = aidId || "";
   openShelvesReadDocumentId = "";
   openShelvesDetailsDocumentId = "";
@@ -3476,13 +3704,15 @@ function openShelvesAidModal(aidId) {
   shelvesAidPageIndex = 0;
   shelvesNotablePageIndex = 0;
   renderCurrentArchiveSurface();
+  presentOpenShelvesModal();
 }
 
-function openShelvesRecentModal() {
+function openShelvesRecentModal(trigger = null) {
   if (!getShelvesRecentlyReadDocuments(10).length) {
     return;
   }
 
+  prepareShelvesModalOpen(trigger);
   isShelvesRecentModalOpen = true;
   openShelvesReadDocumentId = "";
   openShelvesDetailsDocumentId = "";
@@ -3492,13 +3722,15 @@ function openShelvesRecentModal() {
   shelvesAidPageIndex = 0;
   shelvesNotablePageIndex = 0;
   renderCurrentArchiveSurface();
+  presentOpenShelvesModal();
 }
 
-function openShelvesNotableModal() {
+function openShelvesNotableModal(trigger = null) {
   if (!getSavedShelvesDocuments().length) {
     return;
   }
 
+  prepareShelvesModalOpen(trigger);
   isShelvesNotableModalOpen = true;
   isShelvesResearchModalOpen = false;
   isShelvesRecentModalOpen = false;
@@ -3508,9 +3740,11 @@ function openShelvesNotableModal() {
   shelvesAidPageIndex = 0;
   shelvesNotablePageIndex = 0;
   renderCurrentArchiveSurface();
+  presentOpenShelvesModal();
 }
 
-function openShelvesResearchModal() {
+function openShelvesResearchModal(trigger = null) {
+  prepareShelvesModalOpen(trigger);
   isShelvesResearchModalOpen = true;
   openShelvesReadDocumentId = "";
   openShelvesDetailsDocumentId = "";
@@ -3520,6 +3754,7 @@ function openShelvesResearchModal() {
   shelvesAidPageIndex = 0;
   shelvesNotablePageIndex = 0;
   renderCurrentArchiveSurface();
+  presentOpenShelvesModal();
 }
 
 function isNoctisDocumentLocked(document) {
@@ -6393,10 +6628,13 @@ function normalizeArchiveCode(value) {
 function renderCurrentArchiveSurface() {
   if (isNoctisRoomPage) {
     renderNoctisRoomByQuery();
-    return;
+  } else {
+    renderArchiveRooms();
   }
 
-  renderArchiveRooms();
+  if (hasOpenShelvesModal()) {
+    setShelvesModalBackgroundInert(getOpenShelvesModalElements().modal);
+  }
 }
 
 function renderShelvesSurfaceWithSearchFocus(selectionStart = null, selectionEnd = null) {
@@ -6892,9 +7130,9 @@ document.addEventListener("click", (event) => {
     const documentId = shelvesActionButton.dataset.shelvesDocumentId || "";
 
     if (shelvesActionButton.dataset.action === "view-details") {
-      openShelvesDetailsModal(documentId);
+      openShelvesDetailsModal(documentId, shelvesActionButton);
     } else {
-      openShelvesReadModal(documentId);
+      openShelvesReadModal(documentId, shelvesActionButton);
     }
 
     return;
@@ -6907,29 +7145,29 @@ document.addEventListener("click", (event) => {
   }
 
   if (shelvesRecentClose) {
-    isShelvesRecentModalOpen = false;
+    closeShelvesModals();
     renderCurrentArchiveSurface();
     return;
   }
 
   if (shelvesRecentViewAllButton) {
-    openShelvesRecentModal();
+    openShelvesRecentModal(shelvesRecentViewAllButton);
     return;
   }
 
   if (shelvesRecentOpenButton) {
-    openShelvesReadModal(shelvesRecentOpenButton.dataset.shelvesRecentOpen || "");
+    openShelvesReadModal(shelvesRecentOpenButton.dataset.shelvesRecentOpen || "", shelvesRecentOpenButton);
     return;
   }
 
   if (shelvesNotableClose) {
-    isShelvesNotableModalOpen = false;
+    closeShelvesModals();
     renderCurrentArchiveSurface();
     return;
   }
 
   if (shelvesNotableViewAllButton) {
-    openShelvesNotableModal();
+    openShelvesNotableModal(shelvesNotableViewAllButton);
     return;
   }
 
@@ -6940,13 +7178,13 @@ document.addEventListener("click", (event) => {
   }
 
   if (shelvesResearchClose) {
-    isShelvesResearchModalOpen = false;
+    closeShelvesModals();
     renderCurrentArchiveSurface();
     return;
   }
 
   if (shelvesResearchExploreAllButton) {
-    openShelvesResearchModal();
+    openShelvesResearchModal(shelvesResearchExploreAllButton);
     return;
   }
 
@@ -6967,17 +7205,17 @@ document.addEventListener("click", (event) => {
   }
 
   if (shelvesNotableDocumentButton) {
-    openShelvesReadModal(shelvesNotableDocumentButton.dataset.shelvesNotableOpen || "");
+    openShelvesReadModal(shelvesNotableDocumentButton.dataset.shelvesNotableOpen || "", shelvesNotableDocumentButton);
     return;
   }
 
   if (shelvesAidActionButton) {
-    openShelvesAidModal(shelvesAidActionButton.dataset.aidAction || "");
+    openShelvesAidModal(shelvesAidActionButton.dataset.aidAction || "", shelvesAidActionButton);
     return;
   }
 
   if (shelvesAidDocumentButton) {
-    openShelvesDetailsModal(shelvesAidDocumentButton.dataset.shelvesAidDocument || "");
+    openShelvesDetailsModal(shelvesAidDocumentButton.dataset.shelvesAidDocument || "", shelvesAidDocumentButton);
     return;
   }
 
@@ -7240,6 +7478,11 @@ document.addEventListener("change", (event) => {
 
 document.addEventListener("keydown", (event) => {
   const whisperRow = event.target.closest?.("[data-whisper-id]");
+
+  if (event.key === "Tab" && hasOpenShelvesModal()) {
+    trapOpenShelvesModalFocus(event);
+    return;
+  }
 
   if (event.key === "Escape" && (openGalleryTrailRestoredId || galleryTrailRevealAnimatingId)) {
     event.preventDefault();

@@ -6752,6 +6752,7 @@ body.shelves-page .shelves-research-modal {
   z-index: 9999;
   display: grid;
   place-items: center;
+  min-height: 100vh;
   min-height: 100dvh;
   padding: clamp(1rem, 3vw, 2rem);
   overflow-y: auto;
@@ -6799,6 +6800,7 @@ body.shelves-page .shelves-research-dialog {
   display: grid;
   gap: 1rem;
   width: min(760px, calc(100vw - 2rem));
+  max-height: min(760px, calc(100vh - 2rem));
   max-height: min(760px, calc(100dvh - 2rem));
   overflow-y: auto;
   border: 1px solid rgba(255, 80, 100, 0.24);
@@ -6886,6 +6888,7 @@ body.shelves-page .shelves-notable-pagination button:disabled {
 
 body.shelves-page .shelves-read-dialog {
   width: min(780px, calc(100vw - 2rem));
+  max-height: min(780px, calc(100vh - 2rem));
   max-height: min(780px, calc(100dvh - 2rem));
   overflow-y: auto;
   border-radius: 26px;
@@ -6898,6 +6901,7 @@ body.shelves-page .shelves-read-dialog {
 
 body.shelves-page .shelves-details-dialog {
   width: min(680px, calc(100vw - 2rem));
+  max-height: min(720px, calc(100vh - 2rem));
   max-height: min(720px, calc(100dvh - 2rem));
   overflow-y: auto;
   border-radius: 24px;
@@ -7052,6 +7056,7 @@ body.shelves-page .shelves-aid-modal {
   z-index: 9999;
   display: grid;
   place-items: center;
+  min-height: 100vh;
   min-height: 100dvh;
   padding: clamp(1rem, 3vw, 2rem);
   overflow-y: auto;
@@ -7078,6 +7083,7 @@ body.shelves-page .shelves-aid-dialog {
   position: relative;
   z-index: 1;
   width: min(760px, calc(100vw - 2rem));
+  max-height: min(760px, calc(100vh - 2rem));
   max-height: min(760px, calc(100dvh - 2rem));
   overflow-y: auto;
   border-radius: 24px;
@@ -7752,15 +7758,49 @@ body.shelves-page .shelves-reading-desk {
 }
 
 @media (max-width: 640px) {
+  body.shelves-page .shelves-read-modal,
+  body.shelves-page .shelves-details-modal,
+  body.shelves-page .shelves-aid-modal,
+  body.shelves-page .shelves-recent-modal,
+  body.shelves-page .shelves-notable-modal,
+  body.shelves-page .shelves-research-modal {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    padding:
+      max(0.5rem, env(safe-area-inset-top, 0px))
+      0.5rem
+      max(0.5rem, env(safe-area-inset-bottom, 0px));
+    overflow: hidden;
+  }
+
   body.shelves-page .shelves-read-dialog,
   body.shelves-page .shelves-details-dialog,
+  body.shelves-page .shelves-aid-dialog,
   body.shelves-page .shelves-recent-dialog,
   body.shelves-page .shelves-notable-dialog,
   body.shelves-page .shelves-research-dialog {
-    width: calc(100vw - 1rem);
-    max-height: calc(100dvh - 1rem);
+    width: 100%;
+    max-height: calc(
+      100vh
+      - max(0.5rem, env(safe-area-inset-top, 0px))
+      - max(0.5rem, env(safe-area-inset-bottom, 0px))
+    );
+    max-height: calc(
+      100dvh
+      - max(0.5rem, env(safe-area-inset-top, 0px))
+      - max(0.5rem, env(safe-area-inset-bottom, 0px))
+    );
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     border-radius: 20px;
     padding: 1.25rem;
+    transform: none;
   }
 
   body.shelves-page .shelves-recent-dialog__header,
@@ -7771,6 +7811,11 @@ body.shelves-page .shelves-reading-desk {
 
   body.shelves-page .shelves-modal-kicker {
     margin-right: 5rem;
+  }
+
+  body.shelves-page .shelves-read-title,
+  body.shelves-page .shelves-details-title {
+    padding-right: 4.75rem;
   }
 
   body.shelves-page .shelves-details-grid {
@@ -7827,13 +7872,6 @@ body.shelves-page .shelves-reading-desk {
   body.shelves-page .shelves-notable-row__copy span,
   body.shelves-page .shelves-notable-row__copy em {
     white-space: normal;
-  }
-
-  body.shelves-page .shelves-aid-dialog {
-    width: calc(100vw - 1rem);
-    max-height: calc(100dvh - 1rem);
-    border-radius: 20px;
-    padding: 1.25rem;
   }
 
   body.shelves-page .shelves-aid-list-item {
@@ -12787,6 +12825,7 @@ body.entry-desk-page .entry-desk-whisper-full-message {
 
 body.modal-open {
   overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body.entry-desk-page .entry-desk-whisper-modal,

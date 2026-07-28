@@ -1,5 +1,6 @@
 body.is-scroll-reader-open {
   overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .scroll-reader {
@@ -8,6 +9,8 @@ body.is-scroll-reader-open {
   z-index: 1400;
   display: grid;
   place-items: center;
+  height: 100vh;
+  height: 100dvh;
   padding: clamp(12px, 4vw, 42px);
   opacity: 0;
   pointer-events: none;
@@ -38,6 +41,7 @@ body.is-scroll-reader-open {
   z-index: 1;
   width: min(100%, 820px);
   max-height: min(88vh, 860px);
+  max-height: min(88dvh, 860px);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: clamp(14px, 2.4vw, 22px);
@@ -157,6 +161,8 @@ body.is-scroll-reader-open {
   max-width: 68ch;
   min-width: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding-right: 10px;
   padding-bottom: 44px;
   scrollbar-color: rgba(120, 78, 34, 0.52) rgba(255, 255, 255, 0.24);
@@ -357,15 +363,36 @@ body.is-scroll-reader-open {
 
 @media (max-width: 640px) {
   .scroll-reader {
-    align-items: end;
-    padding: 10px;
+    align-items: start;
+    justify-items: center;
+    height: 100vh;
+    height: 100dvh;
+    padding:
+      max(10px, env(safe-area-inset-top, 0px))
+      10px
+      max(10px, env(safe-area-inset-bottom, 0px));
+    overflow: hidden;
   }
 
   .scroll-reader__panel {
     width: 100%;
-    max-height: calc(100vh - 20px);
+    max-height: calc(
+      100vh
+      - max(10px, env(safe-area-inset-top, 0px))
+      - max(10px, env(safe-area-inset-bottom, 0px))
+    );
+    max-height: calc(
+      100dvh
+      - max(10px, env(safe-area-inset-top, 0px))
+      - max(10px, env(safe-area-inset-bottom, 0px))
+    );
     border-radius: 22px 20px 18px 18px;
     padding: 52px 18px 26px;
+    transform: none;
+  }
+
+  .scroll-reader.is-open .scroll-reader__panel {
+    transform: none;
   }
 
   .scroll-reader__header {

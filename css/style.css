@@ -12248,6 +12248,18 @@ body.no-glow .veilwalker-unique__item:hover .veilwalker-unique__icon {
 }
 
 @media (max-width: 768px) {
+  body.blood-moon-mode .reader-carousel__featured.reader-card--aquarius-bloodmoon {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  body.blood-moon-mode .reader-carousel__featured.reader-card--aquarius-bloodmoon .reader-selection-orbit .reader-orbit-card--featured {
+    padding-block: 0;
+  }
+
   .reader-selection-orbit {
     grid-template-columns: minmax(0, 1fr);
     gap: 18px;

@@ -12,7 +12,7 @@ export const tarotSpreadsPage = {
     eyebrow: "Patterns of the Cards",
     title: "Tarot Spreads Explained",
     paragraphs: [
-      "A tarot spread is the architecture of a reading. Each position gives a card a specific role, helping separate the past, present influences, advice, choices, challenges, and possible directions within a question.",
+      "A tarot spread gives every card a specific role, helping organize the past, present influences, advice, choices, challenges, and possible directions within a question.",
       "From one-card reflections to detailed layouts such as the Celtic Cross, different spreads offer different levels of focus and depth. The strongest layout is not always the largest one, but the one that best matches the question being asked."
     ],
     facts: ["One to Ten Cards", "Questions and Positions", "Simple to In-Depth", "Many Paths of Inquiry"],
