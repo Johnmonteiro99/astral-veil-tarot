@@ -22,6 +22,7 @@ if (!existsSync(outputPath)) {
 } else {
   const html = readFileSync(outputPath, "utf8");
   const css = readFileSync(resolve(rootDir, "css/tarot-minor-arcana.css"), "utf8");
+  const tarotCss = readFileSync(resolve(rootDir, "css/tarot.css"), "utf8");
   const sharedCss = readFileSync(resolve(rootDir, "css/tarot-major-arcana.css"), "utf8");
   const js = readFileSync(resolve(rootDir, "js/tarot-minor-arcana.js"), "utf8");
   const sharedJs = readFileSync(resolve(rootDir, "js/tarot-major-arcana.js"), "utf8");
@@ -96,6 +97,59 @@ if (!existsSync(outputPath)) {
   const duplicateIds = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
   if (duplicateIds.length) errors.push(`accessibility: duplicate IDs found (${duplicateIds.join(", ")})`);
 
+  [
+    '<header class="site-header">',
+    '<nav class="navbar" aria-label="Primary navigation">',
+    'data-theme-toggle',
+    'id="mobile-navigation"',
+    '<div class="tarot-background" aria-hidden="true">',
+    '<div class="celestial-wash"></div>',
+    '<div class="starfield"></div>',
+    '<div class="mystic-mist"></div>',
+    '<div class="lunar-orb"></div>',
+    '<footer class="site-footer" data-footer-drawer>',
+    '<link rel="stylesheet" href="/css/animations.css" />',
+    '<script src="/js/app.js"></script>',
+    '<script type="module" src="/src/public/public-auth-nav.js"></script>'
+  ].forEach((token) => {
+    if (!html.includes(token)) errors.push(`shared shell: required Major Arcana architecture is missing (${token})`);
+  });
+  if (/<site-(?:header|footer)>|\/js\/(?:components|theme)\.js|\/assets\/icons\/brand\/logo\.svg/.test(html)) {
+    errors.push("shared shell: dead custom-element shell or missing legacy asset references remain");
+  }
+
+  const educationNavStart = html.indexOf('<nav class="tarot-education-nav"');
+  const educationNavEnd = educationNavStart >= 0 ? html.indexOf("</nav>", educationNavStart) : -1;
+  const educationNavHtml = educationNavStart >= 0 && educationNavEnd > educationNavStart
+    ? html.slice(educationNavStart, educationNavEnd)
+    : "";
+  if (
+    !educationNavHtml.includes('aria-label="Tarot education"') ||
+    countMatches(/data-tarot-education-item="/g, educationNavHtml) !== 8 ||
+    countMatches(/class="tarot-education-nav__item/g, educationNavHtml) !== 8 ||
+    countMatches(/<a class="tarot-education-nav__item/g, educationNavHtml) !== 5 ||
+    countMatches(/aria-disabled="true"/g, educationNavHtml) !== 3 ||
+    !educationNavHtml.includes('href="/tarot/minor-arcana/" aria-current="page" data-tarot-education-active')
+  ) {
+    errors.push("education navigation: expected five live routes, three Coming Soon items, and an active Minor Arcana link");
+  }
+  [
+    'href="/tarot/history/"',
+    'href="/tarot/major-arcana/"',
+    'href="/tarot/minor-arcana/"',
+    'href="/tarot/compare/tarot-vs-oracle-cards/"',
+    'href="/tarot/compare/tarot-vs-lenormand/"'
+  ].forEach((token) => {
+    if (!educationNavHtml.includes(token)) errors.push(`education navigation: live route is missing (${token})`);
+  });
+  [
+    'href="/tarot/for-beginners/',
+    'href="/tarot/how-to-read/',
+    'href="/tarot/spreads/'
+  ].forEach((token) => {
+    if (educationNavHtml.includes(token)) errors.push(`education navigation: unavailable route must not be linked (${token})`);
+  });
+
   if (
     !html.includes('class="major-arcana-hero minor-arcana-hero"') ||
     !html.includes('class="major-arcana-hero__image"') ||
@@ -153,12 +207,25 @@ if (!existsSync(outputPath)) {
     });
   });
 
+  const suitsStart = html.indexOf('<section class="major-arcana-section minor-suits"');
+  const suitsEnd = suitsStart >= 0 ? html.indexOf("</section>", suitsStart) : -1;
+  const suitsHtml = suitsStart >= 0 && suitsEnd > suitsStart ? html.slice(suitsStart, suitsEnd) : "";
   if (
-    countMatches(/data-minor-suit-tab/g) !== 4 ||
-    countMatches(/data-minor-suit-panel/g) !== 4 ||
-    !html.includes("Select a suit to explore its element and themes.")
+    countMatches(/data-minor-suit-tab/g, suitsHtml) !== 4 ||
+    countMatches(/data-minor-suit-panel/g, suitsHtml) !== 4 ||
+    countMatches(/class="minor-suit-selector__portal"/g, suitsHtml) !== 4 ||
+    countMatches(/class="minor-suit-selector__icon"/g, suitsHtml) !== 4 ||
+    countMatches(/class="minor-suit-selector__name"/g, suitsHtml) !== 4 ||
+    countMatches(/class="minor-suit-selector__element"/g, suitsHtml) !== 4 ||
+    countMatches(/data-minor-suit-progress="/g, suitsHtml) !== 4 ||
+    !suitsHtml.includes('class="minor-suit-selector" aria-label="Explore the four Minor Arcana suits"') ||
+    !suitsHtml.includes('role="tablist" aria-label="Choose a Minor Arcana suit"') ||
+    !suitsHtml.includes('data-minor-suit-previous') ||
+    !suitsHtml.includes('data-minor-suit-next') ||
+    !suitsHtml.includes("Select a suit to explore its element and themes.") ||
+    suitsHtml.includes("minor-suits__tabs")
   ) {
-    errors.push("suits: expected four accessible selectors and four initial panels");
+    errors.push("suits: expected four symbol-first portal tabs, mobile controls, and four preserved panels");
   }
   minorArcanaPage.suits.items.forEach((suit) => {
     [suit.name, suit.element, ...suit.themes, ...suit.paragraphs, suit.progression].forEach((content) => {
@@ -166,28 +233,109 @@ if (!existsSync(outputPath)) {
     });
   });
 
-  if (countMatches(/data-minor-number-tab/g) !== 10 || countMatches(/data-minor-number-panel/g) !== 10) {
-    errors.push("numbers: expected ten accessible number tabs and panels");
+  const numbersStart = html.indexOf('<section class="major-arcana-section minor-numbers minor-number-patterns"');
+  const numbersEnd = numbersStart >= 0 ? html.indexOf("</section>", numbersStart) : -1;
+  const numbersHtml = numbersStart >= 0 && numbersEnd > numbersStart ? html.slice(numbersStart, numbersEnd) : "";
+  if (
+    !numbersHtml.includes('id="minor-number-patterns"') ||
+    !numbersHtml.includes('aria-labelledby="minor-number-patterns-heading"') ||
+    !numbersHtml.includes("Patterns Across the Suits") ||
+    !numbersHtml.includes("How Numbers Shape the Minor Arcana") ||
+    !numbersHtml.includes(minorArcanaPage.numbers.introduction) ||
+    countMatches(/data-minor-number-tab=/g, numbersHtml) !== 10 ||
+    countMatches(/data-minor-number-panel=/g, numbersHtml) !== 10 ||
+    countMatches(/class="minor-number-patterns__option/g, numbersHtml) !== 10 ||
+    countMatches(/data-minor-number-card/g, numbersHtml) !== 40 ||
+    countMatches(/class="minor-numbers__card-image"/g, numbersHtml) !== 40 ||
+    countMatches(/href="\/tarot\/[^"]+\/"/g, numbersHtml) !== 40 ||
+    countMatches(/aria-selected="true"/g, numbersHtml) !== 1 ||
+    countMatches(/tabindex="0"/g, numbersHtml) !== 1 ||
+    countMatches(/class="minor-numbers__panel is-active"/g, numbersHtml) !== 1 ||
+    countMatches(/aria-hidden="false"/g, numbersHtml) !== 1 ||
+    countMatches(/\sinert/g, numbersHtml) !== 9 ||
+    !numbersHtml.includes('class="minor-number-patterns__selector"') ||
+    !numbersHtml.includes('class="minor-number-patterns__rail" role="tablist"') ||
+    /minor-numbers__(?:tabs|suits|value)/.test(numbersHtml)
+  ) {
+    errors.push("numbers: expected the scoped selector rail, one active pattern, and forty image-led linked cards");
   }
   minorArcanaPage.numbers.items.forEach((number) => {
     [number.pattern, ...Object.values(number.readings)].forEach((content) => {
       if (!html.includes(content)) errors.push(`numbers: initial explanation is missing for ${number.label}`);
     });
+    if (
+      !numbersHtml.includes(`id="minor-number-tab-${number.key}"`) ||
+      !numbersHtml.includes(`aria-controls="minor-number-panel-${number.key}"`) ||
+      !numbersHtml.includes(`id="minor-number-panel-${number.key}"`) ||
+      !numbersHtml.includes(`aria-labelledby="minor-number-tab-${number.key}"`)
+    ) {
+      errors.push(`numbers: reciprocal tab and panel semantics are missing for ${number.label}`);
+    }
+    const rank = number.rank || "Ace";
+    ["Wands", "Cups", "Swords", "Pentacles"].forEach((suit) => {
+      const card = cards.find((candidate) => candidate.title === `${rank} of ${suit}`);
+      if (!card || !numbersHtml.includes(card.title) || !numbersHtml.includes(`href="${card.route}"`)) {
+        errors.push(`numbers: canonical card or route is missing for ${rank} of ${suit}`);
+      }
+    });
   });
-  if ((html.match(/class="minor-numbers__card-image"/g) || []).length !== 40) {
-    errors.push("numbers: expected one card from every suit in all ten panels");
-  }
 
+  const courtsStart = html.indexOf('<section class="major-arcana-section minor-courts minor-court-cards"');
+  const courtsEnd = courtsStart >= 0 ? html.indexOf("</section>", courtsStart) : -1;
+  const courtsHtml = courtsStart >= 0 && courtsEnd > courtsStart ? html.slice(courtsStart, courtsEnd) : "";
   if (
-    countMatches(/data-minor-court-tab/g) !== 4 ||
-    countMatches(/data-minor-court-panel/g) !== 4 ||
-    (html.match(/class="minor-courts__rank"/g) || []).length !== 16
+    !courtsHtml.includes('id="minor-court-cards"') ||
+    !courtsHtml.includes('aria-labelledby="minor-court-cards-heading"') ||
+    !courtsHtml.includes("The Living Court") ||
+    !courtsHtml.includes("Understanding Minor Arcana Court Cards") ||
+    !courtsHtml.includes(minorArcanaPage.courts.introduction) ||
+    countMatches(/data-minor-court-tab=/g, courtsHtml) !== 4 ||
+    countMatches(/data-minor-court-panel=/g, courtsHtml) !== 4 ||
+    countMatches(/data-minor-court-rank-option=/g, courtsHtml) !== 4 ||
+    countMatches(/data-minor-court-role=/g, courtsHtml) !== 16 ||
+    countMatches(/data-minor-court-progress=/g, courtsHtml) !== 16 ||
+    countMatches(/class="minor-court-cards__card-image"/g, courtsHtml) !== 16 ||
+    countMatches(/data-standard-src=/g, courtsHtml) !== 16 ||
+    countMatches(/data-blood-src=/g, courtsHtml) !== 16 ||
+    countMatches(/class="minor-court-cards__link"/g, courtsHtml) !== 16 ||
+    countMatches(/aria-selected="true"/g, courtsHtml) !== 1 ||
+    countMatches(/aria-pressed="true"/g, courtsHtml) !== 1 ||
+    countMatches(/class="minor-court-cards__panel minor-court-cards__panel--wands is-active"/g, courtsHtml) !== 1 ||
+    countMatches(/\sinert/g, courtsHtml) !== 3 ||
+    !courtsHtml.includes('data-minor-court-previous') ||
+    !courtsHtml.includes('data-minor-court-next') ||
+    !courtsHtml.includes('class="minor-court-cards__progression"') ||
+    /minor-courts__(?:tabs|panel|rank|card-image)/.test(courtsHtml)
   ) {
-    errors.push("courts: expected four suit views with Page, Knight, Queen, and King");
+    errors.push("courts: expected the scoped suit selector, sixteen borderless roles, progression line, and mobile controls");
   }
+  minorArcanaPage.courts.suits.forEach((suit) => {
+    const suitKey = suit.toLowerCase();
+    if (
+      !courtsHtml.includes(`id="minor-court-tab-${suitKey}"`) ||
+      !courtsHtml.includes(`aria-controls="minor-court-panel-${suitKey}"`) ||
+      !courtsHtml.includes(`id="minor-court-panel-${suitKey}"`) ||
+      !courtsHtml.includes(`aria-labelledby="minor-court-tab-${suitKey}"`)
+    ) {
+      errors.push(`courts: reciprocal suit tab and panel semantics are missing for ${suit}`);
+    }
+    minorArcanaPage.courts.ranks.forEach((rank) => {
+      const card = cards.find((candidate) => candidate.title === `${rank.name} of ${suit}`);
+      if (
+        !card ||
+        !courtsHtml.includes(`id="minor-court-role-${suitKey}-${rank.key}"`) ||
+        !courtsHtml.includes(card.title) ||
+        !courtsHtml.includes(`href="${card.route}"`) ||
+        !courtsHtml.includes(`data-standard-src="${card.image}"`) ||
+        !courtsHtml.includes(`data-blood-src="${card.bloodMoonImage}"`)
+      ) {
+        errors.push(`courts: canonical content, route, or themed artwork is missing for ${rank.name} of ${suit}`);
+      }
+    });
+  });
   minorArcanaPage.courts.ranks.forEach((rank) => {
     [rank.themes, rank.copy].forEach((content) => {
-      if (!html.includes(content)) errors.push(`courts: ${rank.name} explanation is missing`);
+      if (!courtsHtml.includes(content)) errors.push(`courts: ${rank.name} explanation is missing`);
     });
   });
 
@@ -253,26 +401,63 @@ if (!existsSync(outputPath)) {
     ".minor-arcana-page",
     ".minor-arcana-filters",
     ".minor-suits",
+    ".minor-suit-selector__portal",
+    ".minor-suit-selector__option.is-active",
+    ".minor-suit-selector__mobile-controls",
     ".minor-numbers",
+    ".minor-number-patterns",
+    ".minor-number-patterns__rail",
+    ".minor-number-patterns__cards",
     ".minor-courts",
+    ".minor-court-cards",
+    ".minor-court-cards__procession",
+    ".minor-court-cards__progression",
+    ".minor-court-cards__rank-selector",
     "scroll-snap-type: x mandatory",
     "@media (max-width: 768px)",
     "@media (prefers-reduced-motion: reduce)"
   ].forEach((token) => {
     if (!css.includes(token)) errors.push(`styles: required scoped or responsive treatment is missing (${token})`);
   });
+  [
+    ".tarot-education-nav",
+    ".tarot-education-nav__viewport",
+    ".tarot-education-nav__track",
+    ".tarot-education-nav__item.is-active",
+    "overflow-x: auto",
+    "background: transparent"
+  ].forEach((token) => {
+    if (!tarotCss.includes(token)) errors.push(`styles: shared education navigation treatment is missing (${token})`);
+  });
   if (
     !/\.minor-arcana-page\s*\{[^}]*background:\s*transparent/s.test(css) ||
-    /^\s*\.(?:minor-arcana-filters|minor-suits|minor-numbers|minor-courts)(?:__|\s|\{)/m.test(css) ||
+    /^\s*\.(?:minor-arcana-filters|minor-suits|minor-numbers|minor-number-patterns|minor-courts|minor-court-cards)(?:__|\s|\{)/m.test(css) ||
     /body\.(?:sun|moon|blood-moon)-mode\.tarot-minor-arcana-page\s*\{[^}]*background\s*:/.test(css)
   ) {
     errors.push("styles: Minor additions must stay scoped and reveal the global theme background");
   }
   if (
     !/@media \(max-width: 768px\)[\s\S]*?\.minor-arcana-page \.minor-suits__cards\s*\{[^}]*overflow-x:\s*auto;[^}]*scroll-snap-type:\s*x mandatory/s.test(css) ||
-    !/@media \(max-width: 768px\)[\s\S]*?\.minor-arcana-page \.minor-courts__panel\s*\{[^}]*overflow-x:\s*auto;[^}]*scroll-snap-type:\s*x mandatory/s.test(css)
+    !/@media \(max-width: 768px\)[\s\S]*?\.minor-arcana-page \.minor-court-cards \.minor-court-cards__procession\s*\{[^}]*overflow-x:\s*auto;[^}]*scroll-snap-type:\s*x mandatory/s.test(css)
   ) {
     errors.push("styles: suit and court imagery need bounded mobile scroll-snap layouts");
+  }
+  if (
+    !/\.minor-arcana-page \.minor-number-patterns\s*\{[^}]*background:\s*transparent/s.test(css) ||
+    !/@media \(max-width: 768px\)[\s\S]*?\.minor-arcana-page \.minor-number-patterns \.minor-number-patterns__selector\s*\{[^}]*overflow-x:\s*auto;[^}]*scroll-snap-type:\s*x proximity/s.test(css) ||
+    !/@media \(max-width: 620px\)[\s\S]*?\.minor-arcana-page \.minor-number-patterns \.minor-number-patterns__cards\s*\{[^}]*overflow-x:\s*auto;[^}]*scroll-snap-type:\s*x mandatory/s.test(css) ||
+    /\.minor-number-patterns[^{]*\{[^}]*min-height:\s*(?:570|650)px/s.test(css)
+  ) {
+    errors.push("styles: number patterns must remain transparent, compact, and bounded on mobile");
+  }
+  if (
+    !/\.minor-arcana-page \.minor-court-cards\s*\{[^}]*background:\s*transparent/s.test(css) ||
+    !/@media \(max-width: 1100px\)[\s\S]*?\.minor-arcana-page \.minor-court-cards \.minor-court-cards__procession\s*\{[^}]*grid-template-columns:\s*repeat\(2,/s.test(css) ||
+    !/@media \(max-width: 768px\)[\s\S]*?\.minor-arcana-page \.minor-court-cards \.minor-court-cards__rank-selector\s*\{[^}]*display:\s*grid/s.test(css) ||
+    /\.minor-court-cards[^{]*\{[^}]*min-height:\s*(?:580|760)px/s.test(css) ||
+    /\.minor-court-cards__role[^{]*\{[^}]*border:\s*1px/s.test(css)
+  ) {
+    errors.push("styles: court cards must remain transparent, borderless, compact, and responsive");
   }
 
   [
@@ -287,7 +472,24 @@ if (!existsSync(outputPath)) {
     "aria-hidden",
     "inert",
     "scroll",
-    "reducedMotionQuery"
+    "isTransitioning",
+    "minorSuitDirection",
+    "minorNumberDirection",
+    "minorCourtDirection",
+    "transitionDirectionDataKey",
+    "data-minor-suit-selector",
+    "data-minor-suit-previous",
+    "data-minor-suit-next",
+    "data-minor-number-selector",
+    "data-minor-court-rank-option",
+    "data-minor-court-procession",
+    "data-minor-court-previous",
+    "data-minor-court-next",
+    "updateRankState",
+    "syncActivePanel",
+    "reducedMotionQuery",
+    "positionActiveEducationItem",
+    "data-tarot-education-viewport"
   ].forEach((token) => {
     if (!js.includes(token)) errors.push(`interaction: required Minor behavior is missing (${token})`);
   });

@@ -59,6 +59,147 @@
 .tarot-shell { width: min(1360px, calc(100% - 56px)); margin-inline: auto; }
 .tarot-library [hidden] { display: none !important; }
 
+/* Shared editorial navigation for Tarot education and SEO pages. The global
+   header is absolute, so this row reserves its clearance in normal flow. */
+.tarot-education-nav {
+  --tarot-education-text: color-mix(in srgb, var(--theme-text-main) 76%, transparent);
+  --tarot-education-muted: color-mix(in srgb, var(--theme-text-muted) 58%, transparent);
+  --tarot-education-accent: var(--major-accent, #c9a35d);
+  --tarot-education-line: color-mix(in srgb, var(--tarot-education-accent) 22%, transparent);
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  padding: calc(78px + clamp(6px, 1vw, 12px)) max(28px, calc((100vw - 1360px) / 2)) 0;
+  background: transparent;
+}
+
+.tarot-education-nav__viewport {
+  width: min(100%, 1360px);
+  margin-inline: auto;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  border-bottom: 1px solid var(--tarot-education-line);
+  scroll-padding-inline: 18px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tarot-education-nav__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.tarot-education-nav__track {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  min-height: 52px;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(10px, 1.35vw, 22px);
+  padding-inline: 6px;
+}
+
+.tarot-education-nav__item {
+  position: relative;
+  display: inline-flex;
+  min-height: 52px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 2px clamp(5px, .6vw, 9px) 0;
+  color: var(--tarot-education-text);
+  font: 600 clamp(.56rem, .52rem + .07vw, .64rem)/1.2 var(--logo-font, Cinzel, serif);
+  letter-spacing: .065em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+.tarot-education-nav__item::after {
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--tarot-education-accent), transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--tarot-education-accent) 32%, transparent);
+  content: "";
+  transform: translateX(-50%);
+  transition: width 180ms ease;
+}
+
+.tarot-education-nav__item:hover,
+.tarot-education-nav__item:focus-visible {
+  color: color-mix(in srgb, var(--tarot-education-accent) 70%, #fff);
+  transform: translateY(-1px);
+}
+
+.tarot-education-nav__item:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid color-mix(in srgb, var(--tarot-education-accent) 68%, transparent);
+  outline-offset: -5px;
+}
+
+.tarot-education-nav__item.is-active {
+  color: var(--tarot-education-accent);
+}
+
+.tarot-education-nav__item.is-active::after {
+  width: min(72%, 54px);
+}
+
+.tarot-education-nav__item.is-disabled {
+  flex-direction: column;
+  gap: 2px;
+  color: var(--tarot-education-muted);
+  cursor: default;
+  opacity: .7;
+}
+
+.tarot-education-nav__item.is-disabled small {
+  color: inherit;
+  font: 600 .43rem/1 var(--body-font, "DM Sans", sans-serif);
+  letter-spacing: .11em;
+}
+
+.tarot-education-nav__item.is-disabled:hover,
+.tarot-education-nav__item.is-disabled:focus-visible {
+  color: var(--tarot-education-muted);
+  transform: none;
+}
+
+@media (max-width: 1180px) {
+  .tarot-education-nav {
+    padding-top: 68px;
+  }
+}
+
+@media (max-width: 820px) {
+  .tarot-education-nav {
+    padding-inline: 0;
+  }
+
+  .tarot-education-nav__track {
+    justify-content: flex-start;
+    gap: 8px;
+    padding-inline: 18px 42px;
+  }
+
+  .tarot-education-nav__item {
+    min-height: 54px;
+    padding-inline: 9px;
+    font-size: .59rem;
+    scroll-snap-align: center;
+  }
+
+  .tarot-education-nav__viewport {
+    scroll-snap-type: x proximity;
+  }
+}
+
 .tarot-eyebrow {
   margin: 0;
   color: var(--tarot-gold);

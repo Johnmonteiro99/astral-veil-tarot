@@ -23,19 +23,38 @@
     <script id="minor-arcana-breadcrumb-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://astralveil.world/"},{"@type":"ListItem","position":2,"name":"Tarot","item":"https://astralveil.world/tarot"},{"@type":"ListItem","position":3,"name":"Minor Arcana Explained","item":"https://astralveil.world/tarot/minor-arcana/"}]}</script>
     <script id="minor-arcana-webpage-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Minor Arcana Explained","description":"Learn how the 56 Minor Arcana cards work through four suits, number patterns, court cards, elements, and everyday tarot meanings.","url":"https://astralveil.world/tarot/minor-arcana/","image":"https://astralveil.world/assets/images/background%20_images/minor-arcana-explained.png","dateModified":"2026-07-26","isPartOf":{"@type":"WebSite","name":"Astral Veil","url":"https://astralveil.world/"},"about":[{"@type":"Thing","name":"Minor Arcana"},{"@type":"Thing","name":"Tarot suits"},{"@type":"Thing","name":"Tarot card meanings"}]}</script>
     <script id="minor-arcana-faq-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the Minor Arcana in tarot?","acceptedAnswer":{"@type":"Answer","text":"The Minor Arcana is a group of fifty-six cards divided into four suits. These cards often explore emotions, actions, thoughts, relationships, work, resources, challenges, and everyday circumstances."}},{"@type":"Question","name":"How many Minor Arcana cards are there?","acceptedAnswer":{"@type":"Answer","text":"A standard tarot deck contains fifty-six Minor Arcana cards. Each of the four suits contains fourteen cards: Ace through Ten, followed by Page, Knight, Queen, and King."}},{"@type":"Question","name":"What are the four Minor Arcana suits?","acceptedAnswer":{"@type":"Answer","text":"The four suits are Wands, Cups, Swords, and Pentacles. They are commonly associated with fire, water, air, and earth, though traditions may vary."}},{"@type":"Question","name":"What do the numbers mean in the Minor Arcana?","acceptedAnswer":{"@type":"Answer","text":"The numbers can be used as a teaching framework for recognizing patterns such as beginnings, choices, development, stability, disruption, adjustment, and completion. The suit determines how that pattern is expressed."}},{"@type":"Question","name":"What do Minor Arcana court cards represent?","acceptedAnswer":{"@type":"Answer","text":"Court cards may describe people, personality traits, roles, approaches, developmental stages, or different ways of expressing a suit’s energy."}},{"@type":"Question","name":"Are Minor Arcana cards less important than Major Arcana cards?","acceptedAnswer":{"@type":"Answer","text":"No. Major Arcana cards often emphasize broader themes, while Minor Arcana cards show how those themes appear through daily experience. Both groups contribute to a complete reading."}},{"@type":"Question","name":"Can Minor Arcana cards be reversed?","acceptedAnswer":{"@type":"Answer","text":"Yes. A reversed Minor Arcana card may describe internalized energy, delay, resistance, imbalance, avoidance, or a practical lesson requiring closer attention."}}]}</script>
-    <link rel="icon" href="/assets/icons/brand/logo.svg" type="image/svg+xml" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&amp;family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;family=Lora:ital,wght@0,400;0,500;1,400&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Cormorant+Garamond:wght@500;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;family=Lora:wght@400;500;600&amp;family=Marcellus&amp;display=swap" rel="stylesheet" />
+    <script>(function(){try{if(localStorage.getItem("astralVeilDisableGlowEffects")==="true")document.documentElement.classList.add("no-glow")}catch(error){}})();</script>
     <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/animations.css" />
     <link rel="stylesheet" href="/css/tarot.css" />
     <link rel="stylesheet" href="/css/tarot-major-arcana.css" />
     <link rel="stylesheet" href="/css/tarot-minor-arcana.css" />
   </head>
   <body class="sun-mode tarot-meanings-page tarot-major-arcana-page tarot-minor-arcana-page">
-    <div class="stars-container" id="stars-container" aria-hidden="true"></div>
-    <site-header></site-header>
+    <script>(function(){var params=new URLSearchParams(window.location.search);var queryBloodMoon=params.get("bloodMoon")||params.get("testBloodMoon");var hasOverride=params.has("bloodMoon")||params.has("testBloodMoon");var isBloodMoon=hasOverride&&(queryBloodMoon===""||/^(1|true|yes|on|active)$/i.test(queryBloodMoon||""));var mode="";try{isBloodMoon=hasOverride?isBloodMoon:sessionStorage.getItem("astralVeilBloodMoonActive")==="true"||localStorage.getItem("astralVeilBloodMoonActive")==="true"||sessionStorage.getItem("astralVeilTestBloodMoonActive")==="true"||localStorage.getItem("astralVeilTestBloodMoonActive")==="true";mode=localStorage.getItem("dailyTarotTheme")||""}catch(error){}if(mode!=="sun"&&mode!=="moon")mode=new Date().getHours()>=6&&new Date().getHours()<18?"sun":"moon";document.body.classList.remove("sun-mode","moon-mode","blood-moon-mode");document.body.classList.add(isBloodMoon?"blood-moon-mode":mode+"-mode")})();</script>
+
+    <header class="site-header">
+      <nav class="navbar" aria-label="Primary navigation">
+        <a class="navbar__brand" href="/" aria-label="Astral Veil home"><span class="logo-eye" aria-hidden="true"><img class="logo-eye__image" src="/assets/icons/symbols/astral-veil-icon-logo-transparent.png" alt="" width="512" height="512" /></span><span class="navbar__brand-text">Astral Veil</span></a>
+        <ul class="navbar__links"><li><a class="navbar__link" href="/">Readings</a></li><li><a class="navbar__link" href="/veilwalkers">Veilwalkers</a></li><li><a class="navbar__link" href="/decks">DECKS</a></li><li><a class="navbar__link" href="/journal">Journal</a></li><li><a class="navbar__link" href="/about">About</a></li></ul>
+        <button class="theme-toggle theme-orb-toggle" type="button" aria-label="Switch between sun and moon mode" data-theme-toggle><span class="theme-orb-toggle__label theme-orb-toggle__label--sun">Sun</span><span class="theme-orb-toggle__icon-wrap" aria-hidden="true"><img src="/assets/icons/symbols/sun-moon-transparent.png" alt="" class="theme-orb-toggle__icon" width="512" height="512" /></span><span class="theme-orb-toggle__label theme-orb-toggle__label--moon">Moon</span></button>
+        <button class="navbar__menu-toggle" type="button" aria-label="Open navigation menu" aria-controls="mobile-navigation" aria-expanded="false"><span class="navbar__menu-icon" aria-hidden="true"></span></button>
+        <div class="navbar__mobile-menu" id="mobile-navigation" aria-hidden="true"><a class="navbar__mobile-link" href="/">Readings</a><a class="navbar__mobile-link" href="/veilwalkers">Veilwalkers</a><a class="navbar__mobile-link" href="/decks">DECKS</a><a class="navbar__mobile-link" href="/journal">Journal</a><a class="navbar__mobile-link" href="/about">About</a></div>
+      </nav>
+    </header>
+
+    <div class="tarot-background" aria-hidden="true"><div class="celestial-wash"></div><div class="starfield"></div><div class="mystic-mist"></div><div class="lunar-orb"></div></div>
+
     <main id="main-content" class="major-arcana-page minor-arcana-page">
+      <nav class="tarot-education-nav" aria-label="Tarot education">
+        <div class="tarot-education-nav__viewport" data-tarot-education-viewport>
+          <div class="tarot-education-nav__track"><a class="tarot-education-nav__item" href="/tarot/history/" data-tarot-education-item="history">Tarot History</a><a class="tarot-education-nav__item" href="/tarot/major-arcana/" data-tarot-education-item="major-arcana">Major Arcana</a><a class="tarot-education-nav__item is-active" href="/tarot/minor-arcana/" aria-current="page" data-tarot-education-active data-tarot-education-item="minor-arcana">Minor Arcana</a><span class="tarot-education-nav__item is-disabled" role="link" aria-disabled="true" aria-label="Tarot for Beginners — Coming Soon" tabindex="0" data-tarot-education-item="beginners"><span>Tarot for Beginners</span><small>Coming Soon</small></span><span class="tarot-education-nav__item is-disabled" role="link" aria-disabled="true" aria-label="How to Read Tarot — Coming Soon" tabindex="0" data-tarot-education-item="how-to-read"><span>How to Read Tarot</span><small>Coming Soon</small></span><span class="tarot-education-nav__item is-disabled" role="link" aria-disabled="true" aria-label="Tarot Spreads — Coming Soon" tabindex="0" data-tarot-education-item="spreads"><span>Tarot Spreads</span><small>Coming Soon</small></span><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-oracle-cards/" data-tarot-education-item="tarot-vs-oracle">Tarot vs. Oracle</a><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-lenormand/" data-tarot-education-item="tarot-vs-lenormand">Tarot vs. Lenormand</a></div>
+        </div>
+      </nav>
       <section class="major-arcana-hero minor-arcana-hero" aria-labelledby="minor-arcana-title">
         <div class="major-arcana-hero__stage">
           <div class="major-arcana-hero__title">
@@ -923,7 +942,64 @@
           <p>The four Minor Arcana suits organize everyday experience into symbolic realms. Each suit has its own element, concerns, strengths, tensions, and style of expression.</p>
         </header>
         <p class="minor-suits__instruction"><span aria-hidden="true">✦</span>Select a suit to explore its element and themes.</p>
-        <div class="minor-suits__tabs" role="tablist" aria-label="Choose a Minor Arcana suit"><button class="is-active" id="minor-suit-tab-wands" type="button" role="tab" aria-selected="true" aria-controls="minor-suit-panel-wands" tabindex="0" data-minor-suit-tab="wands"><span>Fire</span>Wands</button><button class="" id="minor-suit-tab-cups" type="button" role="tab" aria-selected="false" aria-controls="minor-suit-panel-cups" tabindex="-1" data-minor-suit-tab="cups"><span>Water</span>Cups</button><button class="" id="minor-suit-tab-swords" type="button" role="tab" aria-selected="false" aria-controls="minor-suit-panel-swords" tabindex="-1" data-minor-suit-tab="swords"><span>Air</span>Swords</button><button class="" id="minor-suit-tab-pentacles" type="button" role="tab" aria-selected="false" aria-controls="minor-suit-panel-pentacles" tabindex="-1" data-minor-suit-tab="pentacles"><span>Earth</span>Pentacles</button></div>
+        <nav class="minor-suit-selector" aria-label="Explore the four Minor Arcana suits" data-minor-suit-selector>
+          <div class="minor-suit-selector__track" role="tablist" aria-label="Choose a Minor Arcana suit"><button class="minor-suit-selector__option minor-suit-selector__option--wands is-active" id="minor-suit-tab-wands" type="button" role="tab" aria-label="Wands, Fire" aria-selected="true" aria-controls="minor-suit-panel-wands" tabindex="0" data-minor-suit-tab="wands" data-minor-suit-name="Wands" data-minor-suit-element="Fire">
+            <span class="minor-suit-selector__portal" aria-hidden="true">
+              <span class="minor-suit-selector__effect"></span>
+              <svg class="minor-suit-selector__icon" viewBox="0 0 64 80" aria-hidden="true" focusable="false">
+              <path d="M31.5 69c1-12.4.7-24.5-.8-36.3-.7-5.3-.5-10.4.8-15.2" />
+              <path d="M31 43c-6.8-2.5-11.1-7.1-13.2-13.6M31.3 36.5c6.8-2.2 11.5-6.4 14.1-12.7M29.9 53.2c-4.2-1.5-7.3-4.2-9.4-8.1M31 49.1c4.8-1.4 8.2-4.1 10.4-8.1" />
+              <path class="minor-suit-selector__icon-detail" d="M32 7.5c5.8 6.2 8 11.1 6.7 14.6-1.1 3-3.4 4.7-6.8 5.1-3.2-.6-5.4-2.3-6.4-5.2-1.2-3.5 1-8.3 6.5-14.5Z" />
+            </svg>
+              <span class="minor-suit-selector__marker"></span>
+            </span>
+            <span class="minor-suit-selector__name">Wands</span>
+            <span class="minor-suit-selector__element">Fire</span>
+          </button><button class="minor-suit-selector__option minor-suit-selector__option--cups" id="minor-suit-tab-cups" type="button" role="tab" aria-label="Cups, Water" aria-selected="false" aria-controls="minor-suit-panel-cups" tabindex="-1" data-minor-suit-tab="cups" data-minor-suit-name="Cups" data-minor-suit-element="Water">
+            <span class="minor-suit-selector__portal" aria-hidden="true">
+              <span class="minor-suit-selector__effect"></span>
+              <svg class="minor-suit-selector__icon" viewBox="0 0 64 80" aria-hidden="true" focusable="false">
+              <path d="M14.5 18.5h35c0 17.8-6.1 28-17.5 28s-17.5-10.2-17.5-28Z" />
+              <path class="minor-suit-selector__icon-detail" d="M18.5 25.5c4.1 2.2 8.6 3.3 13.5 3.3s9.4-1.1 13.5-3.3" />
+              <path d="M32 46.5v14.8M23.5 68h17M27.5 61.5h9" />
+            </svg>
+              <span class="minor-suit-selector__marker"></span>
+            </span>
+            <span class="minor-suit-selector__name">Cups</span>
+            <span class="minor-suit-selector__element">Water</span>
+          </button><button class="minor-suit-selector__option minor-suit-selector__option--swords" id="minor-suit-tab-swords" type="button" role="tab" aria-label="Swords, Air" aria-selected="false" aria-controls="minor-suit-panel-swords" tabindex="-1" data-minor-suit-tab="swords" data-minor-suit-name="Swords" data-minor-suit-element="Air">
+            <span class="minor-suit-selector__portal" aria-hidden="true">
+              <span class="minor-suit-selector__effect"></span>
+              <svg class="minor-suit-selector__icon" viewBox="0 0 64 80" aria-hidden="true" focusable="false">
+              <path d="m32 7.5 7.2 36.8L32 52l-7.2-7.7L32 7.5Z" />
+              <path class="minor-suit-selector__icon-detail" d="M32 13v32.5" />
+              <path d="M18.5 51.5h27M26.5 51.5l2.2 9.7h6.6l2.2-9.7M28.5 69h7" />
+            </svg>
+              <span class="minor-suit-selector__marker"></span>
+            </span>
+            <span class="minor-suit-selector__name">Swords</span>
+            <span class="minor-suit-selector__element">Air</span>
+          </button><button class="minor-suit-selector__option minor-suit-selector__option--pentacles" id="minor-suit-tab-pentacles" type="button" role="tab" aria-label="Pentacles, Earth" aria-selected="false" aria-controls="minor-suit-panel-pentacles" tabindex="-1" data-minor-suit-tab="pentacles" data-minor-suit-name="Pentacles" data-minor-suit-element="Earth">
+            <span class="minor-suit-selector__portal" aria-hidden="true">
+              <span class="minor-suit-selector__effect"></span>
+              <svg class="minor-suit-selector__icon" viewBox="0 0 64 80" aria-hidden="true" focusable="false">
+              <circle cx="32" cy="39" r="23.5" />
+              <circle class="minor-suit-selector__icon-detail" cx="32" cy="39" r="18.5" />
+              <path d="m32 21.5 4.2 12.8h13.5l-10.9 7.9L43 55 32 47.1 21 55l4.2-12.8-10.9-7.9h13.5L32 21.5Z" />
+            </svg>
+              <span class="minor-suit-selector__marker"></span>
+            </span>
+            <span class="minor-suit-selector__name">Pentacles</span>
+            <span class="minor-suit-selector__element">Earth</span>
+          </button></div>
+        </nav>
+        <div class="minor-suit-selector__mobile-controls">
+          <button type="button" aria-label="Select previous Minor Arcana suit" data-minor-suit-previous><span aria-hidden="true">←</span><span>Previous</span></button>
+          <span class="minor-suit-selector__progress" aria-hidden="true"><span class="is-active" data-minor-suit-progress="wands"></span><span data-minor-suit-progress="cups"></span><span data-minor-suit-progress="swords"></span><span data-minor-suit-progress="pentacles"></span></span>
+          <span class="minor-suit-selector__count" data-minor-suit-count>01 / 04</span>
+          <button type="button" aria-label="Select next Minor Arcana suit" data-minor-suit-next><span>Next</span><span aria-hidden="true">→</span></button>
+          <span class="major-arcana-visually-hidden" aria-live="polite" data-minor-suit-status>Wands, Fire, 1 of 4</span>
+        </div>
         <div class="minor-suits__viewport"><article class="minor-suits__panel is-active" id="minor-suit-panel-wands" role="tabpanel" aria-labelledby="minor-suit-tab-wands" aria-hidden="false" data-minor-suit-panel="wands">
           <div class="minor-suits__copy">
             <p class="major-arcana-eyebrow">Fire · Wands</p>
@@ -978,162 +1054,404 @@
           </div>
         </article></div>
       </section>
-        <section class="major-arcana-section minor-numbers" id="minor-number-patterns" aria-labelledby="minor-number-patterns-heading" data-minor-numbers>
+        <section class="major-arcana-section minor-numbers minor-number-patterns" id="minor-number-patterns" aria-labelledby="minor-number-patterns-heading" data-minor-numbers>
         <header class="major-arcana-section-heading">
           <p class="major-arcana-eyebrow">Patterns Across the Suits</p>
           <h2 id="minor-number-patterns-heading">How Numbers Shape the Minor Arcana</h2>
           <p>The same number can echo related developmental ideas across all four suits while taking on the unique context of fire, water, air, or earth. These patterns are a flexible teaching framework rather than rigid universal laws.</p>
         </header>
-        <div class="minor-numbers__tabs" role="tablist" aria-label="Choose a Minor Arcana number pattern"><button class="is-active" id="minor-number-tab-ace" type="button" role="tab" aria-selected="true" aria-controls="minor-number-panel-ace" tabindex="0" data-minor-number-tab="ace">Ace</button><button class="" id="minor-number-tab-two" type="button" role="tab" aria-selected="false" aria-controls="minor-number-panel-two" tabindex="-1" data-minor-number-tab="two">2</button><button class="" id="minor-number-tab-three" type="button" role="tab" aria-selected="false" aria-controls="minor-number-panel-three" tabindex="-1" data-minor-number-tab="three">3</button><button class="" id="minor-number-tab-four" type="button" role="tab" aria-selected="false" aria-controls="minor-number-panel-four" tabindex="-1" data-minor-number-tab="four">4</button><button class="" id="minor-number-tab-five" type="button" role="tab" aria-selected="false" aria-controls="minor-number-panel-five" tabindex="-1" data-minor-number-tab="five">5</button><button class="" id="minor-number-tab-six" type="button" role="tab" aria-selected="false" aria-controls="minor-number-panel-six" tabindex="-1" data-minor-number-tab="six">6</button><button class="" id="minor-number-tab-seven" type="button" role="tab" aria-selected="false" aria-controls="minor-number-panel-seven" tabindex="-1" data-minor-number-tab="seven">7</button><button class="" id="minor-number-tab-eight" type="button" role="tab" aria-selected="false" aria-controls="minor-number-panel-eight" tabindex="-1" data-minor-number-tab="eight">8</button><button class="" id="minor-number-tab-nine" type="button" role="tab" aria-selected="false" aria-controls="minor-number-panel-nine" tabindex="-1" data-minor-number-tab="nine">9</button><button class="" id="minor-number-tab-ten" type="button" role="tab" aria-selected="false" aria-controls="minor-number-panel-ten" tabindex="-1" data-minor-number-tab="ten">10</button></div>
+        <nav class="minor-number-patterns__selector" aria-label="Explore Minor Arcana number patterns" data-minor-number-selector>
+          <div class="minor-number-patterns__rail" role="tablist" aria-label="Choose a Minor Arcana number pattern"><button class="minor-number-patterns__option is-active" id="minor-number-tab-ace" type="button" role="tab" aria-label="Ace: Potential · Beginning · Opportunity" aria-selected="true" aria-controls="minor-number-panel-ace" tabindex="0" data-minor-number-tab="ace"><span>Ace</span></button><button class="minor-number-patterns__option" id="minor-number-tab-two" type="button" role="tab" aria-label="2: Polarity · Choice · Relationship" aria-selected="false" aria-controls="minor-number-panel-two" tabindex="-1" data-minor-number-tab="two"><span>2</span></button><button class="minor-number-patterns__option" id="minor-number-tab-three" type="button" role="tab" aria-label="3: Growth · Expression · Development" aria-selected="false" aria-controls="minor-number-panel-three" tabindex="-1" data-minor-number-tab="three"><span>3</span></button><button class="minor-number-patterns__option" id="minor-number-tab-four" type="button" role="tab" aria-label="4: Structure · Stability · Holding" aria-selected="false" aria-controls="minor-number-panel-four" tabindex="-1" data-minor-number-tab="four"><span>4</span></button><button class="minor-number-patterns__option" id="minor-number-tab-five" type="button" role="tab" aria-label="5: Disruption · Tension · Adjustment" aria-selected="false" aria-controls="minor-number-panel-five" tabindex="-1" data-minor-number-tab="five"><span>5</span></button><button class="minor-number-patterns__option" id="minor-number-tab-six" type="button" role="tab" aria-label="6: Movement · Exchange · Rebalancing" aria-selected="false" aria-controls="minor-number-panel-six" tabindex="-1" data-minor-number-tab="six"><span>6</span></button><button class="minor-number-patterns__option" id="minor-number-tab-seven" type="button" role="tab" aria-label="7: Assessment · Challenge · Strategy" aria-selected="false" aria-controls="minor-number-panel-seven" tabindex="-1" data-minor-number-tab="seven"><span>7</span></button><button class="minor-number-patterns__option" id="minor-number-tab-eight" type="button" role="tab" aria-label="8: Momentum · Skill · Restriction or Mastery" aria-selected="false" aria-controls="minor-number-panel-eight" tabindex="-1" data-minor-number-tab="eight"><span>8</span></button><button class="minor-number-patterns__option" id="minor-number-tab-nine" type="button" role="tab" aria-label="9: Intensity · Fulfillment · Near Completion" aria-selected="false" aria-controls="minor-number-panel-nine" tabindex="-1" data-minor-number-tab="nine"><span>9</span></button><button class="minor-number-patterns__option" id="minor-number-tab-ten" type="button" role="tab" aria-label="10: Completion · Consequence · Transition" aria-selected="false" aria-controls="minor-number-panel-ten" tabindex="-1" data-minor-number-tab="ten"><span>10</span></button></div>
+        </nav>
         <div class="minor-numbers__viewport"><article class="minor-numbers__panel is-active" id="minor-number-panel-ace" role="tabpanel" aria-labelledby="minor-number-tab-ace" aria-hidden="false" data-minor-number-panel="ace">
-          <header><p class="minor-numbers__value">Ace</p><div><p class="major-arcana-eyebrow">General Pattern</p><h3>Potential · Beginning · Opportunity</h3></div></header>
-          <div class="minor-numbers__suits"><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/01-ace-of-wands.png" alt="Ace of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/01-ace-of-wands.png" data-standard-alt="Ace of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/01-ace-of-wands.png" data-blood-alt="Ace of Wands card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Ace of Wands</h4><p>Creative ignition or a new initiative</p><a href="/tarot/ace-of-wands/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/01-ace-of-cups.png" alt="Ace of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/01-ace-of-cups.png" data-standard-alt="Ace of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/01-ace-of-cups.png" data-blood-alt="Ace of Cups card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Ace of Cups</h4><p>Emotional opening or renewed connection</p><a href="/tarot/ace-of-cups/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/01-ace-of-swords.png" alt="Ace of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/01-ace-of-swords.png" data-standard-alt="Ace of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/01-ace-of-swords.png" data-blood-alt="Ace of Swords card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Ace of Swords</h4><p>A clarifying idea or decisive truth</p><a href="/tarot/ace-of-swords/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/01-ace-of-pentacles.png" alt="Ace of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/01-ace-of-pentacles.png" data-standard-alt="Ace of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/01-ace-of-pentacles.png" data-blood-alt="Ace of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Ace of Pentacles</h4><p>A practical opportunity or material beginning</p><a href="/tarot/ace-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a></div>
+          <header class="minor-number-patterns__summary">
+            <p class="major-arcana-eyebrow">Selected Number</p>
+            <div class="minor-number-patterns__value-row"><span aria-hidden="true"></span><p class="minor-number-patterns__value">Ace</p><span aria-hidden="true"></span></div>
+            <h3>Potential · Beginning · Opportunity</h3>
+          </header>
+          <div class="minor-number-patterns__cards"><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="wands">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/01-ace-of-wands.png" alt="Ace of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/01-ace-of-wands.png" data-standard-alt="Ace of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/01-ace-of-wands.png" data-blood-alt="Ace of Wands card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Fire · Wands</p>
+                <h4>Ace of Wands</h4>
+                <p>Creative ignition or a new initiative</p>
+                <a href="/tarot/ace-of-wands/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="cups">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/01-ace-of-cups.png" alt="Ace of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/01-ace-of-cups.png" data-standard-alt="Ace of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/01-ace-of-cups.png" data-blood-alt="Ace of Cups card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Water · Cups</p>
+                <h4>Ace of Cups</h4>
+                <p>Emotional opening or renewed connection</p>
+                <a href="/tarot/ace-of-cups/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="swords">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/01-ace-of-swords.png" alt="Ace of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/01-ace-of-swords.png" data-standard-alt="Ace of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/01-ace-of-swords.png" data-blood-alt="Ace of Swords card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Air · Swords</p>
+                <h4>Ace of Swords</h4>
+                <p>A clarifying idea or decisive truth</p>
+                <a href="/tarot/ace-of-swords/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="pentacles">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/01-ace-of-pentacles.png" alt="Ace of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/01-ace-of-pentacles.png" data-standard-alt="Ace of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/01-ace-of-pentacles.png" data-blood-alt="Ace of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Earth · Pentacles</p>
+                <h4>Ace of Pentacles</h4>
+                <p>A practical opportunity or material beginning</p>
+                <a href="/tarot/ace-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
             </article></div>
         </article><article class="minor-numbers__panel" id="minor-number-panel-two" role="tabpanel" aria-labelledby="minor-number-tab-two" aria-hidden="true" inert data-minor-number-panel="two">
-          <header><p class="minor-numbers__value">2</p><div><p class="major-arcana-eyebrow">General Pattern</p><h3>Polarity · Choice · Relationship</h3></div></header>
-          <div class="minor-numbers__suits"><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/02-two-of-wands.png" alt="Two of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/02-two-of-wands.png" data-standard-alt="Two of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/02-two-of-wands.png" data-blood-alt="Two of Wands card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Two of Wands</h4><p>Planning a direction or choosing a horizon</p><a href="/tarot/two-of-wands/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/02-two-of-cups.png" alt="Two of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/02-two-of-cups.png" data-standard-alt="Two of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/02-two-of-cups.png" data-blood-alt="Two of Cups card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Two of Cups</h4><p>Mutual feeling, exchange, or partnership</p><a href="/tarot/two-of-cups/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/02-two-of-swords.png" alt="Two of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/02-two-of-swords.png" data-standard-alt="Two of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/02-two-of-swords.png" data-blood-alt="Two of Swords card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Two of Swords</h4><p>A difficult choice or protected uncertainty</p><a href="/tarot/two-of-swords/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/02-two-of-pentacles.png" alt="Two of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/02-two-of-pentacles.png" data-standard-alt="Two of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/02-two-of-pentacles.png" data-blood-alt="Two of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Two of Pentacles</h4><p>Balancing resources, duties, or changing demands</p><a href="/tarot/two-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a></div>
+          <header class="minor-number-patterns__summary">
+            <p class="major-arcana-eyebrow">Selected Number</p>
+            <div class="minor-number-patterns__value-row"><span aria-hidden="true"></span><p class="minor-number-patterns__value">2</p><span aria-hidden="true"></span></div>
+            <h3>Polarity · Choice · Relationship</h3>
+          </header>
+          <div class="minor-number-patterns__cards"><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="wands">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/02-two-of-wands.png" alt="Two of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/02-two-of-wands.png" data-standard-alt="Two of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/02-two-of-wands.png" data-blood-alt="Two of Wands card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Fire · Wands</p>
+                <h4>Two of Wands</h4>
+                <p>Planning a direction or choosing a horizon</p>
+                <a href="/tarot/two-of-wands/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="cups">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/02-two-of-cups.png" alt="Two of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/02-two-of-cups.png" data-standard-alt="Two of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/02-two-of-cups.png" data-blood-alt="Two of Cups card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Water · Cups</p>
+                <h4>Two of Cups</h4>
+                <p>Mutual feeling, exchange, or partnership</p>
+                <a href="/tarot/two-of-cups/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="swords">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/02-two-of-swords.png" alt="Two of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/02-two-of-swords.png" data-standard-alt="Two of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/02-two-of-swords.png" data-blood-alt="Two of Swords card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Air · Swords</p>
+                <h4>Two of Swords</h4>
+                <p>A difficult choice or protected uncertainty</p>
+                <a href="/tarot/two-of-swords/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="pentacles">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/02-two-of-pentacles.png" alt="Two of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/02-two-of-pentacles.png" data-standard-alt="Two of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/02-two-of-pentacles.png" data-blood-alt="Two of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Earth · Pentacles</p>
+                <h4>Two of Pentacles</h4>
+                <p>Balancing resources, duties, or changing demands</p>
+                <a href="/tarot/two-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
             </article></div>
         </article><article class="minor-numbers__panel" id="minor-number-panel-three" role="tabpanel" aria-labelledby="minor-number-tab-three" aria-hidden="true" inert data-minor-number-panel="three">
-          <header><p class="minor-numbers__value">3</p><div><p class="major-arcana-eyebrow">General Pattern</p><h3>Growth · Expression · Development</h3></div></header>
-          <div class="minor-numbers__suits"><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/03-three-of-wands.png" alt="Three of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/03-three-of-wands.png" data-standard-alt="Three of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/03-three-of-wands.png" data-blood-alt="Three of Wands card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Three of Wands</h4><p>Expansion, foresight, or visible progress</p><a href="/tarot/three-of-wands/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/03-three-of-cups.png" alt="Three of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/03-three-of-cups.png" data-standard-alt="Three of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/03-three-of-cups.png" data-blood-alt="Three of Cups card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Three of Cups</h4><p>Shared joy, friendship, or emotional support</p><a href="/tarot/three-of-cups/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/03-three-of-swords.png" alt="Three of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/03-three-of-swords.png" data-standard-alt="Three of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/03-three-of-swords.png" data-blood-alt="Three of Swords card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Three of Swords</h4><p>Pain, separation, or truth that must be felt</p><a href="/tarot/three-of-swords/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/03-three-of-pentacles.png" alt="Three of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/03-three-of-pentacles.png" data-standard-alt="Three of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/03-three-of-pentacles.png" data-blood-alt="Three of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Three of Pentacles</h4><p>Collaboration, learning, or skilled contribution</p><a href="/tarot/three-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a></div>
+          <header class="minor-number-patterns__summary">
+            <p class="major-arcana-eyebrow">Selected Number</p>
+            <div class="minor-number-patterns__value-row"><span aria-hidden="true"></span><p class="minor-number-patterns__value">3</p><span aria-hidden="true"></span></div>
+            <h3>Growth · Expression · Development</h3>
+          </header>
+          <div class="minor-number-patterns__cards"><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="wands">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/03-three-of-wands.png" alt="Three of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/03-three-of-wands.png" data-standard-alt="Three of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/03-three-of-wands.png" data-blood-alt="Three of Wands card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Fire · Wands</p>
+                <h4>Three of Wands</h4>
+                <p>Expansion, foresight, or visible progress</p>
+                <a href="/tarot/three-of-wands/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="cups">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/03-three-of-cups.png" alt="Three of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/03-three-of-cups.png" data-standard-alt="Three of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/03-three-of-cups.png" data-blood-alt="Three of Cups card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Water · Cups</p>
+                <h4>Three of Cups</h4>
+                <p>Shared joy, friendship, or emotional support</p>
+                <a href="/tarot/three-of-cups/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="swords">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/03-three-of-swords.png" alt="Three of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/03-three-of-swords.png" data-standard-alt="Three of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/03-three-of-swords.png" data-blood-alt="Three of Swords card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Air · Swords</p>
+                <h4>Three of Swords</h4>
+                <p>Pain, separation, or truth that must be felt</p>
+                <a href="/tarot/three-of-swords/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="pentacles">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/03-three-of-pentacles.png" alt="Three of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/03-three-of-pentacles.png" data-standard-alt="Three of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/03-three-of-pentacles.png" data-blood-alt="Three of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Earth · Pentacles</p>
+                <h4>Three of Pentacles</h4>
+                <p>Collaboration, learning, or skilled contribution</p>
+                <a href="/tarot/three-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
             </article></div>
         </article><article class="minor-numbers__panel" id="minor-number-panel-four" role="tabpanel" aria-labelledby="minor-number-tab-four" aria-hidden="true" inert data-minor-number-panel="four">
-          <header><p class="minor-numbers__value">4</p><div><p class="major-arcana-eyebrow">General Pattern</p><h3>Structure · Stability · Holding</h3></div></header>
-          <div class="minor-numbers__suits"><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/04-four-of-wands.png" alt="Four of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/04-four-of-wands.png" data-standard-alt="Four of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/04-four-of-wands.png" data-blood-alt="Four of Wands card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Four of Wands</h4><p>Celebration, belonging, or a secure foundation</p><a href="/tarot/four-of-wands/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/04-four-of-cups.png" alt="Four of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/04-four-of-cups.png" data-standard-alt="Four of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/04-four-of-cups.png" data-blood-alt="Four of Cups card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Four of Cups</h4><p>Withdrawal, reflection, or emotional disengagement</p><a href="/tarot/four-of-cups/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/04-four-of-swords.png" alt="Four of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/04-four-of-swords.png" data-standard-alt="Four of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/04-four-of-swords.png" data-blood-alt="Four of Swords card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Four of Swords</h4><p>Rest, recovery, or necessary mental stillness</p><a href="/tarot/four-of-swords/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/04-four-of-pentacles.png" alt="Four of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/04-four-of-pentacles.png" data-standard-alt="Four of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/04-four-of-pentacles.png" data-blood-alt="Four of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Four of Pentacles</h4><p>Security, conservation, or possessive holding</p><a href="/tarot/four-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a></div>
+          <header class="minor-number-patterns__summary">
+            <p class="major-arcana-eyebrow">Selected Number</p>
+            <div class="minor-number-patterns__value-row"><span aria-hidden="true"></span><p class="minor-number-patterns__value">4</p><span aria-hidden="true"></span></div>
+            <h3>Structure · Stability · Holding</h3>
+          </header>
+          <div class="minor-number-patterns__cards"><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="wands">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/04-four-of-wands.png" alt="Four of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/04-four-of-wands.png" data-standard-alt="Four of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/04-four-of-wands.png" data-blood-alt="Four of Wands card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Fire · Wands</p>
+                <h4>Four of Wands</h4>
+                <p>Celebration, belonging, or a secure foundation</p>
+                <a href="/tarot/four-of-wands/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="cups">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/04-four-of-cups.png" alt="Four of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/04-four-of-cups.png" data-standard-alt="Four of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/04-four-of-cups.png" data-blood-alt="Four of Cups card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Water · Cups</p>
+                <h4>Four of Cups</h4>
+                <p>Withdrawal, reflection, or emotional disengagement</p>
+                <a href="/tarot/four-of-cups/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="swords">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/04-four-of-swords.png" alt="Four of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/04-four-of-swords.png" data-standard-alt="Four of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/04-four-of-swords.png" data-blood-alt="Four of Swords card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Air · Swords</p>
+                <h4>Four of Swords</h4>
+                <p>Rest, recovery, or necessary mental stillness</p>
+                <a href="/tarot/four-of-swords/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="pentacles">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/04-four-of-pentacles.png" alt="Four of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/04-four-of-pentacles.png" data-standard-alt="Four of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/04-four-of-pentacles.png" data-blood-alt="Four of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Earth · Pentacles</p>
+                <h4>Four of Pentacles</h4>
+                <p>Security, conservation, or possessive holding</p>
+                <a href="/tarot/four-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
             </article></div>
         </article><article class="minor-numbers__panel" id="minor-number-panel-five" role="tabpanel" aria-labelledby="minor-number-tab-five" aria-hidden="true" inert data-minor-number-panel="five">
-          <header><p class="minor-numbers__value">5</p><div><p class="major-arcana-eyebrow">General Pattern</p><h3>Disruption · Tension · Adjustment</h3></div></header>
-          <div class="minor-numbers__suits"><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/05-five-of-wands.png" alt="Five of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/05-five-of-wands.png" data-standard-alt="Five of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/05-five-of-wands.png" data-blood-alt="Five of Wands card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Five of Wands</h4><p>Competition or clashing energy</p><a href="/tarot/five-of-wands/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/05-five-of-cups.png" alt="Five of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/05-five-of-cups.png" data-standard-alt="Five of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/05-five-of-cups.png" data-blood-alt="Five of Cups card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Five of Cups</h4><p>Loss, grief, or emotional focus</p><a href="/tarot/five-of-cups/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/05-five-of-swords.png" alt="Five of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/05-five-of-swords.png" data-standard-alt="Five of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/05-five-of-swords.png" data-blood-alt="Five of Swords card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Five of Swords</h4><p>Conflict, cost, or difficult victory</p><a href="/tarot/five-of-swords/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/05-five-of-pentacles.png" alt="Five of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/05-five-of-pentacles.png" data-standard-alt="Five of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/05-five-of-pentacles.png" data-blood-alt="Five of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Five of Pentacles</h4><p>Material difficulty or exclusion</p><a href="/tarot/five-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a></div>
+          <header class="minor-number-patterns__summary">
+            <p class="major-arcana-eyebrow">Selected Number</p>
+            <div class="minor-number-patterns__value-row"><span aria-hidden="true"></span><p class="minor-number-patterns__value">5</p><span aria-hidden="true"></span></div>
+            <h3>Disruption · Tension · Adjustment</h3>
+          </header>
+          <div class="minor-number-patterns__cards"><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="wands">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/05-five-of-wands.png" alt="Five of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/05-five-of-wands.png" data-standard-alt="Five of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/05-five-of-wands.png" data-blood-alt="Five of Wands card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Fire · Wands</p>
+                <h4>Five of Wands</h4>
+                <p>Competition or clashing energy</p>
+                <a href="/tarot/five-of-wands/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="cups">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/05-five-of-cups.png" alt="Five of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/05-five-of-cups.png" data-standard-alt="Five of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/05-five-of-cups.png" data-blood-alt="Five of Cups card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Water · Cups</p>
+                <h4>Five of Cups</h4>
+                <p>Loss, grief, or emotional focus</p>
+                <a href="/tarot/five-of-cups/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="swords">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/05-five-of-swords.png" alt="Five of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/05-five-of-swords.png" data-standard-alt="Five of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/05-five-of-swords.png" data-blood-alt="Five of Swords card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Air · Swords</p>
+                <h4>Five of Swords</h4>
+                <p>Conflict, cost, or difficult victory</p>
+                <a href="/tarot/five-of-swords/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="pentacles">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/05-five-of-pentacles.png" alt="Five of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/05-five-of-pentacles.png" data-standard-alt="Five of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/05-five-of-pentacles.png" data-blood-alt="Five of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Earth · Pentacles</p>
+                <h4>Five of Pentacles</h4>
+                <p>Material difficulty or exclusion</p>
+                <a href="/tarot/five-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
             </article></div>
         </article><article class="minor-numbers__panel" id="minor-number-panel-six" role="tabpanel" aria-labelledby="minor-number-tab-six" aria-hidden="true" inert data-minor-number-panel="six">
-          <header><p class="minor-numbers__value">6</p><div><p class="major-arcana-eyebrow">General Pattern</p><h3>Movement · Exchange · Rebalancing</h3></div></header>
-          <div class="minor-numbers__suits"><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/06-six-of-wands.png" alt="Six of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/06-six-of-wands.png" data-standard-alt="Six of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/06-six-of-wands.png" data-blood-alt="Six of Wands card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Six of Wands</h4><p>Recognition, confidence, or public progress</p><a href="/tarot/six-of-wands/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/06-six-of-cups.png" alt="Six of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/06-six-of-cups.png" data-standard-alt="Six of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/06-six-of-cups.png" data-blood-alt="Six of Cups card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Six of Cups</h4><p>Memory, kindness, or return to the past</p><a href="/tarot/six-of-cups/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/06-six-of-swords.png" alt="Six of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/06-six-of-swords.png" data-standard-alt="Six of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/06-six-of-swords.png" data-blood-alt="Six of Swords card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Six of Swords</h4><p>Transition away from difficulty</p><a href="/tarot/six-of-swords/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/06-six-of-pentacles.png" alt="Six of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/06-six-of-pentacles.png" data-standard-alt="Six of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/06-six-of-pentacles.png" data-blood-alt="Six of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Six of Pentacles</h4><p>Giving, receiving, or restoring material balance</p><a href="/tarot/six-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a></div>
+          <header class="minor-number-patterns__summary">
+            <p class="major-arcana-eyebrow">Selected Number</p>
+            <div class="minor-number-patterns__value-row"><span aria-hidden="true"></span><p class="minor-number-patterns__value">6</p><span aria-hidden="true"></span></div>
+            <h3>Movement · Exchange · Rebalancing</h3>
+          </header>
+          <div class="minor-number-patterns__cards"><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="wands">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/06-six-of-wands.png" alt="Six of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/06-six-of-wands.png" data-standard-alt="Six of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/06-six-of-wands.png" data-blood-alt="Six of Wands card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Fire · Wands</p>
+                <h4>Six of Wands</h4>
+                <p>Recognition, confidence, or public progress</p>
+                <a href="/tarot/six-of-wands/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="cups">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/06-six-of-cups.png" alt="Six of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/06-six-of-cups.png" data-standard-alt="Six of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/06-six-of-cups.png" data-blood-alt="Six of Cups card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Water · Cups</p>
+                <h4>Six of Cups</h4>
+                <p>Memory, kindness, or return to the past</p>
+                <a href="/tarot/six-of-cups/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="swords">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/06-six-of-swords.png" alt="Six of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/06-six-of-swords.png" data-standard-alt="Six of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/06-six-of-swords.png" data-blood-alt="Six of Swords card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Air · Swords</p>
+                <h4>Six of Swords</h4>
+                <p>Transition away from difficulty</p>
+                <a href="/tarot/six-of-swords/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="pentacles">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/06-six-of-pentacles.png" alt="Six of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/06-six-of-pentacles.png" data-standard-alt="Six of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/06-six-of-pentacles.png" data-blood-alt="Six of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Earth · Pentacles</p>
+                <h4>Six of Pentacles</h4>
+                <p>Giving, receiving, or restoring material balance</p>
+                <a href="/tarot/six-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
             </article></div>
         </article><article class="minor-numbers__panel" id="minor-number-panel-seven" role="tabpanel" aria-labelledby="minor-number-tab-seven" aria-hidden="true" inert data-minor-number-panel="seven">
-          <header><p class="minor-numbers__value">7</p><div><p class="major-arcana-eyebrow">General Pattern</p><h3>Assessment · Challenge · Strategy</h3></div></header>
-          <div class="minor-numbers__suits"><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/07-seven-of-wands.png" alt="Seven of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/07-seven-of-wands.png" data-standard-alt="Seven of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/07-seven-of-wands.png" data-blood-alt="Seven of Wands card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Seven of Wands</h4><p>Defending a position or sustaining conviction</p><a href="/tarot/seven-of-wands/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/07-seven-of-cups.png" alt="Seven of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/07-seven-of-cups.png" data-standard-alt="Seven of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/07-seven-of-cups.png" data-blood-alt="Seven of Cups card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Seven of Cups</h4><p>Options, fantasy, or emotional discernment</p><a href="/tarot/seven-of-cups/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/07-seven-of-swords.png" alt="Seven of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/07-seven-of-swords.png" data-standard-alt="Seven of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/07-seven-of-swords.png" data-blood-alt="Seven of Swords card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Seven of Swords</h4><p>Strategy, secrecy, or indirect action</p><a href="/tarot/seven-of-swords/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/07-seven-of-pentacles.png" alt="Seven of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/07-seven-of-pentacles.png" data-standard-alt="Seven of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/07-seven-of-pentacles.png" data-blood-alt="Seven of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Seven of Pentacles</h4><p>Patience, evaluation, or long-term cultivation</p><a href="/tarot/seven-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a></div>
+          <header class="minor-number-patterns__summary">
+            <p class="major-arcana-eyebrow">Selected Number</p>
+            <div class="minor-number-patterns__value-row"><span aria-hidden="true"></span><p class="minor-number-patterns__value">7</p><span aria-hidden="true"></span></div>
+            <h3>Assessment · Challenge · Strategy</h3>
+          </header>
+          <div class="minor-number-patterns__cards"><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="wands">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/07-seven-of-wands.png" alt="Seven of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/07-seven-of-wands.png" data-standard-alt="Seven of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/07-seven-of-wands.png" data-blood-alt="Seven of Wands card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Fire · Wands</p>
+                <h4>Seven of Wands</h4>
+                <p>Defending a position or sustaining conviction</p>
+                <a href="/tarot/seven-of-wands/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="cups">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/07-seven-of-cups.png" alt="Seven of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/07-seven-of-cups.png" data-standard-alt="Seven of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/07-seven-of-cups.png" data-blood-alt="Seven of Cups card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Water · Cups</p>
+                <h4>Seven of Cups</h4>
+                <p>Options, fantasy, or emotional discernment</p>
+                <a href="/tarot/seven-of-cups/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="swords">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/07-seven-of-swords.png" alt="Seven of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/07-seven-of-swords.png" data-standard-alt="Seven of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/07-seven-of-swords.png" data-blood-alt="Seven of Swords card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Air · Swords</p>
+                <h4>Seven of Swords</h4>
+                <p>Strategy, secrecy, or indirect action</p>
+                <a href="/tarot/seven-of-swords/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="pentacles">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/07-seven-of-pentacles.png" alt="Seven of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/07-seven-of-pentacles.png" data-standard-alt="Seven of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/07-seven-of-pentacles.png" data-blood-alt="Seven of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Earth · Pentacles</p>
+                <h4>Seven of Pentacles</h4>
+                <p>Patience, evaluation, or long-term cultivation</p>
+                <a href="/tarot/seven-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
             </article></div>
         </article><article class="minor-numbers__panel" id="minor-number-panel-eight" role="tabpanel" aria-labelledby="minor-number-tab-eight" aria-hidden="true" inert data-minor-number-panel="eight">
-          <header><p class="minor-numbers__value">8</p><div><p class="major-arcana-eyebrow">General Pattern</p><h3>Momentum · Skill · Restriction or Mastery</h3></div></header>
-          <div class="minor-numbers__suits"><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/08-eight-of-wands.png" alt="Eight of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/08-eight-of-wands.png" data-standard-alt="Eight of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/08-eight-of-wands.png" data-blood-alt="Eight of Wands card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Eight of Wands</h4><p>Swift movement, messages, or acceleration</p><a href="/tarot/eight-of-wands/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/08-eight-of-cups.png" alt="Eight of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/08-eight-of-cups.png" data-standard-alt="Eight of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/08-eight-of-cups.png" data-blood-alt="Eight of Cups card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Eight of Cups</h4><p>Leaving what no longer feels meaningful</p><a href="/tarot/eight-of-cups/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/08-eight-of-swords.png" alt="Eight of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/08-eight-of-swords.png" data-standard-alt="Eight of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/08-eight-of-swords.png" data-blood-alt="Eight of Swords card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Eight of Swords</h4><p>Perceived restriction or a limiting perspective</p><a href="/tarot/eight-of-swords/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/08-eight-of-pentacles.png" alt="Eight of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/08-eight-of-pentacles.png" data-standard-alt="Eight of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/08-eight-of-pentacles.png" data-blood-alt="Eight of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Eight of Pentacles</h4><p>Practice, craftsmanship, or disciplined skill</p><a href="/tarot/eight-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a></div>
+          <header class="minor-number-patterns__summary">
+            <p class="major-arcana-eyebrow">Selected Number</p>
+            <div class="minor-number-patterns__value-row"><span aria-hidden="true"></span><p class="minor-number-patterns__value">8</p><span aria-hidden="true"></span></div>
+            <h3>Momentum · Skill · Restriction or Mastery</h3>
+          </header>
+          <div class="minor-number-patterns__cards"><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="wands">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/08-eight-of-wands.png" alt="Eight of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/08-eight-of-wands.png" data-standard-alt="Eight of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/08-eight-of-wands.png" data-blood-alt="Eight of Wands card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Fire · Wands</p>
+                <h4>Eight of Wands</h4>
+                <p>Swift movement, messages, or acceleration</p>
+                <a href="/tarot/eight-of-wands/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="cups">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/08-eight-of-cups.png" alt="Eight of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/08-eight-of-cups.png" data-standard-alt="Eight of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/08-eight-of-cups.png" data-blood-alt="Eight of Cups card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Water · Cups</p>
+                <h4>Eight of Cups</h4>
+                <p>Leaving what no longer feels meaningful</p>
+                <a href="/tarot/eight-of-cups/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="swords">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/08-eight-of-swords.png" alt="Eight of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/08-eight-of-swords.png" data-standard-alt="Eight of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/08-eight-of-swords.png" data-blood-alt="Eight of Swords card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Air · Swords</p>
+                <h4>Eight of Swords</h4>
+                <p>Perceived restriction or a limiting perspective</p>
+                <a href="/tarot/eight-of-swords/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="pentacles">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/08-eight-of-pentacles.png" alt="Eight of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/08-eight-of-pentacles.png" data-standard-alt="Eight of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/08-eight-of-pentacles.png" data-blood-alt="Eight of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Earth · Pentacles</p>
+                <h4>Eight of Pentacles</h4>
+                <p>Practice, craftsmanship, or disciplined skill</p>
+                <a href="/tarot/eight-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
             </article></div>
         </article><article class="minor-numbers__panel" id="minor-number-panel-nine" role="tabpanel" aria-labelledby="minor-number-tab-nine" aria-hidden="true" inert data-minor-number-panel="nine">
-          <header><p class="minor-numbers__value">9</p><div><p class="major-arcana-eyebrow">General Pattern</p><h3>Intensity · Fulfillment · Near Completion</h3></div></header>
-          <div class="minor-numbers__suits"><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/09-nine-of-wands.png" alt="Nine of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/09-nine-of-wands.png" data-standard-alt="Nine of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/09-nine-of-wands.png" data-blood-alt="Nine of Wands card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Nine of Wands</h4><p>Resilience, boundaries, or guarded persistence</p><a href="/tarot/nine-of-wands/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/09-nine-of-cups.png" alt="Nine of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/09-nine-of-cups.png" data-standard-alt="Nine of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/09-nine-of-cups.png" data-blood-alt="Nine of Cups card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Nine of Cups</h4><p>Satisfaction, gratitude, or a wish fulfilled</p><a href="/tarot/nine-of-cups/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/09-nine-of-swords.png" alt="Nine of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/09-nine-of-swords.png" data-standard-alt="Nine of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/09-nine-of-swords.png" data-blood-alt="Nine of Swords card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Nine of Swords</h4><p>Anxiety, regret, or mental overwhelm</p><a href="/tarot/nine-of-swords/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/09-nine-of-pentacles.png" alt="Nine of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/09-nine-of-pentacles.png" data-standard-alt="Nine of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/09-nine-of-pentacles.png" data-blood-alt="Nine of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Nine of Pentacles</h4><p>Independence, refinement, or earned comfort</p><a href="/tarot/nine-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a></div>
+          <header class="minor-number-patterns__summary">
+            <p class="major-arcana-eyebrow">Selected Number</p>
+            <div class="minor-number-patterns__value-row"><span aria-hidden="true"></span><p class="minor-number-patterns__value">9</p><span aria-hidden="true"></span></div>
+            <h3>Intensity · Fulfillment · Near Completion</h3>
+          </header>
+          <div class="minor-number-patterns__cards"><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="wands">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/09-nine-of-wands.png" alt="Nine of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/09-nine-of-wands.png" data-standard-alt="Nine of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/09-nine-of-wands.png" data-blood-alt="Nine of Wands card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Fire · Wands</p>
+                <h4>Nine of Wands</h4>
+                <p>Resilience, boundaries, or guarded persistence</p>
+                <a href="/tarot/nine-of-wands/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="cups">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/09-nine-of-cups.png" alt="Nine of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/09-nine-of-cups.png" data-standard-alt="Nine of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/09-nine-of-cups.png" data-blood-alt="Nine of Cups card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Water · Cups</p>
+                <h4>Nine of Cups</h4>
+                <p>Satisfaction, gratitude, or a wish fulfilled</p>
+                <a href="/tarot/nine-of-cups/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="swords">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/09-nine-of-swords.png" alt="Nine of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/09-nine-of-swords.png" data-standard-alt="Nine of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/09-nine-of-swords.png" data-blood-alt="Nine of Swords card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Air · Swords</p>
+                <h4>Nine of Swords</h4>
+                <p>Anxiety, regret, or mental overwhelm</p>
+                <a href="/tarot/nine-of-swords/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="pentacles">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/09-nine-of-pentacles.png" alt="Nine of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/09-nine-of-pentacles.png" data-standard-alt="Nine of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/09-nine-of-pentacles.png" data-blood-alt="Nine of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Earth · Pentacles</p>
+                <h4>Nine of Pentacles</h4>
+                <p>Independence, refinement, or earned comfort</p>
+                <a href="/tarot/nine-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
             </article></div>
         </article><article class="minor-numbers__panel" id="minor-number-panel-ten" role="tabpanel" aria-labelledby="minor-number-tab-ten" aria-hidden="true" inert data-minor-number-panel="ten">
-          <header><p class="minor-numbers__value">10</p><div><p class="major-arcana-eyebrow">General Pattern</p><h3>Completion · Consequence · Transition</h3></div></header>
-          <div class="minor-numbers__suits"><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/10-ten-of-wands.png" alt="Ten of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/10-ten-of-wands.png" data-standard-alt="Ten of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/10-ten-of-wands.png" data-blood-alt="Ten of Wands card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Ten of Wands</h4><p>Responsibility, burden, or overextension</p><a href="/tarot/ten-of-wands/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/10-ten-of-cups.png" alt="Ten of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/10-ten-of-cups.png" data-standard-alt="Ten of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/10-ten-of-cups.png" data-blood-alt="Ten of Cups card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Ten of Cups</h4><p>Emotional harmony, belonging, or shared fulfillment</p><a href="/tarot/ten-of-cups/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/10-ten-of-swords.png" alt="Ten of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/10-ten-of-swords.png" data-standard-alt="Ten of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/10-ten-of-swords.png" data-blood-alt="Ten of Swords card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Ten of Swords</h4><p>A painful ending and unavoidable transition</p><a href="/tarot/ten-of-swords/">Explore this card <span aria-hidden="true">→</span></a></div>
-            </article><article>
-              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/10-ten-of-pentacles.png" alt="Ten of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 768px) 31vw, 150px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/10-ten-of-pentacles.png" data-standard-alt="Ten of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/10-ten-of-pentacles.png" data-blood-alt="Ten of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
-              <div><h4>Ten of Pentacles</h4><p>Legacy, continuity, or established material life</p><a href="/tarot/ten-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a></div>
+          <header class="minor-number-patterns__summary">
+            <p class="major-arcana-eyebrow">Selected Number</p>
+            <div class="minor-number-patterns__value-row"><span aria-hidden="true"></span><p class="minor-number-patterns__value">10</p><span aria-hidden="true"></span></div>
+            <h3>Completion · Consequence · Transition</h3>
+          </header>
+          <div class="minor-number-patterns__cards"><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="wands">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/wands/10-ten-of-wands.png" alt="Ten of Wands card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/wands/10-ten-of-wands.png" data-standard-alt="Ten of Wands card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/wands/10-ten-of-wands.png" data-blood-alt="Ten of Wands card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Fire · Wands</p>
+                <h4>Ten of Wands</h4>
+                <p>Responsibility, burden, or overextension</p>
+                <a href="/tarot/ten-of-wands/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="cups">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/cups/10-ten-of-cups.png" alt="Ten of Cups card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/cups/10-ten-of-cups.png" data-standard-alt="Ten of Cups card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/cups/10-ten-of-cups.png" data-blood-alt="Ten of Cups card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Water · Cups</p>
+                <h4>Ten of Cups</h4>
+                <p>Emotional harmony, belonging, or shared fulfillment</p>
+                <a href="/tarot/ten-of-cups/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="swords">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/swords/10-ten-of-swords.png" alt="Ten of Swords card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/swords/10-ten-of-swords.png" data-standard-alt="Ten of Swords card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/swords/10-ten-of-swords.png" data-blood-alt="Ten of Swords card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Air · Swords</p>
+                <h4>Ten of Swords</h4>
+                <p>A painful ending and unavoidable transition</p>
+                <a href="/tarot/ten-of-swords/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
+            </article><article class="minor-number-patterns__card" data-minor-number-card data-minor-number-suit="pentacles">
+              <figure><img class="minor-numbers__card-image" src="/assets/images/cards/astral-veil-tarot/pentacles/10-ten-of-pentacles.png" alt="Ten of Pentacles card from the Veilrise Arcana tarot deck" width="1024" height="1536" loading="lazy" decoding="async" sizes="(max-width: 620px) 58vw, (max-width: 768px) 170px, 205px" draggable="false" data-major-theme-image data-standard-src="/assets/images/cards/astral-veil-tarot/pentacles/10-ten-of-pentacles.png" data-standard-alt="Ten of Pentacles card from the Veilrise Arcana tarot deck" data-blood-src="/assets/images/cards/astral-veil-crimson/pentacles/10-ten-of-pentacles.png" data-blood-alt="Ten of Pentacles card from the Veilfall Arcana tarot deck" /></figure>
+              <div class="minor-number-patterns__card-copy">
+                <p class="minor-number-patterns__element">Earth · Pentacles</p>
+                <h4>Ten of Pentacles</h4>
+                <p>Legacy, continuity, or established material life</p>
+                <a href="/tarot/ten-of-pentacles/">Explore this card <span aria-hidden="true">→</span></a>
+              </div>
             </article></div>
         </article></div>
       </section>
@@ -1348,9 +1666,9 @@
         </div>
       </section>
     </main>
-    <site-footer></site-footer>
-    <script src="/js/components.js"></script>
-    <script src="/js/theme.js"></script>
+
+    <footer class="site-footer" data-footer-drawer><div class="site-footer__shell"><div class="site-footer__compact"><p class="site-footer__mark">Astral Veil™</p><p class="site-footer__tagline">Between fate and imagination</p><div class="site-footer__actions"><button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details"><span data-footer-toggle-label>Explore</span><span class="site-footer__chevron" aria-hidden="true">⌄</span></button><button class="site-footer__share" type="button" data-share-astral-veil>Share</button></div></div><div class="site-footer__inner" id="site-footer-details" hidden><div class="site-footer__brand"><h2>Astral Veil™</h2><p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p><p class="site-footer__poem">✦ Between fate and imagination ✦</p></div><nav class="site-footer__nav" aria-label="Footer navigation"><p class="site-footer__label">Explore</p><a href="/">Home</a><a href="/veilwalkers">Veilwalkers</a><a href="/decks">DECKS</a><a href="/tarot">TAROT</a><a href="/about">About</a><a href="/lumen-archive" data-lumen-archive-footer-link>Lumen Archive</a></nav><div class="site-footer__creator"><p class="site-footer__label">Creator</p><p>Crafted by João Monteiro</p><p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p><p>Designer • Developer • Worldbuilder</p><p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p></div><p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p><nav class="site-footer__legal" aria-label="Legal links"><a href="/terms">Terms of Service</a><span aria-hidden="true">·</span><a href="/privacy">Privacy Policy</a></nav></div><p class="site-footer__share-status" aria-live="polite"></p></div></footer>
+
     <script src="/data/events.js"></script><script src="/js/events.js"></script><script src="/js/bloodmoon-access.js"></script><script src="/js/app.js"></script><script src="/js/tarot-major-arcana.js"></script><script src="/js/tarot-minor-arcana.js"></script><script type="module" src="/src/public/public-auth-nav.js"></script>
   </body>
 </html>

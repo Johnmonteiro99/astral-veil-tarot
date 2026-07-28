@@ -1,47 +1,84 @@
 .minor-arcana-page {
+  --minor-reading-surface: rgba(3, 17, 15, .44);
+  --minor-reading-surface-soft: rgba(5, 23, 20, .28);
+  --minor-reading-edge: rgba(208, 164, 82, .22);
   background: transparent;
 }
 
-.minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage {
-  grid-template-columns: minmax(0, 56fr) minmax(0, 44fr);
+body.moon-mode.tarot-minor-arcana-page .minor-arcana-page {
+  --minor-reading-surface: rgba(3, 9, 20, .5);
+  --minor-reading-surface-soft: rgba(6, 14, 28, .3);
+  --minor-reading-edge: rgba(187, 165, 109, .2);
 }
 
-.minor-arcana-page .minor-arcana-hero .major-arcana-hero__title {
-  grid-column: 2;
-  justify-self: end;
+body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-page {
+  --minor-reading-surface: rgba(24, 2, 7, .48);
+  --minor-reading-surface-soft: rgba(35, 4, 11, .28);
+  --minor-reading-edge: rgba(189, 134, 100, .22);
 }
 
-.minor-arcana-page .minor-arcana-hero .major-arcana-hero__visual {
-  inset: 0 31% 0 0;
-}
-
-.minor-arcana-page .minor-arcana-hero .major-arcana-hero__image {
-  object-position: 38% 58%;
-}
-
-.minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-  background:
-    linear-gradient(270deg, rgba(2, 17, 18, .98) 0%, rgba(2, 17, 18, .88) 35%, rgba(2, 17, 18, .31) 62%, rgba(2, 17, 18, .08) 100%),
-    linear-gradient(180deg, rgba(2, 17, 18, .04), rgba(2, 17, 18, .58));
-}
-
-body.moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-  background:
-    linear-gradient(270deg, rgba(3, 13, 22, .98) 0%, rgba(3, 13, 22, .89) 35%, rgba(3, 13, 22, .32) 62%, rgba(3, 13, 22, .08) 100%),
-    linear-gradient(180deg, rgba(3, 13, 22, .04), rgba(3, 13, 22, .61));
-}
-
-body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-  background:
-    linear-gradient(270deg, rgba(16, 2, 6, .98) 0%, rgba(16, 2, 6, .88) 35%, rgba(16, 2, 6, .32) 62%, rgba(16, 2, 6, .1) 100%),
-    linear-gradient(180deg, rgba(16, 2, 6, .04), rgba(16, 2, 6, .62));
-}
-
+.minor-arcana-page,
+.minor-arcana-page .major-arcana-archive,
+.minor-arcana-page .major-arcana-section,
+.minor-arcana-page .major-arcana-readings,
+.minor-arcana-page .major-arcana-readings__inner,
+.minor-arcana-page .minor-arcana-hero,
 .minor-arcana-page .minor-arcana-explore,
 .minor-arcana-page .minor-suits,
 .minor-arcana-page .minor-numbers,
 .minor-arcana-page .minor-courts {
   background: transparent;
+}
+
+.minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage {
+  grid-template-columns: minmax(0, 54fr) minmax(0, 46fr);
+}
+
+.minor-arcana-page .minor-arcana-hero .major-arcana-hero__title {
+  grid-column: 2;
+  width: min(100%, 590px);
+  justify-self: start;
+  padding-block: clamp(2.5rem, 5vw, 4rem);
+  padding-left: clamp(1rem, 3vw, 3.25rem);
+}
+
+.minor-arcana-page .minor-arcana-hero h1 {
+  max-width: 7.5ch;
+}
+
+.minor-arcana-page .minor-arcana-hero .major-arcana-hero__visual {
+  inset: 0;
+  opacity: .94;
+}
+
+.minor-arcana-page .minor-arcana-hero .major-arcana-hero__image {
+  object-position: 50% 58%;
+  filter: saturate(.9) contrast(.98);
+}
+
+.minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
+  background:
+    linear-gradient(270deg, rgba(2, 17, 18, .84) 0%, rgba(2, 17, 18, .58) 32%, rgba(2, 17, 18, .17) 64%, transparent 100%),
+    linear-gradient(180deg, rgba(2, 17, 18, .02), rgba(2, 17, 18, .52));
+}
+
+body.moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
+  background:
+    linear-gradient(270deg, rgba(3, 13, 22, .86) 0%, rgba(3, 13, 22, .6) 32%, rgba(3, 13, 22, .18) 64%, transparent 100%),
+    linear-gradient(180deg, rgba(3, 13, 22, .02), rgba(3, 13, 22, .55));
+}
+
+body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
+  background:
+    linear-gradient(270deg, rgba(16, 2, 6, .86) 0%, rgba(16, 2, 6, .6) 32%, rgba(16, 2, 6, .18) 64%, transparent 100%),
+    linear-gradient(180deg, rgba(16, 2, 6, .02), rgba(16, 2, 6, .56));
+}
+
+.minor-arcana-page .minor-arcana-hero .major-arcana-hero__content-inner {
+  border-left: 1px solid var(--minor-reading-edge);
+  padding-inline: clamp(1rem, 2.2vw, 2rem);
+  background: linear-gradient(100deg, var(--minor-reading-surface), var(--minor-reading-surface-soft) 58%, transparent 92%);
+  box-shadow: -20px 0 46px -40px var(--major-shadow);
 }
 
 .minor-arcana-page .minor-arcana-filters {
@@ -59,10 +96,7 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
   display: none;
 }
 
-.minor-arcana-page .minor-arcana-filters button,
-.minor-arcana-page .minor-suits__tabs button,
-.minor-arcana-page .minor-numbers__tabs button,
-.minor-arcana-page .minor-courts__tabs button {
+.minor-arcana-page .minor-arcana-filters button {
   min-height: 46px;
   border: 1px solid var(--major-line);
   border-radius: 999px;
@@ -77,19 +111,13 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
   transition: color .25s ease, border-color .25s ease, background .25s ease, transform .25s ease;
 }
 
-.minor-arcana-page .minor-arcana-filters button:hover,
-.minor-arcana-page .minor-suits__tabs button:hover,
-.minor-arcana-page .minor-numbers__tabs button:hover,
-.minor-arcana-page .minor-courts__tabs button:hover {
+.minor-arcana-page .minor-arcana-filters button:hover {
   color: var(--major-heading);
   border-color: var(--major-line-strong);
   transform: translateY(-1px);
 }
 
-.minor-arcana-page .minor-arcana-filters button.is-active,
-.minor-arcana-page .minor-suits__tabs button.is-active,
-.minor-arcana-page .minor-numbers__tabs button.is-active,
-.minor-arcana-page .minor-courts__tabs button.is-active {
+.minor-arcana-page .minor-arcana-filters button.is-active {
   color: var(--major-heading);
   border-color: var(--major-accent);
   background: color-mix(in srgb, var(--major-accent) 13%, var(--major-surface-strong));
@@ -161,50 +189,390 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
   color: var(--major-accent);
 }
 
-.minor-arcana-page .minor-suits__tabs {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(.6rem, 1.4vw, 1rem);
-  margin-bottom: clamp(1.6rem, 3vw, 2.5rem);
+.minor-arcana-page .minor-suits .minor-suit-selector {
+  width: 100%;
+  overflow: visible;
+  margin-bottom: clamp(1.8rem, 3.5vw, 3rem);
+  background: transparent;
 }
 
-.minor-arcana-page .minor-suits__tabs::before {
+.minor-arcana-page .minor-suits .minor-suit-selector__track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1rem, 2.6vw, 2.4rem);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option {
+  --minor-suit-color: var(--major-accent-strong);
+  --minor-suit-halo: var(--major-accent);
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 178px;
+  place-items: center;
+  align-content: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 0;
+  padding: 8px 10px 22px;
+  color: var(--major-heading);
+  background: transparent;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  isolation: isolate;
+  opacity: 1;
+  transition: color .28s ease;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option::after {
   position: absolute;
-  z-index: -1;
-  top: 50%;
-  right: 6%;
-  left: 6%;
-  height: 1px;
-  background: var(--major-line);
+  bottom: 4px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--major-accent-strong), transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--major-accent) 38%, transparent);
+  content: "";
+  transform: translateX(-50%);
+  transition: width .32s cubic-bezier(.22, .61, .36, 1);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__portal {
+  position: relative;
+  display: grid;
+  width: 92px;
+  height: 104px;
+  place-items: center;
+  margin-bottom: 5px;
+  border: 1px solid color-mix(in srgb, var(--minor-suit-color) 34%, transparent);
+  border-radius: 52px 52px 42px 42px;
+  color: var(--minor-suit-color);
+  background:
+    radial-gradient(circle at 50% 54%, color-mix(in srgb, var(--minor-suit-halo) 17%, transparent), transparent 56%),
+    transparent;
+  box-shadow:
+    inset 0 0 26px color-mix(in srgb, var(--minor-suit-halo) 7%, transparent),
+    0 16px 34px -28px color-mix(in srgb, var(--minor-suit-halo) 70%, transparent);
+  transition: border-color .32s ease, box-shadow .32s ease, background .32s ease, transform .32s cubic-bezier(.22, .61, .36, 1);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__portal::before {
+  position: absolute;
+  inset: 8px;
+  border: 1px solid color-mix(in srgb, var(--minor-suit-color) 17%, transparent);
+  border-radius: inherit;
+  content: "";
+  transition: border-color .32s ease, transform .32s ease;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__portal::after {
+  position: absolute;
+  inset: 16px 10px 9px;
+  border-top: 1px solid color-mix(in srgb, var(--minor-suit-color) 24%, transparent);
+  border-radius: 50%;
+  content: "";
+  opacity: .72;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__icon {
+  z-index: 2;
+  width: 52px;
+  height: 66px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--minor-suit-halo) 34%, transparent));
+  transform: translateY(0);
+  transition: color .3s ease, filter .3s ease, transform .32s cubic-bezier(.22, .61, .36, 1);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__icon-detail {
+  stroke: color-mix(in srgb, var(--minor-suit-color) 68%, var(--major-accent));
+  stroke-width: 1.15;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__effect {
+  position: absolute;
+  z-index: 1;
+  inset: 4px;
+  overflow: hidden;
+  border-radius: inherit;
+  color: var(--minor-suit-color);
+  opacity: .3;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__effect::before,
+.minor-arcana-page .minor-suits .minor-suit-selector__effect::after {
+  position: absolute;
   content: "";
 }
 
-.minor-arcana-page .minor-suits__tabs button {
-  display: grid;
-  min-height: 70px;
-  place-items: center;
-  gap: 3px;
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--major-surface-strong) 72%, transparent);
+.minor-arcana-page .minor-suits .minor-suit-selector__marker {
+  position: absolute;
+  z-index: 3;
+  bottom: -5px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border: 1px solid color-mix(in srgb, var(--minor-suit-color) 78%, transparent);
+  border-radius: 50%;
+  background: var(--major-surface-strong);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--minor-suit-halo) 12%, transparent);
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity .28s ease, transform .28s ease;
 }
 
-.minor-arcana-page .minor-suits__tabs button span {
-  color: var(--major-accent);
-  font-size: .56rem;
-  letter-spacing: .14em;
+.minor-arcana-page .minor-suits .minor-suit-selector__name {
+  color: color-mix(in srgb, var(--major-heading) 91%, var(--minor-suit-color));
+  font: 600 clamp(1.04rem, 1.4vw, 1.3rem)/1.1 var(--heading-font, "Cormorant Garamond", serif);
+  letter-spacing: .055em;
+  text-transform: uppercase;
+  transition: color .28s ease, text-shadow .28s ease;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__element {
+  color: color-mix(in srgb, var(--major-accent-strong) 76%, var(--minor-suit-color));
+  font: 700 .52rem/1.2 var(--logo-font, Cinzel, serif);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  transition: color .28s ease;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option:hover::after,
+.minor-arcana-page .minor-suits .minor-suit-selector__option:focus-visible::after {
+  width: 34px;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option:hover .minor-suit-selector__portal,
+.minor-arcana-page .minor-suits .minor-suit-selector__option:focus-visible .minor-suit-selector__portal {
+  border-color: color-mix(in srgb, var(--minor-suit-color) 65%, transparent);
+  box-shadow:
+    inset 0 0 30px color-mix(in srgb, var(--minor-suit-halo) 12%, transparent),
+    0 18px 38px -24px color-mix(in srgb, var(--minor-suit-halo) 72%, transparent);
+  transform: translateY(-2px);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option:hover .minor-suit-selector__icon,
+.minor-arcana-page .minor-suits .minor-suit-selector__option:focus-visible .minor-suit-selector__icon {
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--minor-suit-halo) 50%, transparent));
+  transform: translateY(-2px);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option:hover .minor-suit-selector__effect,
+.minor-arcana-page .minor-suits .minor-suit-selector__option:focus-visible .minor-suit-selector__effect {
+  opacity: .82;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option:focus-visible {
+  outline: 0;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option:focus-visible .minor-suit-selector__portal {
+  box-shadow:
+    0 0 0 2px var(--major-surface-strong),
+    0 0 0 4px var(--major-accent-strong),
+    inset 0 0 30px color-mix(in srgb, var(--minor-suit-halo) 12%, transparent),
+    0 18px 38px -24px color-mix(in srgb, var(--minor-suit-halo) 72%, transparent);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option.is-active::after {
+  width: 58px;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option.is-active .minor-suit-selector__portal {
+  border-color: color-mix(in srgb, var(--minor-suit-color) 82%, transparent);
+  background:
+    radial-gradient(circle at 50% 54%, color-mix(in srgb, var(--minor-suit-halo) 25%, transparent), transparent 59%),
+    transparent;
+  box-shadow:
+    inset 0 0 34px color-mix(in srgb, var(--minor-suit-halo) 15%, transparent),
+    0 20px 42px -24px color-mix(in srgb, var(--minor-suit-halo) 82%, transparent);
+  transform: translateY(-3px);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option.is-active .minor-suit-selector__portal::before {
+  border-color: color-mix(in srgb, var(--minor-suit-color) 38%, transparent);
+  transform: scale(.97);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option.is-active .minor-suit-selector__icon {
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--minor-suit-halo) 58%, transparent));
+  transform: translateY(-3px);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option.is-active .minor-suit-selector__effect {
+  opacity: .62;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option.is-active .minor-suit-selector__marker {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option.is-active .minor-suit-selector__name {
+  color: var(--major-heading);
+  text-shadow: 0 0 16px color-mix(in srgb, var(--minor-suit-halo) 34%, transparent);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option.is-active .minor-suit-selector__element {
+  color: color-mix(in srgb, var(--major-accent-strong) 88%, var(--minor-suit-color));
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--wands {
+  --minor-suit-color: #d8b16c;
+  --minor-suit-halo: #a95432;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--cups {
+  --minor-suit-color: #a9c8c2;
+  --minor-suit-halo: #477f82;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--swords {
+  --minor-suit-color: #d4d5ce;
+  --minor-suit-halo: #688f8b;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--pentacles {
+  --minor-suit-color: #b8a464;
+  --minor-suit-halo: #70753f;
+}
+
+body.blood-moon-mode.tarot-minor-arcana-page .minor-suits .minor-suit-selector__option--wands {
+  --minor-suit-color: #c58b58;
+  --minor-suit-halo: #781b28;
+}
+
+body.blood-moon-mode.tarot-minor-arcana-page .minor-suits .minor-suit-selector__option--cups {
+  --minor-suit-color: #b4a89a;
+  --minor-suit-halo: #552033;
+}
+
+body.blood-moon-mode.tarot-minor-arcana-page .minor-suits .minor-suit-selector__option--swords {
+  --minor-suit-color: #aaa29a;
+  --minor-suit-halo: #692430;
+}
+
+body.blood-moon-mode.tarot-minor-arcana-page .minor-suits .minor-suit-selector__option--pentacles {
+  --minor-suit-color: #9d7958;
+  --minor-suit-halo: #5a271f;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--wands .minor-suit-selector__effect {
+  background:
+    radial-gradient(circle at 32% 72%, currentColor 0 1px, transparent 1.8px),
+    radial-gradient(circle at 72% 38%, currentColor 0 1.1px, transparent 2px),
+    radial-gradient(circle at 62% 78%, color-mix(in srgb, currentColor 70%, var(--major-accent)) 0 1px, transparent 2px);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--cups .minor-suit-selector__effect::before,
+.minor-arcana-page .minor-suits .minor-suit-selector__option--cups .minor-suit-selector__effect::after {
+  right: 10px;
+  bottom: 14px;
+  left: 10px;
+  height: 20px;
+  border: 1px solid color-mix(in srgb, currentColor 56%, transparent);
+  border-radius: 50%;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--cups .minor-suit-selector__effect::after {
+  right: 21px;
+  bottom: 20px;
+  left: 21px;
+  height: 10px;
+  opacity: .62;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--swords .minor-suit-selector__effect::before {
+  top: 10px;
+  bottom: 10px;
+  left: -34%;
+  width: 22%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, currentColor 72%, transparent), transparent);
+  transform: skewX(-18deg);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--swords .minor-suit-selector__effect::after {
+  top: 32%;
+  right: 7px;
+  left: 7px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, currentColor 42%, transparent), transparent);
+  transform: rotate(-8deg);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--pentacles .minor-suit-selector__effect {
+  background:
+    radial-gradient(ellipse at 28% 72%, currentColor 0 1px, transparent 2px),
+    radial-gradient(ellipse at 74% 61%, currentColor 0 1.1px, transparent 2.2px),
+    radial-gradient(ellipse at 58% 82%, color-mix(in srgb, currentColor 68%, var(--major-accent)) 0 1px, transparent 2px);
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--wands:hover .minor-suit-selector__effect,
+.minor-arcana-page .minor-suits .minor-suit-selector__option--wands:focus-visible .minor-suit-selector__effect {
+  animation: minor-suit-sparks 2.6s ease-in-out infinite;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--cups:hover .minor-suit-selector__effect::before,
+.minor-arcana-page .minor-suits .minor-suit-selector__option--cups:focus-visible .minor-suit-selector__effect::before {
+  animation: minor-suit-ripple 2.4s ease-out infinite;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--swords:hover .minor-suit-selector__effect::before,
+.minor-arcana-page .minor-suits .minor-suit-selector__option--swords:focus-visible .minor-suit-selector__effect::before {
+  animation: minor-suit-glint 1.9s ease-in-out infinite;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__option--pentacles:hover .minor-suit-selector__effect,
+.minor-arcana-page .minor-suits .minor-suit-selector__option--pentacles:focus-visible .minor-suit-selector__effect {
+  animation: minor-suit-dust 3.2s ease-in-out infinite;
+}
+
+.minor-arcana-page .minor-suits .minor-suit-selector__mobile-controls {
+  display: none;
+}
+
+@keyframes minor-suit-sparks {
+  0%,
+  100% { transform: translateY(1px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes minor-suit-ripple {
+  0% { opacity: .24; transform: scale(.74); }
+  68% { opacity: .7; }
+  100% { opacity: 0; transform: scale(1.08); }
+}
+
+@keyframes minor-suit-glint {
+  0%,
+  18% { transform: translateX(0) skewX(-18deg); }
+  82%,
+  100% { transform: translateX(540%) skewX(-18deg); }
+}
+
+@keyframes minor-suit-dust {
+  0%,
+  100% { transform: translate(0, 1px); }
+  50% { transform: translate(2px, -3px); }
 }
 
 .minor-arcana-page .minor-suits__viewport,
-.minor-arcana-page .minor-numbers__viewport,
-.minor-arcana-page .minor-courts__viewport {
+.minor-arcana-page .minor-numbers__viewport {
   display: grid;
   overflow: clip;
 }
 
 .minor-arcana-page .minor-suits__panel,
-.minor-arcana-page .minor-numbers__panel,
-.minor-arcana-page .minor-courts__panel {
+.minor-arcana-page .minor-numbers__panel {
   grid-area: 1 / 1;
   opacity: 0;
   visibility: hidden;
@@ -214,8 +582,7 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
 }
 
 .minor-arcana-page .minor-suits__panel.is-active,
-.minor-arcana-page .minor-numbers__panel.is-active,
-.minor-arcana-page .minor-courts__panel.is-active {
+.minor-arcana-page .minor-numbers__panel.is-active {
   z-index: 1;
   opacity: 1;
   visibility: visible;
@@ -224,13 +591,67 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
   transition-delay: .08s, .08s, 0s;
 }
 
+.minor-arcana-page .minor-suits .minor-suits__panel {
+  transform: translateX(24px);
+  transition:
+    opacity .62s cubic-bezier(.76, 0, .24, 1),
+    transform .62s cubic-bezier(.76, 0, .24, 1),
+    visibility 0s linear .62s;
+}
+
+.minor-arcana-page .minor-suits[data-minor-suit-direction="backward"] .minor-suits__panel {
+  transform: translateX(-24px);
+}
+
+.minor-arcana-page .minor-suits .minor-suits__panel.is-active {
+  transform: none;
+  transition-delay: 0s;
+}
+
+.minor-arcana-page .minor-suits .minor-suits__panel.is-entering {
+  opacity: 0;
+  visibility: visible;
+  transform: translateX(24px);
+}
+
+.minor-arcana-page .minor-suits[data-minor-suit-direction="backward"] .minor-suits__panel.is-entering {
+  transform: translateX(-24px);
+}
+
+.minor-arcana-page .minor-suits .minor-suits__panel.is-leaving {
+  z-index: 0;
+  opacity: 0;
+  visibility: visible;
+  transform: translateX(-24px);
+  transition-delay: 0s;
+}
+
+.minor-arcana-page .minor-suits[data-minor-suit-direction="backward"] .minor-suits__panel.is-leaving {
+  transform: translateX(24px);
+}
+
+.minor-arcana-page .major-arcana-foundations__copy,
+.minor-arcana-page .minor-suits__copy,
+.minor-arcana-page .major-arcana-orientation__state,
+.minor-arcana-page .major-arcana-reading-example__copy,
+.minor-arcana-page .major-minor-showcase__information {
+  border-left: 1px solid var(--minor-reading-edge);
+  padding: clamp(1rem, 2vw, 1.65rem);
+  background: linear-gradient(105deg, var(--minor-reading-surface), var(--minor-reading-surface-soft) 66%, transparent 100%);
+  box-shadow: -18px 0 42px -38px var(--major-shadow);
+}
+
+.minor-arcana-page .major-arcana-readings__concepts {
+  padding-block: clamp(1.15rem, 2vw, 1.65rem);
+  background: linear-gradient(90deg, var(--minor-reading-surface-soft), color-mix(in srgb, var(--minor-reading-surface) 54%, transparent) 48%, transparent 100%);
+}
+
 .minor-arcana-page .minor-suits__panel {
   display: grid;
   min-height: 540px;
   grid-template-columns: minmax(320px, 42fr) minmax(500px, 58fr);
   align-items: center;
   gap: clamp(2.5rem, 5vw, 5rem);
-  border-block: 1px solid var(--major-line);
   padding-block: clamp(2rem, 4vw, 3.5rem);
 }
 
@@ -302,8 +723,19 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
   left: calc(50% + (var(--minor-suit-card-index) - 1.5) * 18%);
   width: clamp(145px, 15vw, 205px);
   margin: 0;
+  opacity: 1;
   transform: translate(-50%, -50%) rotate(calc((var(--minor-suit-card-index) - 1.5) * 4deg));
-  transition: transform .35s ease, filter .35s ease;
+  transition:
+    opacity .58s cubic-bezier(.76, 0, .24, 1),
+    transform .62s cubic-bezier(.76, 0, .24, 1),
+    filter .35s ease;
+}
+
+.minor-arcana-page .minor-suits__panel.is-entering .minor-suits__cards figure {
+  opacity: 0;
+  transform:
+    translate(-50%, calc(-50% + 12px))
+    rotate(calc((var(--minor-suit-card-index) - 1.5) * 6deg));
 }
 
 .minor-arcana-page .minor-suits__cards figure:nth-child(2),
@@ -319,8 +751,7 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
 }
 
 .minor-arcana-page .minor-suits__card-image,
-.minor-arcana-page .minor-numbers__card-image,
-.minor-arcana-page .minor-courts__card-image {
+.minor-arcana-page .minor-numbers__card-image {
   display: block;
   width: 100%;
   height: auto;
@@ -331,8 +762,7 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
   box-shadow: 0 22px 42px -20px var(--major-shadow);
 }
 
-.minor-arcana-page .minor-suits__cards figcaption,
-.minor-arcana-page .minor-courts__rank figcaption {
+.minor-arcana-page .minor-suits__cards figcaption {
   margin-top: .6rem;
   color: var(--major-accent-strong);
   font: 700 .57rem/1.3 var(--logo-font, Cinzel, serif);
@@ -341,157 +771,882 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
   text-transform: uppercase;
 }
 
-.minor-arcana-page .minor-numbers__tabs {
-  display: flex;
-  width: min(100%, 900px);
-  justify-content: center;
-  gap: 6px;
-  margin: 0 auto 2rem;
-  overflow-x: auto;
-  padding: 4px 4px 10px;
-  scrollbar-width: none;
+.minor-arcana-page .minor-number-patterns {
+  --minor-number-local-surface: color-mix(in srgb, var(--major-surface-strong) 78%, transparent);
+  padding-block: clamp(4rem, 6vw, 6rem);
+  background: transparent;
 }
 
-.minor-arcana-page .minor-numbers__tabs::-webkit-scrollbar {
-  display: none;
+.minor-arcana-page .minor-number-patterns .major-arcana-section-heading {
+  max-width: 940px;
+  margin: 0 auto clamp(1.5rem, 2.8vw, 2.25rem);
+  text-align: center;
 }
 
-.minor-arcana-page .minor-numbers__tabs button {
+.minor-arcana-page .minor-number-patterns .major-arcana-section-heading > p:last-child {
+  max-width: 72ch;
+  margin-inline: auto;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__selector {
+  width: min(100%, 1110px);
+  margin: 0 auto clamp(1.4rem, 2.6vw, 2rem);
+  overflow: visible;
+  background: transparent;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__rail {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(52px, 1fr));
+  align-items: center;
+  gap: clamp(4px, .7vw, 10px);
+  border: 1px solid var(--major-line-strong);
+  border-radius: 999px;
+  padding: 12px clamp(18px, 2vw, 30px);
+  background: transparent;
+  box-shadow:
+    inset 0 0 0 4px color-mix(in srgb, var(--major-line) 30%, transparent),
+    0 18px 38px -34px var(--major-shadow);
+  isolation: isolate;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__rail::before {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: clamp(42px, 5vw, 68px);
+  left: clamp(42px, 5vw, 68px);
+  height: 1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--major-accent) 42%, transparent) 7%,
+      color-mix(in srgb, var(--major-accent) 42%, transparent) 93%,
+      transparent
+    );
+  content: "";
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__option {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 52px;
   min-width: 52px;
-  padding-inline: 12px;
-}
-
-.minor-arcana-page .minor-numbers__panel {
-  min-height: 570px;
-  border-block: 1px solid var(--major-line);
-  padding-block: clamp(2rem, 4vw, 3.2rem);
-}
-
-.minor-arcana-page .minor-numbers__panel > header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(1.5rem, 3vw, 2.5rem);
-  margin-bottom: 2rem;
-  text-align: left;
-}
-
-.minor-arcana-page .minor-numbers__value {
-  margin: 0;
+  height: 52px;
+  min-height: 52px;
+  place-items: center;
+  justify-self: center;
+  border: 1px solid var(--major-line-strong);
+  border-radius: 50%;
+  padding: 0;
   color: var(--major-accent-strong);
-  font: 500 clamp(4.5rem, 8vw, 7rem)/.75 var(--heading-font, "Cormorant Garamond", serif);
+  background: var(--minor-number-local-surface);
+  box-shadow:
+    inset 0 0 16px color-mix(in srgb, var(--major-accent) 6%, transparent),
+    0 8px 18px -16px var(--major-shadow);
+  font: 600 .88rem/1 var(--heading-font, "Cormorant Garamond", serif);
+  cursor: pointer;
+  opacity: 1;
+  transition:
+    color .28s ease,
+    border-color .28s ease,
+    box-shadow .32s ease,
+    transform .32s cubic-bezier(.22, .61, .36, 1);
 }
 
-.minor-arcana-page .minor-numbers__panel > header h3 {
-  margin: .4rem 0 0;
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__option::before {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  color: var(--major-accent-strong);
+  content: "✦";
+  font-size: .52rem;
+  opacity: 0;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--major-accent) 58%, transparent);
+  transform: translate(-50%, 5px) scale(.75);
+  transition: opacity .28s ease, transform .28s ease;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__option::after {
+  position: absolute;
+  inset: 5px;
+  border: 1px solid color-mix(in srgb, var(--major-accent) 20%, transparent);
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+  transition: border-color .28s ease, transform .28s ease;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__option:hover {
   color: var(--major-heading);
-  font: 500 clamp(2rem, 3.4vw, 3.1rem)/1 var(--heading-font, "Cormorant Garamond", serif);
+  border-color: var(--major-accent);
+  box-shadow:
+    inset 0 0 19px color-mix(in srgb, var(--major-accent) 10%, transparent),
+    0 0 20px -12px color-mix(in srgb, var(--major-accent) 72%, transparent);
+  transform: translateY(-2px);
 }
 
-.minor-arcana-page .minor-numbers__suits {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(.8rem, 1.7vw, 1.4rem);
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__option:focus-visible {
+  border-color: var(--major-accent-strong);
+  outline: 0;
+  box-shadow:
+    0 0 0 2px var(--major-surface-strong),
+    0 0 0 4px var(--major-accent-strong),
+    inset 0 0 20px color-mix(in srgb, var(--major-accent) 13%, transparent);
 }
 
-.minor-arcana-page .minor-numbers__suits > article {
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__option.is-active {
+  color: var(--major-heading);
+  border-color: var(--major-accent-strong);
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--major-accent) 18%, var(--major-surface-strong)), var(--minor-number-local-surface) 68%);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--major-accent) 12%, transparent),
+    0 0 0 6px color-mix(in srgb, var(--major-accent-strong) 54%, transparent),
+    inset 0 0 24px color-mix(in srgb, var(--major-accent) 16%, transparent),
+    0 0 28px -10px color-mix(in srgb, var(--major-accent) 76%, transparent);
+  transform: translateY(-2px);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__option.is-active::before {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__option.is-active::after {
+  border-color: color-mix(in srgb, var(--major-accent-strong) 58%, transparent);
+  transform: scale(.92);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-numbers__panel {
+  min-height: 0;
+  padding: clamp(.7rem, 1.4vw, 1.2rem) 0 0;
+  transform: translateX(20px);
+  transition:
+    opacity .58s cubic-bezier(.76, 0, .24, 1),
+    transform .58s cubic-bezier(.76, 0, .24, 1),
+    visibility 0s linear .58s;
+}
+
+.minor-arcana-page .minor-number-patterns[data-minor-number-direction="backward"] .minor-numbers__panel {
+  transform: translateX(-20px);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-numbers__panel.is-active {
+  transform: none;
+  transition-delay: 0s;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-numbers__panel.is-entering {
+  opacity: 0;
+  visibility: visible;
+  transform: translateX(20px);
+}
+
+.minor-arcana-page .minor-number-patterns[data-minor-number-direction="backward"] .minor-numbers__panel.is-entering {
+  transform: translateX(-20px);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-numbers__panel.is-leaving {
+  z-index: 0;
+  opacity: 0;
+  visibility: visible;
+  transform: translateX(-20px);
+  transition-delay: 0s;
+}
+
+.minor-arcana-page .minor-number-patterns[data-minor-number-direction="backward"] .minor-numbers__panel.is-leaving {
+  transform: translateX(20px);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__summary {
   display: grid;
-  min-width: 0;
-  grid-template-columns: minmax(80px, 34fr) minmax(0, 66fr);
+  justify-items: center;
+  gap: 7px;
+  margin-bottom: clamp(1.35rem, 2.5vw, 2rem);
+  text-align: center;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__summary .major-arcana-eyebrow {
+  margin: 0;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__value-row {
+  display: grid;
+  width: min(100%, 760px);
+  grid-template-columns: minmax(48px, 1fr) auto minmax(48px, 1fr);
   align-items: center;
-  gap: .9rem;
-  border: 1px solid var(--major-line);
-  border-radius: 9px;
-  padding: .75rem;
-  background: color-mix(in srgb, var(--major-surface) 27%, transparent);
+  gap: clamp(1rem, 3vw, 2rem);
 }
 
-.minor-arcana-page .minor-numbers__suits figure {
-  margin: 0;
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__value-row > span {
+  height: 1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--major-accent) 46%, transparent)
+    );
 }
 
-.minor-arcana-page .minor-numbers__suits h4 {
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__value-row > span:last-child {
+  transform: scaleX(-1);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__value-row > span::after {
+  display: block;
+  width: 5px;
+  height: 5px;
+  margin: -2px 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--major-accent-strong) 58%, transparent);
+  content: "";
+  transform: rotate(45deg);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__value {
   margin: 0;
   color: var(--major-heading);
-  font: 500 clamp(1.15rem, 1.7vw, 1.45rem)/1.05 var(--heading-font, "Cormorant Garamond", serif);
+  font: 500 clamp(4.4rem, 8vw, 7.2rem)/.75 var(--heading-font, "Cormorant Garamond", serif);
+  letter-spacing: -.035em;
+  text-shadow: 0 12px 26px color-mix(in srgb, var(--major-shadow) 54%, transparent);
 }
 
-.minor-arcana-page .minor-numbers__suits p {
-  margin: .5rem 0 0;
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__summary h3 {
+  margin: .2rem 0 0;
+  color: var(--major-accent-strong);
+  font: 500 clamp(1.35rem, 2.25vw, 2rem)/1.1 var(--heading-font, "Cormorant Garamond", serif);
+  letter-spacing: .025em;
+  text-wrap: balance;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__cards {
+  display: grid;
+  width: min(100%, 1120px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(1.1rem, 2.5vw, 2.4rem);
+  margin-inline: auto;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  text-align: center;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .48s ease, transform .56s cubic-bezier(.22, .61, .36, 1);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-numbers__panel.is-entering .minor-number-patterns__card {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card figure {
+  width: min(100%, 205px);
+  margin: 0 auto;
+  transform: rotate(0);
+  transform-origin: center 78%;
+  transition: transform .36s cubic-bezier(.22, .61, .36, 1), filter .36s ease;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card:nth-child(1) figure {
+  transform: translateY(5px) rotate(-2.2deg);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card:nth-child(2) figure {
+  transform: rotate(-.7deg);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card:nth-child(3) figure {
+  transform: rotate(.7deg);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card:nth-child(4) figure {
+  transform: translateY(5px) rotate(2.2deg);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card:hover figure,
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card:focus-within figure {
+  z-index: 2;
+  filter: brightness(1.04) saturate(1.03);
+  transform: translateY(-5px) rotate(0);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-numbers__card-image {
+  border-color: var(--major-line-strong);
+  border-radius: 10px;
+  box-shadow:
+    0 24px 44px -24px var(--major-shadow),
+    0 0 24px -20px color-mix(in srgb, var(--major-accent) 54%, transparent);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card-copy {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+  width: min(100%, 240px);
+  padding-top: clamp(1rem, 1.8vw, 1.35rem);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__element {
+  margin: 0;
+  color: var(--major-accent);
+  font: 700 .52rem/1.25 var(--logo-font, Cinzel, serif);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card h4 {
+  margin: .45rem 0 0;
+  color: var(--major-heading);
+  font: 500 clamp(1.35rem, 1.8vw, 1.65rem)/1.05 var(--heading-font, "Cormorant Garamond", serif);
+}
+
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card-copy > p:not(.minor-number-patterns__element) {
+  max-width: 28ch;
+  margin: .55rem 0 0;
   color: var(--major-muted);
-  font: .72rem/1.5 var(--font-body-serif, Lora, serif);
+  font: .75rem/1.55 var(--font-body-serif, Lora, serif);
 }
 
-.minor-arcana-page .minor-numbers__suits a {
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card a {
   display: inline-flex;
   gap: 6px;
-  margin-top: .65rem;
-  color: var(--major-accent);
-  font: 700 .52rem/1.3 var(--logo-font, Cinzel, serif);
-  letter-spacing: .04em;
+  margin-top: .7rem;
+  color: var(--major-accent-strong);
+  font: 700 .5rem/1.3 var(--logo-font, Cinzel, serif);
+  letter-spacing: .06em;
   text-decoration: none;
   text-transform: uppercase;
 }
 
-.minor-arcana-page .minor-courts__tabs {
-  display: grid;
-  width: min(100%, 680px);
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin: 0 auto 2rem;
-}
-
-.minor-arcana-page .minor-courts__panel {
-  display: grid;
-  min-height: 580px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(1rem, 2vw, 1.7rem);
-  align-items: stretch;
-}
-
-.minor-arcana-page .minor-courts__rank {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  border: 1px solid var(--major-line);
-  border-radius: 10px;
-  padding: 1rem;
-  background: color-mix(in srgb, var(--major-surface) 25%, transparent);
-}
-
-.minor-arcana-page .minor-courts__rank figure {
-  width: min(100%, 195px);
-  margin: 0 auto;
-}
-
-.minor-arcana-page .minor-courts__rank > div {
-  display: flex;
-  flex-direction: column;
-  padding-top: 1.1rem;
-}
-
-.minor-arcana-page .minor-courts__rank .major-arcana-eyebrow {
-  font-size: .5rem;
-  line-height: 1.55;
-  letter-spacing: .08em;
-}
-
-.minor-arcana-page .minor-courts__rank h3 {
-  margin: .4rem 0 0;
+.minor-arcana-page .minor-number-patterns .minor-number-patterns__card a:hover {
   color: var(--major-heading);
-  font: 500 clamp(2rem, 3vw, 2.7rem)/.95 var(--heading-font, "Cormorant Garamond", serif);
 }
 
-.minor-arcana-page .minor-courts__rank p:not(.major-arcana-eyebrow) {
+.minor-arcana-page .minor-court-cards {
+  padding-block: clamp(4.25rem, 6vw, 6.25rem);
+  background: transparent;
+}
+
+.minor-arcana-page .minor-court-cards .major-arcana-section-heading {
+  max-width: 920px;
+  margin: 0 auto clamp(1.8rem, 3vw, 2.5rem);
+  text-align: center;
+}
+
+.minor-arcana-page .minor-court-cards .major-arcana-section-heading > p:last-child {
+  max-width: 70ch;
+  margin-inline: auto;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-selector {
+  width: min(100%, 650px);
+  margin: 0 auto clamp(2.35rem, 4vw, 3.25rem);
+  background: transparent;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(.7rem, 1.8vw, 1.35rem);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option {
+  --minor-court-suit-color: var(--major-accent-strong);
+  --minor-court-suit-halo: var(--major-accent);
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 96px;
+  place-items: center;
+  align-content: center;
+  gap: 2px;
+  border: 0;
+  padding: 6px 8px 14px;
+  color: var(--major-heading);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option::after {
+  position: absolute;
+  right: 20%;
+  bottom: 2px;
+  left: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--minor-court-suit-color), transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--minor-court-suit-halo) 46%, transparent);
+  content: "";
+  opacity: 0;
+  transform: scaleX(.35);
+  transition: opacity .3s ease, transform .34s cubic-bezier(.22, .61, .36, 1);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-emblem {
+  position: relative;
+  display: grid;
+  width: 50px;
+  height: 54px;
+  place-items: center;
+  margin-bottom: 3px;
+  border: 1px solid color-mix(in srgb, var(--minor-court-suit-color) 34%, transparent);
+  border-radius: 50% 50% 44% 44%;
+  color: var(--minor-court-suit-color);
+  background: radial-gradient(circle, color-mix(in srgb, var(--minor-court-suit-halo) 14%, transparent), transparent 68%);
+  box-shadow: inset 0 0 18px color-mix(in srgb, var(--minor-court-suit-halo) 8%, transparent);
+  transition: border-color .3s ease, box-shadow .3s ease, transform .3s cubic-bezier(.22, .61, .36, 1);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-emblem::after {
+  position: absolute;
+  inset: 5px;
+  border: 1px solid color-mix(in srgb, var(--minor-court-suit-color) 16%, transparent);
+  border-radius: inherit;
+  content: "";
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-icon {
+  z-index: 1;
+  width: 30px;
+  height: 38px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--minor-court-suit-halo) 40%, transparent));
+  transition: filter .3s ease, transform .3s ease;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-icon .minor-suit-selector__icon-detail {
+  stroke: color-mix(in srgb, var(--minor-court-suit-color) 68%, var(--major-accent));
+  stroke-width: 1.15;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-name {
+  color: var(--major-heading);
+  font: 600 clamp(.95rem, 1.35vw, 1.15rem)/1.1 var(--heading-font, "Cormorant Garamond", serif);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-element {
+  color: color-mix(in srgb, var(--major-muted) 78%, var(--minor-court-suit-color));
+  font: 700 .48rem/1.2 var(--logo-font, Cinzel, serif);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option:hover::after,
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option:focus-visible::after,
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option.is-active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option:hover .minor-court-cards__suit-emblem,
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option:focus-visible .minor-court-cards__suit-emblem,
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option.is-active .minor-court-cards__suit-emblem {
+  border-color: color-mix(in srgb, var(--minor-court-suit-color) 76%, transparent);
+  box-shadow:
+    inset 0 0 22px color-mix(in srgb, var(--minor-court-suit-halo) 15%, transparent),
+    0 0 22px -10px color-mix(in srgb, var(--minor-court-suit-halo) 72%, transparent);
+  transform: translateY(-2px);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option:hover .minor-court-cards__suit-icon,
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option:focus-visible .minor-court-cards__suit-icon,
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option.is-active .minor-court-cards__suit-icon {
+  filter: drop-shadow(0 0 9px color-mix(in srgb, var(--minor-court-suit-halo) 58%, transparent));
+  transform: translateY(-1px);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option:focus-visible {
+  outline: 0;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option:focus-visible .minor-court-cards__suit-emblem {
+  box-shadow:
+    0 0 0 2px var(--major-surface-strong),
+    0 0 0 4px var(--major-accent-strong),
+    inset 0 0 22px color-mix(in srgb, var(--minor-court-suit-halo) 15%, transparent);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option--wands,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel--wands {
+  --minor-court-suit-color: #d8b16c;
+  --minor-court-suit-halo: #a95432;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option--cups,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel--cups {
+  --minor-court-suit-color: #a9c8c2;
+  --minor-court-suit-halo: #477f82;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option--swords,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel--swords {
+  --minor-court-suit-color: #d4d5ce;
+  --minor-court-suit-halo: #688f8b;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__suit-option--pentacles,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel--pentacles {
+  --minor-court-suit-color: #b8a464;
+  --minor-court-suit-halo: #70753f;
+}
+
+body.blood-moon-mode.tarot-minor-arcana-page .minor-court-cards .minor-court-cards__suit-option--wands,
+body.blood-moon-mode.tarot-minor-arcana-page .minor-court-cards .minor-court-cards__panel--wands {
+  --minor-court-suit-color: #c58b58;
+  --minor-court-suit-halo: #781b28;
+}
+
+body.blood-moon-mode.tarot-minor-arcana-page .minor-court-cards .minor-court-cards__suit-option--cups,
+body.blood-moon-mode.tarot-minor-arcana-page .minor-court-cards .minor-court-cards__panel--cups {
+  --minor-court-suit-color: #b4a89a;
+  --minor-court-suit-halo: #552033;
+}
+
+body.blood-moon-mode.tarot-minor-arcana-page .minor-court-cards .minor-court-cards__suit-option--swords,
+body.blood-moon-mode.tarot-minor-arcana-page .minor-court-cards .minor-court-cards__panel--swords {
+  --minor-court-suit-color: #aaa29a;
+  --minor-court-suit-halo: #692430;
+}
+
+body.blood-moon-mode.tarot-minor-arcana-page .minor-court-cards .minor-court-cards__suit-option--pentacles,
+body.blood-moon-mode.tarot-minor-arcana-page .minor-court-cards .minor-court-cards__panel--pentacles {
+  --minor-court-suit-color: #9d7958;
+  --minor-court-suit-halo: #5a271f;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__rank-selector,
+.minor-arcana-page .minor-court-cards .minor-court-cards__mobile-controls {
+  display: none;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__viewport {
+  display: grid;
+  width: 100%;
+  overflow: clip;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel {
+  grid-area: 1 / 1;
+  min-height: 0;
+  padding-top: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(16px);
+  transition:
+    opacity .68s cubic-bezier(.76, 0, .24, 1),
+    transform .68s cubic-bezier(.76, 0, .24, 1),
+    visibility 0s linear .68s;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-active {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-entering,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-leaving {
+  visibility: visible;
+  opacity: 0;
+  transform: translateY(16px);
+  transition-delay: 0s;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__procession {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(1.25rem, 2.6vw, 2.6rem);
+  padding: 1.5rem 0 .5rem;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__role {
+  --minor-court-rotation: 0deg;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  text-align: center;
+  opacity: 1;
+  transform: translateY(calc(var(--minor-court-rank-index) * -8px));
+  transition:
+    opacity .54s cubic-bezier(.76, 0, .24, 1),
+    transform .64s cubic-bezier(.76, 0, .24, 1);
+  transition-delay: calc(var(--minor-court-rank-index) * 70ms);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:nth-child(1) {
+  --minor-court-rotation: -2deg;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:nth-child(2) {
+  --minor-court-rotation: -.5deg;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:nth-child(3) {
+  --minor-court-rotation: .5deg;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:nth-child(4) {
+  --minor-court-rotation: 2deg;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-entering .minor-court-cards__role,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-leaving .minor-court-cards__role {
+  opacity: 0;
+  transform: translateY(calc((var(--minor-court-rank-index) * -8px) + 18px));
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__figure {
+  position: relative;
+  width: min(100%, clamp(210px, 17vw, 250px));
+  margin: 0 auto;
+  isolation: isolate;
+  transform: rotate(var(--minor-court-rotation));
+  transform-origin: center 80%;
+  transition: transform .38s cubic-bezier(.22, .61, .36, 1);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__figure::before {
+  position: absolute;
+  z-index: -1;
+  inset: 12% -12% 4%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--minor-court-suit-halo) 25%, transparent), transparent 70%);
+  content: "";
+  opacity: .48;
+  filter: blur(10px);
+  transition: opacity .35s ease, transform .35s ease;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__card-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border: 1px solid color-mix(in srgb, var(--minor-court-suit-color) 62%, var(--major-line-strong));
+  border-radius: 9px;
+  box-shadow:
+    0 28px 48px -24px var(--major-shadow),
+    0 0 26px -21px color-mix(in srgb, var(--minor-court-suit-halo) 72%, transparent);
+  transition: filter .35s ease, box-shadow .35s ease;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__figure figcaption {
+  margin-top: .8rem;
+  color: color-mix(in srgb, var(--major-accent-strong) 82%, var(--minor-court-suit-color));
+  font: 700 .58rem/1.35 var(--logo-font, Cinzel, serif);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__content {
+  display: flex;
+  width: min(100%, 275px);
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  margin-top: .7rem;
+  padding: .8rem .35rem .35rem;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--minor-reading-surface-soft) 42%, transparent));
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__rank-label {
+  margin: 0;
+  color: var(--minor-court-suit-color);
+  font: 700 .52rem/1.3 var(--logo-font, Cinzel, serif);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__content h3 {
+  position: relative;
+  margin: .45rem 0 0;
+  padding-bottom: .65rem;
+  color: var(--major-heading);
+  font: 500 clamp(2.2rem, 3.1vw, 3.2rem)/.9 var(--heading-font, "Cormorant Garamond", serif);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__content h3::after {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--minor-court-suit-color), transparent);
+  content: "";
+  transform: translateX(-50%);
+  transition: width .34s cubic-bezier(.22, .61, .36, 1), box-shadow .34s ease;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__keywords {
   margin: .8rem 0 0;
-  color: var(--major-muted);
-  font: .79rem/1.6 var(--font-body-serif, Lora, serif);
+  color: color-mix(in srgb, var(--major-accent-strong) 76%, var(--minor-court-suit-color));
+  font: 700 .62rem/1.55 var(--logo-font, Cinzel, serif);
+  letter-spacing: .055em;
+  text-transform: uppercase;
+  text-wrap: balance;
 }
 
-.minor-arcana-page .minor-courts__rank .major-arcana-text-link {
-  justify-content: flex-start;
+.minor-arcana-page .minor-court-cards .minor-court-cards__description {
+  max-width: 32ch;
+  margin: .85rem 0 0;
+  color: var(--major-text);
+  font: .86rem/1.68 var(--font-body-serif, Lora, serif);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   margin-top: auto;
   padding-top: 1rem;
-  font-size: .55rem;
+  color: var(--major-accent-strong);
+  font: 700 .56rem/1.35 var(--logo-font, Cinzel, serif);
+  letter-spacing: .055em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__link span {
+  transition: transform .25s ease;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__link:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--major-accent-strong);
+  outline-offset: 4px;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:hover .minor-court-cards__figure,
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:focus-within .minor-court-cards__figure {
+  transform: translateY(-5px) rotate(0);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:hover .minor-court-cards__figure::before,
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:focus-within .minor-court-cards__figure::before {
+  opacity: .72;
+  transform: scale(1.04);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:hover .minor-court-cards__card-image,
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:focus-within .minor-court-cards__card-image {
+  filter: brightness(1.035) saturate(1.025);
+  box-shadow:
+    0 32px 54px -22px var(--major-shadow),
+    0 0 30px -18px color-mix(in srgb, var(--minor-court-suit-halo) 76%, transparent);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:hover .minor-court-cards__content h3::after,
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:focus-within .minor-court-cards__content h3::after {
+  width: 48px;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--minor-court-suit-halo) 55%, transparent);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:hover .minor-court-cards__link span,
+.minor-arcana-page .minor-court-cards .minor-court-cards__role:focus-within .minor-court-cards__link span {
+  transform: translateX(3px);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__progression {
+  position: relative;
+  display: grid;
+  width: min(88%, 980px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: clamp(1.8rem, 3vw, 2.5rem) auto 0;
+  padding: 0;
+  list-style: none;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__progression::before {
+  position: absolute;
+  top: 5px;
+  right: 12.5%;
+  left: 12.5%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--minor-court-suit-color) 34%, transparent),
+    color-mix(in srgb, var(--major-accent-strong) 68%, var(--minor-court-suit-color)),
+    color-mix(in srgb, var(--minor-court-suit-color) 34%, transparent)
+  );
+  content: "";
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__progression::after {
+  position: absolute;
+  top: 1px;
+  right: calc(12.5% - 2px);
+  width: 7px;
+  height: 7px;
+  border-top: 1px solid var(--minor-court-suit-color);
+  border-right: 1px solid var(--minor-court-suit-color);
+  content: "";
+  transform: rotate(45deg);
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__progression li {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  color: color-mix(in srgb, var(--major-muted) 86%, var(--minor-court-suit-color));
+  font: 700 .5rem/1.3 var(--logo-font, Cinzel, serif);
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__progression-node {
+  width: 11px;
+  height: 11px;
+  border: 1px solid color-mix(in srgb, var(--minor-court-suit-color) 74%, transparent);
+  border-radius: 50%;
+  background: var(--major-surface-strong);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--minor-court-suit-halo) 8%, transparent);
+  transition: background .28s ease, box-shadow .28s ease, transform .28s ease;
+}
+
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel:has(.minor-court-cards__role:nth-child(1):hover) .minor-court-cards__progression li:nth-child(1) .minor-court-cards__progression-node,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel:has(.minor-court-cards__role:nth-child(1):focus-within) .minor-court-cards__progression li:nth-child(1) .minor-court-cards__progression-node,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel:has(.minor-court-cards__role:nth-child(2):hover) .minor-court-cards__progression li:nth-child(2) .minor-court-cards__progression-node,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel:has(.minor-court-cards__role:nth-child(2):focus-within) .minor-court-cards__progression li:nth-child(2) .minor-court-cards__progression-node,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel:has(.minor-court-cards__role:nth-child(3):hover) .minor-court-cards__progression li:nth-child(3) .minor-court-cards__progression-node,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel:has(.minor-court-cards__role:nth-child(3):focus-within) .minor-court-cards__progression li:nth-child(3) .minor-court-cards__progression-node,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel:has(.minor-court-cards__role:nth-child(4):hover) .minor-court-cards__progression li:nth-child(4) .minor-court-cards__progression-node,
+.minor-arcana-page .minor-court-cards .minor-court-cards__panel:has(.minor-court-cards__role:nth-child(4):focus-within) .minor-court-cards__progression li:nth-child(4) .minor-court-cards__progression-node {
+  background: color-mix(in srgb, var(--minor-court-suit-color) 22%, var(--major-surface-strong));
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--minor-court-suit-halo) 13%, transparent),
+    0 0 14px color-mix(in srgb, var(--minor-court-suit-halo) 50%, transparent);
+  transform: scale(1.16);
 }
 
 .minor-arcana-page .major-arcana-reading-example__spread figure {
@@ -523,27 +1678,32 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
     grid-template-columns: minmax(290px, 44fr) minmax(430px, 56fr);
   }
 
-  .minor-arcana-page .minor-numbers__suits {
+  .minor-arcana-page .minor-court-cards .minor-court-cards__procession {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: clamp(2.75rem, 6vw, 4.5rem);
   }
 
-  .minor-arcana-page .minor-numbers__panel {
-    min-height: 650px;
+  .minor-arcana-page .minor-court-cards .minor-court-cards__role,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-entering .minor-court-cards__role,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-leaving .minor-court-cards__role {
+    transform: none;
   }
 
-  .minor-arcana-page .minor-courts__panel {
-    min-height: 760px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-entering .minor-court-cards__role,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-leaving .minor-court-cards__role {
+    transform: translateY(16px);
   }
 
-  .minor-arcana-page .minor-courts__rank {
-    grid-template-columns: minmax(120px, 35fr) minmax(0, 65fr);
-    grid-template-rows: auto;
-    gap: 1rem;
+  .minor-arcana-page .minor-court-cards .minor-court-cards__figure {
+    width: min(100%, 225px);
   }
 
-  .minor-arcana-page .minor-courts__rank > div {
-    padding-top: .4rem;
+  .minor-arcana-page .minor-court-cards .minor-court-cards__content {
+    width: min(100%, 340px);
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__progression {
+    width: min(94%, 780px);
   }
 }
 
@@ -567,7 +1727,12 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
   .minor-arcana-page .minor-arcana-hero .major-arcana-hero__title {
     width: min(calc(100% - 32px), 620px);
     margin-inline: auto;
-    padding-top: 6.2rem;
+    padding: clamp(2.4rem, 9vw, 3.6rem) 0 2rem;
+    text-align: right;
+  }
+
+  .minor-arcana-page .minor-arcana-hero h1 {
+    margin-left: auto;
   }
 
   .minor-arcana-page .minor-arcana-hero .major-arcana-hero__visual {
@@ -581,15 +1746,21 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
   .minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after,
   body.moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after,
   body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-    background: linear-gradient(180deg, rgba(3, 15, 17, .96) 0%, rgba(3, 15, 17, .83) 43%, rgba(3, 15, 17, .26) 76%, rgba(3, 15, 17, .66) 100%);
+    background:
+      linear-gradient(270deg, rgba(3, 15, 17, .7), rgba(3, 15, 17, .24) 64%, transparent),
+      linear-gradient(180deg, rgba(3, 15, 17, .72) 0%, rgba(3, 15, 17, .52) 42%, rgba(3, 15, 17, .17) 76%, rgba(3, 15, 17, .54) 100%);
   }
 
   body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-    background: linear-gradient(180deg, rgba(16, 2, 6, .96) 0%, rgba(16, 2, 6, .84) 43%, rgba(16, 2, 6, .27) 76%, rgba(16, 2, 6, .67) 100%);
+    background:
+      linear-gradient(270deg, rgba(16, 2, 6, .72), rgba(16, 2, 6, .25) 64%, transparent),
+      linear-gradient(180deg, rgba(16, 2, 6, .74) 0%, rgba(16, 2, 6, .54) 42%, rgba(16, 2, 6, .18) 76%, rgba(16, 2, 6, .56) 100%);
   }
 
   body.moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-    background: linear-gradient(180deg, rgba(3, 13, 22, .96) 0%, rgba(3, 13, 22, .84) 43%, rgba(3, 13, 22, .27) 76%, rgba(3, 13, 22, .67) 100%);
+    background:
+      linear-gradient(270deg, rgba(3, 13, 22, .72), rgba(3, 13, 22, .25) 64%, transparent),
+      linear-gradient(180deg, rgba(3, 13, 22, .74) 0%, rgba(3, 13, 22, .54) 42%, rgba(3, 13, 22, .18) 76%, rgba(3, 13, 22, .56) 100%);
   }
 
   .minor-arcana-page .minor-arcana-filters {
@@ -606,18 +1777,102 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
     width: 100%;
   }
 
-  .minor-arcana-page .minor-suits__tabs {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .minor-arcana-page .minor-suits .minor-suit-selector {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    margin-inline: -16px;
+    padding: 0 16px 12px;
+    scroll-padding-inline: 16px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .minor-arcana-page .minor-suits__tabs::before {
+  .minor-arcana-page .minor-suits .minor-suit-selector::-webkit-scrollbar {
     display: none;
   }
 
+  .minor-arcana-page .minor-suits .minor-suit-selector__track {
+    display: flex;
+    width: max-content;
+    gap: 14px;
+    padding-right: 18vw;
+  }
+
+  .minor-arcana-page .minor-suits .minor-suit-selector__option {
+    width: 78vw;
+    min-width: 78vw;
+    min-height: 168px;
+    flex: 0 0 78vw;
+    scroll-snap-align: center;
+  }
+
+  .minor-arcana-page .minor-suits .minor-suit-selector__portal {
+    width: 86px;
+    height: 96px;
+  }
+
+  .minor-arcana-page .minor-suits .minor-suit-selector__icon {
+    width: 48px;
+    height: 60px;
+  }
+
+  .minor-arcana-page .minor-suits .minor-suit-selector__mobile-controls {
+    display: grid;
+    grid-template-columns: auto minmax(68px, 1fr) auto auto;
+    align-items: center;
+    gap: 10px;
+    margin: -1rem 0 1.1rem;
+  }
+
+  .minor-arcana-page .minor-suits .minor-suit-selector__mobile-controls > button {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    padding: 4px;
+    color: var(--major-accent-strong);
+    background: transparent;
+    font: 700 .52rem/1.2 var(--logo-font, Cinzel, serif);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .minor-arcana-page .minor-suits .minor-suit-selector__mobile-controls > button:last-of-type {
+    justify-self: end;
+  }
+
+  .minor-arcana-page .minor-suits .minor-suit-selector__progress {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .minor-arcana-page .minor-suits .minor-suit-selector__progress > span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--major-line);
+    transition: background .3s ease, box-shadow .3s ease;
+  }
+
+  .minor-arcana-page .minor-suits .minor-suit-selector__progress > span.is-active {
+    background: var(--major-accent-strong);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--major-accent) 44%, transparent);
+  }
+
+  .minor-arcana-page .minor-suits .minor-suit-selector__count {
+    color: var(--major-muted);
+    font: 700 .5rem/1 var(--logo-font, Cinzel, serif);
+    letter-spacing: .08em;
+    white-space: nowrap;
+  }
+
   .minor-arcana-page .minor-suits__panel,
-  .minor-arcana-page .minor-numbers__panel,
-  .minor-arcana-page .minor-courts__panel {
+  .minor-arcana-page .minor-numbers__panel {
     min-height: 0;
   }
 
@@ -658,93 +1913,353 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-he
     transform: none;
   }
 
-  .minor-arcana-page .minor-numbers__tabs {
-    justify-content: flex-start;
-    margin-inline: -16px;
-    padding-inline: 16px;
+  .minor-arcana-page .minor-suits__panel.is-entering .minor-suits__cards figure {
+    opacity: 0;
+    transform: translateY(10px);
   }
 
-  .minor-arcana-page .minor-numbers__panel {
-    padding-block: 1.8rem;
+  .minor-arcana-page .minor-number-patterns {
+    padding-block: clamp(3.25rem, 12vw, 4.5rem);
   }
 
-  .minor-arcana-page .minor-numbers__panel > header {
-    justify-content: flex-start;
-    gap: 1rem;
+  .minor-arcana-page .minor-number-patterns .major-arcana-section-heading {
+    margin-bottom: 1.35rem;
   }
 
-  .minor-arcana-page .minor-numbers__value {
-    font-size: clamp(4rem, 21vw, 5.5rem);
-  }
-
-  .minor-arcana-page .minor-numbers__panel > header h3 {
-    font-size: clamp(1.7rem, 8vw, 2.4rem);
-  }
-
-  .minor-arcana-page .minor-numbers__suits {
-    grid-template-columns: 1fr;
-  }
-
-  .minor-arcana-page .minor-numbers__suits > article {
-    grid-template-columns: 88px 1fr;
-  }
-
-  .minor-arcana-page .minor-courts__tabs {
-    display: flex;
-    justify-content: flex-start;
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__selector {
     overflow-x: auto;
+    overscroll-behavior-inline: contain;
     margin-inline: -16px;
-    padding: 2px 16px 10px;
+    padding: 12px 16px 16px;
+    scroll-padding-inline: 16px;
+    scroll-snap-type: x proximity;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .minor-arcana-page .minor-courts__tabs button {
-    min-width: 112px;
-  }
-
-  .minor-arcana-page .minor-courts__panel {
-    display: flex;
-    gap: 16px;
-    overflow-x: auto;
-    margin-inline: -16px;
-    padding: .5rem 16px 1rem;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-
-  .minor-arcana-page .minor-courts__panel::-webkit-scrollbar {
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__selector::-webkit-scrollbar {
     display: none;
   }
 
-  .minor-arcana-page .minor-courts__rank {
-    display: grid;
-    width: min(82vw, 330px);
-    min-width: min(82vw, 330px);
-    flex: 0 0 min(82vw, 330px);
-    grid-template-columns: 1fr;
-    gap: 0;
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__rail {
+    width: max-content;
+    grid-template-columns: repeat(10, 52px);
+    gap: 12px;
+    padding-inline: 24px;
+  }
+
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__option {
     scroll-snap-align: center;
   }
 
-  .minor-arcana-page .minor-courts__rank figure {
-    width: min(58vw, 220px);
+  .minor-arcana-page .minor-number-patterns .minor-numbers__panel {
+    padding-top: .45rem;
   }
 
-  .minor-arcana-page .minor-courts__rank > div {
-    padding-top: 1rem;
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__summary {
+    margin-bottom: 1.35rem;
+  }
+
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__value {
+    font-size: clamp(4.2rem, 18vw, 6rem);
+  }
+
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__summary h3 {
+    max-width: 22ch;
+    font-size: clamp(1.3rem, 5vw, 1.8rem);
+  }
+
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__card figure {
+    width: min(100%, 170px);
+  }
+
+  .minor-arcana-page .minor-court-cards {
+    padding-block: clamp(3.75rem, 12vw, 5rem);
+  }
+
+  .minor-arcana-page .minor-court-cards .major-arcana-section-heading {
+    margin-bottom: 1.4rem;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__suit-selector {
+    margin-bottom: 1.35rem;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__suit-track {
+    gap: 4px;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__suit-option {
+    min-height: 88px;
+    padding-inline: 2px;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__suit-emblem {
+    width: 44px;
+    height: 48px;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__suit-icon {
+    width: 27px;
+    height: 34px;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__suit-name {
+    font-size: .9rem;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__suit-element {
+    font-size: .43rem;
+    letter-spacing: .1em;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__rank-selector {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2px;
+    margin: 0 auto .65rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--major-line) 64%, transparent);
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__rank-option {
+    position: relative;
+    min-width: 0;
+    min-height: 44px;
+    border: 0;
+    padding: 8px 3px;
+    color: var(--major-muted);
+    background: transparent;
+    font: 700 .55rem/1.2 var(--logo-font, Cinzel, serif);
+    letter-spacing: .055em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color .25s ease;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__rank-option::after {
+    position: absolute;
+    right: 20%;
+    bottom: -1px;
+    left: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--major-accent-strong), transparent);
+    content: "";
+    opacity: 0;
+    transform: scaleX(.3);
+    transition: opacity .25s ease, transform .28s ease;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__rank-option.is-active {
+    color: var(--major-heading);
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__rank-option.is-active::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__rank-option:focus-visible {
+    border-radius: 3px;
+    outline: 2px solid var(--major-accent-strong);
+    outline-offset: -3px;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__viewport {
+    overflow: visible;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__panel {
+    min-width: 0;
+    padding-top: .25rem;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__procession {
+    display: flex;
+    width: auto;
+    gap: 16px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    margin-inline: -16px;
+    padding: 1.15rem 16px 1.35rem;
+    scroll-padding-inline: 16px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__procession::-webkit-scrollbar {
+    display: none;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__role,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-entering .minor-court-cards__role,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-leaving .minor-court-cards__role {
+    width: min(82vw, 340px);
+    min-width: min(82vw, 340px);
+    flex: 0 0 min(82vw, 340px);
+    scroll-snap-align: center;
+    transform: none;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-entering .minor-court-cards__role,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__panel.is-leaving .minor-court-cards__role {
+    transform: translateY(14px);
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__figure {
+    width: min(64vw, 235px);
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__content {
+    width: min(100%, 340px);
+    padding-inline: .7rem;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__content h3 {
+    font-size: clamp(2.7rem, 13vw, 3.5rem);
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__description {
+    font-size: .9rem;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__progression {
+    display: none;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__mobile-controls {
+    display: grid;
+    grid-template-columns: auto minmax(64px, 1fr) auto auto;
+    align-items: center;
+    gap: 10px;
+    margin-top: .35rem;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__mobile-controls > button {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    padding: 4px;
+    color: var(--major-accent-strong);
+    background: transparent;
+    font: 700 .52rem/1.2 var(--logo-font, Cinzel, serif);
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__mobile-controls > button:last-child {
+    justify-self: end;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__mobile-controls > button:disabled {
+    cursor: default;
+    opacity: .38;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__mobile-controls > button:focus-visible {
+    border-radius: 3px;
+    outline: 2px solid var(--major-accent-strong);
+    outline-offset: 3px;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__mobile-progress {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__mobile-progress > span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--major-line);
+    transition: background .25s ease, box-shadow .25s ease;
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__mobile-progress > span.is-active {
+    background: var(--major-accent-strong);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--major-accent) 44%, transparent);
+  }
+
+  .minor-arcana-page .minor-court-cards .minor-court-cards__mobile-count {
+    color: var(--major-muted);
+    font: 700 .5rem/1 var(--logo-font, Cinzel, serif);
+    letter-spacing: .08em;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 620px) {
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__cards {
+    display: flex;
+    width: auto;
+    gap: 16px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    margin-inline: -16px;
+    padding: .45rem 16px 1rem;
+    scroll-padding-inline: 16px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__cards::-webkit-scrollbar {
+    display: none;
+  }
+
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__card {
+    width: 76vw;
+    min-width: 76vw;
+    flex: 0 0 76vw;
+    scroll-snap-align: center;
+  }
+
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__card figure {
+    width: min(58vw, 215px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .minor-arcana-page .minor-arcana-filters button,
-  .minor-arcana-page .minor-suits__tabs button,
-  .minor-arcana-page .minor-numbers__tabs button,
-  .minor-arcana-page .minor-courts__tabs button,
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__option,
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__card,
+  .minor-arcana-page .minor-number-patterns .minor-number-patterns__card figure,
+  .minor-arcana-page .minor-suits .minor-suit-selector__option,
+  .minor-arcana-page .minor-suits .minor-suit-selector__portal,
+  .minor-arcana-page .minor-suits .minor-suit-selector__icon,
+  .minor-arcana-page .minor-suits .minor-suit-selector__effect,
+  .minor-arcana-page .minor-suits .minor-suit-selector__effect::before,
+  .minor-arcana-page .minor-suits .minor-suit-selector__effect::after,
   .minor-arcana-page .minor-suits__panel,
   .minor-arcana-page .minor-numbers__panel,
-  .minor-arcana-page .minor-courts__panel,
   .minor-arcana-page .minor-suits__cards figure,
-  .minor-arcana-page .minor-arcana-carousel-progress span {
+  .minor-arcana-page .minor-arcana-carousel-progress span,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__panel,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__role,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__figure,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__figure::before,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__card-image,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__suit-option::after,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__suit-emblem,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__suit-icon,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__rank-option,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__rank-option::after,
+  .minor-arcana-page .minor-court-cards .minor-court-cards__mobile-progress > span {
     transition: none !important;
+  }
+
+  .minor-arcana-page .minor-suits .minor-suit-selector__effect,
+  .minor-arcana-page .minor-suits .minor-suit-selector__effect::before,
+  .minor-arcana-page .minor-suits .minor-suit-selector__effect::after {
+    animation: none !important;
   }
 }
