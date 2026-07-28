@@ -136,6 +136,14 @@
     <priority>0.85</priority>
   </url>
   <!-- GENERATED:TAROT_TOPIC_PAGES:END -->
+  <!-- GENERATED:TAROT_SPREADS_PAGE:START -->
+  <url>
+    <loc>https://astralveil.world/tarot-spreads/</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+<!-- GENERATED:TAROT_SPREADS_PAGE:END -->
   <!-- GENERATED:MINOR_ARCANA_PAGE:START -->
   <url>
     <loc>https://astralveil.world/tarot/minor-arcana/</loc>
