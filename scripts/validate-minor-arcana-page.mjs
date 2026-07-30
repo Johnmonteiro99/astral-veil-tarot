@@ -10,6 +10,7 @@ import {
   getMinorArcanaRoute,
   validateMinorArcanaData
 } from "./minor-arcana-page-helpers.mjs";
+import { validateRenderedTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const outputPath = getMinorArcanaOutputPath(rootDir, minorArcanaPage);
@@ -118,41 +119,13 @@ if (!existsSync(outputPath)) {
     errors.push("shared shell: dead custom-element shell or missing legacy asset references remain");
   }
 
-  const educationNavStart = html.indexOf('<nav class="tarot-education-nav"');
-  const educationNavEnd = educationNavStart >= 0 ? html.indexOf("</nav>", educationNavStart) : -1;
-  const educationNavHtml = educationNavStart >= 0 && educationNavEnd > educationNavStart
-    ? html.slice(educationNavStart, educationNavEnd)
-    : "";
-  if (
-    !educationNavHtml.includes('aria-label="Tarot education"') ||
-    countMatches(/data-tarot-education-item="/g, educationNavHtml) !== 8 ||
-    countMatches(/class="tarot-education-nav__item/g, educationNavHtml) !== 8 ||
-    countMatches(/<a class="tarot-education-nav__item/g, educationNavHtml) !== 5 ||
-    countMatches(/aria-disabled="true"/g, educationNavHtml) !== 3 ||
-    !educationNavHtml.includes('href="/tarot/minor-arcana/" aria-current="page" data-tarot-education-active')
-  ) {
-    errors.push("education navigation: expected five live routes, three Coming Soon items, and an active Minor Arcana link");
-  }
-  [
-    'href="/tarot/history/"',
-    'href="/tarot/major-arcana/"',
-    'href="/tarot/minor-arcana/"',
-    'href="/tarot/compare/tarot-vs-oracle-cards/"',
-    'href="/tarot/compare/tarot-vs-lenormand/"'
-  ].forEach((token) => {
-    if (!educationNavHtml.includes(token)) errors.push(`education navigation: live route is missing (${token})`);
-  });
-  [
-    'href="/tarot/for-beginners/',
-    'href="/tarot/how-to-read/',
-    'href="/tarot/spreads/'
-  ].forEach((token) => {
-    if (educationNavHtml.includes(token)) errors.push(`education navigation: unavailable route must not be linked (${token})`);
-  });
+  validateRenderedTarotEducationNavigation(html, { activeKey: "minor-arcana", rootDir })
+    .forEach((error) => errors.push(`education navigation: ${error}`));
 
   if (
-    !html.includes('class="major-arcana-hero minor-arcana-hero"') ||
-    !html.includes('class="major-arcana-hero__image"') ||
+    !html.includes("tarot-education-hero--immersive") ||
+    !html.includes("minor-arcana-hero") ||
+    !html.includes("major-arcana-hero__image") ||
     !html.includes('loading="eager" decoding="async" fetchpriority="high"') ||
     !html.includes('href="#explore-minor-arcana">Explore the 56 Cards')
   ) {
@@ -488,8 +461,7 @@ if (!existsSync(outputPath)) {
     "updateRankState",
     "syncActivePanel",
     "reducedMotionQuery",
-    "positionActiveEducationItem",
-    "data-tarot-education-viewport"
+    "reducedMotionQuery"
   ].forEach((token) => {
     if (!js.includes(token)) errors.push(`interaction: required Minor behavior is missing (${token})`);
   });

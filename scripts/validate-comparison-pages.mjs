@@ -9,6 +9,7 @@ import {
   resolveComparisonCard,
   validateComparisonData
 } from "./comparison-page-helpers.mjs";
+import { validateRenderedTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const errors = validateComparisonData(tarotComparisons, { rootDir, checkGenerated: true });
@@ -34,9 +35,14 @@ tarotComparisons.forEach((comparison) => {
   const tarotExampleCount = (html.match(/<figure class="tarot-comparison-example tarot-comparison-example--tarot">/g) || []).length;
   const conceptualExampleCount = (html.match(/data-conceptual-comparison-example/g) || []).length;
   const decisionHeadingCount = (html.match(/id="comparison-decision-heading"/g) || []).length;
-  const heroStart = html.indexOf('<section class="tarot-comparison-hero"');
+  const heroStart = html.indexOf("tarot-comparison-hero");
   const introductionStart = html.indexOf('<section class="tarot-comparison-introduction tarot-comparison-section"');
   const directStart = html.indexOf('<section class="tarot-comparison-direct tarot-comparison-section"');
+  const activeEducationKey = comparison.slug === "tarot-vs-lenormand"
+    ? "tarot-vs-lenormand"
+    : "tarot-vs-oracle";
+  validateRenderedTarotEducationNavigation(html, { activeKey: activeEducationKey, rootDir })
+    .forEach((error) => errors.push(`${comparison.id}.educationNavigation: ${error}`));
 
   if (sitemapCount !== 1) errors.push(`${comparison.id}.sitemap: expected one entry, found ${sitemapCount}`);
   if (canonicalCount !== 1) errors.push(`${comparison.id}.canonical: expected one canonical, found ${canonicalCount}`);
@@ -123,7 +129,7 @@ tarotComparisons.forEach((comparison) => {
     || !comparisonCss.includes("backdrop-filter: blur(10px);")) {
     errors.push(`${comparison.id}.comparisonRows: editorial comparison panel styling is missing`);
   }
-  if (!comparisonCss.includes("min-height: clamp(420px, 34vw, 500px);")
+  if (!comparisonCss.includes("--education-hero-height: clamp(380px, 34vw, 500px);")
     || !comparisonCss.includes(".tarot-comparison-introduction {")
     || !comparisonCss.includes("grid-template-columns: minmax(150px, .35fr) minmax(0, 1.45fr) minmax(260px, .75fr);")) {
     errors.push(`${comparison.id}.hero: compact editorial hero or direct-answer layout is missing`);

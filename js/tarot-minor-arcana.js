@@ -3,36 +3,8 @@
   document.documentElement.dataset.minorArcanaInitialized = "true";
 
   const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const educationNavViewport = document.querySelector("[data-tarot-education-viewport]");
-  const activeEducationItem = educationNavViewport?.querySelector("[data-tarot-education-active]");
   const carouselRoot = document.querySelector("[data-minor-carousel]");
   let applyMinorFilter = () => {};
-
-  function positionActiveEducationItem() {
-    if (!educationNavViewport
-      || !activeEducationItem
-      || !window.matchMedia("(max-width: 820px)").matches) return;
-
-    const maximumScroll = Math.max(0, educationNavViewport.scrollWidth - educationNavViewport.clientWidth);
-    if (maximumScroll <= 1) {
-      educationNavViewport.scrollLeft = 0;
-      return;
-    }
-
-    const viewportRect = educationNavViewport.getBoundingClientRect();
-    const activeRect = activeEducationItem.getBoundingClientRect();
-    const activeCenter = activeRect.left
-      - viewportRect.left
-      + educationNavViewport.scrollLeft
-      + (activeRect.width / 2);
-    educationNavViewport.scrollLeft = Math.min(
-      maximumScroll,
-      Math.max(0, activeCenter - (educationNavViewport.clientWidth / 2))
-    );
-  }
-
-  window.addEventListener("load", positionActiveEducationItem, { once: true });
-  window.requestAnimationFrame(() => window.requestAnimationFrame(positionActiveEducationItem));
 
   if (carouselRoot) {
     const viewport = carouselRoot.querySelector("[data-minor-carousel-viewport]");

@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="/css/animations.css" />
     <link rel="stylesheet" href="/css/tarot.css" />
     <link rel="stylesheet" href="/css/tarot-major-arcana.css" />
+    <link rel="stylesheet" href="/css/tarot-education-typography.css" />
   </head>
   <body class="sun-mode tarot-meanings-page tarot-major-arcana-page">
     <script>(function(){var params=new URLSearchParams(window.location.search);var queryBloodMoon=params.get("bloodMoon")||params.get("testBloodMoon");var hasOverride=params.has("bloodMoon")||params.has("testBloodMoon");var isBloodMoon=hasOverride&&(queryBloodMoon===""||/^(1|true|yes|on|active)$/i.test(queryBloodMoon||""));var mode="";try{isBloodMoon=hasOverride?isBloodMoon:sessionStorage.getItem("astralVeilBloodMoonActive")==="true"||localStorage.getItem("astralVeilBloodMoonActive")==="true"||sessionStorage.getItem("astralVeilTestBloodMoonActive")==="true"||localStorage.getItem("astralVeilTestBloodMoonActive")==="true";mode=localStorage.getItem("dailyTarotTheme")||""}catch(error){}if(mode!=="sun"&&mode!=="moon")mode=new Date().getHours()>=6&&new Date().getHours()<18?"sun":"moon";document.body.classList.remove("sun-mode","moon-mode","blood-moon-mode");document.body.classList.add(isBloodMoon?"blood-moon-mode":mode+"-mode")})();</script>
@@ -48,18 +49,24 @@
 
     <div class="tarot-background" aria-hidden="true"><div class="celestial-wash"></div><div class="starfield"></div><div class="mystic-mist"></div><div class="lunar-orb"></div></div>
 
-    <main id="main-content" class="major-arcana-page">
-      <section class="major-arcana-hero" aria-labelledby="major-arcana-title">
-        <div class="major-arcana-hero__stage">
-          <div class="major-arcana-hero__title">
+    <main id="main-content" class="major-arcana-page tarot-education-page">
+      <nav class="tarot-education-nav" aria-label="Tarot education pages">
+        <div class="tarot-education-nav__viewport" data-tarot-education-viewport>
+          <div class="tarot-education-nav__track"><a class="tarot-education-nav__item" href="/tarot/history/" data-tarot-education-item="history">Tarot History</a><a class="tarot-education-nav__item is-active" href="/tarot/major-arcana/" aria-current="page" data-tarot-education-active data-tarot-education-item="major-arcana">Major Arcana</a><a class="tarot-education-nav__item" href="/tarot/minor-arcana/" data-tarot-education-item="minor-arcana">Minor Arcana</a><span class="tarot-education-nav__item is-disabled" role="link" aria-disabled="true" aria-label="Tarot for Beginners — Coming Soon" tabindex="0" data-tarot-education-item="beginners"><span>Tarot for Beginners</span><small>Coming Soon</small></span><span class="tarot-education-nav__item is-disabled" role="link" aria-disabled="true" aria-label="How to Read Tarot — Coming Soon" tabindex="0" data-tarot-education-item="how-to-read"><span>How to Read Tarot</span><small>Coming Soon</small></span><a class="tarot-education-nav__item" href="/tarot-spreads/" data-tarot-education-item="spreads">Tarot Spreads</a><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-oracle-cards/" data-tarot-education-item="tarot-vs-oracle">Tarot vs. Oracle</a><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-lenormand/" data-tarot-education-item="tarot-vs-lenormand">Tarot vs. Lenormand</a></div>
+        </div>
+      </nav>
+      <section class="tarot-education-hero tarot-education-hero--immersive major-arcana-hero" aria-labelledby="major-arcana-title">
+        <div class="tarot-education-hero__stage major-arcana-hero__stage">
+          <div class="tarot-education-hero__copy major-arcana-hero__title">
             <p class="major-arcana-eyebrow">The 22 Archetypes of the Soul</p>
             <h1 id="major-arcana-title">Major Arcana Explained</h1>
           </div>
-          <figure class="major-arcana-hero__visual">
-            <img class="major-arcana-hero__image" src="/assets/images/background%20_images/major-arcana-explained.png" alt="A cloaked traveler facing a luminous celestial arch marked with symbolic constellations" width="1448" height="1086" loading="eager" decoding="async" fetchpriority="high" draggable="false" />
+          <figure class="tarot-education-hero__visual major-arcana-hero__visual">
+            <img class="tarot-education-hero__image major-arcana-hero__image" src="/assets/images/background%20_images/major-arcana-explained.png" alt="A cloaked traveler facing a luminous celestial arch marked with symbolic constellations" width="1448" height="1086" loading="eager" decoding="async" fetchpriority="high" draggable="false" />
           </figure>
+          <div class="tarot-education-hero__overlay" aria-hidden="true"></div>
         </div>
-        <div class="major-arcana-hero__content-band">
+        <div class="tarot-education-hero__editorial major-arcana-hero__content-band">
           <div class="major-arcana-hero__content-inner">
             <div class="major-arcana-hero__introduction">
               <p>The Major Arcana contains twenty-two cards that represent the larger patterns of human experience: beginnings, choices, relationships, challenges, transformation, and completion.</p><p>Numbered from The Fool at 0 to The World at 21, these cards often point to defining lessons and turning points. Together, they create a symbolic journey through growth, awareness, and change.</p>
@@ -989,6 +996,6 @@
 
     <footer class="site-footer" data-footer-drawer><div class="site-footer__shell"><div class="site-footer__compact"><p class="site-footer__mark">Astral Veil™</p><p class="site-footer__tagline">Between fate and imagination</p><div class="site-footer__actions"><button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details"><span data-footer-toggle-label>Explore</span><span class="site-footer__chevron" aria-hidden="true">⌄</span></button><button class="site-footer__share" type="button" data-share-astral-veil>Share</button></div></div><div class="site-footer__inner" id="site-footer-details" hidden><div class="site-footer__brand"><h2>Astral Veil™</h2><p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p><p class="site-footer__poem">✦ Between fate and imagination ✦</p></div><nav class="site-footer__nav" aria-label="Footer navigation"><p class="site-footer__label">Explore</p><a href="/">Home</a><a href="/veilwalkers">Veilwalkers</a><a href="/decks">DECKS</a><a href="/tarot">TAROT</a><a href="/about">About</a><a href="/lumen-archive" data-lumen-archive-footer-link>Lumen Archive</a></nav><div class="site-footer__creator"><p class="site-footer__label">Creator</p><p>Crafted by João Monteiro</p><p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p><p>Designer • Developer • Worldbuilder</p><p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p></div><p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p><nav class="site-footer__legal" aria-label="Legal links"><a href="/terms">Terms of Service</a><span aria-hidden="true">·</span><a href="/privacy">Privacy Policy</a></nav></div><p class="site-footer__share-status" aria-live="polite"></p></div></footer>
 
-    <script src="/data/events.js"></script><script src="/js/events.js"></script><script src="/js/bloodmoon-access.js"></script><script src="/js/app.js"></script><script src="/js/tarot-major-arcana.js"></script><script type="module" src="/src/public/public-auth-nav.js"></script>
+    <script src="/data/events.js"></script><script src="/js/events.js"></script><script src="/js/bloodmoon-access.js"></script><script src="/js/app.js"></script><script src="/js/tarot-education.js"></script><script src="/js/tarot-major-arcana.js"></script><script type="module" src="/src/public/public-auth-nav.js"></script>
   </body>
 </html>

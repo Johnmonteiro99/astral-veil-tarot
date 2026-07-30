@@ -9,6 +9,7 @@ import {
   resolveComparisonCard,
   validateComparisonData
 } from "./comparison-page-helpers.mjs";
+import { renderTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const templatePath = resolve(rootDir, "templates/tarot-comparison-page.html");
@@ -203,17 +204,22 @@ function renderMain(comparison) {
   const leftTabLabel = comparison.systems.left.tabLabel || leftTitle;
   const rightTabLabel = comparison.systems.right.tabLabel || rightTitle;
 
+  const activeEducationKey = comparison.slug === "tarot-vs-lenormand"
+    ? "tarot-vs-lenormand"
+    : "tarot-vs-oracle";
+
   return `<main id="main-content" class="tarot-comparison">
-      <section class="tarot-comparison-hero" aria-labelledby="tarot-comparison-title">
-        <div class="tarot-comparison-hero__shell">
-          <div class="tarot-comparison-hero__copy">
+      ${renderTarotEducationNavigation({ activeKey: activeEducationKey, rootDir })}
+      <section class="tarot-education-hero tarot-education-hero--compact tarot-comparison-hero tarot-comparison-hero--${escapeHtml(comparison.slug)}" aria-labelledby="tarot-comparison-title">
+        <div class="tarot-education-hero__stage tarot-comparison-hero__shell">
+          <div class="tarot-education-hero__copy tarot-comparison-hero__copy">
             <p class="tarot-comparison-kicker">${escapeHtml(comparison.eyebrow)}</p>
             <h1 id="tarot-comparison-title">${escapeHtml(comparison.title)}</h1>
             <span class="tarot-comparison-rule" aria-hidden="true"><span>✦</span></span>
           </div>
-          <figure class="tarot-comparison-hero__art">
+          <figure class="tarot-education-hero__visual tarot-comparison-hero__art">
             ${renderThemeImage({
-              className: "tarot-comparison-hero__image",
+              className: "tarot-education-hero__image tarot-comparison-hero__image",
               regularImage: hero.regularImage,
               bloodMoonImage: hero.bloodMoonImage,
               regularAlt: hero.regularAlt,
@@ -224,6 +230,7 @@ function renderMain(comparison) {
               fetchpriority: "high"
             })}
           </figure>
+          <div class="tarot-education-hero__overlay" aria-hidden="true"></div>
         </div>
       </section>
 

@@ -8,6 +8,7 @@ import {
   getHistoryRoute,
   validateHistoryData
 } from "./history-page-helpers.mjs";
+import { renderTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const templatePath = resolve(rootDir, "templates/tarot-history-page.html");
@@ -543,19 +544,20 @@ function renderClosingCta(history) {
 
 function renderMain(history) {
   return `<main id="main-content" class="tarot-history">
-      <section class="tarot-history-hero" aria-labelledby="tarot-history-title">
-        <div class="tarot-history-hero__copy">
+      ${renderTarotEducationNavigation({ activeKey: "history", rootDir })}
+      <section class="tarot-education-hero tarot-education-hero--immersive tarot-history-hero" aria-labelledby="tarot-history-title">
+        <div class="tarot-education-hero__copy tarot-history-hero__copy">
           <p class="tarot-history-eyebrow">${escapeHtml(history.hero.eyebrow)}</p>
           <h1 id="tarot-history-title">${escapeHtml(history.hero.title)}</h1>
           <p>${escapeHtml(history.hero.introduction)}</p>
           <a class="tarot-history-button" href="${escapeHtml(history.hero.ctaTarget)}">${escapeHtml(history.hero.ctaLabel)} <span aria-hidden="true">→</span></a>
         </div>
         ${renderImage(history.hero.image, {
-          className: "tarot-history-hero__image",
+          className: "tarot-education-hero__image tarot-history-hero__image",
           loading: "eager",
           fetchpriority: "high"
         })}
-        <div class="tarot-history-hero__veil"></div>
+        <div class="tarot-education-hero__overlay tarot-history-hero__veil" aria-hidden="true"></div>
       </section>
       <div class="tarot-history-archive">
         <aside class="tarot-history-visual-note" aria-label="Visual reconstruction disclosure">

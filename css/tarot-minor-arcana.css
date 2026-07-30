@@ -30,6 +30,15 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-page {
   background: transparent;
 }
 
+.minor-arcana-page .minor-arcana-hero {
+  --education-hero-image-position: 50% 58%;
+  --education-hero-text-width: 590px;
+  --education-hero-horizontal-fade-start: 32%;
+  --education-hero-horizontal-fade-end: 72%;
+  --education-hero-overlay-strength: 86%;
+  --education-hero-fade-angle: 270deg;
+}
+
 .minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage {
   grid-template-columns: minmax(0, 54fr) minmax(0, 46fr);
 }
@@ -52,26 +61,8 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-page {
 }
 
 .minor-arcana-page .minor-arcana-hero .major-arcana-hero__image {
-  object-position: 50% 58%;
+  object-position: var(--education-hero-image-position);
   filter: saturate(.9) contrast(.98);
-}
-
-.minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-  background:
-    linear-gradient(270deg, rgba(2, 17, 18, .84) 0%, rgba(2, 17, 18, .58) 32%, rgba(2, 17, 18, .17) 64%, transparent 100%),
-    linear-gradient(180deg, rgba(2, 17, 18, .02), rgba(2, 17, 18, .52));
-}
-
-body.moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-  background:
-    linear-gradient(270deg, rgba(3, 13, 22, .86) 0%, rgba(3, 13, 22, .6) 32%, rgba(3, 13, 22, .18) 64%, transparent 100%),
-    linear-gradient(180deg, rgba(3, 13, 22, .02), rgba(3, 13, 22, .55));
-}
-
-body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-  background:
-    linear-gradient(270deg, rgba(16, 2, 6, .86) 0%, rgba(16, 2, 6, .6) 32%, rgba(16, 2, 6, .18) 64%, transparent 100%),
-    linear-gradient(180deg, rgba(16, 2, 6, .02), rgba(16, 2, 6, .56));
 }
 
 .minor-arcana-page .minor-arcana-hero .major-arcana-hero__content-inner {
@@ -1720,6 +1711,12 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-court-cards .minor-court-car
 }
 
 @media (max-width: 768px) {
+  .minor-arcana-page .minor-arcana-hero {
+    --education-hero-image-position: 36% 62%;
+    --education-hero-horizontal-fade-start: 34%;
+    --education-hero-horizontal-fade-end: 76%;
+  }
+
   .minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage {
     display: block;
   }
@@ -1740,27 +1737,7 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-court-cards .minor-court-car
   }
 
   .minor-arcana-page .minor-arcana-hero .major-arcana-hero__image {
-    object-position: 36% 62%;
-  }
-
-  .minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after,
-  body.moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after,
-  body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-    background:
-      linear-gradient(270deg, rgba(3, 15, 17, .7), rgba(3, 15, 17, .24) 64%, transparent),
-      linear-gradient(180deg, rgba(3, 15, 17, .72) 0%, rgba(3, 15, 17, .52) 42%, rgba(3, 15, 17, .17) 76%, rgba(3, 15, 17, .54) 100%);
-  }
-
-  body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-    background:
-      linear-gradient(270deg, rgba(16, 2, 6, .72), rgba(16, 2, 6, .25) 64%, transparent),
-      linear-gradient(180deg, rgba(16, 2, 6, .74) 0%, rgba(16, 2, 6, .54) 42%, rgba(16, 2, 6, .18) 76%, rgba(16, 2, 6, .56) 100%);
-  }
-
-  body.moon-mode.tarot-minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage::after {
-    background:
-      linear-gradient(270deg, rgba(3, 13, 22, .72), rgba(3, 13, 22, .25) 64%, transparent),
-      linear-gradient(180deg, rgba(3, 13, 22, .74) 0%, rgba(3, 13, 22, .54) 42%, rgba(3, 13, 22, .18) 76%, rgba(3, 13, 22, .56) 100%);
+    object-position: var(--education-hero-image-position);
   }
 
   .minor-arcana-page .minor-arcana-filters {

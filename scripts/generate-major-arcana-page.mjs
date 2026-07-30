@@ -10,6 +10,7 @@ import {
   getMajorArcanaRoute,
   validateMajorArcanaData
 } from "./major-arcana-page-helpers.mjs";
+import { renderTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const templatePath = resolve(rootDir, "templates/tarot-major-arcana-page.html");
@@ -130,21 +131,22 @@ function renderSectionHeader(section) {
 }
 
 function renderHero(page) {
-  return `<section class="major-arcana-hero" aria-labelledby="major-arcana-title">
-        <div class="major-arcana-hero__stage">
-          <div class="major-arcana-hero__title">
+  return `<section class="tarot-education-hero tarot-education-hero--immersive major-arcana-hero" aria-labelledby="major-arcana-title">
+        <div class="tarot-education-hero__stage major-arcana-hero__stage">
+          <div class="tarot-education-hero__copy major-arcana-hero__title">
             <p class="major-arcana-eyebrow">${escapeHtml(page.hero.eyebrow)}</p>
             <h1 id="major-arcana-title">${escapeHtml(page.hero.title)}</h1>
           </div>
-          <figure class="major-arcana-hero__visual">
+          <figure class="tarot-education-hero__visual major-arcana-hero__visual">
             ${renderImage(page.hero.image, {
-              className: "major-arcana-hero__image",
+              className: "tarot-education-hero__image major-arcana-hero__image",
               loading: "eager",
               fetchpriority: "high"
             })}
           </figure>
+          <div class="tarot-education-hero__overlay" aria-hidden="true"></div>
         </div>
-        <div class="major-arcana-hero__content-band">
+        <div class="tarot-education-hero__editorial major-arcana-hero__content-band">
           <div class="major-arcana-hero__content-inner">
             <div class="major-arcana-hero__introduction">
               ${page.hero.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}
@@ -484,6 +486,7 @@ function renderClosing(page) {
 
 function renderMain(page, cards, tarotCards) {
   return `<main id="main-content" class="major-arcana-page">
+      ${renderTarotEducationNavigation({ activeKey: "major-arcana", rootDir })}
       ${renderHero(page)}
       <div class="major-arcana-archive">
         ${renderExplore(page, cards)}

@@ -10,6 +10,7 @@ import {
   getMajorArcanaRoute,
   validateMajorArcanaData
 } from "./major-arcana-page-helpers.mjs";
+import { validateRenderedTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const outputPath = getMajorArcanaOutputPath(rootDir, majorArcanaPage);
@@ -22,11 +23,14 @@ if (!existsSync(outputPath)) {
 } else {
   const html = readFileSync(outputPath, "utf8");
   const css = readFileSync(resolve(rootDir, "css/tarot-major-arcana.css"), "utf8");
+  const sharedTarotCss = readFileSync(resolve(rootDir, "css/tarot.css"), "utf8");
   const js = readFileSync(resolve(rootDir, "js/tarot-major-arcana.js"), "utf8");
   const hubScript = readFileSync(resolve(rootDir, "js/tarot.js"), "utf8");
   const sitemap = readFileSync(resolve(rootDir, "sitemap.xml"), "utf8");
   const cards = buildMajorArcanaCards(majorArcanaPage, tarotCardDetails);
   const countMatches = (pattern, value = html) => (value.match(pattern) || []).length;
+  validateRenderedTarotEducationNavigation(html, { activeKey: "major-arcana", rootDir })
+    .forEach((error) => errors.push(`education navigation: ${error}`));
 
   const parseSchema = (id) => {
     const match = html.match(new RegExp(`<script id="${id}" type="application/ld\\+json">([\\s\\S]*?)<\\/script>`));
@@ -127,13 +131,13 @@ if (!existsSync(outputPath)) {
   if (countMatches(/class="major-arcana-slide__image"[\s\S]*?loading="lazy"/g) < 19) {
     errors.push("performance: below-fold carousel images must lazy-load");
   }
-  if (!html.includes(`class="major-arcana-hero__image"`) || !html.includes('loading="eager" decoding="async" fetchpriority="high"')) {
+  if (!html.includes("major-arcana-hero__image") || !html.includes('loading="eager" decoding="async" fetchpriority="high"')) {
     errors.push("performance: hero image must load eagerly with priority");
   }
-  const heroStageIndex = html.indexOf('class="major-arcana-hero__stage"');
+  const heroStageIndex = html.indexOf("major-arcana-hero__stage");
   const heroTitleIndex = html.indexOf('id="major-arcana-title"');
-  const heroImageIndex = html.indexOf('class="major-arcana-hero__visual"');
-  const heroBandIndex = html.indexOf('class="major-arcana-hero__content-band"');
+  const heroImageIndex = html.indexOf("major-arcana-hero__visual");
+  const heroBandIndex = html.indexOf("major-arcana-hero__content-band");
   const heroIntroductionIndex = html.indexOf('class="major-arcana-hero__introduction"');
   const heroFactsIndex = html.indexOf('class="major-arcana-hero__facts"');
   const heroCtaIndex = html.indexOf(`href="${majorArcanaPage.hero.ctaTarget}">${majorArcanaPage.hero.ctaLabel}`);
@@ -586,11 +590,15 @@ if (!existsSync(outputPath)) {
     errors.push("styles: mistaken readings redesign selectors must be fully removed");
   }
   const heroStageBlock = css.match(/\.major-arcana-hero__stage\s*\{([^}]*)\}/)?.[1] || "";
-  if (!heroStageBlock.includes("height: clamp(480px, 54vw, 620px)") || !heroStageBlock.includes("min-height: 0")) {
+  const heroBlock = css.match(/\.major-arcana-hero\s*\{([^}]*)\}/)?.[1] || "";
+  if (!heroBlock.includes("--education-hero-height: clamp(520px, 54vw, 620px)")
+    || !heroStageBlock.includes("height: var(--education-hero-height)")
+    || !heroStageBlock.includes("min-height: 0")) {
     errors.push("styles: cinematic hero stage must remain restrained and capped on desktop");
   }
-  const heroVisualBlock = css.match(/\.major-arcana-hero__visual\s*\{([^}]*)\}/)?.[1] || "";
-  if (!heroVisualBlock.includes("mask-image: linear-gradient")) {
+  const sharedHeroImageBlock = sharedTarotCss.match(/\.tarot-education-hero__image\s*\{([^}]*)\}/)?.[1] || "";
+  if (!sharedHeroImageBlock.includes("-webkit-mask-image: linear-gradient")
+    || !sharedHeroImageBlock.includes("mask-image: linear-gradient")) {
     errors.push("styles: hero image must dissolve into the inherited Astral Veil background");
   }
   const heroIntroSecondParagraphBlock = css.match(/\.major-arcana-hero__introduction p \+ p\s*\{([^}]*)\}/)?.[1] || "";

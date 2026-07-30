@@ -7,6 +7,7 @@ import {
   getHistoryRoute,
   validateHistoryData
 } from "./history-page-helpers.mjs";
+import { validateRenderedTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const outputPath = getHistoryOutputPath(rootDir, tarotHistory);
@@ -24,6 +25,8 @@ if (!existsSync(outputPath)) {
   const hubScript = readFileSync(resolve(rootDir, "js/tarot.js"), "utf8");
 
   const countMatches = (pattern, value = html) => (value.match(pattern) || []).length;
+  validateRenderedTarotEducationNavigation(html, { activeKey: "history", rootDir })
+    .forEach((error) => errors.push(`education navigation: ${error}`));
   const parseSchema = (id) => {
     const match = html.match(new RegExp(`<script id="${id}" type="application/ld\\+json">([\\s\\S]*?)<\\/script>`));
     if (!match) return null;
@@ -448,7 +451,7 @@ if (!existsSync(outputPath)) {
   routeTargets.forEach(([href, file]) => {
     if (!existsSync(resolve(rootDir, file))) errors.push(`internal route: expected target file for ${href}`);
   });
-  if (/href="\/tarot\/(?:for-beginners|major-arcana|minor-arcana)/.test(html)) {
+  if (/href="\/tarot\/(?:for-beginners|how-to-read)\//.test(html)) {
     errors.push("internal routes: unfinished Tarot guides must not be linked");
   }
 

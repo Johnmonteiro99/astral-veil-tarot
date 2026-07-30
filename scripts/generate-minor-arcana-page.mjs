@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { minorArcanaPage } from "../data/minor-arcana.mjs";
@@ -10,22 +10,13 @@ import {
   getMinorArcanaRoute,
   validateMinorArcanaData
 } from "./minor-arcana-page-helpers.mjs";
+import { renderTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const templatePath = resolve(rootDir, "templates/tarot-minor-arcana-page.html");
 const sitemapPath = resolve(rootDir, "sitemap.xml");
 const generatedMarkerStart = "<!-- GENERATED:MINOR_ARCANA_PAGE:START -->";
 const generatedMarkerEnd = "<!-- GENERATED:MINOR_ARCANA_PAGE:END -->";
-const tarotEducationNavigation = [
-  { key: "history", label: "Tarot History", route: "/tarot/history/" },
-  { key: "major-arcana", label: "Major Arcana", route: "/tarot/major-arcana/" },
-  { key: "minor-arcana", label: "Minor Arcana", route: "/tarot/minor-arcana/" },
-  { key: "beginners", label: "Tarot for Beginners", route: "/tarot/for-beginners/" },
-  { key: "how-to-read", label: "How to Read Tarot", route: "/tarot/how-to-read/" },
-  { key: "spreads", label: "Tarot Spreads", route: "/tarot/spreads/" },
-  { key: "tarot-vs-oracle", label: "Tarot vs. Oracle", route: "/tarot/compare/tarot-vs-oracle-cards/" },
-  { key: "tarot-vs-lenormand", label: "Tarot vs. Lenormand", route: "/tarot/compare/tarot-vs-lenormand/" }
-];
 
 function renderSchemas(page) {
   const canonicalUrl = `${SITE_ORIGIN}${getMinorArcanaRoute(page)}`;
@@ -143,28 +134,6 @@ function renderSectionHeader(section) {
         </header>`;
 }
 
-function renderEducationNavigation(page) {
-  const currentRoute = getMinorArcanaRoute(page);
-  const items = tarotEducationNavigation.map((item) => {
-    const outputPath = resolve(rootDir, item.route.replace(/^\/+/, ""), "index.html");
-    const isAvailable = existsSync(outputPath);
-    const isActive = item.route === currentRoute;
-    const className = `tarot-education-nav__item${isActive ? " is-active" : ""}${isAvailable ? "" : " is-disabled"}`;
-
-    if (isAvailable) {
-      return `<a class="${className}" href="${escapeHtml(item.route)}"${isActive ? ' aria-current="page" data-tarot-education-active' : ""} data-tarot-education-item="${escapeHtml(item.key)}">${escapeHtml(item.label)}</a>`;
-    }
-
-    return `<span class="${className}" role="link" aria-disabled="true" aria-label="${escapeHtml(item.label)} — Coming Soon" tabindex="0" data-tarot-education-item="${escapeHtml(item.key)}"><span>${escapeHtml(item.label)}</span><small>Coming Soon</small></span>`;
-  }).join("");
-
-  return `<nav class="tarot-education-nav" aria-label="Tarot education">
-        <div class="tarot-education-nav__viewport" data-tarot-education-viewport>
-          <div class="tarot-education-nav__track">${items}</div>
-        </div>
-      </nav>`;
-}
-
 function cardByTitle(title, cards = tarotCardDetails) {
   const card = cards.find((candidate) => candidate.title === title);
   if (!card) throw new Error(`Missing canonical tarot card: ${title}`);
@@ -172,17 +141,18 @@ function cardByTitle(title, cards = tarotCardDetails) {
 }
 
 function renderHero(page) {
-  return `<section class="major-arcana-hero minor-arcana-hero" aria-labelledby="minor-arcana-title">
-        <div class="major-arcana-hero__stage">
-          <div class="major-arcana-hero__title">
+  return `<section class="tarot-education-hero tarot-education-hero--immersive major-arcana-hero minor-arcana-hero" aria-labelledby="minor-arcana-title">
+        <div class="tarot-education-hero__stage major-arcana-hero__stage">
+          <div class="tarot-education-hero__copy major-arcana-hero__title">
             <p class="major-arcana-eyebrow">${escapeHtml(page.hero.eyebrow)}</p>
             <h1 id="minor-arcana-title">${escapeHtml(page.hero.title)}</h1>
           </div>
-          <figure class="major-arcana-hero__visual">
-            ${renderImage(page.hero.image, { className: "major-arcana-hero__image", loading: "eager", fetchpriority: "high" })}
+          <figure class="tarot-education-hero__visual major-arcana-hero__visual">
+            ${renderImage(page.hero.image, { className: "tarot-education-hero__image major-arcana-hero__image", loading: "eager", fetchpriority: "high" })}
           </figure>
+          <div class="tarot-education-hero__overlay" aria-hidden="true"></div>
         </div>
-        <div class="major-arcana-hero__content-band">
+        <div class="tarot-education-hero__editorial major-arcana-hero__content-band">
           <div class="major-arcana-hero__content-inner">
             <div class="major-arcana-hero__introduction">${page.hero.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>
             <div class="major-arcana-hero__meta">
@@ -571,7 +541,7 @@ function renderClosing(page) {
 
 function renderMain(page, cards) {
   return `<main id="main-content" class="major-arcana-page minor-arcana-page">
-      ${renderEducationNavigation(page)}
+      ${renderTarotEducationNavigation({ activeKey: "minor-arcana", rootDir })}
       ${renderHero(page)}
       <div class="major-arcana-archive">
         ${renderExplore(page, cards)}

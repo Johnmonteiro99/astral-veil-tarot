@@ -64,7 +64,7 @@
 .tarot-education-nav {
   --tarot-education-text: color-mix(in srgb, var(--theme-text-main) 76%, transparent);
   --tarot-education-muted: color-mix(in srgb, var(--theme-text-muted) 58%, transparent);
-  --tarot-education-accent: var(--major-accent, #c9a35d);
+  --tarot-education-accent: var(--major-accent, var(--history-accent, var(--comparison-accent, var(--tarot-gold, #c9a35d))));
   --tarot-education-line: color-mix(in srgb, var(--tarot-education-accent) 22%, transparent);
   position: relative;
   z-index: 3;
@@ -197,6 +197,105 @@
 
   .tarot-education-nav__viewport {
     scroll-snap-type: x proximity;
+  }
+}
+
+/* Shared shell for the education batch. Each page supplies framing variables
+   while the image mask and token-based text veil remain consistent. */
+.tarot-education-hero {
+  --education-hero-height: clamp(520px, 48vw, 640px);
+  --education-hero-image-position: center;
+  --education-hero-image-size: cover;
+  --education-hero-text-width: 620px;
+  --education-hero-horizontal-fade-start: 34%;
+  --education-hero-horizontal-fade-end: 68%;
+  --education-hero-bottom-fade-start: 72%;
+  --education-hero-overlay-strength: 94%;
+  --education-hero-fade-angle: 90deg;
+  --education-hero-surface: var(--major-surface-strong, var(--history-surface-strong, var(--comparison-surface-strong, var(--tarot-panel-strong))));
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: transparent;
+}
+
+.tarot-education-hero--compact {
+  --education-hero-height: clamp(380px, 34vw, 500px);
+  --education-hero-horizontal-fade-start: 32%;
+  --education-hero-horizontal-fade-end: 64%;
+}
+
+.tarot-education-hero__stage {
+  position: relative;
+  min-height: var(--education-hero-height);
+  isolation: isolate;
+  background: transparent;
+}
+
+.tarot-education-hero__copy {
+  position: relative;
+  z-index: 2;
+  max-width: var(--education-hero-text-width);
+}
+
+.tarot-education-hero__visual {
+  background: transparent;
+}
+
+.tarot-education-hero__image {
+  object-fit: var(--education-hero-image-size);
+  object-position: var(--education-hero-image-position);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 var(--education-hero-bottom-fade-start),
+    rgba(0, 0, 0, .78) 82%,
+    rgba(0, 0, 0, .2) 95%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 var(--education-hero-bottom-fade-start),
+    rgba(0, 0, 0, .78) 82%,
+    rgba(0, 0, 0, .2) 95%,
+    transparent 100%
+  );
+}
+
+.tarot-education-hero__overlay {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    linear-gradient(
+      var(--education-hero-fade-angle),
+      color-mix(in srgb, var(--education-hero-surface) var(--education-hero-overlay-strength), transparent) 0%,
+      color-mix(in srgb, var(--education-hero-surface) 76%, transparent) var(--education-hero-horizontal-fade-start),
+      transparent var(--education-hero-horizontal-fade-end)
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 54%,
+      color-mix(in srgb, var(--education-hero-surface) 18%, transparent) 76%,
+      transparent 100%
+    );
+  pointer-events: none;
+}
+
+.tarot-education-hero__editorial {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+@media (max-width: 768px) {
+  .tarot-education-hero,
+  .tarot-education-hero--compact {
+    --education-hero-height: auto;
+    --education-hero-horizontal-fade-start: 38%;
+    --education-hero-horizontal-fade-end: 76%;
+    --education-hero-bottom-fade-start: 68%;
   }
 }
 
