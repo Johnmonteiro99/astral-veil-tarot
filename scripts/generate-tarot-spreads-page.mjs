@@ -130,6 +130,23 @@ const explorerStageLayouts = {
   }
 };
 
+const modalDiagramLayouts = {
+  "celtic-cross": {
+    positions: [
+      { x: 38, y: 49, rotation: 0, mobileX: 36, mobileY: 49 },
+      { x: 38, y: 49, rotation: 90, mobileX: 36, mobileY: 49 },
+      { x: 38, y: 82, rotation: 0, mobileX: 36, mobileY: 82 },
+      { x: 12, y: 49, rotation: 0, mobileX: 10, mobileY: 49 },
+      { x: 38, y: 16, rotation: 0, mobileX: 36, mobileY: 16 },
+      { x: 64, y: 49, rotation: 0, mobileX: 62, mobileY: 49 },
+      { x: 89, y: 84, rotation: 0, mobileX: 88, mobileY: 84 },
+      { x: 89, y: 62, rotation: 0, mobileX: 88, mobileY: 62 },
+      { x: 89, y: 40, rotation: 0, mobileX: 88, mobileY: 40 },
+      { x: 89, y: 18, rotation: 0, mobileX: 88, mobileY: 18 }
+    ]
+  }
+};
+
 function renderSchemas(page) {
   const canonical = `${SITE_ORIGIN}${page.route}`;
   return {
@@ -208,6 +225,7 @@ function renderSectionHeader(section) {
 function renderCardBackDiagram(count, label, positionNames = [], modifier = "", options = {}) {
   const interactive = options.interactive === true;
   const spreadId = String(options.spreadId || "");
+  const layoutClass = options.layoutClass ? ` ${escapeHtml(options.layoutClass)}` : "";
   const cards = Array.from({ length: count }, (_, index) => {
     const position = positionNames[index] || `Position ${index + 1}`;
     const copy = options.positions?.[index]?.copy || "";
@@ -227,7 +245,7 @@ function renderCardBackDiagram(count, label, positionNames = [], modifier = "", 
   }).join("");
   const modifierClass = modifier ? ` ${modifier}` : "";
   return `<figure class="tarot-spread-diagram tarot-spread-diagram--${count}${modifierClass}" data-spread-card-count="${count}" aria-label="${escapeHtml(label)}">
-          <div class="tarot-spread-diagram__layout"${interactive ? ` role="group" aria-label="Choose a position in ${escapeHtml(label)}"` : ""}>${cards}</div>
+          <div class="tarot-spread-diagram__layout${layoutClass}"${interactive ? ` role="group" aria-label="Choose a position in ${escapeHtml(label)}"` : ""}>${cards}</div>
           <figcaption>${escapeHtml(label)}</figcaption>
         </figure>`;
 }
@@ -389,6 +407,7 @@ function renderExplorer(page) {
   }).join("");
   const modalPanels = section.items.map((spread) => {
     const positionNames = spread.positions.map((position) => position.name);
+    const modalLayout = modalDiagramLayouts[spread.id];
     const modalAction = spread.isAvailable
       ? `<a class="tarot-spreads-observatory-button tarot-spreads-observatory-button--primary" href="${escapeHtml(spread.href)}">Start This Spread</a>`
       : `<span class="tarot-spreads-explorer__release" role="status">Planned for v2.5</span>`;
@@ -400,7 +419,7 @@ function renderExplorer(page) {
             </header>
             <div class="tarot-spreads-modal__body">
               <div class="tarot-spreads-modal__preview">
-                ${renderCardBackDiagram(spread.cardCount, `${spread.name} modal layout preview`, positionNames, `tarot-spread-diagram--observatory tarot-spread-diagram--modal tarot-spread-diagram--${escapeHtml(spread.id)}`)}
+                ${renderCardBackDiagram(spread.cardCount, `${spread.name} modal layout preview`, positionNames, `tarot-spread-diagram--observatory tarot-spread-diagram--modal tarot-spread-diagram--${escapeHtml(spread.id)}`, { layout: modalLayout })}
                 <div class="tarot-spreads-modal__when">
                   <h4>When to use it</h4>
                   <p>${escapeHtml(spread.bestFor)}</p>
@@ -470,12 +489,23 @@ function renderBeginners(page) {
   };
   const spreadPresentations = section.groups.map((group, index) => {
     const route = routes[group.cards];
-    return `<article class="tarot-spreads-beginners__spread${index === 0 ? " is-active" : ""}" aria-current="${index === 0 ? "step" : "false"}" data-beginner-spread="${index}">
+    const isFiveCardSpread = group.cards === 5;
+    const diagram = renderCardBackDiagram(
+      group.cards,
+      `${group.title} beginner spread`,
+      group.positionNames,
+      "tarot-spread-diagram--beginner",
+      isFiveCardSpread ? { layoutClass: "beginner-five-card-layout" } : {}
+    );
+    const visual = isFiveCardSpread
+      ? `<div class="beginner-spread__visual">${diagram}</div>`
+      : diagram;
+    return `<article class="tarot-spreads-beginners__spread${isFiveCardSpread ? " beginner-spread beginner-spread--five" : ""}${index === 0 ? " is-active" : ""}" aria-current="${index === 0 ? "step" : "false"}" data-beginner-spread="${index}">
             <div class="tarot-spreads-beginners__stage">
-              ${renderCardBackDiagram(group.cards, `${group.title} beginner spread`, group.positionNames, "tarot-spread-diagram--beginner")}
+              ${visual}
               <button class="tarot-spreads-beginners__selector" type="button" aria-label="Select ${escapeHtml(group.title)} in the beginner progression" aria-pressed="${index === 0 ? "true" : "false"}" aria-controls="beginner-spread-copy-${group.cards}" data-beginner-selector="${index}"><span class="major-arcana-visually-hidden">Select ${escapeHtml(group.title)}</span></button>
             </div>
-            <div class="tarot-spreads-beginners__copy" id="beginner-spread-copy-${group.cards}">
+            <div class="tarot-spreads-beginners__copy${isFiveCardSpread ? " beginner-spread__content" : ""}" id="beginner-spread-copy-${group.cards}">
               <p class="tarot-spreads-beginners__label">${escapeHtml(group.label)}</p>
               <h3>${escapeHtml(group.title)}</h3>
               <span class="tarot-spreads-beginners__divider" aria-hidden="true"></span>
@@ -550,31 +580,116 @@ function renderPositions(page) {
   const section = page.positions;
   const card = tarotCardDetails.find((candidate) => candidate.title === section.cardTitle);
   if (!card) throw new Error(`Missing canonical tarot card: ${section.cardTitle}`);
+  const positions = section.examples.map((example, index) => ({
+    ...example,
+    index,
+    key: example.label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+  }));
+  const tabs = positions.map((position) => `<button class="tarot-spreads-positions__tab${position.index === 0 ? " is-active" : ""}" id="card-position-tab-${position.key}" type="button" role="tab" aria-selected="${position.index === 0 ? "true" : "false"}" aria-controls="card-position-panel-${position.key}" tabindex="${position.index === 0 ? "0" : "-1"}" data-card-position-tab="${position.key}"><span>${escapeHtml(position.label)}</span></button>`).join("");
+  const markers = positions.map((position) => `<span class="tarot-spreads-positions__marker tarot-spreads-positions__marker--${position.key}${position.index === 0 ? " is-active" : ""}" data-card-position-marker="${position.key}"><span>${String(position.index + 1).padStart(2, "0")}</span><strong>${escapeHtml(position.label)}</strong></span>`).join("");
+  const panels = positions.map((position) => `<article class="tarot-spreads-positions__panel${position.index === 0 ? " is-active" : ""}" id="card-position-panel-${position.key}" role="tabpanel" aria-labelledby="card-position-tab-${position.key}" aria-hidden="${position.index === 0 ? "false" : "true"}"${position.index === 0 ? "" : " hidden inert"} data-card-position-panel="${position.key}">
+                  <p class="tarot-spreads-positions__number">Position ${String(position.index + 1).padStart(2, "0")}</p>
+                  <p class="tarot-spreads-positions__context">${escapeHtml(position.context)}</p>
+                  <h3>${escapeHtml(position.label)}</h3>
+                  <span class="tarot-spreads-positions__divider" aria-hidden="true"></span>
+                  <p class="tarot-spreads-positions__meaning">${escapeHtml(position.copy)}</p>
+                </article>`).join("");
   return `<section class="tarot-spreads-section tarot-spreads-positions" id="${escapeHtml(section.id)}" aria-labelledby="${escapeHtml(section.id)}-heading">
         <div class="tarot-spreads-shell">
           ${renderSectionHeader(section)}
-          <div class="tarot-spreads-positions__grid">${section.examples.map((example) => `<article><figure>${renderThemeCardImage(card, "tarot-spreads-positions__card")}<figcaption>${escapeHtml(example.label)}</figcaption></figure><div><h3>${escapeHtml(example.label)}</h3><p>${escapeHtml(example.copy)}</p></div></article>`).join("")}</div>
-          <p class="tarot-spreads-positions__link"><a href="/tarot/the-hermit/">Explore The Hermit tarot card meaning <span aria-hidden="true">→</span></a></p>
+          <div class="tarot-spreads-positions__experience" data-card-position-experience data-active-position="${positions[0].key}" style="--position-active-index:0">
+            <div class="tarot-spreads-positions__selector" role="tablist" aria-label="Choose The Hermit's spread position">
+              ${tabs}
+            </div>
+            <div class="tarot-spreads-positions__visual">
+              <div class="tarot-spreads-positions__markers" aria-hidden="true">${markers}</div>
+              <figure class="tarot-spreads-positions__figure">
+                <span class="tarot-spreads-positions__trace" aria-hidden="true"></span>
+                ${renderThemeCardImage(card, "tarot-spreads-positions__card")}
+                <figcaption>The Hermit — one card interpreted through three spread positions.</figcaption>
+              </figure>
+            </div>
+            <div class="tarot-spreads-positions__reading" aria-live="polite">
+              <div class="tarot-spreads-positions__panels">${panels}</div>
+              <p class="tarot-spreads-positions__link"><a href="/tarot/the-hermit/">Explore The Hermit Tarot Card Meaning <span aria-hidden="true">→</span></a></p>
+            </div>
+          </div>
         </div>
       </section>`;
 }
 
 function renderHowTo(page) {
   const section = page.howTo;
+  const renderCardBack = (className = "") => `<img${className ? ` class="${className}"` : ""} src="${cardBack.src}" alt="" width="${cardBack.width}" height="${cardBack.height}" loading="lazy" decoding="async" data-major-theme-image data-standard-src="${cardBack.src}" data-standard-alt="" data-blood-src="${cardBack.bloodSrc}" data-blood-alt="" />`;
+  const renderVisual = (stage) => {
+    if (stage.visual === "question") {
+      return `<div class="question-story-visual question-story-visual--question" aria-hidden="true"><span class="question-story-visual__orbit"></span><span class="question-story-visual__question">?</span><span class="question-story-visual__journal-line"></span></div>`;
+    }
+    if (stage.visual === "layout") {
+      return `<div class="question-story-visual question-story-visual--layout" aria-hidden="true">
+                    <span class="question-story-layout-symbol question-story-layout-symbol--one"><i></i></span>
+                    <span class="question-story-layout-symbol question-story-layout-symbol--three"><i></i><i></i><i></i></span>
+                    <span class="question-story-layout-symbol question-story-layout-symbol--five"><i></i><i></i><i></i><i></i><i></i></span>
+                    <span class="question-story-layout-symbol question-story-layout-symbol--cross">${Array.from({ length: 10 }, () => "<i></i>").join("")}</span>
+                  </div>`;
+    }
+    if (stage.visual === "shuffle") {
+      return `<div class="question-story-visual question-story-visual--shuffle" aria-hidden="true">${renderCardBack()}${renderCardBack()}${renderCardBack()}</div>`;
+    }
+    if (stage.visual === "place") {
+      return `<div class="question-story-visual question-story-visual--place" aria-hidden="true"><span class="question-story-visual__deck">${renderCardBack()}</span><span class="question-story-visual__dealt">${renderCardBack()}${renderCardBack()}${renderCardBack()}</span></div>`;
+    }
+    return `<div class="question-story-visual question-story-visual--story" aria-hidden="true"><span class="question-story-visual__constellation"></span>${renderCardBack()}${renderCardBack()}${renderCardBack()}<span class="question-story-visual__marker">✦</span></div>`;
+  };
+  const tabs = section.stages.map((stage, index) => `<button class="tarot-spreads-how-to__tab${index === 0 ? " is-active" : ""}" id="question-story-tab-${escapeHtml(stage.key)}" type="button" role="tab" aria-selected="${index === 0 ? "true" : "false"}" aria-controls="question-story-panel-${escapeHtml(stage.key)}" tabindex="${index === 0 ? "0" : "-1"}" data-question-story-tab="${escapeHtml(stage.key)}"><span class="tarot-spreads-how-to__node" aria-hidden="true"><span>${String(index + 1).padStart(2, "0")}</span></span><span class="tarot-spreads-how-to__tab-title">${escapeHtml(stage.title)}</span></button>`).join("");
+  const panels = section.stages.map((stage, index) => {
+    const guidance = stage.guidance?.length ? `<section class="tarot-spreads-how-to__dossier-group" aria-labelledby="question-story-${escapeHtml(stage.key)}-guidance"><p class="tarot-spreads-how-to__dossier-label">Archive guidance</p><h4 id="question-story-${escapeHtml(stage.key)}-guidance">Guidance for this stage</h4><ul class="tarot-spreads-how-to__guidance">${stage.guidance.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section>` : "";
+    const recommendations = stage.recommendations?.length ? `<section class="tarot-spreads-how-to__dossier-group" aria-labelledby="question-story-${escapeHtml(stage.key)}-recommendations"><p class="tarot-spreads-how-to__dossier-label">Layout index</p><h4 id="question-story-${escapeHtml(stage.key)}-recommendations">Match the question to the spread</h4><dl class="tarot-spreads-how-to__recommendations">${stage.recommendations.map((item) => `<div><dt>${escapeHtml(item.label)}</dt><dd>${escapeHtml(item.copy)}</dd></div>`).join("")}</dl></section>` : "";
+    const examples = stage.examples?.length ? `<section class="tarot-spreads-how-to__dossier-group" aria-labelledby="question-story-${escapeHtml(stage.key)}-examples"><p class="tarot-spreads-how-to__dossier-label">Example prompts</p><h4 id="question-story-${escapeHtml(stage.key)}-examples">Questions worth opening</h4><ul class="tarot-spreads-how-to__prompts">${stage.examples.map((example) => `<li>“${escapeHtml(example)}”</li>`).join("")}</ul></section>` : "";
+    const note = stage.note ? `<p class="tarot-spreads-how-to__note">${escapeHtml(stage.note)}</p>` : "";
+    const action = stage.action ? `<p class="tarot-spreads-how-to__stage-action"><a href="${escapeHtml(stage.action.href)}">${escapeHtml(stage.action.label)} <span aria-hidden="true">→</span></a></p>` : "";
+    const detailContent = [recommendations, guidance, examples, note, action].filter(Boolean).join("\n                  ");
+    return `<article class="tarot-spreads-how-to__panel${index === 0 ? " is-active" : ""}" id="question-story-panel-${escapeHtml(stage.key)}" role="tabpanel" aria-labelledby="question-story-tab-${escapeHtml(stage.key)}" aria-hidden="${index === 0 ? "false" : "true"}"${index === 0 ? "" : " hidden inert"} data-question-story-panel="${escapeHtml(stage.key)}" data-question-story-stage-index="${index}">
+                <div class="tarot-spreads-how-to__stage-lead">
+                  <p class="tarot-spreads-how-to__stage-number"><span>Stage ${String(index + 1).padStart(2, "0")}</span><span>Archive record ${index + 1}/${section.stages.length}</span></p>
+                  <h3>${escapeHtml(stage.title)}</h3>
+                  <p class="tarot-spreads-how-to__summary">${escapeHtml(stage.summary)}</p>
+                  ${renderVisual(stage)}
+                </div>
+                <div class="tarot-spreads-how-to__stage-detail">
+                  <p class="tarot-spreads-how-to__dossier-label">Active dossier · ${escapeHtml(stage.title)}</p>
+                  <p class="tarot-spreads-how-to__dossier-lead">${escapeHtml(stage.lead)}</p>
+                  ${detailContent}
+                </div>
+              </article>`;
+  }).join("");
+  const destinationIcons = [
+    `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="7" y="3.5" width="10" height="17" rx="2"></rect><path d="m12 7 .75 2.25L15 10l-2.25.75L12 13l-.75-2.25L9 10l2.25-.75L12 7Z"></path></svg>`,
+    `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="9" r="3.25"></circle><path d="M8 3.5v-1M8 15.5v-1M2.5 9h-1M14.5 9h-1M4.1 5.1l-.8-.8M12.7 13.7l-.8-.8M11.9 5.1l.8-.8M3.3 13.7l.8-.8M20 7.1a6.2 6.2 0 1 0 0 9.8 5 5 0 0 1 0-9.8Z"></path></svg>`,
+    `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 5.5c3.1-.8 5.5-.25 7.5 1.5v12c-2-1.75-4.4-2.3-7.5-1.5v-12Z"></path><path d="M19.5 5.5c-3.1-.8-5.5-.25-7.5 1.5v12c2-1.75 4.4-2.3 7.5-1.5v-12Z"></path></svg>`
+  ];
+  const destinations = section.destinations.map((destination, index) => {
+    const links = destination.links?.length
+      ? `<div class="tarot-spreads-related-links__actions">${destination.links.map((link) => `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)} <span aria-hidden="true">→</span></a>`).join("")}</div>`
+      : `<a class="tarot-spreads-related-links__cta" href="${escapeHtml(destination.href)}">${escapeHtml(destination.cta)} <span aria-hidden="true">→</span></a>`;
+    return `<article class="tarot-spreads-related-links__destination"><span class="tarot-spreads-related-links__icon">${destinationIcons[index] || destinationIcons[0]}</span><p class="tarot-spreads-related-links__eyebrow">${escapeHtml(destination.eyebrow)}</p><h3>${escapeHtml(destination.title)}</h3><p>${escapeHtml(destination.copy)}</p>${links}</article>`;
+  }).join("");
   return `<section class="tarot-spreads-section tarot-spreads-how-to" id="${escapeHtml(section.id)}" aria-labelledby="${escapeHtml(section.id)}-heading">
         <div class="tarot-spreads-shell">
           ${renderSectionHeader(section)}
-          <div class="tarot-spreads-how-to__grid">
-            <article><h3>Choosing the Spread</h3><dl>${section.choosing.map((item) => `<div><dt>${escapeHtml(item.label)}</dt><dd>${escapeHtml(item.copy)}</dd></div>`).join("")}</dl></article>
-            <article><h3>Performing the Spread</h3><ol>${section.performing.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol></article>
+          <div class="tarot-spreads-how-to__experience" data-question-story data-active-stage="${escapeHtml(section.stages[0].key)}" style="--story-active-index:0;--story-progress:0">
+            <div class="tarot-spreads-how-to__rail" role="tablist" aria-label="How to perform a tarot spread" aria-orientation="horizontal" data-question-story-rail>${tabs}</div>
+            <p class="tarot-spreads-how-to__mobile-progress" aria-live="polite" aria-atomic="true" data-question-story-progress>1 of ${section.stages.length}</p>
+            <div class="tarot-spreads-how-to__panels">${panels}</div>
+            <div class="tarot-spreads-how-to__controls" aria-label="Move between reading stages">
+              <button type="button" data-question-story-previous disabled><span aria-hidden="true">←</span> Previous</button>
+              <span aria-hidden="true" data-question-story-control-count>1 of ${section.stages.length}</span>
+              <button type="button" data-question-story-next>Next <span aria-hidden="true">→</span></button>
+            </div>
           </div>
           <nav class="tarot-spreads-related-links" aria-label="Continue learning and practicing tarot">
-            <span class="tarot-spreads-related-links__disabled" role="link" aria-disabled="true" tabindex="0">How to Read Tarot Cards · Coming Soon</span>
-            <a href="/tarot/major-arcana/">Explore the Major Arcana</a>
-            <a href="/tarot/minor-arcana/">Explore the Minor Arcana</a>
-            <a href="/journal">Record a Reflection in the Journal</a>
-            <a href="/online-tarot-reading">Explore the Online Tarot Reading Experience</a>
-            <a href="/">Begin a Tarot Reading</a>
+            <div class="tarot-spreads-related-links__grid">${destinations}</div>
+            <span class="tarot-spreads-related-links__disabled" aria-disabled="true">${escapeHtml(section.comingSoon)}</span>
           </nav>
         </div>
       </section>`;
@@ -582,18 +697,58 @@ function renderHowTo(page) {
 
 function renderPatterns(page) {
   const section = page.patterns;
+  const items = section.items.map((item, index) => `<article class="spread-pattern" data-pattern="${escapeHtml(item.key)}" tabindex="0">
+              <span class="spread-pattern__number" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>
+              <h3 class="spread-pattern__title">${escapeHtml(item.title)}</h3>
+              <p class="spread-pattern__description">${escapeHtml(item.copy)}</p>
+              <span class="spread-pattern__divider" aria-hidden="true"></span>
+              <p class="spread-pattern__example"><span>Example</span>${escapeHtml(item.example)}</p>
+            </article>`).join("");
   return `<section class="tarot-spreads-section tarot-spreads-patterns" id="${escapeHtml(section.id)}" aria-labelledby="${escapeHtml(section.id)}-heading">
         <div class="tarot-spreads-shell">
           ${renderSectionHeader(section)}
-          <div class="tarot-spreads-patterns__grid">${section.items.map((item, index) => `<article><span aria-hidden="true">${String(index + 1).padStart(2, "0")}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.copy)}</p></article>`).join("")}</div>
+          <div class="tarot-spreads-patterns__grid spread-pattern-grid">${items}</div>
         </div>
       </section>`;
 }
 
 function renderComparison(page) {
   const section = page.comparison;
-  const renderPanel = (key, group, active) => `<article class="tarot-spreads-comparison__panel${active ? " is-active" : ""}" id="tarot-spread-${key}-panel" role="tabpanel" aria-labelledby="tarot-spread-${key}-tab" aria-hidden="${active ? "false" : "true"}"${active ? "" : " inert"} data-spread-comparison-panel="${key}"><h3>${escapeHtml(group.label)}</h3><ul>${group.items.map((item) => `<li><span aria-hidden="true">✦</span>${escapeHtml(item)}</li>`).join("")}</ul></article>`;
-  return `<section class="tarot-spreads-section tarot-spreads-comparison" id="${escapeHtml(section.id)}" aria-labelledby="${escapeHtml(section.id)}-heading" data-spread-comparison>
+  const renderCard = (modifier = "") => `<span class="tarot-spreads-comparison__card${modifier ? ` ${modifier}` : ""}"><img src="${cardBack.src}" alt="" width="${cardBack.width}" height="${cardBack.height}" loading="lazy" decoding="async" data-major-theme-image data-standard-src="${cardBack.src}" data-standard-alt="" data-blood-src="${cardBack.bloodSrc}" data-blood-alt="" /></span>`;
+  const renderVisual = (key) => {
+    if (key === "simple") {
+      return `<div class="tarot-spreads-comparison__visual tarot-spreads-comparison__visual--simple">
+              <figure class="comparison-spread comparison-spread--one">
+                <div class="comparison-spread__stage">${renderCard()}</div>
+                <figcaption>One Card</figcaption>
+              </figure>
+              <figure class="comparison-spread comparison-spread--three">
+                <div class="comparison-spread__stage">${Array.from({ length: 3 }, () => renderCard()).join("")}</div>
+                <figcaption>Three Cards</figcaption>
+              </figure>
+            </div>`;
+    }
+    return `<div class="tarot-spreads-comparison__visual tarot-spreads-comparison__visual--in-depth">
+              <figure class="comparison-spread comparison-spread--five">
+                <div class="comparison-spread__stage">${Array.from({ length: 5 }, (_, index) => renderCard(`comparison-spread__position comparison-spread__position--${index + 1}`)).join("")}</div>
+                <figcaption>Five Cards</figcaption>
+              </figure>
+              <figure class="comparison-spread comparison-spread--celtic">
+                <div class="comparison-spread__stage">${Array.from({ length: 10 }, (_, index) => renderCard(`comparison-spread__position comparison-spread__position--${index + 1}`)).join("")}</div>
+                <figcaption>Celtic Cross</figcaption>
+              </figure>
+            </div>`;
+  };
+  const renderPanel = (key, group, active) => `<article class="tarot-spreads-comparison__panel${active ? " is-active" : ""}" id="tarot-spread-${key}-panel" role="tabpanel" aria-labelledby="tarot-spread-${key}-tab" aria-hidden="${active ? "false" : "true"}"${active ? "" : " inert"} data-spread-comparison-panel="${key}">
+            ${renderVisual(key)}
+            <div class="tarot-spreads-comparison__copy">
+              <h3>${escapeHtml(group.label)}</h3>
+              <p class="tarot-spreads-comparison__description">${escapeHtml(group.description)}</p>
+              <ul class="tarot-spreads-comparison__characteristics" aria-label="${escapeHtml(group.label)} characteristics">${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+              <p class="tarot-spreads-comparison__recommendation"><span>Recommendation</span>${escapeHtml(group.recommendation)}</p>
+            </div>
+          </article>`;
+  return `<section class="tarot-spreads-section tarot-spreads-comparison" id="${escapeHtml(section.id)}" aria-labelledby="${escapeHtml(section.id)}-heading" data-active-comparison="simple" data-spread-comparison>
         <div class="tarot-spreads-shell">
           ${renderSectionHeader(section)}
           <div class="tarot-spreads-comparison__tabs" role="tablist" aria-label="Compare simple and in-depth tarot spreads">
@@ -601,7 +756,7 @@ function renderComparison(page) {
             <button id="tarot-spread-in-depth-tab" type="button" role="tab" aria-selected="false" aria-controls="tarot-spread-in-depth-panel" tabindex="-1" data-spread-comparison-tab="in-depth">In-Depth Spreads</button>
           </div>
           <div class="tarot-spreads-comparison__viewport">${renderPanel("simple", section.simple, true)}${renderPanel("in-depth", section.inDepth, false)}</div>
-          <p class="tarot-spreads-comparison__conclusion">${escapeHtml(section.conclusion)}</p>
+          <p class="tarot-spreads-comparison__conclusion"><span>${escapeHtml(section.conclusion)}</span><small>${escapeHtml(section.conclusionSupport)}</small></p>
         </div>
       </section>`;
 }
@@ -611,7 +766,7 @@ function renderFaq(page) {
   const items = section.items.map((item, index) => {
     const number = index + 1;
     return `<article class="tarot-faq__item" data-major-faq-item>
-          <h3><button class="tarot-faq__trigger" id="tarot-spreads-faq-question-${number}" type="button" aria-expanded="true" aria-controls="tarot-spreads-faq-answer-${number}" data-major-faq-button><span>${escapeHtml(item.question)}</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+          <h3><button class="tarot-faq__trigger" id="tarot-spreads-faq-question-${number}" type="button" aria-expanded="true" aria-controls="tarot-spreads-faq-answer-${number}" data-major-faq-button><span class="tarot-spreads-faq__number" aria-hidden="true">${String(number).padStart(2, "0")}</span><span class="tarot-spreads-faq__question">${escapeHtml(item.question)}</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
           <div class="tarot-faq__answer" id="tarot-spreads-faq-answer-${number}" role="region" aria-labelledby="tarot-spreads-faq-question-${number}" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>${escapeHtml(item.answer)}</p></div></div>
         </article>`;
   }).join("");

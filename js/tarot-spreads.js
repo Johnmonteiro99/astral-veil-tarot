@@ -250,6 +250,303 @@
     window.requestAnimationFrame(() => scrollIntentionPathway(activeIntentionIndex, "auto"));
   }
 
+  const cardPositionExperience = document.querySelector("[data-card-position-experience]");
+
+  if (cardPositionExperience) {
+    const tabs = Array.from(cardPositionExperience.querySelectorAll("[data-card-position-tab]"));
+    const panels = Array.from(cardPositionExperience.querySelectorAll("[data-card-position-panel]"));
+    const markers = Array.from(cardPositionExperience.querySelectorAll("[data-card-position-marker]"));
+    let activeCardPositionIndex = Math.max(0, tabs.findIndex((tab) => tab.getAttribute("aria-selected") === "true"));
+    let cardPositionTransitionToken = 0;
+    let cardPositionAnimations = [];
+
+    function settleCardPositionPanels(activeIndex) {
+      panels.forEach((panel, panelIndex) => {
+        const active = panelIndex === activeIndex;
+        panel.classList.toggle("is-active", active);
+        panel.hidden = !active;
+        panel.inert = !active;
+        panel.setAttribute("aria-hidden", String(!active));
+      });
+    }
+
+    function cancelCardPositionAnimations() {
+      cardPositionAnimations.forEach((animation) => animation.cancel());
+      cardPositionAnimations = [];
+    }
+
+    function setCardPosition(index, { focus = false } = {}) {
+      const nextIndex = Math.max(0, Math.min(index, tabs.length - 1));
+      const previousIndex = activeCardPositionIndex;
+      const nextTab = tabs[nextIndex];
+      const nextKey = nextTab?.dataset.cardPositionTab;
+      if (!nextTab || !nextKey) return;
+
+      cardPositionTransitionToken += 1;
+      const transitionToken = cardPositionTransitionToken;
+      cancelCardPositionAnimations();
+      settleCardPositionPanels(previousIndex);
+
+      tabs.forEach((tab, tabIndex) => {
+        const active = tabIndex === nextIndex;
+        tab.classList.toggle("is-active", active);
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+      markers.forEach((marker) => {
+        marker.classList.toggle("is-active", marker.dataset.cardPositionMarker === nextKey);
+      });
+
+      cardPositionExperience.dataset.activePosition = nextKey;
+      cardPositionExperience.style.setProperty("--position-active-index", String(nextIndex));
+      activeCardPositionIndex = nextIndex;
+
+      if (focus) nextTab.focus({ preventScroll: true });
+      if (
+        nextIndex === previousIndex ||
+        reducedMotionQuery.matches ||
+        typeof panels[previousIndex]?.animate !== "function" ||
+        typeof panels[nextIndex]?.animate !== "function"
+      ) {
+        settleCardPositionPanels(nextIndex);
+        return;
+      }
+
+      const previousPanel = panels[previousIndex];
+      const nextPanel = panels[nextIndex];
+      const direction = nextIndex > previousIndex ? 1 : -1;
+      if (!previousPanel || !nextPanel) {
+        settleCardPositionPanels(nextIndex);
+        return;
+      }
+
+      nextPanel.hidden = false;
+      nextPanel.inert = false;
+      nextPanel.setAttribute("aria-hidden", "false");
+      nextPanel.classList.add("is-active");
+      previousPanel.inert = true;
+      previousPanel.setAttribute("aria-hidden", "true");
+
+      const outgoing = previousPanel.animate([
+        { opacity: 1, transform: "translate3d(0, 0, 0)" },
+        { opacity: 0, transform: `translate3d(${-8 * direction}px, -5px, 0)` }
+      ], {
+        duration: 230,
+        easing: "cubic-bezier(.4, 0, .2, 1)",
+        fill: "both"
+      });
+      const incoming = nextPanel.animate([
+        { opacity: 0, transform: `translate3d(${10 * direction}px, 7px, 0)` },
+        { opacity: 1, transform: "translate3d(0, 0, 0)" }
+      ], {
+        duration: 300,
+        easing: "cubic-bezier(.22, .72, .22, 1)",
+        fill: "both"
+      });
+      cardPositionAnimations = [outgoing, incoming];
+
+      Promise.all(cardPositionAnimations.map((animation) => animation.finished.catch(() => null))).then(() => {
+        if (transitionToken !== cardPositionTransitionToken) return;
+        settleCardPositionPanels(nextIndex);
+        cancelCardPositionAnimations();
+      });
+    }
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => setCardPosition(index));
+      tab.addEventListener("keydown", (event) => {
+        let targetIndex = index;
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") targetIndex = (index + 1) % tabs.length;
+        else if (event.key === "ArrowLeft" || event.key === "ArrowUp") targetIndex = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === "Home") targetIndex = 0;
+        else if (event.key === "End") targetIndex = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        setCardPosition(targetIndex, { focus: true });
+      });
+    });
+
+    cardPositionExperience.classList.add("is-enhanced");
+    settleCardPositionPanels(activeCardPositionIndex);
+  }
+
+  const questionStory = document.querySelector("[data-question-story]");
+
+  if (questionStory) {
+    const rail = questionStory.querySelector("[data-question-story-rail]");
+    const tabs = Array.from(questionStory.querySelectorAll("[data-question-story-tab]"));
+    const panels = Array.from(questionStory.querySelectorAll("[data-question-story-panel]"));
+    const questionStoryPanelTrack = questionStory.querySelector(".tarot-spreads-how-to__panels");
+    const previousButton = questionStory.querySelector("[data-question-story-previous]");
+    const nextButton = questionStory.querySelector("[data-question-story-next]");
+    const progress = questionStory.querySelector("[data-question-story-progress]");
+    const controlCount = questionStory.querySelector("[data-question-story-control-count]");
+    const mobileStoryQuery = window.matchMedia("(max-width: 900px)");
+    let activeQuestionStoryIndex = Math.max(0, tabs.findIndex((tab) => tab.getAttribute("aria-selected") === "true"));
+    let questionStoryTransitionToken = 0;
+    let questionStoryAnimations = [];
+    let questionStoryResizeFrame = 0;
+
+    function settleQuestionStoryPanels(activeIndex) {
+      panels.forEach((panel, panelIndex) => {
+        const active = panelIndex === activeIndex;
+        panel.classList.toggle("is-active", active);
+        panel.hidden = !active;
+        panel.inert = !active;
+        panel.setAttribute("aria-hidden", String(!active));
+      });
+    }
+
+    function cancelQuestionStoryAnimations() {
+      questionStoryAnimations.forEach((animation) => animation.cancel());
+      questionStoryAnimations = [];
+      questionStory.classList.remove("is-transitioning");
+      questionStoryPanelTrack?.style.removeProperty("height");
+    }
+
+    function scrollQuestionStoryTab(index, behavior = reducedMotionQuery.matches ? "auto" : "smooth") {
+      const tab = tabs[index];
+      if (!rail || !tab || !mobileStoryQuery.matches) return;
+      const left = tab.offsetLeft - ((rail.clientWidth - tab.offsetWidth) / 2);
+      rail.scrollTo({ left: Math.max(0, left), behavior });
+    }
+
+    function updateQuestionStoryControls() {
+      const countText = `${activeQuestionStoryIndex + 1} of ${tabs.length}`;
+      if (progress) progress.textContent = countText;
+      if (controlCount) controlCount.textContent = countText;
+      if (previousButton) previousButton.disabled = activeQuestionStoryIndex === 0;
+      if (nextButton) nextButton.disabled = activeQuestionStoryIndex === tabs.length - 1;
+    }
+
+    function setQuestionStoryStage(index, { focus = false, scroll = false } = {}) {
+      const nextIndex = Math.max(0, Math.min(index, tabs.length - 1));
+      const previousIndex = activeQuestionStoryIndex;
+      const nextTab = tabs[nextIndex];
+      const nextKey = nextTab?.dataset.questionStoryTab;
+      if (!nextTab || !nextKey) return;
+
+      questionStoryTransitionToken += 1;
+      const transitionToken = questionStoryTransitionToken;
+      cancelQuestionStoryAnimations();
+      settleQuestionStoryPanels(previousIndex);
+
+      tabs.forEach((tab, tabIndex) => {
+        const active = tabIndex === nextIndex;
+        tab.classList.toggle("is-active", active);
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+
+      questionStory.dataset.activeStage = nextKey;
+      questionStory.style.setProperty("--story-active-index", String(nextIndex));
+      questionStory.style.setProperty("--story-progress", String(tabs.length > 1 ? nextIndex / (tabs.length - 1) : 1));
+      activeQuestionStoryIndex = nextIndex;
+      updateQuestionStoryControls();
+
+      if (focus) nextTab.focus({ preventScroll: true });
+      if (scroll) scrollQuestionStoryTab(nextIndex);
+
+      if (
+        nextIndex === previousIndex ||
+        reducedMotionQuery.matches ||
+        typeof panels[previousIndex]?.animate !== "function" ||
+        typeof panels[nextIndex]?.animate !== "function"
+      ) {
+        settleQuestionStoryPanels(nextIndex);
+        return;
+      }
+
+      const previousPanel = panels[previousIndex];
+      const nextPanel = panels[nextIndex];
+      const direction = nextIndex > previousIndex ? 1 : -1;
+      if (!previousPanel || !nextPanel) {
+        settleQuestionStoryPanels(nextIndex);
+        return;
+      }
+
+      nextPanel.hidden = false;
+      nextPanel.inert = false;
+      nextPanel.setAttribute("aria-hidden", "false");
+      nextPanel.classList.add("is-active");
+      previousPanel.inert = true;
+      previousPanel.setAttribute("aria-hidden", "true");
+      questionStory.classList.add("is-transitioning");
+
+      const previousHeight = previousPanel.getBoundingClientRect().height;
+      const nextHeight = nextPanel.getBoundingClientRect().height;
+      let heightAnimation = null;
+      if (questionStoryPanelTrack && Math.abs(previousHeight - nextHeight) > 1) {
+        questionStoryPanelTrack.style.height = `${previousHeight}px`;
+        heightAnimation = questionStoryPanelTrack.animate([
+          { height: `${previousHeight}px` },
+          { height: `${nextHeight}px` }
+        ], {
+          duration: 400,
+          easing: "cubic-bezier(.22, .72, .22, 1)",
+          fill: "both"
+        });
+      }
+
+      const outgoing = previousPanel.animate([
+        { opacity: 1, transform: "translate3d(0, 0, 0)" },
+        { opacity: 0, transform: `translate3d(${-10 * direction}px, -4px, 0)` }
+      ], {
+        duration: 300,
+        easing: "cubic-bezier(.4, 0, .2, 1)",
+        fill: "both"
+      });
+      const incoming = nextPanel.animate([
+        { opacity: 0, transform: `translate3d(${12 * direction}px, 6px, 0)` },
+        { opacity: 1, transform: "translate3d(0, 0, 0)" }
+      ], {
+        duration: 400,
+        easing: "cubic-bezier(.22, .72, .22, 1)",
+        fill: "both"
+      });
+      questionStoryAnimations = [outgoing, incoming, heightAnimation].filter(Boolean);
+
+      Promise.all(questionStoryAnimations.map((animation) => animation.finished.catch(() => null))).then(() => {
+        if (transitionToken !== questionStoryTransitionToken) return;
+        settleQuestionStoryPanels(nextIndex);
+        cancelQuestionStoryAnimations();
+      });
+    }
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => setQuestionStoryStage(index, { scroll: true }));
+      tab.addEventListener("keydown", (event) => {
+        let targetIndex = index;
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") targetIndex = (index + 1) % tabs.length;
+        else if (event.key === "ArrowLeft" || event.key === "ArrowUp") targetIndex = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === "Home") targetIndex = 0;
+        else if (event.key === "End") targetIndex = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        setQuestionStoryStage(targetIndex, { focus: true, scroll: true });
+      });
+    });
+
+    previousButton?.addEventListener("click", () => {
+      setQuestionStoryStage(activeQuestionStoryIndex - 1, { scroll: true });
+    });
+    nextButton?.addEventListener("click", () => {
+      setQuestionStoryStage(activeQuestionStoryIndex + 1, { scroll: true });
+    });
+
+    window.addEventListener("resize", () => {
+      window.cancelAnimationFrame(questionStoryResizeFrame);
+      questionStoryResizeFrame = window.requestAnimationFrame(() => {
+        scrollQuestionStoryTab(activeQuestionStoryIndex, "auto");
+      });
+    }, { passive: true });
+
+    questionStory.classList.add("is-enhanced");
+    settleQuestionStoryPanels(activeQuestionStoryIndex);
+    updateQuestionStoryControls();
+    window.requestAnimationFrame(() => scrollQuestionStoryTab(activeQuestionStoryIndex, "auto"));
+  }
+
   const explorer = document.querySelector("[data-spread-explorer]");
 
   if (explorer) {
@@ -861,6 +1158,9 @@
     const panels = Array.from(comparison.querySelectorAll("[data-spread-comparison-panel]"));
 
     function setComparison(key) {
+      const activeIndex = Math.max(0, tabs.findIndex((tab) => tab.dataset.spreadComparisonTab === key));
+      comparison.dataset.activeComparison = key;
+      comparison.style.setProperty("--comparison-active-index", String(activeIndex));
       tabs.forEach((tab) => {
         const active = tab.dataset.spreadComparisonTab === key;
         tab.classList.toggle("is-active", active);
@@ -885,7 +1185,7 @@
         else if (event.key === "End") targetIndex = tabs.length - 1;
         else return;
         event.preventDefault();
-        tabs[targetIndex].focus();
+        tabs[targetIndex].focus({ preventScroll: true });
         setComparison(tabs[targetIndex].dataset.spreadComparisonTab);
       });
     });

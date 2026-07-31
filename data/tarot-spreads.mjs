@@ -516,14 +516,17 @@ export const tarotSpreadsPage = {
     examples: [
       {
         label: "Past",
+        context: "What has shaped the situation.",
         copy: "A period of withdrawal, study, or independent reflection may continue to influence the present."
       },
       {
         label: "Advice",
+        context: "What may help now.",
         copy: "Create space for quiet thought, independent judgment, or a temporary step away from outside noise."
       },
       {
         label: "Possible Outcome",
+        context: "Where the present pattern may lead.",
         copy: "The situation may move toward solitude, research, self-guided understanding, or a more inward phase."
       }
     ]
@@ -532,35 +535,155 @@ export const tarotSpreadsPage = {
     id: "how-to-choose-and-perform-a-tarot-spread",
     eyebrow: "From Question to Story",
     heading: "How to Choose and Perform a Tarot Spread",
-    choosing: [
-      { label: "Focused question", copy: "Use one to three cards." },
-      { label: "Several connected influences", copy: "Use three to five cards." },
-      { label: "Complex or broad situation", copy: "Use five or more cards." },
-      { label: "Need to compare options", copy: "Use a crossroads or decision spread." },
-      { label: "Need a complete overview", copy: "Use an in-depth layout such as the Celtic Cross." }
+    introduction: "Follow the reading from its first question to the moment the cards become one connected story.",
+    stages: [
+      {
+        key: "question",
+        title: "Form the Question",
+        summary: "Shape the reading around one clear situation and an invitation to understand it.",
+        lead: "A reading begins with the question. The more honest and focused the question, the more useful the spread becomes.",
+        guidance: [
+          "Ask open-ended questions.",
+          "Focus on understanding rather than prediction.",
+          "Name the situation clearly.",
+          "Avoid vague or overly broad phrasing."
+        ],
+        examples: [
+          "What should I understand about this relationship?",
+          "What energy surrounds this decision?",
+          "What am I being asked to learn right now?"
+        ],
+        action: { label: "Begin a Tarot Reading", href: "/free-tarot-reading" },
+        visual: "question"
+      },
+      {
+        key: "layout",
+        title: "Choose the Layout",
+        summary: "Match the number and arrangement of cards to the question’s actual complexity.",
+        lead: "Choose a layout that matches the complexity of the question.",
+        recommendations: [
+          { label: "Focused question", copy: "Use one to three cards." },
+          { label: "Several connected influences", copy: "Use three to five cards." },
+          { label: "Need to compare options", copy: "Use a crossroads or decision spread." },
+          { label: "Need a complete overview", copy: "Use an in-depth layout such as the Celtic Cross." }
+        ],
+        note: "The largest spread is not automatically the strongest choice.",
+        action: { label: "Explore Tarot Spreads", href: "#explore-tarot-spreads" },
+        visual: "layout"
+      },
+      {
+        key: "shuffle",
+        title: "Shuffle with Intention",
+        summary: "Create a calm pause in which the question can settle before the draw.",
+        lead: "Shuffling helps settle the question into the reading space.",
+        guidance: [
+          "Hold the question in mind.",
+          "Breathe and focus before drawing.",
+          "Stop when the deck feels ready.",
+          "Let the ritual create presence rather than pressure."
+        ],
+        action: { label: "Learn About Reading Ritual", href: "/free-tarot-reading#astral-veil-works" },
+        visual: "shuffle"
+      },
+      {
+        key: "place",
+        title: "Place the Cards",
+        summary: "Give every position enough space to remain distinct, deliberate, and readable.",
+        lead: "Place each card deliberately and keep the layout readable.",
+        guidance: [
+          "Follow the layout structure clearly.",
+          "Give each position enough space.",
+          "Keep orientation consistent.",
+          "Notice which positions feel visually emphasized."
+        ],
+        action: { label: "See Spread Layouts", href: "#explore-tarot-spreads" },
+        visual: "place"
+      },
+      {
+        key: "story",
+        title: "Connect the Story",
+        summary: "Move beyond isolated definitions and read the cards as one connected field.",
+        lead: "A spread is not a list of isolated meanings. It becomes a story through relationship.",
+        guidance: [
+          "Notice repeating suits.",
+          "Notice repeated numbers.",
+          "Observe Major Arcana concentration.",
+          "Compare card directions and visual flow.",
+          "Read the spread as one connected field."
+        ],
+        note: "Patterns matter as much as individual definitions.",
+        action: { label: "Record a Reflection", href: "/journal" },
+        visual: "story"
+      }
     ],
-    performing: [
-      "Form a clear, open-ended question.",
-      "Choose a layout that matches the question’s complexity.",
-      "Shuffle while holding the question in mind.",
-      "Draw and place each card deliberately.",
-      "Interpret every card within its assigned position.",
-      "Look for repeated suits, numbers, court cards, and Major Arcana.",
-      "Read the spread as one connected story.",
-      "Record useful reflections in the journal."
-    ]
+    destinations: [
+      {
+        eyebrow: "Primary path",
+        title: "Begin a Tarot Reading",
+        copy: "Bring a clear question to the cards and begin a guided reading.",
+        cta: "Begin your reading",
+        href: "/free-tarot-reading"
+      },
+      {
+        eyebrow: "Learning path",
+        title: "Learn the Major and Minor Arcana",
+        copy: "Deepen your understanding of the archetypes, suits, and card relationships.",
+        links: [
+          { label: "Explore the Major Arcana", href: "/tarot/major-arcana/" },
+          { label: "Explore the Minor Arcana", href: "/tarot/minor-arcana/" }
+        ]
+      },
+      {
+        eyebrow: "Reflection path",
+        title: "Record a Reflection",
+        copy: "Save the patterns, questions, and insights that remain after the reading.",
+        cta: "Open the journal",
+        href: "/journal"
+      }
+    ],
+    comingSoon: "How to Read Tarot Cards · Coming Soon"
   },
   patterns: {
     id: "patterns-across-a-tarot-spread",
     eyebrow: "Read the Whole Arrangement",
     heading: "Patterns to Notice Across a Tarot Spread",
     items: [
-      { title: "Several Major Arcana Cards", copy: "A concentration of Major Arcana may emphasize larger lessons, turning points, or significant developmental themes." },
-      { title: "Repeated Suits", copy: "Repeated suits may draw attention to one realm of experience, such as emotion, action, thought, conflict, work, or resources." },
-      { title: "Repeated Numbers", copy: "Repeated numbers may suggest related developmental patterns appearing through different suits." },
-      { title: "Multiple Court Cards", copy: "Several court cards may emphasize people, roles, personalities, social dynamics, or different ways of expressing energy." },
-      { title: "Elemental Imbalance", copy: "A strong presence or absence of one suit may reveal which type of experience dominates the reading." },
-      { title: "Visual Direction", copy: "Figures, gestures, and card compositions may appear to face toward or away from one another, creating visual relationships across the spread." }
+      {
+        key: "major-arcana",
+        title: "Several Major Arcana Cards",
+        copy: "A concentration of Major Arcana may emphasize larger lessons, turning points, or significant developmental themes.",
+        example: "Three or more Major Arcana cards may suggest that the reading is centered on larger lessons, transitions, or defining choices."
+      },
+      {
+        key: "repeated-suits",
+        title: "Repeated Suits",
+        copy: "Repeated suits may draw attention to one realm of experience, such as emotion, action, thought, conflict, work, or resources.",
+        example: "Several Cups cards may place emotional experience, connection, or intuition at the center of the reading."
+      },
+      {
+        key: "repeated-numbers",
+        title: "Repeated Numbers",
+        copy: "Repeated numbers may suggest related developmental patterns appearing through different suits.",
+        example: "Repeated fives across different suits may emphasize disruption, tension, adjustment, or the need to respond to change."
+      },
+      {
+        key: "court-cards",
+        title: "Multiple Court Cards",
+        copy: "Several court cards may emphasize people, roles, personalities, social dynamics, or different ways of expressing energy.",
+        example: "Several court cards may point toward people, roles, personalities, or different ways of expressing the situation."
+      },
+      {
+        key: "elemental-imbalance",
+        title: "Elemental Imbalance",
+        copy: "A strong presence or absence of one suit may reveal which type of experience dominates the reading.",
+        example: "Many Swords with very few Cups may suggest that thought, conflict, or analysis is overshadowing emotional awareness."
+      },
+      {
+        key: "visual-direction",
+        title: "Visual Direction",
+        copy: "Figures, gestures, and card compositions may appear to face toward or away from one another, creating visual relationships across the spread.",
+        example: "Figures facing one another may suggest engagement, while figures turned away may indicate distance, avoidance, or separation."
+      }
     ]
   },
   comparison: {
@@ -569,13 +692,18 @@ export const tarotSpreadsPage = {
     heading: "Simple vs. In-Depth Tarot Spreads",
     simple: {
       label: "Simple Spreads",
-      items: ["One to three cards", "Focused questions", "Faster interpretation", "Beginner-friendly", "Easier to summarize"]
+      description: "Simple spreads use one to three cards to focus on a clear question, central theme, or small group of connected influences.",
+      items: ["One to three cards", "Focused questions", "Faster to interpret", "Beginner-friendly", "Easier to summarize"],
+      recommendation: "Choose a simple spread when clarity matters more than additional layers."
     },
     inDepth: {
       label: "In-Depth Spreads",
-      items: ["Five or more cards", "Multiple influences", "Broader context", "Greater interpretive demand", "More complex relationships between positions"]
+      description: "In-depth spreads use five or more cards to examine multiple influences, perspectives, relationships, and possible developments within a complex situation.",
+      items: ["Five to ten cards", "Multiple influences", "Broader context", "Greater interpretive depth", "More relationships between positions"],
+      recommendation: "Choose an in-depth spread when the question needs a fuller view rather than one concentrated message."
     },
-    conclusion: "A larger spread is not automatically better. The most useful spread is the one whose structure matches the question."
+    conclusion: "A larger spread is not automatically better. The most useful spread is the one whose structure matches the question.",
+    conclusionSupport: "More cards create more context, not automatically more clarity."
   },
   faq: {
     id: "tarot-spreads-faq",

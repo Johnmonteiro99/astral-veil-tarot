@@ -16,6 +16,7 @@ if (!existsSync(outputPath)) {
   const html = readFileSync(outputPath, "utf8");
   const css = readFileSync(resolve(rootDir, "css/tarot-spreads.css"), "utf8");
   const js = readFileSync(resolve(rootDir, "js/tarot-spreads.js"), "utf8");
+  const majorArcanaJs = readFileSync(resolve(rootDir, "js/tarot-major-arcana.js"), "utf8");
   const generatorJs = readFileSync(resolve(rootDir, "scripts/generate-tarot-spreads-page.mjs"), "utf8");
   const readingJs = readFileSync(resolve(rootDir, "js/reading.js"), "utf8");
   const readingCss = readFileSync(resolve(rootDir, "css/style.css"), "utf8");
@@ -645,6 +646,13 @@ if (!existsSync(outputPath)) {
     [3, "/?spread=3"],
     [5, "/?spread=5"]
   ]);
+  const fiveCardBeginnerStart = beginnersHtml.indexOf('<figure class="tarot-spread-diagram tarot-spread-diagram--5 tarot-spread-diagram--beginner"');
+  const fiveCardBeginnerEnd = fiveCardBeginnerStart >= 0
+    ? beginnersHtml.indexOf("</figure>", fiveCardBeginnerStart)
+    : -1;
+  const fiveCardBeginnerHtml = fiveCardBeginnerStart >= 0 && fiveCardBeginnerEnd > fiveCardBeginnerStart
+    ? beginnersHtml.slice(fiveCardBeginnerStart, fiveCardBeginnerEnd)
+    : "";
   if (
     !beginnersHtml.includes("data-beginner-progression") ||
     !beginnersHtml.includes('data-beginner-active="0"') ||
@@ -659,7 +667,13 @@ if (!existsSync(outputPath)) {
     !beginnersHtml.includes("data-beginner-next") ||
     !beginnersHtml.includes("data-beginner-count") ||
     !beginnersHtml.includes("data-beginner-label") ||
-    beginnersHtml.includes("tarot-spreads-beginners__grid")
+    !beginnersHtml.includes('class="tarot-spreads-beginners__spread beginner-spread beginner-spread--five"') ||
+    !beginnersHtml.includes('class="beginner-spread__visual"') ||
+    !fiveCardBeginnerHtml.includes("beginner-five-card-layout") ||
+    beginnersHtml.includes("tarot-spreads-beginners__grid") ||
+    countMatches(/class="tarot-spread-diagram__card"/g, fiveCardBeginnerHtml) !== 5 ||
+    countMatches(/<img src="\/assets\/images\/cards\/original\/card-back\.webp"/g, fiveCardBeginnerHtml) !== 5 ||
+    countMatches(/data-blood-src="\/assets\/images\/cards\/blood-moon\/bloodmoon-card-back\.webp"/g, fiveCardBeginnerHtml) !== 5
   ) {
     errors.push("beginners: borderless progression structure, themed diagrams, path, or mobile controls are incomplete");
   }
@@ -704,7 +718,20 @@ if (!existsSync(outputPath)) {
     "rotateX(9deg)",
     "width: clamp(150px, 14vw, 184px)",
     "width: clamp(104px, 8.35vw, 124px)",
-    "width: clamp(78px, 6.5vw, 98px)",
+    ".beginner-spread--five .beginner-spread__visual",
+    ".beginner-five-card-layout",
+    "grid-template-areas:",
+    '". top ."',
+    '"left center right"',
+    '". bottom ."',
+    "width: clamp(66px, 4.8vw, 68px)",
+    "width: clamp(58px, 8vw, 59px)",
+    "width: clamp(46px, 14vw, 56px)",
+    "aspect-ratio: 2 / 3",
+    "opacity: 1",
+    "visibility: visible",
+    ".tarot-spread-diagram--beginner.tarot-spread-diagram--5 .tarot-spread-diagram__card:nth-child(3) img",
+    "transform: rotateX(9deg) scale(1.04)",
     ".tarot-spreads-beginners__path",
     ".tarot-spreads-beginners__path-node",
     "body.blood-moon-mode.tarot-spreads-page .tarot-spreads-beginners",
@@ -718,9 +745,11 @@ if (!existsSync(outputPath)) {
   });
   if (
     !/\.tarot-spreads-beginners__spread,[\s\S]*?border:\s*0;[\s\S]*?background:\s*transparent;[\s\S]*?box-shadow:\s*none;/s.test(beginnerCss) ||
+    !/\.beginner-five-card-layout\s*\{[^}]*display:\s*grid;[^}]*overflow:\s*visible;/s.test(beginnerCss) ||
+    !/\.beginner-spread--five \.beginner-spread__visual\s*\{[^}]*height:\s*100%;[^}]*overflow:\s*visible;/s.test(beginnerCss) ||
     /animation[^;]*(?:float|bob|pulse)/i.test(beginnerCss)
   ) {
-    errors.push("beginners styles: outer cards must stay transparent and continuous motion must remain absent");
+    errors.push("beginners styles: outer cards, stable five-card grid, or continuous-motion safeguards are incomplete");
   }
   const intentionsStart = html.indexOf('<section class="tarot-spreads-section tarot-spreads-intentions"');
   const intentionsEnd = intentionsStart >= 0
@@ -790,7 +819,7 @@ if (!existsSync(outputPath)) {
     if (!js.includes(token)) errors.push(`intentions interaction: mobile gallery behavior is missing (${token})`);
   });
   const intentionsCssStart = css.indexOf("/* Choose a Tarot Spread by Intention: borderless editorial gallery */");
-  const intentionsCssEnd = css.indexOf("body.tarot-spreads-page .tarot-spreads-positions__grid article", intentionsCssStart);
+  const intentionsCssEnd = css.indexOf("/* How Card Positions Change a Reading: one card, three meanings */", intentionsCssStart);
   const intentionsCss = intentionsCssStart >= 0 && intentionsCssEnd > intentionsCssStart
     ? css.slice(intentionsCssStart, intentionsCssEnd)
     : "";
@@ -830,49 +859,492 @@ if (!existsSync(outputPath)) {
   const hermitBlood = hermit?.bloodMoonImage || hermit?.variants?.veilfall?.image;
   if (
     !hermit ||
-    countMatches(/class="tarot-spreads-positions__card"/g) !== 3 ||
+    countMatches(/class="tarot-spreads-positions__card"/g) !== 1 ||
     !html.includes(`data-standard-src="${hermitStandard}"`) ||
     !html.includes(`data-blood-src="${hermitBlood}"`) ||
-    !html.includes('href="/tarot/the-hermit/"')
+    !html.includes('href="/tarot/the-hermit/"') ||
+    countMatches(/data-card-position-tab=/g) !== 3 ||
+    countMatches(/data-card-position-panel=/g) !== 3 ||
+    countMatches(/role="tabpanel"/g) < 3 ||
+    html.includes("tarot-spreads-positions__grid")
   ) {
-    errors.push("positions: The Hermit route and theme-aware artwork are incomplete");
+    errors.push("positions: one-card, three-meaning structure or theme-aware artwork is incomplete");
   }
   tarotSpreadsPage.positions.examples.forEach((example) => {
-    if (!html.includes(example.label) || !html.includes(example.copy)) {
+    if (!html.includes(example.label) || !html.includes(example.context) || !html.includes(example.copy)) {
       errors.push(`positions: example is missing (${example.label})`);
     }
   });
+  [
+    "setCardPosition",
+    "settleCardPositionPanels",
+    "data-card-position-tab",
+    "data-card-position-panel",
+    "data-card-position-marker",
+    '"ArrowRight"',
+    '"ArrowLeft"',
+    '"Home"',
+    '"End"',
+    "reducedMotionQuery.matches",
+    "--position-active-index"
+  ].forEach((token) => {
+    if (!js.includes(token)) errors.push(`positions interaction: required behavior is missing (${token})`);
+  });
+  [
+    "/* How Card Positions Change a Reading: one card, three meanings */",
+    "grid-template-columns: minmax(350px, .44fr) minmax(390px, .56fr)",
+    "body.moon-mode.tarot-spreads-page .tarot-spreads-positions",
+    "body.blood-moon-mode.tarot-spreads-page .tarot-spreads-positions",
+    "pointer-events: none",
+    "min-height: 46px",
+    "transform: translateX(calc(var(--position-active-index) * 100%))",
+    "font-family: var(--body-font, \"DM Sans\", sans-serif)"
+  ].forEach((token) => {
+    if (!css.includes(token)) errors.push(`positions styles: required one-card treatment is missing (${token})`);
+  });
 
-  tarotSpreadsPage.howTo.choosing.forEach((item) => {
-    if (!html.includes(item.label) || !html.includes(item.copy)) errors.push(`how-to: choosing guidance is missing (${item.label})`);
-  });
-  tarotSpreadsPage.howTo.performing.forEach((step) => {
-    if (!html.includes(step)) errors.push(`how-to: performance step is missing (${step})`);
-  });
-  tarotSpreadsPage.patterns.items.forEach((item) => {
-    if (!html.includes(item.title) || !html.includes(item.copy)) errors.push(`patterns: explanation is missing (${item.title})`);
-  });
-
+  const howToHtmlStart = html.indexOf('<section class="tarot-spreads-section tarot-spreads-how-to"');
+  const howToHtmlEnd = html.indexOf('<section class="tarot-spreads-section tarot-spreads-patterns"', howToHtmlStart);
+  const howToHtml = howToHtmlStart >= 0 && howToHtmlEnd > howToHtmlStart
+    ? html.slice(howToHtmlStart, howToHtmlEnd)
+    : "";
   if (
-    countMatches(/data-spread-comparison-tab=/g) !== 2 ||
-    countMatches(/data-spread-comparison-panel=/g) !== 2 ||
-    !html.includes(tarotSpreadsPage.comparison.conclusion)
+    countMatches(/data-question-story-tab=/g) !== 5 ||
+    countMatches(/data-question-story-panel=/g) !== 5 ||
+    countMatches(/class="tarot-spreads-how-to__panel(?: is-active)?"/g) !== 5 ||
+    countMatches(/data-question-story-stage-index=/g) !== 5 ||
+    countMatches(/class="tarot-spreads-how-to__stage-action"/g) !== 5 ||
+    countMatches(/class="tarot-spreads-how-to__dossier-group"/g) !== 6 ||
+    countMatches(/class="tarot-spreads-related-links__destination"/g) !== 3 ||
+    countMatches(/class="tarot-spreads-related-links__icon"/g, howToHtml) !== 3 ||
+    countMatches(/<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">/g, howToHtml) !== 3 ||
+    !html.includes('role="tablist" aria-label="How to perform a tarot spread"') ||
+    !html.includes("data-question-story-previous disabled") ||
+    !html.includes("data-question-story-next") ||
+    !html.includes("Active dossier · Form the Question") ||
+    !generatorJs.includes('Array.from({ length: 10 }, () => "<i></i>").join("")') ||
+    html.includes("tarot-spreads-how-to__grid") ||
+    html.includes("<h3>Choosing the Spread</h3>") ||
+    html.includes("<h3>Performing the Spread</h3>")
+  ) {
+    errors.push("how-to: five-stage archive dossier, mobile controls, ten-card layout cue, or related destinations are incomplete");
+  }
+  tarotSpreadsPage.howTo.stages.forEach((stage) => {
+    [stage.title, stage.summary, stage.lead, stage.note]
+      .filter(Boolean)
+      .forEach((copy) => {
+        if (!html.includes(copy)) errors.push(`how-to: stage content is missing (${stage.title}: ${copy})`);
+      });
+    [...(stage.guidance || []), ...(stage.examples || [])].forEach((copy) => {
+      if (!html.includes(copy)) errors.push(`how-to: guidance is missing (${stage.title}: ${copy})`);
+    });
+    (stage.recommendations || []).forEach((item) => {
+      if (!html.includes(item.label) || !html.includes(item.copy)) errors.push(`how-to: choosing guidance is missing (${item.label})`);
+    });
+    if (stage.action && (!html.includes(`href="${stage.action.href}"`) || !html.includes(stage.action.label))) {
+      errors.push(`how-to: stage action is missing (${stage.action.label})`);
+    }
+  });
+  tarotSpreadsPage.howTo.destinations.forEach((destination) => {
+    if (!html.includes(destination.eyebrow) || !html.includes(destination.title) || !html.includes(destination.copy)) {
+      errors.push(`how-to: related destination is missing (${destination.title})`);
+    }
+    const links = destination.links || [{ label: destination.cta, href: destination.href }];
+    links.forEach((link) => {
+      if (!html.includes(`href="${link.href}"`) || !html.includes(link.label)) errors.push(`how-to: destination link is missing (${link.label})`);
+    });
+  });
+  if (!html.includes(tarotSpreadsPage.howTo.comingSoon)) errors.push("how-to: subtle coming-soon learning label is missing");
+  [
+    "setQuestionStoryStage",
+    "settleQuestionStoryPanels",
+    "questionStoryTransitionToken",
+    "questionStoryPanelTrack",
+    "scrollQuestionStoryTab",
+    "data-question-story-tab",
+    "data-question-story-panel",
+    "data-question-story-previous",
+    "data-question-story-next",
+    '"ArrowRight"',
+    '"ArrowLeft"',
+    '"Home"',
+    '"End"',
+    "reducedMotionQuery.matches",
+    "--story-progress",
+    "preventScroll: true",
+    'questionStory.classList.add("is-transitioning")',
+    "questionStoryPanelTrack.animate",
+    "getBoundingClientRect().height"
+  ].forEach((token) => {
+    if (!js.includes(token)) errors.push(`how-to interaction: required behavior is missing (${token})`);
+  });
+  [
+    "/* Question-to-Story Timeline */",
+    "grid-template-columns: repeat(5, minmax(0, 1fr))",
+    "/* Question-to-Story: Sliding Archive Dossier */",
+    "grid-template-columns: minmax(0, .34fr) minmax(0, .66fr)",
+    "grid-area: 1 / 1",
+    ".tarot-spreads-how-to__dossier-lead",
+    ".tarot-spreads-how-to__dossier-group",
+    ".tarot-spreads-how-to__prompts",
+    "counter-reset: dossier-guidance",
+    ".question-story-layout-symbol--cross i:nth-child(10)",
+    "body.moon-mode.tarot-spreads-page .tarot-spreads-how-to",
+    "body.blood-moon-mode.tarot-spreads-page .tarot-spreads-how-to",
+    "scroll-snap-type: x proximity",
+    "min-height: 44px",
+    "font-family: var(--body-font, \"DM Sans\", sans-serif)",
+    "@keyframes question-story-deal",
+    "body.tarot-spreads-page .tarot-spreads-how-to__panel[hidden]",
+    "@media (prefers-reduced-motion: reduce)"
+  ].forEach((token) => {
+    if (!css.includes(token)) errors.push(`how-to styles: required timeline treatment is missing (${token})`);
+  });
+  const howToGlassCssStart = css.indexOf("/* Question-to-Story: borderless smoked-glass refinement */");
+  const howToGlassCssEnd = css.indexOf("/* Patterns to Notice: borderless pattern constellation */", howToGlassCssStart);
+  const howToGlassCss = howToGlassCssStart >= 0 && howToGlassCssEnd > howToGlassCssStart
+    ? css.slice(howToGlassCssStart, howToGlassCssEnd)
+    : "";
+  [
+    "--story-glass-identity",
+    "--story-glass-dossier",
+    "--story-glass-control",
+    "backdrop-filter: blur(14px) saturate(115%)",
+    "-webkit-backdrop-filter: blur(14px) saturate(115%)",
+    "grid-template-columns: minmax(0, .36fr) minmax(0, .64fr)",
+    ".tarot-spreads-how-to__tab[aria-selected=\"true\"]",
+    ".tarot-spreads-how-to__node::before",
+    "content: none",
+    "--story-tab-width: clamp(120px, 34vw, 160px)",
+    "--story-tab-width: clamp(106px, 32vw, 132px)",
+    "background: var(--story-glass-control)",
+    ".tarot-spreads-how-to__stage-lead",
+    "background: var(--story-glass-identity)",
+    ".tarot-spreads-how-to__stage-detail",
+    "background: var(--story-glass-dossier)",
+    ".tarot-spreads-how-to__guidance li::before",
+    "border-radius: 50%",
+    "text-decoration: none",
+    ".tarot-spreads-related-links__icon svg",
+    "grid-template-columns: repeat(2, minmax(0, 1fr))",
+    "transform: translateY(-4px)",
+    "@media (max-width: 900px)",
+    "@media (max-width: 640px)",
+    "@media (prefers-reduced-motion: reduce)"
+  ].forEach((token) => {
+    if (!howToGlassCss.includes(token)) errors.push(`how-to glass styles: required borderless treatment is missing (${token})`);
+  });
+  if (
+    /border-(?:top|right|bottom|left):\s*1px/i.test(howToGlassCss) ||
+    /text-decoration:\s*underline/i.test(howToGlassCss) ||
+    !/\.tarot-spreads-how-to__tab\[aria-selected="true"\]\s*\{[^}]*background:\s*transparent;[^}]*box-shadow:\s*none;[^}]*transform:\s*none;/s.test(howToGlassCss) ||
+    !/\.tarot-spreads-how-to__tab\[aria-selected="true"\]\s+\.tarot-spreads-how-to__node::before\s*\{[^}]*opacity:\s*1;[^}]*transform:\s*scale\(1\);/s.test(howToGlassCss) ||
+    !/\.tarot-spreads-how-to__stage-lead,\s*body\.tarot-spreads-page \.tarot-spreads-how-to__stage-detail\s*\{[^}]*border:\s*0;/s.test(howToGlassCss) ||
+    !/\.tarot-spreads-related-links__destination,\s*body\.tarot-spreads-page \.tarot-spreads-related-links__destination:first-child,\s*body\.tarot-spreads-page \.tarot-spreads-related-links__destination:last-child\s*\{[^}]*border:\s*0;/s.test(howToGlassCss)
+  ) {
+    errors.push("how-to glass styles: dossier and destination surfaces must remain borderless and links must have no permanent underline");
+  }
+  const patternsStart = html.indexOf('<section class="tarot-spreads-section tarot-spreads-patterns"');
+  const patternsEnd = html.indexOf('<section class="tarot-spreads-section tarot-spreads-comparison"', patternsStart);
+  const patternsHtml = patternsStart >= 0 && patternsEnd > patternsStart ? html.slice(patternsStart, patternsEnd) : "";
+  const patternsCssStart = css.indexOf("/* Patterns to Notice: borderless pattern constellation */");
+  const patternsCssEnd = css.indexOf("body.tarot-spreads-page .tarot-spreads-comparison__tabs", patternsCssStart);
+  const patternsCss = patternsCssStart >= 0 && patternsCssEnd > patternsCssStart ? css.slice(patternsCssStart, patternsCssEnd) : "";
+  if (
+    !patternsHtml.includes("spread-pattern-grid") ||
+    countMatches(/class="spread-pattern"/g, patternsHtml) !== 6 ||
+    countMatches(/class="spread-pattern__number"/g, patternsHtml) !== 6 ||
+    countMatches(/class="spread-pattern__divider"/g, patternsHtml) !== 6 ||
+    countMatches(/class="spread-pattern__example"/g, patternsHtml) !== 6 ||
+    countMatches(/tabindex="0"/g, patternsHtml) !== 6 ||
+    patternsHtml.includes("spread-pattern__icon") ||
+    patternsHtml.includes("spread-pattern__symbol") ||
+    patternsHtml.includes("<svg")
+  ) {
+    errors.push("patterns: six icon-free constellation points, focus targets, or examples are incomplete");
+  }
+  tarotSpreadsPage.patterns.items.forEach((item, index) => {
+    [item.title, item.copy, item.example].forEach((content) => {
+      if (!patternsHtml.includes(content)) errors.push(`patterns: initial educational content is missing (${item.title}: ${content})`);
+    });
+    if (
+      !patternsHtml.includes(`data-pattern="${item.key}"`) ||
+      !patternsHtml.includes(`>${String(index + 1).padStart(2, "0")}</span>`)
+    ) {
+      errors.push(`patterns: key or decorative sequence number is missing (${item.title})`);
+    }
+  });
+  [
+    "grid-template-columns: repeat(3, minmax(0, 1fr))",
+    "column-gap: clamp(2rem, 4vw, 4rem)",
+    "row-gap: clamp(2.625rem, 5vw, 4.5rem)",
+    "border: 0",
+    "background: transparent",
+    "font: 600 clamp(3.5rem, 6vw, 6.5rem)/1 var(--body-font, \"DM Sans\", sans-serif)",
+    "padding: clamp(4rem, 6.5vw, 6.75rem) 0 .5rem",
+    "top: 0",
+    "left: 0",
+    "min-height: 2.08em",
+    "width: 48px",
+    "width: 70px",
+    ".spread-pattern:focus-visible",
+    "@media (hover: hover)",
+    "@media (hover: none)",
+    "@media (max-width: 960px)",
+    "grid-template-columns: repeat(2, minmax(0, 1fr))",
+    "@media (max-width: 767px)",
+    "grid-auto-flow: column",
+    "grid-auto-columns: 82%",
+    "overflow-x: auto",
+    "scroll-snap-type: x mandatory",
+    "scroll-snap-align: start",
+    "overscroll-behavior-inline: contain",
+    "scrollbar-width: none",
+    "-webkit-overflow-scrolling: touch",
+    "@media (prefers-reduced-motion: reduce)",
+    "body.moon-mode.tarot-spreads-page .tarot-spreads-patterns",
+    "body.blood-moon-mode.tarot-spreads-page .tarot-spreads-patterns",
+    "pointer-events: none"
+  ].forEach((token) => {
+    if (!patternsCss.includes(token)) errors.push(`patterns styles: required constellation treatment is missing (${token})`);
+  });
+  if (
+    !/\.spread-pattern\s*\{[^}]*border:\s*0;[^}]*background:\s*transparent;[^}]*box-shadow:\s*none;/s.test(patternsCss) ||
+    /border-top:/i.test(patternsCss) ||
+    /animation[^;]*(?:float|bob|pulse|spin)/i.test(patternsCss)
+  ) {
+    errors.push("patterns styles: items must remain borderless, avoid long top rules, and use no continuous motion");
+  }
+
+  const comparisonStart = html.indexOf('<section class="tarot-spreads-section tarot-spreads-comparison"');
+  const comparisonEnd = html.indexOf('<section class="tarot-faq', comparisonStart);
+  const comparisonHtml = comparisonStart >= 0 && comparisonEnd > comparisonStart
+    ? html.slice(comparisonStart, comparisonEnd)
+    : "";
+  if (
+    (comparisonHtml.match(/data-spread-comparison-tab=/g) || []).length !== 2 ||
+    (comparisonHtml.match(/data-spread-comparison-panel=/g) || []).length !== 2 ||
+    !comparisonHtml.includes(tarotSpreadsPage.comparison.conclusion) ||
+    !comparisonHtml.includes(tarotSpreadsPage.comparison.conclusionSupport) ||
+    !comparisonHtml.includes('role="tablist"') ||
+    !comparisonHtml.includes('role="tabpanel"') ||
+    !comparisonHtml.includes('aria-hidden="true" inert')
   ) {
     errors.push("comparison: accessible toggle, both initial panels, or conclusion is missing");
   }
-  [...tarotSpreadsPage.comparison.simple.items, ...tarotSpreadsPage.comparison.inDepth.items].forEach((item) => {
+  [
+    tarotSpreadsPage.comparison.simple.description,
+    tarotSpreadsPage.comparison.simple.recommendation,
+    tarotSpreadsPage.comparison.inDepth.description,
+    tarotSpreadsPage.comparison.inDepth.recommendation,
+    ...tarotSpreadsPage.comparison.simple.items,
+    ...tarotSpreadsPage.comparison.inDepth.items
+  ].forEach((item) => {
     if (!html.includes(item)) errors.push(`comparison: content is missing (${item})`);
+  });
+  [
+    "One Card",
+    "Three Cards",
+    "Five Cards",
+    "Celtic Cross",
+    "comparison-spread--one",
+    "comparison-spread--three",
+    "comparison-spread--five",
+    "comparison-spread--celtic"
+  ].forEach((token) => {
+    if (!comparisonHtml.includes(token)) errors.push(`comparison: required spread visual is missing (${token})`);
+  });
+  if (
+    (comparisonHtml.match(/class="tarot-spreads-comparison__card/g) || []).length !== 19 ||
+    (comparisonHtml.match(/comparison-spread__position--/g) || []).length !== 15
+  ) {
+    errors.push("comparison: simple and in-depth diagrams must render one, three, five, and ten card backs");
+  }
+  [
+    "--comparison-active-index",
+    ".tarot-spreads-comparison__tabs::before",
+    "grid-template-columns: minmax(0, 42%) minmax(0, 58%)",
+    "grid-template-areas:",
+    '". top ."',
+    '"left center right"',
+    '". bottom ."',
+    "aspect-ratio: 1 / 1",
+    "width: clamp(42px, 3.7vw, 44px)",
+    ".comparison-spread--five .comparison-spread__position--3",
+    "transform: translateY(-3px) scale(1.02)",
+    "aspect-ratio: 1.15 / 1",
+    "width: clamp(28px, 2.4vw, 30px)",
+    ".comparison-spread--celtic .comparison-spread__position--2",
+    "transform: rotate(90deg)",
+    "top: 84%",
+    "top: 63%",
+    "top: 42%",
+    "left: 88%",
+    "overflow: visible",
+    "pointer-events: none",
+    "width: clamp(34px, 10vw, 42px)",
+    "width: clamp(24px, 7vw, 28px)",
+    ".tarot-spreads-comparison__characteristics li::before",
+    "@media (max-width: 900px)",
+    "@media (max-width: 560px)",
+    "@media (prefers-reduced-motion: reduce)"
+  ].forEach((token) => {
+    if (!css.includes(token)) errors.push(`comparison styles: required responsive comparison treatment is missing (${token})`);
+  });
+  const previewGeometryStart = css.indexOf("body.tarot-spreads-page .comparison-spread--five .comparison-spread__stage");
+  const previewGeometryEnd = css.indexOf("body.tarot-spreads-page .tarot-spreads-comparison__copy", previewGeometryStart);
+  const previewGeometryCss = previewGeometryStart >= 0 && previewGeometryEnd > previewGeometryStart
+    ? css.slice(previewGeometryStart, previewGeometryEnd)
+    : "";
+  if (
+    /margin(?:-[a-z]+)?:\s*-/i.test(previewGeometryCss) ||
+    /overflow:\s*(?:hidden|clip)/i.test(previewGeometryCss) ||
+    !previewGeometryCss.includes("grid-area: top") ||
+    !previewGeometryCss.includes("grid-area: left") ||
+    !previewGeometryCss.includes("grid-area: center") ||
+    !previewGeometryCss.includes("grid-area: right") ||
+    !previewGeometryCss.includes("grid-area: bottom")
+  ) {
+    errors.push("comparison geometry: previews must use the dedicated five-card grid and unclipped Celtic stage without negative offsets");
+  }
+  const celticPreviewCoordinates = [
+    [35, 50, 0],
+    [35, 50, 90],
+    [35, 80, 0],
+    [10, 50, 0],
+    [35, 18, 0],
+    [60, 50, 0],
+    [88, 84, 0],
+    [88, 63, 0],
+    [88, 42, 0],
+    [88, 20, 0]
+  ];
+  [
+    { name: "narrow mobile", width: 135, height: 205, cardWidth: 24 },
+    { name: "mobile", width: 170, height: 205, cardWidth: 27.3 },
+    { name: "wide mobile", width: 224, height: 205, cardWidth: 28 },
+    { name: "desktop constrained", width: 219, height: 220, cardWidth: 30 },
+    { name: "desktop", width: 250, height: 220, cardWidth: 30 }
+  ].forEach((scenario) => {
+    const boxes = celticPreviewCoordinates.map(([x, y, rotation]) => {
+      const verticalWidth = scenario.cardWidth;
+      const verticalHeight = scenario.cardWidth * 1.5;
+      return {
+        x: scenario.width * x / 100,
+        y: scenario.height * y / 100,
+        width: rotation === 90 ? verticalHeight : verticalWidth,
+        height: rotation === 90 ? verticalWidth : verticalHeight
+      };
+    });
+    boxes.forEach((box, index) => {
+      if (
+        box.x - box.width / 2 < -0.01 ||
+        box.x + box.width / 2 > scenario.width + 0.01 ||
+        box.y - box.height / 2 < -0.01 ||
+        box.y + box.height / 2 > scenario.height + 0.01
+      ) {
+        errors.push(`comparison geometry: Celtic Cross card ${index + 1} clips in ${scenario.name}`);
+      }
+    });
+    boxes.forEach((first, firstIndex) => {
+      boxes.slice(firstIndex + 1).forEach((second, offset) => {
+        const secondIndex = firstIndex + offset + 1;
+        if (firstIndex === 0 && secondIndex === 1) return;
+        const overlapX = (first.width + second.width) / 2 - Math.abs(first.x - second.x);
+        const overlapY = (first.height + second.height) / 2 - Math.abs(first.y - second.y);
+        if (overlapX > 0.01 && overlapY > 0.01) {
+          errors.push(`comparison geometry: Celtic Cross cards ${firstIndex + 1} and ${secondIndex + 1} collide in ${scenario.name}`);
+        }
+      });
+    });
+  });
+  [
+    { name: "mobile", stage: 205, cardWidth: 42, columnGap: 10, rowGap: 8 },
+    { name: "constrained", stage: 219, cardWidth: 42, columnGap: 10, rowGap: 8 },
+    { name: "expanded", stage: 220, cardWidth: 44, columnGap: 14, rowGap: 10 }
+  ].forEach((scenario) => {
+    const totalWidth = scenario.cardWidth * 3 + scenario.columnGap * 2;
+    const totalHeight = scenario.cardWidth * 4.5 + scenario.rowGap * 2;
+    if (totalWidth > scenario.stage || totalHeight > scenario.stage) {
+      errors.push(`comparison geometry: five-card grid exceeds its ${scenario.name} stage`);
+    }
+    const centerWidth = scenario.cardWidth * 1.02;
+    const centerHeight = scenario.cardWidth * 1.5 * 1.02;
+    const horizontalClearance = scenario.cardWidth + scenario.columnGap - (scenario.cardWidth + centerWidth) / 2;
+    const upperClearance = scenario.cardWidth * 1.5 + scenario.rowGap - 3 - (scenario.cardWidth * 1.5 + centerHeight) / 2;
+    if (horizontalClearance <= 0 || upperClearance <= 0) {
+      errors.push(`comparison geometry: emphasized center card collides in the ${scenario.name} five-card grid`);
+    }
+  });
+  [
+    'comparison.dataset.activeComparison = key',
+    'comparison.style.setProperty("--comparison-active-index", String(activeIndex))',
+    'tabs[targetIndex].focus({ preventScroll: true })',
+    'panel.inert = !active'
+  ].forEach((token) => {
+    if (!js.includes(token)) errors.push(`comparison behavior: required accessible toggle behavior is missing (${token})`);
   });
 
   if (
     countMatches(/data-major-faq-item/g) !== tarotSpreadsPage.faq.items.length ||
-    countMatches(/class="tarot-faq__answer"/g) !== tarotSpreadsPage.faq.items.length
+    countMatches(/class="tarot-faq__answer"/g) !== tarotSpreadsPage.faq.items.length ||
+    countMatches(/class="tarot-spreads-faq__number"/g) !== tarotSpreadsPage.faq.items.length ||
+    countMatches(/class="tarot-spreads-faq__question"/g) !== tarotSpreadsPage.faq.items.length
   ) {
-    errors.push("faq: expected all accessible questions and answers");
+    errors.push("faq: expected all accessible numbered questions and answers");
   }
-  tarotSpreadsPage.faq.items.forEach((item) => {
+  tarotSpreadsPage.faq.items.forEach((item, index) => {
     if (!html.includes(item.question) || !html.includes(item.answer)) errors.push(`faq: visible content is missing (${item.question})`);
+    if (!html.includes(`class="tarot-spreads-faq__number" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>`)) {
+      errors.push(`faq: editorial sequence number is missing (${item.question})`);
+    }
   });
+  [
+    "items.forEach((candidate) => setFaqState(candidate, false))",
+    "if (shouldOpen) setFaqState(item, true)",
+    'button?.setAttribute("aria-expanded", String(expanded))',
+    'panel?.setAttribute("aria-hidden", String(!expanded))',
+    "panel.inert = !expanded",
+    'icon.textContent = expanded ? "−" : "+"'
+  ].forEach((token) => {
+    if (!majorArcanaJs.includes(token)) errors.push(`faq interaction: required single-open accessible behavior is missing (${token})`);
+  });
+  const spreadsFaqCssStart = css.indexOf("body.tarot-spreads-page .tarot-spreads-faq {");
+  const spreadsFaqCssEnd = css.indexOf("body.tarot-spreads-page .tarot-spreads-closing", spreadsFaqCssStart);
+  const spreadsFaqCss = spreadsFaqCssStart >= 0 && spreadsFaqCssEnd > spreadsFaqCssStart
+    ? css.slice(spreadsFaqCssStart, spreadsFaqCssEnd)
+    : "";
+  [
+    "--spreads-faq-accent",
+    "padding-block: clamp(4rem, 7vw, 6.5rem)",
+    "width: min(calc(100% - 40px), 980px)",
+    "grid-template-columns: minmax(0, 1fr)",
+    "width: min(100%, 740px)",
+    "text-align: center",
+    "font: 700 .64rem/1.35 var(--body-font, \"DM Sans\", sans-serif)",
+    "width: min(100%, 960px)",
+    "border-radius: 0",
+    "background: transparent",
+    "box-shadow: none",
+    "grid-template-columns: 52px minmax(0, 1fr) 44px",
+    "font-variant-numeric: tabular-nums",
+    "font: 500 clamp(1.25rem, 1.8vw, 1.65rem)/1.28 var(--heading-font, \"Cormorant Garamond\", serif)",
+    "transform: translateX(6px)",
+    "font: 400 clamp(1rem, 1.15vw, 1.08rem)/1.72 var(--body-font, \"DM Sans\", sans-serif)",
+    "grid-template-columns: 32px minmax(0, 1fr) 44px",
+    "body.moon-mode.tarot-spreads-page .tarot-spreads-faq",
+    "body.blood-moon-mode.tarot-spreads-page .tarot-spreads-faq",
+    "@media (prefers-reduced-motion: reduce)"
+  ].forEach((token) => {
+    if (!spreadsFaqCss.includes(token)) errors.push(`faq styles: required centered editorial treatment is missing (${token})`);
+  });
+  if (
+    !/\.tarot-faq__item,\s*body\.tarot-spreads-page \.tarot-spreads-faq \.tarot-faq__item:hover,[\s\S]*?\{[^}]*border:\s*0;[^}]*border-radius:\s*0;[^}]*background:\s*transparent;[^}]*box-shadow:\s*none;/s.test(spreadsFaqCss) ||
+    /min-height:\s*100vh/i.test(spreadsFaqCss) ||
+    /grid-template-columns:\s*minmax\(0,\s*\.75fr\)/i.test(spreadsFaqCss)
+  ) {
+    errors.push("faq styles: bordered cards or the old split-column layout remain active");
+  }
 
   [
     'href="/one-card-tarot-reading"',
@@ -982,5 +1454,5 @@ if (errors.length) {
   console.error(`Tarot Spreads validation failed:\n- ${errors.join("\n- ")}`);
   process.exitCode = 1;
 } else {
-  console.log("Tarot Spreads validation passed for the horizontal gallery and split tabletop workspace.");
+  console.log("Tarot Spreads validation passed for the horizontal gallery, split tabletop workspace, and Question-to-Story timeline.");
 }
