@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tarotComparisons } from "../data/tarot-comparisons.mjs";
+import { getTarotEducationHeroImages } from "../data/tarot-education-hero-images.js";
 import { escapeHtml } from "./card-page-helpers.mjs";
 import {
   getComparisonOutputPath,
@@ -18,8 +19,9 @@ const tarotScript = readFileSync(resolve(rootDir, "js/tarot.js"), "utf8");
 const tarotHubCss = readFileSync(resolve(rootDir, "css/tarot.css"), "utf8");
 const comparisonCss = readFileSync(resolve(rootDir, "css/tarot-comparison.css"), "utf8");
 const comparisonScript = readFileSync(resolve(rootDir, "js/tarot-comparison.js"), "utf8");
+const educationCss = readFileSync(resolve(rootDir, "css/tarot-education-components.css"), "utf8");
+const educationScript = readFileSync(resolve(rootDir, "js/tarot-education.js"), "utf8");
 const directWrapperRule = comparisonCss.match(/\.tarot-comparison-direct\s*\{([^}]*)\}/)?.[1] || "";
-const faqWrapperRule = comparisonCss.match(/\.tarot-comparison-faq\s*\{([^}]*)\}/)?.[1] || "";
 
 tarotComparisons.forEach((comparison) => {
   const route = getComparisonRoute(comparison);
@@ -36,7 +38,7 @@ tarotComparisons.forEach((comparison) => {
   const conceptualExampleCount = (html.match(/data-conceptual-comparison-example/g) || []).length;
   const decisionHeadingCount = (html.match(/id="comparison-decision-heading"/g) || []).length;
   const heroStart = html.indexOf("tarot-comparison-hero");
-  const introductionStart = html.indexOf('<section class="tarot-comparison-introduction tarot-comparison-section"');
+  const introductionStart = html.indexOf('<div class="tarot-education-hero__editorial tarot-comparison-introduction tarot-comparison-section"');
   const directStart = html.indexOf('<section class="tarot-comparison-direct tarot-comparison-section"');
   const activeEducationKey = comparison.slug === "tarot-vs-lenormand"
     ? "tarot-vs-lenormand"
@@ -65,7 +67,7 @@ tarotComparisons.forEach((comparison) => {
   }
   if (!(heroStart >= 0 && introductionStart > heroStart && directStart > introductionStart)
     || !html.includes(`<p>${escapeHtml(comparison.introduction)}</p>`)) {
-    errors.push(`${comparison.id}.hero: introduction must appear directly after the hero and before the direct answer`);
+    errors.push(`${comparison.id}.hero: introduction must appear in the hero supporting row before the direct answer`);
   }
   if (!html.includes('class="tarot-comparison-examples-layout"')
     || !html.includes('class="tarot-comparison-decision-wide"')
@@ -101,9 +103,12 @@ tarotComparisons.forEach((comparison) => {
     errors.push(`${comparison.id}.tile: completed comparison guide link layout is missing`);
   }
 
-  if (!html.includes(`data-regular-src="${escapeHtml(comparison.hero.regularImage)}"`)
-    || !html.includes(`data-blood-src="${escapeHtml(comparison.hero.bloodMoonImage)}"`)) {
-    errors.push(`${comparison.id}.hero: stable regular and Blood Moon sources are missing`);
+  const educationHeroKey = comparison.slug === "tarot-vs-lenormand" ? "tarot-vs-lenormand" : "tarot-vs-oracle";
+  const educationHeroImages = getTarotEducationHeroImages(educationHeroKey);
+  if (!html.includes(`data-education-page="${educationHeroKey}"`)
+    || !html.includes(`src="${escapeHtml(educationHeroImages.regular.src)}"`)
+    || !html.includes("data-education-hero-image")) {
+    errors.push(`${comparison.id}.hero: centralized education hero configuration is not rendered`);
   }
   if (comparison.hero.regularImage.includes("?") || comparison.hero.bloodMoonImage.includes("?")) {
     errors.push(`${comparison.id}.hero: cache-busting query strings are not allowed`);
@@ -129,10 +134,13 @@ tarotComparisons.forEach((comparison) => {
     || !comparisonCss.includes("backdrop-filter: blur(10px);")) {
     errors.push(`${comparison.id}.comparisonRows: editorial comparison panel styling is missing`);
   }
-  if (!comparisonCss.includes("--education-hero-height: clamp(380px, 34vw, 500px);")
-    || !comparisonCss.includes(".tarot-comparison-introduction {")
+  if (!html.includes("tarot-education-hero--immersive")
+    || !html.includes(`data-education-page="${escapeHtml(activeEducationKey)}"`)
+    || !educationCss.includes("--education-hero-height: clamp(540px, 56vw, 640px);")
+    || !educationCss.includes("object-fit: cover;")
+    || !educationCss.includes("object-position: var(--education-hero-image-position);")
     || !comparisonCss.includes("grid-template-columns: minmax(150px, .35fr) minmax(0, 1.45fr) minmax(260px, .75fr);")) {
-    errors.push(`${comparison.id}.hero: compact editorial hero or direct-answer layout is missing`);
+    errors.push(`${comparison.id}.hero: shared cinematic hero or direct-answer layout is missing`);
   }
   if (!comparisonCss.includes("@media (max-width: 900px) and (min-width: 769px)")
     || !comparisonCss.includes("@media (max-width: 768px)")
@@ -141,11 +149,9 @@ tarotComparisons.forEach((comparison) => {
     errors.push(`${comparison.id}.examplesResponsive: tablet stacking or mobile tab styling is missing`);
   }
   if (!/background:\s*transparent;/.test(directWrapperRule)
-    || !/background:\s*transparent;/.test(faqWrapperRule)
     || /gradient|box-shadow|backdrop-filter|\bborder\s*:/.test(directWrapperRule)
-    || /gradient|box-shadow|backdrop-filter|\bborder\s*:/.test(faqWrapperRule)
-    || /\.tarot-comparison-(?:direct|faq)::(?:before|after)/.test(comparisonCss)) {
-    errors.push(`${comparison.id}.outerSurfaces: Direct Answer and FAQ wrappers must remain transparent and overlay-free`);
+    || /\.tarot-comparison-direct::(?:before|after)/.test(comparisonCss)) {
+    errors.push(`${comparison.id}.outerSurfaces: Direct Answer wrapper must remain transparent and overlay-free`);
   }
   if (!comparisonScript.includes("data-comparison-example-tab")
     || !comparisonScript.includes("syncExamplePanels")
@@ -214,6 +220,11 @@ tarotComparisons.forEach((comparison) => {
         errors.push(`${comparison.id}.faq[${index}]: visible FAQ content does not match the comparison record`);
       }
     });
+  }
+  if ((html.match(/data-education-faq-button/g) || []).length !== comparison.faq.length
+    || (html.match(/data-education-faq-item/g) || []).length !== comparison.faq.length
+    || !educationScript.includes("setItemState")) {
+    errors.push(`${comparison.id}.faq: shared accessible accordion contract is incomplete`);
   }
 
   const schemas = [...html.matchAll(/<script(?: id="[^"]+")? type="application\/ld\+json">([\s\S]*?)<\/script>/g)]

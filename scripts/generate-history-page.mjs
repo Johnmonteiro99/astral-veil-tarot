@@ -2,13 +2,14 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tarotHistory } from "../data/tarot-history.mjs";
+import { getTarotEducationHeroImages } from "../data/tarot-education-hero-images.js";
 import { escapeHtml, serializeForInlineScript, SITE_ORIGIN } from "./card-page-helpers.mjs";
 import {
   getHistoryOutputPath,
   getHistoryRoute,
   validateHistoryData
 } from "./history-page-helpers.mjs";
-import { renderTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
+import { renderTarotEducationFaq, renderTarotEducationHeroImage, renderTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const templatePath = resolve(rootDir, "templates/tarot-history-page.html");
@@ -66,6 +67,7 @@ function renderMeta(history) {
   const canonicalUrl = `${SITE_ORIGIN}${getHistoryRoute(history)}`;
   const imageUrl = `${SITE_ORIGIN}${history.hero.image.src}`;
   const schemas = renderSchemas(history);
+  const educationHero = getTarotEducationHeroImages("tarot-history");
   return [
     `<title>${escapeHtml(history.seo.title)}</title>`,
     `<meta name="description" content="${escapeHtml(history.seo.description)}" />`,
@@ -81,7 +83,7 @@ function renderMeta(history) {
     `<meta name="twitter:description" content="${escapeHtml(history.seo.ogDescription)}" />`,
     `<meta name="twitter:image" content="${imageUrl}" />`,
     `<meta name="twitter:image:alt" content="${escapeHtml(history.hero.image.alt)}" />`,
-    `<link rel="preload" as="image" href="${escapeHtml(history.hero.image.src)}" fetchpriority="high" />`,
+    `<link rel="preload" as="image" href="${escapeHtml(educationHero.regular.src)}" fetchpriority="high" />`,
     `<script id="tarot-history-breadcrumb-schema" type="application/ld+json">${serializeForInlineScript(schemas.breadcrumb)}</script>`,
     `<script id="tarot-history-webpage-schema" type="application/ld+json">${serializeForInlineScript(schemas.webPage)}</script>`,
     `<script id="tarot-history-faq-schema" type="application/ld+json">${serializeForInlineScript(schemas.faqPage)}</script>`
@@ -475,44 +477,12 @@ function renderResources(history) {
 }
 
 function renderFaq(history) {
-  const section = history.faqSection;
-  const panels = history.faq.map((item, index) => {
-    const number = index + 1;
-    const label = String(number).padStart(2, "0");
-    return `<article class="tarot-history-faq__answer-panel${index === 0 ? " is-active" : ""}" id="tarot-history-faq-answer-${number}" role="tabpanel" aria-labelledby="tarot-history-faq-tab-${number}" aria-hidden="false" data-history-faq-panel>
-            <div class="tarot-history-faq__answer-meta">
-              <p>Question ${label}</p>
-              <p>${number} of ${history.faq.length}</p>
-            </div>
-            <h3>${escapeHtml(item.question)}</h3>
-            <p class="tarot-history-faq__answer-copy">${escapeHtml(item.answer)}</p>
-            <span class="tarot-history-faq__answer-divider" aria-hidden="true"></span>
-          </article>`;
-  }).join("");
-
-  const questions = history.faq.map((item, index) => {
-    const number = index + 1;
-    const label = String(number).padStart(2, "0");
-    return `<button class="tarot-history-faq__index-button${index === 0 ? " is-active" : ""}" id="tarot-history-faq-tab-${number}" type="button" role="tab" aria-selected="${index === 0 ? "true" : "false"}"${index === 0 ? ' aria-current="true"' : ""} aria-controls="tarot-history-faq-answer-${number}" tabindex="${index === 0 ? "0" : "-1"}" data-history-faq-button>
-            <span class="tarot-history-faq__index-number" aria-hidden="true">${label}</span>
-            <span class="tarot-history-faq__index-question">${escapeHtml(item.question)}</span>
-            <span class="tarot-history-faq__index-marker" aria-hidden="true"></span>
-          </button>`;
-  }).join("");
-
-  return `<section class="tarot-history-section tarot-history-faq" id="${escapeHtml(section.id)}" aria-labelledby="${escapeHtml(section.id)}-heading">
-        <div class="tarot-history-faq__content">
-          <header class="tarot-history-faq__header">
-            ${renderChapterHeader(section)}
-            <p class="tarot-history-faq__introduction">${escapeHtml(section.introduction)}</p>
-          </header>
-          <div class="tarot-history-faq__featured" data-history-faq-featured>
-            <div class="tarot-history-faq__panels">${panels}</div>
-            <p class="tarot-history-visually-hidden tarot-history-faq__status" aria-live="polite" aria-atomic="true" data-history-faq-status>Question 1 of ${history.faq.length} selected: ${escapeHtml(history.faq[0].question)}</p>
-          </div>
-          <div class="tarot-history-faq__index" role="tablist" aria-label="Questions about the history of Tarot">${questions}</div>
-        </div>
-      </section>`;
+  return renderTarotEducationFaq({
+    section: history.faqSection,
+    items: history.faq,
+    idPrefix: "tarot-history-faq",
+    className: "tarot-history-faq"
+  });
 }
 
 function renderClosingCta(history) {
@@ -543,21 +513,29 @@ function renderClosingCta(history) {
 }
 
 function renderMain(history) {
-  return `<main id="main-content" class="tarot-history">
+  return `<main id="main-content" class="tarot-history tarot-education-page">
       ${renderTarotEducationNavigation({ activeKey: "history", rootDir })}
-      <section class="tarot-education-hero tarot-education-hero--immersive tarot-history-hero" aria-labelledby="tarot-history-title">
-        <div class="tarot-education-hero__copy tarot-history-hero__copy">
-          <p class="tarot-history-eyebrow">${escapeHtml(history.hero.eyebrow)}</p>
-          <h1 id="tarot-history-title">${escapeHtml(history.hero.title)}</h1>
-          <p>${escapeHtml(history.hero.introduction)}</p>
-          <a class="tarot-history-button" href="${escapeHtml(history.hero.ctaTarget)}">${escapeHtml(history.hero.ctaLabel)} <span aria-hidden="true">→</span></a>
+      <section class="tarot-education-hero tarot-education-hero--immersive tarot-history-hero" aria-labelledby="tarot-history-title" data-education-page="tarot-history">
+        <div class="tarot-education-hero__stage tarot-history-hero__stage">
+          <div class="tarot-education-hero__copy tarot-history-hero__copy">
+            <p class="tarot-history-eyebrow">${escapeHtml(history.hero.eyebrow)}</p>
+            <h1 id="tarot-history-title">${escapeHtml(history.hero.title)}</h1>
+          </div>
+          <figure class="tarot-education-hero__visual tarot-history-hero__visual">
+            ${renderTarotEducationHeroImage({
+              pageKey: "tarot-history",
+              className: "tarot-education-hero__image tarot-history-hero__image",
+              alt: history.hero.image.alt
+            })}
+          </figure>
+          <div class="tarot-education-hero__overlay tarot-history-hero__veil" aria-hidden="true"></div>
         </div>
-        ${renderImage(history.hero.image, {
-          className: "tarot-education-hero__image tarot-history-hero__image",
-          loading: "eager",
-          fetchpriority: "high"
-        })}
-        <div class="tarot-education-hero__overlay tarot-history-hero__veil" aria-hidden="true"></div>
+        <div class="tarot-education-hero__editorial tarot-history-hero__editorial">
+          <div class="tarot-history-hero__editorial-inner">
+            <p>${escapeHtml(history.hero.introduction)}</p>
+            <a class="tarot-history-button" href="${escapeHtml(history.hero.ctaTarget)}">${escapeHtml(history.hero.ctaLabel)} <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
       </section>
       <div class="tarot-history-archive">
         <aside class="tarot-history-visual-note" aria-label="Visual reconstruction disclosure">
@@ -576,8 +554,8 @@ function renderMain(history) {
           ${renderTarotToday(history)}
           ${renderResources(history)}
         </div>
-        ${renderFaq(history)}
       </div>
+      ${renderFaq(history)}
       ${renderClosingCta(history)}
       ${renderContributorDialog(history)}
     </main>`;

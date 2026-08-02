@@ -21,10 +21,23 @@ if (!existsSync(outputPath)) {
   const html = readFileSync(outputPath, "utf8");
   const css = readFileSync(resolve(rootDir, "css/tarot-history.css"), "utf8");
   const js = readFileSync(resolve(rootDir, "js/tarot-history.js"), "utf8");
+  const educationCss = readFileSync(resolve(rootDir, "css/tarot-education-components.css"), "utf8");
+  const educationJs = readFileSync(resolve(rootDir, "js/tarot-education.js"), "utf8");
   const sitemap = readFileSync(resolve(rootDir, "sitemap.xml"), "utf8");
   const hubScript = readFileSync(resolve(rootDir, "js/tarot.js"), "utf8");
 
   const countMatches = (pattern, value = html) => (value.match(pattern) || []).length;
+  const findElementEnd = (startIndex, tagName) => {
+    const tags = new RegExp(`<\\/?${tagName}\\b[^>]*>`, "gi");
+    tags.lastIndex = startIndex;
+    let depth = 0;
+    let match;
+    while ((match = tags.exec(html))) {
+      depth += match[0].startsWith(`</${tagName}`) ? -1 : 1;
+      if (depth === 0) return tags.lastIndex;
+    }
+    return -1;
+  };
   validateRenderedTarotEducationNavigation(html, { activeKey: "history", rootDir })
     .forEach((error) => errors.push(`education navigation: ${error}`));
   const parseSchema = (id) => {
@@ -63,99 +76,72 @@ if (!existsSync(outputPath)) {
     });
   }
 
-  const faqMarkup = html.match(/<section class="tarot-history-section tarot-history-faq"[\s\S]*?<\/section>/)?.[0] || "";
-  if (countMatches(/data-history-faq-button/g) !== tarotHistory.faq.length) {
-    errors.push("faq: question-index button count is incorrect");
+  const faqMarkup = html.match(/<section class="[^"]*tarot-education-faq[^"]*"[\s\S]*?<\/section>/)?.[0] || "";
+  const archiveStart = html.indexOf('<div class="tarot-history-archive">');
+  const archiveEnd = findElementEnd(archiveStart, "div");
+  const faqStart = html.indexOf('<section class="tarot-faq major-arcana-faq tarot-education-faq tarot-history-faq"');
+  if (archiveStart < 0 || archiveEnd < 0 || faqStart < archiveEnd) {
+    errors.push("faq: shared accordion must render outside the twelve-column History archive grid");
   }
-  if (countMatches(/data-history-faq-panel/g) !== tarotHistory.faq.length) {
-    errors.push("faq: featured answer-panel count is incorrect");
+  if (countMatches(/data-education-faq-button/g) !== tarotHistory.faq.length
+    || countMatches(/data-education-faq-item/g) !== tarotHistory.faq.length
+    || countMatches(/class="tarot-faq__answer"/g) !== tarotHistory.faq.length) {
+    errors.push("faq: shared accordion record count is incorrect");
   }
   if (!html.includes(`>${tarotHistory.faqSection.introduction}</p>`)) {
     errors.push("faq: editorial introduction is missing");
   }
-  if (!html.includes('role="tablist"')
-    || !faqMarkup.includes('class="tarot-history-visually-hidden tarot-history-faq__status"')
-    || !faqMarkup.includes('aria-live="polite"')
-    || !faqMarkup.includes("data-history-faq-status")) {
-    errors.push("faq: tablist or live selection status is missing");
+  if (!faqMarkup.includes("data-education-faq") || !faqMarkup.includes('class="tarot-shell tarot-faq__inner"')) {
+    errors.push("faq: shared two-column education shell is missing");
   }
   tarotHistory.faq.forEach((item, index) => {
     const number = index + 1;
-    const tabId = `tarot-history-faq-tab-${number}`;
-    const panelId = `tarot-history-faq-answer-${number}`;
-    if (!html.includes(`id="${tabId}"`) || !html.includes(`aria-controls="${panelId}"`)) {
-      errors.push(`faq: question index ${number} is not connected to its answer`);
+    const questionId = `tarot-history-faq-question-${number}`;
+    const answerId = `tarot-history-faq-answer-${number}`;
+    if (!html.includes(`id="${questionId}"`) || !html.includes(`aria-controls="${answerId}"`)) {
+      errors.push(`faq: question ${number} is not connected to its answer`);
     }
-    if (!html.includes(`id="${panelId}" role="tabpanel" aria-labelledby="${tabId}" aria-hidden="false"`)) {
-      errors.push(`faq: answer panel ${number} is not present in the initial accessible HTML`);
+    if (!html.includes(`id="${answerId}" role="region" aria-labelledby="${questionId}" aria-hidden="false"`)) {
+      errors.push(`faq: answer ${number} is not present in the initial accessible HTML`);
     }
     if (!html.includes(item.question) || !html.includes(item.answer)) {
       errors.push(`faq: question or answer ${number} is missing from visible HTML`);
     }
   });
   [
-    "history-faq-visual",
-    "tarot-history-faq__image",
-    "tarot-history-faq__icon",
-    "aria-expanded="
+    "data-history-faq-button",
+    "data-history-faq-panel",
+    'role="tablist"'
   ].forEach((token) => {
-    if (faqMarkup.includes(token)) errors.push(`faq: obsolete accordion or image markup remains (${token})`);
+    if (faqMarkup.includes(token)) errors.push(`faq: obsolete History tab markup remains (${token})`);
   });
   [
-    ".tarot-history-faq__header",
-    ".tarot-history-faq__featured",
-    ".tarot-history-faq__answer-panel",
-    ".tarot-history-faq__answer-meta",
-    ".tarot-history-faq__answer-divider",
-    ".tarot-history-faq__index-button",
-    ".tarot-history-faq__index-marker",
-    "grid-template-columns: repeat(2, minmax(0, 1fr))",
-    "grid-auto-flow: column",
-    "min-height: 72px",
-    "radial-gradient(circle at 78% 20%",
-    "linear-gradient(135deg, rgba(8, 35, 29, .98)",
-    "scroll-margin-top: 76px",
-    "body.sun-mode.tarot-history-page .tarot-history-faq",
-    "body.moon-mode.tarot-history-page .tarot-history-faq",
-    "body.blood-moon-mode.tarot-history-page .tarot-history-faq",
+    "body.tarot-meanings-page .tarot-education-page .tarot-education-faq .tarot-faq__inner",
+    "grid-template-columns: minmax(15rem, .75fr) minmax(0, 1.25fr)",
+    "border-radius: 14px",
+    ".tarot-faq__trigger:focus-visible",
+    "@media (max-width: 820px)",
     "@media (prefers-reduced-motion: reduce)"
   ].forEach((token) => {
-    if (!css.includes(token)) errors.push(`faq: redesigned editorial styling is missing (${token})`);
-  });
-  if (css.includes("--faq-featured-bg: rgba(237, 222, 190, .97)")) {
-    errors.push("faq: obsolete parchment featured-panel surface remains");
-  }
-  [
-    ".history-faq-visual",
-    ".tarot-history-faq__image",
-    ".tarot-history-faq__item",
-    ".tarot-history-faq__question",
-    ".tarot-history-faq__icon"
-  ].forEach((token) => {
-    if (css.includes(token)) errors.push(`faq: obsolete accordion or image styling remains (${token})`);
+    if (!educationCss.includes(token)) errors.push(`faq: shared education styling is missing (${token})`);
   });
   [
+    "data-history-faq-button",
     "activateFaq",
     "faqTransitioning",
-    "waitForFaqTransition",
-    "is-entering",
-    "is-leaving",
-    "ArrowRight",
-    "ArrowDown",
-    "ArrowLeft",
-    "ArrowUp",
-    'event.key === "Home"',
-    'event.key === "End"',
-    "mobileFaqQuery",
-    "scrollFaqAnswerIntoView",
-    "scrollIntoView",
-    "returnToAnswer",
-    "reducedMotionQuery"
+    "waitForFaqTransition"
   ].forEach((token) => {
-    if (!js.includes(token)) errors.push(`faq: required interaction behavior is missing (${token})`);
+    if (js.includes(token)) errors.push(`faq: obsolete History interaction remains (${token})`);
   });
-  ["setFaqState", "aria-expanded", "faqVisual", "updateFaqVisualTilt", "--history-faq-tilt"].forEach((token) => {
-    if (js.includes(token)) errors.push(`faq: obsolete interaction behavior remains (${token})`);
+  [
+    "[data-education-faq]",
+    "setItemState",
+    'button.setAttribute("aria-expanded", String(isOpen))',
+    'answer.setAttribute("aria-hidden", String(!isOpen))',
+    "answer.inert = !isOpen",
+    'icon.textContent = isOpen ? "−" : "+"'
+  ].forEach((token) => {
+    if (!educationJs.includes(token)) errors.push(`faq: required shared interaction is missing (${token})`);
   });
 
   if (countMatches(/class="tarot-history-closing-card"/g) !== tarotHistory.closingCta.actions.length

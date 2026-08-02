@@ -495,14 +495,14 @@ export const tarotSpreadsPage = {
         route: "/daily-tarot-reading",
         linkLabel: "Begin a Daily Tarot Reading",
         image: {
-          src: "/assets/images/background%20_images/daily-read-bg.png",
-          alt: "A celestial tarot card beneath an arch of stars, prepared for a daily reading",
-          width: 1086,
-          height: 1448,
-          bloodSrc: "/assets/images/background%20_images/bloodmoon-upright-reverse.png",
-          bloodAlt: "A contemplative celestial scene beneath a red moon for daily guidance",
-          bloodWidth: 1122,
-          bloodHeight: 1402
+          src: "/assets/images/background%20_images/history-tarot-today-reflection.webp",
+          alt: "A tarot reader holding a card above a candlelit spread beside crystals and a journal",
+          width: 1536,
+          height: 1024,
+          bloodSrc: "/assets/images/background%20_images/bloodmoon_tarot_spread_header.png",
+          bloodAlt: "Multiple tarot spreads arranged beneath a red moon in a crimson ritual setting",
+          bloodWidth: 1672,
+          bloodHeight: 941
         }
       }
     ]

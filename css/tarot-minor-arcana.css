@@ -30,48 +30,6 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-arcana-page {
   background: transparent;
 }
 
-.minor-arcana-page .minor-arcana-hero {
-  --education-hero-image-position: 50% 58%;
-  --education-hero-text-width: 590px;
-  --education-hero-horizontal-fade-start: 32%;
-  --education-hero-horizontal-fade-end: 72%;
-  --education-hero-overlay-strength: 86%;
-  --education-hero-fade-angle: 270deg;
-}
-
-.minor-arcana-page .minor-arcana-hero .major-arcana-hero__stage {
-  grid-template-columns: minmax(0, 54fr) minmax(0, 46fr);
-}
-
-.minor-arcana-page .minor-arcana-hero .major-arcana-hero__title {
-  grid-column: 2;
-  width: min(100%, 590px);
-  justify-self: start;
-  padding-block: clamp(2.5rem, 5vw, 4rem);
-  padding-left: clamp(1rem, 3vw, 3.25rem);
-}
-
-.minor-arcana-page .minor-arcana-hero h1 {
-  max-width: 7.5ch;
-}
-
-.minor-arcana-page .minor-arcana-hero .major-arcana-hero__visual {
-  inset: 0;
-  opacity: .94;
-}
-
-.minor-arcana-page .minor-arcana-hero .major-arcana-hero__image {
-  object-position: var(--education-hero-image-position);
-  filter: saturate(.9) contrast(.98);
-}
-
-.minor-arcana-page .minor-arcana-hero .major-arcana-hero__content-inner {
-  border-left: 1px solid var(--minor-reading-edge);
-  padding-inline: clamp(1rem, 2.2vw, 2rem);
-  background: linear-gradient(100deg, var(--minor-reading-surface), var(--minor-reading-surface-soft) 58%, transparent 92%);
-  box-shadow: -20px 0 46px -40px var(--major-shadow);
-}
-
 .minor-arcana-page .minor-arcana-filters {
   display: flex;
   width: min(100%, 760px);
@@ -2238,5 +2196,69 @@ body.blood-moon-mode.tarot-minor-arcana-page .minor-court-cards .minor-court-car
   .minor-arcana-page .minor-suits .minor-suit-selector__effect::before,
   .minor-arcana-page .minor-suits .minor-suit-selector__effect::after {
     animation: none !important;
+  }
+}
+
+/* Hero geometry is owned by tarot-education-components.css. Keep only the
+   page-specific CTA color behavior here. */
+
+body.tarot-minor-arcana-page .minor-arcana-page .minor-arcana-hero[data-education-page="minor-arcana"] .major-arcana-hero__content-band .major-arcana-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: color 220ms ease, border-color 220ms ease, background 260ms ease, box-shadow 220ms ease, filter 220ms ease, transform 220ms ease;
+  -webkit-text-fill-color: currentColor;
+}
+
+body.tarot-minor-arcana-page .minor-arcana-page .minor-arcana-hero[data-education-page="minor-arcana"] .major-arcana-hero__content-band .major-arcana-button::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, .18) 45%, transparent 70%);
+  content: "";
+  pointer-events: none;
+  transform: translateX(-135%);
+  transition: transform 500ms ease;
+}
+
+body.tarot-minor-arcana-page .minor-arcana-page .minor-arcana-hero[data-education-page="minor-arcana"] .major-arcana-hero__content-band .major-arcana-button > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.tarot-minor-arcana-page .minor-arcana-page .minor-arcana-hero[data-education-page="minor-arcana"] .major-arcana-hero__content-band .major-arcana-button:is(:hover, :focus-visible) {
+  border-color: rgba(247, 221, 161, .9);
+  color: #211509;
+  background: linear-gradient(135deg, #f7dda1, #d3a64f);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .28), 0 0 18px color-mix(in srgb, var(--major-accent) 18%, transparent), inset 0 1px 0 rgba(255, 255, 255, .3);
+  filter: saturate(1.03);
+  transform: translateY(-2px);
+  -webkit-text-fill-color: currentColor;
+}
+
+body.tarot-minor-arcana-page .minor-arcana-page .minor-arcana-hero[data-education-page="minor-arcana"] .major-arcana-hero__content-band .major-arcana-button:is(:hover, :focus-visible)::before {
+  transform: translateX(135%);
+}
+
+body.tarot-minor-arcana-page .minor-arcana-page .minor-arcana-hero[data-education-page="minor-arcana"] .major-arcana-hero__content-band .major-arcana-button:active {
+  transform: translateY(0);
+}
+
+body.tarot-minor-arcana-page.blood-moon-mode .minor-arcana-page .minor-arcana-hero[data-education-page="minor-arcana"] .major-arcana-hero__content-band .major-arcana-button:is(:hover, :focus-visible) {
+  border-color: rgba(241, 91, 103, .86);
+  color: #ff9299;
+  background: linear-gradient(135deg, #5a1423, #310812);
+  box-shadow: 0 12px 30px rgba(12, 0, 4, .4), 0 0 18px rgba(213, 72, 86, .18);
+}
+
+@media (max-width: 520px) {
+  body.tarot-minor-arcana-page .minor-arcana-page .minor-arcana-hero[data-education-page="minor-arcana"] .major-arcana-hero__content-band .major-arcana-button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.tarot-minor-arcana-page .minor-arcana-page .minor-arcana-hero[data-education-page="minor-arcana"] .major-arcana-hero__content-band .major-arcana-button::before {
+    display: none;
   }
 }

@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tarotComparisons } from "../data/tarot-comparisons.mjs";
+import { getTarotEducationHeroImages } from "../data/tarot-education-hero-images.js";
 import { escapeHtml, serializeForInlineScript, SITE_ORIGIN } from "./card-page-helpers.mjs";
 import {
   getComparisonOutputPath,
@@ -9,7 +10,7 @@ import {
   resolveComparisonCard,
   validateComparisonData
 } from "./comparison-page-helpers.mjs";
-import { renderTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
+import { renderTarotEducationFaq, renderTarotEducationHeroImage, renderTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const templatePath = resolve(rootDir, "templates/tarot-comparison-page.html");
@@ -66,6 +67,8 @@ function renderMeta(comparison) {
   const canonicalUrl = `${SITE_ORIGIN}${route}`;
   const heroUrl = `${SITE_ORIGIN}${comparison.hero.regularImage}`;
   const schemas = renderSchemas(comparison);
+  const educationHeroKey = comparison.slug === "tarot-vs-lenormand" ? "tarot-vs-lenormand" : "tarot-vs-oracle";
+  const educationHero = getTarotEducationHeroImages(educationHeroKey);
 
   return [
     `<title>${escapeHtml(comparison.seo.title)}</title>`,
@@ -82,7 +85,7 @@ function renderMeta(comparison) {
     `<meta name="twitter:description" content="${escapeHtml(comparison.seo.ogDescription)}" />`,
     `<meta name="twitter:image" content="${heroUrl}" />`,
     `<meta name="twitter:image:alt" content="${escapeHtml(comparison.hero.regularAlt)}" />`,
-    `<link rel="preload" as="image" href="${escapeHtml(comparison.hero.regularImage)}" fetchpriority="high" />`,
+    `<link rel="preload" as="image" href="${escapeHtml(educationHero.regular.src)}" fetchpriority="high" />`,
     `<script type="application/ld+json">${serializeForInlineScript(schemas.breadcrumb)}</script>`,
     `<script id="tarot-comparison-webpage-schema" type="application/ld+json">${serializeForInlineScript(schemas.webPage)}</script>`,
     `<script id="tarot-comparison-faq-schema" type="application/ld+json">${serializeForInlineScript(schemas.faqPage)}</script>`
@@ -177,18 +180,6 @@ function renderChoiceList(choice) {
           </section>`;
 }
 
-function renderFaq(comparison) {
-  return comparison.faq.map(({ question, answer }, index) => {
-    const number = index + 1;
-    return `<article class="tarot-comparison-faq__item${index === 0 ? " is-open" : ""}">
-            <h3><button class="tarot-comparison-faq__question" id="tarot-comparison-faq-question-${number}" type="button" aria-expanded="${index === 0 ? "true" : "false"}" aria-controls="tarot-comparison-faq-answer-${number}" data-comparison-faq-button>
-              <span>${escapeHtml(question)}</span><span class="tarot-comparison-faq__icon" aria-hidden="true">+</span>
-            </button></h3>
-            <div class="tarot-comparison-faq__answer" id="tarot-comparison-faq-answer-${number}" role="region" aria-labelledby="tarot-comparison-faq-question-${number}"${index === 0 ? "" : " hidden"}><p>${escapeHtml(answer)}</p></div>
-          </article>`;
-  }).join("");
-}
-
 function renderRelatedLinks(comparison) {
   return comparison.relatedLinks.map((link) => `<a class="tarot-comparison-related__link" href="${escapeHtml(link.route)}"><strong>${escapeHtml(link.label)}</strong><span>${escapeHtml(link.copy)}</span><span aria-hidden="true">→</span></a>`).join("");
 }
@@ -208,9 +199,9 @@ function renderMain(comparison) {
     ? "tarot-vs-lenormand"
     : "tarot-vs-oracle";
 
-  return `<main id="main-content" class="tarot-comparison">
+  return `<main id="main-content" class="tarot-comparison tarot-education-page">
       ${renderTarotEducationNavigation({ activeKey: activeEducationKey, rootDir })}
-      <section class="tarot-education-hero tarot-education-hero--compact tarot-comparison-hero tarot-comparison-hero--${escapeHtml(comparison.slug)}" aria-labelledby="tarot-comparison-title">
+      <section class="tarot-education-hero tarot-education-hero--immersive tarot-comparison-hero tarot-comparison-hero--${escapeHtml(comparison.slug)}" aria-labelledby="tarot-comparison-title" data-education-page="${escapeHtml(activeEducationKey)}">
         <div class="tarot-education-hero__stage tarot-comparison-hero__shell">
           <div class="tarot-education-hero__copy tarot-comparison-hero__copy">
             <p class="tarot-comparison-kicker">${escapeHtml(comparison.eyebrow)}</p>
@@ -218,24 +209,17 @@ function renderMain(comparison) {
             <span class="tarot-comparison-rule" aria-hidden="true"><span>✦</span></span>
           </div>
           <figure class="tarot-education-hero__visual tarot-comparison-hero__art">
-            ${renderThemeImage({
+            ${renderTarotEducationHeroImage({
+              pageKey: activeEducationKey,
               className: "tarot-education-hero__image tarot-comparison-hero__image",
-              regularImage: hero.regularImage,
-              bloodMoonImage: hero.bloodMoonImage,
-              regularAlt: hero.regularAlt,
-              bloodMoonAlt: hero.bloodMoonAlt,
-              width: hero.width,
-              height: hero.height,
-              loading: "eager",
-              fetchpriority: "high"
+              alt: hero.regularAlt
             })}
           </figure>
           <div class="tarot-education-hero__overlay" aria-hidden="true"></div>
         </div>
-      </section>
-
-      <section class="tarot-comparison-introduction tarot-comparison-section" aria-label="Introduction">
-        <p>${escapeHtml(comparison.introduction)}</p>
+        <div class="tarot-education-hero__editorial tarot-comparison-introduction tarot-comparison-section" aria-label="Introduction">
+          <p>${escapeHtml(comparison.introduction)}</p>
+        </div>
       </section>
 
       <section class="tarot-comparison-direct tarot-comparison-section" aria-labelledby="direct-answer-heading">
@@ -330,14 +314,12 @@ function renderMain(comparison) {
         <ol class="tarot-comparison-together__steps">${comparison.together.steps.map((step, index) => `<li><span>${String(index + 1).padStart(2, "0")}</span><p>${escapeHtml(step)}</p></li>`).join("")}</ol>
       </section>
 
-      <section class="tarot-comparison-faq tarot-comparison-section" aria-labelledby="comparison-faq-heading">
-        <header class="tarot-comparison-faq__header">
-          <p class="tarot-comparison-kicker">${escapeHtml(comparison.faqSection.eyebrow)}</p>
-          <h2 id="comparison-faq-heading">${escapeHtml(comparison.faqSection.heading)}</h2>
-          <p>${escapeHtml(comparison.faqSection.introduction)}</p>
-        </header>
-        <div class="tarot-comparison-faq__list">${renderFaq(comparison)}</div>
-      </section>
+      ${renderTarotEducationFaq({
+        section: { ...comparison.faqSection, id: "comparison-faq" },
+        items: comparison.faq,
+        idPrefix: `comparison-${comparison.slug}-faq`,
+        className: "tarot-comparison-faq tarot-comparison-section"
+      })}
 
       <section class="tarot-comparison-related tarot-comparison-section" aria-labelledby="comparison-related-heading">
         <header>

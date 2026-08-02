@@ -353,7 +353,9 @@ if (!existsSync(outputPath)) {
     errors.push("comparison: shared interaction must honor the page’s initial Minor mode");
   }
 
-  if (countMatches(/data-major-faq-item/g) !== 7 || countMatches(/class="tarot-faq__answer"/g) !== 7) {
+  if (countMatches(/data-education-faq-item/g) !== 7
+    || countMatches(/data-education-faq-button/g) !== 7
+    || countMatches(/class="tarot-faq__answer"/g) !== 7) {
     errors.push("faq: expected seven accessible questions and answers");
   }
   minorArcanaPage.faq.items.forEach((item) => {

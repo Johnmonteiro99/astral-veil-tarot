@@ -2,9 +2,10 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tarotSpreadsPage } from "../data/tarot-spreads.mjs";
+import { getTarotEducationHeroImages } from "../data/tarot-education-hero-images.js";
 import { tarotCardDetails } from "../data/card-details/tarot.mjs";
 import { escapeHtml, serializeForInlineScript, SITE_ORIGIN } from "./card-page-helpers.mjs";
-import { renderTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
+import { renderTarotEducationFaq, renderTarotEducationHeroImage, renderTarotEducationNavigation } from "./tarot-education-page-helpers.mjs";
 
 const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const shellTemplatePath = resolve(rootDir, "templates/tarot-minor-arcana-page.html");
@@ -190,6 +191,7 @@ function renderMeta(page) {
   const canonical = `${SITE_ORIGIN}${page.route}`;
   const imageUrl = `${SITE_ORIGIN}${page.hero.image.src}`;
   const schemas = renderSchemas(page);
+  const educationHero = getTarotEducationHeroImages("tarot-spreads");
   return [
     `<title>${escapeHtml(page.seo.title)}</title>`,
     `<meta name="description" content="${escapeHtml(page.seo.description)}" />`,
@@ -207,7 +209,7 @@ function renderMeta(page) {
     `<meta name="twitter:description" content="${escapeHtml(page.seo.ogDescription)}" />`,
     `<meta name="twitter:image" content="${imageUrl}" />`,
     `<meta name="twitter:image:alt" content="${escapeHtml(page.hero.image.alt)}" />`,
-    `<link rel="preload" as="image" href="${escapeHtml(page.hero.image.src)}" fetchpriority="high" />`,
+    `<link rel="preload" as="image" href="${escapeHtml(educationHero.regular.src)}" fetchpriority="high" />`,
     `<script id="tarot-spreads-breadcrumb-schema" type="application/ld+json">${serializeForInlineScript(schemas.breadcrumb)}</script>`,
     `<script id="tarot-spreads-webpage-schema" type="application/ld+json">${serializeForInlineScript(schemas.webPage)}</script>`,
     `<script id="tarot-spreads-faq-schema" type="application/ld+json">${serializeForInlineScript(schemas.faqPage)}</script>`
@@ -261,9 +263,9 @@ function renderThemeCardImage(card, className) {
 function renderHero(page) {
   const hero = page.hero;
   const [primaryParagraph, secondaryParagraph] = hero.paragraphs;
-  return `<section id="tarot-spreads-hero" class="tarot-education-hero tarot-education-hero--immersive tarot-education-hero--reference tarot-spreads-hero" aria-labelledby="tarot-spreads-title">
+  return `<section id="tarot-spreads-hero" class="tarot-education-hero tarot-education-hero--immersive tarot-education-hero--reference tarot-spreads-hero" aria-labelledby="tarot-spreads-title" data-education-page="tarot-spreads">
         <div class="tarot-education-hero__stage tarot-spreads-hero__stage">
-          <div class="tarot-spreads-hero__visual" aria-hidden="true"><img src="${escapeHtml(hero.image.src)}" alt="" width="${hero.image.width}" height="${hero.image.height}" loading="eager" decoding="async" fetchpriority="high" /></div>
+          <div class="tarot-spreads-hero__visual" aria-hidden="true">${renderTarotEducationHeroImage({ pageKey: "tarot-spreads", decorative: true })}</div>
           <div class="tarot-education-hero__overlay tarot-spreads-hero__overlay"></div>
           <div class="tarot-education-hero__copy tarot-spreads-shell tarot-spreads-hero__content">
             <p class="major-arcana-eyebrow">${escapeHtml(hero.eyebrow)}</p>
@@ -279,7 +281,7 @@ function renderHero(page) {
             <div class="tarot-spreads-hero__copy tarot-spreads-hero__copy--secondary"><p>${escapeHtml(secondaryParagraph)}</p></div>
             <div class="tarot-spreads-hero__editorial-meta">
               <ul class="tarot-spreads-hero__facts">${hero.facts.map((fact) => `<li>${escapeHtml(fact)}</li>`).join("")}</ul>
-              <span class="tarot-spreads-coming-soon tarot-spreads-hero__secondary-action" role="link" aria-disabled="true" tabindex="0">How to Read Tarot Spreads <small>Coming Soon</small></span>
+              <a class="tarot-spreads-button tarot-spreads-hero__secondary-action" href="/how-to-read-tarot-cards/">How to Read Tarot Cards</a>
             </div>
           </div>
         </div>
@@ -689,7 +691,7 @@ function renderHowTo(page) {
           </div>
           <nav class="tarot-spreads-related-links" aria-label="Continue learning and practicing tarot">
             <div class="tarot-spreads-related-links__grid">${destinations}</div>
-            <span class="tarot-spreads-related-links__disabled" aria-disabled="true">${escapeHtml(section.comingSoon)}</span>
+            <a class="tarot-spreads-related-links__cta" href="/how-to-read-tarot-cards/">How to Read Tarot Cards <span aria-hidden="true">→</span></a>
           </nav>
         </div>
       </section>`;
@@ -762,17 +764,12 @@ function renderComparison(page) {
 }
 
 function renderFaq(page) {
-  const section = page.faq;
-  const items = section.items.map((item, index) => {
-    const number = index + 1;
-    return `<article class="tarot-faq__item" data-major-faq-item>
-          <h3><button class="tarot-faq__trigger" id="tarot-spreads-faq-question-${number}" type="button" aria-expanded="true" aria-controls="tarot-spreads-faq-answer-${number}" data-major-faq-button><span class="tarot-spreads-faq__number" aria-hidden="true">${String(number).padStart(2, "0")}</span><span class="tarot-spreads-faq__question">${escapeHtml(item.question)}</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
-          <div class="tarot-faq__answer" id="tarot-spreads-faq-answer-${number}" role="region" aria-labelledby="tarot-spreads-faq-question-${number}" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>${escapeHtml(item.answer)}</p></div></div>
-        </article>`;
-  }).join("");
-  return `<section class="tarot-faq major-arcana-faq tarot-spreads-faq" id="${escapeHtml(section.id)}" aria-labelledby="${escapeHtml(section.id)}-heading" data-major-faq>
-        <div class="tarot-shell tarot-faq__inner"><header class="tarot-faq__header"><p class="tarot-faq__eyebrow">${escapeHtml(section.eyebrow)}</p><h2 id="${escapeHtml(section.id)}-heading">${escapeHtml(section.heading)}</h2><p class="tarot-faq__intro">${escapeHtml(section.introduction)}</p><div class="tarot-faq__divider" aria-hidden="true"><span></span><span class="tarot-faq__ornament">✦</span><span></span></div></header><div class="tarot-faq__list">${items}</div></div>
-      </section>`;
+  return renderTarotEducationFaq({
+    section: page.faq,
+    items: page.faq.items,
+    idPrefix: "tarot-spreads-faq",
+    className: "tarot-spreads-faq"
+  });
 }
 
 function renderClosing(page) {
@@ -788,13 +785,13 @@ function renderClosing(page) {
             <a class="major-arcana-closing__action major-arcana-closing__action--primary" href="/">Explore Available Tarot Spreads <span aria-hidden="true">→</span></a>
             <a class="major-arcana-closing__action" href="/free-tarot-reading">Begin a Tarot Reading <span aria-hidden="true">→</span></a>
           </nav>
-          <p class="major-arcana-closing__status">How to Read Tarot Cards · Coming Soon</p>
+          <p class="major-arcana-closing__status"><a href="/how-to-read-tarot-cards/">Continue with How to Read Tarot Cards</a></p>
         </div>
       </section>`;
 }
 
 function renderMain(page) {
-  return `<main id="main-content" class="major-arcana-page tarot-spreads-page-content">
+  return `<main id="main-content" class="major-arcana-page tarot-spreads-page-content tarot-education-page">
       ${renderTarotEducationNavigation({ activeKey: "spreads", rootDir })}
       ${renderHero(page)}
       <div class="tarot-spreads-archive">

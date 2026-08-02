@@ -17,6 +17,8 @@ if (!existsSync(outputPath)) {
   const css = readFileSync(resolve(rootDir, "css/tarot-spreads.css"), "utf8");
   const js = readFileSync(resolve(rootDir, "js/tarot-spreads.js"), "utf8");
   const majorArcanaJs = readFileSync(resolve(rootDir, "js/tarot-major-arcana.js"), "utf8");
+  const educationJs = readFileSync(resolve(rootDir, "js/tarot-education.js"), "utf8");
+  const educationCss = readFileSync(resolve(rootDir, "css/tarot-education-components.css"), "utf8");
   const generatorJs = readFileSync(resolve(rootDir, "scripts/generate-tarot-spreads-page.mjs"), "utf8");
   const readingJs = readFileSync(resolve(rootDir, "js/reading.js"), "utf8");
   const readingCss = readFileSync(resolve(rootDir, "css/style.css"), "utf8");
@@ -147,7 +149,7 @@ if (!existsSync(outputPath)) {
     !html.includes("tarot-spreads-hero__editorial") ||
     !html.includes('loading="eager" decoding="async" fetchpriority="high"') ||
     !html.includes('href="#explore-tarot-spreads">Explore Tarot Spreads</a>') ||
-    !html.includes("How to Read Tarot Spreads <small>Coming Soon</small>")
+    !html.includes('href="/how-to-read-tarot-cards/">How to Read Tarot Cards</a>')
   ) {
     errors.push("hero: priority image, primary CTA, or honest secondary status is incomplete");
   }
@@ -954,7 +956,9 @@ if (!existsSync(outputPath)) {
       if (!html.includes(`href="${link.href}"`) || !html.includes(link.label)) errors.push(`how-to: destination link is missing (${link.label})`);
     });
   });
-  if (!html.includes(tarotSpreadsPage.howTo.comingSoon)) errors.push("how-to: subtle coming-soon learning label is missing");
+  if (!html.includes('href="/how-to-read-tarot-cards/">How to Read Tarot Cards <span aria-hidden="true">→</span></a>')) {
+    errors.push("how-to: live How to Read Tarot learning link is missing");
+  }
   [
     "setQuestionStoryStage",
     "settleQuestionStoryPanels",
@@ -1286,65 +1290,35 @@ if (!existsSync(outputPath)) {
   });
 
   if (
-    countMatches(/data-major-faq-item/g) !== tarotSpreadsPage.faq.items.length ||
-    countMatches(/class="tarot-faq__answer"/g) !== tarotSpreadsPage.faq.items.length ||
-    countMatches(/class="tarot-spreads-faq__number"/g) !== tarotSpreadsPage.faq.items.length ||
-    countMatches(/class="tarot-spreads-faq__question"/g) !== tarotSpreadsPage.faq.items.length
+    countMatches(/data-education-faq-item/g) !== tarotSpreadsPage.faq.items.length ||
+    countMatches(/data-education-faq-button/g) !== tarotSpreadsPage.faq.items.length ||
+    countMatches(/class="tarot-faq__answer"/g) !== tarotSpreadsPage.faq.items.length
   ) {
-    errors.push("faq: expected all accessible numbered questions and answers");
+    errors.push("faq: expected all shared accessible questions and answers");
   }
-  tarotSpreadsPage.faq.items.forEach((item, index) => {
+  tarotSpreadsPage.faq.items.forEach((item) => {
     if (!html.includes(item.question) || !html.includes(item.answer)) errors.push(`faq: visible content is missing (${item.question})`);
-    if (!html.includes(`class="tarot-spreads-faq__number" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>`)) {
-      errors.push(`faq: editorial sequence number is missing (${item.question})`);
-    }
   });
   [
-    "items.forEach((candidate) => setFaqState(candidate, false))",
-    "if (shouldOpen) setFaqState(item, true)",
-    'button?.setAttribute("aria-expanded", String(expanded))',
-    'panel?.setAttribute("aria-hidden", String(!expanded))',
-    "panel.inert = !expanded",
-    'icon.textContent = expanded ? "−" : "+"'
+    "[data-education-faq]",
+    "items.forEach((candidate) => setItemState(candidate, candidate === item && willOpen))",
+    'button.setAttribute("aria-expanded", String(isOpen))',
+    'answer.setAttribute("aria-hidden", String(!isOpen))',
+    "answer.inert = !isOpen",
+    'icon.textContent = isOpen ? "−" : "+"'
   ].forEach((token) => {
-    if (!majorArcanaJs.includes(token)) errors.push(`faq interaction: required single-open accessible behavior is missing (${token})`);
+    if (!educationJs.includes(token)) errors.push(`faq interaction: required shared single-open behavior is missing (${token})`);
   });
-  const spreadsFaqCssStart = css.indexOf("body.tarot-spreads-page .tarot-spreads-faq {");
-  const spreadsFaqCssEnd = css.indexOf("body.tarot-spreads-page .tarot-spreads-closing", spreadsFaqCssStart);
-  const spreadsFaqCss = spreadsFaqCssStart >= 0 && spreadsFaqCssEnd > spreadsFaqCssStart
-    ? css.slice(spreadsFaqCssStart, spreadsFaqCssEnd)
-    : "";
   [
-    "--spreads-faq-accent",
-    "padding-block: clamp(4rem, 7vw, 6.5rem)",
-    "width: min(calc(100% - 40px), 980px)",
-    "grid-template-columns: minmax(0, 1fr)",
-    "width: min(100%, 740px)",
-    "text-align: center",
-    "font: 700 .64rem/1.35 var(--body-font, \"DM Sans\", sans-serif)",
-    "width: min(100%, 960px)",
-    "border-radius: 0",
-    "background: transparent",
-    "box-shadow: none",
-    "grid-template-columns: 52px minmax(0, 1fr) 44px",
-    "font-variant-numeric: tabular-nums",
-    "font: 500 clamp(1.25rem, 1.8vw, 1.65rem)/1.28 var(--heading-font, \"Cormorant Garamond\", serif)",
-    "transform: translateX(6px)",
-    "font: 400 clamp(1rem, 1.15vw, 1.08rem)/1.72 var(--body-font, \"DM Sans\", sans-serif)",
-    "grid-template-columns: 32px minmax(0, 1fr) 44px",
-    "body.moon-mode.tarot-spreads-page .tarot-spreads-faq",
-    "body.blood-moon-mode.tarot-spreads-page .tarot-spreads-faq",
+    "body.tarot-meanings-page .tarot-education-page .tarot-education-faq .tarot-faq__inner",
+    "grid-template-columns: minmax(15rem, .75fr) minmax(0, 1.25fr)",
+    "border-radius: 14px",
+    ".tarot-faq__trigger:focus-visible",
+    "@media (max-width: 820px)",
     "@media (prefers-reduced-motion: reduce)"
   ].forEach((token) => {
-    if (!spreadsFaqCss.includes(token)) errors.push(`faq styles: required centered editorial treatment is missing (${token})`);
+    if (!educationCss.includes(token)) errors.push(`faq styles: required shared treatment is missing (${token})`);
   });
-  if (
-    !/\.tarot-faq__item,\s*body\.tarot-spreads-page \.tarot-spreads-faq \.tarot-faq__item:hover,[\s\S]*?\{[^}]*border:\s*0;[^}]*border-radius:\s*0;[^}]*background:\s*transparent;[^}]*box-shadow:\s*none;/s.test(spreadsFaqCss) ||
-    /min-height:\s*100vh/i.test(spreadsFaqCss) ||
-    /grid-template-columns:\s*minmax\(0,\s*\.75fr\)/i.test(spreadsFaqCss)
-  ) {
-    errors.push("faq styles: bordered cards or the old split-column layout remain active");
-  }
 
   [
     'href="/one-card-tarot-reading"',

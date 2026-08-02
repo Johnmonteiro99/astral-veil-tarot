@@ -19,7 +19,7 @@
     <meta name="twitter:description" content="Explore the 22 Major Arcana cards, the Fool’s Journey, upright and reversed meanings, and their role in tarot readings." />
     <meta name="twitter:image" content="https://astralveil.world/assets/images/background%20_images/major-arcana-explained.png" />
     <meta name="twitter:image:alt" content="A cloaked traveler facing a luminous celestial arch marked with symbolic constellations" />
-    <link rel="preload" as="image" href="/assets/images/background%20_images/major-arcana-explained.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="/assets/images/background%20_images/major_arcana_header.png" fetchpriority="high" />
     <script id="major-arcana-breadcrumb-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://astralveil.world/"},{"@type":"ListItem","position":2,"name":"Tarot","item":"https://astralveil.world/tarot"},{"@type":"ListItem","position":3,"name":"Major Arcana Explained","item":"https://astralveil.world/tarot/major-arcana/"}]}</script>
     <script id="major-arcana-webpage-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Major Arcana Explained","description":"Learn what the 22 Major Arcana cards mean, explore the Fool’s Journey, upright and reversed interpretations, and how they shape tarot readings.","url":"https://astralveil.world/tarot/major-arcana/","image":"https://astralveil.world/assets/images/background%20_images/major-arcana-explained.png","dateModified":"2026-07-26","isPartOf":{"@type":"WebSite","name":"Astral Veil","url":"https://astralveil.world/"},"about":[{"@type":"Thing","name":"Major Arcana"},{"@type":"Thing","name":"Tarot card meanings"},{"@type":"Thing","name":"The Fool’s Journey"}]}</script>
     <script id="major-arcana-faq-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the Major Arcana in tarot?","acceptedAnswer":{"@type":"Answer","text":"The Major Arcana is a set of twenty-two cards numbered from 0 to 21. The cards represent broad archetypes, lessons, choices, and transformations that can shape the larger meaning of a tarot reading."}},{"@type":"Question","name":"How many Major Arcana cards are there?","acceptedAnswer":{"@type":"Answer","text":"A standard tarot deck contains twenty-two Major Arcana cards, beginning with The Fool at 0 and ending with The World at 21."}},{"@type":"Question","name":"What is the Fool’s Journey?","acceptedAnswer":{"@type":"Answer","text":"The Fool’s Journey is a teaching framework that explores the Major Arcana as a connected path. The Fool encounters experiences associated with identity, relationship, challenge, transformation, awareness, and completion."}},{"@type":"Question","name":"Are Major Arcana cards more important than Minor Arcana cards?","acceptedAnswer":{"@type":"Answer","text":"They are not automatically more important, but they often carry broader thematic weight. Major Arcana cards may describe the larger lesson or transition, while Minor Arcana cards provide practical details and context."}},{"@type":"Question","name":"What does it mean when several Major Arcana cards appear in a reading?","acceptedAnswer":{"@type":"Answer","text":"Several Major Arcana cards may suggest that the reading centers on significant themes, choices, or periods of development. Their meaning still depends on the question, spread positions, and surrounding cards."}},{"@type":"Question","name":"Can Major Arcana cards be reversed?","acceptedAnswer":{"@type":"Answer","text":"Yes. Readers who use reversals may interpret a reversed Major Arcana card as internalized energy, resistance, delay, imbalance, or a shadow expression of the same archetype. A reversal is not automatically negative."}}]}</script>
@@ -32,7 +32,7 @@
     <link rel="stylesheet" href="/css/animations.css" />
     <link rel="stylesheet" href="/css/tarot.css" />
     <link rel="stylesheet" href="/css/tarot-major-arcana.css" />
-    <link rel="stylesheet" href="/css/tarot-education-typography.css" />
+    <link rel="stylesheet" href="/css/tarot-education-components.css" />
   </head>
   <body class="sun-mode tarot-meanings-page tarot-major-arcana-page">
     <script>(function(){var params=new URLSearchParams(window.location.search);var queryBloodMoon=params.get("bloodMoon")||params.get("testBloodMoon");var hasOverride=params.has("bloodMoon")||params.has("testBloodMoon");var isBloodMoon=hasOverride&&(queryBloodMoon===""||/^(1|true|yes|on|active)$/i.test(queryBloodMoon||""));var mode="";try{isBloodMoon=hasOverride?isBloodMoon:sessionStorage.getItem("astralVeilBloodMoonActive")==="true"||localStorage.getItem("astralVeilBloodMoonActive")==="true"||sessionStorage.getItem("astralVeilTestBloodMoonActive")==="true"||localStorage.getItem("astralVeilTestBloodMoonActive")==="true";mode=localStorage.getItem("dailyTarotTheme")||""}catch(error){}if(mode!=="sun"&&mode!=="moon")mode=new Date().getHours()>=6&&new Date().getHours()<18?"sun":"moon";document.body.classList.remove("sun-mode","moon-mode","blood-moon-mode");document.body.classList.add(isBloodMoon?"blood-moon-mode":mode+"-mode")})();</script>
@@ -52,17 +52,17 @@
     <main id="main-content" class="major-arcana-page tarot-education-page">
       <nav class="tarot-education-nav" aria-label="Tarot education pages">
         <div class="tarot-education-nav__viewport" data-tarot-education-viewport>
-          <div class="tarot-education-nav__track"><a class="tarot-education-nav__item" href="/tarot/history/" data-tarot-education-item="history">Tarot History</a><a class="tarot-education-nav__item is-active" href="/tarot/major-arcana/" aria-current="page" data-tarot-education-active data-tarot-education-item="major-arcana">Major Arcana</a><a class="tarot-education-nav__item" href="/tarot/minor-arcana/" data-tarot-education-item="minor-arcana">Minor Arcana</a><span class="tarot-education-nav__item is-disabled" role="link" aria-disabled="true" aria-label="Tarot for Beginners — Coming Soon" tabindex="0" data-tarot-education-item="beginners"><span>Tarot for Beginners</span><small>Coming Soon</small></span><span class="tarot-education-nav__item is-disabled" role="link" aria-disabled="true" aria-label="How to Read Tarot — Coming Soon" tabindex="0" data-tarot-education-item="how-to-read"><span>How to Read Tarot</span><small>Coming Soon</small></span><a class="tarot-education-nav__item" href="/tarot-spreads/" data-tarot-education-item="spreads">Tarot Spreads</a><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-oracle-cards/" data-tarot-education-item="tarot-vs-oracle">Tarot vs. Oracle</a><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-lenormand/" data-tarot-education-item="tarot-vs-lenormand">Tarot vs. Lenormand</a></div>
+          <div class="tarot-education-nav__track"><a class="tarot-education-nav__item" href="/tarot/history/" data-tarot-education-item="history">Tarot History</a><a class="tarot-education-nav__item is-active" href="/tarot/major-arcana/" aria-current="page" data-tarot-education-active data-tarot-education-item="major-arcana">Major Arcana</a><a class="tarot-education-nav__item" href="/tarot/minor-arcana/" data-tarot-education-item="minor-arcana">Minor Arcana</a><span class="tarot-education-nav__item is-disabled" role="link" aria-disabled="true" aria-label="Tarot for Beginners — Coming Soon" tabindex="0" data-tarot-education-item="beginners"><span>Tarot for Beginners</span><small>Coming Soon</small></span><a class="tarot-education-nav__item" href="/how-to-read-tarot-cards/" data-tarot-education-item="how-to-read">How to Read Tarot</a><a class="tarot-education-nav__item" href="/tarot-spreads/" data-tarot-education-item="spreads">Tarot Spreads</a><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-oracle-cards/" data-tarot-education-item="tarot-vs-oracle">Tarot vs. Oracle</a><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-lenormand/" data-tarot-education-item="tarot-vs-lenormand">Tarot vs. Lenormand</a></div>
         </div>
       </nav>
-      <section class="tarot-education-hero tarot-education-hero--immersive major-arcana-hero" aria-labelledby="major-arcana-title">
+      <section class="tarot-education-hero tarot-education-hero--immersive major-arcana-hero" aria-labelledby="major-arcana-title" data-education-page="major-arcana">
         <div class="tarot-education-hero__stage major-arcana-hero__stage">
           <div class="tarot-education-hero__copy major-arcana-hero__title">
             <p class="major-arcana-eyebrow">The 22 Archetypes of the Soul</p>
             <h1 id="major-arcana-title">Major Arcana Explained</h1>
           </div>
           <figure class="tarot-education-hero__visual major-arcana-hero__visual">
-            <img class="tarot-education-hero__image major-arcana-hero__image" src="/assets/images/background%20_images/major-arcana-explained.png" alt="A cloaked traveler facing a luminous celestial arch marked with symbolic constellations" width="1448" height="1086" loading="eager" decoding="async" fetchpriority="high" draggable="false" />
+            <img class="tarot-education-hero__image major-arcana-hero__image" src="/assets/images/background%20_images/major_arcana_header.png" alt="A cloaked traveler facing a luminous celestial arch marked with symbolic constellations" width="1672" height="941" loading="eager" decoding="async" fetchpriority="high" draggable="false" data-education-hero-image />
           </figure>
           <div class="tarot-education-hero__overlay" aria-hidden="true"></div>
         </div>
@@ -937,7 +937,7 @@
           <a class="major-minor-showcase__status" href="/tarot/minor-arcana/"><span aria-hidden="true">✦</span>Minor Arcana Explained</a>
         </footer>
       </section>
-        <section class="tarot-faq major-arcana-faq" id="major-arcana-faq" aria-labelledby="major-arcana-faq-heading" data-major-faq>
+        <section class="tarot-faq major-arcana-faq tarot-education-faq" id="major-arcana-faq" aria-labelledby="major-arcana-faq-heading" data-education-faq>
         <div class="tarot-shell tarot-faq__inner">
           <header class="tarot-faq__header">
             <p class="tarot-faq__eyebrow">Common Questions</p>
@@ -945,33 +945,33 @@
             <p class="tarot-faq__intro">Clear answers about the structure, interpretation, and role of the Major Arcana.</p>
             <div class="tarot-faq__divider" aria-hidden="true"><span></span><span class="tarot-faq__ornament">✦</span><span></span></div>
           </header>
-          <div class="tarot-faq__list"><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="major-faq-question-1" type="button" aria-expanded="true" aria-controls="major-faq-answer-1" data-major-faq-button>
+          <div class="tarot-faq__list"><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="major-faq-question-1" type="button" aria-expanded="true" aria-controls="major-faq-answer-1" data-education-faq-button>
               <span>What is the Major Arcana in tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
             </button></h3>
             <div class="tarot-faq__answer" id="major-faq-answer-1" role="region" aria-labelledby="major-faq-question-1" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>The Major Arcana is a set of twenty-two cards numbered from 0 to 21. The cards represent broad archetypes, lessons, choices, and transformations that can shape the larger meaning of a tarot reading.</p></div></div>
-          </article><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="major-faq-question-2" type="button" aria-expanded="true" aria-controls="major-faq-answer-2" data-major-faq-button>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="major-faq-question-2" type="button" aria-expanded="true" aria-controls="major-faq-answer-2" data-education-faq-button>
               <span>How many Major Arcana cards are there?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
             </button></h3>
             <div class="tarot-faq__answer" id="major-faq-answer-2" role="region" aria-labelledby="major-faq-question-2" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>A standard tarot deck contains twenty-two Major Arcana cards, beginning with The Fool at 0 and ending with The World at 21.</p></div></div>
-          </article><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="major-faq-question-3" type="button" aria-expanded="true" aria-controls="major-faq-answer-3" data-major-faq-button>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="major-faq-question-3" type="button" aria-expanded="true" aria-controls="major-faq-answer-3" data-education-faq-button>
               <span>What is the Fool’s Journey?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
             </button></h3>
             <div class="tarot-faq__answer" id="major-faq-answer-3" role="region" aria-labelledby="major-faq-question-3" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>The Fool’s Journey is a teaching framework that explores the Major Arcana as a connected path. The Fool encounters experiences associated with identity, relationship, challenge, transformation, awareness, and completion.</p></div></div>
-          </article><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="major-faq-question-4" type="button" aria-expanded="true" aria-controls="major-faq-answer-4" data-major-faq-button>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="major-faq-question-4" type="button" aria-expanded="true" aria-controls="major-faq-answer-4" data-education-faq-button>
               <span>Are Major Arcana cards more important than Minor Arcana cards?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
             </button></h3>
             <div class="tarot-faq__answer" id="major-faq-answer-4" role="region" aria-labelledby="major-faq-question-4" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>They are not automatically more important, but they often carry broader thematic weight. Major Arcana cards may describe the larger lesson or transition, while Minor Arcana cards provide practical details and context.</p></div></div>
-          </article><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="major-faq-question-5" type="button" aria-expanded="true" aria-controls="major-faq-answer-5" data-major-faq-button>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="major-faq-question-5" type="button" aria-expanded="true" aria-controls="major-faq-answer-5" data-education-faq-button>
               <span>What does it mean when several Major Arcana cards appear in a reading?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
             </button></h3>
             <div class="tarot-faq__answer" id="major-faq-answer-5" role="region" aria-labelledby="major-faq-question-5" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Several Major Arcana cards may suggest that the reading centers on significant themes, choices, or periods of development. Their meaning still depends on the question, spread positions, and surrounding cards.</p></div></div>
-          </article><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="major-faq-question-6" type="button" aria-expanded="true" aria-controls="major-faq-answer-6" data-major-faq-button>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="major-faq-question-6" type="button" aria-expanded="true" aria-controls="major-faq-answer-6" data-education-faq-button>
               <span>Can Major Arcana cards be reversed?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
             </button></h3>
             <div class="tarot-faq__answer" id="major-faq-answer-6" role="region" aria-labelledby="major-faq-question-6" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Yes. Readers who use reversals may interpret a reversed Major Arcana card as internalized energy, resistance, delay, imbalance, or a shadow expression of the same archetype. A reversal is not automatically negative.</p></div></div>

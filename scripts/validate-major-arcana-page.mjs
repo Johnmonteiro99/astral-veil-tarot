@@ -23,7 +23,7 @@ if (!existsSync(outputPath)) {
 } else {
   const html = readFileSync(outputPath, "utf8");
   const css = readFileSync(resolve(rootDir, "css/tarot-major-arcana.css"), "utf8");
-  const sharedTarotCss = readFileSync(resolve(rootDir, "css/tarot.css"), "utf8");
+  const educationCss = readFileSync(resolve(rootDir, "css/tarot-education-components.css"), "utf8");
   const js = readFileSync(resolve(rootDir, "js/tarot-major-arcana.js"), "utf8");
   const hubScript = readFileSync(resolve(rootDir, "js/tarot.js"), "utf8");
   const sitemap = readFileSync(resolve(rootDir, "sitemap.xml"), "utf8");
@@ -376,7 +376,9 @@ if (!existsSync(outputPath)) {
     errors.push("internal links: placeholder href found");
   }
 
-  if (countMatches(/data-major-faq-button/g) !== 6 || countMatches(/class="tarot-faq__answer"/g) !== 6) {
+  if (countMatches(/data-education-faq-button/g) !== 6
+    || countMatches(/data-education-faq-item/g) !== 6
+    || countMatches(/class="tarot-faq__answer"/g) !== 6) {
     errors.push("faq: expected six visible button-and-answer records");
   }
   majorArcanaPage.faq.items.forEach((item) => {
@@ -589,17 +591,21 @@ if (!existsSync(outputPath)) {
   ) {
     errors.push("styles: mistaken readings redesign selectors must be fully removed");
   }
-  const heroStageBlock = css.match(/\.major-arcana-hero__stage\s*\{([^}]*)\}/)?.[1] || "";
-  const heroBlock = css.match(/\.major-arcana-hero\s*\{([^}]*)\}/)?.[1] || "";
-  if (!heroBlock.includes("--education-hero-height: clamp(520px, 54vw, 620px)")
-    || !heroStageBlock.includes("height: var(--education-hero-height)")
-    || !heroStageBlock.includes("min-height: 0")) {
-    errors.push("styles: cinematic hero stage must remain restrained and capped on desktop");
+  const sharedHeroBlock = educationCss.match(/body\.tarot-meanings-page \.tarot-education-page > \.tarot-education-hero\[data-education-page\]\s*\{([^}]*)\}/)?.[1] || "";
+  const sharedHeroStageBlock = educationCss.match(/\.tarot-education-hero\[data-education-page\] \.tarot-education-hero__stage\s*\{([^}]*)\}/)?.[1] || "";
+  const sharedHeroImageBlock = educationCss.match(/\[data-education-hero-image\]\s*\{([^}]*)\}/)?.[1] || "";
+  if (!sharedHeroBlock.includes("--education-hero-height: clamp(540px, 56vw, 640px)")
+    || !sharedHeroBlock.includes("display: flex")
+    || !sharedHeroStageBlock.includes("flex: 1 1 auto")
+    || !sharedHeroStageBlock.includes("min-height: 0")) {
+    errors.push("styles: education hero must match the How to Read Tarot stage geometry");
   }
-  const sharedHeroImageBlock = sharedTarotCss.match(/\.tarot-education-hero__image\s*\{([^}]*)\}/)?.[1] || "";
-  if (!sharedHeroImageBlock.includes("-webkit-mask-image: linear-gradient")
-    || !sharedHeroImageBlock.includes("mask-image: linear-gradient")) {
-    errors.push("styles: hero image must dissolve into the inherited Astral Veil background");
+  if (!sharedHeroImageBlock.includes("width: 100%")
+    || !sharedHeroImageBlock.includes("height: 100%")
+    || !sharedHeroImageBlock.includes("object-fit: cover")
+    || sharedHeroImageBlock.includes("object-fit: contain")
+    || !educationCss.includes("#000 80%, rgba(0, 0, 0, .92) 90%, transparent 100%")) {
+    errors.push("styles: shared hero image must be full-bleed and dissolve into the supporting row");
   }
   const heroIntroSecondParagraphBlock = css.match(/\.major-arcana-hero__introduction p \+ p\s*\{([^}]*)\}/)?.[1] || "";
   if (/border-(?:left|top)\s*:/.test(heroIntroSecondParagraphBlock)) {

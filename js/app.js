@@ -380,17 +380,79 @@ document.addEventListener("contextmenu", (event) => {
 
 // Re-query links after Blood Moon adds or removes event-only navigation items.
 function refreshNavCollections() {
+  dedupePrimaryNavDestinations(navbar?.querySelector(":scope > .navbar__links"));
+  dedupePrimaryNavDestinations(navbar?.querySelector(":scope > .navbar__mobile-menu"));
   navLinks = document.querySelectorAll(".navbar__link, .navbar__mobile-link");
   mobileMenuLinks = document.querySelectorAll(".navbar__mobile-link");
 }
 
-// Tarot is a permanent shared destination. It is injected here because the
-// static pages all consume this navigation controller, while archive links are
-// inserted dynamically according to the active celestial event.
+// Return only direct destination links from one primary navigation container.
+// Keeping this selector container-scoped prevents the Tarot education rail (and
+// any other navigation landmark) from being included in shared-nav cleanup.
+function getPrimaryNavDestinationLinks(container) {
+  if (!container) {
+    return [];
+  }
+
+  return Array.from(container.querySelectorAll(":scope > li > a[href], :scope > a[href]"));
+}
+
+function removePrimaryNavDestinationLink(link, container) {
+  const listItem = link.closest("li");
+
+  if (listItem?.parentElement === container) {
+    listItem.remove();
+    return;
+  }
+
+  link.remove();
+}
+
+// Defensive reconciliation is destination-based so /tarot, /tarot/, and an
+// absolute same-origin Tarot URL cannot coexist in the same primary nav.
+function dedupePrimaryNavDestinations(container) {
+  const seenPaths = new Set();
+
+  getPrimaryNavDestinationLinks(container).forEach((link) => {
+    const path = getNormalizedNavPath(link.href);
+
+    if (seenPaths.has(path)) {
+      removePrimaryNavDestinationLink(link, container);
+      return;
+    }
+
+    seenPaths.add(path);
+  });
+}
+
+function findPrimaryNavDestination(container, path) {
+  return getPrimaryNavDestinationLinks(container)
+    .find((link) => getNormalizedNavPath(link.href) === path) || null;
+}
+
+// Tarot is a permanent shared destination. Some older pages rely on this
+// controller to supply it, while newer pages include it in their static header.
+// Reconcile either form instead of assuming an unmarked static link is missing.
 function ensureTarotNav() {
-  const desktopLinks = document.querySelector(".navbar__links");
-  const existingDesktopLink = document.querySelector("[data-tarot-nav-link]");
-  const existingMobileLink = document.querySelector("[data-tarot-mobile-nav-link]");
+  const desktopLinks = navbar?.querySelector(":scope > .navbar__links");
+  const primaryMobileMenu = navbar?.querySelector(":scope > .navbar__mobile-menu");
+
+  if (!navbar) {
+    return;
+  }
+
+  if (desktopLinks) {
+    desktopLinks.dataset.primaryNav = "desktop";
+    dedupePrimaryNavDestinations(desktopLinks);
+  }
+
+  if (primaryMobileMenu) {
+    primaryMobileMenu.dataset.primaryNav = "mobile";
+    dedupePrimaryNavDestinations(primaryMobileMenu);
+  }
+
+  let existingDesktopLink = findPrimaryNavDestination(desktopLinks, "/tarot");
+  let existingMobileLink = findPrimaryNavDestination(primaryMobileMenu, "/tarot");
 
   if (desktopLinks && !existingDesktopLink) {
     const item = document.createElement("li");
@@ -399,20 +461,38 @@ function ensureTarotNav() {
       ?.closest("li");
 
     item.innerHTML = '<a class="navbar__link" href="/tarot" data-tarot-nav-link>TAROT</a>';
-    decksItem?.insertAdjacentElement("afterend", item);
+    if (decksItem) {
+      decksItem.insertAdjacentElement("afterend", item);
+    } else {
+      desktopLinks.appendChild(item);
+    }
+
+    existingDesktopLink = item.querySelector("a");
   }
 
-  if (mobileMenu && !existingMobileLink) {
+  if (primaryMobileMenu && !existingMobileLink) {
     const link = document.createElement("a");
-    const decksLink = Array.from(mobileMenu.querySelectorAll("a"))
+    const decksLink = getPrimaryNavDestinationLinks(primaryMobileMenu)
       .find((item) => getNormalizedNavPath(item.href) === "/decks");
 
     link.className = "navbar__mobile-link";
     link.href = "/tarot";
     link.textContent = "TAROT";
     link.dataset.tarotMobileNavLink = "";
-    decksLink?.insertAdjacentElement("afterend", link);
+    if (decksLink) {
+      decksLink.insertAdjacentElement("afterend", link);
+    } else {
+      primaryMobileMenu.appendChild(link);
+    }
+
+    existingMobileLink = link;
   }
+
+  existingDesktopLink?.setAttribute("data-tarot-nav-link", "");
+  existingMobileLink?.setAttribute("data-tarot-mobile-nav-link", "");
+  dedupePrimaryNavDestinations(desktopLinks);
+  dedupePrimaryNavDestinations(primaryMobileMenu);
+  navbar.dataset.primaryNavInitialized = "true";
 
   refreshNavCollections();
 }
@@ -1232,7 +1312,7 @@ function setActiveNavLink(activeHref) {
   });
 }
 
-if (navLinks.length) {
+if (navbar) {
   ensureTarotNav();
   updateBloodMoonNav(isBloodMoonActive());
   setActiveNavLink(window.location.href);

@@ -18,12 +18,15 @@
     "validate:major-arcana": "node scripts/validate-major-arcana-page.mjs",
     "validate:minor-arcana": "node scripts/validate-minor-arcana-page.mjs",
     "validate:tarot-spreads": "node scripts/validate-tarot-spreads-page.mjs",
-    "build": "npm run generate:topics && npm run generate:comparisons && npm run generate:history && npm run generate:major-arcana && npm run generate:minor-arcana && npm run generate:tarot-spreads && npm run generate:cards && npm run validate:topics && npm run validate:comparisons && npm run validate:history && npm run validate:major-arcana && npm run validate:minor-arcana && npm run validate:tarot-spreads && npm run validate:cards",
+    "validate:education-heroes": "node scripts/validate-tarot-education-hero-images.mjs",
+    "validate:how-to-read-nav": "node scripts/validate-how-to-read-navigation.mjs",
+    "build": "npm run generate:topics && npm run generate:comparisons && npm run generate:history && npm run generate:major-arcana && npm run generate:minor-arcana && npm run generate:tarot-spreads && npm run generate:cards && npm run validate:topics && npm run validate:comparisons && npm run validate:history && npm run validate:major-arcana && npm run validate:minor-arcana && npm run validate:tarot-spreads && npm run validate:education-heroes && npm run validate:cards",
     "validate:modal-routes": "node scripts/validate-tarot-modal-routes.mjs",
-    "test": "npm run validate:cards && npm run validate:modal-routes && npm run validate:topics && npm run validate:comparisons && npm run validate:history && npm run validate:major-arcana && npm run validate:minor-arcana && npm run validate:tarot-spreads"
+    "test": "npm run validate:how-to-read-nav && npm run validate:cards && npm run validate:modal-routes && npm run validate:topics && npm run validate:comparisons && npm run validate:history && npm run validate:major-arcana && npm run validate:minor-arcana && npm run validate:tarot-spreads && npm run validate:education-heroes"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
-    "@supabase/supabase-js": "^2.110.2"
+    "@supabase/supabase-js": "^2.110.2",
+    "gsap": "^3.15.0"
   }
 }

@@ -9,7 +9,6 @@
   const comparisonDeckCounter = document.querySelector("[data-comparison-deck-counter]");
   const comparisonDeckPrevious = document.querySelector("[data-comparison-deck-prev]");
   const comparisonDeckNext = document.querySelector("[data-comparison-deck-next]");
-  const faqButtons = Array.from(document.querySelectorAll("[data-comparison-faq-button]"));
   const exampleTabs = Array.from(document.querySelectorAll("[data-comparison-example-tab]"));
   const examplePanels = Array.from(document.querySelectorAll("[data-comparison-example-panel]"));
   const exampleMobileQuery = window.matchMedia("(max-width: 768px)");
@@ -49,21 +48,6 @@
       });
     });
   }
-
-  function setFaqState(button, expanded) {
-    const panel = document.getElementById(button.getAttribute("aria-controls"));
-    if (!panel) return;
-    button.setAttribute("aria-expanded", String(expanded));
-    panel.hidden = !expanded;
-    button.closest(".tarot-comparison-faq__item")?.classList.toggle("is-open", expanded);
-  }
-
-  faqButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const willOpen = button.getAttribute("aria-expanded") !== "true";
-      faqButtons.forEach((candidate) => setFaqState(candidate, candidate === button && willOpen));
-    });
-  });
 
   function updateComparisonDeckState(index) {
     if (!comparisonDeckSlides.length) return;

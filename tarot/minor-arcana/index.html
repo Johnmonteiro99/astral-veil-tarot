@@ -19,7 +19,7 @@
     <meta name="twitter:description" content="Explore the four tarot suits, number patterns, court cards, elements, and everyday meanings of the 56 Minor Arcana cards." />
     <meta name="twitter:image" content="https://astralveil.world/assets/images/background%20_images/minor-arcana-explained.png" />
     <meta name="twitter:image:alt" content="Four symbolic tarot suit cards arranged across a candlelit celestial table" />
-    <link rel="preload" as="image" href="/assets/images/background%20_images/minor-arcana-explained.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="/assets/images/background%20_images/minor_arcana_header.png" fetchpriority="high" />
     <script id="minor-arcana-breadcrumb-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://astralveil.world/"},{"@type":"ListItem","position":2,"name":"Tarot","item":"https://astralveil.world/tarot"},{"@type":"ListItem","position":3,"name":"Minor Arcana Explained","item":"https://astralveil.world/tarot/minor-arcana/"}]}</script>
     <script id="minor-arcana-webpage-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Minor Arcana Explained","description":"Learn how the 56 Minor Arcana cards work through four suits, number patterns, court cards, elements, and everyday tarot meanings.","url":"https://astralveil.world/tarot/minor-arcana/","image":"https://astralveil.world/assets/images/background%20_images/minor-arcana-explained.png","dateModified":"2026-07-26","isPartOf":{"@type":"WebSite","name":"Astral Veil","url":"https://astralveil.world/"},"about":[{"@type":"Thing","name":"Minor Arcana"},{"@type":"Thing","name":"Tarot suits"},{"@type":"Thing","name":"Tarot card meanings"}]}</script>
     <script id="minor-arcana-faq-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the Minor Arcana in tarot?","acceptedAnswer":{"@type":"Answer","text":"The Minor Arcana is a group of fifty-six cards divided into four suits. These cards often explore emotions, actions, thoughts, relationships, work, resources, challenges, and everyday circumstances."}},{"@type":"Question","name":"How many Minor Arcana cards are there?","acceptedAnswer":{"@type":"Answer","text":"A standard tarot deck contains fifty-six Minor Arcana cards. Each of the four suits contains fourteen cards: Ace through Ten, followed by Page, Knight, Queen, and King."}},{"@type":"Question","name":"What are the four Minor Arcana suits?","acceptedAnswer":{"@type":"Answer","text":"The four suits are Wands, Cups, Swords, and Pentacles. They are commonly associated with fire, water, air, and earth, though traditions may vary."}},{"@type":"Question","name":"What do the numbers mean in the Minor Arcana?","acceptedAnswer":{"@type":"Answer","text":"The numbers can be used as a teaching framework for recognizing patterns such as beginnings, choices, development, stability, disruption, adjustment, and completion. The suit determines how that pattern is expressed."}},{"@type":"Question","name":"What do Minor Arcana court cards represent?","acceptedAnswer":{"@type":"Answer","text":"Court cards may describe people, personality traits, roles, approaches, developmental stages, or different ways of expressing a suit’s energy."}},{"@type":"Question","name":"Are Minor Arcana cards less important than Major Arcana cards?","acceptedAnswer":{"@type":"Answer","text":"No. Major Arcana cards often emphasize broader themes, while Minor Arcana cards show how those themes appear through daily experience. Both groups contribute to a complete reading."}},{"@type":"Question","name":"Can Minor Arcana cards be reversed?","acceptedAnswer":{"@type":"Answer","text":"Yes. A reversed Minor Arcana card may describe internalized energy, delay, resistance, imbalance, avoidance, or a practical lesson requiring closer attention."}}]}</script>
@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="/css/tarot.css" />
     <link rel="stylesheet" href="/css/tarot-major-arcana.css" />
     <link rel="stylesheet" href="/css/tarot-minor-arcana.css" />
-    <link rel="stylesheet" href="/css/tarot-education-typography.css" />
+    <link rel="stylesheet" href="/css/tarot-education-components.css" />
   </head>
   <body class="sun-mode tarot-meanings-page tarot-major-arcana-page tarot-minor-arcana-page">
     <script>(function(){var params=new URLSearchParams(window.location.search);var queryBloodMoon=params.get("bloodMoon")||params.get("testBloodMoon");var hasOverride=params.has("bloodMoon")||params.has("testBloodMoon");var isBloodMoon=hasOverride&&(queryBloodMoon===""||/^(1|true|yes|on|active)$/i.test(queryBloodMoon||""));var mode="";try{isBloodMoon=hasOverride?isBloodMoon:sessionStorage.getItem("astralVeilBloodMoonActive")==="true"||localStorage.getItem("astralVeilBloodMoonActive")==="true"||sessionStorage.getItem("astralVeilTestBloodMoonActive")==="true"||localStorage.getItem("astralVeilTestBloodMoonActive")==="true";mode=localStorage.getItem("dailyTarotTheme")||""}catch(error){}if(mode!=="sun"&&mode!=="moon")mode=new Date().getHours()>=6&&new Date().getHours()<18?"sun":"moon";document.body.classList.remove("sun-mode","moon-mode","blood-moon-mode");document.body.classList.add(isBloodMoon?"blood-moon-mode":mode+"-mode")})();</script>
@@ -53,17 +53,17 @@
     <main id="main-content" class="major-arcana-page minor-arcana-page tarot-education-page">
       <nav class="tarot-education-nav" aria-label="Tarot education pages">
         <div class="tarot-education-nav__viewport" data-tarot-education-viewport>
-          <div class="tarot-education-nav__track"><a class="tarot-education-nav__item" href="/tarot/history/" data-tarot-education-item="history">Tarot History</a><a class="tarot-education-nav__item" href="/tarot/major-arcana/" data-tarot-education-item="major-arcana">Major Arcana</a><a class="tarot-education-nav__item is-active" href="/tarot/minor-arcana/" aria-current="page" data-tarot-education-active data-tarot-education-item="minor-arcana">Minor Arcana</a><span class="tarot-education-nav__item is-disabled" role="link" aria-disabled="true" aria-label="Tarot for Beginners — Coming Soon" tabindex="0" data-tarot-education-item="beginners"><span>Tarot for Beginners</span><small>Coming Soon</small></span><span class="tarot-education-nav__item is-disabled" role="link" aria-disabled="true" aria-label="How to Read Tarot — Coming Soon" tabindex="0" data-tarot-education-item="how-to-read"><span>How to Read Tarot</span><small>Coming Soon</small></span><a class="tarot-education-nav__item" href="/tarot-spreads/" data-tarot-education-item="spreads">Tarot Spreads</a><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-oracle-cards/" data-tarot-education-item="tarot-vs-oracle">Tarot vs. Oracle</a><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-lenormand/" data-tarot-education-item="tarot-vs-lenormand">Tarot vs. Lenormand</a></div>
+          <div class="tarot-education-nav__track"><a class="tarot-education-nav__item" href="/tarot/history/" data-tarot-education-item="history">Tarot History</a><a class="tarot-education-nav__item" href="/tarot/major-arcana/" data-tarot-education-item="major-arcana">Major Arcana</a><a class="tarot-education-nav__item is-active" href="/tarot/minor-arcana/" aria-current="page" data-tarot-education-active data-tarot-education-item="minor-arcana">Minor Arcana</a><span class="tarot-education-nav__item is-disabled" role="link" aria-disabled="true" aria-label="Tarot for Beginners — Coming Soon" tabindex="0" data-tarot-education-item="beginners"><span>Tarot for Beginners</span><small>Coming Soon</small></span><a class="tarot-education-nav__item" href="/how-to-read-tarot-cards/" data-tarot-education-item="how-to-read">How to Read Tarot</a><a class="tarot-education-nav__item" href="/tarot-spreads/" data-tarot-education-item="spreads">Tarot Spreads</a><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-oracle-cards/" data-tarot-education-item="tarot-vs-oracle">Tarot vs. Oracle</a><a class="tarot-education-nav__item" href="/tarot/compare/tarot-vs-lenormand/" data-tarot-education-item="tarot-vs-lenormand">Tarot vs. Lenormand</a></div>
         </div>
       </nav>
-      <section class="tarot-education-hero tarot-education-hero--immersive major-arcana-hero minor-arcana-hero" aria-labelledby="minor-arcana-title">
+      <section class="tarot-education-hero tarot-education-hero--immersive major-arcana-hero minor-arcana-hero" aria-labelledby="minor-arcana-title" data-education-page="minor-arcana">
         <div class="tarot-education-hero__stage major-arcana-hero__stage">
           <div class="tarot-education-hero__copy major-arcana-hero__title">
             <p class="major-arcana-eyebrow">The 56 Cards of Everyday Experience</p>
             <h1 id="minor-arcana-title">Minor Arcana Explained</h1>
           </div>
           <figure class="tarot-education-hero__visual major-arcana-hero__visual">
-            <img class="tarot-education-hero__image major-arcana-hero__image" src="/assets/images/background%20_images/minor-arcana-explained.png" alt="Four symbolic tarot suit cards arranged across a candlelit celestial table" width="1448" height="1086" loading="eager" decoding="async" fetchpriority="high" draggable="false" />
+            <img class="tarot-education-hero__image major-arcana-hero__image" src="/assets/images/background%20_images/minor_arcana_header.png" alt="Four symbolic tarot suit cards arranged across a candlelit celestial table" width="1672" height="941" loading="eager" decoding="async" fetchpriority="high" draggable="false" data-education-hero-image />
           </figure>
           <div class="tarot-education-hero__overlay" aria-hidden="true"></div>
         </div>
@@ -1785,29 +1785,48 @@
         </article></div>
         <footer class="major-minor-showcase__footer"><p class="major-minor-showcase__supporting">The two groups work together. Major Arcana cards often establish the larger theme, while Minor Arcana cards show how that theme is experienced through everyday situations.</p></footer>
       </section>
-        <section class="tarot-faq major-arcana-faq" id="minor-arcana-faq" aria-labelledby="minor-arcana-faq-heading" data-major-faq>
+        <section class="tarot-faq major-arcana-faq tarot-education-faq" id="minor-arcana-faq" aria-labelledby="minor-arcana-faq-heading" data-education-faq>
         <div class="tarot-shell tarot-faq__inner">
-          <header class="tarot-faq__header"><p class="tarot-faq__eyebrow">Common Questions</p><h2 id="minor-arcana-faq-heading">Minor Arcana Frequently Asked Questions</h2><p class="tarot-faq__intro">Clear answers about the structure, suits, numbers, court cards, and role of the Minor Arcana.</p><div class="tarot-faq__divider" aria-hidden="true"><span></span><span class="tarot-faq__ornament">✦</span><span></span></div></header>
-          <div class="tarot-faq__list"><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="minor-faq-question-1" type="button" aria-expanded="true" aria-controls="minor-faq-answer-1" data-major-faq-button><span>What is the Minor Arcana in tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+          <header class="tarot-faq__header">
+            <p class="tarot-faq__eyebrow">Common Questions</p>
+            <h2 id="minor-arcana-faq-heading">Minor Arcana Frequently Asked Questions</h2>
+            <p class="tarot-faq__intro">Clear answers about the structure, suits, numbers, court cards, and role of the Minor Arcana.</p>
+            <div class="tarot-faq__divider" aria-hidden="true"><span></span><span class="tarot-faq__ornament">✦</span><span></span></div>
+          </header>
+          <div class="tarot-faq__list"><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="minor-faq-question-1" type="button" aria-expanded="true" aria-controls="minor-faq-answer-1" data-education-faq-button>
+              <span>What is the Minor Arcana in tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="minor-faq-answer-1" role="region" aria-labelledby="minor-faq-question-1" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>The Minor Arcana is a group of fifty-six cards divided into four suits. These cards often explore emotions, actions, thoughts, relationships, work, resources, challenges, and everyday circumstances.</p></div></div>
-          </article><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="minor-faq-question-2" type="button" aria-expanded="true" aria-controls="minor-faq-answer-2" data-major-faq-button><span>How many Minor Arcana cards are there?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="minor-faq-question-2" type="button" aria-expanded="true" aria-controls="minor-faq-answer-2" data-education-faq-button>
+              <span>How many Minor Arcana cards are there?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="minor-faq-answer-2" role="region" aria-labelledby="minor-faq-question-2" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>A standard tarot deck contains fifty-six Minor Arcana cards. Each of the four suits contains fourteen cards: Ace through Ten, followed by Page, Knight, Queen, and King.</p></div></div>
-          </article><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="minor-faq-question-3" type="button" aria-expanded="true" aria-controls="minor-faq-answer-3" data-major-faq-button><span>What are the four Minor Arcana suits?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="minor-faq-question-3" type="button" aria-expanded="true" aria-controls="minor-faq-answer-3" data-education-faq-button>
+              <span>What are the four Minor Arcana suits?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="minor-faq-answer-3" role="region" aria-labelledby="minor-faq-question-3" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>The four suits are Wands, Cups, Swords, and Pentacles. They are commonly associated with fire, water, air, and earth, though traditions may vary.</p></div></div>
-          </article><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="minor-faq-question-4" type="button" aria-expanded="true" aria-controls="minor-faq-answer-4" data-major-faq-button><span>What do the numbers mean in the Minor Arcana?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="minor-faq-question-4" type="button" aria-expanded="true" aria-controls="minor-faq-answer-4" data-education-faq-button>
+              <span>What do the numbers mean in the Minor Arcana?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="minor-faq-answer-4" role="region" aria-labelledby="minor-faq-question-4" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>The numbers can be used as a teaching framework for recognizing patterns such as beginnings, choices, development, stability, disruption, adjustment, and completion. The suit determines how that pattern is expressed.</p></div></div>
-          </article><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="minor-faq-question-5" type="button" aria-expanded="true" aria-controls="minor-faq-answer-5" data-major-faq-button><span>What do Minor Arcana court cards represent?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="minor-faq-question-5" type="button" aria-expanded="true" aria-controls="minor-faq-answer-5" data-education-faq-button>
+              <span>What do Minor Arcana court cards represent?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="minor-faq-answer-5" role="region" aria-labelledby="minor-faq-question-5" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Court cards may describe people, personality traits, roles, approaches, developmental stages, or different ways of expressing a suit’s energy.</p></div></div>
-          </article><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="minor-faq-question-6" type="button" aria-expanded="true" aria-controls="minor-faq-answer-6" data-major-faq-button><span>Are Minor Arcana cards less important than Major Arcana cards?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="minor-faq-question-6" type="button" aria-expanded="true" aria-controls="minor-faq-answer-6" data-education-faq-button>
+              <span>Are Minor Arcana cards less important than Major Arcana cards?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="minor-faq-answer-6" role="region" aria-labelledby="minor-faq-question-6" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>No. Major Arcana cards often emphasize broader themes, while Minor Arcana cards show how those themes appear through daily experience. Both groups contribute to a complete reading.</p></div></div>
-          </article><article class="tarot-faq__item" data-major-faq-item>
-            <h3><button class="tarot-faq__trigger" id="minor-faq-question-7" type="button" aria-expanded="true" aria-controls="minor-faq-answer-7" data-major-faq-button><span>Can Minor Arcana cards be reversed?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="minor-faq-question-7" type="button" aria-expanded="true" aria-controls="minor-faq-answer-7" data-education-faq-button>
+              <span>Can Minor Arcana cards be reversed?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="minor-faq-answer-7" role="region" aria-labelledby="minor-faq-question-7" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Yes. A reversed Minor Arcana card may describe internalized energy, delay, resistance, imbalance, avoidance, or a practical lesson requiring closer attention.</p></div></div>
           </article></div>
         </div>
