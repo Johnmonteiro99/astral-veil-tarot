@@ -10,11 +10,11 @@
     { label: "Pentacles", value: "pentacles" }
   ];
   const tarotQuestionPaths = [
-    { key: "love", title: "Love & Relationships", description: "Explore tarot meanings for love, connection, trust, distance, reconciliation, and harmony.", route: "/tarot/topics/love-relationships/", available: true, regularImage: "/assets/images/background%20_images/love-relationships.png", bloodMoonImage: "/assets/images/background%20_images/bloodmoon-love-relationships.png", alt: "Astral Veil artwork representing love, relationships, and emotional connection" },
-    { key: "career", title: "Career & Purpose", description: "Gain clarity with tarot meanings for career: your work, direction, opportunities, ambition, and next steps.", route: "/tarot/topics/career-purpose/", available: true, regularImage: "/assets/images/background%20_images/career-purpose.png", bloodMoonImage: "/assets/images/background%20_images/bloodmoon-career-purpose.png", alt: "Astral Veil artwork representing career, purpose, ambition, and direction" },
-    { key: "feelings", title: "Feelings & Intentions", description: "Uncover hidden feelings, developing emotions, motives, and tarot cards as feelings and intentions behind them.", route: "/tarot/topics/feelings-intentions/", available: true, regularImage: "/assets/images/background%20_images/feelings-intuitions.png", bloodMoonImage: "/assets/images/background%20_images/bloodmoon-feelings-intuitions.png", alt: "Astral Veil artwork representing hidden feelings, emotions, motives, and intentions" },
-    { key: "advice", title: "Advice & Personal Growth", description: "Receive tarot advice to evolve, heal, overcome challenges, and step into your power.", route: "/tarot/topics/advice-personal-growth/", available: true, regularImage: "/assets/images/background%20_images/advice-personal-growth.png", bloodMoonImage: "/assets/images/background%20_images/bloodmoon-advice-personal-growth.png", alt: "Astral Veil artwork representing guidance, healing, growth, and personal power" },
-    { key: "spiritual", title: "Spiritual Guidance", description: "Explore meaning, intuition, practice, discernment, and grounded spiritual reflection through Tarot.", route: "/tarot/topics/spiritual-guidance/", available: true, regularImage: "/assets/images/background%20_images/upright-reverse.png", bloodMoonImage: "/assets/images/background%20_images/upright-reverse.png", alt: "A contemplative figure beneath quiet constellations reflected in moonlit water" }
+    { key: "love", title: "Love & Relationships", description: "Explore tarot meanings for love, connection, trust, distance, reconciliation, and harmony.", route: "/tarot/topics/love-relationships/", available: true, ariaLabel: "Explore Love and Relationships Tarot", regularImage: "/assets/images/background%20_images/love_relationships.png", regularWidth: 1086, regularHeight: 1448, bloodMoonImage: "/assets/images/background%20_images/bloodmoon-love-relationships.png", bloodMoonWidth: 1122, bloodMoonHeight: 1402, alt: "Two soulmates meeting beneath a moonlit celestial arch", bloodMoonAlt: "Blood Moon artwork representing love, relationships, and emotional connection" },
+    { key: "career", title: "Career & Purpose", description: "Gain clarity with tarot meanings for career: your work, direction, opportunities, ambition, and next steps.", route: "/tarot/topics/career-purpose/", available: true, ariaLabel: "Explore Career and Purpose Tarot", regularImage: "/assets/images/background%20_images/career_purpose.png", regularWidth: 1086, regularHeight: 1448, bloodMoonImage: "/assets/images/background%20_images/bloodmoon-career-purpose.png", bloodMoonWidth: 1122, bloodMoonHeight: 1402, alt: "Traveler overlooking illuminated paths beneath a guiding star", bloodMoonAlt: "Blood Moon artwork representing career, purpose, ambition, and direction" },
+    { key: "feelings", title: "Feelings & Intentions", description: "Uncover hidden feelings, developing emotions, motives, and tarot cards as feelings and intentions behind them.", route: "/tarot/topics/feelings-intentions/", available: true, ariaLabel: "Explore Feelings and Intentions Tarot", regularImage: "/assets/images/background%20_images/feelings_intuition.png", regularWidth: 1086, regularHeight: 1448, bloodMoonImage: "/assets/images/background%20_images/bloodmoon-feelings-intuitions.png", bloodMoonWidth: 1122, bloodMoonHeight: 1402, alt: "Woman touching reflective water beneath the moon", bloodMoonAlt: "Blood Moon artwork representing hidden feelings, emotions, motives, and intentions" },
+    { key: "advice", title: "Advice & Personal Growth", description: "Receive tarot advice to evolve, heal, overcome challenges, and step into your power.", route: "/tarot/topics/advice-personal-growth/", available: true, ariaLabel: "Explore Advice and Personal Growth Tarot", regularImage: "/assets/images/background%20_images/advice_personal_growth.png", regularWidth: 1086, regularHeight: 1448, bloodMoonImage: "/assets/images/background%20_images/bloodmoon-advice-personal-growth.png", bloodMoonWidth: 1122, bloodMoonHeight: 1402, alt: "Figure ascending a luminous garden stairway toward a celestial gateway", bloodMoonAlt: "Blood Moon artwork representing guidance, healing, growth, and personal power" },
+    { key: "spiritual", title: "Spiritual Guidance", description: "Explore meaning, intuition, practice, discernment, and grounded spiritual reflection through Tarot.", route: "/tarot/topics/spiritual-guidance/", available: true, ariaLabel: "Explore Spiritual Guidance Tarot", regularImage: "/assets/images/background%20_images/spiritual_guidance.png", regularWidth: 1086, regularHeight: 1448, bloodMoonImage: "/assets/images/background%20_images/spiritual_guidance.png", bloodMoonWidth: 1086, bloodMoonHeight: 1448, alt: "Mystic meditating with a glowing celestial orb among lotus flowers", bloodMoonAlt: "Mystic meditating with a glowing celestial orb among lotus flowers" }
   ];
   const tarotGuides = [
     { key: "history", eyebrow: "The Chronicle of the Cards", title: "The History of Tarot", description: "Trace tarot from its early life as a European card game through symbolism, divination, reflection, and modern practice.", route: "/tarot/history/", available: true, ctaLabel: "Explore Tarot History", image: "/assets/images/background%20_images/history-of-tarot.png", imageAlt: "A candlelit archive of antique tarot cards, books, and a tall stained-glass window", imageWidth: 1122, imageHeight: 1402, imageAspect: "portrait", imageFit: "cover", objectPosition: "58% center", layoutSize: "featured" },
@@ -127,10 +127,6 @@
   const questionPathViewport = document.querySelector("[data-question-carousel-viewport]");
   const questionPathPrevious = document.querySelector("[data-question-carousel-prev]");
   const questionPathNext = document.querySelector("[data-question-carousel-next]");
-  const questionPathViewer = document.querySelector("[data-tarot-image-viewer]");
-  const questionPathViewerImage = document.querySelector("[data-tarot-image-viewer-image]");
-  const questionPathViewerTitle = document.querySelector("[data-tarot-image-viewer-title]");
-  const questionPathViewerCaption = document.querySelector("[data-tarot-image-viewer-caption]");
   const tarotGuidesGrid = document.querySelector("[data-tarot-guides-grid]");
   const tarotFaq = document.querySelector("[data-tarot-faq]");
   const tarotFaqList = document.querySelector("[data-tarot-faq-list]");
@@ -138,32 +134,24 @@
   let codexCloseTimer = 0;
   let scrollTimer = 0;
   let questionPathThemeIsBloodMoon = null;
-  let lastQuestionPathImageTrigger = null;
 
   function configureQuestionPaths(isBloodMoon = document.body.classList.contains("blood-moon-mode")) {
     const pathsByKey = new Map(tarotQuestionPaths.map((path) => [path.key, path]));
     document.querySelectorAll("[data-tarot-question-path]").forEach((item) => {
       const path = pathsByKey.get(item.dataset.tarotQuestionPath);
-      const content = item.querySelector("[data-question-path-content]");
+      const card = item.querySelector("[data-question-path-card]");
       const image = item.querySelector("[data-question-path-image]");
-      const imageButton = item.querySelector("[data-question-path-image-button]");
-      if (!path || !image || !imageButton) return;
+      if (!path || !card || !image) return;
       const imageSource = isBloodMoon ? path.bloodMoonImage : path.regularImage;
-      const imageWidth = isBloodMoon ? 1122 : 1024;
-      const imageHeight = isBloodMoon ? 1402 : 1536;
+      const imageWidth = isBloodMoon ? path.bloodMoonWidth : path.regularWidth;
+      const imageHeight = isBloodMoon ? path.bloodMoonHeight : path.regularHeight;
       if (image.getAttribute("src") !== imageSource) image.src = imageSource;
       image.width = imageWidth;
       image.height = imageHeight;
-      image.alt = path.alt;
-      if (!path.available || !content) return;
-      const link = content.matches("a") ? content : document.createElement("a");
-      link.className = "tarot-question-path__link";
-      link.href = path.route;
-      link.setAttribute("aria-label", `${path.title}: ${path.description}`);
-      if (link !== content) {
-        while (content.firstChild) link.append(content.firstChild);
-        content.replaceWith(link);
-      }
+      image.alt = isBloodMoon ? path.bloodMoonAlt : path.alt;
+      if (!path.available) return;
+      card.href = path.route;
+      card.setAttribute("aria-label", path.ariaLabel);
       item.dataset.available = "true";
     });
   }
@@ -181,33 +169,7 @@
     if (!force && questionPathThemeIsBloodMoon === isBloodMoon) return;
     questionPathThemeIsBloodMoon = isBloodMoon;
     configureQuestionPaths(isBloodMoon);
-    if (questionPathViewer?.open && lastQuestionPathImageTrigger) {
-      const image = lastQuestionPathImageTrigger.querySelector("[data-question-path-image]");
-      if (image && questionPathViewerImage) {
-        questionPathViewerImage.src = image.currentSrc || image.src;
-        questionPathViewerImage.alt = image.alt;
-      }
-    }
     updateQuestionPathCarouselControls();
-  }
-
-  function openQuestionPathViewer(trigger) {
-    const image = trigger.querySelector("[data-question-path-image]");
-    const pathKey = trigger.closest("[data-tarot-question-path]")?.dataset.tarotQuestionPath;
-    const path = tarotQuestionPaths.find((item) => item.key === pathKey);
-    if (!questionPathViewer || !questionPathViewerImage || !image || !path) return;
-
-    lastQuestionPathImageTrigger = trigger;
-    questionPathViewerImage.src = image.currentSrc || image.src;
-    questionPathViewerImage.alt = image.alt;
-    questionPathViewerTitle.textContent = path.title;
-    questionPathViewerCaption.textContent = path.description;
-    if (!questionPathViewer.open) questionPathViewer.showModal();
-    window.requestAnimationFrame(() => questionPathViewer.querySelector("[data-close-tarot-image-viewer]")?.focus({ preventScroll: true }));
-  }
-
-  function closeQuestionPathViewer() {
-    if (questionPathViewer?.open) questionPathViewer.close();
   }
 
   function renderTarotGuides() {
@@ -221,7 +183,7 @@
       const body = `<div class="tarot-guide__media tarot-guide__media--${escapeHtml(guide.imageAspect)}">${media}</div>${content}`;
       const accessibleTitle = `${guide.title}: ${guide.description}`;
       const imageSideClass = guide.layoutSize === "comparison" ? ` tarot-guide--image-${escapeHtml(guide.imageSide || "right")}` : "";
-      return `<article class="tarot-guide tarot-guide--${escapeHtml(guide.layoutSize)}${imageSideClass}" data-tarot-guide="${escapeHtml(guide.key)}" data-route="${escapeHtml(guide.route)}" data-available="${guide.available}">${guide.available ? `<a class="tarot-guide__link" href="${escapeHtml(guide.route)}" aria-label="${escapeHtml(accessibleTitle)}">${body}</a>` : body}</article>`;
+      return `<article class="tarot-guide tarot-guide--${escapeHtml(guide.layoutSize)}${imageSideClass}" data-tarot-guide="${escapeHtml(guide.key)}" data-route="${escapeHtml(guide.route)}" data-available="${guide.available}">${guide.available ? `<a class="tarot-guide__link" href="${escapeHtml(guide.route)}" aria-label="${escapeHtml(accessibleTitle)}">${body}</a>` : `<div class="tarot-guide__body">${body}</div>`}</article>`;
     }).join("");
   }
 
@@ -767,12 +729,6 @@
       });
     };
 
-    questionPathTrack?.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-question-path-image-button]");
-      if (!button || !questionPathTrack.contains(button)) return;
-      event.preventDefault();
-      openQuestionPathViewer(button);
-    });
     questionPathPrevious?.addEventListener("click", () => scrollQuestionPathCarousel(-1));
     questionPathNext?.addEventListener("click", () => scrollQuestionPathCarousel(1));
     questionPathViewport?.addEventListener("scroll", updateQuestionPathCarouselControls, { passive: true });
@@ -784,18 +740,6 @@
     window.addEventListener("resize", updateQuestionPathCarouselControls, { passive: true });
 
     window.addEventListener("astralVeilBloodMoonChange", updateQuestionPathThemeImages);
-
-    questionPathViewer?.addEventListener("click", (event) => {
-      if (event.target === questionPathViewer || event.target.closest("[data-close-tarot-image-viewer]")) closeQuestionPathViewer();
-    });
-    questionPathViewer?.addEventListener("close", () => {
-      questionPathViewerImage?.removeAttribute("src");
-      questionPathViewerImage && (questionPathViewerImage.alt = "");
-      questionPathViewerTitle && (questionPathViewerTitle.textContent = "");
-      questionPathViewerCaption && (questionPathViewerCaption.textContent = "");
-      lastQuestionPathImageTrigger?.isConnected && lastQuestionPathImageTrigger.focus({ preventScroll: true });
-      lastQuestionPathImageTrigger = null;
-    });
   }
 
   updateQuestionPathThemeImages(true);

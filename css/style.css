@@ -11696,7 +11696,7 @@ body.blood-moon-mode .reader-carousel__featured .reader-selection-split__image .
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 14px;
-  width: min(100%, 460px);
+  width: min(100%, var(--reader-card-width));
 }
 
 .reader-selection-orbit .reader-action-button {
@@ -12204,7 +12204,7 @@ body.no-glow .veilwalker-unique__item:hover .veilwalker-unique__icon {
   filter: none !important;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1200px) {
   .reader-selection-orbit {
     --reader-card-width: clamp(340px, 40vw, 460px);
     --reader-preview-width: clamp(112px, 16vw, 216px);
@@ -12263,6 +12263,19 @@ body.no-glow .veilwalker-unique__item:hover .veilwalker-unique__icon {
   .reader-selection-orbit {
     grid-template-columns: minmax(0, 1fr);
     gap: 18px;
+    width: 100%;
+    max-width: min(100%, 430px);
+    margin-inline: auto;
+  }
+
+  .reader-carousel__stage,
+  .reader-carousel__featured {
+    width: 100%;
+    justify-items: center;
+  }
+
+  .reader-carousel__featured {
+    display: grid;
   }
 
   .reader-orbit-card--side {
@@ -12317,6 +12330,10 @@ body.no-glow .veilwalker-unique__item:hover .veilwalker-unique__icon {
   .reader-selection-orbit .reader-selection-split__image {
     width: min(100%, 360px);
     border-radius: 24px;
+  }
+
+  .reader-selection-orbit {
+    --reader-card-width: 360px;
   }
 
   .reader-card-overlay {
@@ -15151,17 +15168,6 @@ body.blood-moon-mode .active-reader-header--aquarius-bloodmoon .reader-portrait-
     border-radius: 22px;
   }
 
-  .reader-selection-orbit {
-    --reader-card-width: clamp(340px, 34vw, 410px);
-    --reader-preview-width: clamp(120px, 15vw, 190px);
-    --reader-carousel-gap: clamp(14px, 2vw, 26px);
-  }
-
-  .reader-selection-orbit .reader-selection-split__image,
-  .reader-selection-orbit .reader-selection-split__image img {
-    max-height: clamp(330px, 58vh, 500px);
-  }
-
   .reader-card-overlay {
     inset: auto clamp(14px, 3vw, 26px) clamp(14px, 3vw, 24px);
     gap: clamp(6px, 1vw, 10px);
@@ -15858,8 +15864,115 @@ body.no-glow .veil-glow::after {
 
 }
 
-/* The compact desktop pass must not compress the reader orbit's image/overlay card. */
-@media (min-width: 769px) and (max-height: 800px) {
+/* Tablet and compact-desktop reader selector: one centered card, no empty preview columns. */
+@media (min-width: 769px) and (max-width: 1199px) {
+  .tarot-stage--readings {
+    padding-top: clamp(72px, 8vh, 92px);
+  }
+
+  .reading-section {
+    gap: clamp(18px, 2.4vw, 26px);
+  }
+
+  .reading-section .reading-section__intro--veilgate {
+    justify-self: center;
+    gap: clamp(8px, 1.35vw, 14px);
+    width: min(100%, 980px);
+    max-width: 980px;
+    padding: clamp(10px, 2vw, 22px) clamp(18px, 4vw, 48px) 0;
+    border-radius: 0;
+  }
+
+  .reading-section__intro--veilgate .reading-veil-brand {
+    font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+    letter-spacing: 0.3em;
+  }
+
+  .reading-section__intro--veilgate .reading-section__eyebrow--veilgate {
+    margin-top: 4px;
+    font-size: clamp(0.7rem, 1.25vw, 0.84rem);
+  }
+
+  .reading-section__intro--veilgate h1 {
+    max-width: 100%;
+    font-size: clamp(3.1rem, 6vw, 4.65rem);
+    line-height: 0.98;
+    overflow-wrap: normal;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  .reading-section__intro--veilgate p:not(.reading-veil-brand):not(.reading-section__eyebrow) {
+    max-width: 54rem;
+    margin-inline: auto;
+    font-size: clamp(0.98rem, 1.45vw, 1.12rem);
+    text-align: center;
+  }
+
+  .reader-selection.reader-panel,
+  .reader-grid.reader-carousel,
+  .reader-carousel__stage,
+  .reader-carousel__featured {
+    width: 100%;
+    max-width: 100%;
+    margin-inline: auto;
+  }
+
+  .reader-selection.reader-panel {
+    justify-self: stretch;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .reader-carousel__stage,
+  .reader-carousel__featured {
+    min-height: 0;
+    justify-items: center;
+    overflow: visible;
+  }
+
+  .reader-carousel__featured {
+    display: grid;
+  }
+
+  .reader-selection-orbit {
+    --reader-card-width: clamp(350px, 48vw, 480px);
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: clamp(14px, 2vw, 20px);
+    width: 100%;
+    max-width: min(100%, calc(var(--reader-card-width) + 136px));
+    margin-inline: auto;
+  }
+
+  .reader-selection-orbit .reader-orbit-card--side {
+    display: none;
+  }
+
+  .reader-selection-orbit .reader-orbit-card--featured {
+    grid-column: 1;
+    justify-self: center;
+  }
+
+  .reader-selection-orbit .reader-carousel__nav {
+    top: clamp(215px, 28vw, 284px);
+  }
+
+  .reader-selection-orbit .reader-carousel__nav--prev {
+    left: 0;
+  }
+
+  .reader-selection-orbit .reader-carousel__nav--next {
+    right: 0;
+  }
+}
+
+/* Short viewports keep the same modes with a smaller, naturally flowing selector. */
+@media (min-width: 769px) and (max-height: 850px) {
+  .tarot-stage--readings {
+    padding-top: clamp(68px, 8vh, 80px);
+  }
+
   .reader-carousel__stage,
   .reader-carousel__featured {
     min-height: 0;
@@ -15869,6 +15982,41 @@ body.no-glow .veil-glow::after {
   .reader-selection-orbit .reader-selection-split__image,
   .reader-selection-orbit .reader-selection-split__image img {
     max-height: none;
+  }
+
+  .reading-section .reading-section__intro--veilgate {
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+  .reading-section__intro--veilgate h1 {
+    font-size: clamp(2.9rem, 5.2vw, 4.15rem);
+  }
+
+  .reader-selection-orbit .reader-orbit-card--featured {
+    gap: 14px;
+  }
+
+  .reader-selection-orbit .reader-action-button {
+    min-height: 54px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1199px) and (max-height: 850px) {
+  .reader-selection-orbit {
+    --reader-card-width: clamp(330px, 42vw, 420px);
+  }
+
+  .reader-selection-orbit .reader-carousel__nav {
+    top: clamp(195px, 24.8vw, 248px);
+  }
+}
+
+@media (min-width: 1200px) and (max-height: 850px) {
+  .reader-selection-orbit {
+    --reader-card-width: clamp(350px, 30vw, 410px);
+    --reader-preview-width: clamp(112px, 14vw, 190px);
+    --reader-carousel-gap: clamp(22px, 3vw, 38px);
   }
 }
 

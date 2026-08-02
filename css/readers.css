@@ -151,7 +151,7 @@ body.moon-mode .veilwalker-feature--zephyra {
   height: 100%;
   min-height: clamp(480px, 48vw, 660px);
   object-fit: cover;
-  object-position: center top;
+  object-position: var(--veilwalker-image-position, center top);
 }
 
 .veilwalker-feature__nav {
@@ -683,7 +683,7 @@ body.blood-moon-mode .veilwalker-selector__closing p {
   }
 }
 
-@media (min-width: 901px) and (max-width: 1366px), (min-width: 901px) and (max-height: 800px) {
+@media (min-width: 820px) and (max-width: 1279px) {
   .readers-stage {
     min-height: auto;
     place-items: start center;
@@ -734,31 +734,39 @@ body.blood-moon-mode .veilwalker-selector__closing p {
   }
 
   .veilwalker-selector__featured {
-    padding-inline: clamp(0px, 1.6vw, 18px);
+    padding-inline: 0;
   }
 
   .veilwalker-feature {
-    grid-template-columns: minmax(290px, 0.84fr) minmax(0, 1fr);
-    gap: clamp(18px, 3vw, 34px);
-    max-width: min(100%, 1040px);
+    grid-template-columns: minmax(280px, 44%) minmax(0, 56%);
+    gap: 0;
+    width: min(calc(100% - 36px), 1080px);
+    max-width: 1080px;
+    min-height: 560px;
+    max-height: 690px;
     margin-inline: auto;
     padding: clamp(12px, 1.6vw, 18px);
     border-radius: 14px;
   }
 
   .veilwalker-feature__image-wrap {
-    max-height: clamp(340px, 58vh, 500px);
+    height: auto;
+    min-height: 100%;
+    max-height: none;
     border-radius: 10px;
   }
 
   .veilwalker-feature__image {
-    min-height: clamp(340px, 55vh, 500px);
-    max-height: clamp(340px, 58vh, 500px);
+    height: 100%;
+    min-height: 0;
+    max-height: none;
   }
 
   .veilwalker-feature__details {
-    gap: clamp(9px, 1.25vw, 14px);
-    padding: clamp(8px, 1.7vw, 18px) clamp(4px, 0.9vw, 10px);
+    align-content: center;
+    gap: clamp(8px, 1.1vw, 13px);
+    min-height: 0;
+    padding: clamp(18px, 2.4vw, 30px);
   }
 
   .veilwalker-feature__meta {
@@ -777,32 +785,39 @@ body.blood-moon-mode .veilwalker-selector__closing p {
   }
 
   .veilwalker-feature h2 {
-    font-size: clamp(2.1rem, 4vw, 3.6rem);
+    font-size: clamp(2.35rem, 3.8vw, 3.75rem);
+    line-height: 1;
   }
 
   .veilwalker-feature__quote {
-    font-size: clamp(0.98rem, 1.45vw, 1.12rem);
-    line-height: 1.38;
+    font-size: clamp(1.02rem, 1.4vw, 1.2rem);
+    line-height: 1.35;
   }
 
   .veilwalker-feature__description,
   .veilwalker-feature__unavailable {
-    font-size: clamp(0.92rem, 1.1vw, 1rem);
-    line-height: 1.58;
+    font-size: clamp(0.94rem, 1.15vw, 1.05rem);
+    line-height: 1.5;
   }
 
   .veilwalker-feature__detail-list {
-    gap: 5px;
+    gap: 4px;
   }
 
   .veilwalker-feature__detail-row {
-    gap: 10px;
+    grid-template-columns: minmax(82px, 108px) minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
     padding: 6px 0;
   }
 
   .veilwalker-feature__actions {
     gap: 12px;
-    margin-top: 4px;
+    margin-top: clamp(6px, 1.2vw, 14px);
+  }
+
+  .veilwalker-feature__actions > * {
+    flex: 1 1 150px;
   }
 
   .veilwalker-feature__button {
@@ -812,8 +827,21 @@ body.blood-moon-mode .veilwalker-selector__closing p {
   }
 
   .veilwalker-selector__zodiac {
-    width: min(100%, 1040px);
+    width: min(calc(100% - 36px), 1080px);
+    margin-inline: auto;
     padding: 6px 8px;
+  }
+
+  .veilwalker-selector__dots {
+    margin-inline: auto;
+  }
+
+  .veilwalker-feature__nav--prev {
+    left: -18px;
+  }
+
+  .veilwalker-feature__nav--next {
+    right: -18px;
   }
 
   .veilwalker-zodiac-track {
@@ -881,21 +909,37 @@ body.blood-moon-mode .veilwalker-selector__closing p {
   }
 }
 
-/* Keep the Veilwalker feature content-led on short desktop screens. */
-@media (min-width: 769px) and (max-height: 800px) {
+/* Short compact viewports keep every detail visible without enlarging the portrait. */
+@media (min-width: 820px) and (max-width: 1279px) and (max-height: 850px) {
+  .readers-stage {
+    padding-top: clamp(72px, 9vh, 82px);
+  }
+
   .veilwalker-feature {
-    align-items: start;
+    min-height: 520px;
+    max-height: 610px;
   }
 
-  .veilwalker-feature__image-wrap,
-  .veilwalker-feature__image {
-    height: auto;
-    max-height: none;
+  .veilwalker-feature__details {
+    gap: 7px;
+    padding-block: 16px;
   }
 
-  .veilwalker-feature__image {
-    min-height: 0;
-    aspect-ratio: 4 / 5;
+  .veilwalker-feature h2 {
+    font-size: clamp(2.15rem, 3.4vw, 3.35rem);
+  }
+
+  .veilwalker-feature__description,
+  .veilwalker-feature__unavailable {
+    line-height: 1.42;
+  }
+
+  .veilwalker-feature__detail-row {
+    padding-block: 4px;
+  }
+
+  .veilwalker-feature__button {
+    min-height: 38px;
   }
 }
 
@@ -1877,7 +1921,7 @@ body.blood-moon-mode .reader-detail__form-button[data-reader-form-id="bloodMoonS
    Veilwalker Responsive Rules
 ================================ */
 
-@media (max-width: 900px) {
+@media (max-width: 819px) {
   .veilwalker-selector__zodiac {
     order: 1;
   }
