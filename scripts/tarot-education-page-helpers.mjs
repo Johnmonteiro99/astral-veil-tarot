@@ -28,8 +28,8 @@ export function renderTarotEducationNavigation({ activeKey, rootDir }) {
   getTarotEducationItem(activeKey);
 
   const items = tarotEducationNavigation.map((item) => {
-    const isAvailable = isTarotEducationRouteAvailable(rootDir, item.route);
     const isActive = item.key === activeKey;
+    const isAvailable = isActive || isTarotEducationRouteAvailable(rootDir, item.route);
     const className = `tarot-education-nav__item${isActive ? " is-active" : ""}${isAvailable ? "" : " is-disabled"}`;
 
     if (isAvailable) {

@@ -23,6 +23,19 @@ const educationCss = readFileSync(resolve(rootDir, "css/tarot-education-componen
 const educationScript = readFileSync(resolve(rootDir, "js/tarot-education.js"), "utf8");
 const directWrapperRule = comparisonCss.match(/\.tarot-comparison-direct\s*\{([^}]*)\}/)?.[1] || "";
 
+if (!tarotHubCss.includes("grid-template-columns: minmax(220px,44%) minmax(0,56%);")
+  || !tarotHubCss.includes("grid-template-columns: minmax(0,56%) minmax(220px,44%);")
+  || !tarotHubCss.includes(".tarot-guide--comparison>.tarot-guide__link>.tarot-guide__media")
+  || !tarotHubCss.includes(".tarot-guide--comparison .tarot-guide__content")
+  || !tarotHubCss.includes(".tarot-guide--comparison .tarot-guide__cta")
+  || !tarotHubCss.includes("padding: 9px 15px;")
+  || !tarotHubCss.includes(".tarot-guide__cta-label { min-width: 0; white-space: normal; }")
+  || !tarotScript.includes('<span class="tarot-guide__spark" aria-hidden="true">✦</span>')
+  || !tarotScript.includes('<span class="tarot-guide__arrow" aria-hidden="true">→</span>')
+  || !tarotScript.includes('<span class="tarot-guide__cta-label">')) {
+  errors.push("tarotHub.comparisonTiles: mirrored media sizing or stable CTA pill structure is missing");
+}
+
 tarotComparisons.forEach((comparison) => {
   const route = getComparisonRoute(comparison);
   const leftTabLabel = comparison.systems.left.tabLabel || comparison.systems.left.title;

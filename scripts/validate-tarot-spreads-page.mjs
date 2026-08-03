@@ -1410,10 +1410,11 @@ if (!existsSync(outputPath)) {
     if (!libraryCss.includes(token)) errors.push(`library card: responsive Tarot Spreads layout is missing (${token})`);
   });
   if (
-    !libraryJs.includes('guide.key === "spreads" && guide.available') ||
-    !libraryJs.includes('aria-hidden="true">→</span>')
+    !libraryJs.includes('class="tarot-guide__spark" aria-hidden="true">✦</span>') ||
+    !libraryJs.includes('class="tarot-guide__arrow" aria-hidden="true">→</span>') ||
+    !libraryHtml.includes('class="tarot-guide__status tarot-guide__cta"')
   ) {
-    errors.push("library card: live Tarot Spreads CTA treatment is incomplete");
+    errors.push("library card: live Tarot Spreads shared CTA treatment is incomplete");
   }
 
   if (countMatches(new RegExp(`<loc>${canonical}</loc>`, "g"), sitemap) !== 1) {

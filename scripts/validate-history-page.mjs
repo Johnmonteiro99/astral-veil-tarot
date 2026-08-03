@@ -437,10 +437,6 @@ if (!existsSync(outputPath)) {
   routeTargets.forEach(([href, file]) => {
     if (!existsSync(resolve(rootDir, file))) errors.push(`internal route: expected target file for ${href}`);
   });
-  if (/href="\/tarot\/(?:for-beginners|how-to-read)\//.test(html)) {
-    errors.push("internal routes: unfinished Tarot guides must not be linked");
-  }
-
   const timelineLinkTargets = [
     ["/tarot/history/#origins", "tarot/history/index.html", "origins"],
     ["/tarot/history/#occult-revival", "tarot/history/index.html", "occult-revival"],

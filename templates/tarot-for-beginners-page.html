@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {{BEGINNERS_META}}
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Cormorant+Garamond:wght@500;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;family=Lora:wght@400;500;600&amp;family=Marcellus&amp;display=swap" rel="stylesheet" />
+    <script>(function(){try{if(localStorage.getItem("astralVeilDisableGlowEffects")==="true")document.documentElement.classList.add("no-glow")}catch(error){}})();</script>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/animations.css" />
+    <link rel="stylesheet" href="/css/tarot.css" />
+    <link rel="stylesheet" href="/css/tarot-education-components.css" />
+    <link rel="stylesheet" href="/css/tarot-for-beginners.css" />
+  </head>
+  <body class="sun-mode tarot-meanings-page tarot-beginners-page">
+    <script>(function(){var params=new URLSearchParams(window.location.search);var query=params.get("bloodMoon")||params.get("testBloodMoon");var override=params.has("bloodMoon")||params.has("testBloodMoon");var blood=override&&(query===""||/^(1|true|yes|on|active)$/i.test(query||""));var mode="";try{blood=override?blood:sessionStorage.getItem("astralVeilBloodMoonActive")==="true"||localStorage.getItem("astralVeilBloodMoonActive")==="true"||sessionStorage.getItem("astralVeilTestBloodMoonActive")==="true"||localStorage.getItem("astralVeilTestBloodMoonActive")==="true";mode=localStorage.getItem("dailyTarotTheme")||""}catch(error){}if(mode!=="sun"&&mode!=="moon")mode=new Date().getHours()>=6&&new Date().getHours()<18?"sun":"moon";document.body.classList.remove("sun-mode","moon-mode","blood-moon-mode");document.body.classList.add(blood?"blood-moon-mode":mode+"-mode")})();</script>
+
+    <header class="site-header">
+      <nav class="navbar" aria-label="Primary navigation">
+        <a class="navbar__brand" href="/" aria-label="Astral Veil home"><span class="logo-eye" aria-hidden="true"><img class="logo-eye__image" src="/assets/icons/symbols/astral-veil-icon-logo-transparent.png" alt="" width="512" height="512" /></span><span class="navbar__brand-text">Astral Veil</span></a>
+        <ul class="navbar__links"><li><a class="navbar__link" href="/">Readings</a></li><li><a class="navbar__link" href="/veilwalkers">Veilwalkers</a></li><li><a class="navbar__link" href="/decks">Decks</a></li><li><a class="navbar__link" href="/tarot">Tarot</a></li><li><a class="navbar__link" href="/journal">Journal</a></li><li><a class="navbar__link" href="/about">About</a></li></ul>
+        <button class="theme-toggle theme-orb-toggle" type="button" aria-label="Switch between sun and moon mode" data-theme-toggle><span class="theme-orb-toggle__label theme-orb-toggle__label--sun">Sun</span><span class="theme-orb-toggle__icon-wrap" aria-hidden="true"><img src="/assets/icons/symbols/sun-moon-transparent.png" alt="" class="theme-orb-toggle__icon" width="512" height="512" /></span><span class="theme-orb-toggle__label theme-orb-toggle__label--moon">Moon</span></button>
+        <button class="navbar__menu-toggle" type="button" aria-label="Open navigation menu" aria-controls="mobile-navigation" aria-expanded="false"><span class="navbar__menu-icon" aria-hidden="true"></span></button>
+        <div class="navbar__mobile-menu" id="mobile-navigation" aria-hidden="true"><a class="navbar__mobile-link" href="/">Readings</a><a class="navbar__mobile-link" href="/veilwalkers">Veilwalkers</a><a class="navbar__mobile-link" href="/decks">Decks</a><a class="navbar__mobile-link" href="/tarot">Tarot</a><a class="navbar__mobile-link" href="/journal">Journal</a><a class="navbar__mobile-link" href="/about">About</a></div>
+      </nav>
+    </header>
+
+    <div class="tarot-background" aria-hidden="true"><div class="celestial-wash"></div><div class="starfield"></div><div class="mystic-mist"></div><div class="lunar-orb"></div></div>
+
+    {{BEGINNERS_MAIN}}
+
+    <footer class="site-footer" data-footer-drawer><div class="site-footer__shell"><div class="site-footer__compact"><p class="site-footer__mark">Astral Veil™</p><p class="site-footer__tagline">Between fate and imagination</p><div class="site-footer__actions"><button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details"><span data-footer-toggle-label>Explore</span><span class="site-footer__chevron" aria-hidden="true">⌄</span></button><button class="site-footer__share" type="button" data-share-astral-veil>Share</button></div></div><div class="site-footer__inner" id="site-footer-details" hidden><div class="site-footer__brand"><h2>Astral Veil™</h2><p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p><p class="site-footer__poem">✦ Between fate and imagination ✦</p></div><nav class="site-footer__nav" aria-label="Footer navigation"><p class="site-footer__label">Explore</p><a href="/">Home</a><a href="/veilwalkers">Veilwalkers</a><a href="/decks">Decks</a><a href="/tarot">Tarot</a><a href="/about">About</a><a href="/lumen-archive" data-lumen-archive-footer-link>Lumen Archive</a></nav><div class="site-footer__creator"><p class="site-footer__label">Creator</p><p>Crafted by João Monteiro</p><p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p><p>Designer • Developer • Worldbuilder</p><p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p></div><p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p><nav class="site-footer__legal" aria-label="Legal links"><a href="/terms">Terms of Service</a><span aria-hidden="true">·</span><a href="/privacy">Privacy Policy</a></nav></div><p class="site-footer__share-status" aria-live="polite"></p></div></footer>
+
+    <script src="/data/events.js"></script><script src="/js/events.js"></script><script src="/js/bloodmoon-access.js"></script><script src="/js/app.js"></script><script src="/js/tarot-education.js"></script><script src="/js/tarot-for-beginners.js"></script><script type="module" src="/src/public/public-auth-nav.js"></script>
+  </body>
+</html>
