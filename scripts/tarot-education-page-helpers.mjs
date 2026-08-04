@@ -61,10 +61,31 @@ export function renderTarotEducationHeroImage({
   return `<img${classAttribute} src="${escapeHtml(regular.src)}" alt="${decorative ? "" : escapeHtml(alt)}" width="${regular.width}" height="${regular.height}" loading="${escapeHtml(loading)}" decoding="async"${priorityAttribute} draggable="${draggable}" data-education-hero-image />`;
 }
 
-export function renderTarotEducationFaq({ section, items, idPrefix, className = "" }) {
+export function renderTarotFaqSection({
+  section,
+  items,
+  idPrefix,
+  className = "",
+  layout = "split",
+  includeMajorClass = false,
+  innerClassName = "tarot-shell",
+  renderQuestion = (item) => escapeHtml(item.question),
+  renderAnswer = (item) => escapeHtml(item.answer),
+  showDivider = true
+}) {
+  if (layout !== "split" && layout !== "stacked") {
+    throw new Error(`Unknown Tarot FAQ layout: ${layout}`);
+  }
+
   const sectionId = section.id;
   const eyebrow = section.eyebrow || (section.number ? `Chapter ${section.number}` : "Common Questions");
-  const classes = ["tarot-faq", "major-arcana-faq", "tarot-education-faq", className]
+  const classes = [
+    "tarot-faq",
+    includeMajorClass ? "major-arcana-faq" : "",
+    "tarot-education-faq",
+    className,
+    `tarot-faq--${layout}`
+  ]
     .filter(Boolean)
     .join(" ");
   const renderedItems = items.map((item, index) => {
@@ -74,23 +95,43 @@ export function renderTarotEducationFaq({ section, items, idPrefix, className = 
 
     return `<article class="tarot-faq__item" data-education-faq-item>
             <h3><button class="tarot-faq__trigger" id="${escapeHtml(questionId)}" type="button" aria-expanded="true" aria-controls="${escapeHtml(answerId)}" data-education-faq-button>
-              <span>${escapeHtml(item.question)}</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+              <span>${renderQuestion(item, index)}</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
             </button></h3>
-            <div class="tarot-faq__answer" id="${escapeHtml(answerId)}" role="region" aria-labelledby="${escapeHtml(questionId)}" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>${escapeHtml(item.answer)}</p></div></div>
+            <div class="tarot-faq__answer" id="${escapeHtml(answerId)}" role="region" aria-labelledby="${escapeHtml(questionId)}" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>${renderAnswer(item, index)}</p></div></div>
           </article>`;
   }).join("");
+  const innerClasses = [innerClassName, "tarot-faq__inner"].filter(Boolean).join(" ");
+  const introduction = section.introduction
+    ? `<p class="tarot-faq__intro">${escapeHtml(section.introduction)}</p>`
+    : "";
+  const divider = showDivider
+    ? '<div class="tarot-faq__divider" aria-hidden="true"><span></span><span class="tarot-faq__ornament">✦</span><span></span></div>'
+    : "";
+  const headerExtras = [introduction, divider]
+    .filter(Boolean)
+    .map((part) => `            ${part}`)
+    .join("\n");
 
   return `<section class="${classes}" id="${escapeHtml(sectionId)}" aria-labelledby="${escapeHtml(sectionId)}-heading" data-education-faq>
-        <div class="tarot-shell tarot-faq__inner">
+        <div class="${innerClasses}">
           <header class="tarot-faq__header">
             <p class="tarot-faq__eyebrow">${escapeHtml(eyebrow)}</p>
             <h2 id="${escapeHtml(sectionId)}-heading">${escapeHtml(section.heading)}</h2>
-            <p class="tarot-faq__intro">${escapeHtml(section.introduction)}</p>
-            <div class="tarot-faq__divider" aria-hidden="true"><span></span><span class="tarot-faq__ornament">✦</span><span></span></div>
-          </header>
+${headerExtras ? `${headerExtras}\n` : ""}          </header>
           <div class="tarot-faq__list">${renderedItems}</div>
         </div>
       </section>`;
+}
+
+export function renderTarotEducationFaq({ section, items, idPrefix, className = "" }) {
+  return renderTarotFaqSection({
+    section,
+    items,
+    idPrefix,
+    className,
+    layout: "split",
+    includeMajorClass: true
+  });
 }
 
 export function validateRenderedTarotEducationNavigation(html, { activeKey, rootDir }) {

@@ -3,7 +3,6 @@
   document.documentElement.dataset.tarotTopicInitialized = "true";
 
   const themeImages = Array.from(document.querySelectorAll("[data-topic-theme-image]"));
-  const faqButtons = Array.from(document.querySelectorAll("[data-topic-faq-button]"));
   const orientationRoot = document.querySelector("[data-topic-orientation]");
   const orientationDataElement = document.querySelector("#tarot-topic-orientation-data");
   const topicRibbonTrack = document.querySelector(".tarot-topic-ribbon__track");
@@ -57,13 +56,6 @@
     const activeCenter = activeRect.left - trackRect.left + topicRibbonTrack.scrollLeft + (activeRect.width / 2);
     const desiredScroll = activeCenter - (topicRibbonTrack.clientWidth / 2);
     topicRibbonTrack.scrollLeft = Math.min(maximumScroll, Math.max(0, desiredScroll));
-  }
-
-  function setFaqState(button, expanded) {
-    const panel = document.getElementById(button.getAttribute("aria-controls"));
-    if (!panel) return;
-    button.setAttribute("aria-expanded", String(expanded));
-    panel.hidden = !expanded;
   }
 
   function initializeOrientationToggle() {
@@ -129,13 +121,6 @@
       });
     });
   }
-
-  faqButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const willOpen = button.getAttribute("aria-expanded") !== "true";
-      faqButtons.forEach((candidate) => setFaqState(candidate, candidate === button && willOpen));
-    });
-  });
 
   window.addEventListener("astralVeilBloodMoonChange", updateThemeImages);
   window.addEventListener("load", positionActiveTopicInRibbon, { once: true });

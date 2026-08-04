@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="/css/animations.css" />
     <link rel="stylesheet" href="/css/tarot.css" />
     <link rel="stylesheet" href="/css/tarot-topic.css" />
+    <link rel="stylesheet" href="/css/tarot-education-components.css" />
   </head>
   <body class="sun-mode tarot-meanings-page tarot-topic-page">
     <script>(function(){var params=new URLSearchParams(window.location.search);var queryBloodMoon=params.get("bloodMoon")||params.get("testBloodMoon");var hasOverride=params.has("bloodMoon")||params.has("testBloodMoon");var isBloodMoon=hasOverride&&(queryBloodMoon===""||/^(1|true|yes|on|active)$/i.test(queryBloodMoon||""));var mode="";try{isBloodMoon=hasOverride?isBloodMoon:sessionStorage.getItem("astralVeilBloodMoonActive")==="true"||localStorage.getItem("astralVeilBloodMoonActive")==="true"||sessionStorage.getItem("astralVeilTestBloodMoonActive")==="true"||localStorage.getItem("astralVeilTestBloodMoonActive")==="true";mode=localStorage.getItem("dailyTarotTheme")||""}catch(error){}if(mode!=="sun"&&mode!=="moon")mode=new Date().getHours()>=6&&new Date().getHours()<18?"sun":"moon";document.body.classList.remove("sun-mode","moon-mode","blood-moon-mode");document.body.classList.add(isBloodMoon?"blood-moon-mode":mode+"-mode")})();</script>
@@ -396,42 +397,44 @@
           </div>
         </section>
 
-      <section class="tarot-topic-faq tarot-topic-section" aria-labelledby="advice-tarot-faq-heading">
-        <div class="tarot-topic-section-heading tarot-topic-section-heading--compact">
-          <p class="tarot-topic-kicker">Advice Tarot FAQ</p>
-          <h2 id="advice-tarot-faq-heading">Questions About Tarot Advice and Personal Growth</h2>
+      <section class="tarot-faq tarot-education-faq tarot-topic-faq tarot-topic-section tarot-faq--stacked" id="advice-tarot-faq" aria-labelledby="advice-tarot-faq-heading" data-education-faq>
+        <div class="tarot-faq__inner">
+          <header class="tarot-faq__header">
+            <p class="tarot-faq__eyebrow">Advice Tarot FAQ</p>
+            <h2 id="advice-tarot-faq-heading">Questions About Tarot Advice and Personal Growth</h2>
+          </header>
+          <div class="tarot-faq__list"><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="advice-tarot-faq-question-1" type="button" aria-expanded="true" aria-controls="advice-tarot-faq-answer-1" data-education-faq-button>
+              <span>Can Tarot tell me what decision I should make?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="advice-tarot-faq-answer-1" role="region" aria-labelledby="advice-tarot-faq-question-1" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Tarot should not make a decision for you or guarantee that one option will produce a particular result. It can help you compare values, needs, risks, patterns, and possible responses so that you can make a more conscious choice while retaining responsibility for the decision.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="advice-tarot-faq-question-2" type="button" aria-expanded="true" aria-controls="advice-tarot-faq-answer-2" data-education-faq-button>
+              <span>Which Tarot cards represent personal growth?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="advice-tarot-faq-answer-2" role="region" aria-labelledby="advice-tarot-faq-question-2" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Cards such as The Hermit, Strength, Death, Temperance, The Star, and Judgement are often associated with reflection, courage, transformation, healing, renewal, and self-evaluation. No card proves that growth will happen automatically; meaning depends on the question, position, surrounding cards, and the choices made after the reading.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="advice-tarot-faq-question-3" type="button" aria-expanded="true" aria-controls="advice-tarot-faq-answer-3" data-education-faq-button>
+              <span>What does a difficult card mean in an advice reading?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="advice-tarot-faq-answer-3" role="region" aria-labelledby="advice-tarot-faq-question-3" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>A difficult card may draw attention to conflict, avoidance, grief, fear, consequences, or a pattern that requires care. It is not a punishment or proof that something terrible must happen. Read it in context, use compassionate language, and ask what awareness, boundary, support, or realistic action may be helpful.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="advice-tarot-faq-question-4" type="button" aria-expanded="true" aria-controls="advice-tarot-faq-answer-4" data-education-faq-button>
+              <span>Can Tarot help me break a repeating pattern?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="advice-tarot-faq-answer-4" role="region" aria-labelledby="advice-tarot-faq-question-4" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Tarot may help you name a pattern, recognize triggers, consider alternatives, and clarify the next small choice, but awareness alone may not change an entrenched cycle. Practice, accountability, supportive relationships, and qualified professional care can all be important, especially when a pattern affects safety, health, or daily functioning.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="advice-tarot-faq-question-5" type="button" aria-expanded="true" aria-controls="advice-tarot-faq-answer-5" data-education-faq-button>
+              <span>How can I turn a Tarot insight into real change?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="advice-tarot-faq-answer-5" role="region" aria-labelledby="advice-tarot-faq-question-5" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Translate the insight into one specific and sustainable action, boundary, conversation, or habit. Observe what happens, adjust without shame when needed, and return to the reading only after lived experience has provided new information. Change usually develops through repetition rather than one dramatic decision.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="advice-tarot-faq-question-6" type="button" aria-expanded="true" aria-controls="advice-tarot-faq-answer-6" data-education-faq-button>
+              <span>How often should I do a personal-growth Tarot reading?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="advice-tarot-faq-answer-6" role="region" aria-labelledby="advice-tarot-faq-question-6" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Return when circumstances change, you have practiced the previous insight, or new evidence creates a genuinely different question. Repeating the same reading too frequently can replace action with interpretation, so allow time for reflection, practice, rest, conversation, or professional support to shape what comes next.</p></div></div>
+          </article></div>
         </div>
-        <div class="tarot-topic-faq__list"><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-1" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-1" data-topic-faq-button>
-            <span>Can Tarot tell me what decision I should make?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-1" role="region" aria-labelledby="tarot-topic-faq-question-1" hidden data-topic-faq-panel><p>Tarot should not make a decision for you or guarantee that one option will produce a particular result. It can help you compare values, needs, risks, patterns, and possible responses so that you can make a more conscious choice while retaining responsibility for the decision.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-2" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-2" data-topic-faq-button>
-            <span>Which Tarot cards represent personal growth?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-2" role="region" aria-labelledby="tarot-topic-faq-question-2" hidden data-topic-faq-panel><p>Cards such as The Hermit, Strength, Death, Temperance, The Star, and Judgement are often associated with reflection, courage, transformation, healing, renewal, and self-evaluation. No card proves that growth will happen automatically; meaning depends on the question, position, surrounding cards, and the choices made after the reading.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-3" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-3" data-topic-faq-button>
-            <span>What does a difficult card mean in an advice reading?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-3" role="region" aria-labelledby="tarot-topic-faq-question-3" hidden data-topic-faq-panel><p>A difficult card may draw attention to conflict, avoidance, grief, fear, consequences, or a pattern that requires care. It is not a punishment or proof that something terrible must happen. Read it in context, use compassionate language, and ask what awareness, boundary, support, or realistic action may be helpful.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-4" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-4" data-topic-faq-button>
-            <span>Can Tarot help me break a repeating pattern?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-4" role="region" aria-labelledby="tarot-topic-faq-question-4" hidden data-topic-faq-panel><p>Tarot may help you name a pattern, recognize triggers, consider alternatives, and clarify the next small choice, but awareness alone may not change an entrenched cycle. Practice, accountability, supportive relationships, and qualified professional care can all be important, especially when a pattern affects safety, health, or daily functioning.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-5" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-5" data-topic-faq-button>
-            <span>How can I turn a Tarot insight into real change?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-5" role="region" aria-labelledby="tarot-topic-faq-question-5" hidden data-topic-faq-panel><p>Translate the insight into one specific and sustainable action, boundary, conversation, or habit. Observe what happens, adjust without shame when needed, and return to the reading only after lived experience has provided new information. Change usually develops through repetition rather than one dramatic decision.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-6" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-6" data-topic-faq-button>
-            <span>How often should I do a personal-growth Tarot reading?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-6" role="region" aria-labelledby="tarot-topic-faq-question-6" hidden data-topic-faq-panel><p>Return when circumstances change, you have practiced the previous insight, or new evidence creates a genuinely different question. Repeating the same reading too frequently can replace action with interpretation, so allow time for reflection, practice, rest, conversation, or professional support to shape what comes next.</p></div>
-        </article></div>
       </section>
 
       <section class="tarot-topic-related tarot-topic-section" aria-labelledby="continue-exploring-heading">
@@ -445,6 +448,6 @@
 
     <footer class="site-footer" data-footer-drawer><div class="site-footer__shell"><div class="site-footer__compact"><p class="site-footer__mark">Astral Veil™</p><p class="site-footer__tagline">Between fate and imagination</p><div class="site-footer__actions"><button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details"><span data-footer-toggle-label>Explore</span><span class="site-footer__chevron" aria-hidden="true">⌄</span></button><button class="site-footer__share" type="button" data-share-astral-veil>Share</button></div></div><div class="site-footer__inner" id="site-footer-details" hidden><div class="site-footer__brand"><h2>Astral Veil™</h2><p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p><p class="site-footer__poem">✦ Between fate and imagination ✦</p></div><nav class="site-footer__nav" aria-label="Footer navigation"><p class="site-footer__label">Explore</p><a href="/">Home</a><a href="/veilwalkers">Veilwalkers</a><a href="/decks">DECKS</a><a href="/tarot">TAROT</a><a href="/about">About</a><a href="/lumen-archive" data-lumen-archive-footer-link>Lumen Archive</a></nav><div class="site-footer__creator"><p class="site-footer__label">Creator</p><p>Crafted by João Monteiro</p><p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p><p>Designer • Developer • Worldbuilder</p><p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p></div><p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p><nav class="site-footer__legal" aria-label="Legal links"><a href="/terms">Terms of Service</a><span aria-hidden="true">·</span><a href="/privacy">Privacy Policy</a></nav></div><p class="site-footer__share-status" aria-live="polite"></p></div></footer>
 
-    <script src="/data/events.js"></script><script src="/js/events.js"></script><script src="/js/bloodmoon-access.js"></script><script src="/js/app.js"></script><script src="/js/tarot-card-tilt.js"></script><script src="/js/tarot-topic.js"></script><script type="module" src="/src/public/public-auth-nav.js"></script>
+    <script src="/data/events.js"></script><script src="/js/events.js"></script><script src="/js/bloodmoon-access.js"></script><script src="/js/app.js"></script><script src="/js/tarot-education.js"></script><script src="/js/tarot-card-tilt.js"></script><script src="/js/tarot-topic.js"></script><script type="module" src="/src/public/public-auth-nav.js"></script>
   </body>
 </html>

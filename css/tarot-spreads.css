@@ -5460,9 +5460,17 @@ body.tarot-spreads-page [role="link"][tabindex="0"]:focus-visible {
     object-position: 62% center;
   }
 
-  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__overlay,
-  body.moon-mode.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__overlay {
+  body.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__overlay {
     background: linear-gradient(180deg, rgba(3, 12, 17, .2), rgba(3, 12, 17, .83) 45%, rgba(3, 12, 17, .96));
+  }
+
+  body.moon-mode.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__overlay {
+    background:
+      var(--tarot-hero-overlay),
+      linear-gradient(180deg,
+        color-mix(in srgb, var(--tarot-hero-blend-primary) 20%, transparent) 0%,
+        color-mix(in srgb, var(--tarot-hero-blend-primary) 52%, var(--tarot-hero-blend-secondary)) 45%,
+        var(--tarot-hero-edge-shadow) 100%);
   }
 
   body.blood-moon-mode.tarot-spreads-page #tarot-spreads-hero .tarot-spreads-hero__overlay {

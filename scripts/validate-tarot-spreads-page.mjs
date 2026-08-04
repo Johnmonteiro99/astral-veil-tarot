@@ -16,6 +16,7 @@ if (!existsSync(outputPath)) {
   const html = readFileSync(outputPath, "utf8");
   const css = readFileSync(resolve(rootDir, "css/tarot-spreads.css"), "utf8");
   const js = readFileSync(resolve(rootDir, "js/tarot-spreads.js"), "utf8");
+  const routeScrollJs = readFileSync(resolve(rootDir, "js/tarot-education-route-scroll.js"), "utf8");
   const majorArcanaJs = readFileSync(resolve(rootDir, "js/tarot-major-arcana.js"), "utf8");
   const educationJs = readFileSync(resolve(rootDir, "js/tarot-education.js"), "utf8");
   const educationCss = readFileSync(resolve(rootDir, "css/tarot-education-components.css"), "utf8");
@@ -123,6 +124,7 @@ if (!existsSync(outputPath)) {
     '<div class="lunar-orb"></div>',
     '<footer class="site-footer" data-footer-drawer>',
     '<link rel="stylesheet" href="/css/tarot-spreads.css" />',
+    '<script src="/js/tarot-education-route-scroll.js"></script>',
     '<script src="/js/tarot-major-arcana.js"></script>',
     '<script src="/js/tarot-spreads.js"></script>',
     '<script type="module" src="/src/public/public-auth-nav.js"></script>'
@@ -1310,9 +1312,11 @@ if (!existsSync(outputPath)) {
     if (!educationJs.includes(token)) errors.push(`faq interaction: required shared single-open behavior is missing (${token})`);
   });
   [
-    "body.tarot-meanings-page .tarot-education-page .tarot-education-faq .tarot-faq__inner",
-    "grid-template-columns: minmax(15rem, .75fr) minmax(0, 1.25fr)",
-    "border-radius: 14px",
+    "body.tarot-meanings-page .tarot-education-faq .tarot-faq__inner",
+    "grid-template-columns: minmax(15rem, 32fr) minmax(0, 68fr)",
+    "background: var(--tarot-question-surface)",
+    "border-radius: 0",
+    "box-shadow: none",
     ".tarot-faq__trigger:focus-visible",
     "@media (max-width: 820px)",
     "@media (prefers-reduced-motion: reduce)"
@@ -1379,6 +1383,19 @@ if (!existsSync(outputPath)) {
     "reducedMotionQuery"
   ].forEach((token) => {
     if (!js.includes(token)) errors.push(`interaction: required enhancement is missing (${token})`);
+  });
+  if (!js.includes("setActiveSpread(nextSpread, { scroll, animate });")
+    || js.includes("setActiveSpread(nextSpread, { scroll: true, animate });")) {
+    errors.push("scroll restoration: initial spread setup must not force selector scrolling");
+  }
+  [
+    'window.location.hash) return',
+    'navigationEntry?.type === "back_forward"',
+    'window.history.scrollRestoration = "manual"',
+    'window.scrollTo(0, 0)',
+    'window.addEventListener("pagehide"'
+  ].forEach((token) => {
+    if (!routeScrollJs.includes(token)) errors.push(`scroll restoration: route guard is missing (${token})`);
   });
 
   const guideRecord = libraryJs.match(/\{ key: "spreads"[\s\S]*?\},/);

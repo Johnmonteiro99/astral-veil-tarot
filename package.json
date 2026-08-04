@@ -21,10 +21,11 @@
     "validate:tarot-spreads": "node scripts/validate-tarot-spreads-page.mjs",
     "validate:beginners": "node scripts/validate-tarot-for-beginners-page.mjs",
     "validate:education-heroes": "node scripts/validate-tarot-education-hero-images.mjs",
+    "validate:education-themes": "node scripts/validate-tarot-education-theme-system.mjs",
     "validate:how-to-read-nav": "node scripts/validate-how-to-read-navigation.mjs",
-    "build": "npm run generate:beginners && npm run generate:topics && npm run generate:comparisons && npm run generate:history && npm run generate:major-arcana && npm run generate:minor-arcana && npm run generate:tarot-spreads && npm run generate:cards && npm run validate:topics && npm run validate:comparisons && npm run validate:history && npm run validate:major-arcana && npm run validate:minor-arcana && npm run validate:tarot-spreads && npm run validate:beginners && npm run validate:education-heroes && npm run validate:cards",
+    "build": "npm run generate:beginners && npm run generate:topics && npm run generate:comparisons && npm run generate:history && npm run generate:major-arcana && npm run generate:minor-arcana && npm run generate:tarot-spreads && npm run generate:cards && npm run validate:topics && npm run validate:comparisons && npm run validate:history && npm run validate:major-arcana && npm run validate:minor-arcana && npm run validate:tarot-spreads && npm run validate:beginners && npm run validate:education-heroes && npm run validate:education-themes && npm run validate:cards",
     "validate:modal-routes": "node scripts/validate-tarot-modal-routes.mjs",
-    "test": "npm run validate:how-to-read-nav && npm run validate:beginners && npm run validate:cards && npm run validate:modal-routes && npm run validate:topics && npm run validate:comparisons && npm run validate:history && npm run validate:major-arcana && npm run validate:minor-arcana && npm run validate:tarot-spreads && npm run validate:education-heroes"
+    "test": "npm run validate:how-to-read-nav && npm run validate:beginners && npm run validate:cards && npm run validate:modal-routes && npm run validate:topics && npm run validate:comparisons && npm run validate:history && npm run validate:major-arcana && npm run validate:minor-arcana && npm run validate:tarot-spreads && npm run validate:education-heroes && npm run validate:education-themes"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

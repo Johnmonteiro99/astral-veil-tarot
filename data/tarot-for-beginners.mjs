@@ -81,26 +81,101 @@ export const tarotForBeginners = {
       introduction: "Before learning the cards, understand what kind of symbolic system you are entering.",
       cardSummary: "Understand tarot as a deck, symbolic language, and interpretive tool.",
       image: chapterImage("tarot-for-beginners.png", 1448, 1086, "A tarot deck resting beside an open guide and candlelight", "68% center"),
-      visual: {
-        type: "orbit",
-        caption: "Three ways to understand the tarot system",
-        center: "Tarot",
-        items: ["Deck", "Symbolic Language", "Interpretive Tool"]
-      },
-      blocks: [
-        {
-          type: "features",
-          items: [
-            { heading: "A Deck", text: "Tarot is a seventy-eight-card system containing recurring figures, numbers, suits, archetypes, colors, objects, and narrative patterns." },
-            { heading: "A Symbolic Language", text: "Images communicate ideas about life, choices, emotions, relationships, conflict, movement, and transformation." },
-            { heading: "An Interpretive Tool", text: "Meaning develops through the visible card, traditional associations, the question, context, and careful reflection." }
-          ]
+      academyLesson: {
+        title: "What Is Tarot?",
+        introContinuation: "This lesson unfolds in three chambers. Step through each one with presence.",
+        headerVisual: {
+          slot: "chapter-01-header",
+          futureSrc: "/assets/images/tarot-for-beginners/chapter-01/header.webp",
+          alt: "Placeholder for the future Chapter 01 atmospheric header artwork",
+          ratio: "16 / 7"
         },
-        {
-          type: "paragraphs",
-          paragraphs: ["Tarot does not guarantee certainty or remove personal responsibility. Within Astral Veil, the cards are treated as mirrors for patterns and possibilities rather than fixed verdicts."]
-        }
-      ],
+        chambers: [
+          {
+            id: "chamber-1",
+            numeral: "I",
+            label: "CHAMBER I",
+            title: "What You Are Looking At",
+            preview: "Step into the room of form. Here we explore the deck as an object, its structure, components, and the visible elements that make it what it is.",
+            topics: ["The Deck", "The Cards", "The System"],
+            visual: {
+              slot: "chapter-01-chamber-01",
+              futureSrc: "/assets/images/tarot-for-beginners/chapter-01/chamber-01.webp",
+              alt: "Placeholder for future artwork showing tarot as a structured deck",
+              ratio: "16 / 9"
+            },
+            learningVisual: {
+              type: "stats",
+              label: "Tarot deck structure",
+              items: ["78 Cards", "Major and Minor Arcana", "Four Suits", "Number and Court Cards"]
+            },
+            sections: [
+              {
+                heading: "A Deck",
+                paragraphs: ["Tarot is a seventy-eight-card system containing recurring figures, numbers, suits, archetypes, colors, objects, and narrative patterns."]
+              }
+            ],
+            takeaway: "Tarot begins as a structured deck before it becomes an interpretive practice."
+          },
+          {
+            id: "chamber-2",
+            numeral: "II",
+            label: "CHAMBER II",
+            title: "What the Images Are Saying",
+            preview: "Step into the room of symbols. Here we discover what the images communicate through archetypes, emotions, themes, and the symbolic language of tarot.",
+            topics: ["Symbols", "Themes", "Archetypes"],
+            visual: {
+              slot: "chapter-01-chamber-02",
+              futureSrc: "/assets/images/tarot-for-beginners/chapter-01/chamber-02.webp",
+              alt: "Placeholder for future artwork exploring tarot imagery and symbols",
+              ratio: "16 / 9"
+            },
+            learningVisual: {
+              type: "examples",
+              label: "Future tarot symbol examples",
+              items: ["Example Symbol 01", "Example Symbol 02", "Example Symbol 03"]
+            },
+            sections: [
+              {
+                heading: "A Symbolic Language",
+                paragraphs: ["Images communicate ideas about life, choices, emotions, relationships, conflict, movement, and transformation."]
+              }
+            ],
+            takeaway: "The image is not merely decoration. It carries the vocabulary of the reading."
+          },
+          {
+            id: "chamber-3",
+            numeral: "III",
+            label: "CHAMBER III",
+            title: "How Meaning Is Created",
+            preview: "Step into the room of synthesis. Here we learn how meaning emerges through connection, context, and the art of interpretation.",
+            topics: ["Context", "Association", "Reflection"],
+            visual: {
+              slot: "chapter-01-chamber-03",
+              futureSrc: "/assets/images/tarot-for-beginners/chapter-01/chamber-03.webp",
+              alt: "Placeholder for future artwork illustrating how tarot interpretation develops",
+              ratio: "16 / 9"
+            },
+            learningVisual: {
+              type: "equation",
+              label: "Interpretation model",
+              items: ["Card", "Question", "Context", "Reader"],
+              result: "Interpretation"
+            },
+            sections: [
+              {
+                heading: "An Interpretive Tool",
+                paragraphs: [
+                  "Meaning develops through the visible card, traditional associations, the question, context, and careful reflection.",
+                  "Tarot does not guarantee certainty or remove personal responsibility. Within Astral Veil, the cards are treated as mirrors for patterns and possibilities rather than fixed verdicts."
+                ]
+              }
+            ],
+            takeaway: "Tarot offers perspective through symbols. It does not remove your ability to choose."
+          }
+        ],
+        takeaway: "Tarot offers perspective through symbols. It does not remove your ability to choose."
+      },
       takeaway: "Tarot offers perspective through symbols. It does not remove your ability to choose."
     },
     {
@@ -515,10 +590,22 @@ export const tarotForBeginners = {
   },
   closing: {
     eyebrow: "The Book Is Open",
-    heading: "Choose One Useful Next Step",
-    text: "Begin a reflective reading now, or continue into the practical course when you are ready to place the cards on the table.",
-    primary: { label: "Begin a Tarot Reading", route: "/free-tarot-reading" },
-    secondary: { label: "Learn How to Read Tarot", route: "/how-to-read-tarot-cards/" }
+    heading: "Choose Where to Go Next",
+    text: "Begin a reflective tarot reading now, or continue into the practical How to Read Tarot guide.",
+    primary: {
+      eyebrow: "Practice",
+      title: "Begin a Tarot Reading",
+      description: "Put the cards on the table and begin with a question already on your mind.",
+      label: "Begin a Reading",
+      route: "/free-tarot-reading"
+    },
+    secondary: {
+      eyebrow: "Continue Learning",
+      title: "Learn How to Read Tarot",
+      description: "Continue into the practical guide and learn how to prepare, draw, and interpret your cards.",
+      label: "Open the Guide",
+      route: "/how-to-read-tarot-cards/"
+    }
   }
 };
 

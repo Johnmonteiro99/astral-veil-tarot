@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="/css/animations.css" />
     <link rel="stylesheet" href="/css/tarot.css" />
     <link rel="stylesheet" href="/css/tarot-topic.css" />
+    <link rel="stylesheet" href="/css/tarot-education-components.css" />
   </head>
   <body class="sun-mode tarot-meanings-page tarot-topic-page">
     <script>(function(){var params=new URLSearchParams(window.location.search);var queryBloodMoon=params.get("bloodMoon")||params.get("testBloodMoon");var hasOverride=params.has("bloodMoon")||params.has("testBloodMoon");var isBloodMoon=hasOverride&&(queryBloodMoon===""||/^(1|true|yes|on|active)$/i.test(queryBloodMoon||""));var mode="";try{isBloodMoon=hasOverride?isBloodMoon:sessionStorage.getItem("astralVeilBloodMoonActive")==="true"||localStorage.getItem("astralVeilBloodMoonActive")==="true"||sessionStorage.getItem("astralVeilTestBloodMoonActive")==="true"||localStorage.getItem("astralVeilTestBloodMoonActive")==="true";mode=localStorage.getItem("dailyTarotTheme")||""}catch(error){}if(mode!=="sun"&&mode!=="moon")mode=new Date().getHours()>=6&&new Date().getHours()<18?"sun":"moon";document.body.classList.remove("sun-mode","moon-mode","blood-moon-mode");document.body.classList.add(isBloodMoon?"blood-moon-mode":mode+"-mode")})();</script>
@@ -354,42 +355,44 @@
           </div>
         </section>
 
-      <section class="tarot-topic-faq tarot-topic-section" aria-labelledby="career-tarot-faq-heading">
-        <div class="tarot-topic-section-heading tarot-topic-section-heading--compact">
-          <p class="tarot-topic-kicker">Career Tarot FAQ</p>
-          <h2 id="career-tarot-faq-heading">Questions About Tarot, Work, and Purpose</h2>
+      <section class="tarot-faq tarot-education-faq tarot-topic-faq tarot-topic-section tarot-faq--stacked" id="career-tarot-faq" aria-labelledby="career-tarot-faq-heading" data-education-faq>
+        <div class="tarot-faq__inner">
+          <header class="tarot-faq__header">
+            <p class="tarot-faq__eyebrow">Career Tarot FAQ</p>
+            <h2 id="career-tarot-faq-heading">Questions About Tarot, Work, and Purpose</h2>
+          </header>
+          <div class="tarot-faq__list"><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="career-tarot-faq-question-1" type="button" aria-expanded="true" aria-controls="career-tarot-faq-answer-1" data-education-faq-button>
+              <span>Can Tarot predict whether I will get a job?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="career-tarot-faq-answer-1" role="region" aria-labelledby="career-tarot-faq-question-1" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Tarot cannot guarantee that an application, interview, or offer will succeed. It can help you reflect on preparation, confidence, timing, obstacles, and the choices available to you. Job research, tailored applications, skill development, networking, and direct follow-up remain the practical foundations of a search.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="career-tarot-faq-question-2" type="button" aria-expanded="true" aria-controls="career-tarot-faq-answer-2" data-education-faq-button>
+              <span>Which Tarot cards represent career success?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="career-tarot-faq-answer-2" role="region" aria-labelledby="career-tarot-faq-question-2" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Cards such as The Magician, Three of Pentacles, Six of Wands, Eight of Pentacles, and King of Pentacles are often associated with capability, collaboration, recognition, mastery, and stewardship. No card guarantees a promotion, salary, business result, or lasting success; its meaning depends on the question, position, surrounding cards, and real circumstances.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="career-tarot-faq-question-3" type="button" aria-expanded="true" aria-controls="career-tarot-faq-answer-3" data-education-faq-button>
+              <span>Can Tarot help me decide whether to leave my job?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="career-tarot-faq-answer-3" role="region" aria-labelledby="career-tarot-faq-question-3" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Tarot can help clarify dissatisfaction, values, risk tolerance, boundaries, and what change may require, but it should not make the decision for you. Review contracts, finances, benefits, market conditions, alternatives, and safety needs, and seek qualified professional or financial guidance where appropriate.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="career-tarot-faq-question-4" type="button" aria-expanded="true" aria-controls="career-tarot-faq-answer-4" data-education-faq-button>
+              <span>What does a reversed career card mean?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="career-tarot-faq-answer-4" role="region" aria-labelledby="career-tarot-faq-question-4" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>A reversed card may describe blocked momentum, delayed progress, internal doubt, misaligned effort, workplace imbalance, or a need to reassess direction. It is not automatically a sign of failure, dismissal, or financial loss; consider the whole reading alongside observable evidence and practical options.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="career-tarot-faq-question-5" type="button" aria-expanded="true" aria-controls="career-tarot-faq-answer-5" data-education-faq-button>
+              <span>Can Tarot reveal my life purpose?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="career-tarot-faq-answer-5" role="region" aria-labelledby="career-tarot-faq-question-5" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Tarot may help you explore values, strengths, recurring interests, and the kinds of contribution that feel meaningful, but purpose is not a single fixed answer hidden in the cards. It often develops through experience, relationships, experimentation, responsibility, and choices made over time.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="career-tarot-faq-question-6" type="button" aria-expanded="true" aria-controls="career-tarot-faq-answer-6" data-education-faq-button>
+              <span>How often should I do a career Tarot reading?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="career-tarot-faq-answer-6" role="region" aria-labelledby="career-tarot-faq-question-6" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Return when circumstances change, new information appears, or you have acted on the previous reading and need a fresh perspective. Repeating the same question too frequently can increase anxiety or replace action with interpretation, so allow enough time for research, conversations, applications, practice, or rest to produce new evidence.</p></div></div>
+          </article></div>
         </div>
-        <div class="tarot-topic-faq__list"><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-1" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-1" data-topic-faq-button>
-            <span>Can Tarot predict whether I will get a job?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-1" role="region" aria-labelledby="tarot-topic-faq-question-1" hidden data-topic-faq-panel><p>Tarot cannot guarantee that an application, interview, or offer will succeed. It can help you reflect on preparation, confidence, timing, obstacles, and the choices available to you. Job research, tailored applications, skill development, networking, and direct follow-up remain the practical foundations of a search.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-2" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-2" data-topic-faq-button>
-            <span>Which Tarot cards represent career success?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-2" role="region" aria-labelledby="tarot-topic-faq-question-2" hidden data-topic-faq-panel><p>Cards such as The Magician, Three of Pentacles, Six of Wands, Eight of Pentacles, and King of Pentacles are often associated with capability, collaboration, recognition, mastery, and stewardship. No card guarantees a promotion, salary, business result, or lasting success; its meaning depends on the question, position, surrounding cards, and real circumstances.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-3" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-3" data-topic-faq-button>
-            <span>Can Tarot help me decide whether to leave my job?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-3" role="region" aria-labelledby="tarot-topic-faq-question-3" hidden data-topic-faq-panel><p>Tarot can help clarify dissatisfaction, values, risk tolerance, boundaries, and what change may require, but it should not make the decision for you. Review contracts, finances, benefits, market conditions, alternatives, and safety needs, and seek qualified professional or financial guidance where appropriate.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-4" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-4" data-topic-faq-button>
-            <span>What does a reversed career card mean?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-4" role="region" aria-labelledby="tarot-topic-faq-question-4" hidden data-topic-faq-panel><p>A reversed card may describe blocked momentum, delayed progress, internal doubt, misaligned effort, workplace imbalance, or a need to reassess direction. It is not automatically a sign of failure, dismissal, or financial loss; consider the whole reading alongside observable evidence and practical options.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-5" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-5" data-topic-faq-button>
-            <span>Can Tarot reveal my life purpose?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-5" role="region" aria-labelledby="tarot-topic-faq-question-5" hidden data-topic-faq-panel><p>Tarot may help you explore values, strengths, recurring interests, and the kinds of contribution that feel meaningful, but purpose is not a single fixed answer hidden in the cards. It often develops through experience, relationships, experimentation, responsibility, and choices made over time.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-6" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-6" data-topic-faq-button>
-            <span>How often should I do a career Tarot reading?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-6" role="region" aria-labelledby="tarot-topic-faq-question-6" hidden data-topic-faq-panel><p>Return when circumstances change, new information appears, or you have acted on the previous reading and need a fresh perspective. Repeating the same question too frequently can increase anxiety or replace action with interpretation, so allow enough time for research, conversations, applications, practice, or rest to produce new evidence.</p></div>
-        </article></div>
       </section>
 
       <section class="tarot-topic-related tarot-topic-section" aria-labelledby="continue-exploring-heading">
@@ -403,6 +406,6 @@
 
     <footer class="site-footer" data-footer-drawer><div class="site-footer__shell"><div class="site-footer__compact"><p class="site-footer__mark">Astral Veil™</p><p class="site-footer__tagline">Between fate and imagination</p><div class="site-footer__actions"><button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details"><span data-footer-toggle-label>Explore</span><span class="site-footer__chevron" aria-hidden="true">⌄</span></button><button class="site-footer__share" type="button" data-share-astral-veil>Share</button></div></div><div class="site-footer__inner" id="site-footer-details" hidden><div class="site-footer__brand"><h2>Astral Veil™</h2><p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p><p class="site-footer__poem">✦ Between fate and imagination ✦</p></div><nav class="site-footer__nav" aria-label="Footer navigation"><p class="site-footer__label">Explore</p><a href="/">Home</a><a href="/veilwalkers">Veilwalkers</a><a href="/decks">DECKS</a><a href="/tarot">TAROT</a><a href="/about">About</a><a href="/lumen-archive" data-lumen-archive-footer-link>Lumen Archive</a></nav><div class="site-footer__creator"><p class="site-footer__label">Creator</p><p>Crafted by João Monteiro</p><p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p><p>Designer • Developer • Worldbuilder</p><p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p></div><p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p><nav class="site-footer__legal" aria-label="Legal links"><a href="/terms">Terms of Service</a><span aria-hidden="true">·</span><a href="/privacy">Privacy Policy</a></nav></div><p class="site-footer__share-status" aria-live="polite"></p></div></footer>
 
-    <script src="/data/events.js"></script><script src="/js/events.js"></script><script src="/js/bloodmoon-access.js"></script><script src="/js/app.js"></script><script src="/js/tarot-card-tilt.js"></script><script src="/js/tarot-topic.js"></script><script type="module" src="/src/public/public-auth-nav.js"></script>
+    <script src="/data/events.js"></script><script src="/js/events.js"></script><script src="/js/bloodmoon-access.js"></script><script src="/js/app.js"></script><script src="/js/tarot-education.js"></script><script src="/js/tarot-card-tilt.js"></script><script src="/js/tarot-topic.js"></script><script type="module" src="/src/public/public-auth-nav.js"></script>
   </body>
 </html>

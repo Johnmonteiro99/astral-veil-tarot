@@ -4,6 +4,7 @@
 
   const mobileTimelineQuery = window.matchMedia("(max-width: 768px)");
   const mobileTraditionsQuery = window.matchMedia("(max-width: 768px)");
+  const mobileContributorsQuery = window.matchMedia("(max-width: 768px)");
   const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   const timelineSection = document.querySelector(".tarot-history-timeline");
@@ -443,8 +444,11 @@
   if (contributorsSection) {
     const contributorPanels = Array.from(contributorsSection.querySelectorAll("[data-history-contributor-panel]"));
     const contributorTabs = Array.from(contributorsSection.querySelectorAll("[data-history-contributor-index]"));
+    const contributorPanelsContainer = contributorsSection.querySelector(".tarot-history-contributors__panels");
+    const contributorTablist = contributorsSection.querySelector('.tarot-history-contributors__index [role="tablist"]');
     let activeContributorIndex = 0;
     let leavingTimer = 0;
+    let contributorsUseMobileAccordion = false;
 
     function updateContributorView(panel, index, { focusTab = false } = {}) {
       const viewTabs = Array.from(panel.querySelectorAll("[data-history-contributor-view-tab]"));
@@ -482,6 +486,64 @@
       updateContributorView(panel, 0);
     });
 
+    function setMobileContributorPanelState(index, open) {
+      contributorTabs.forEach((tab, tabIndex) => {
+        const expanded = open && tabIndex === index;
+        const panel = contributorPanels[tabIndex];
+        tab.setAttribute("aria-expanded", String(expanded));
+        panel.classList.toggle("is-active", expanded);
+        panel.classList.remove("is-leaving");
+        panel.hidden = !expanded;
+        panel.setAttribute("aria-hidden", String(!expanded));
+      });
+      if (open) activeContributorIndex = index;
+    }
+
+    function enableMobileContributorAccordion() {
+      if (contributorsUseMobileAccordion) return;
+      contributorsUseMobileAccordion = true;
+      contributorsSection.classList.add("is-contributors-mobile-accordion");
+      contributorTablist?.removeAttribute("role");
+      contributorTablist?.removeAttribute("aria-orientation");
+      contributorTabs.forEach((tab, index) => {
+        const panel = contributorPanels[index];
+        tab.removeAttribute("role");
+        tab.removeAttribute("aria-selected");
+        tab.tabIndex = 0;
+        tab.setAttribute("aria-expanded", "false");
+        panel.setAttribute("role", "region");
+        panel.setAttribute("aria-labelledby", tab.id);
+        tab.after(panel);
+      });
+      setMobileContributorPanelState(activeContributorIndex, false);
+    }
+
+    function disableMobileContributorAccordion() {
+      if (!contributorsUseMobileAccordion || !contributorPanelsContainer) return;
+      contributorsUseMobileAccordion = false;
+      contributorsSection.classList.remove("is-contributors-mobile-accordion");
+      contributorTablist?.setAttribute("role", "tablist");
+      contributorTablist?.setAttribute("aria-orientation", "vertical");
+      contributorTabs.forEach((tab, index) => {
+        const panel = contributorPanels[index];
+        tab.setAttribute("role", "tab");
+        tab.removeAttribute("aria-expanded");
+        panel.hidden = false;
+        panel.setAttribute("role", "tabpanel");
+        panel.setAttribute("aria-labelledby", tab.id);
+        contributorPanelsContainer.append(panel);
+      });
+      updateContributorState(activeContributorIndex, { immediate: true });
+    }
+
+    function syncContributorLayout() {
+      if (mobileContributorsQuery.matches) {
+        enableMobileContributorAccordion();
+      } else {
+        disableMobileContributorAccordion();
+      }
+    }
+
     function updateContributorState(index, { focusTab = false, immediate = false } = {}) {
       const nextIndex = Math.max(0, Math.min(index, contributorPanels.length - 1));
       const previousPanel = contributorPanels[activeContributorIndex];
@@ -508,8 +570,16 @@
     }
 
     contributorTabs.forEach((tab, index) => {
-      tab.addEventListener("click", () => updateContributorState(index));
+      tab.addEventListener("click", () => {
+        if (contributorsUseMobileAccordion) {
+          const open = tab.getAttribute("aria-expanded") !== "true";
+          setMobileContributorPanelState(index, open);
+          return;
+        }
+        updateContributorState(index);
+      });
       tab.addEventListener("keydown", (event) => {
+        if (contributorsUseMobileAccordion) return;
         const targets = {
           ArrowUp: activeContributorIndex - 1,
           ArrowDown: activeContributorIndex + 1,
@@ -525,7 +595,12 @@
     });
 
     contributorsSection.classList.add("is-contributors-enhanced");
-    updateContributorState(0, { immediate: true });
+    if (mobileContributorsQuery.matches) {
+      enableMobileContributorAccordion();
+    } else {
+      updateContributorState(0, { immediate: true });
+    }
+    mobileContributorsQuery.addEventListener?.("change", syncContributorLayout);
   }
 
   const contributorDialog = document.querySelector("[data-history-contributor-dialog]");

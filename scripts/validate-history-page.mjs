@@ -79,7 +79,7 @@ if (!existsSync(outputPath)) {
   const faqMarkup = html.match(/<section class="[^"]*tarot-education-faq[^"]*"[\s\S]*?<\/section>/)?.[0] || "";
   const archiveStart = html.indexOf('<div class="tarot-history-archive">');
   const archiveEnd = findElementEnd(archiveStart, "div");
-  const faqStart = html.indexOf('<section class="tarot-faq major-arcana-faq tarot-education-faq tarot-history-faq"');
+  const faqStart = html.indexOf('<section class="tarot-faq major-arcana-faq tarot-education-faq tarot-history-faq tarot-faq--split"');
   if (archiveStart < 0 || archiveEnd < 0 || faqStart < archiveEnd) {
     errors.push("faq: shared accordion must render outside the twelve-column History archive grid");
   }
@@ -116,9 +116,11 @@ if (!existsSync(outputPath)) {
     if (faqMarkup.includes(token)) errors.push(`faq: obsolete History tab markup remains (${token})`);
   });
   [
-    "body.tarot-meanings-page .tarot-education-page .tarot-education-faq .tarot-faq__inner",
-    "grid-template-columns: minmax(15rem, .75fr) minmax(0, 1.25fr)",
-    "border-radius: 14px",
+    "body.tarot-meanings-page .tarot-education-faq .tarot-faq__inner",
+    "grid-template-columns: minmax(15rem, 32fr) minmax(0, 68fr)",
+    "background: var(--tarot-question-surface)",
+    "border-radius: 0",
+    "box-shadow: none",
     ".tarot-faq__trigger:focus-visible",
     "@media (max-width: 820px)",
     "@media (prefers-reduced-motion: reduce)"
@@ -412,6 +414,26 @@ if (!existsSync(outputPath)) {
     "data-history-contributor-view"
   ].forEach((token) => {
     if (!js.includes(token)) errors.push(`contributors: modal behavior is missing (${token})`);
+  });
+  [
+    'const mobileContributorsQuery = window.matchMedia("(max-width: 768px)")',
+    "setMobileContributorPanelState",
+    "enableMobileContributorAccordion",
+    "disableMobileContributorAccordion",
+    'tab.setAttribute("aria-expanded", String(expanded))',
+    "panel.hidden = !expanded",
+    'panel.setAttribute("role", "region")',
+    "tab.after(panel)",
+    "contributorPanelsContainer.append(panel)"
+  ].forEach((token) => {
+    if (!js.includes(token)) errors.push(`contributors: mobile accordion behavior is missing (${token})`);
+  });
+  [
+    ".tarot-history-contributors.is-contributors-mobile-accordion",
+    '.tarot-history-contributors__index-item[aria-expanded="true"]',
+    ".tarot-history-contributors__index-marker::after"
+  ].forEach((token) => {
+    if (!css.includes(token)) errors.push(`contributors: mobile accordion styling is missing (${token})`);
   });
 
   const externalLinks = [

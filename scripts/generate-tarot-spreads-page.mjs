@@ -212,7 +212,8 @@ function renderMeta(page) {
     `<link rel="preload" as="image" href="${escapeHtml(educationHero.regular.src)}" fetchpriority="high" />`,
     `<script id="tarot-spreads-breadcrumb-schema" type="application/ld+json">${serializeForInlineScript(schemas.breadcrumb)}</script>`,
     `<script id="tarot-spreads-webpage-schema" type="application/ld+json">${serializeForInlineScript(schemas.webPage)}</script>`,
-    `<script id="tarot-spreads-faq-schema" type="application/ld+json">${serializeForInlineScript(schemas.faqPage)}</script>`
+    `<script id="tarot-spreads-faq-schema" type="application/ld+json">${serializeForInlineScript(schemas.faqPage)}</script>`,
+    `<script src="/js/tarot-education-route-scroll.js"></script>`
   ].join("\n    ");
 }
 

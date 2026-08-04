@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { tarotTopicNavigation } from "../data/tarot-topic-navigation.mjs";
 import { tarotTopics } from "../data/tarot-topics.mjs";
 import { escapeHtml, serializeForInlineScript, SITE_ORIGIN } from "./card-page-helpers.mjs";
+import { renderTarotFaqSection } from "./tarot-education-page-helpers.mjs";
 import {
   getTopicOutputPath,
   getTopicRoute,
@@ -310,15 +311,20 @@ function renderEthics(topic) {
 }
 
 function renderFaq(topic) {
-  return topic.faq.map(({ question, answer }, index) => {
-    const number = index + 1;
-    return `<article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-${number}" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-${number}" data-topic-faq-button>
-            <span>${escapeHtml(question)}</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-${number}" role="region" aria-labelledby="tarot-topic-faq-question-${number}" hidden data-topic-faq-panel><p>${escapeHtml(answer)}</p></div>
-        </article>`;
-  }).join("");
+  const sectionId = `${topic.sectionKey}-tarot-faq`;
+  return renderTarotFaqSection({
+    section: {
+      id: sectionId,
+      eyebrow: topic.faqSection.eyebrow,
+      heading: topic.faqSection.heading
+    },
+    items: topic.faq,
+    idPrefix: `${topic.sectionKey}-tarot-faq`,
+    className: "tarot-topic-faq tarot-topic-section",
+    layout: "stacked",
+    innerClassName: "",
+    showDivider: false
+  });
 }
 
 function renderRelatedLinks(topic) {
@@ -443,13 +449,7 @@ function renderMain(topic) {
 
       ${renderEthics(topic)}
 
-      <section class="tarot-topic-faq tarot-topic-section" aria-labelledby="${escapeHtml(sectionKey)}-tarot-faq-heading">
-        <div class="tarot-topic-section-heading tarot-topic-section-heading--compact">
-          <p class="tarot-topic-kicker">${escapeHtml(topic.faqSection.eyebrow)}</p>
-          <h2 id="${escapeHtml(sectionKey)}-tarot-faq-heading">${escapeHtml(topic.faqSection.heading)}</h2>
-        </div>
-        <div class="tarot-topic-faq__list">${renderFaq(topic)}</div>
-      </section>
+      ${renderFaq(topic)}
 
       <section class="tarot-topic-related tarot-topic-section" aria-labelledby="continue-exploring-heading">
         <div class="tarot-topic-section-heading tarot-topic-section-heading--compact">

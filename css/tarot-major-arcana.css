@@ -9,6 +9,8 @@
   --major-line: rgba(201, 163, 93, .22);
   --major-line-strong: rgba(201, 163, 93, .42);
   --major-shadow: rgba(0, 4, 10, .44);
+  --major-codex-base: #020807;
+  --major-codex-backdrop: rgba(0, 5, 8, .78);
   --major-max-width: 1360px;
   --major-section-space: clamp(4.5rem, 7vw, 7rem);
   position: relative;
@@ -29,19 +31,23 @@ body.sun-mode.tarot-major-arcana-page .major-arcana-page {
   --major-line: rgba(208, 164, 82, .2);
   --major-line-strong: rgba(208, 164, 82, .4);
   --major-shadow: rgba(0, 8, 8, .53);
+  --major-codex-base: #020807;
+  --major-codex-backdrop: rgba(0, 5, 8, .78);
 }
 
 body.moon-mode.tarot-major-arcana-page .major-arcana-page {
-  --major-surface: rgba(9, 34, 40, .7);
-  --major-surface-strong: rgba(3, 20, 27, .95);
-  --major-heading: #f1ecdf;
-  --major-text: rgba(235, 233, 226, .94);
-  --major-muted: rgba(198, 198, 201, .82);
+  --major-surface: var(--tarot-education-surface-secondary);
+  --major-surface-strong: var(--tarot-education-surface-primary);
+  --major-heading: var(--tarot-education-text-primary);
+  --major-text: var(--tarot-education-text-secondary);
+  --major-muted: var(--tarot-education-text-muted);
   --major-accent: #bba56d;
   --major-accent-strong: #d7c388;
-  --major-line: rgba(187, 165, 109, .2);
-  --major-line-strong: rgba(187, 165, 109, .39);
-  --major-shadow: rgba(0, 2, 16, .5);
+  --major-line: var(--tarot-education-divider);
+  --major-line-strong: var(--tarot-education-border-strong);
+  --major-shadow: var(--tarot-education-shadow);
+  --major-codex-base: #03020d;
+  --major-codex-backdrop: rgba(3, 2, 13, .8);
 }
 
 body.blood-moon-mode.tarot-major-arcana-page .major-arcana-page {
@@ -55,6 +61,8 @@ body.blood-moon-mode.tarot-major-arcana-page .major-arcana-page {
   --major-line: rgba(189, 134, 100, .21);
   --major-line-strong: rgba(189, 134, 100, .4);
   --major-shadow: rgba(13, 0, 4, .56);
+  --major-codex-base: #0c0003;
+  --major-codex-backdrop: rgba(12, 0, 3, .8);
 }
 
 .major-arcana-page *,
@@ -1107,7 +1115,7 @@ body.major-chapter-modal-open {
   color: var(--major-text);
   background:
     radial-gradient(circle at 88% 5%, color-mix(in srgb, var(--major-accent) 10%, transparent), transparent 30%),
-    color-mix(in srgb, var(--major-surface-strong) 97%, #020807);
+    color-mix(in srgb, var(--major-surface-strong) 97%, var(--major-codex-base));
   box-shadow: 0 36px 110px rgba(0, 0, 0, .62);
 }
 
@@ -1116,7 +1124,7 @@ body.major-chapter-modal-open {
 }
 
 .major-chapter-codex::backdrop {
-  background: rgba(0, 5, 8, .78);
+  background: var(--major-codex-backdrop);
   backdrop-filter: blur(7px);
 }
 
@@ -2163,57 +2171,6 @@ body.major-chapter-modal-open {
   font: 700 .62rem/1.35 var(--logo-font, Cinzel, serif);
   letter-spacing: .07em;
   text-decoration: none;
-}
-
-.major-arcana-faq {
-  width: min(100%, var(--major-max-width));
-  margin-inline: auto;
-  padding-block: var(--major-section-space);
-  background: transparent;
-}
-
-body.tarot-major-arcana-page .major-arcana-page .major-arcana-faq {
-  --faq-title: var(--major-heading);
-  --faq-copy: var(--major-muted);
-  --faq-accent: var(--major-accent-strong);
-  --faq-surface-top: color-mix(in srgb, var(--major-surface) 88%, transparent);
-  --faq-surface-bottom: color-mix(in srgb, var(--major-surface-strong) 92%, transparent);
-  --faq-surface-hover-top: color-mix(in srgb, var(--major-surface) 94%, var(--major-accent) 6%);
-  --faq-surface-hover-bottom: var(--major-surface-strong);
-  --faq-surface-open-top: color-mix(in srgb, var(--major-surface) 90%, var(--major-accent) 10%);
-  --faq-surface-open-bottom: color-mix(in srgb, var(--major-surface-strong) 96%, var(--major-accent) 4%);
-  --faq-haze: color-mix(in srgb, var(--major-accent) 14%, transparent);
-  --faq-halo: color-mix(in srgb, var(--major-accent) 12%, transparent);
-  --faq-edge: var(--major-line-strong);
-  --faq-inner-highlight: color-mix(in srgb, var(--major-heading) 8%, transparent);
-  --faq-shadow-near: color-mix(in srgb, var(--major-shadow) 54%, transparent);
-  --faq-shadow-far: color-mix(in srgb, var(--major-shadow) 74%, transparent);
-  --faq-focus: color-mix(in srgb, var(--major-accent-strong) 42%, transparent);
-  --tarot-glow: color-mix(in srgb, var(--major-accent) 22%, transparent);
-}
-
-.major-arcana-faq .tarot-faq__header {
-  position: static;
-}
-
-.major-arcana-faq .tarot-faq__inner {
-  width: min(calc(100% - 56px), var(--major-max-width));
-  gap: clamp(3rem, 5vw, 5.5rem);
-}
-
-.major-arcana-faq .tarot-faq__item {
-  border-radius: 14px;
-  backdrop-filter: blur(7px);
-}
-
-.major-arcana-faq .tarot-faq__trigger {
-  min-height: 66px;
-  padding-block: 16px;
-  font-size: clamp(.98rem, 1.15vw, 1.1rem);
-}
-
-.major-arcana-faq .tarot-faq__answer p {
-  font-size: .9rem;
 }
 
 .major-arcana-closing {

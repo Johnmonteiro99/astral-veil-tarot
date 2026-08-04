@@ -947,7 +947,7 @@
       const nextSpread = visibleSelectors.some((selector) => selector.dataset.spreadSelector === activeSpread)
         ? activeSpread
         : visibleSelectors[0]?.dataset.spreadSelector || "";
-      setActiveSpread(nextSpread, { scroll: true, animate });
+      setActiveSpread(nextSpread, { scroll, animate });
       positionFilterIndicator(activeButton);
       if (scroll) scrollFilterIntoView(activeButton);
     }

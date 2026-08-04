@@ -24,6 +24,7 @@ if (!existsSync(outputPath)) {
   const html = readFileSync(outputPath, "utf8");
   const css = readFileSync(resolve(rootDir, "css/tarot-major-arcana.css"), "utf8");
   const educationCss = readFileSync(resolve(rootDir, "css/tarot-education-components.css"), "utf8");
+  const educationJs = readFileSync(resolve(rootDir, "js/tarot-education.js"), "utf8");
   const js = readFileSync(resolve(rootDir, "js/tarot-major-arcana.js"), "utf8");
   const hubScript = readFileSync(resolve(rootDir, "js/tarot.js"), "utf8");
   const sitemap = readFileSync(resolve(rootDir, "sitemap.xml"), "utf8");
@@ -384,6 +385,15 @@ if (!existsSync(outputPath)) {
   majorArcanaPage.faq.items.forEach((item) => {
     if (!html.includes(item.question) || !html.includes(item.answer)) errors.push(`faq: visible content is missing for ${item.question}`);
   });
+  [
+    "[data-education-faq]",
+    "setItemState",
+    'button.setAttribute("aria-expanded", String(isOpen))',
+    'answer.setAttribute("aria-hidden", String(!isOpen))',
+    "answer.inert = !isOpen"
+  ].forEach((token) => {
+    if (!educationJs.includes(token)) errors.push(`faq interaction: required shared behavior is missing (${token})`);
+  });
   if (html.includes('class="major-arcana-visually-hidden" aria-live="polite"') === false) {
     errors.push("accessibility: carousel live status must use the scoped visually hidden utility");
   }
@@ -406,8 +416,6 @@ if (!existsSync(outputPath)) {
     "aria-current",
     "major-chapter-modal-open",
     "setOrientation",
-    "setFaqState",
-    "aria-expanded",
     "reducedMotionQuery",
     "astralVeilBloodMoonChange",
     "tabindex",

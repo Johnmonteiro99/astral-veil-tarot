@@ -22,6 +22,7 @@
     <script id="tarot-beginners-breadcrumb-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://astralveil.world/"},{"@type":"ListItem","position":2,"name":"Tarot","item":"https://astralveil.world/tarot"},{"@type":"ListItem","position":3,"name":"Tarot for Beginners","item":"https://astralveil.world/tarot/for-beginners/"}]}</script>
     <script id="tarot-beginners-webpage-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Tarot for Beginners","headline":"Tarot for Beginners","description":"New to tarot? Learn what tarot is, what you need to begin, how the seventy-eight-card deck is structured, how to choose a deck, common myths, and where to study next.","url":"https://astralveil.world/tarot/for-beginners/","image":"https://astralveil.world/assets/images/background%20_images/tarot_for_beginners_header.png","dateModified":"2026-08-02","isPartOf":{"@type":"WebSite","name":"Astral Veil","url":"https://astralveil.world/"},"about":[{"@type":"Thing","name":"Tarot for beginners"},{"@type":"Thing","name":"Tarot deck structure"},{"@type":"Thing","name":"Learning tarot cards"}]}</script>
     <script id="tarot-beginners-faq-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is tarot?","acceptedAnswer":{"@type":"Answer","text":"Tarot is a seventy-eight-card deck, a symbolic language, and an interpretive tool used to explore patterns, possibilities, and choices. Begin with the first chapter for a fuller introduction."}},{"@type":"Question","name":"Is tarot difficult to learn?","acceptedAnswer":{"@type":"Answer","text":"Tarot takes time to know, but it does not require instant mastery. Learning symbols, suits, numbers, and a few useful meanings at a time makes the deck manageable."}},{"@type":"Question","name":"What tarot deck is best for beginners?","acceptedAnswer":{"@type":"Answer","text":"Choose a deck with readable, consistent imagery and a useful guidebook—especially one based on a recognizable tarot system. Review the first-deck guide before deciding."}},{"@type":"Question","name":"Does my first tarot deck need to be gifted?","acceptedAnswer":{"@type":"Answer","text":"No. You may choose and buy your own first tarot deck. The gifted-deck rule is a custom, not a requirement."}},{"@type":"Question","name":"Do I need psychic abilities to read tarot?","acceptedAnswer":{"@type":"Answer","text":"No. Tarot can be learned through observation, symbolic study, context, practice, and reflection. You do not need to claim psychic abilities."}},{"@type":"Question","name":"Do I need to memorize all seventy-eight cards?","acceptedAnswer":{"@type":"Answer","text":"No. Start with imagery and patterns, learn two or three useful meanings, and check a reliable reference afterward. Explore the learning-meanings chapter for a practical method."}},{"@type":"Question","name":"Should beginners use reversed cards?","acceptedAnswer":{"@type":"Answer","text":"Reversals are optional. You can learn with upright cards first, then add reversals when they support clarity rather than overwhelm."}},{"@type":"Question","name":"Can beginners read tarot for themselves?","acceptedAnswer":{"@type":"Answer","text":"Yes. Self-reading can be useful when you record your question, remain honest about bias, and avoid repeatedly drawing for the same answer. Learn the full reading process."}},{"@type":"Question","name":"Is tarot the same as fortune-telling?","acceptedAnswer":{"@type":"Answer","text":"Not necessarily. Some people use tarot predictively, while Astral Veil treats it as a reflective tool for examining present patterns, possibilities, and choices rather than fixed verdicts."}},{"@type":"Question","name":"How long does it take to learn tarot?","acceptedAnswer":{"@type":"Answer","text":"There is no single timetable. You can begin meaningful study immediately, while deeper familiarity grows over weeks, months, and years of repeated attention."}},{"@type":"Question","name":"What is the difference between Major and Minor Arcana?","acceptedAnswer":{"@type":"Answer","text":"The twenty-two Major Arcana cards describe larger archetypes and turning points. The fifty-six Minor Arcana cards describe everyday life through suits, numbers, and court cards. See the deck structure."}},{"@type":"Question","name":"Where should I start learning tarot?","acceptedAnswer":{"@type":"Answer","text":"Start with what tarot is, choose a readable deck, learn the structure, and spend your first week becoming familiar with the images. Open Chapter One or follow the seven-day study path."}}]}</script>
+    <script src="/js/tarot-education-route-scroll.js"></script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -73,7 +74,7 @@
             </div>
             <div class="tarot-beginners-actions tarot-beginners-hero__actions">
               <a class="tarot-beginners-button tarot-beginners-button--primary" href="#welcome" data-beginner-view-link="welcome">Enter the First Door <span aria-hidden="true">→</span></a>
-              <a class="tarot-beginners-button tarot-beginners-button--text" href="/how-to-read-tarot-cards/">Ready to Practice? Learn How to Read Tarot <span aria-hidden="true">→</span></a>
+              <a class="tarot-beginners-button tarot-beginners-button--secondary" href="/how-to-read-tarot-cards/">Ready to Practice? Learn How to Read Tarot <span aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
@@ -85,7 +86,7 @@
           <div class="tarot-beginners-welcome__copies">
             <div class="tarot-beginners-welcome__copy tarot-beginners-welcome__copy--regular" data-beginner-welcome-copy="regular" aria-hidden="false">
           <p class="tarot-beginners-eyebrow">Before the First Card Turns</p>
-          <h2 id="welcome-heading">Welcome to the Beginning</h2>
+          <h2 id="welcome-heading" tabindex="-1">Welcome to the Beginning</h2>
           <div class="tarot-beginners-welcome__prose"><p>Learning tarot is not about becoming perfect at predicting what comes next. It is about learning to notice symbols, patterns, emotions, and possibilities with greater care.</p><p>You do not need psychic abilities, a gifted deck, or all seventy-eight meanings memorized. Bring your curiosity. The rest can be learned one chapter at a time.</p></div>
           <ol class="tarot-beginners-welcome__truths"><li>
                 <span class="tarot-beginners-welcome__truth-number" aria-hidden="true">01</span>
@@ -99,13 +100,13 @@
               </li></ol>
           <div class="tarot-beginners-actions tarot-beginners-welcome__actions">
             <a class="tarot-beginners-button tarot-beginners-button--primary" href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot" data-welcome-primary><span data-welcome-primary-label>Open Chapter One</span> <span aria-hidden="true">→</span></a>
-            <a class="tarot-beginners-button tarot-beginners-button--secondary" href="#chapters" data-beginner-view-link="library">View All Chapters</a>
+            <a class="tarot-beginners-button tarot-beginners-button--secondary" href="?view=chapters" data-beginner-index-link>View All Chapters</a>
           </div>
           <p class="tarot-beginners-welcome__whisper" data-welcome-whisper>Every reader once stood where you are now.</p>
         </div>
             <div class="tarot-beginners-welcome__copy tarot-beginners-welcome__copy--blood" data-beginner-welcome-copy="blood" aria-hidden="true" inert>
           <p class="tarot-beginners-eyebrow">You Came Looking for Answers</p>
-          <h2 id="blood-welcome-heading">Good. Start by Learning How to Question Them.</h2>
+          <h2 id="blood-welcome-heading" tabindex="-1">Good. Start by Learning How to Question Them.</h2>
           <div class="tarot-beginners-welcome__prose"><p>So, you want to learn tarot. Perhaps you expected instant intuition, secret knowledge, and a dramatic revelation before the candles finished melting. Unfortunate. You will have to pay attention instead.</p><p>The cards will not flatter you, think for you, or rescue you from uncertainty. They may, however, show you the pattern you keep pretending not to see. That is usually more useful.</p></div>
           <ol class="tarot-beginners-welcome__truths"><li>
                 <span class="tarot-beginners-welcome__truth-number" aria-hidden="true">01</span>
@@ -119,128 +120,302 @@
               </li></ol>
           <div class="tarot-beginners-actions tarot-beginners-welcome__actions">
             <a class="tarot-beginners-button tarot-beginners-button--primary" href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot" data-welcome-primary><span data-welcome-primary-label>Enter Chapter One</span> <span aria-hidden="true">→</span></a>
-            <a class="tarot-beginners-button tarot-beginners-button--secondary" href="#chapters" data-beginner-view-link="library">Reveal All Chapters</a>
+            <a class="tarot-beginners-button tarot-beginners-button--secondary" href="?view=chapters" data-beginner-index-link>Reveal All Chapters</a>
           </div>
           <p class="tarot-beginners-welcome__whisper" data-welcome-whisper>Come closer. You have avoided the lesson long enough.</p>
         </div>
           </div>
           <figure class="tarot-beginners-welcome__visual">
             <img class="tarot-beginners-welcome__image" src="/assets/images/background%20_images/tarot-for-beginners.png" alt="An open tarot guide, cards, crystals, and a candle arranged at the threshold of study" width="1448" height="1086" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:68% center" />
-            <span class="tarot-beginners-welcome__door" aria-hidden="true"><i></i></span>
             <figcaption>The first door opens through curiosity, attention, and time.</figcaption>
           </figure>
         </div>
       </section>
-        <section class="tarot-beginners-library" id="chapters" aria-labelledby="chapters-heading" data-beginner-panel="library">
-        <div class="tarot-beginners-shell">
-          <header class="tarot-beginners-section-heading">
-            <p class="tarot-beginners-eyebrow">The Illuminated Index</p>
-            <h2 id="chapters-heading">The Chapters Before You</h2>
-            <p>Choose the chapter that answers the question you are carrying now, or begin at the first page and follow the book in order.</p>
-          </header>
-          <div class="tarot-beginners-library__grid"><a class="tarot-beginners-library-card" href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot" data-library-chapter="what-is-tarot" data-chapter-number="01">
-          <span class="tarot-beginners-library-card__media">
-            <img class="tarot-beginners-library-card__image" src="/assets/images/background%20_images/tarot-for-beginners.png" alt="A tarot deck resting beside an open guide and candlelight" width="1448" height="1086" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:68% center" />
-            <span class="tarot-beginners-library-card__number">Chapter 01</span>
-          </span>
-          <span class="tarot-beginners-library-card__body">
-            <strong>What Is Tarot?</strong>
-            <span>Understand tarot as a deck, symbolic language, and interpretive tool.</span>
-            <span class="tarot-beginners-library-card__cue"><span data-library-state>Open chapter</span><span aria-hidden="true">→</span></span>
-          </span>
-        </a><a class="tarot-beginners-library-card" href="#what-you-need" data-beginner-chapter-link="what-you-need" data-library-chapter="what-you-need" data-chapter-number="02">
-          <span class="tarot-beginners-library-card__media">
-            <img class="tarot-beginners-library-card__image" src="/assets/images/background%20_images/tarot-study.png" alt="A quiet tarot study table prepared with cards, a journal, and a reference book" width="1672" height="941" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center" />
-            <span class="tarot-beginners-library-card__number">Chapter 02</span>
-          </span>
-          <span class="tarot-beginners-library-card__body">
-            <strong>What Do You Need?</strong>
-            <span>Learn what helps a beginner and what is completely optional.</span>
-            <span class="tarot-beginners-library-card__cue"><span data-library-state>Open chapter</span><span aria-hidden="true">→</span></span>
-          </span>
-        </a><a class="tarot-beginners-library-card" href="#choosing-your-first-deck" data-beginner-chapter-link="choosing-your-first-deck" data-library-chapter="choosing-your-first-deck" data-chapter-number="03">
-          <span class="tarot-beginners-library-card__media">
-            <img class="tarot-beginners-library-card__image" src="/assets/images/background%20_images/decks-bg.png" alt="Several distinct tarot decks gathered in a moonlit archive" width="1086" height="1448" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center 46%" />
-            <span class="tarot-beginners-library-card__number">Chapter 03</span>
-          </span>
-          <span class="tarot-beginners-library-card__body">
-            <strong>Choosing a Deck</strong>
-            <span>Find a first deck whose imagery and structure support learning.</span>
-            <span class="tarot-beginners-library-card__cue"><span data-library-state>Open chapter</span><span aria-hidden="true">→</span></span>
-          </span>
-        </a><a class="tarot-beginners-library-card" href="#inside-the-deck" data-beginner-chapter-link="inside-the-deck" data-library-chapter="inside-the-deck" data-chapter-number="04">
-          <span class="tarot-beginners-library-card__media">
-            <img class="tarot-beginners-library-card__image" src="/assets/images/background%20_images/minor-arcana-explained.png" alt="Four symbolic tarot cards arranged as part of a complete deck" width="1448" height="1086" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:38% 62%" />
-            <span class="tarot-beginners-library-card__number">Chapter 04</span>
-          </span>
-          <span class="tarot-beginners-library-card__body">
-            <strong>Inside the Deck</strong>
-            <span>See how seventy-eight cards divide into Arcana, suits, numbers, and courts.</span>
-            <span class="tarot-beginners-library-card__cue"><span data-library-state>Open chapter</span><span aria-hidden="true">→</span></span>
-          </span>
-        </a><a class="tarot-beginners-library-card" href="#learning-card-meanings" data-beginner-chapter-link="learning-card-meanings" data-library-chapter="learning-card-meanings" data-chapter-number="05">
-          <span class="tarot-beginners-library-card__media">
-            <img class="tarot-beginners-library-card__image" src="/assets/images/background%20_images/history-symbolic-correspondences.webp" alt="An open symbolic study with tarot cards, diagrams, and reference books" width="1672" height="941" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center" />
-            <span class="tarot-beginners-library-card__number">Chapter 05</span>
-          </span>
-          <span class="tarot-beginners-library-card__body">
-            <strong>Learning Meanings</strong>
-            <span>Learn patterns and context without memorizing rigid definitions.</span>
-            <span class="tarot-beginners-library-card__cue"><span data-library-state>Open chapter</span><span aria-hidden="true">→</span></span>
-          </span>
-        </a><a class="tarot-beginners-library-card" href="#tarot-myths" data-beginner-chapter-link="tarot-myths" data-library-chapter="tarot-myths" data-chapter-number="06">
-          <span class="tarot-beginners-library-card__media">
-            <img class="tarot-beginners-library-card__image" src="/assets/images/background%20_images/upright-reverse.png" alt="A tarot card reflected in upright and reversed orientations" width="1024" height="1536" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center 42%" />
-            <span class="tarot-beginners-library-card__number">Chapter 06</span>
-          </span>
-          <span class="tarot-beginners-library-card__body">
-            <strong>Tarot Myths</strong>
-            <span>Separate useful tradition from assumptions and repeated misinformation.</span>
-            <span class="tarot-beginners-library-card__cue"><span data-library-state>Open chapter</span><span aria-hidden="true">→</span></span>
-          </span>
-        </a><a class="tarot-beginners-library-card" href="#first-week-with-tarot" data-beginner-chapter-link="first-week-with-tarot" data-library-chapter="first-week-with-tarot" data-chapter-number="07">
-          <span class="tarot-beginners-library-card__media">
-            <img class="tarot-beginners-library-card__image" src="/assets/images/background%20_images/history-tarot-today-reflection.webp" alt="A journal, tarot cards, and candlelight arranged for a week of quiet study" width="1536" height="1024" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center" />
-            <span class="tarot-beginners-library-card__number">Chapter 07</span>
-          </span>
-          <span class="tarot-beginners-library-card__body">
-            <strong>First Week</strong>
-            <span>Follow a calm seven-day study path for becoming familiar with the deck.</span>
-            <span class="tarot-beginners-library-card__cue"><span data-library-state>Open chapter</span><span aria-hidden="true">→</span></span>
-          </span>
-        </a><a class="tarot-beginners-library-card" href="#beginner-mistakes" data-beginner-chapter-link="beginner-mistakes" data-library-chapter="beginner-mistakes" data-chapter-number="08">
-          <span class="tarot-beginners-library-card__media">
-            <img class="tarot-beginners-library-card__image" src="/assets/images/background%20_images/how-to-read-tarot.png" alt="Hands bringing order to tarot cards on a candlelit reading table" width="1448" height="1086" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:70% center" />
-            <span class="tarot-beginners-library-card__number">Chapter 08</span>
-          </span>
-          <span class="tarot-beginners-library-card__body">
-            <strong>Common Mistakes</strong>
-            <span>Understand why beginner uncertainty is normal and how to work through it.</span>
-            <span class="tarot-beginners-library-card__cue"><span data-library-state>Open chapter</span><span aria-hidden="true">→</span></span>
-          </span>
-        </a><a class="tarot-beginners-library-card" href="#tarot-glossary" data-beginner-chapter-link="tarot-glossary" data-library-chapter="tarot-glossary" data-chapter-number="09">
-          <span class="tarot-beginners-library-card__media">
-            <img class="tarot-beginners-library-card__image" src="/assets/images/background%20_images/history-faq-celestial-emblem.webp" alt="A celestial compass emblem representing an index of tarot terms" width="1254" height="1254" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center" />
-            <span class="tarot-beginners-library-card__number">Chapter 09</span>
-          </span>
-          <span class="tarot-beginners-library-card__body">
-            <strong>Glossary</strong>
-            <span>Learn the essential words used throughout tarot study.</span>
-            <span class="tarot-beginners-library-card__cue"><span data-library-state>Open chapter</span><span aria-hidden="true">→</span></span>
-          </span>
-        </a><a class="tarot-beginners-library-card" href="#choose-your-next-path" data-beginner-chapter-link="choose-your-next-path" data-library-chapter="choose-your-next-path" data-chapter-number="10">
-          <span class="tarot-beginners-library-card__media">
-            <img class="tarot-beginners-library-card__image" src="/assets/images/background%20_images/history-continue-journey-banner.webp" alt="A luminous path leading through the next doorway of the tarot archive" width="1916" height="821" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center" />
-            <span class="tarot-beginners-library-card__number">Chapter 10</span>
-          </span>
-          <span class="tarot-beginners-library-card__body">
-            <strong>Next Path</strong>
-            <span>Choose the next doorway into the larger Astral Veil tarot archive.</span>
-            <span class="tarot-beginners-library-card__cue"><span data-library-state>Open chapter</span><span aria-hidden="true">→</span></span>
-          </span>
-        </a></div>
-          <div class="tarot-beginners-library__footer">
-            <a class="tarot-beginners-button tarot-beginners-button--text" href="#welcome" data-beginner-view-link="welcome"><span aria-hidden="true">←</span> Return to the Welcome</a>
+        <section class="tarot-beginners-index" id="chapters" aria-labelledby="beginner-index-heading" data-beginner-panel="index" data-beginner-index>
+        <div class="tarot-beginners-index__shell">
+          <a class="tarot-beginners-index__back" href="/tarot/for-beginners/" data-beginner-index-back><span aria-hidden="true">←</span> Back to Tarot for Beginners</a>
+          <h2 class="tarot-beginners-index__sr-only" id="beginner-index-heading">Explore all Tarot for Beginners chapters</h2>
+          <div class="tarot-beginners-index__layout">
+            <aside class="tarot-beginners-index-path" aria-label="Tarot for Beginners chapter path">
+              <svg class="tarot-beginners-index-path__line" viewBox="0 0 88 740" preserveAspectRatio="none" aria-hidden="true"><path d="M 28 37 C 28 74, 44 74, 44 111 C 44 148, 54 148, 54 185 C 54 222, 43 222, 43 259 C 43 296, 25 296, 25 333 C 25 370, 16 370, 16 407 C 16 444, 31 444, 31 481 C 31 518, 47 518, 47 555 C 47 592, 30 592, 30 629 C 30 666, 14 666, 14 703"></path></svg>
+              <ol><li style="--chapter-path-x:28px">
+              <button type="button" aria-controls="beginner-index-card-what-is-tarot" data-beginner-index-select="what-is-tarot">
+                <span class="tarot-beginners-index-path__node" aria-hidden="true"><span data-beginner-index-node-icon></span></span>
+                <span class="tarot-beginners-index-path__number">01</span>
+                <span class="tarot-beginners-index-path__copy"><strong>What Is Tarot?</strong><small>Understand tarot as a deck, symbolic language, and interpretive tool.</small></span>
+                <span class="tarot-beginners-index-path__next" data-beginner-index-next hidden>Next <span aria-hidden="true">→</span></span>
+                <span class="tarot-beginners-index__sr-only" data-beginner-index-state>Upcoming chapter</span>
+              </button>
+            </li><li style="--chapter-path-x:44px">
+              <button type="button" aria-controls="beginner-index-card-what-you-need" data-beginner-index-select="what-you-need">
+                <span class="tarot-beginners-index-path__node" aria-hidden="true"><span data-beginner-index-node-icon></span></span>
+                <span class="tarot-beginners-index-path__number">02</span>
+                <span class="tarot-beginners-index-path__copy"><strong>What Do You Need?</strong><small>Learn what helps a beginner and what is completely optional.</small></span>
+                <span class="tarot-beginners-index-path__next" data-beginner-index-next hidden>Next <span aria-hidden="true">→</span></span>
+                <span class="tarot-beginners-index__sr-only" data-beginner-index-state>Upcoming chapter</span>
+              </button>
+            </li><li style="--chapter-path-x:54px">
+              <button type="button" aria-controls="beginner-index-card-choosing-your-first-deck" data-beginner-index-select="choosing-your-first-deck">
+                <span class="tarot-beginners-index-path__node" aria-hidden="true"><span data-beginner-index-node-icon></span></span>
+                <span class="tarot-beginners-index-path__number">03</span>
+                <span class="tarot-beginners-index-path__copy"><strong>Choosing a Deck</strong><small>Find a first deck whose imagery and structure support learning.</small></span>
+                <span class="tarot-beginners-index-path__next" data-beginner-index-next hidden>Next <span aria-hidden="true">→</span></span>
+                <span class="tarot-beginners-index__sr-only" data-beginner-index-state>Upcoming chapter</span>
+              </button>
+            </li><li style="--chapter-path-x:43px">
+              <button type="button" aria-controls="beginner-index-card-inside-the-deck" data-beginner-index-select="inside-the-deck">
+                <span class="tarot-beginners-index-path__node" aria-hidden="true"><span data-beginner-index-node-icon></span></span>
+                <span class="tarot-beginners-index-path__number">04</span>
+                <span class="tarot-beginners-index-path__copy"><strong>Inside the Deck</strong><small>See how seventy-eight cards divide into Arcana, suits, numbers, and courts.</small></span>
+                <span class="tarot-beginners-index-path__next" data-beginner-index-next hidden>Next <span aria-hidden="true">→</span></span>
+                <span class="tarot-beginners-index__sr-only" data-beginner-index-state>Upcoming chapter</span>
+              </button>
+            </li><li style="--chapter-path-x:25px">
+              <button type="button" aria-controls="beginner-index-card-learning-card-meanings" data-beginner-index-select="learning-card-meanings">
+                <span class="tarot-beginners-index-path__node" aria-hidden="true"><span data-beginner-index-node-icon></span></span>
+                <span class="tarot-beginners-index-path__number">05</span>
+                <span class="tarot-beginners-index-path__copy"><strong>Learning Meanings</strong><small>Learn patterns and context without memorizing rigid definitions.</small></span>
+                <span class="tarot-beginners-index-path__next" data-beginner-index-next hidden>Next <span aria-hidden="true">→</span></span>
+                <span class="tarot-beginners-index__sr-only" data-beginner-index-state>Upcoming chapter</span>
+              </button>
+            </li><li style="--chapter-path-x:16px">
+              <button type="button" aria-controls="beginner-index-card-tarot-myths" data-beginner-index-select="tarot-myths">
+                <span class="tarot-beginners-index-path__node" aria-hidden="true"><span data-beginner-index-node-icon></span></span>
+                <span class="tarot-beginners-index-path__number">06</span>
+                <span class="tarot-beginners-index-path__copy"><strong>Tarot Myths</strong><small>Separate useful tradition from assumptions and repeated misinformation.</small></span>
+                <span class="tarot-beginners-index-path__next" data-beginner-index-next hidden>Next <span aria-hidden="true">→</span></span>
+                <span class="tarot-beginners-index__sr-only" data-beginner-index-state>Upcoming chapter</span>
+              </button>
+            </li><li style="--chapter-path-x:31px">
+              <button type="button" aria-controls="beginner-index-card-first-week-with-tarot" data-beginner-index-select="first-week-with-tarot">
+                <span class="tarot-beginners-index-path__node" aria-hidden="true"><span data-beginner-index-node-icon></span></span>
+                <span class="tarot-beginners-index-path__number">07</span>
+                <span class="tarot-beginners-index-path__copy"><strong>First Week</strong><small>Follow a calm seven-day study path for becoming familiar with the deck.</small></span>
+                <span class="tarot-beginners-index-path__next" data-beginner-index-next hidden>Next <span aria-hidden="true">→</span></span>
+                <span class="tarot-beginners-index__sr-only" data-beginner-index-state>Upcoming chapter</span>
+              </button>
+            </li><li style="--chapter-path-x:47px">
+              <button type="button" aria-controls="beginner-index-card-beginner-mistakes" data-beginner-index-select="beginner-mistakes">
+                <span class="tarot-beginners-index-path__node" aria-hidden="true"><span data-beginner-index-node-icon></span></span>
+                <span class="tarot-beginners-index-path__number">08</span>
+                <span class="tarot-beginners-index-path__copy"><strong>Common Mistakes</strong><small>Understand why beginner uncertainty is normal and how to work through it.</small></span>
+                <span class="tarot-beginners-index-path__next" data-beginner-index-next hidden>Next <span aria-hidden="true">→</span></span>
+                <span class="tarot-beginners-index__sr-only" data-beginner-index-state>Upcoming chapter</span>
+              </button>
+            </li><li style="--chapter-path-x:30px">
+              <button type="button" aria-controls="beginner-index-card-tarot-glossary" data-beginner-index-select="tarot-glossary">
+                <span class="tarot-beginners-index-path__node" aria-hidden="true"><span data-beginner-index-node-icon></span></span>
+                <span class="tarot-beginners-index-path__number">09</span>
+                <span class="tarot-beginners-index-path__copy"><strong>Glossary</strong><small>Learn the essential words used throughout tarot study.</small></span>
+                <span class="tarot-beginners-index-path__next" data-beginner-index-next hidden>Next <span aria-hidden="true">→</span></span>
+                <span class="tarot-beginners-index__sr-only" data-beginner-index-state>Upcoming chapter</span>
+              </button>
+            </li><li style="--chapter-path-x:14px">
+              <button type="button" aria-controls="beginner-index-card-choose-your-next-path" data-beginner-index-select="choose-your-next-path">
+                <span class="tarot-beginners-index-path__node" aria-hidden="true"><span data-beginner-index-node-icon></span></span>
+                <span class="tarot-beginners-index-path__number">10</span>
+                <span class="tarot-beginners-index-path__copy"><strong>Next Path</strong><small>Choose the next doorway into the larger Astral Veil tarot archive.</small></span>
+                <span class="tarot-beginners-index-path__next" data-beginner-index-next hidden>Next <span aria-hidden="true">→</span></span>
+                <span class="tarot-beginners-index__sr-only" data-beginner-index-state>Upcoming chapter</span>
+              </button>
+            </li></ol>
+            </aside>
+            <div class="tarot-beginners-index-preview">
+              <header class="tarot-beginners-index-mobile-header">
+                <p data-beginner-index-counter>Chapter 1 of 10</p>
+                <span><span aria-hidden="true">↔</span> Swipe to explore</span>
+              </header>
+              <div class="tarot-beginners-index-viewport" role="region" aria-roledescription="carousel" aria-label="Tarot for Beginners chapter previews" data-beginner-index-viewport>
+                <div class="tarot-beginners-index-track" data-beginner-index-track><article class="tarot-beginners-index-card" id="beginner-index-card-what-is-tarot" role="group" aria-roledescription="slide" aria-label="Chapter 1 of 10: What Is Tarot?" data-beginner-index-slide="what-is-tarot">
+              <div class="tarot-beginners-index-card__media">
+                <img class="tarot-beginners-index-card__image" src="/assets/images/background%20_images/tarot-for-beginners.png" alt="A tarot deck resting beside an open guide and candlelight" width="1448" height="1086" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:68% center" />
+                <span class="tarot-beginners-index-card__veil" aria-hidden="true"></span>
+              </div>
+              <div class="tarot-beginners-index-card__content">
+                <p class="tarot-beginners-index-card__label">Chapter 01 <span aria-hidden="true">✦</span></p>
+                <h3>What Is Tarot?</h3>
+                <p class="tarot-beginners-index-card__summary">Understand tarot as a deck, symbolic language, and interpretive tool.</p>
+                <div class="tarot-beginners-index-card__footer">
+                  <div class="tarot-beginners-index-progress">
+                    <div class="tarot-beginners-index-progress__heading"><span>Your Progress</span><strong data-beginner-index-progress-percent>0%</strong></div>
+                    <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
+                  </div>
+                  <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="what-is-tarot"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                </div>
+              </div>
+            </article><article class="tarot-beginners-index-card" id="beginner-index-card-what-you-need" role="group" aria-roledescription="slide" aria-label="Chapter 2 of 10: What Do You Need?" data-beginner-index-slide="what-you-need">
+              <div class="tarot-beginners-index-card__media">
+                <img class="tarot-beginners-index-card__image" src="/assets/images/background%20_images/tarot-study.png" alt="A quiet tarot study table prepared with cards, a journal, and a reference book" width="1672" height="941" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center" />
+                <span class="tarot-beginners-index-card__veil" aria-hidden="true"></span>
+              </div>
+              <div class="tarot-beginners-index-card__content">
+                <p class="tarot-beginners-index-card__label">Chapter 02 <span aria-hidden="true">✦</span></p>
+                <h3>What Do You Need?</h3>
+                <p class="tarot-beginners-index-card__summary">Learn what helps a beginner and what is completely optional.</p>
+                <div class="tarot-beginners-index-card__footer">
+                  <div class="tarot-beginners-index-progress">
+                    <div class="tarot-beginners-index-progress__heading"><span>Your Progress</span><strong data-beginner-index-progress-percent>0%</strong></div>
+                    <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
+                  </div>
+                  <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#what-you-need" data-beginner-chapter-link="what-you-need"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="what-you-need"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                </div>
+              </div>
+            </article><article class="tarot-beginners-index-card" id="beginner-index-card-choosing-your-first-deck" role="group" aria-roledescription="slide" aria-label="Chapter 3 of 10: Choosing a Deck" data-beginner-index-slide="choosing-your-first-deck">
+              <div class="tarot-beginners-index-card__media">
+                <img class="tarot-beginners-index-card__image" src="/assets/images/background%20_images/decks-bg.png" alt="Several distinct tarot decks gathered in a moonlit archive" width="1086" height="1448" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center 46%" />
+                <span class="tarot-beginners-index-card__veil" aria-hidden="true"></span>
+              </div>
+              <div class="tarot-beginners-index-card__content">
+                <p class="tarot-beginners-index-card__label">Chapter 03 <span aria-hidden="true">✦</span></p>
+                <h3>Choosing a Deck</h3>
+                <p class="tarot-beginners-index-card__summary">Find a first deck whose imagery and structure support learning.</p>
+                <div class="tarot-beginners-index-card__footer">
+                  <div class="tarot-beginners-index-progress">
+                    <div class="tarot-beginners-index-progress__heading"><span>Your Progress</span><strong data-beginner-index-progress-percent>0%</strong></div>
+                    <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
+                  </div>
+                  <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#choosing-your-first-deck" data-beginner-chapter-link="choosing-your-first-deck"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="choosing-your-first-deck"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                </div>
+              </div>
+            </article><article class="tarot-beginners-index-card" id="beginner-index-card-inside-the-deck" role="group" aria-roledescription="slide" aria-label="Chapter 4 of 10: Inside the Deck" data-beginner-index-slide="inside-the-deck">
+              <div class="tarot-beginners-index-card__media">
+                <img class="tarot-beginners-index-card__image" src="/assets/images/background%20_images/minor-arcana-explained.png" alt="Four symbolic tarot cards arranged as part of a complete deck" width="1448" height="1086" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:38% 62%" />
+                <span class="tarot-beginners-index-card__veil" aria-hidden="true"></span>
+              </div>
+              <div class="tarot-beginners-index-card__content">
+                <p class="tarot-beginners-index-card__label">Chapter 04 <span aria-hidden="true">✦</span></p>
+                <h3>Inside the Deck</h3>
+                <p class="tarot-beginners-index-card__summary">See how seventy-eight cards divide into Arcana, suits, numbers, and courts.</p>
+                <div class="tarot-beginners-index-card__footer">
+                  <div class="tarot-beginners-index-progress">
+                    <div class="tarot-beginners-index-progress__heading"><span>Your Progress</span><strong data-beginner-index-progress-percent>0%</strong></div>
+                    <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
+                  </div>
+                  <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#inside-the-deck" data-beginner-chapter-link="inside-the-deck"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="inside-the-deck"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                </div>
+              </div>
+            </article><article class="tarot-beginners-index-card" id="beginner-index-card-learning-card-meanings" role="group" aria-roledescription="slide" aria-label="Chapter 5 of 10: Learning Meanings" data-beginner-index-slide="learning-card-meanings">
+              <div class="tarot-beginners-index-card__media">
+                <img class="tarot-beginners-index-card__image" src="/assets/images/background%20_images/history-symbolic-correspondences.webp" alt="An open symbolic study with tarot cards, diagrams, and reference books" width="1672" height="941" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center" />
+                <span class="tarot-beginners-index-card__veil" aria-hidden="true"></span>
+              </div>
+              <div class="tarot-beginners-index-card__content">
+                <p class="tarot-beginners-index-card__label">Chapter 05 <span aria-hidden="true">✦</span></p>
+                <h3>Learning Meanings</h3>
+                <p class="tarot-beginners-index-card__summary">Learn patterns and context without memorizing rigid definitions.</p>
+                <div class="tarot-beginners-index-card__footer">
+                  <div class="tarot-beginners-index-progress">
+                    <div class="tarot-beginners-index-progress__heading"><span>Your Progress</span><strong data-beginner-index-progress-percent>0%</strong></div>
+                    <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
+                  </div>
+                  <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#learning-card-meanings" data-beginner-chapter-link="learning-card-meanings"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="learning-card-meanings"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                </div>
+              </div>
+            </article><article class="tarot-beginners-index-card" id="beginner-index-card-tarot-myths" role="group" aria-roledescription="slide" aria-label="Chapter 6 of 10: Tarot Myths" data-beginner-index-slide="tarot-myths">
+              <div class="tarot-beginners-index-card__media">
+                <img class="tarot-beginners-index-card__image" src="/assets/images/background%20_images/upright-reverse.png" alt="A tarot card reflected in upright and reversed orientations" width="1024" height="1536" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center 42%" />
+                <span class="tarot-beginners-index-card__veil" aria-hidden="true"></span>
+              </div>
+              <div class="tarot-beginners-index-card__content">
+                <p class="tarot-beginners-index-card__label">Chapter 06 <span aria-hidden="true">✦</span></p>
+                <h3>Tarot Myths</h3>
+                <p class="tarot-beginners-index-card__summary">Separate useful tradition from assumptions and repeated misinformation.</p>
+                <div class="tarot-beginners-index-card__footer">
+                  <div class="tarot-beginners-index-progress">
+                    <div class="tarot-beginners-index-progress__heading"><span>Your Progress</span><strong data-beginner-index-progress-percent>0%</strong></div>
+                    <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
+                  </div>
+                  <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#tarot-myths" data-beginner-chapter-link="tarot-myths"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="tarot-myths"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                </div>
+              </div>
+            </article><article class="tarot-beginners-index-card" id="beginner-index-card-first-week-with-tarot" role="group" aria-roledescription="slide" aria-label="Chapter 7 of 10: First Week" data-beginner-index-slide="first-week-with-tarot">
+              <div class="tarot-beginners-index-card__media">
+                <img class="tarot-beginners-index-card__image" src="/assets/images/background%20_images/history-tarot-today-reflection.webp" alt="A journal, tarot cards, and candlelight arranged for a week of quiet study" width="1536" height="1024" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center" />
+                <span class="tarot-beginners-index-card__veil" aria-hidden="true"></span>
+              </div>
+              <div class="tarot-beginners-index-card__content">
+                <p class="tarot-beginners-index-card__label">Chapter 07 <span aria-hidden="true">✦</span></p>
+                <h3>First Week</h3>
+                <p class="tarot-beginners-index-card__summary">Follow a calm seven-day study path for becoming familiar with the deck.</p>
+                <div class="tarot-beginners-index-card__footer">
+                  <div class="tarot-beginners-index-progress">
+                    <div class="tarot-beginners-index-progress__heading"><span>Your Progress</span><strong data-beginner-index-progress-percent>0%</strong></div>
+                    <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
+                  </div>
+                  <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#first-week-with-tarot" data-beginner-chapter-link="first-week-with-tarot"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="first-week-with-tarot"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                </div>
+              </div>
+            </article><article class="tarot-beginners-index-card" id="beginner-index-card-beginner-mistakes" role="group" aria-roledescription="slide" aria-label="Chapter 8 of 10: Common Mistakes" data-beginner-index-slide="beginner-mistakes">
+              <div class="tarot-beginners-index-card__media">
+                <img class="tarot-beginners-index-card__image" src="/assets/images/background%20_images/how-to-read-tarot.png" alt="Hands bringing order to tarot cards on a candlelit reading table" width="1448" height="1086" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:70% center" />
+                <span class="tarot-beginners-index-card__veil" aria-hidden="true"></span>
+              </div>
+              <div class="tarot-beginners-index-card__content">
+                <p class="tarot-beginners-index-card__label">Chapter 08 <span aria-hidden="true">✦</span></p>
+                <h3>Common Mistakes</h3>
+                <p class="tarot-beginners-index-card__summary">Understand why beginner uncertainty is normal and how to work through it.</p>
+                <div class="tarot-beginners-index-card__footer">
+                  <div class="tarot-beginners-index-progress">
+                    <div class="tarot-beginners-index-progress__heading"><span>Your Progress</span><strong data-beginner-index-progress-percent>0%</strong></div>
+                    <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
+                  </div>
+                  <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#beginner-mistakes" data-beginner-chapter-link="beginner-mistakes"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="beginner-mistakes"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                </div>
+              </div>
+            </article><article class="tarot-beginners-index-card" id="beginner-index-card-tarot-glossary" role="group" aria-roledescription="slide" aria-label="Chapter 9 of 10: Glossary" data-beginner-index-slide="tarot-glossary">
+              <div class="tarot-beginners-index-card__media">
+                <img class="tarot-beginners-index-card__image" src="/assets/images/background%20_images/history-faq-celestial-emblem.webp" alt="A celestial compass emblem representing an index of tarot terms" width="1254" height="1254" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center" />
+                <span class="tarot-beginners-index-card__veil" aria-hidden="true"></span>
+              </div>
+              <div class="tarot-beginners-index-card__content">
+                <p class="tarot-beginners-index-card__label">Chapter 09 <span aria-hidden="true">✦</span></p>
+                <h3>Glossary</h3>
+                <p class="tarot-beginners-index-card__summary">Learn the essential words used throughout tarot study.</p>
+                <div class="tarot-beginners-index-card__footer">
+                  <div class="tarot-beginners-index-progress">
+                    <div class="tarot-beginners-index-progress__heading"><span>Your Progress</span><strong data-beginner-index-progress-percent>0%</strong></div>
+                    <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
+                  </div>
+                  <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#tarot-glossary" data-beginner-chapter-link="tarot-glossary"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="tarot-glossary"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                </div>
+              </div>
+            </article><article class="tarot-beginners-index-card" id="beginner-index-card-choose-your-next-path" role="group" aria-roledescription="slide" aria-label="Chapter 10 of 10: Next Path" data-beginner-index-slide="choose-your-next-path">
+              <div class="tarot-beginners-index-card__media">
+                <img class="tarot-beginners-index-card__image" src="/assets/images/background%20_images/history-continue-journey-banner.webp" alt="A luminous path leading through the next doorway of the tarot archive" width="1916" height="821" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:center" />
+                <span class="tarot-beginners-index-card__veil" aria-hidden="true"></span>
+              </div>
+              <div class="tarot-beginners-index-card__content">
+                <p class="tarot-beginners-index-card__label">Chapter 10 <span aria-hidden="true">✦</span></p>
+                <h3>Next Path</h3>
+                <p class="tarot-beginners-index-card__summary">Choose the next doorway into the larger Astral Veil tarot archive.</p>
+                <div class="tarot-beginners-index-card__footer">
+                  <div class="tarot-beginners-index-progress">
+                    <div class="tarot-beginners-index-progress__heading"><span>Your Progress</span><strong data-beginner-index-progress-percent>0%</strong></div>
+                    <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
+                  </div>
+                  <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#choose-your-next-path" data-beginner-chapter-link="choose-your-next-path"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="choose-your-next-path"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                </div>
+              </div>
+            </article></div>
+              </div>
+              <nav class="tarot-beginners-index-strip" aria-label="Choose a chapter"><button type="button" aria-controls="beginner-index-card-what-is-tarot" data-beginner-index-select="what-is-tarot"><span>01</span><strong>What Is Tarot?</strong><i aria-hidden="true"></i></button><button type="button" aria-controls="beginner-index-card-what-you-need" data-beginner-index-select="what-you-need"><span>02</span><strong>What Do You Need?</strong><i aria-hidden="true"></i></button><button type="button" aria-controls="beginner-index-card-choosing-your-first-deck" data-beginner-index-select="choosing-your-first-deck"><span>03</span><strong>Choosing a Deck</strong><i aria-hidden="true"></i></button><button type="button" aria-controls="beginner-index-card-inside-the-deck" data-beginner-index-select="inside-the-deck"><span>04</span><strong>Inside the Deck</strong><i aria-hidden="true"></i></button><button type="button" aria-controls="beginner-index-card-learning-card-meanings" data-beginner-index-select="learning-card-meanings"><span>05</span><strong>Learning Meanings</strong><i aria-hidden="true"></i></button><button type="button" aria-controls="beginner-index-card-tarot-myths" data-beginner-index-select="tarot-myths"><span>06</span><strong>Tarot Myths</strong><i aria-hidden="true"></i></button><button type="button" aria-controls="beginner-index-card-first-week-with-tarot" data-beginner-index-select="first-week-with-tarot"><span>07</span><strong>First Week</strong><i aria-hidden="true"></i></button><button type="button" aria-controls="beginner-index-card-beginner-mistakes" data-beginner-index-select="beginner-mistakes"><span>08</span><strong>Common Mistakes</strong><i aria-hidden="true"></i></button><button type="button" aria-controls="beginner-index-card-tarot-glossary" data-beginner-index-select="tarot-glossary"><span>09</span><strong>Glossary</strong><i aria-hidden="true"></i></button><button type="button" aria-controls="beginner-index-card-choose-your-next-path" data-beginner-index-select="choose-your-next-path"><span>10</span><strong>Next Path</strong><i aria-hidden="true"></i></button></nav>
+              <div class="tarot-beginners-index-mobile-nav">
+                <button type="button" aria-label="Previous chapter" data-beginner-index-previous><span aria-hidden="true">←</span></button>
+                <div class="tarot-beginners-index-dots" role="group" aria-label="Choose a chapter"><button type="button" aria-label="Show Chapter 1: What Is Tarot?" aria-controls="beginner-index-card-what-is-tarot" data-beginner-index-select="what-is-tarot"><span aria-hidden="true"></span></button><button type="button" aria-label="Show Chapter 2: What Do You Need?" aria-controls="beginner-index-card-what-you-need" data-beginner-index-select="what-you-need"><span aria-hidden="true"></span></button><button type="button" aria-label="Show Chapter 3: Choosing a Deck" aria-controls="beginner-index-card-choosing-your-first-deck" data-beginner-index-select="choosing-your-first-deck"><span aria-hidden="true"></span></button><button type="button" aria-label="Show Chapter 4: Inside the Deck" aria-controls="beginner-index-card-inside-the-deck" data-beginner-index-select="inside-the-deck"><span aria-hidden="true"></span></button><button type="button" aria-label="Show Chapter 5: Learning Meanings" aria-controls="beginner-index-card-learning-card-meanings" data-beginner-index-select="learning-card-meanings"><span aria-hidden="true"></span></button><button type="button" aria-label="Show Chapter 6: Tarot Myths" aria-controls="beginner-index-card-tarot-myths" data-beginner-index-select="tarot-myths"><span aria-hidden="true"></span></button><button type="button" aria-label="Show Chapter 7: First Week" aria-controls="beginner-index-card-first-week-with-tarot" data-beginner-index-select="first-week-with-tarot"><span aria-hidden="true"></span></button><button type="button" aria-label="Show Chapter 8: Common Mistakes" aria-controls="beginner-index-card-beginner-mistakes" data-beginner-index-select="beginner-mistakes"><span aria-hidden="true"></span></button><button type="button" aria-label="Show Chapter 9: Glossary" aria-controls="beginner-index-card-tarot-glossary" data-beginner-index-select="tarot-glossary"><span aria-hidden="true"></span></button><button type="button" aria-label="Show Chapter 10: Next Path" aria-controls="beginner-index-card-choose-your-next-path" data-beginner-index-select="choose-your-next-path"><span aria-hidden="true"></span></button></div>
+                <button type="button" aria-label="Next chapter" data-beginner-index-next-control><span aria-hidden="true">→</span></button>
+              </div>
+              <p class="tarot-beginners-index__status tarot-beginners-index__sr-only" aria-live="polite" aria-atomic="true" data-beginner-index-live>Chapter index ready.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -250,7 +425,6 @@
             <div class="tarot-beginners-rail__inner">
               <p class="tarot-beginners-eyebrow">The First Ten Doors</p>
               <nav aria-label="Tarot for Beginners chapter navigation"><ol><li><a href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot" data-chapter-nav-location="rail"><span class="tarot-beginners-chapter-link__number">01</span><span class="tarot-beginners-chapter-link__copy"><span>What Is Tarot?</span><small data-chapter-state>Upcoming</small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li><li><a href="#what-you-need" data-beginner-chapter-link="what-you-need" data-chapter-nav-location="rail"><span class="tarot-beginners-chapter-link__number">02</span><span class="tarot-beginners-chapter-link__copy"><span>What Do You Need?</span><small data-chapter-state>Upcoming</small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li><li><a href="#choosing-your-first-deck" data-beginner-chapter-link="choosing-your-first-deck" data-chapter-nav-location="rail"><span class="tarot-beginners-chapter-link__number">03</span><span class="tarot-beginners-chapter-link__copy"><span>Choosing a Deck</span><small data-chapter-state>Upcoming</small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li><li><a href="#inside-the-deck" data-beginner-chapter-link="inside-the-deck" data-chapter-nav-location="rail"><span class="tarot-beginners-chapter-link__number">04</span><span class="tarot-beginners-chapter-link__copy"><span>Inside the Deck</span><small data-chapter-state>Upcoming</small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li><li><a href="#learning-card-meanings" data-beginner-chapter-link="learning-card-meanings" data-chapter-nav-location="rail"><span class="tarot-beginners-chapter-link__number">05</span><span class="tarot-beginners-chapter-link__copy"><span>Learning Meanings</span><small data-chapter-state>Upcoming</small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li><li><a href="#tarot-myths" data-beginner-chapter-link="tarot-myths" data-chapter-nav-location="rail"><span class="tarot-beginners-chapter-link__number">06</span><span class="tarot-beginners-chapter-link__copy"><span>Tarot Myths</span><small data-chapter-state>Upcoming</small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li><li><a href="#first-week-with-tarot" data-beginner-chapter-link="first-week-with-tarot" data-chapter-nav-location="rail"><span class="tarot-beginners-chapter-link__number">07</span><span class="tarot-beginners-chapter-link__copy"><span>First Week</span><small data-chapter-state>Upcoming</small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li><li><a href="#beginner-mistakes" data-beginner-chapter-link="beginner-mistakes" data-chapter-nav-location="rail"><span class="tarot-beginners-chapter-link__number">08</span><span class="tarot-beginners-chapter-link__copy"><span>Common Mistakes</span><small data-chapter-state>Upcoming</small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li><li><a href="#tarot-glossary" data-beginner-chapter-link="tarot-glossary" data-chapter-nav-location="rail"><span class="tarot-beginners-chapter-link__number">09</span><span class="tarot-beginners-chapter-link__copy"><span>Glossary</span><small data-chapter-state>Upcoming</small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li><li><a href="#choose-your-next-path" data-beginner-chapter-link="choose-your-next-path" data-chapter-nav-location="rail"><span class="tarot-beginners-chapter-link__number">10</span><span class="tarot-beginners-chapter-link__copy"><span>Next Path</span><small data-chapter-state>Upcoming</small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li></ol></nav>
-              <button class="tarot-beginners-button tarot-beginners-button--text" type="button" data-return-guided hidden>Return to Guided Chapters</button>
             </div>
           </aside>
           <div class="tarot-beginners-reader__main">
@@ -266,35 +440,168 @@
             <div class="tarot-beginners-reader__toolbar">
               <p aria-live="polite" aria-atomic="true" data-beginner-live-region>Guided chapters ready.</p>
               <div>
-                <a href="#chapters" data-beginner-view-link="library">Chapter Library</a>
-                <a href="#what-is-tarot" data-beginner-view-all>View All Chapters</a>
-                <button type="button" data-return-guided hidden>Return to Guided Chapters</button>
+                <a href="?view=chapters" data-beginner-index-link>View All Chapters</a>
               </div>
             </div>
             <div class="tarot-beginners-door" aria-hidden="true" data-beginner-door><span></span><i>✦</i></div>
-            <div class="tarot-beginners-chapter-stream" data-beginner-chapter-stream><article class="tarot-beginners-chapter" id="what-is-tarot" aria-labelledby="what-is-tarot-heading" data-beginner-chapter="what-is-tarot">
-        <header class="tarot-beginners-chapter__header">
-          <p class="tarot-beginners-chapter__number">Chapter 01 <span aria-hidden="true">·</span> 10</p>
-          <p class="tarot-beginners-eyebrow">The Beginning</p>
-          <h2 id="what-is-tarot-heading" tabindex="-1">What Is Tarot, Really?</h2>
-          <p class="tarot-beginners-chapter__introduction">Before learning the cards, understand what kind of symbolic system you are entering.</p>
-        </header>
-        <figure class="tarot-beginners-module tarot-beginners-module--orbit" data-beginner-module="orbit">
-          <div class="tarot-beginners-module__image-wrap">
-            <img class="tarot-beginners-module__image" src="/assets/images/background%20_images/tarot-for-beginners.png" alt="A tarot deck resting beside an open guide and candlelight" width="1448" height="1086" loading="lazy" decoding="async" draggable="false" style="--beginner-image-position:68% center" />
-            <span class="tarot-beginners-module__veil" aria-hidden="true"></span>
+            <div class="tarot-beginners-chapter-stream" data-beginner-chapter-stream><article class="tarot-beginners-chapter tarot-beginners-academy-lesson" id="what-is-tarot" aria-labelledby="what-is-tarot-heading" data-beginner-chapter="what-is-tarot" data-academy-lesson="what-is-tarot">
+        <header class="tarot-beginners-academy-introduction">
+          <div class="tarot-beginners-academy-introduction__layout">
+            <div class="tarot-beginners-academy-introduction__copy">
+              <p class="tarot-beginners-chapter__number">Chapter 01 <span aria-hidden="true">•</span> The Beginning</p>
+              <h2 id="what-is-tarot-heading" tabindex="-1">What Is Tarot?</h2>
+              <p class="tarot-beginners-chapter__introduction">Before learning the cards, understand what kind of symbolic system you are entering.</p>
+              <p class="tarot-beginners-academy-introduction__continuation">This lesson unfolds in three chambers. Step through each one with presence.</p>
+              <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
+            </div>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7" data-chapter-visual-placeholder="chapter-01-header" data-future-src="/assets/images/tarot-for-beginners/chapter-01/header.webp">
+          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Placeholder for the future Chapter 01 atmospheric header artwork">
+            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
+            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
+            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
           </div>
-          <div class="tarot-beginners-module__diagram" aria-hidden="true">
-            <span class="tarot-beginners-module__center">Tarot</span>
-            <span class="tarot-beginners-module__item" style="--module-index:0;--module-count:3">Deck</span><span class="tarot-beginners-module__item" style="--module-index:1;--module-count:3">Symbolic Language</span><span class="tarot-beginners-module__item" style="--module-index:2;--module-count:3">Interpretive Tool</span>
-          </div>
-          <figcaption>Three ways to understand the tarot system</figcaption>
+          <figcaption id="chapter-01-header-placeholder-caption"><span>Development visual</span><strong>chapter-01-header</strong></figcaption>
         </figure>
-        <div class="tarot-beginners-chapter__body"><div class="tarot-beginners-block tarot-beginners-block--features">
-            
-            <div class="tarot-beginners-feature-grid"><article><span aria-hidden="true">✦</span><h3>A Deck</h3><p>Tarot is a seventy-eight-card system containing recurring figures, numbers, suits, archetypes, colors, objects, and narrative patterns.</p></article><article><span aria-hidden="true">✦</span><h3>A Symbolic Language</h3><p>Images communicate ideas about life, choices, emotions, relationships, conflict, movement, and transformation.</p></article><article><span aria-hidden="true">✦</span><h3>An Interpretive Tool</h3><p>Meaning develops through the visible card, traditional associations, the question, context, and careful reflection.</p></article></div>
-          </div><div class="tarot-beginners-block tarot-beginners-block--prose"><p>Tarot does not guarantee certainty or remove personal responsibility. Within Astral Veil, the cards are treated as mirrors for patterns and possibilities rather than fixed verdicts.</p></div></div>
-        <aside class="tarot-beginners-takeaway" aria-label="Remember this"><span aria-hidden="true">✦</span><div><h3>Remember This</h3><p>Tarot offers perspective through symbols. It does not remove your ability to choose.</p></div></aside>
+          </div>
+          <nav class="tarot-beginners-chamber-progress" aria-label="Chapter chamber progress" data-chamber-progress>
+          <p class="tarot-beginners-index__sr-only" aria-live="polite" aria-atomic="true" data-chamber-progress-status>Chamber 1 of 3, What You Are Looking At, open.</p>
+          <ol><li class="is-active">
+            <button type="button" aria-label="Open CHAMBER I: What You Are Looking At" aria-controls="chamber-1-panel" aria-pressed="true" aria-current="step" data-chamber-stage="chamber-1">
+              <span aria-hidden="true">I</span>
+              <span class="tarot-beginners-index__sr-only">What You Are Looking At</span>
+              <i aria-hidden="true" hidden data-chamber-stage-mark></i>
+            </button>
+            <span class="tarot-beginners-chamber-progress__line" aria-hidden="true"></span>
+          </li><li>
+            <button type="button" aria-label="Open CHAMBER II: What the Images Are Saying" aria-controls="chamber-2-panel" aria-pressed="false" data-chamber-stage="chamber-2">
+              <span aria-hidden="true">II</span>
+              <span class="tarot-beginners-index__sr-only">What the Images Are Saying</span>
+              <i aria-hidden="true" hidden data-chamber-stage-mark></i>
+            </button>
+            <span class="tarot-beginners-chamber-progress__line" aria-hidden="true"></span>
+          </li><li>
+            <button type="button" aria-label="Open CHAMBER III: How Meaning Is Created" aria-controls="chamber-3-panel" aria-pressed="false" data-chamber-stage="chamber-3">
+              <span aria-hidden="true">III</span>
+              <span class="tarot-beginners-index__sr-only">How Meaning Is Created</span>
+              <i aria-hidden="true" hidden data-chamber-stage-mark></i>
+            </button>
+          </li></ol>
+        </nav>
+        </header>
+        <div class="tarot-beginners-lesson-chambers" data-lesson-chambers><section class="tarot-beginners-lesson-chamber is-active is-open" id="chamber-1" aria-labelledby="chamber-1-heading" data-lesson-chamber="chamber-1" data-chamber-default-open>
+          <div class="tarot-beginners-lesson-chamber__header">
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-placeholder="chapter-01-chamber-01" data-future-src="/assets/images/tarot-for-beginners/chapter-01/chamber-01.webp">
+          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Placeholder for future artwork showing tarot as a structured deck">
+            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
+            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
+            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
+          </div>
+          <figcaption id="chapter-01-chamber-01-placeholder-caption"><span>Development visual</span><strong>chapter-01-chamber-01</strong></figcaption>
+        </figure>
+            <div class="tarot-beginners-lesson-chamber__summary">
+              <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">I</span><p>CHAMBER I</p></div>
+              <h3 id="chamber-1-heading" data-chamber-title>What You Are Looking At</h3>
+              <p id="chamber-1-preview">Step into the room of form. Here we explore the deck as an object, its structure, components, and the visible elements that make it what it is.</p>
+              <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER I"><li>The Deck</li><li>The Cards</li><li>The System</li></ul>
+            </div>
+            <button class="tarot-beginners-lesson-chamber__trigger" type="button" aria-expanded="true" aria-controls="chamber-1-panel" aria-labelledby="chamber-1-heading" aria-describedby="chamber-1-preview" data-chamber-trigger="chamber-1"><span data-chamber-trigger-label>Close CHAMBER I</span><span aria-hidden="true">→</span></button>
+          </div>
+          <div class="tarot-beginners-lesson-chamber__panel" id="chamber-1-panel" role="region" aria-labelledby="chamber-1-heading" data-chamber-panel="chamber-1">
+            <div class="tarot-beginners-lesson-chamber__panel-inner">
+              <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--stats" data-lesson-visual-tool="stats">
+          <div class="tarot-beginners-lesson-visual-tool__field" aria-hidden="true"><span></span><i>✦</i></div>
+          <div class="tarot-beginners-lesson-visual-tool__content"><ul><li>78 Cards</li><li>Major and Minor Arcana</li><li>Four Suits</li><li>Number and Court Cards</li></ul></div>
+          <figcaption>Tarot deck structure</figcaption>
+        </figure>
+              <div class="tarot-beginners-lesson-chamber__editorial"><section class="tarot-beginners-lesson-chamber__section">
+              <h4>A Deck</h4>
+              <p>Tarot is a seventy-eight-card system containing recurring figures, numbers, suits, archetypes, colors, objects, and narrative patterns.</p>
+            </section></div>
+              <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Tarot begins as a structured deck before it becomes an interpretive practice.</p></aside>
+            </div>
+          </div>
+        </section><section class="tarot-beginners-lesson-chamber" id="chamber-2" aria-labelledby="chamber-2-heading" data-lesson-chamber="chamber-2">
+          <div class="tarot-beginners-lesson-chamber__header">
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-placeholder="chapter-01-chamber-02" data-future-src="/assets/images/tarot-for-beginners/chapter-01/chamber-02.webp">
+          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Placeholder for future artwork exploring tarot imagery and symbols">
+            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
+            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
+            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
+          </div>
+          <figcaption id="chapter-01-chamber-02-placeholder-caption"><span>Development visual</span><strong>chapter-01-chamber-02</strong></figcaption>
+        </figure>
+            <div class="tarot-beginners-lesson-chamber__summary">
+              <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">II</span><p>CHAMBER II</p></div>
+              <h3 id="chamber-2-heading" data-chamber-title>What the Images Are Saying</h3>
+              <p id="chamber-2-preview">Step into the room of symbols. Here we discover what the images communicate through archetypes, emotions, themes, and the symbolic language of tarot.</p>
+              <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER II"><li>Symbols</li><li>Themes</li><li>Archetypes</li></ul>
+            </div>
+            <button class="tarot-beginners-lesson-chamber__trigger" type="button" aria-expanded="true" aria-controls="chamber-2-panel" aria-labelledby="chamber-2-heading" aria-describedby="chamber-2-preview" data-chamber-trigger="chamber-2"><span data-chamber-trigger-label>Close CHAMBER II</span><span aria-hidden="true">→</span></button>
+          </div>
+          <div class="tarot-beginners-lesson-chamber__panel" id="chamber-2-panel" role="region" aria-labelledby="chamber-2-heading" data-chamber-panel="chamber-2">
+            <div class="tarot-beginners-lesson-chamber__panel-inner">
+              <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--examples" data-lesson-visual-tool="examples">
+          <div class="tarot-beginners-lesson-visual-tool__field" aria-hidden="true"><span></span><i>✦</i></div>
+          <div class="tarot-beginners-lesson-visual-tool__content"><ul><li>Example Symbol 01</li><li>Example Symbol 02</li><li>Example Symbol 03</li></ul></div>
+          <figcaption>Future tarot symbol examples</figcaption>
+        </figure>
+              <div class="tarot-beginners-lesson-chamber__editorial"><section class="tarot-beginners-lesson-chamber__section">
+              <h4>A Symbolic Language</h4>
+              <p>Images communicate ideas about life, choices, emotions, relationships, conflict, movement, and transformation.</p>
+            </section></div>
+              <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>The image is not merely decoration. It carries the vocabulary of the reading.</p></aside>
+            </div>
+          </div>
+        </section><section class="tarot-beginners-lesson-chamber" id="chamber-3" aria-labelledby="chamber-3-heading" data-lesson-chamber="chamber-3">
+          <div class="tarot-beginners-lesson-chamber__header">
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-placeholder="chapter-01-chamber-03" data-future-src="/assets/images/tarot-for-beginners/chapter-01/chamber-03.webp">
+          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Placeholder for future artwork illustrating how tarot interpretation develops">
+            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
+            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
+            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
+          </div>
+          <figcaption id="chapter-01-chamber-03-placeholder-caption"><span>Development visual</span><strong>chapter-01-chamber-03</strong></figcaption>
+        </figure>
+            <div class="tarot-beginners-lesson-chamber__summary">
+              <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">III</span><p>CHAMBER III</p></div>
+              <h3 id="chamber-3-heading" data-chamber-title>How Meaning Is Created</h3>
+              <p id="chamber-3-preview">Step into the room of synthesis. Here we learn how meaning emerges through connection, context, and the art of interpretation.</p>
+              <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER III"><li>Context</li><li>Association</li><li>Reflection</li></ul>
+            </div>
+            <button class="tarot-beginners-lesson-chamber__trigger" type="button" aria-expanded="true" aria-controls="chamber-3-panel" aria-labelledby="chamber-3-heading" aria-describedby="chamber-3-preview" data-chamber-trigger="chamber-3"><span data-chamber-trigger-label>Close CHAMBER III</span><span aria-hidden="true">→</span></button>
+          </div>
+          <div class="tarot-beginners-lesson-chamber__panel" id="chamber-3-panel" role="region" aria-labelledby="chamber-3-heading" data-chamber-panel="chamber-3">
+            <div class="tarot-beginners-lesson-chamber__panel-inner">
+              <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--equation" data-lesson-visual-tool="equation">
+          <div class="tarot-beginners-lesson-visual-tool__field" aria-hidden="true"><span></span><i>✦</i></div>
+          <div class="tarot-beginners-lesson-visual-tool__content"><div class="tarot-beginners-lesson-visual-tool__equation" role="group" aria-label="Card plus Question plus Context plus Reader equals Interpretation"><span class="tarot-beginners-lesson-visual-tool__term">Card</span><span class="tarot-beginners-lesson-visual-tool__operator" aria-hidden="true">+</span><span class="tarot-beginners-lesson-visual-tool__term">Question</span><span class="tarot-beginners-lesson-visual-tool__operator" aria-hidden="true">+</span><span class="tarot-beginners-lesson-visual-tool__term">Context</span><span class="tarot-beginners-lesson-visual-tool__operator" aria-hidden="true">+</span><span class="tarot-beginners-lesson-visual-tool__term">Reader</span><span class="tarot-beginners-lesson-visual-tool__operator" aria-hidden="true">=</span><strong>Interpretation</strong></div></div>
+          <figcaption>Interpretation model</figcaption>
+        </figure>
+              <div class="tarot-beginners-lesson-chamber__editorial"><section class="tarot-beginners-lesson-chamber__section">
+              <h4>An Interpretive Tool</h4>
+              <p>Meaning develops through the visible card, traditional associations, the question, context, and careful reflection.</p><p>Tarot does not guarantee certainty or remove personal responsibility. Within Astral Veil, the cards are treated as mirrors for patterns and possibilities rather than fixed verdicts.</p>
+            </section></div>
+              <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Tarot offers perspective through symbols. It does not remove your ability to choose.</p></aside>
+            </div>
+          </div>
+        </section></div>
+        <aside class="tarot-beginners-lesson-takeaway" aria-labelledby="what-is-tarot-lesson-takeaway-heading">
+          <span aria-hidden="true">✦</span>
+          <div><h3 id="what-is-tarot-lesson-takeaway-heading">Remember This</h3><p>Tarot offers perspective through symbols. It does not remove your ability to choose.</p></div>
+        </aside>
+        <section class="tarot-beginners-lesson-completion" aria-labelledby="what-is-tarot-lesson-completion-heading">
+          <div class="tarot-beginners-lesson-completion__progress">
+            <h3 id="what-is-tarot-lesson-completion-heading">Chapter Completion</h3>
+            <p aria-live="polite" data-lesson-course-progress-text>0 of 10 chapters complete</p>
+            <div role="progressbar" aria-label="Tarot for Beginners course completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-lesson-course-progress><span></span></div>
+          </div>
+          <button class="tarot-beginners-button tarot-beginners-button--secondary tarot-beginners-lesson-completion__button" type="button" aria-pressed="false" data-beginner-complete-chapter="what-is-tarot"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark Chapter Complete</span></button>
+        </section>
+        <nav class="tarot-beginners-lesson-navigation" aria-label="Chapter navigation">
+          <div class="tarot-beginners-lesson-navigation__previous"><a href="#chapters" aria-disabled="true" tabindex="-1" data-reader-previous><span aria-hidden="true">←</span><span>Previous Chapter</span><strong>No previous chapter</strong></a><a href="?view=chapters" data-beginner-index-link>Return to Chapter Library</a></div>
+          <p class="tarot-beginners-lesson-navigation__position"><span>Current progress</span><strong>Chapter 01 of 10</strong></p>
+          <div class="tarot-beginners-lesson-navigation__next"><a href="#what-you-need" data-beginner-chapter-link="what-you-need" data-reader-continue><span>Continue to Chapter 02</span><strong>What Do You Need?</strong><span aria-hidden="true">→</span></a></div>
+        </nav>
       </article><article class="tarot-beginners-chapter" id="what-you-need" aria-labelledby="what-you-need-heading" data-beginner-chapter="what-you-need">
         <header class="tarot-beginners-chapter__header">
           <p class="tarot-beginners-chapter__number">Chapter 02 <span aria-hidden="true">·</span> 10</p>
@@ -525,10 +832,9 @@
             <nav class="tarot-beginners-reader-controls" aria-label="Guided chapter controls" data-reader-controls>
               <a class="tarot-beginners-button tarot-beginners-button--secondary" href="#chapters" aria-disabled="true" data-reader-previous><span aria-hidden="true">←</span> Previous Chapter</a>
               <a class="tarot-beginners-button tarot-beginners-button--primary" href="#what-you-need" data-reader-continue>Continue to Chapter 02 <span aria-hidden="true">→</span></a>
-              <a class="tarot-beginners-button tarot-beginners-button--text" href="#chapters" data-beginner-view-link="library">Return to Chapter Library</a>
-              <a class="tarot-beginners-button tarot-beginners-button--text" href="#what-is-tarot" data-beginner-view-all>View All Chapters</a>
+              <a class="tarot-beginners-button tarot-beginners-button--text" href="?view=chapters" data-beginner-index-link>View All Chapters</a>
             </nav>
-            <p class="tarot-beginners-reader__end" data-reader-end hidden>You have reached Chapter 10. Choose the next doorway above, return to the library, or view the complete chapter.</p>
+            <p class="tarot-beginners-reader__end" data-reader-end hidden>You have reached Chapter 10. Return to the chapter index to choose another doorway.</p>
           </div>
         </div>
         <dialog class="tarot-beginners-chapter-menu" id="beginner-chapter-menu" aria-labelledby="beginner-chapter-menu-title" data-chapter-menu>
@@ -539,7 +845,7 @@
         </dialog>
       </section>
       </div>
-      <section class="tarot-faq major-arcana-faq tarot-education-faq tarot-beginners-faq" id="beginner-faq" aria-labelledby="beginner-faq-heading" data-education-faq>
+      <section class="tarot-faq major-arcana-faq tarot-education-faq tarot-beginners-faq tarot-faq--split" id="beginner-faq" aria-labelledby="beginner-faq-heading" data-education-faq>
         <div class="tarot-shell tarot-faq__inner">
           <header class="tarot-faq__header">
             <p class="tarot-faq__eyebrow">Questions at the Threshold</p>
@@ -548,56 +854,96 @@
             <div class="tarot-faq__divider" aria-hidden="true"><span></span><span class="tarot-faq__ornament">✦</span><span></span></div>
           </header>
           <div class="tarot-faq__list"><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-1" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-1" data-education-faq-button><span>What is tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-1" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-1" data-education-faq-button>
+              <span>What is tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-1" role="region" aria-labelledby="tarot-beginners-faq-question-1" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Tarot is a seventy-eight-card deck, a symbolic language, and an interpretive tool used to explore patterns, possibilities, and choices. <a href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot">Begin with the first chapter</a> for a fuller introduction.</p></div></div>
           </article><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-2" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-2" data-education-faq-button><span>Is tarot difficult to learn?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-2" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-2" data-education-faq-button>
+              <span>Is tarot difficult to learn?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-2" role="region" aria-labelledby="tarot-beginners-faq-question-2" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Tarot takes time to know, but it does not require instant mastery. Learning symbols, suits, numbers, and a few useful meanings at a time makes the deck manageable.</p></div></div>
           </article><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-3" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-3" data-education-faq-button><span>What tarot deck is best for beginners?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-3" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-3" data-education-faq-button>
+              <span>What tarot deck is best for beginners?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-3" role="region" aria-labelledby="tarot-beginners-faq-question-3" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Choose a deck with readable, consistent imagery and a useful guidebook—especially one based on a recognizable tarot system. <a href="#choosing-your-first-deck" data-beginner-chapter-link="choosing-your-first-deck">Review the first-deck guide</a> before deciding.</p></div></div>
           </article><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-4" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-4" data-education-faq-button><span>Does my first tarot deck need to be gifted?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-4" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-4" data-education-faq-button>
+              <span>Does my first tarot deck need to be gifted?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-4" role="region" aria-labelledby="tarot-beginners-faq-question-4" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>No. You may choose and buy your own first tarot deck. The gifted-deck rule is a custom, not a requirement.</p></div></div>
           </article><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-5" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-5" data-education-faq-button><span>Do I need psychic abilities to read tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-5" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-5" data-education-faq-button>
+              <span>Do I need psychic abilities to read tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-5" role="region" aria-labelledby="tarot-beginners-faq-question-5" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>No. Tarot can be learned through observation, symbolic study, context, practice, and reflection. You do not need to claim psychic abilities.</p></div></div>
           </article><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-6" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-6" data-education-faq-button><span>Do I need to memorize all seventy-eight cards?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-6" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-6" data-education-faq-button>
+              <span>Do I need to memorize all seventy-eight cards?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-6" role="region" aria-labelledby="tarot-beginners-faq-question-6" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>No. Start with imagery and patterns, learn two or three useful meanings, and check a reliable reference afterward. <a href="#learning-card-meanings" data-beginner-chapter-link="learning-card-meanings">Explore the learning-meanings chapter</a> for a practical method.</p></div></div>
           </article><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-7" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-7" data-education-faq-button><span>Should beginners use reversed cards?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-7" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-7" data-education-faq-button>
+              <span>Should beginners use reversed cards?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-7" role="region" aria-labelledby="tarot-beginners-faq-question-7" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Reversals are optional. You can learn with upright cards first, then add reversals when they support clarity rather than overwhelm.</p></div></div>
           </article><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-8" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-8" data-education-faq-button><span>Can beginners read tarot for themselves?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-8" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-8" data-education-faq-button>
+              <span>Can beginners read tarot for themselves?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-8" role="region" aria-labelledby="tarot-beginners-faq-question-8" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Yes. Self-reading can be useful when you record your question, remain honest about bias, and avoid repeatedly drawing for the same answer. <a href="/how-to-read-tarot-cards/">Learn the full reading process</a>.</p></div></div>
           </article><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-9" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-9" data-education-faq-button><span>Is tarot the same as fortune-telling?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-9" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-9" data-education-faq-button>
+              <span>Is tarot the same as fortune-telling?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-9" role="region" aria-labelledby="tarot-beginners-faq-question-9" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Not necessarily. Some people use tarot predictively, while Astral Veil treats it as a reflective tool for examining present patterns, possibilities, and choices rather than fixed verdicts.</p></div></div>
           </article><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-10" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-10" data-education-faq-button><span>How long does it take to learn tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-10" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-10" data-education-faq-button>
+              <span>How long does it take to learn tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-10" role="region" aria-labelledby="tarot-beginners-faq-question-10" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>There is no single timetable. You can begin meaningful study immediately, while deeper familiarity grows over weeks, months, and years of repeated attention.</p></div></div>
           </article><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-11" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-11" data-education-faq-button><span>What is the difference between Major and Minor Arcana?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-11" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-11" data-education-faq-button>
+              <span>What is the difference between Major and Minor Arcana?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-11" role="region" aria-labelledby="tarot-beginners-faq-question-11" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>The twenty-two Major Arcana cards describe larger archetypes and turning points. The fifty-six Minor Arcana cards describe everyday life through suits, numbers, and court cards. <a href="#inside-the-deck" data-beginner-chapter-link="inside-the-deck">See the deck structure</a>.</p></div></div>
           </article><article class="tarot-faq__item" data-education-faq-item>
-            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-12" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-12" data-education-faq-button><span>Where should I start learning tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3>
+            <h3><button class="tarot-faq__trigger" id="tarot-beginners-faq-question-12" type="button" aria-expanded="true" aria-controls="tarot-beginners-faq-answer-12" data-education-faq-button>
+              <span>Where should I start learning tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
             <div class="tarot-faq__answer" id="tarot-beginners-faq-answer-12" role="region" aria-labelledby="tarot-beginners-faq-question-12" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Start with what tarot is, choose a readable deck, learn the structure, and spend your first week becoming familiar with the images. <a href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot">Open Chapter One</a> or follow the <a href="#first-week-with-tarot" data-beginner-chapter-link="first-week-with-tarot">seven-day study path</a>.</p></div></div>
           </article></div>
         </div>
       </section>
       <section class="tarot-beginners-closing" aria-labelledby="beginner-closing-heading">
         <div class="tarot-beginners-shell tarot-beginners-closing__inner">
-          <p class="tarot-beginners-eyebrow">The Book Is Open</p>
-          <h2 id="beginner-closing-heading">Choose One Useful Next Step</h2>
-          <p>Begin a reflective reading now, or continue into the practical course when you are ready to place the cards on the table.</p>
-          <div class="tarot-beginners-actions">
-            <a class="tarot-beginners-button tarot-beginners-button--primary" href="/free-tarot-reading">Begin a Tarot Reading <span aria-hidden="true">→</span></a>
-            <a class="tarot-beginners-button tarot-beginners-button--secondary" href="/how-to-read-tarot-cards/">Learn How to Read Tarot</a>
-          </div>
+          <header class="tarot-beginners-closing__header">
+            <p class="tarot-beginners-eyebrow">The Book Is Open</p>
+            <h2 id="beginner-closing-heading">Choose Where to Go Next</h2>
+            <p>Begin a reflective tarot reading now, or continue into the practical How to Read Tarot guide.</p>
+          </header>
+          <nav class="tarot-beginners-closing__doors" aria-label="Choose your next tarot destination">
+            <a class="tarot-beginners-closing__door tarot-beginners-closing__door--practice" href="/free-tarot-reading" aria-label="Begin a Tarot Reading">
+            <span class="tarot-beginners-closing__content">
+              <span class="tarot-beginners-closing__label">Practice</span>
+              <span class="tarot-beginners-closing__title">Begin a Tarot Reading</span>
+              <span class="tarot-beginners-closing__description">Put the cards on the table and begin with a question already on your mind.</span>
+              <span class="tarot-beginners-closing__cta">Begin a Reading <span aria-hidden="true">→</span></span>
+            </span>
+          </a>
+            <a class="tarot-beginners-closing__door tarot-beginners-closing__door--learning" href="/how-to-read-tarot-cards/" aria-label="Learn How to Read Tarot">
+            <span class="tarot-beginners-closing__content">
+              <span class="tarot-beginners-closing__label">Continue Learning</span>
+              <span class="tarot-beginners-closing__title">Learn How to Read Tarot</span>
+              <span class="tarot-beginners-closing__description">Continue into the practical guide and learn how to prepare, draw, and interpret your cards.</span>
+              <span class="tarot-beginners-closing__cta">Open the Guide <span aria-hidden="true">→</span></span>
+            </span>
+          </a>
+          </nav>
         </div>
       </section>
-      <script id="tarot-beginners-chapter-data" type="application/json">[{"id":"what-is-tarot","number":"01","navLabel":"What Is Tarot?","title":"What Is Tarot, Really?","hash":"#what-is-tarot","previous":null,"next":"what-you-need"},{"id":"what-you-need","number":"02","navLabel":"What Do You Need?","title":"What Do You Actually Need?","hash":"#what-you-need","previous":"what-is-tarot","next":"choosing-your-first-deck"},{"id":"choosing-your-first-deck","number":"03","navLabel":"Choosing a Deck","title":"Which Tarot Deck Should You Begin With?","hash":"#choosing-your-first-deck","previous":"what-you-need","next":"inside-the-deck"},{"id":"inside-the-deck","number":"04","navLabel":"Inside the Deck","title":"What Lives Inside Seventy-Eight Cards?","hash":"#inside-the-deck","previous":"choosing-your-first-deck","next":"learning-card-meanings"},{"id":"learning-card-meanings","number":"05","navLabel":"Learning Meanings","title":"Do You Need to Memorize Every Card?","hash":"#learning-card-meanings","previous":"inside-the-deck","next":"tarot-myths"},{"id":"tarot-myths","number":"06","navLabel":"Tarot Myths","title":"What Are Beginners Often Told?","hash":"#tarot-myths","previous":"learning-card-meanings","next":"first-week-with-tarot"},{"id":"first-week-with-tarot","number":"07","navLabel":"First Week","title":"What Should Your First Week Look Like?","hash":"#first-week-with-tarot","previous":"tarot-myths","next":"beginner-mistakes"},{"id":"beginner-mistakes","number":"08","navLabel":"Common Mistakes","title":"What If You Feel Like You Are Doing It Wrong?","hash":"#beginner-mistakes","previous":"first-week-with-tarot","next":"tarot-glossary"},{"id":"tarot-glossary","number":"09","navLabel":"Glossary","title":"Which Tarot Words Should You Know?","hash":"#tarot-glossary","previous":"beginner-mistakes","next":"choose-your-next-path"},{"id":"choose-your-next-path","number":"10","navLabel":"Next Path","title":"Where Will You Go Next?","hash":"#choose-your-next-path","previous":"tarot-glossary","next":null}]</script>
+      <script id="tarot-beginners-chapter-data" type="application/json">[{"id":"what-is-tarot","number":"01","navLabel":"What Is Tarot?","title":"What Is Tarot, Really?","cardSummary":"Understand tarot as a deck, symbolic language, and interpretive tool.","hash":"#what-is-tarot","previous":null,"next":"what-you-need"},{"id":"what-you-need","number":"02","navLabel":"What Do You Need?","title":"What Do You Actually Need?","cardSummary":"Learn what helps a beginner and what is completely optional.","hash":"#what-you-need","previous":"what-is-tarot","next":"choosing-your-first-deck"},{"id":"choosing-your-first-deck","number":"03","navLabel":"Choosing a Deck","title":"Which Tarot Deck Should You Begin With?","cardSummary":"Find a first deck whose imagery and structure support learning.","hash":"#choosing-your-first-deck","previous":"what-you-need","next":"inside-the-deck"},{"id":"inside-the-deck","number":"04","navLabel":"Inside the Deck","title":"What Lives Inside Seventy-Eight Cards?","cardSummary":"See how seventy-eight cards divide into Arcana, suits, numbers, and courts.","hash":"#inside-the-deck","previous":"choosing-your-first-deck","next":"learning-card-meanings"},{"id":"learning-card-meanings","number":"05","navLabel":"Learning Meanings","title":"Do You Need to Memorize Every Card?","cardSummary":"Learn patterns and context without memorizing rigid definitions.","hash":"#learning-card-meanings","previous":"inside-the-deck","next":"tarot-myths"},{"id":"tarot-myths","number":"06","navLabel":"Tarot Myths","title":"What Are Beginners Often Told?","cardSummary":"Separate useful tradition from assumptions and repeated misinformation.","hash":"#tarot-myths","previous":"learning-card-meanings","next":"first-week-with-tarot"},{"id":"first-week-with-tarot","number":"07","navLabel":"First Week","title":"What Should Your First Week Look Like?","cardSummary":"Follow a calm seven-day study path for becoming familiar with the deck.","hash":"#first-week-with-tarot","previous":"tarot-myths","next":"beginner-mistakes"},{"id":"beginner-mistakes","number":"08","navLabel":"Common Mistakes","title":"What If You Feel Like You Are Doing It Wrong?","cardSummary":"Understand why beginner uncertainty is normal and how to work through it.","hash":"#beginner-mistakes","previous":"first-week-with-tarot","next":"tarot-glossary"},{"id":"tarot-glossary","number":"09","navLabel":"Glossary","title":"Which Tarot Words Should You Know?","cardSummary":"Learn the essential words used throughout tarot study.","hash":"#tarot-glossary","previous":"beginner-mistakes","next":"choose-your-next-path"},{"id":"choose-your-next-path","number":"10","navLabel":"Next Path","title":"Where Will You Go Next?","cardSummary":"Choose the next doorway into the larger Astral Veil tarot archive.","hash":"#choose-your-next-path","previous":"tarot-glossary","next":null}]</script>
     </main>
 
     <footer class="site-footer" data-footer-drawer><div class="site-footer__shell"><div class="site-footer__compact"><p class="site-footer__mark">Astral Veil™</p><p class="site-footer__tagline">Between fate and imagination</p><div class="site-footer__actions"><button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details"><span data-footer-toggle-label>Explore</span><span class="site-footer__chevron" aria-hidden="true">⌄</span></button><button class="site-footer__share" type="button" data-share-astral-veil>Share</button></div></div><div class="site-footer__inner" id="site-footer-details" hidden><div class="site-footer__brand"><h2>Astral Veil™</h2><p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p><p class="site-footer__poem">✦ Between fate and imagination ✦</p></div><nav class="site-footer__nav" aria-label="Footer navigation"><p class="site-footer__label">Explore</p><a href="/">Home</a><a href="/veilwalkers">Veilwalkers</a><a href="/decks">Decks</a><a href="/tarot">Tarot</a><a href="/about">About</a><a href="/lumen-archive" data-lumen-archive-footer-link>Lumen Archive</a></nav><div class="site-footer__creator"><p class="site-footer__label">Creator</p><p>Crafted by João Monteiro</p><p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p><p>Designer • Developer • Worldbuilder</p><p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p></div><p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p><nav class="site-footer__legal" aria-label="Legal links"><a href="/terms">Terms of Service</a><span aria-hidden="true">·</span><a href="/privacy">Privacy Policy</a></nav></div><p class="site-footer__share-status" aria-live="polite"></p></div></footer>

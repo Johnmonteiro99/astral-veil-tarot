@@ -594,33 +594,6 @@
     scheduleActiveShowcase();
   }
 
-  const faqRoot = document.querySelector("[data-major-faq]");
-
-  if (faqRoot) {
-    const items = Array.from(faqRoot.querySelectorAll("[data-major-faq-item]"));
-
-    function setFaqState(item, expanded) {
-      const button = item.querySelector("[data-major-faq-button]");
-      const panel = document.getElementById(button?.getAttribute("aria-controls") || "");
-      const icon = button?.querySelector(".tarot-faq__icon");
-      item.classList.toggle("is-open", expanded);
-      button?.setAttribute("aria-expanded", String(expanded));
-      panel?.setAttribute("aria-hidden", String(!expanded));
-      if (panel) panel.inert = !expanded;
-      if (icon) icon.textContent = expanded ? "−" : "+";
-    }
-
-    items.forEach((item) => {
-      item.querySelector("[data-major-faq-button]")?.addEventListener("click", () => {
-        const shouldOpen = !item.classList.contains("is-open");
-        items.forEach((candidate) => setFaqState(candidate, false));
-        if (shouldOpen) setFaqState(item, true);
-      });
-    });
-    faqRoot.classList.add("is-enhanced");
-    items.forEach((item) => setFaqState(item, false));
-  }
-
   window.addEventListener("astralVeilBloodMoonChange", updateThemeImages);
   updateThemeImages();
 })();

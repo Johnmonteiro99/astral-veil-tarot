@@ -12,6 +12,34 @@
   --tarot-glow: var(--theme-glow-primary, rgba(135, 92, 226, 0.28));
   --tarot-button-text: #160f21;
   --tarot-search-icon-filter: invert(82%) sepia(42%) saturate(672%) hue-rotate(358deg) brightness(98%) contrast(88%);
+  /* Semantic paint shared only by Tarot education and topic components. */
+  --tarot-education-surface-primary: rgba(12, 9, 27, .84);
+  --tarot-education-surface-secondary: rgba(22, 15, 43, .72);
+  --tarot-education-surface-subtle: rgba(34, 23, 61, .42);
+  --tarot-education-surface-hover: rgba(47, 31, 77, .52);
+  --tarot-education-surface-open: rgba(27, 18, 50, .68);
+  --tarot-education-border: rgba(151, 122, 201, .25);
+  --tarot-education-border-strong: rgba(184, 151, 233, .42);
+  --tarot-education-divider: rgba(144, 119, 184, .2);
+  --tarot-education-accent: #b99ce7;
+  --tarot-education-accent-soft: rgba(181, 146, 232, .24);
+  --tarot-education-accent-muted: #9982bd;
+  --tarot-education-glow: rgba(150, 106, 223, .28);
+  --tarot-education-glow-soft: rgba(105, 73, 168, .14);
+  --tarot-education-shadow: rgba(4, 3, 14, .62);
+  --tarot-education-inset-shadow: rgba(97, 65, 155, .12);
+  --tarot-education-text-primary: #f5f0ff;
+  --tarot-education-text-secondary: #c9bfd8;
+  --tarot-education-text-muted: #9f94b2;
+  --tarot-question-surface: rgba(15, 11, 31, .34);
+  --tarot-question-surface-hover: rgba(34, 23, 58, .48);
+  --tarot-question-surface-open: rgba(27, 18, 50, .68);
+  --tarot-question-border: rgba(137, 110, 182, .2);
+  --tarot-question-border-hover: rgba(178, 144, 224, .34);
+  --tarot-question-text: #f2edf9;
+  --tarot-question-answer: #c6bbd2;
+  --tarot-question-icon: #c9a860;
+  --tarot-question-focus: rgba(185, 156, 231, .38);
   color: var(--tarot-text);
   background: var(--tarot-bg-deep);
 }
@@ -38,6 +66,63 @@
   --tarot-sun-action-hover-text: #211a11;
   --tarot-sun-action-hover-background: linear-gradient(135deg,#ffe6a7,#f1c56f);
   --tarot-sun-action-hover-shadow: 0 0 22px rgba(241,181,73,.42);
+  --tarot-education-surface-primary: rgba(3, 22, 20, .94);
+  --tarot-education-surface-secondary: rgba(10, 40, 34, .68);
+  --tarot-education-surface-subtle: rgba(18, 48, 40, .38);
+  --tarot-education-surface-hover: rgba(20, 55, 47, .48);
+  --tarot-education-surface-open: rgba(14, 43, 37, .64);
+  --tarot-education-border: rgba(181, 149, 75, .3);
+  --tarot-education-border-strong: rgba(224, 187, 103, .44);
+  --tarot-education-divider: rgba(181, 149, 75, .2);
+  --tarot-education-accent: #c9aa62;
+  --tarot-education-accent-soft: rgba(201, 170, 98, .22);
+  --tarot-education-accent-muted: #aa9363;
+  --tarot-education-glow: rgba(105, 150, 112, .24);
+  --tarot-education-glow-soft: rgba(73, 115, 86, .14);
+  --tarot-education-shadow: rgba(0, 8, 8, .53);
+  --tarot-education-inset-shadow: rgba(151, 175, 132, .1);
+  --tarot-education-text-primary: #fff5dc;
+  --tarot-education-text-secondary: #ead8b4;
+  --tarot-education-text-muted: #c7b996;
+  --tarot-question-surface: rgba(4, 20, 18, .3);
+  --tarot-question-surface-hover: rgba(19, 51, 42, .42);
+  --tarot-question-surface-open: rgba(13, 38, 33, .58);
+  --tarot-question-border: rgba(201, 170, 98, .2);
+  --tarot-question-border-hover: rgba(232, 196, 112, .36);
+  --tarot-question-text: #fff5dc;
+  --tarot-question-answer: #ead8b4;
+  --tarot-question-icon: #f1c56f;
+  --tarot-question-focus: rgba(241, 197, 111, .38);
+}
+
+.tarot-meanings-page.moon-mode {
+  --tarot-education-surface-primary: rgba(12, 9, 27, .84);
+  --tarot-education-surface-secondary: rgba(22, 15, 43, .72);
+  --tarot-education-surface-subtle: rgba(34, 23, 61, .42);
+  --tarot-education-surface-hover: rgba(47, 31, 77, .52);
+  --tarot-education-surface-open: rgba(27, 18, 50, .68);
+  --tarot-education-border: rgba(151, 122, 201, .25);
+  --tarot-education-border-strong: rgba(184, 151, 233, .42);
+  --tarot-education-divider: rgba(144, 119, 184, .2);
+  --tarot-education-accent: #b99ce7;
+  --tarot-education-accent-soft: rgba(181, 146, 232, .24);
+  --tarot-education-accent-muted: #9982bd;
+  --tarot-education-glow: rgba(150, 106, 223, .28);
+  --tarot-education-glow-soft: rgba(105, 73, 168, .14);
+  --tarot-education-shadow: rgba(4, 3, 14, .62);
+  --tarot-education-inset-shadow: rgba(97, 65, 155, .12);
+  --tarot-education-text-primary: #f5f0ff;
+  --tarot-education-text-secondary: #c9bfd8;
+  --tarot-education-text-muted: #9f94b2;
+  --tarot-question-surface: rgba(15, 11, 31, .34);
+  --tarot-question-surface-hover: rgba(34, 23, 58, .48);
+  --tarot-question-surface-open: rgba(27, 18, 50, .68);
+  --tarot-question-border: rgba(137, 110, 182, .2);
+  --tarot-question-border-hover: rgba(178, 144, 224, .34);
+  --tarot-question-text: #f2edf9;
+  --tarot-question-answer: #c6bbd2;
+  --tarot-question-icon: #c9a860;
+  --tarot-question-focus: rgba(185, 156, 231, .38);
 }
 
 .tarot-meanings-page.blood-moon-mode {
@@ -52,6 +137,50 @@
   --tarot-glow: rgba(224, 52, 82, 0.28);
   --tarot-button-text: #160105;
   --tarot-search-icon-filter: invert(63%) sepia(48%) saturate(1398%) hue-rotate(307deg) brightness(103%) contrast(101%);
+  --tarot-education-surface-primary: rgba(24, 6, 10, .86);
+  --tarot-education-surface-secondary: rgba(43, 10, 17, .7);
+  --tarot-education-surface-subtle: rgba(53, 12, 21, .4);
+  --tarot-education-surface-hover: rgba(67, 18, 29, .48);
+  --tarot-education-surface-open: rgba(55, 12, 23, .66);
+  --tarot-education-border: rgba(172, 62, 75, .3);
+  --tarot-education-border-strong: rgba(216, 82, 96, .44);
+  --tarot-education-divider: rgba(172, 62, 75, .2);
+  --tarot-education-accent: #d56672;
+  --tarot-education-accent-soft: rgba(201, 58, 75, .22);
+  --tarot-education-accent-muted: #a95260;
+  --tarot-education-glow: rgba(183, 39, 56, .28);
+  --tarot-education-glow-soft: rgba(126, 23, 38, .15);
+  --tarot-education-shadow: rgba(8, 0, 3, .64);
+  --tarot-education-inset-shadow: rgba(151, 32, 51, .12);
+  --tarot-education-text-primary: #f8e5dd;
+  --tarot-education-text-secondary: #d9bfba;
+  --tarot-education-text-muted: #b99b9b;
+  --tarot-question-surface: rgba(24, 5, 10, .36);
+  --tarot-question-surface-hover: rgba(52, 12, 22, .5);
+  --tarot-question-surface-open: rgba(45, 8, 18, .7);
+  --tarot-question-border: rgba(172, 62, 75, .22);
+  --tarot-question-border-hover: rgba(216, 82, 96, .38);
+  --tarot-question-text: #f8e5dd;
+  --tarot-question-answer: #d9bfba;
+  --tarot-question-icon: #d98a72;
+  --tarot-question-focus: rgba(217, 138, 114, .38);
+}
+
+/* Theme-aware lower-edge blend for the eight Tarot education heroes. */
+.tarot-meanings-page :is(.tarot-education-hero, .htr-hero)[data-education-page] {
+  --tarot-hero-blend-primary: var(--education-hero-surface, var(--htr-surface-strong));
+  --tarot-hero-blend-secondary: var(--education-hero-surface, var(--htr-surface-strong));
+  --tarot-hero-edge-shadow: color-mix(in srgb, var(--tarot-hero-blend-primary) 68%, transparent);
+  --tarot-hero-overlay: linear-gradient(transparent, transparent);
+}
+
+body.moon-mode.tarot-meanings-page :is(.tarot-education-hero, .htr-hero)[data-education-page] {
+  --tarot-hero-blend-primary: rgba(4, 6, 20, .92);
+  --tarot-hero-blend-secondary: rgba(20, 14, 55, .72);
+  --tarot-hero-edge-shadow: rgba(4, 6, 20, .92);
+  --tarot-hero-overlay:
+    radial-gradient(ellipse at 55% 100%, rgba(52, 42, 96, .24), transparent 65%),
+    radial-gradient(ellipse at 82% 100%, rgba(34, 55, 105, .12), transparent 54%);
 }
 
 .tarot-meanings-page .tarot-background { position: fixed; }

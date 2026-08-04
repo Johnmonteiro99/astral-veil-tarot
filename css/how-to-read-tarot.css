@@ -1,4 +1,5 @@
 .how-to-read-page {
+  --htr-bg: #071311;
   --htr-accent: #d7b878;
   --htr-accent-strong: #f0d49a;
   --htr-heading: #f4dfb7;
@@ -32,10 +33,11 @@
   --major-section-space: clamp(90px, 11vw, 150px);
   color: var(--htr-text);
   font-family: "DM Sans", sans-serif;
-  background: #071311;
+  background: var(--htr-bg);
 }
 
 .how-to-read-page.moon-mode {
+  --htr-bg: #060511;
   --htr-accent: #ac91e8;
   --htr-accent-strong: #d7c7ff;
   --htr-heading: #eee8ff;
@@ -66,6 +68,7 @@
 }
 
 .how-to-read-page.blood-moon-mode {
+  --htr-bg: #050001;
   --htr-accent: #e65e70;
   --htr-accent-strong: #ff9eaa;
   --htr-heading: #f6d5d9;
@@ -96,6 +99,7 @@
 }
 
 .how-to-read-page.blue-moon-mode {
+  --htr-bg: #020912;
   --htr-reading-text-primary: rgba(239, 248, 255, .97);
   --htr-reading-text-secondary: rgba(207, 226, 240, .86);
   --htr-reading-surface: rgba(2, 9, 18, .92);
@@ -136,7 +140,7 @@
 .htr-hero__visual, .htr-hero__veil { position: absolute; inset: 0; -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 80%, rgba(0, 0, 0, .92) 90%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0%, #000 80%, rgba(0, 0, 0, .92) 90%, transparent 100%); }
 .htr-hero__visual { z-index: 0; }
 .htr-hero__visual img { width: 100%; height: 100%; object-fit: cover; object-position: 64% center; filter: saturate(.9) contrast(1.01); }
-.htr-hero__veil { z-index: 1; background: linear-gradient(90deg, color-mix(in srgb, var(--htr-surface-strong) 96%, transparent) 0%, color-mix(in srgb, var(--htr-surface-strong) 88%, transparent) 24%, color-mix(in srgb, var(--htr-surface-strong) 72%, transparent) 42%, color-mix(in srgb, var(--htr-surface-strong) 20%, transparent) 62%, transparent 78%), linear-gradient(180deg, color-mix(in srgb, var(--htr-surface-strong) 18%, transparent) 0%, transparent 56%, color-mix(in srgb, var(--htr-surface-strong) 68%, transparent) 100%); pointer-events: none; }
+.htr-hero__veil { z-index: 1; background: linear-gradient(90deg, color-mix(in srgb, var(--tarot-hero-blend-primary) 96%, transparent) 0%, color-mix(in srgb, var(--tarot-hero-blend-primary) 88%, transparent) 24%, color-mix(in srgb, var(--tarot-hero-blend-secondary) 72%, transparent) 42%, color-mix(in srgb, var(--tarot-hero-blend-secondary) 20%, transparent) 62%, transparent 78%), var(--tarot-hero-overlay), linear-gradient(180deg, color-mix(in srgb, var(--tarot-hero-blend-primary) 18%, transparent) 0%, transparent 56%, var(--tarot-hero-edge-shadow) 100%); pointer-events: none; }
 .htr-hero__copy { position: relative; z-index: 2; padding-block: clamp(2rem, 3.7vw, 2.8rem); }
 .htr-hero__copy > * { width: min(44%, 620px); }
 .htr-hero__copy .htr-eyebrow { display: flex; align-items: center; gap: .8rem; margin: 0; font-family: "DM Sans", sans-serif; font-size: .64rem; }
@@ -665,18 +669,6 @@
   .htr-learning-thread__item:hover .htr-learning-thread__arrow { color: var(--thread-active); opacity: 1; transform: translateX(4px); }
   .htr-learning-thread__item:hover .htr-learning-thread__underline::after { opacity: .88; transform: scaleX(1); }
 }
-.htr-faq { padding-top: 20px; }
-.htr-faq .tarot-faq__inner { display: block; width: min(920px, calc(100% - 48px)); }
-.htr-faq .tarot-faq__header { max-width: 720px; margin: 0 auto clamp(42px, 6vw, 72px); text-align: center; }
-.htr-faq .tarot-faq__divider { margin-inline: auto; }
-.htr-faq .tarot-faq__list { gap: 0; }
-.htr-faq .tarot-faq__item,
-.htr-faq .tarot-faq__item:hover,
-.htr-faq .tarot-faq__item.is-open,
-.htr-faq .tarot-faq__item:focus-within { border: 0; border-bottom: 1px solid var(--htr-line); border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; transform: none; }
-.htr-faq .tarot-faq__item::before { display: none; }
-.htr-faq .tarot-faq__trigger { min-height: 68px; padding-inline: 4px; color: var(--htr-heading); font: 500 clamp(1.2rem, 2vw, 1.55rem)/1.3 "Cormorant Garamond", serif; }
-.htr-faq .tarot-faq__answer p { max-width: 760px; padding: 0 50px 24px 4px; color: var(--htr-muted); font-family: "DM Sans", sans-serif; }
 .htr-closing { position: relative; padding-bottom: 100px; text-align: center; }
 .htr-closing header { max-width: 700px; margin: 0 auto clamp(38px, 5vw, 56px); }
 .htr-closing h2 { margin: 0; font-size: clamp(3rem, 6vw, 5.8rem); line-height: .9; }
@@ -782,6 +774,7 @@
   .htr-hero__visual, .htr-hero__veil { position: absolute; inset: 0; -webkit-mask-image: none; mask-image: none; }
   .htr-hero__visual img { object-position: 62% center; }
   .htr-hero__veil { background: linear-gradient(180deg, rgba(3,12,17,.2), rgba(3,12,17,.83) 45%, rgba(3,12,17,.96)); }
+  .moon-mode .htr-hero__veil { background: var(--tarot-hero-overlay), linear-gradient(180deg, color-mix(in srgb, var(--tarot-hero-blend-primary) 20%, transparent) 0%, color-mix(in srgb, var(--tarot-hero-blend-primary) 52%, var(--tarot-hero-blend-secondary)) 45%, var(--tarot-hero-edge-shadow) 100%); }
   .blood-moon-mode .htr-hero__veil { background: linear-gradient(180deg, rgba(18,2,7,.22), rgba(18,2,7,.85) 45%, rgba(18,2,7,.97)); }
   .htr-hero__copy .htr-eyebrow, .htr-hero__title, .htr-hero__primary, .htr-hero__primary-actions, .htr-hero__secondary, .htr-hero__secondary-action, .htr-hero__meta { position: relative; z-index: 2; width: min(calc(100% - 32px), 620px); margin-inline: auto; }
   .htr-hero__copy .htr-eyebrow { order: 1; }

@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="/css/animations.css" />
     <link rel="stylesheet" href="/css/tarot.css" />
     <link rel="stylesheet" href="/css/tarot-topic.css" />
+    <link rel="stylesheet" href="/css/tarot-education-components.css" />
   </head>
   <body class="sun-mode tarot-meanings-page tarot-topic-page">
     <script>(function(){var params=new URLSearchParams(window.location.search);var queryBloodMoon=params.get("bloodMoon")||params.get("testBloodMoon");var hasOverride=params.has("bloodMoon")||params.has("testBloodMoon");var isBloodMoon=hasOverride&&(queryBloodMoon===""||/^(1|true|yes|on|active)$/i.test(queryBloodMoon||""));var mode="";try{isBloodMoon=hasOverride?isBloodMoon:sessionStorage.getItem("astralVeilBloodMoonActive")==="true"||localStorage.getItem("astralVeilBloodMoonActive")==="true"||sessionStorage.getItem("astralVeilTestBloodMoonActive")==="true"||localStorage.getItem("astralVeilTestBloodMoonActive")==="true";mode=localStorage.getItem("dailyTarotTheme")||""}catch(error){}if(mode!=="sun"&&mode!=="moon")mode=new Date().getHours()>=6&&new Date().getHours()<18?"sun":"moon";document.body.classList.remove("sun-mode","moon-mode","blood-moon-mode");document.body.classList.add(isBloodMoon?"blood-moon-mode":mode+"-mode")})();</script>
@@ -379,42 +380,44 @@
           </div>
         </section>
 
-      <section class="tarot-topic-faq tarot-topic-section" aria-labelledby="feelings-tarot-faq-heading">
-        <div class="tarot-topic-section-heading tarot-topic-section-heading--compact">
-          <p class="tarot-topic-kicker">Feelings Tarot FAQ</p>
-          <h2 id="feelings-tarot-faq-heading">Questions About Feelings, Intentions, and Tarot</h2>
+      <section class="tarot-faq tarot-education-faq tarot-topic-faq tarot-topic-section tarot-faq--stacked" id="feelings-tarot-faq" aria-labelledby="feelings-tarot-faq-heading" data-education-faq>
+        <div class="tarot-faq__inner">
+          <header class="tarot-faq__header">
+            <p class="tarot-faq__eyebrow">Feelings Tarot FAQ</p>
+            <h2 id="feelings-tarot-faq-heading">Questions About Feelings, Intentions, and Tarot</h2>
+          </header>
+          <div class="tarot-faq__list"><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="feelings-tarot-faq-question-1" type="button" aria-expanded="true" aria-controls="feelings-tarot-faq-answer-1" data-education-faq-button>
+              <span>Can Tarot tell me exactly how someone feels?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="feelings-tarot-faq-answer-1" role="region" aria-labelledby="feelings-tarot-faq-question-1" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Tarot cannot verify another person’s private emotional experience with certainty. It can help you reflect on the dynamic, the behavior you have observed, your own reactions, and the possibilities you may be considering. Direct and respectful communication remains the clearest way to understand someone’s feelings.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="feelings-tarot-faq-question-2" type="button" aria-expanded="true" aria-controls="feelings-tarot-faq-answer-2" data-education-faq-button>
+              <span>Can Tarot reveal another person’s true intentions?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="feelings-tarot-faq-answer-2" role="region" aria-labelledby="feelings-tarot-faq-question-2" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Tarot cannot prove a private motive or guarantee what someone will do. A reading may help you examine patterns, stated priorities, mixed signals, and possible directions, but intentions can change and should be considered alongside consistency, observable action, and honest conversation.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="feelings-tarot-faq-question-3" type="button" aria-expanded="true" aria-controls="feelings-tarot-faq-answer-3" data-education-faq-button>
+              <span>Which Tarot cards represent hidden feelings?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="feelings-tarot-faq-answer-3" role="region" aria-labelledby="feelings-tarot-faq-question-3" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Cards such as The Moon, The High Priestess, Two of Swords, Four of Pentacles, and Seven of Swords may sometimes point toward privacy, ambiguity, guardedness, or incomplete information. They do not prove that a particular feeling is hidden; meaning depends on the question, position, surrounding cards, and real circumstances.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="feelings-tarot-faq-question-4" type="button" aria-expanded="true" aria-controls="feelings-tarot-faq-answer-4" data-education-faq-button>
+              <span>What does a reversed card mean in a feelings reading?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="feelings-tarot-faq-answer-4" role="region" aria-labelledby="feelings-tarot-faq-question-4" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>A reversed card may describe emotion that is internalized, blocked, delayed, avoided, exaggerated, or being reassessed. It does not automatically mean deception, rejection, or the opposite of the upright meaning. Consider the full spread together with communication and observable behavior.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="feelings-tarot-faq-question-5" type="button" aria-expanded="true" aria-controls="feelings-tarot-faq-answer-5" data-education-faq-button>
+              <span>How can I tell intuition from projection?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="feelings-tarot-faq-answer-5" role="region" aria-labelledby="feelings-tarot-faq-question-5" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>Intuition can still be questioned and compared with evidence, while projection often becomes more certain when information is missing. Pause, name the facts you actually know, consider alternative explanations, notice what fear or hope may be adding, and ask what new evidence would change your interpretation.</p></div></div>
+          </article><article class="tarot-faq__item" data-education-faq-item>
+            <h3><button class="tarot-faq__trigger" id="feelings-tarot-faq-question-6" type="button" aria-expanded="true" aria-controls="feelings-tarot-faq-answer-6" data-education-faq-button>
+              <span>Should I use Tarot instead of asking the person directly?</span><span class="tarot-faq__icon" aria-hidden="true">−</span>
+            </button></h3>
+            <div class="tarot-faq__answer" id="feelings-tarot-faq-answer-6" role="region" aria-labelledby="feelings-tarot-faq-question-6" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>No. Tarot can help you prepare for a conversation, understand your own feelings, or clarify what you want to ask, but it should not speak on another person’s behalf. When it is safe and appropriate, direct, respectful communication is the clearest path to mutual understanding.</p></div></div>
+          </article></div>
         </div>
-        <div class="tarot-topic-faq__list"><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-1" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-1" data-topic-faq-button>
-            <span>Can Tarot tell me exactly how someone feels?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-1" role="region" aria-labelledby="tarot-topic-faq-question-1" hidden data-topic-faq-panel><p>Tarot cannot verify another person’s private emotional experience with certainty. It can help you reflect on the dynamic, the behavior you have observed, your own reactions, and the possibilities you may be considering. Direct and respectful communication remains the clearest way to understand someone’s feelings.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-2" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-2" data-topic-faq-button>
-            <span>Can Tarot reveal another person’s true intentions?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-2" role="region" aria-labelledby="tarot-topic-faq-question-2" hidden data-topic-faq-panel><p>Tarot cannot prove a private motive or guarantee what someone will do. A reading may help you examine patterns, stated priorities, mixed signals, and possible directions, but intentions can change and should be considered alongside consistency, observable action, and honest conversation.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-3" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-3" data-topic-faq-button>
-            <span>Which Tarot cards represent hidden feelings?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-3" role="region" aria-labelledby="tarot-topic-faq-question-3" hidden data-topic-faq-panel><p>Cards such as The Moon, The High Priestess, Two of Swords, Four of Pentacles, and Seven of Swords may sometimes point toward privacy, ambiguity, guardedness, or incomplete information. They do not prove that a particular feeling is hidden; meaning depends on the question, position, surrounding cards, and real circumstances.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-4" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-4" data-topic-faq-button>
-            <span>What does a reversed card mean in a feelings reading?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-4" role="region" aria-labelledby="tarot-topic-faq-question-4" hidden data-topic-faq-panel><p>A reversed card may describe emotion that is internalized, blocked, delayed, avoided, exaggerated, or being reassessed. It does not automatically mean deception, rejection, or the opposite of the upright meaning. Consider the full spread together with communication and observable behavior.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-5" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-5" data-topic-faq-button>
-            <span>How can I tell intuition from projection?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-5" role="region" aria-labelledby="tarot-topic-faq-question-5" hidden data-topic-faq-panel><p>Intuition can still be questioned and compared with evidence, while projection often becomes more certain when information is missing. Pause, name the facts you actually know, consider alternative explanations, notice what fear or hope may be adding, and ask what new evidence would change your interpretation.</p></div>
-        </article><article class="tarot-topic-faq__item">
-          <h3><button class="tarot-topic-faq__question" id="tarot-topic-faq-question-6" type="button" aria-expanded="false" aria-controls="tarot-topic-faq-answer-6" data-topic-faq-button>
-            <span>Should I use Tarot instead of asking the person directly?</span><span class="tarot-topic-faq__icon" aria-hidden="true">+</span>
-          </button></h3>
-          <div class="tarot-topic-faq__answer" id="tarot-topic-faq-answer-6" role="region" aria-labelledby="tarot-topic-faq-question-6" hidden data-topic-faq-panel><p>No. Tarot can help you prepare for a conversation, understand your own feelings, or clarify what you want to ask, but it should not speak on another person’s behalf. When it is safe and appropriate, direct, respectful communication is the clearest path to mutual understanding.</p></div>
-        </article></div>
       </section>
 
       <section class="tarot-topic-related tarot-topic-section" aria-labelledby="continue-exploring-heading">
@@ -428,6 +431,6 @@
 
     <footer class="site-footer" data-footer-drawer><div class="site-footer__shell"><div class="site-footer__compact"><p class="site-footer__mark">Astral Veil™</p><p class="site-footer__tagline">Between fate and imagination</p><div class="site-footer__actions"><button class="site-footer__toggle" type="button" aria-expanded="false" aria-controls="site-footer-details"><span data-footer-toggle-label>Explore</span><span class="site-footer__chevron" aria-hidden="true">⌄</span></button><button class="site-footer__share" type="button" data-share-astral-veil>Share</button></div></div><div class="site-footer__inner" id="site-footer-details" hidden><div class="site-footer__brand"><h2>Astral Veil™</h2><p>A cinematic tarot experience for reflection, atmosphere, and symbolic storytelling.</p><p class="site-footer__poem">✦ Between fate and imagination ✦</p></div><nav class="site-footer__nav" aria-label="Footer navigation"><p class="site-footer__label">Explore</p><a href="/">Home</a><a href="/veilwalkers">Veilwalkers</a><a href="/decks">DECKS</a><a href="/tarot">TAROT</a><a href="/about">About</a><a href="/lumen-archive" data-lumen-archive-footer-link>Lumen Archive</a></nav><div class="site-footer__creator"><p class="site-footer__label">Creator</p><p>Crafted by João Monteiro</p><p><a href="https://www.zayverse.dev/" target="_blank" rel="noopener noreferrer">zayverse.dev</a></p><p>Designer • Developer • Worldbuilder</p><p class="site-footer__disclaimer">For entertainment and reflective purposes only.</p></div><p class="site-footer__copyright">© 2026 Astral Veil. All Rights Reserved.</p><nav class="site-footer__legal" aria-label="Legal links"><a href="/terms">Terms of Service</a><span aria-hidden="true">·</span><a href="/privacy">Privacy Policy</a></nav></div><p class="site-footer__share-status" aria-live="polite"></p></div></footer>
 
-    <script src="/data/events.js"></script><script src="/js/events.js"></script><script src="/js/bloodmoon-access.js"></script><script src="/js/app.js"></script><script src="/js/tarot-card-tilt.js"></script><script src="/js/tarot-topic.js"></script><script type="module" src="/src/public/public-auth-nav.js"></script>
+    <script src="/data/events.js"></script><script src="/js/events.js"></script><script src="/js/bloodmoon-access.js"></script><script src="/js/app.js"></script><script src="/js/tarot-education.js"></script><script src="/js/tarot-card-tilt.js"></script><script src="/js/tarot-topic.js"></script><script type="module" src="/src/public/public-auth-nav.js"></script>
   </body>
 </html>

@@ -20,6 +20,21 @@
       if (icon) icon.textContent = isOpen ? "−" : "+";
     };
 
+    function openDirectHashTarget() {
+      if (!window.location.hash) return false;
+      let targetId;
+      try {
+        targetId = decodeURIComponent(window.location.hash.slice(1));
+      } catch (error) {
+        return false;
+      }
+      const target = document.getElementById(targetId);
+      const targetItem = target?.closest("[data-education-faq-item]");
+      if (!targetItem || !faq.contains(targetItem)) return false;
+      items.forEach((candidate) => setItemState(candidate, candidate === targetItem));
+      return true;
+    }
+
     items.forEach((item) => {
       setItemState(item, false);
       const button = item.querySelector("[data-education-faq-button]");
@@ -30,6 +45,8 @@
     });
 
     faq.classList.add("is-enhanced");
+    openDirectHashTarget();
+    window.addEventListener("hashchange", openDirectHashTarget);
   });
 
   const educationHero = document.querySelector("[data-education-page]");

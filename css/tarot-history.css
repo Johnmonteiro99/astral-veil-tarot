@@ -10,6 +10,12 @@
   --history-surface-strong: rgba(3, 13, 17, .84);
   --history-surface-soft: rgba(11, 31, 31, .29);
   --history-shadow: rgba(0, 4, 10, .5);
+  --history-closing-overlay-wide:
+    linear-gradient(90deg, rgba(2, 12, 15, .97) 0%, rgba(2, 12, 15, .88) 34%, rgba(2, 12, 15, .54) 58%, rgba(2, 12, 15, .23) 100%),
+    linear-gradient(180deg, rgba(2, 12, 15, .08), rgba(2, 12, 15, .64));
+  --history-closing-overlay-compact:
+    linear-gradient(90deg, rgba(2, 12, 15, .94), rgba(2, 12, 15, .64)),
+    linear-gradient(180deg, rgba(2, 12, 15, .58), rgba(2, 12, 15, .82));
   --history-max-width: 1360px;
   --history-gutter: clamp(1rem, 1.8vw, 1.5rem);
   --history-section-space: clamp(4rem, 6vw, 5.5rem);
@@ -48,6 +54,12 @@ body.moon-mode.tarot-history-page .tarot-history {
   --history-surface-strong: rgba(6, 8, 24, .88);
   --history-surface-soft: rgba(20, 20, 52, .32);
   --history-shadow: rgba(0, 1, 13, .58);
+  --history-closing-overlay-wide:
+    linear-gradient(90deg, rgba(5, 6, 22, .97), rgba(5, 6, 22, .86) 35%, rgba(5, 6, 22, .5) 61%, rgba(5, 6, 22, .24)),
+    linear-gradient(180deg, rgba(5, 6, 22, .08), rgba(5, 6, 22, .66));
+  --history-closing-overlay-compact:
+    linear-gradient(90deg, rgba(5, 6, 22, .95), rgba(9, 8, 31, .68)),
+    linear-gradient(180deg, rgba(7, 6, 25, .6), rgba(5, 6, 22, .86));
 }
 
 body.blood-moon-mode.tarot-history-page .tarot-history {
@@ -62,6 +74,12 @@ body.blood-moon-mode.tarot-history-page .tarot-history {
   --history-surface-strong: rgba(13, 3, 7, .9);
   --history-surface-soft: rgba(48, 10, 17, .31);
   --history-shadow: rgba(11, 0, 3, .62);
+  --history-closing-overlay-wide:
+    linear-gradient(90deg, rgba(11, 1, 4, .97), rgba(11, 1, 4, .86) 35%, rgba(11, 1, 4, .5) 61%, rgba(11, 1, 4, .25)),
+    linear-gradient(180deg, rgba(11, 1, 4, .08), rgba(11, 1, 4, .67));
+  --history-closing-overlay-compact:
+    linear-gradient(90deg, rgba(11, 1, 4, .95), rgba(22, 3, 8, .7)),
+    linear-gradient(180deg, rgba(17, 2, 6, .62), rgba(11, 1, 4, .87));
 }
 
 .tarot-history *,
@@ -174,7 +192,7 @@ body.blood-moon-mode.tarot-history-page .tarot-history {
   border-radius: 3px;
   padding: 11px 18px;
   color: var(--history-accent-strong);
-  background: rgba(2, 13, 16, .48);
+  background: color-mix(in srgb, var(--history-surface-strong) 58%, transparent);
   font: 700 .65rem/1 var(--logo-font, Cinzel, serif);
   letter-spacing: .13em;
   text-decoration: none;
@@ -706,7 +724,7 @@ body.blood-moon-mode.tarot-history-page .tarot-history-timeline {
   content: "";
   box-shadow:
     inset 0 1px 0 rgba(255, 244, 220, .055),
-    inset 0 -26px 42px rgba(0, 7, 9, .1);
+    inset 0 -26px 42px color-mix(in srgb, var(--history-surface-strong) 14%, transparent);
   pointer-events: none;
 }
 
@@ -716,7 +734,7 @@ body.blood-moon-mode.tarot-history-page .tarot-history-timeline {
   inset: 0;
   border-radius: inherit;
   content: "";
-  background: linear-gradient(90deg, transparent 62%, rgba(3, 13, 17, .24));
+  background: linear-gradient(90deg, transparent 62%, color-mix(in srgb, var(--history-surface-strong) 28%, transparent));
   pointer-events: none;
 }
 
@@ -1210,8 +1228,8 @@ body.blood-moon-mode.tarot-history-page .tarot-history-traditions__exhibit {
   z-index: 1;
   inset: 0;
   background:
-    linear-gradient(90deg, transparent 68%, rgba(3, 17, 19, .24)),
-    linear-gradient(180deg, rgba(255, 244, 220, .035), transparent 16%, transparent 78%, rgba(1, 9, 12, .12));
+    linear-gradient(90deg, transparent 68%, color-mix(in srgb, var(--history-surface-strong) 28%, transparent)),
+    linear-gradient(180deg, rgba(255, 244, 220, .035), transparent 16%, transparent 78%, color-mix(in srgb, var(--history-surface-strong) 14%, transparent));
   content: "";
   pointer-events: none;
 }
@@ -1588,7 +1606,7 @@ body.sun-mode.tarot-history-page .tarot-history-tradition__media-frame::after {
   border-radius: 16px;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, .035), transparent 42%),
-    rgba(2, 13, 17, .2);
+    color-mix(in srgb, var(--history-surface-strong) 24%, transparent);
   box-shadow: 0 22px 52px -46px var(--history-shadow);
 }
 
@@ -2158,15 +2176,11 @@ body.sun-mode.tarot-history-page .tarot-history-tradition__media-frame::after {
   position: absolute;
   z-index: -1;
   inset: 0;
-  background:
-    linear-gradient(90deg, rgba(2, 12, 15, .97) 0%, rgba(2, 12, 15, .88) 34%, rgba(2, 12, 15, .54) 58%, rgba(2, 12, 15, .23) 100%),
-    linear-gradient(180deg, rgba(2, 12, 15, .08), rgba(2, 12, 15, .64));
+  background: var(--history-closing-overlay-wide);
 }
 
 body.moon-mode.tarot-history-page .tarot-history-closing__overlay {
-  background:
-    linear-gradient(90deg, rgba(5, 6, 22, .97), rgba(5, 6, 22, .86) 35%, rgba(5, 6, 22, .5) 61%, rgba(5, 6, 22, .24)),
-    linear-gradient(180deg, rgba(5, 6, 22, .08), rgba(5, 6, 22, .66));
+  background: var(--history-closing-overlay-wide);
 }
 
 body.moon-mode.tarot-history-page .tarot-history-closing {
@@ -2175,9 +2189,7 @@ body.moon-mode.tarot-history-page .tarot-history-closing {
 }
 
 body.blood-moon-mode.tarot-history-page .tarot-history-closing__overlay {
-  background:
-    linear-gradient(90deg, rgba(11, 1, 4, .97), rgba(11, 1, 4, .86) 35%, rgba(11, 1, 4, .5) 61%, rgba(11, 1, 4, .25)),
-    linear-gradient(180deg, rgba(11, 1, 4, .08), rgba(11, 1, 4, .67));
+  background: var(--history-closing-overlay-wide);
 }
 
 body.blood-moon-mode.tarot-history-page .tarot-history-closing {
@@ -2254,8 +2266,8 @@ body.blood-moon-mode.tarot-history-page .tarot-history-closing {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(1, 8, 11, .02), rgba(1, 8, 11, .42)),
-    linear-gradient(90deg, rgba(2, 12, 15, .12), transparent 50%, rgba(2, 12, 15, .14));
+    linear-gradient(180deg, color-mix(in srgb, var(--history-surface-strong) 3%, transparent), color-mix(in srgb, var(--history-surface-strong) 48%, transparent)),
+    linear-gradient(90deg, color-mix(in srgb, var(--history-surface-strong) 14%, transparent), transparent 50%, color-mix(in srgb, var(--history-surface-strong) 16%, transparent));
   content: "";
   pointer-events: none;
 }
@@ -3098,9 +3110,7 @@ body.history-modal-open {
   }
 
   .tarot-history-closing__overlay {
-    background:
-      linear-gradient(90deg, rgba(2, 12, 15, .94), rgba(2, 12, 15, .64)),
-      linear-gradient(180deg, rgba(2, 12, 15, .58), rgba(2, 12, 15, .82));
+    background: var(--history-closing-overlay-compact);
   }
 }
 
@@ -3330,6 +3340,10 @@ body.history-modal-open {
     margin-bottom: 22px;
   }
 
+  .tarot-history-contributors.is-contributors-mobile-accordion .tarot-history-contributors__index-item:last-of-type {
+    border-bottom: 1px solid var(--history-line);
+  }
+
   .tarot-history-contributors__index-item {
     grid-template-columns: 26px minmax(0, 1fr) 20px;
     min-height: 67px;
@@ -3338,6 +3352,35 @@ body.history-modal-open {
 
   .tarot-history-contributors__index-copy strong {
     font-size: 1.16rem;
+  }
+
+  .tarot-history-contributors.is-contributors-mobile-accordion .tarot-history-contributors__index-marker {
+    position: relative;
+  }
+
+  .tarot-history-contributors.is-contributors-mobile-accordion .tarot-history-contributors__index-marker::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1px;
+    height: 14px;
+    background: inherit;
+    content: "";
+    transform: translate(-50%, -50%) scaleY(1);
+    transition: transform .24s ease;
+  }
+
+  .tarot-history-contributors.is-contributors-mobile-accordion .tarot-history-contributors__index-item[aria-expanded="true"] {
+    color: var(--history-heading);
+  }
+
+  .tarot-history-contributors.is-contributors-mobile-accordion .tarot-history-contributors__index-item[aria-expanded="true"] .tarot-history-contributors__index-marker {
+    width: 20px;
+    background: var(--history-accent-strong);
+  }
+
+  .tarot-history-contributors.is-contributors-mobile-accordion .tarot-history-contributors__index-item[aria-expanded="true"] .tarot-history-contributors__index-marker::after {
+    transform: translate(-50%, -50%) scaleY(0);
   }
 
   .tarot-history-contributors.is-contributors-enhanced .tarot-history-contributors__panels {
@@ -3360,6 +3403,10 @@ body.history-modal-open {
 
   .tarot-history-contributors.is-contributors-enhanced .tarot-history-contributor-panel.is-active {
     display: grid;
+  }
+
+  .tarot-history-contributors.is-contributors-mobile-accordion .tarot-history-contributor-panel.is-active {
+    margin-bottom: 12px;
   }
 
   .tarot-history-contributor-panel {
