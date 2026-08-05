@@ -3727,9 +3727,15 @@ body.blood-moon-mode .future-omen {
 
 .seo-landing-faq {
   align-items: start;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(100%, 980px);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(1rem, 2vw, 1.35rem);
+  margin-inline: auto;
   text-align: left;
+}
+
+.seo-landing-faq details {
+  border-radius: 20px;
 }
 
 .seo-landing-faq summary {
@@ -3756,18 +3762,26 @@ body.blood-moon-mode .future-omen {
 }
 
 .seo-landing-faq summary::after {
-  content: "";
+  content: "+";
+  display: grid;
   flex: 0 0 auto;
-  width: 0.48rem;
-  height: 0.48rem;
-  border-right: 2px solid color-mix(in srgb, var(--theme-accent-primary) 86%, #ffffff);
-  border-bottom: 2px solid color-mix(in srgb, var(--theme-accent-primary) 86%, #ffffff);
-  transform: translateY(-0.14rem) rotate(45deg);
-  transition: transform 180ms ease;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--theme-accent-primary) 56%, transparent);
+  border-radius: 50%;
+  color: color-mix(in srgb, var(--theme-accent-primary) 86%, #ffffff);
+  background: color-mix(in srgb, var(--theme-accent-primary) 9%, transparent);
+  font: 500 1.2rem/1 var(--body-font);
+  transform: none;
+  transition: color 180ms ease, background 180ms ease, border-color 180ms ease;
 }
 
 .seo-landing-faq details[open] summary::after {
-  transform: translateY(0.14rem) rotate(225deg);
+  content: "−";
+  border-color: color-mix(in srgb, var(--theme-accent-primary) 78%, transparent);
+  background: color-mix(in srgb, var(--theme-accent-primary) 16%, transparent);
+  transform: none;
 }
 
 .seo-landing-faq details p {
@@ -4252,7 +4266,11 @@ body.seo-daily-page.seo-daily-lavender .seo-landing-section--faq {
 }
 
 body.seo-daily-page.seo-daily-lavender .seo-landing-faq {
-  gap: 0.7rem clamp(1rem, 2vw, 1.35rem);
+  gap: clamp(0.8rem, 1.5vw, 1.05rem);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq details {
+  border-radius: 20px;
 }
 
 body.seo-daily-page.seo-daily-lavender .seo-landing-faq summary {
@@ -4263,7 +4281,14 @@ body.seo-daily-page.seo-daily-lavender .seo-landing-faq summary {
 }
 
 body.seo-daily-page.seo-daily-lavender .seo-landing-faq summary::after {
-  border-color: var(--seo-daily-violet);
+  border-color: rgba(126, 99, 183, .34);
+  color: var(--seo-daily-violet);
+  background: rgba(126, 99, 183, .08);
+}
+
+body.seo-daily-page.seo-daily-lavender .seo-landing-faq details[open] summary::after {
+  border-color: rgba(126, 99, 183, .5);
+  background: rgba(126, 99, 183, .14);
 }
 
 body.seo-daily-page.seo-daily-lavender .seo-landing-faq details p {
@@ -5803,6 +5828,7 @@ body.seo-daily-page.seo-daily-lavender .seo-landing-faq details[open] {
   body.seo-daily-page.seo-daily-lavender .seo-landing-button::before,
   body.seo-daily-page.seo-daily-lavender .seo-landing-button::after,
   body.seo-daily-page.seo-daily-lavender .seo-landing-faq details,
+  body.seo-daily-page.seo-daily-lavender .seo-landing-faq summary::after,
   body.seo-daily-page.seo-daily-lavender .seo-landing-faq details p,
   body.seo-daily-page.seo-daily-lavender .seo-landing-step-icon,
   body.seo-daily-page.seo-daily-lavender .seo-landing-benefits article > span {
@@ -6070,6 +6096,48 @@ body.seo-daily-page.seo-daily-lavender .seo-landing-button,
 body.seo-daily-page.seo-daily-lavender .seo-landing-trust-row li,
 body.seo-daily-page.seo-daily-lavender .seo-landing-faq summary {
   font-family: var(--daily-ui-font);
+}
+
+/* Tarot landing FAQs keep their accordion structure without a visible card shell. */
+body.seo-daily-page .seo-faq-section .seo-landing-faq details,
+body.seo-daily-page.seo-daily-lavender .seo-faq-section .seo-landing-faq details,
+body.seo-daily-page .seo-faq-section .seo-landing-faq details:is(:hover, :focus-within, [open]),
+body.seo-daily-page.seo-daily-lavender .seo-faq-section .seo-landing-faq details:is(:hover, :focus-within, [open]) {
+  position: relative;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transform: none;
+}
+
+body.seo-daily-page .seo-faq-section .seo-landing-faq details::after,
+body.seo-daily-page.seo-daily-lavender .seo-faq-section .seo-landing-faq details::after {
+  position: absolute;
+  right: 1rem;
+  bottom: 1px;
+  left: 1rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--theme-accent-primary) 12%, var(--theme-accent-primary) 88%, transparent);
+  box-shadow: 0 0 9px color-mix(in srgb, var(--theme-glow-primary) 82%, transparent);
+  content: "";
+  opacity: .8;
+  pointer-events: none;
+  transition: opacity 180ms ease, box-shadow 180ms ease;
+}
+
+body.seo-daily-page .seo-faq-section .seo-landing-faq details:is(:hover, :focus-within, [open])::after,
+body.seo-daily-page.seo-daily-lavender .seo-faq-section .seo-landing-faq details:is(:hover, :focus-within, [open])::after {
+  box-shadow: 0 0 12px color-mix(in srgb, var(--theme-glow-primary) 92%, transparent);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.seo-daily-page .seo-faq-section .seo-landing-faq details::after,
+  body.seo-daily-page.seo-daily-lavender .seo-faq-section .seo-landing-faq details::after {
+    transition: none;
+  }
 }
 
 body.seo-daily-page.seo-daily-lavender .seo-explore-intro {

@@ -136,19 +136,30 @@ function renderHero(page) {
 }
 
 function renderTruths(truths) {
+  const icons = ["✦", "☾", "◉"];
   return truths.map((truth, index) => `<li>
-                <span class="tarot-beginners-welcome__truth-number" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>
-                <span><strong>${escapeHtml(truth.label)}</strong><span>${escapeHtml(truth.text)}</span></span>
+                <span class="tarot-beginners-welcome__truth-meta" aria-hidden="true">
+                  <span class="tarot-beginners-welcome__truth-icon">${icons[index] || "✦"}</span>
+                  <span class="tarot-beginners-welcome__truth-number">${String(index + 1).padStart(2, "0")}</span>
+                </span>
+                <span class="tarot-beginners-welcome__truth-copy"><strong>${escapeHtml(truth.label)}</strong><span>${escapeHtml(truth.text)}</span></span>
               </li>`).join("");
 }
 
 function renderWelcomeCopy(copy, theme) {
   const isBlood = theme === "blood";
   return `<div class="tarot-beginners-welcome__copy tarot-beginners-welcome__copy--${theme}" data-beginner-welcome-copy="${theme}" aria-hidden="${isBlood ? "true" : "false"}"${isBlood ? " inert" : ""}>
-          <p class="tarot-beginners-eyebrow">${escapeHtml(copy.eyebrow)}</p>
-          <h2 id="${isBlood ? "blood-welcome-heading" : "welcome-heading"}" tabindex="-1">${escapeHtml(copy.heading)}</h2>
+          <header class="tarot-beginners-welcome__header">
+            <p class="tarot-beginners-eyebrow">${escapeHtml(copy.eyebrow)}</p>
+            <h2 id="${isBlood ? "blood-welcome-heading" : "welcome-heading"}" tabindex="-1">${escapeHtml(copy.heading)}</h2>
+          </header>
+          <div class="tarot-beginners-welcome__greeting" aria-label="A welcome from your guide">
+            <p>${escapeHtml(copy.greeting[0])}</p>
+            <p>${escapeHtml(copy.greeting[1])}</p>
+          </div>
           <div class="tarot-beginners-welcome__prose">${copy.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>
-          <ol class="tarot-beginners-welcome__truths">${renderTruths(copy.truths)}</ol>
+          <ol class="tarot-beginners-welcome__truths" tabindex="0" aria-label="Beginner guidance principles">${renderTruths(copy.truths)}</ol>
+          <p class="tarot-beginners-welcome__truths-hint" aria-hidden="true">Swipe to explore <span>→</span></p>
           <div class="tarot-beginners-actions tarot-beginners-welcome__actions">
             <a class="tarot-beginners-button tarot-beginners-button--primary" href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot" data-welcome-primary><span data-welcome-primary-label>${escapeHtml(copy.primaryLabel)}</span> <span aria-hidden="true">→</span></a>
             <a class="tarot-beginners-button tarot-beginners-button--secondary" href="?view=chapters" data-beginner-index-link>${escapeHtml(copy.secondaryLabel)}</a>
@@ -158,16 +169,19 @@ function renderWelcomeCopy(copy, theme) {
 }
 
 function renderWelcome(page) {
-  return `<section class="tarot-beginners-welcome" id="welcome" aria-labelledby="welcome-heading" data-beginner-panel="welcome" data-beginner-welcome data-welcome-theme="regular">
+  const regularImage = page.welcome.images.regular;
+  const bloodMoonImage = page.welcome.images.bloodMoon;
+  const backgroundStyle = `--beginner-welcome-guide-image-regular:url(${escapeHtml(regularImage.src)});--beginner-welcome-guide-image-blood:url(${escapeHtml(bloodMoonImage.src)})`;
+
+  return `<section class="tarot-beginners-welcome" id="welcome" aria-labelledby="welcome-heading" data-beginner-panel="welcome" data-beginner-welcome data-welcome-theme="regular" data-welcome-guide-art style="${backgroundStyle}">
         <div class="tarot-beginners-shell tarot-beginners-welcome__layout">
           <div class="tarot-beginners-welcome__copies">
             ${renderWelcomeCopy(page.welcome.regular, "regular")}
             ${renderWelcomeCopy(page.welcome.bloodMoon, "blood")}
           </div>
-          <figure class="tarot-beginners-welcome__visual">
-            ${renderImage(page.welcome.image, "tarot-beginners-welcome__image")}
-            <figcaption>The first door opens through curiosity, attention, and time.</figcaption>
-          </figure>
+          <aside class="tarot-beginners-welcome__guide-quote" aria-label="A note from your guide" data-welcome-guide-quote data-regular-quote="${escapeHtml(page.welcome.regular.quote)}" data-blood-quote="${escapeHtml(page.welcome.bloodMoon.quote)}">
+            <span data-welcome-guide-quote-text>${escapeHtml(page.welcome.regular.quote)}</span>
+          </aside>
         </div>
       </section>`;
 }
@@ -200,7 +214,7 @@ function renderIndexTimelineItem(chapter, index) {
 function renderIndexPreview(chapter, index, total) {
   return `<article class="tarot-beginners-index-card" id="beginner-index-card-${escapeHtml(chapter.id)}" role="group" aria-roledescription="slide" aria-label="Chapter ${index + 1} of ${total}: ${escapeHtml(chapter.navLabel)}" data-beginner-index-slide="${escapeHtml(chapter.id)}">
               <div class="tarot-beginners-index-card__media">
-                ${renderImage(chapter.image, "tarot-beginners-index-card__image")}
+                ${renderImage(chapter.coverImage, "tarot-beginners-index-card__image")}
                 <span class="tarot-beginners-index-card__veil" aria-hidden="true"></span>
               </div>
               <div class="tarot-beginners-index-card__content">
@@ -219,8 +233,12 @@ function renderIndexPreview(chapter, index, total) {
             </article>`;
 }
 
-function renderIndexStripItem(chapter) {
-  return `<button type="button" aria-controls="beginner-index-card-${escapeHtml(chapter.id)}" data-beginner-index-select="${escapeHtml(chapter.id)}"><span>${chapter.number}</span><strong>${escapeHtml(chapter.navLabel)}</strong><i aria-hidden="true"></i></button>`;
+function renderIndexConstellationNode(chapter) {
+  return `<button type="button" aria-label="Select Chapter ${Number(chapter.number)}: ${escapeHtml(chapter.navLabel)}" aria-controls="beginner-index-card-${escapeHtml(chapter.id)}" data-beginner-index-select="${escapeHtml(chapter.id)}">
+              <span class="tarot-beginners-index-constellation__node" aria-hidden="true"><i data-beginner-index-node-icon></i></span>
+              <span class="tarot-beginners-index-constellation__tooltip" aria-hidden="true"><small>Chapter ${chapter.number}</small><strong>${escapeHtml(chapter.navLabel)}</strong></span>
+              <span class="tarot-beginners-index__sr-only" data-beginner-index-state>Upcoming chapter</span>
+            </button>`;
 }
 
 function renderIndexDot(chapter) {
@@ -246,53 +264,51 @@ function renderChapterIndex(page) {
               <div class="tarot-beginners-index-viewport" role="region" aria-roledescription="carousel" aria-label="Tarot for Beginners chapter previews" data-beginner-index-viewport>
                 <div class="tarot-beginners-index-track" data-beginner-index-track>${page.chapters.map((chapter, index) => renderIndexPreview(chapter, index, total)).join("")}</div>
               </div>
-              <nav class="tarot-beginners-index-strip" aria-label="Choose a chapter">${page.chapters.map(renderIndexStripItem).join("")}</nav>
               <div class="tarot-beginners-index-mobile-nav">
                 <button type="button" aria-label="Previous chapter" data-beginner-index-previous><span aria-hidden="true">←</span></button>
                 <div class="tarot-beginners-index-dots" role="group" aria-label="Choose a chapter">${page.chapters.map(renderIndexDot).join("")}</div>
                 <button type="button" aria-label="Next chapter" data-beginner-index-next-control><span aria-hidden="true">→</span></button>
               </div>
               <p class="tarot-beginners-index__status tarot-beginners-index__sr-only" aria-live="polite" aria-atomic="true" data-beginner-index-live>Chapter index ready.</p>
+              <footer class="tarot-beginners-index-footer">
+                <nav class="tarot-beginners-index-constellation" aria-label="Chapter Constellation Rail">
+                  <div class="tarot-beginners-index-constellation__position">
+                    <button type="button" aria-label="Previous chapter" data-beginner-index-previous><span aria-hidden="true">‹</span></button>
+                    <p data-beginner-index-counter>Chapter 1 of ${total}</p>
+                    <button type="button" aria-label="Next chapter" data-beginner-index-next-control><span aria-hidden="true">›</span></button>
+                  </div>
+                  <div class="tarot-beginners-index-constellation__rail" role="group" aria-label="Select a chapter"><span aria-hidden="true"></span>${page.chapters.map(renderIndexConstellationNode).join("")}</div>
+                  <p class="tarot-beginners-index-constellation__title" aria-live="polite" aria-atomic="true" data-beginner-index-active-title>${escapeHtml(page.chapters[0].navLabel)}</p>
+                </nav>
+              </footer>
             </div>
           </div>
         </div>
       </section>`;
 }
 
-function renderVisual(chapter) {
-  return `<figure class="tarot-beginners-module tarot-beginners-module--${escapeHtml(chapter.visual.type)}" data-beginner-module="${escapeHtml(chapter.visual.type)}">
-          <div class="tarot-beginners-module__image-wrap">
-            ${renderImage(chapter.image, "tarot-beginners-module__image")}
-            <span class="tarot-beginners-module__veil" aria-hidden="true"></span>
-          </div>
-          <div class="tarot-beginners-module__diagram" aria-hidden="true">
-            <span class="tarot-beginners-module__center">${escapeHtml(chapter.visual.center)}</span>
-            ${chapter.visual.items.map((item, index) => `<span class="tarot-beginners-module__item" style="--module-index:${index};--module-count:${chapter.visual.items.length}">${escapeHtml(item)}</span>`).join("")}
-          </div>
-          <figcaption>${escapeHtml(chapter.visual.caption)}</figcaption>
-        </figure>`;
-}
-
 function renderBlock(block) {
+  if (!block || block.type === "empty") return "";
+
   if (block.type === "features") {
     const wrapperTag = block.heading ? "section" : "div";
-    const itemHeadingTag = block.heading ? "h4" : "h3";
+    const itemHeadingTag = block.heading ? "h5" : "h4";
     return `<${wrapperTag} class="tarot-beginners-block tarot-beginners-block--features">
-            ${block.heading ? `<h3>${escapeHtml(block.heading)}</h3>` : ""}
+            ${block.heading ? `<h4>${escapeHtml(block.heading)}</h4>` : ""}
             <div class="tarot-beginners-feature-grid">${block.items.map((item) => `<article><span aria-hidden="true">✦</span><${itemHeadingTag}>${escapeHtml(item.heading)}</${itemHeadingTag}><p>${escapeHtml(item.text)}</p></article>`).join("")}</div>
           </${wrapperTag}>`;
   }
 
   if (block.type === "paragraphs") {
-    return `<div class="tarot-beginners-block tarot-beginners-block--prose">${block.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>`;
+    return `<section class="tarot-beginners-block tarot-beginners-block--prose">${block.heading ? `<h4>${escapeHtml(block.heading)}</h4>` : ""}${block.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</section>`;
   }
 
   if (block.type === "list") {
-    return `<section class="tarot-beginners-block tarot-beginners-block--list"><h3>${escapeHtml(block.heading)}</h3><ul>${block.items.map((item) => `<li><span aria-hidden="true">✦</span>${escapeHtml(item)}</li>`).join("")}</ul></section>`;
+    return `<section class="tarot-beginners-block tarot-beginners-block--list"><h4>${escapeHtml(block.heading)}</h4><ul>${block.items.map((item) => `<li><span aria-hidden="true">✦</span>${escapeHtml(item)}</li>`).join("")}</ul></section>`;
   }
 
   if (block.type === "note") {
-    return `<aside class="tarot-beginners-block tarot-beginners-block--note"><span aria-hidden="true">✦</span><div><h3>${escapeHtml(block.heading)}</h3><p>${escapeHtml(block.text)}</p></div></aside>`;
+    return `<aside class="tarot-beginners-block tarot-beginners-block--note"><span aria-hidden="true">✦</span><div><h4>${escapeHtml(block.heading)}</h4><p>${escapeHtml(block.text)}</p></div></aside>`;
   }
 
   if (block.type === "links") {
@@ -301,18 +317,18 @@ function renderBlock(block) {
 
   if (block.type === "pairs") {
     return `<section class="tarot-beginners-block tarot-beginners-myths" aria-label="Tarot myths and realities">${block.items.map((item, index) => `<article>
-            <div><p>Myth ${String(index + 1).padStart(2, "0")}</p><h3>${escapeHtml(item.myth)}</h3></div>
+            <div><p>Myth ${String(index + 1).padStart(2, "0")}</p><h4>${escapeHtml(item.myth)}</h4></div>
             <span class="tarot-beginners-myths__turn" aria-hidden="true">→</span>
             <div><p>Reality</p><p>${escapeHtml(item.reality)}</p></div>
           </article>`).join("")}</section>`;
   }
 
   if (block.type === "timeline") {
-    return `<section class="tarot-beginners-block tarot-beginners-week" aria-label="Seven-day beginner tarot study path"><ol>${block.items.map((item) => `<li><span>${escapeHtml(item.label)}</span><div><h3>${escapeHtml(item.heading)}</h3><p>${escapeHtml(item.text)}</p></div></li>`).join("")}</ol></section>`;
+    return `<section class="tarot-beginners-block tarot-beginners-week" aria-label="Seven-day beginner tarot study path"><ol>${block.items.map((item) => `<li><span>${escapeHtml(item.label)}</span><div><h4>${escapeHtml(item.heading)}</h4><p>${escapeHtml(item.text)}</p></div></li>`).join("")}</ol></section>`;
   }
 
   if (block.type === "glossary") {
-    return `<section class="tarot-beginners-block tarot-beginners-glossary"><h3>Essential Tarot Terms</h3><div>${block.items.map((item, index) => `<details${index === 0 ? " open" : ""}><summary><span>${escapeHtml(item.term)}</span><span aria-hidden="true">+</span></summary><p>${escapeHtml(item.definition)}</p></details>`).join("")}</div></section>`;
+    return `<section class="tarot-beginners-block tarot-beginners-glossary"><h4>Essential Tarot Terms</h4><div>${block.items.map((item, index) => `<details${index === 0 ? " open" : ""}><summary><span>${escapeHtml(item.term)}</span><span aria-hidden="true">+</span></summary><p>${escapeHtml(item.definition)}</p></details>`).join("")}</div></section>`;
   }
 
   if (block.type === "pathways") {
@@ -323,25 +339,24 @@ function renderBlock(block) {
 }
 
 function renderChapterVisualPlaceholder(visual, variant = "chamber") {
-  const captionId = `${visual.slot}-placeholder-caption`;
-  return `<figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--${escapeHtml(variant)}" style="--lesson-placeholder-ratio:${escapeHtml(visual.ratio)}" data-chapter-visual-placeholder="${escapeHtml(visual.slot)}" data-future-src="${escapeHtml(visual.futureSrc)}">
+  return `<figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--${escapeHtml(variant)}" style="--lesson-placeholder-ratio:${escapeHtml(visual.ratio)}" data-chapter-visual-slot="${escapeHtml(visual.slot)}">
           <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="${escapeHtml(visual.alt)}">
             <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
             <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
             <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
           </div>
-          <figcaption id="${escapeHtml(captionId)}"><span>Development visual</span><strong>${escapeHtml(visual.slot)}</strong></figcaption>
+          <figcaption class="tarot-beginners-index__sr-only">${escapeHtml(visual.alt)}</figcaption>
         </figure>`;
 }
 
 function renderChamberProgress(chambers) {
-  const initialStatus = `Chamber 1 of ${chambers.length}, ${chambers[0].title}, open.`;
+  const initialStatus = `Chamber 1 of ${chambers.length}, ${chambers[0].title}, current.`;
   const stages = chambers.map((chamber, index) => `<li${index === 0 ? ' class="is-active"' : ""}>
-            <button type="button" aria-label="Open ${escapeHtml(chamber.label)}: ${escapeHtml(chamber.title)}" aria-controls="${escapeHtml(chamber.id)}-panel" aria-pressed="${index === 0 ? "true" : "false"}"${index === 0 ? ' aria-current="step"' : ""} data-chamber-stage="${escapeHtml(chamber.id)}">
+            <button type="button" aria-label="Go to ${escapeHtml(chamber.label)}: ${escapeHtml(chamber.title)}" aria-controls="${escapeHtml(chamber.id)}"${index === 0 ? ' aria-current="step"' : ""} data-chamber-stage="${escapeHtml(chamber.id)}">
               <span aria-hidden="true">${escapeHtml(chamber.numeral)}</span>
-              <span class="tarot-beginners-index__sr-only">${escapeHtml(chamber.title)}</span>
+              <strong>${escapeHtml(chamber.shortTitle)}</strong>
               <i aria-hidden="true" hidden data-chamber-stage-mark></i>
-            </button>${index < chambers.length - 1 ? '\n            <span class="tarot-beginners-chamber-progress__line" aria-hidden="true"></span>' : ""}
+            </button>
           </li>`).join("");
 
   return `<nav class="tarot-beginners-chamber-progress" aria-label="Chapter chamber progress" data-chamber-progress>
@@ -358,21 +373,27 @@ function renderChapterIntroduction(chapter, lesson) {
               <h2 id="${escapeHtml(chapter.id)}-heading" tabindex="-1">${escapeHtml(lesson.title)}</h2>
               <p class="tarot-beginners-chapter__introduction">${escapeHtml(chapter.introduction)}</p>
               <p class="tarot-beginners-academy-introduction__continuation">${escapeHtml(lesson.introContinuation)}</p>
+              <section class="tarot-beginners-academy-introduction__outcomes" aria-labelledby="${escapeHtml(chapter.id)}-outcomes-heading">
+                <h3 id="${escapeHtml(chapter.id)}-outcomes-heading">You Will Learn</h3>
+                <ul>${lesson.outcomes.map((outcome) => `<li><span aria-hidden="true">✦</span>${escapeHtml(outcome)}</li>`).join("")}</ul>
+              </section>
               <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
             </div>
             ${renderChapterVisualPlaceholder(lesson.headerVisual, "header")}
           </div>
-          ${renderChamberProgress(lesson.chambers)}
         </header>`;
 }
 
 function renderLessonLearningVisual(chamber) {
-  const visual = chamber.learningVisual;
+  const visual = chamber.visualData;
+  if (!visual) return "";
   let content = "";
 
   if (visual.type === "equation") {
     const terms = visual.items.map((item, index) => `${index > 0 ? '<span class="tarot-beginners-lesson-visual-tool__operator" aria-hidden="true">+</span>' : ""}<span class="tarot-beginners-lesson-visual-tool__term">${escapeHtml(item)}</span>`).join("");
     content = `<div class="tarot-beginners-lesson-visual-tool__equation" role="group" aria-label="Card plus Question plus Context plus Reader equals Interpretation">${terms}<span class="tarot-beginners-lesson-visual-tool__operator" aria-hidden="true">=</span><strong>${escapeHtml(visual.result)}</strong></div>`;
+  } else if (visual.type === "orbit") {
+    content = `<div class="tarot-beginners-lesson-visual-tool__orbit-map" aria-label="${escapeHtml(visual.label)}"><strong>${escapeHtml(visual.center)}</strong>${visual.items.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>`;
   } else {
     content = `<ul>${visual.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
   }
@@ -384,33 +405,49 @@ function renderLessonLearningVisual(chamber) {
         </figure>`;
 }
 
+function renderGuidedPractice(practice) {
+  if (!practice) return "";
+  return `<aside class="tarot-beginners-guided-practice" aria-labelledby="guided-practice-heading-${escapeHtml(practice.heading.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}">
+          <p class="tarot-beginners-eyebrow">Guided Practice</p>
+          <h4 id="guided-practice-heading-${escapeHtml(practice.heading.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}">${escapeHtml(practice.heading)}</h4>
+          <p>${escapeHtml(practice.intro)}</p>
+          <ul>${practice.items.map((item) => `<li><span aria-hidden="true">✦</span>${escapeHtml(item)}</li>`).join("")}</ul>
+        </aside>`;
+}
+
+function renderKnowledgeCheckpoint(checkpoint, chamberId) {
+  if (!checkpoint) return "";
+  const headingId = `${chamberId}-checkpoint-heading`;
+  return `<section class="tarot-beginners-checkpoint" aria-labelledby="${escapeHtml(headingId)}" data-knowledge-checkpoint>
+          <p class="tarot-beginners-eyebrow">Optional Reflection</p>
+          <h4 id="${escapeHtml(headingId)}">${escapeHtml(checkpoint.heading)}</h4>
+          <p>${escapeHtml(checkpoint.prompt)}</p>
+          <div role="group" aria-labelledby="${escapeHtml(headingId)}">${checkpoint.options.map((option) => `<button type="button" data-checkpoint-option data-checkpoint-correct="${String(option.correct)}" data-checkpoint-feedback="${escapeHtml(option.feedback)}">${escapeHtml(option.label)}</button>`).join("")}</div>
+          <p class="tarot-beginners-checkpoint__feedback" aria-live="polite" data-checkpoint-feedback-region>Choose an answer when you are ready. This is not a test.</p>
+        </section>`;
+}
+
 function renderLessonChamber(chamber, index) {
   const headingId = `${chamber.id}-heading`;
-  const previewId = `${chamber.id}-preview`;
-  const panelId = `${chamber.id}-panel`;
-  const sections = chamber.sections.map((section) => `<section class="tarot-beginners-lesson-chamber__section">
-              <h4>${escapeHtml(section.heading)}</h4>
-              ${section.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}
-            </section>`).join("");
+  const blocks = chamber.blocks.map(renderBlock).join("");
+  const visualFirst = index % 2 === 0;
 
-  return `<section class="tarot-beginners-lesson-chamber${index === 0 ? " is-active is-open" : ""}" id="${escapeHtml(chamber.id)}" aria-labelledby="${escapeHtml(headingId)}" data-lesson-chamber="${escapeHtml(chamber.id)}"${index === 0 ? " data-chamber-default-open" : ""}>
-          <div class="tarot-beginners-lesson-chamber__header">
+  return `<section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--${escapeHtml(chamber.variant)}${visualFirst ? " is-visual-first" : " is-visual-last"}${index === 0 ? " is-active" : ""}" id="${escapeHtml(chamber.id)}" aria-labelledby="${escapeHtml(headingId)}" data-lesson-chamber="${escapeHtml(chamber.id)}" data-chamber-variant="${escapeHtml(chamber.variant)}">
+          <header class="tarot-beginners-lesson-chamber__heading">
+            <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">${escapeHtml(chamber.numeral)}</span><p>${escapeHtml(chamber.label)}</p></div>
+            <div><h3 id="${escapeHtml(headingId)}" data-chamber-title>${escapeHtml(chamber.title)}</h3><p>${escapeHtml(chamber.preview)}</p></div>
+            <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in ${escapeHtml(chamber.label)}">${chamber.topics.map((topic) => `<li>${escapeHtml(topic)}</li>`).join("")}</ul>
+          </header>
+          <div class="tarot-beginners-lesson-chamber__body">
             ${renderChapterVisualPlaceholder(chamber.visual)}
-            <div class="tarot-beginners-lesson-chamber__summary">
-              <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">${escapeHtml(chamber.numeral)}</span><p>${escapeHtml(chamber.label)}</p></div>
-              <h3 id="${escapeHtml(headingId)}" data-chamber-title>${escapeHtml(chamber.title)}</h3>
-              <p id="${escapeHtml(previewId)}">${escapeHtml(chamber.preview)}</p>
-              <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in ${escapeHtml(chamber.label)}">${chamber.topics.map((topic) => `<li>${escapeHtml(topic)}</li>`).join("")}</ul>
-            </div>
-            <button class="tarot-beginners-lesson-chamber__trigger" type="button" aria-expanded="true" aria-controls="${escapeHtml(panelId)}" aria-labelledby="${escapeHtml(headingId)}" aria-describedby="${escapeHtml(previewId)}" data-chamber-trigger="${escapeHtml(chamber.id)}"><span data-chamber-trigger-label>Close ${escapeHtml(chamber.label)}</span><span aria-hidden="true">→</span></button>
-          </div>
-          <div class="tarot-beginners-lesson-chamber__panel" id="${escapeHtml(panelId)}" role="region" aria-labelledby="${escapeHtml(headingId)}" data-chamber-panel="${escapeHtml(chamber.id)}">
-            <div class="tarot-beginners-lesson-chamber__panel-inner">
+            <div class="tarot-beginners-lesson-chamber__content">
               ${renderLessonLearningVisual(chamber)}
-              <div class="tarot-beginners-lesson-chamber__editorial">${sections}</div>
-              <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>${escapeHtml(chamber.takeaway)}</p></aside>
+              <div class="tarot-beginners-lesson-chamber__editorial">${blocks}</div>
+              ${renderGuidedPractice(chamber.practice)}
+              ${renderKnowledgeCheckpoint(chamber.checkpoint, chamber.id)}
             </div>
           </div>
+          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>${escapeHtml(chamber.takeaway)}</p></aside>
         </section>`;
 }
 
@@ -422,112 +459,75 @@ function renderLessonTakeaway(chapter, takeaway) {
         </aside>`;
 }
 
-function renderLessonCompletion(chapter) {
-  const headingId = `${chapter.id}-lesson-completion-heading`;
-  return `<section class="tarot-beginners-lesson-completion" aria-labelledby="${escapeHtml(headingId)}">
-          <div class="tarot-beginners-lesson-completion__progress">
-            <h3 id="${escapeHtml(headingId)}">Chapter Completion</h3>
-            <p aria-live="polite" data-lesson-course-progress-text>0 of ${beginnerChapterMetadata.length} chapters complete</p>
-            <div role="progressbar" aria-label="Tarot for Beginners course completion" aria-valuemin="0" aria-valuemax="${beginnerChapterMetadata.length}" aria-valuenow="0" aria-valuetext="0 of ${beginnerChapterMetadata.length} chapters complete" data-lesson-course-progress><span></span></div>
-          </div>
-          <button class="tarot-beginners-button tarot-beginners-button--secondary tarot-beginners-lesson-completion__button" type="button" aria-pressed="false" data-beginner-complete-chapter="${escapeHtml(chapter.id)}"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark Chapter Complete</span></button>
-        </section>`;
-}
-
-function renderLessonNavigation(chapter) {
+function renderChapterEnding(chapter, lesson) {
   const chapterIndex = beginnerChapterMetadata.findIndex((item) => item.id === chapter.id);
   const previous = chapterIndex > 0 ? beginnerChapterMetadata[chapterIndex - 1] : null;
   const next = beginnerChapterMetadata[chapterIndex + 1] || null;
   const previousControl = previous
-    ? `<a href="${escapeHtml(previous.hash)}" data-beginner-chapter-link="${escapeHtml(previous.id)}" data-reader-previous><span aria-hidden="true">←</span><span>Previous Chapter</span><strong>${escapeHtml(previous.navLabel)}</strong></a>`
-    : '<a href="#chapters" aria-disabled="true" tabindex="-1" data-reader-previous><span aria-hidden="true">←</span><span>Previous Chapter</span><strong>No previous chapter</strong></a>';
+    ? `<a href="${escapeHtml(previous.hash)}" data-beginner-chapter-link="${escapeHtml(previous.id)}"><span aria-hidden="true">←</span><span>Previous Door</span><strong>${escapeHtml(previous.navLabel)}</strong></a>`
+    : '<span class="is-disabled" aria-disabled="true"><span aria-hidden="true">←</span><span>Previous Door</span><strong>This is the first Door</strong></span>';
   const nextControl = next
-    ? `<a href="${escapeHtml(next.hash)}" data-beginner-chapter-link="${escapeHtml(next.id)}" data-reader-continue><span>Continue to Chapter ${next.number}</span><strong>${escapeHtml(next.navLabel)}</strong><span aria-hidden="true">→</span></a>`
-    : "";
+    ? `<a href="${escapeHtml(next.hash)}" data-beginner-chapter-link="${escapeHtml(next.id)}"><span>Continue to Door ${next.number}</span><strong>${escapeHtml(next.navLabel)}</strong><span aria-hidden="true">→</span></a>`
+    : '<span class="is-disabled" aria-disabled="true"><span>Next Door</span><strong>Journey complete</strong><span aria-hidden="true">→</span></span>';
+  const headingId = `${chapter.id}-lesson-ending-heading`;
 
-  return `<nav class="tarot-beginners-lesson-navigation" aria-label="Chapter navigation">
-          <div class="tarot-beginners-lesson-navigation__previous">${previousControl}<a href="?view=chapters" data-beginner-index-link>Return to Chapter Library</a></div>
-          <p class="tarot-beginners-lesson-navigation__position"><span>Current progress</span><strong>Chapter ${chapter.number} of ${beginnerChapterMetadata.length}</strong></p>
-          <div class="tarot-beginners-lesson-navigation__next">${nextControl}</div>
-        </nav>`;
+  return `<section class="tarot-beginners-lesson-ending" aria-labelledby="${escapeHtml(headingId)}">
+          <div class="tarot-beginners-lesson-ending__completion">
+            <div>
+              <p class="tarot-beginners-eyebrow">Door ${chapter.number} of ${beginnerChapterMetadata.length}</p>
+              <h3 id="${escapeHtml(headingId)}">Complete This Chapter</h3>
+              <p class="tarot-beginners-lesson-ending__summary">${escapeHtml(lesson.completionSummary)}</p>
+              <p aria-live="polite" data-lesson-course-progress-text>0 of ${beginnerChapterMetadata.length} chapters complete</p>
+              <div role="progressbar" aria-label="Tarot for Beginners course completion" aria-valuemin="0" aria-valuemax="${beginnerChapterMetadata.length}" aria-valuenow="0" aria-valuetext="0 of ${beginnerChapterMetadata.length} chapters complete" data-lesson-course-progress><span></span></div>
+            </div>
+            <button class="tarot-beginners-button tarot-beginners-button--secondary tarot-beginners-lesson-completion__button" type="button" aria-pressed="false" data-beginner-complete-chapter="${escapeHtml(chapter.id)}"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark Chapter Complete</span></button>
+          </div>
+          <nav class="tarot-beginners-lesson-navigation" aria-label="Door navigation">
+            <div class="tarot-beginners-lesson-navigation__previous">${previousControl}</div>
+            <button type="button" aria-haspopup="dialog" aria-controls="beginner-chapter-menu" data-open-chapter-menu>All Chapters</button>
+            <div class="tarot-beginners-lesson-navigation__next">${nextControl}</div>
+          </nav>
+        </section>`;
 }
 
 function renderAcademyChapter(chapter) {
   const lesson = chapter.academyLesson;
-  return `<article class="tarot-beginners-chapter tarot-beginners-academy-lesson" id="${escapeHtml(chapter.id)}" aria-labelledby="${escapeHtml(chapter.id)}-heading" data-beginner-chapter="${escapeHtml(chapter.id)}" data-academy-lesson="${escapeHtml(chapter.id)}">
+  return `<article class="tarot-beginners-chapter tarot-beginners-academy-lesson" id="${escapeHtml(chapter.id)}" aria-labelledby="${escapeHtml(chapter.id)}-heading" data-beginner-chapter="${escapeHtml(chapter.id)}" data-academy-lesson="${escapeHtml(chapter.id)}" data-guided-lesson>
         ${renderChapterIntroduction(chapter, lesson)}
+        ${renderChamberProgress(lesson.chambers)}
         <div class="tarot-beginners-lesson-chambers" data-lesson-chambers>${lesson.chambers.map(renderLessonChamber).join("")}</div>
         ${renderLessonTakeaway(chapter, lesson.takeaway)}
-        ${renderLessonCompletion(chapter)}
-        ${renderLessonNavigation(chapter)}
-      </article>`;
-}
-
-function renderStandardChapter(chapter) {
-  return `<article class="tarot-beginners-chapter" id="${escapeHtml(chapter.id)}" aria-labelledby="${escapeHtml(chapter.id)}-heading" data-beginner-chapter="${escapeHtml(chapter.id)}">
-        <header class="tarot-beginners-chapter__header">
-          <p class="tarot-beginners-chapter__number">Chapter ${chapter.number} <span aria-hidden="true">·</span> 10</p>
-          <p class="tarot-beginners-eyebrow">${escapeHtml(chapter.eyebrow)}</p>
-          <h2 id="${escapeHtml(chapter.id)}-heading" tabindex="-1">${escapeHtml(chapter.title)}</h2>
-          <p class="tarot-beginners-chapter__introduction">${escapeHtml(chapter.introduction)}</p>
-        </header>
-        ${renderVisual(chapter)}
-        <div class="tarot-beginners-chapter__body">${chapter.blocks.map(renderBlock).join("")}</div>
-        <aside class="tarot-beginners-takeaway" aria-label="Remember this"><span aria-hidden="true">✦</span><div><h3>Remember This</h3><p>${escapeHtml(chapter.takeaway)}</p></div></aside>
+        ${renderChapterEnding(chapter, lesson)}
       </article>`;
 }
 
 function renderChapter(chapter) {
-  return chapter.academyLesson ? renderAcademyChapter(chapter) : renderStandardChapter(chapter);
+  return renderAcademyChapter(chapter);
 }
 
 function renderChapterLink(chapter, location) {
-  return `<li><a href="#${escapeHtml(chapter.id)}" data-beginner-chapter-link="${escapeHtml(chapter.id)}" data-chapter-nav-location="${location}"><span class="tarot-beginners-chapter-link__number">${chapter.number}</span><span class="tarot-beginners-chapter-link__copy"><span>${escapeHtml(chapter.navLabel)}</span><small data-chapter-state>Upcoming</small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li>`;
+  return `<li><a href="#${escapeHtml(chapter.id)}" data-beginner-chapter-link="${escapeHtml(chapter.id)}" data-chapter-nav-location="${location}"><span class="tarot-beginners-chapter-link__number">${chapter.number}</span><span class="tarot-beginners-chapter-link__copy"><span>${escapeHtml(chapter.navLabel)}</span><small data-chapter-state></small></span><span class="tarot-beginners-chapter-link__star" aria-hidden="true">✦</span></a></li>`;
 }
 
 function renderReader(page) {
   const first = page.chapters[0];
-  const last = page.chapters.at(-1);
-  const railLinks = page.chapters.map((chapter) => renderChapterLink(chapter, "rail")).join("");
-  const menuLinks = page.chapters.map((chapter) => renderChapterLink(chapter, "menu")).join("");
+  const menuLinks = page.chapters.map((chapter) => renderChapterLink(chapter, "drawer")).join("");
 
   return `<section class="tarot-beginners-reader" aria-label="Guided Tarot for Beginners chapters" data-beginner-panel="reader" data-beginner-reader>
-        <div class="tarot-beginners-shell tarot-beginners-reader__layout">
-          <aside class="tarot-beginners-rail">
-            <div class="tarot-beginners-rail__inner">
-              <p class="tarot-beginners-eyebrow">The First Ten Doors</p>
-              <nav aria-label="Tarot for Beginners chapter navigation"><ol>${railLinks}</ol></nav>
-            </div>
-          </aside>
-          <div class="tarot-beginners-reader__main">
-            <header class="tarot-beginners-mobile-header" data-mobile-chapter-header>
-              <div><p data-mobile-chapter-count>Chapter ${first.number} of 10</p><strong data-mobile-chapter-title>${escapeHtml(first.navLabel)}</strong></div>
-              <div class="tarot-beginners-mobile-header__progress" role="progressbar" aria-label="Current beginner chapter" aria-valuemin="1" aria-valuemax="10" aria-valuenow="1" data-mobile-progress><span></span></div>
-              <div class="tarot-beginners-mobile-header__controls">
-                <a href="#chapters" aria-disabled="true" data-reader-previous>Previous</a>
-                <button type="button" aria-haspopup="dialog" aria-controls="beginner-chapter-menu" data-open-chapter-menu>Chapter Menu</button>
-                <a href="#${escapeHtml(page.chapters[1].id)}" data-reader-continue>Continue</a>
-              </div>
-            </header>
-            <div class="tarot-beginners-reader__toolbar">
-              <p aria-live="polite" aria-atomic="true" data-beginner-live-region>Guided chapters ready.</p>
-              <div>
-                <a href="?view=chapters" data-beginner-index-link>View All Chapters</a>
-              </div>
-            </div>
+        <nav class="tarot-beginners-chapter-navigator" aria-label="Current chapter navigation" data-chapter-navigator>
+          <a href="#chapters" aria-disabled="true" tabindex="-1" data-reader-previous data-reader-dynamic-previous><span aria-hidden="true">←</span><span><small>Previous Door</small><strong data-chapter-nav-title>First Door</strong></span></a>
+          <p aria-live="polite" aria-atomic="true"><small data-chapter-navigator-count>Door ${first.number} of ${page.chapters.length}</small><strong data-chapter-navigator-title>${escapeHtml(first.navLabel)}</strong></p>
+          <button type="button" aria-haspopup="dialog" aria-controls="beginner-chapter-menu" data-open-chapter-menu><span aria-hidden="true">✦</span> All Chapters</button>
+          <a href="#${escapeHtml(page.chapters[1].id)}" data-beginner-chapter-link="${escapeHtml(page.chapters[1].id)}" data-reader-continue data-reader-dynamic-next><span><small>Next Door</small><strong data-chapter-nav-title>${escapeHtml(page.chapters[1].navLabel)}</strong></span><span aria-hidden="true">→</span></a>
+        </nav>
+        <div class="tarot-beginners-shell tarot-beginners-reader__main">
+            <p class="tarot-beginners-index__sr-only" aria-live="polite" aria-atomic="true" data-beginner-live-region>Guided chapters ready.</p>
             <div class="tarot-beginners-door" aria-hidden="true" data-beginner-door><span></span><i>✦</i></div>
             <div class="tarot-beginners-chapter-stream" data-beginner-chapter-stream>${page.chapters.map(renderChapter).join("")}</div>
-            <nav class="tarot-beginners-reader-controls" aria-label="Guided chapter controls" data-reader-controls>
-              <a class="tarot-beginners-button tarot-beginners-button--secondary" href="#chapters" aria-disabled="true" data-reader-previous><span aria-hidden="true">←</span> Previous Chapter</a>
-              <a class="tarot-beginners-button tarot-beginners-button--primary" href="#${escapeHtml(page.chapters[1].id)}" data-reader-continue>Continue to Chapter 02 <span aria-hidden="true">→</span></a>
-              <a class="tarot-beginners-button tarot-beginners-button--text" href="?view=chapters" data-beginner-index-link>View All Chapters</a>
-            </nav>
-            <p class="tarot-beginners-reader__end" data-reader-end hidden>You have reached Chapter ${last.number}. Return to the chapter index to choose another doorway.</p>
-          </div>
         </div>
-        <dialog class="tarot-beginners-chapter-menu" id="beginner-chapter-menu" aria-labelledby="beginner-chapter-menu-title" data-chapter-menu>
+        <dialog class="tarot-beginners-chapter-menu tarot-beginners-chapter-drawer" id="beginner-chapter-menu" aria-labelledby="beginner-chapter-menu-title" data-chapter-menu>
           <div class="tarot-beginners-chapter-menu__panel">
-            <header><div><p class="tarot-beginners-eyebrow">The Illuminated Index</p><h2 id="beginner-chapter-menu-title">Choose a Chapter</h2></div><button type="button" aria-label="Close chapter menu" data-close-chapter-menu>×</button></header>
+            <header><div><p class="tarot-beginners-eyebrow">The First Ten Doors</p><h2 id="beginner-chapter-menu-title">All Chapters</h2></div><button type="button" aria-label="Close All Chapters" data-close-chapter-menu>×</button></header>
             <nav aria-label="Choose a Tarot for Beginners chapter"><ol>${menuLinks}</ol></nav>
           </div>
         </dialog>
@@ -549,7 +549,7 @@ function renderFaq(page) {
     items: page.faq.items,
     idPrefix: "tarot-beginners-faq",
     className: "tarot-beginners-faq",
-    layout: "split",
+    layout: "stacked",
     includeMajorClass: true,
     renderAnswer: (item) => item.parts.map(renderFaqPart).join("")
   });
@@ -626,7 +626,8 @@ export function generateTarotForBeginnersPage(page = tarotForBeginners) {
   const template = readFileSync(templatePath, "utf8");
   const html = template
     .replace("{{BEGINNERS_META}}", renderMeta(page))
-    .replace("{{BEGINNERS_MAIN}}", renderMain(page));
+    .replace("{{BEGINNERS_MAIN}}", renderMain(page))
+    .replace(/[ \t]+$/gm, "");
 
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, html);

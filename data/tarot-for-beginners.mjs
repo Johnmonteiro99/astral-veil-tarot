@@ -8,6 +8,14 @@ const chapterImage = (file, width, height, alt, position = "center") => ({
   position
 });
 
+const chapterCoverImage = (file, alt, position = "center") => ({
+  src: `/assets/images/tarot_for_beginners/${file}`,
+  width: 1122,
+  height: 1402,
+  alt,
+  position
+});
+
 export const tarotForBeginners = {
   route: "/tarot/for-beginners/",
   seo: {
@@ -27,8 +35,12 @@ export const tarotForBeginners = {
   },
   welcome: {
     regular: {
-      eyebrow: "Before the First Card Turns",
+      eyebrow: "Your First Guide Has Arrived",
       heading: "Welcome to the Beginning",
+      greeting: [
+        "You chose to begin. The Veil noticed.",
+        "Come in. We will take this one card at a time."
+      ],
       paragraphs: [
         "Learning tarot is not about becoming perfect at predicting what comes next. It is about learning to notice symbols, patterns, emotions, and possibilities with greater care.",
         "You do not need psychic abilities, a gifted deck, or all seventy-eight meanings memorized. Bring your curiosity. The rest can be learned one chapter at a time."
@@ -38,33 +50,48 @@ export const tarotForBeginners = {
         { label: "You May Move Slowly", text: "Understanding grows through familiarity, not speed." },
         { label: "Your Perspective Matters", text: "Tradition offers a foundation, but your attention helps the cards become meaningful." }
       ],
-      primaryLabel: "Open Chapter One",
+      primaryLabel: "Continue with Chapter 01",
       secondaryLabel: "View All Chapters",
-      whisper: "Every reader once stood where you are now."
+      whisper: "Every reader once stood where you are now.",
+      quote: "You are allowed to begin slowly."
     },
     bloodMoon: {
       eyebrow: "You Came Looking for Answers",
       heading: "Good. Start by Learning How to Question Them.",
+      greeting: [
+        "So, you actually came.",
+        "Fine. Sit down. We can begin."
+      ],
       paragraphs: [
         "So, you want to learn tarot. Perhaps you expected instant intuition, secret knowledge, and a dramatic revelation before the candles finished melting. Unfortunate. You will have to pay attention instead.",
         "The cards will not flatter you, think for you, or rescue you from uncertainty. They may, however, show you the pattern you keep pretending not to see. That is usually more useful."
       ],
       truths: [
-        { label: "You Will Misunderstand Cards", text: "Excellent. Correcting yourself is how discernment develops." },
-        { label: "You Will Want Certainty", text: "The cards are under no obligation to provide it." },
-        { label: "You Already Belong Here", text: "Confusion did not lock the door. It brought you to it." }
+        { label: "There Is No Test", text: "You will misunderstand cards. Excellent. Correcting yourself is how discernment develops." },
+        { label: "You May Move Slowly", text: "Take your time. The cards are under no obligation to make sense on command." },
+        { label: "Your Perspective Matters", text: "Tradition offers the bones. Your attention decides what refuses to stay buried." }
       ],
-      primaryLabel: "Enter Chapter One",
-      secondaryLabel: "Reveal All Chapters",
-      whisper: "Come closer. You have avoided the lesson long enough."
+      primaryLabel: "Continue with Chapter 01",
+      secondaryLabel: "View All Chapters",
+      whisper: "Come closer. You have avoided the lesson long enough.",
+      quote: "Begin slowly. The cards are not going anywhere."
     },
-    image: chapterImage(
-      "tarot-for-beginners.png",
-      1448,
-      1086,
-      "An open tarot guide, cards, crystals, and a candle arranged at the threshold of study",
-      "68% center"
-    )
+    images: {
+      regular: chapterImage(
+        "tarot_beginners_welcome_guide_default.png",
+        1448,
+        1086,
+        "A welcoming tarot guide seated in a moonlit celestial library",
+        "right center"
+      ),
+      bloodMoon: chapterImage(
+        "tarot_beginners_welcome_guide_blood_moon.png",
+        1448,
+        1086,
+        "A gothic tarot guide seated in a shadowed Blood Moon library",
+        "right center"
+      )
+    }
   },
   library: {
     eyebrow: "The Illuminated Index",
@@ -80,6 +107,7 @@ export const tarotForBeginners = {
       title: "What Is Tarot, Really?",
       introduction: "Before learning the cards, understand what kind of symbolic system you are entering.",
       cardSummary: "Understand tarot as a deck, symbolic language, and interpretive tool.",
+      coverImage: chapterCoverImage("01_what_is_tarot.png", "Tarot cards arranged before a celestial astrolabe and candlelight"),
       image: chapterImage("tarot-for-beginners.png", 1448, 1086, "A tarot deck resting beside an open guide and candlelight", "68% center"),
       academyLesson: {
         title: "What Is Tarot?",
@@ -186,6 +214,7 @@ export const tarotForBeginners = {
       title: "What Do You Actually Need?",
       introduction: "Beginning tarot requires far less than many newcomers are led to believe.",
       cardSummary: "Learn what helps a beginner and what is completely optional.",
+      coverImage: chapterCoverImage("02_what_do_you_need.png", "A beginner tarot practice arranged with cards, a journal, and candlelight"),
       image: chapterImage("tarot-study.png", 1672, 941, "A quiet tarot study table prepared with cards, a journal, and a reference book"),
       visual: {
         type: "table",
@@ -220,6 +249,7 @@ export const tarotForBeginners = {
       title: "Which Tarot Deck Should You Begin With?",
       introduction: "The best first deck is one whose imagery you can understand and want to revisit.",
       cardSummary: "Find a first deck whose imagery and structure support learning.",
+      coverImage: chapterCoverImage("03_choosing_a_deck.png", "A collection of tarot decks displayed in a candlelit celestial study"),
       image: chapterImage("decks-bg.png", 1086, 1448, "Several distinct tarot decks gathered in a moonlit archive", "center 46%"),
       visual: {
         type: "decks",
@@ -261,6 +291,7 @@ export const tarotForBeginners = {
       title: "What Lives Inside Seventy-Eight Cards?",
       introduction: "The deck becomes easier to understand once you see its internal structure.",
       cardSummary: "See how seventy-eight cards divide into Arcana, suits, numbers, and courts.",
+      coverImage: chapterCoverImage("04_inside_the_deck.png", "Tarot cards arranged to reveal the structure inside a complete deck"),
       image: chapterImage("minor-arcana-explained.png", 1448, 1086, "Four symbolic tarot cards arranged as part of a complete deck", "38% 62%"),
       visual: {
         type: "split",
@@ -305,6 +336,7 @@ export const tarotForBeginners = {
       title: "Do You Need to Memorize Every Card?",
       introduction: "Tarot becomes easier when you learn relationships and patterns instead of isolated definitions.",
       cardSummary: "Learn patterns and context without memorizing rigid definitions.",
+      coverImage: chapterCoverImage("05_learning_meanings.png", "An open tarot study with cards and symbolic references for learning meanings"),
       image: chapterImage("history-symbolic-correspondences.webp", 1672, 941, "An open symbolic study with tarot cards, diagrams, and reference books"),
       visual: {
         type: "layers",
@@ -345,6 +377,7 @@ export const tarotForBeginners = {
       title: "What Are Beginners Often Told?",
       introduction: "Some of tarot’s most repeated rules are customs, assumptions, or misunderstandings rather than requirements.",
       cardSummary: "Separate useful tradition from assumptions and repeated misinformation.",
+      coverImage: chapterCoverImage("06_tarot_myths.png", "Shadowed tarot cards and symbols representing myths about the practice"),
       image: chapterImage("upright-reverse.png", 1024, 1536, "A tarot card reflected in upright and reversed orientations", "center 42%"),
       visual: {
         type: "balance",
@@ -376,6 +409,7 @@ export const tarotForBeginners = {
       title: "What Should Your First Week Look Like?",
       introduction: "The first week should build familiarity with the deck rather than pressure to perform readings.",
       cardSummary: "Follow a calm seven-day study path for becoming familiar with the deck.",
+      coverImage: chapterCoverImage("07_first_week.png", "A tarot journal and cards arranged for a first week of quiet practice"),
       image: chapterImage("history-tarot-today-reflection.webp", 1536, 1024, "A journal, tarot cards, and candlelight arranged for a week of quiet study"),
       visual: {
         type: "bookmarks",
@@ -407,6 +441,7 @@ export const tarotForBeginners = {
       title: "What If You Feel Like You Are Doing It Wrong?",
       introduction: "Most beginner mistakes are signs of uncertainty, not failure.",
       cardSummary: "Understand why beginner uncertainty is normal and how to work through it.",
+      coverImage: chapterCoverImage("08_common_mistakes.png", "A candlelit tarot table arranged for correcting common beginner mistakes"),
       image: chapterImage("how-to-read-tarot.png", 1448, 1086, "Hands bringing order to tarot cards on a candlelit reading table", "70% center"),
       visual: {
         type: "clarity",
@@ -443,6 +478,7 @@ export const tarotForBeginners = {
       title: "Which Tarot Words Should You Know?",
       introduction: "A small vocabulary will make every guide, card meaning, and spread easier to understand.",
       cardSummary: "Learn the essential words used throughout tarot study.",
+      coverImage: chapterCoverImage("09_tarot_glossary.png", "An illuminated tarot glossary surrounded by celestial symbols"),
       image: chapterImage("history-faq-celestial-emblem.webp", 1254, 1254, "A celestial compass emblem representing an index of tarot terms"),
       visual: {
         type: "index",
@@ -482,6 +518,7 @@ export const tarotForBeginners = {
       title: "Where Will You Go Next?",
       introduction: "You now understand the landscape. Choose the path that matches what you want to learn.",
       cardSummary: "Choose the next doorway into the larger Astral Veil tarot archive.",
+      coverImage: chapterCoverImage("10_next_path.png", "A luminous path leading beyond an open doorway into further tarot study"),
       image: chapterImage("history-continue-journey-banner.webp", 1916, 821, "A luminous path leading through the next doorway of the tarot archive"),
       visual: {
         type: "doorways",
@@ -609,6 +646,435 @@ export const tarotForBeginners = {
   }
 };
 
+const chamberNumerals = ["I", "II", "III"];
+
+function selectBlockItems(block, indexes) {
+  if (!block || !Array.isArray(block.items)) return { type: "empty", items: [] };
+  return { ...block, items: indexes.map((index) => block.items[index]).filter(Boolean) };
+}
+
+function createVisualSlot(chapter, chamberIndex, title, ratio = "16 / 9") {
+  return {
+    slot: `${chapter.id}-chamber-${chamberIndex + 1}`,
+    alt: `Celestial study diagram for ${title}`,
+    ratio
+  };
+}
+
+function createGuidedLesson(chapter, configuration) {
+  return {
+    title: configuration.title || chapter.title,
+    introContinuation: configuration.introContinuation,
+    outcomes: configuration.outcomes,
+    headerVisual: {
+      slot: `${chapter.id}-entrance`,
+      alt: `Celestial threshold for ${chapter.navLabel}`,
+      ratio: "16 / 7"
+    },
+    chambers: configuration.chambers.map((chamber, index) => ({
+      id: `${chapter.id}-chamber-${index + 1}`,
+      numeral: chamberNumerals[index],
+      label: `CHAMBER ${chamberNumerals[index]}`,
+      shortTitle: chamber.shortTitle || chamber.title,
+      title: chamber.title,
+      preview: chamber.preview,
+      topics: chamber.topics,
+      variant: chamber.variant,
+      visual: createVisualSlot(chapter, index, chamber.title, chamber.ratio),
+      visualData: chamber.visualData,
+      blocks: chamber.blocks,
+      practice: chamber.practice,
+      checkpoint: chamber.checkpoint,
+      takeaway: chamber.takeaway
+    })),
+    takeaway: chapter.takeaway,
+    completionSummary: configuration.outcomes
+  };
+}
+
+function migrateChapterOne(chapter) {
+  const source = chapter.academyLesson;
+  const variants = ["split", "map", "editorial"];
+  const shortTitles = ["The Deck", "The Images", "Meaning"];
+  const outcomes = [
+    "Recognize tarot as a structured seventy-eight-card deck",
+    "Read imagery as a symbolic language",
+    "Understand how context and reflection create meaning"
+  ];
+  return createGuidedLesson(chapter, {
+    title: source.title,
+    introContinuation: source.introContinuation,
+    outcomes,
+    chambers: source.chambers.map((chamber, index) => ({
+      shortTitle: shortTitles[index],
+      title: chamber.title,
+      preview: chamber.preview,
+      topics: chamber.topics,
+      variant: variants[index],
+      visualData: chamber.learningVisual,
+      blocks: chamber.sections.map((section) => ({
+        type: "paragraphs",
+        heading: section.heading,
+        paragraphs: section.paragraphs
+      })),
+      takeaway: chamber.takeaway
+    }))
+  });
+}
+
+function migrateStandardChapter(chapter) {
+  const [firstBlock, secondBlock, thirdBlock, fourthBlock] = chapter.blocks;
+  const legacyVisual = {
+    type: "orbit",
+    label: chapter.visual.caption,
+    center: chapter.visual.center,
+    items: chapter.visual.items
+  };
+
+  const configurations = {
+    "what-you-need": {
+      introContinuation: "Move through three Chambers: gather what supports the work, release what does not, and build a practice you can sustain.",
+      outcomes: ["What is truly essential", "What is completely optional", "How familiarity grows through practice"],
+      chambers: [
+        {
+          shortTitle: "Essentials",
+          title: "Your Essential Tools",
+          preview: "Begin with the few things that make observation, reference, and reflection possible.",
+          topics: ["Tarot Deck", "Reference", "Journal"],
+          variant: "split",
+          visualData: legacyVisual,
+          blocks: [selectBlockItems(firstBlock, [0, 1, 2])],
+          takeaway: "A readable deck, a reliable reference, and a place to record what you notice are enough to begin."
+        },
+        {
+          shortTitle: "Optional",
+          title: "What Is Optional",
+          preview: "Set down the rules and objects that are often mistaken for requirements.",
+          topics: ["Ability", "Ritual", "Perfection"],
+          variant: "comparison",
+          blocks: [secondBlock],
+          takeaway: "You do not need special permission, perfect intuition, or ritual perfection to study tarot."
+        },
+        {
+          shortTitle: "Practice",
+          title: "Building Your Practice",
+          preview: "Use time, attention, and willingness to turn simple tools into lasting familiarity.",
+          topics: ["Time", "Attention", "Patience"],
+          variant: "editorial",
+          blocks: [selectBlockItems(firstBlock, [3, 4])],
+          takeaway: chapter.takeaway
+        }
+      ]
+    },
+    "choosing-your-first-deck": {
+      introContinuation: "A first deck becomes a companion through readability, recognizable structure, and the desire to return to it.",
+      outcomes: ["How readable imagery supports learning", "Why structure and references matter", "How to choose through genuine connection"],
+      chambers: [
+        {
+          shortTitle: "Imagery",
+          title: "Readable Imagery",
+          preview: "Choose artwork that gives you enough visual information to observe before you interpret.",
+          topics: ["Clarity", "Artwork", "Guidebook"],
+          variant: "split",
+          visualData: legacyVisual,
+          blocks: [selectBlockItems(firstBlock, [0]), selectBlockItems(secondBlock, [0, 3])],
+          takeaway: "Readable imagery gives your attention somewhere concrete to begin."
+        },
+        {
+          shortTitle: "Structure",
+          title: "Structure and Tradition",
+          preview: "A recognizable system and consistent symbolism make comparison and reference easier.",
+          topics: ["System", "Symbols", "Consistency"],
+          variant: "map",
+          blocks: [selectBlockItems(firstBlock, [2]), selectBlockItems(secondBlock, [2, 4])],
+          takeaway: "Structure is a learning aid, not a rule about which art you are allowed to love."
+        },
+        {
+          shortTitle: "Connection",
+          title: "Personal Connection",
+          preview: "Let practical considerations and genuine curiosity guide the final choice.",
+          topics: ["Card Size", "Interest", "Choice"],
+          variant: "editorial",
+          blocks: [selectBlockItems(firstBlock, [1]), selectBlockItems(secondBlock, [1, 5]), thirdBlock, fourthBlock],
+          takeaway: chapter.takeaway
+        }
+      ]
+    },
+    "inside-the-deck": {
+      introContinuation: "See the architecture first: two Arcana, four suits, and the repeating language of numbers and court cards.",
+      outcomes: ["How Major and Minor Arcana divide the deck", "What the four suits describe", "How numbers and courts repeat across suits"],
+      chambers: [
+        {
+          shortTitle: "The Arcana",
+          title: "Major and Minor Arcana",
+          preview: "Begin with the largest division inside a complete seventy-eight-card tarot deck.",
+          topics: ["78 Cards", "22 Major", "56 Minor"],
+          variant: "comparison",
+          visualData: legacyVisual,
+          blocks: [firstBlock, thirdBlock],
+          checkpoint: {
+            heading: "Check Your Understanding",
+            prompt: "Which two groups make up a complete tarot deck?",
+            options: [
+              { label: "Major and Minor Arcana", correct: true, feedback: "Yes. Together they form the complete seventy-eight-card system." },
+              { label: "Upright and reversed cards", correct: false, feedback: "Those are orientations. The deck itself divides into Major and Minor Arcana." }
+            ]
+          },
+          takeaway: "The Major Arcana holds larger movements; the Minor Arcana brings them into everyday life."
+        },
+        {
+          shortTitle: "The Suits",
+          title: "The Four Suits",
+          preview: "Meet the four families that organize most of the Minor Arcana.",
+          topics: ["Wands", "Cups", "Swords", "Pentacles"],
+          variant: "map",
+          blocks: [secondBlock],
+          takeaway: "Each suit offers a consistent lens for one area of lived experience."
+        },
+        {
+          shortTitle: "Numbers + Courts",
+          title: "Numbers and Court Cards",
+          preview: "Notice the patterns that repeat across all four suits and make the deck easier to compare.",
+          topics: ["Numbers", "Pages", "Knights", "Queens + Kings"],
+          variant: "editorial",
+          blocks: [{
+            type: "paragraphs",
+            heading: "Repeating Patterns",
+            paragraphs: [
+              "Numbers repeat across the suits, allowing you to compare similar stages through different areas of life.",
+              "Pages, Knights, Queens, and Kings can describe people, roles, attitudes, or ways of expressing a suit."
+            ]
+          }],
+          takeaway: chapter.takeaway
+        }
+      ]
+    },
+    "learning-card-meanings": {
+      introContinuation: "Move from observation to context, then bring the layers together into a responsible interpretation.",
+      outcomes: ["How to observe before defining", "How question and context shape meaning", "How to synthesize imagery, tradition, and response"],
+      chambers: [
+        {
+          shortTitle: "Observe",
+          title: "Observe Before Defining",
+          preview: "Let the visible card speak before you reach for a memorized keyword.",
+          topics: ["Image", "Emotion", "Attention"],
+          variant: "split",
+          visualData: legacyVisual,
+          blocks: [selectBlockItems(firstBlock, [0, 3])],
+          practice: {
+            heading: "Try This",
+            intro: "Look at one tarot card for sixty seconds before checking its meaning.",
+            items: ["The first object you notice", "The strongest emotion", "One question the image creates"]
+          },
+          takeaway: "Observation gives interpretation evidence to stand on."
+        },
+        {
+          shortTitle: "Context",
+          title: "Question and Context",
+          preview: "A card changes emphasis through the question, position, and surrounding cards.",
+          topics: ["Question", "Position", "Relationships"],
+          variant: "editorial",
+          blocks: [selectBlockItems(firstBlock, [2]), selectBlockItems(secondBlock, [4, 5, 6])],
+          takeaway: "A meaning becomes useful when it answers the question actually being asked."
+        },
+        {
+          shortTitle: "Synthesis",
+          title: "Synthesis and Interpretation",
+          preview: "Connect tradition, comparison, and personal response without turning any one layer into a verdict.",
+          topics: ["Tradition", "Patterns", "Reflection"],
+          variant: "map",
+          blocks: [selectBlockItems(firstBlock, [1]), selectBlockItems(secondBlock, [0, 1, 2, 3]), thirdBlock],
+          takeaway: chapter.takeaway
+        }
+      ]
+    },
+    "tarot-myths": {
+      introContinuation: "Separate inherited customs from repeated misinformation, then keep what supports a grounded practice.",
+      outcomes: ["How tradition differs from requirement", "Which repeated myths limit learning", "How to keep tarot grounded in choice and context"],
+      chambers: [
+        {
+          shortTitle: "Tradition",
+          title: "Tradition",
+          preview: "Some customs can add meaning without becoming conditions for participation.",
+          topics: ["Custom", "Permission", "Practice"],
+          variant: "editorial",
+          visualData: legacyVisual,
+          blocks: [selectBlockItems(firstBlock, [0, 1])],
+          takeaway: "A custom may guide your practice without deciding whether you are allowed to begin."
+        },
+        {
+          shortTitle: "Repeated Myths",
+          title: "Repeated Myths",
+          preview: "Look again at the claims that create fear, pressure, and rigid expectations.",
+          topics: ["Memorization", "Reversals", "Prediction"],
+          variant: "reveal",
+          blocks: [selectBlockItems(firstBlock, [2, 3, 4])],
+          takeaway: "Repeated language does not become a requirement merely because it sounds traditional."
+        },
+        {
+          shortTitle: "Grounded Practice",
+          title: "A Grounded Practice",
+          preview: "Use honesty, boundaries, and context when the cards feel difficult or personally charged.",
+          topics: ["Challenge", "Bias", "Choice"],
+          variant: "comparison",
+          blocks: [selectBlockItems(firstBlock, [5, 6])],
+          takeaway: chapter.takeaway
+        }
+      ]
+    },
+    "first-week-with-tarot": {
+      introContinuation: "Let the first seven days move from meeting the deck to recognizing patterns and choosing what to study next.",
+      outcomes: ["How to meet the deck without pressure", "How to build familiarity through comparison", "How to finish the week with one useful next step"],
+      chambers: [
+        {
+          shortTitle: "Meet the Deck",
+          title: "Meeting the Deck",
+          preview: "Begin by seeing the whole deck and locating its larger sequence.",
+          topics: ["Day 01", "Day 02", "Major Arcana"],
+          variant: "editorial",
+          visualData: legacyVisual,
+          blocks: [selectBlockItems(firstBlock, [0, 1])],
+          takeaway: "The first encounter is for noticing, not mastering."
+        },
+        {
+          shortTitle: "Familiarity",
+          title: "Building Familiarity",
+          preview: "Compare suits, numbers, and court cards so patterns begin to repeat.",
+          topics: ["Day 03", "Day 04", "Day 05"],
+          variant: "map",
+          blocks: [selectBlockItems(firstBlock, [2, 3, 4])],
+          takeaway: "Comparison makes a large deck feel like a connected language."
+        },
+        {
+          shortTitle: "Complete the Week",
+          title: "Completing the First Week",
+          preview: "Study one card deeply, then choose the next path that fits your curiosity.",
+          topics: ["Day 06", "Day 07", "Continue"],
+          variant: "practice",
+          blocks: [selectBlockItems(firstBlock, [5, 6])],
+          takeaway: chapter.takeaway
+        }
+      ]
+    },
+    "beginner-mistakes": {
+      introContinuation: "Name the pressure, notice where certainty distorts the reading, and return to habits that keep learning sustainable.",
+      outcomes: ["Why memorization pressure creates confusion", "How projection and repeated questioning reduce clarity", "Which habits support steady learning"],
+      chambers: [
+        {
+          shortTitle: "Pressure",
+          title: "Pressure and Memorization",
+          preview: "Release the expectation that confidence or complete recall must arrive immediately.",
+          topics: ["Memorization", "Keywords", "Comparison"],
+          variant: "reveal",
+          visualData: legacyVisual,
+          blocks: [selectBlockItems(firstBlock, [0, 4, 7])],
+          takeaway: "Confidence develops through use, correction, and familiarity."
+        },
+        {
+          shortTitle: "Certainty",
+          title: "Projection and Certainty",
+          preview: "Notice the habits that add cards, repeat questions, or force every symbol into an answer.",
+          topics: ["Clarifiers", "Repeated Questions", "Context"],
+          variant: "comparison",
+          blocks: [selectBlockItems(firstBlock, [1, 2, 3, 5])],
+          takeaway: "More cards and stronger certainty do not always create a clearer reading."
+        },
+        {
+          shortTitle: "Sustainable Habits",
+          title: "Sustainable Reading Habits",
+          preview: "Return to the question, allow uncertainty, and give interpretation time to develop.",
+          topics: ["Pause", "Simplify", "Reflect"],
+          variant: "editorial",
+          blocks: [selectBlockItems(firstBlock, [6]), secondBlock],
+          takeaway: chapter.takeaway
+        }
+      ]
+    },
+    "tarot-glossary": {
+      introContinuation: "Learn the vocabulary in three groups: the deck itself, the language of a reading, and the process of interpretation.",
+      outcomes: ["Terms describing deck structure", "Terms used during a reading", "Terms connecting practice and interpretation"],
+      chambers: [
+        {
+          shortTitle: "Deck Structure",
+          title: "Deck and Structure",
+          preview: "Begin with the terms that describe how the seventy-eight cards are organized.",
+          topics: ["Arcana", "Suit", "Court Card"],
+          variant: "editorial",
+          visualData: legacyVisual,
+          blocks: [selectBlockItems(firstBlock, [0, 1, 2, 3, 4])],
+          takeaway: "Structure gives you a map for locating any card in the larger deck."
+        },
+        {
+          shortTitle: "Reading Language",
+          title: "Reading Language",
+          preview: "Learn the terms used to describe positions, orientations, people, and supporting cards.",
+          topics: ["Spread", "Position", "Querent", "Clarifier"],
+          variant: "reveal",
+          blocks: [selectBlockItems(firstBlock, [5, 6, 7, 8, 9, 10, 11])],
+          takeaway: "Reading vocabulary helps you describe what each card is doing in context."
+        },
+        {
+          shortTitle: "Interpretation",
+          title: "Practice and Interpretation",
+          preview: "Connect recurring symbolic patterns with the process of making responsible meaning.",
+          topics: ["Archetype", "Interpretation", "Intuition"],
+          variant: "map",
+          blocks: [selectBlockItems(firstBlock, [12, 13, 14])],
+          takeaway: chapter.takeaway
+        }
+      ]
+    },
+    "choose-your-next-path": {
+      introContinuation: "Pause at the final Door, recognize the foundation you have built, and choose one useful direction through the archive.",
+      outcomes: ["What foundation you now carry", "Which learning paths are available", "How to continue without learning everything at once"],
+      chambers: [
+        {
+          shortTitle: "What You Learned",
+          title: "What You Have Learned",
+          preview: "You now know the deck’s structure, the role of imagery and context, and how familiarity grows.",
+          topics: ["Structure", "Symbols", "Practice"],
+          variant: "editorial",
+          visualData: legacyVisual,
+          blocks: [{
+            type: "paragraphs",
+            heading: "The Foundation",
+            paragraphs: ["You have learned how tarot is organized, what supports a beginning practice, and why observation matters more than instant certainty."]
+          }],
+          takeaway: "The foundation is not mastery. It is enough understanding to choose your next useful step."
+        },
+        {
+          shortTitle: "Choose",
+          title: "Choose Your Direction",
+          preview: "Continue through the path that most closely matches what you want to practice now.",
+          topics: ["Read", "Practice", "Study"],
+          variant: "comparison",
+          blocks: [selectBlockItems(firstBlock, [0, 1, 2, 3])],
+          takeaway: "Choose the direction that answers your present curiosity."
+        },
+        {
+          shortTitle: "Continue",
+          title: "Continue Through the Archive",
+          preview: "The remaining doors lead into Arcana, spreads, history, and the decks themselves.",
+          topics: ["Arcana", "Spreads", "History", "Decks"],
+          variant: "map",
+          blocks: [selectBlockItems(firstBlock, [4, 5, 6, 7])],
+          takeaway: chapter.takeaway
+        }
+      ]
+    }
+  };
+
+  return createGuidedLesson(chapter, configurations[chapter.id]);
+}
+
+tarotForBeginners.chapters.forEach((chapter) => {
+  chapter.academyLesson = chapter.id === "what-is-tarot"
+    ? migrateChapterOne(chapter)
+    : migrateStandardChapter(chapter);
+  delete chapter.visual;
+  delete chapter.blocks;
+});
+
 export const beginnerChapterMetadata = tarotForBeginners.chapters.map((chapter, index, chapters) => ({
   id: chapter.id,
   number: chapter.number,
@@ -617,6 +1083,12 @@ export const beginnerChapterMetadata = tarotForBeginners.chapters.map((chapter, 
   title: chapter.title,
   introduction: chapter.introduction,
   cardSummary: chapter.cardSummary,
+  chambers: chapter.academyLesson.chambers.map((chamber) => ({
+    id: chamber.id,
+    numeral: chamber.numeral,
+    title: chamber.title,
+    shortTitle: chamber.shortTitle
+  })),
   hash: `#${chapter.id}`,
   previous: chapters[index - 1]?.id || null,
   next: chapters[index + 1]?.id || null

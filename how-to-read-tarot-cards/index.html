@@ -104,7 +104,50 @@
                 <div class="htr-constellation__travel-layer" data-constellation-travel-layer>
                   <div class="htr-constellation__phase-labels" aria-hidden="true"><span>Foundations · 01–03</span><span>Interpretation · 04–07</span><span>Integration · 08–09</span></div>
                   <svg class="htr-constellation__lines htr-spiral-map__svg" viewBox="0 0 1200 500" preserveAspectRatio="none" aria-hidden="true" data-spiral-map-svg><path class="htr-spiral-map__path-base" d="M84 178 C146 124 224 94 298 112 S434 190 502 176 S640 88 704 108 S838 194 906 176 S1082 84 1110 112 C1136 182 1066 284 914 322 S712 420 588 426 S358 326 296 318" data-spiral-path-base /><path class="htr-spiral-map__path-progress" data-spiral-path-progress /><g><circle cx="164" cy="142" r="2"/><circle cx="392" cy="155" r="1.7"/><circle cx="615" cy="132" r="2"/><circle cx="812" cy="168" r="1.6"/><circle cx="1018" cy="235" r="2"/><circle cx="746" cy="380" r="1.6"/><circle cx="452" cy="374" r="2"/></g></svg>
-                  <div class="htr-constellation__mobile-path" aria-hidden="true"></div>
+                  <svg class="htr-constellation__mobile-path htr-celestial-spine" viewBox="0 0 360 720" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" data-mobile-celestial-spine>
+                    <defs>
+                      <linearGradient id="htr-celestial-spine-gradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#e991ff" />
+                        <stop offset="13%" stop-color="#a76cff" />
+                        <stop offset="21%" stop-color="#6867ff" />
+                        <stop offset="29%" stop-color="#45adff" />
+                        <stop offset="40%" stop-color="#52d68d" />
+                        <stop offset="50%" stop-color="#f2cc55" />
+                        <stop offset="60%" stop-color="#ff963f" />
+                        <stop offset="70%" stop-color="#ef4c5c" />
+                        <stop offset="95%" stop-color="#f8f6ff" />
+                      </linearGradient>
+                    </defs>
+                    <g class="htr-celestial-spine__geometry">
+                      <ellipse cx="180" cy="360" rx="96" ry="332" />
+                      <ellipse cx="180" cy="360" rx="62" ry="306" />
+                      <path d="M180 24 L270 360 L180 696 L90 360 Z" />
+                      <path d="M180 78 L234 360 L180 642 L126 360 Z" />
+                    </g>
+                    <g class="htr-celestial-spine__orbits">
+                      <path d="M180 28 C116 74 116 132 180 178 C244 224 244 284 180 330 C116 376 116 438 180 484 C244 530 244 590 180 638 C152 660 148 682 180 700" />
+                      <path d="M180 28 C244 74 244 132 180 178 C116 224 116 284 180 330 C244 376 244 438 180 484 C116 530 116 590 180 638 C208 660 212 682 180 700" />
+                      <path d="M180 52 C88 116 94 214 180 270 C266 326 266 418 180 474 C94 530 100 622 180 672" />
+                      <path d="M180 52 C272 116 266 214 180 270 C94 326 94 418 180 474 C266 530 260 622 180 672" />
+                    </g>
+                    <g class="htr-celestial-spine__stations">
+                      <ellipse cx="180" cy="29" rx="27" ry="7" transform="rotate(-10 180 29)" />
+                      <ellipse cx="180" cy="94" rx="23" ry="6" transform="rotate(11 180 94)" />
+                      <ellipse cx="180" cy="151" rx="25" ry="6" transform="rotate(-9 180 151)" />
+                      <ellipse cx="180" cy="209" rx="22" ry="6" transform="rotate(12 180 209)" />
+                      <ellipse cx="180" cy="288" rx="27" ry="7" transform="rotate(-8 180 288)" />
+                      <ellipse cx="180" cy="360" rx="24" ry="6" transform="rotate(10 180 360)" />
+                      <ellipse cx="180" cy="432" rx="26" ry="7" transform="rotate(-11 180 432)" />
+                      <ellipse cx="180" cy="504" rx="23" ry="6" transform="rotate(9 180 504)" />
+                      <ellipse cx="180" cy="684" rx="35" ry="9" />
+                    </g>
+                    <path class="htr-celestial-spine__channel" d="M180 18 C176 112 184 206 180 300 C176 394 184 488 180 702" />
+                    <g class="htr-celestial-spine__sigils">
+                      <path d="M180 5 L188 18 L180 31 L172 18 Z" />
+                      <circle cx="180" cy="360" r="4" />
+                      <path d="M132 690 Q180 718 228 690 M150 696 Q180 710 210 696" />
+                    </g>
+                  </svg>
                   <ol class="htr-constellation__nodes" data-lesson-stars aria-label="Choose a tarot lesson"></ol>
                 </div>
                 <div class="htr-constellation__vignette" aria-hidden="true" data-constellation-vignette><span data-constellation-vignette-veil></span></div>
@@ -268,7 +311,7 @@
         </div>
       </section>
 
-      <section class="tarot-faq major-arcana-faq tarot-education-faq htr-faq tarot-faq--stacked" id="faq" aria-labelledby="faq-heading" data-education-faq><div class="tarot-shell tarot-faq__inner"><header class="tarot-faq__header"><p class="tarot-faq__eyebrow">Questions Along the Way</p><h2 id="faq-heading">How to Read Tarot: Frequently Asked Questions</h2><p class="tarot-faq__intro">Clear, balanced answers for building a thoughtful reading practice.</p><div class="tarot-faq__divider" aria-hidden="true"><span></span><span class="tarot-faq__ornament">✦</span><span></span></div></header><div class="tarot-faq__list">
+      <section class="tarot-faq major-arcana-faq tarot-education-faq htr-faq tarot-faq--stacked" id="faq" aria-labelledby="faq-heading" data-education-faq><div class="tarot-shell tarot-faq__inner"><header class="tarot-faq__header"><p class="tarot-faq__eyebrow">Questions Along the Way</p><h2 id="faq-heading">How to Read Tarot: Frequently Asked Questions</h2><p class="tarot-faq__intro">Clear, balanced answers for building a thoughtful reading practice.</p></header><div class="tarot-faq__list">
         <article class="tarot-faq__item" data-education-faq-item><h3><button class="tarot-faq__trigger" id="htr-faq-question-1" type="button" aria-expanded="true" aria-controls="htr-faq-answer-1" data-education-faq-button><span>Do I need to memorize every tarot card meaning?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3><div class="tarot-faq__answer" id="htr-faq-answer-1" role="region" aria-labelledby="htr-faq-question-1" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>No. Begin with imagery, suit, number, and position, then use reference meanings to deepen what you notice. Familiarity grows through repeated practice.</p></div></div></article>
         <article class="tarot-faq__item" data-education-faq-item><h3><button class="tarot-faq__trigger" id="htr-faq-question-2" type="button" aria-expanded="true" aria-controls="htr-faq-answer-2" data-education-faq-button><span>Do I need psychic abilities to read tarot?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3><div class="tarot-faq__answer" id="htr-faq-answer-2" role="region" aria-labelledby="htr-faq-question-2" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>No. Tarot reading can be practiced as careful observation, symbolic interpretation, reflection, and storytelling.</p></div></div></article>
         <article class="tarot-faq__item" data-education-faq-item><h3><button class="tarot-faq__trigger" id="htr-faq-question-3" type="button" aria-expanded="true" aria-controls="htr-faq-answer-3" data-education-faq-button><span>Which tarot spread should a beginner use?</span><span class="tarot-faq__icon" aria-hidden="true">−</span></button></h3><div class="tarot-faq__answer" id="htr-faq-answer-3" role="region" aria-labelledby="htr-faq-question-3" aria-hidden="false"><div class="tarot-faq__answer-inner"><p>A one-card or three-card spread is usually the clearest place to begin because every position remains easy to track.</p></div></div></article>

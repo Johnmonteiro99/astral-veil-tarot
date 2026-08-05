@@ -7,14 +7,14 @@ const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const errors = [];
 
 const pageRecords = [
-  { label: "Tarot History", path: "tarot/history/index.html", layout: "split" },
-  { label: "Major Arcana", path: "tarot/major-arcana/index.html", layout: "split" },
-  { label: "Minor Arcana", path: "tarot/minor-arcana/index.html", layout: "split" },
-  { label: "Tarot for Beginners", path: "tarot/for-beginners/index.html", layout: "split" },
+  { label: "Tarot History", path: "tarot/history/index.html", layout: "stacked" },
+  { label: "Major Arcana", path: "tarot/major-arcana/index.html", layout: "stacked" },
+  { label: "Minor Arcana", path: "tarot/minor-arcana/index.html", layout: "stacked" },
+  { label: "Tarot for Beginners", path: "tarot/for-beginners/index.html", layout: "stacked" },
   { label: "How to Read Tarot", path: "how-to-read-tarot-cards/index.html", layout: "stacked" },
-  { label: "Tarot Spreads", path: "tarot-spreads/index.html", layout: "split" },
-  { label: "Tarot vs. Oracle", path: "tarot/compare/tarot-vs-oracle-cards/index.html", layout: "split" },
-  { label: "Tarot vs. Lenormand", path: "tarot/compare/tarot-vs-lenormand/index.html", layout: "split" },
+  { label: "Tarot Spreads", path: "tarot-spreads/index.html", layout: "stacked" },
+  { label: "Tarot vs. Oracle", path: "tarot/compare/tarot-vs-oracle-cards/index.html", layout: "stacked" },
+  { label: "Tarot vs. Lenormand", path: "tarot/compare/tarot-vs-lenormand/index.html", layout: "stacked" },
   ...tarotTopics.map((topic) => ({
     label: topic.title,
     path: `tarot/topics/${topic.slug}/index.html`,
@@ -188,6 +188,29 @@ function validateThemeArchitecture() {
   const topicJs = read("js/tarot-topic.js");
   const majorJs = read("js/tarot-major-arcana.js");
 
+  const faqTokens = [
+    "--tarot-faq-atmosphere",
+    "--tarot-faq-card-bg",
+    "--tarot-faq-card-hover-bg",
+    "--tarot-faq-card-open-bg",
+    "--tarot-faq-card-border",
+    "--tarot-faq-card-border-hover",
+    "--tarot-faq-card-shadow",
+    "--tarot-faq-card-hover-shadow",
+    "--tarot-faq-card-open-shadow",
+    "--tarot-faq-heading",
+    "--tarot-faq-question",
+    "--tarot-faq-answer",
+    "--tarot-faq-accent",
+    "--tarot-faq-icon-bg",
+    "--tarot-faq-icon-border",
+    "--tarot-faq-icon-color",
+    "--tarot-faq-icon-open-bg",
+    "--tarot-faq-focus",
+    "--tarot-faq-haze",
+    "--tarot-faq-rule-color",
+    "--tarot-faq-rule-glow"
+  ];
   const semanticTokens = [
     "--tarot-education-surface-primary",
     "--tarot-education-surface-secondary",
@@ -212,7 +235,8 @@ function validateThemeArchitecture() {
     "--tarot-question-text",
     "--tarot-question-answer",
     "--tarot-question-icon",
-    "--tarot-question-focus"
+    "--tarot-question-focus",
+    ...faqTokens
   ];
 
   [
@@ -227,22 +251,58 @@ function validateThemeArchitecture() {
     });
   });
 
+  const blueMoonRule = extractRule(tarotCss, "body.blue-moon-mode.tarot-meanings-page");
+  if (!blueMoonRule) errors.push("theme tokens: missing Blue Moon FAQ selector");
+  faqTokens.forEach((token) => {
+    if (!blueMoonRule.includes(`${token}:`)) errors.push(`theme tokens: Blue Moon is missing ${token}`);
+  });
+
   [
-    "background: var(--tarot-question-surface)",
-    "background: var(--tarot-question-surface-hover)",
-    "background: var(--tarot-question-surface-open)",
-    "border-bottom: 1px solid var(--tarot-question-border)",
-    "border-radius: 0",
+    "border: 1px solid transparent",
+    "border-radius: 22px",
+    "background: transparent",
     "box-shadow: none",
-    "width: 44px",
-    "height: 44px",
-    "grid-template-rows 300ms ease",
+    "backdrop-filter: none",
+    ".tarot-faq__item::after",
+    "var(--tarot-faq-rule-color)",
+    "var(--tarot-faq-rule-glow)",
+    "background: var(--tarot-faq-icon-bg)",
+    ".tarot-faq--stacked .tarot-faq__inner",
+    "width: min(calc(100% - 48px),960px)",
+    "max-width: 960px",
+    "width: min(calc(100% - 64px),960px)",
+    "width: min(calc(100% - 36px),960px)",
     "@media (prefers-reduced-motion: reduce)"
   ].forEach((token) => {
-    if (!educationCss.includes(token)) errors.push(`shared FAQ styles: missing ${token}`);
+    if (!tarotCss.includes(token)) errors.push(`shared FAQ styles: missing ${token}`);
   });
-  ["#101b22", "--faq-surface-base", "--faq-haze", "--faq-halo", "border-radius: 14px"].forEach((token) => {
-    if (educationCss.includes(token)) errors.push(`shared FAQ styles: obsolete heavy-card token remains (${token})`);
+  [
+    "grid-template-columns: minmax(0, 1fr)",
+    "width: min(calc(100% - 48px), 960px)",
+    "max-width: 960px",
+    "width: min(calc(100vw - 64px), 960px)",
+    "width: min(calc(100vw - 36px), 960px)",
+    "width: min(100%, 800px)",
+    "max-width: 680px",
+    "text-align: left",
+    "all paint comes from the theme tokens"
+  ].forEach((token) => {
+    if (!educationCss.includes(token)) errors.push(`shared FAQ layout: missing ${token}`);
+  });
+  [
+    "width: min(calc(100% - 56px), 1180px)",
+    "body.how-to-read-page .htr-faq.tarot-faq .tarot-faq__inner",
+    "body.how-to-read-page .htr-faq.tarot-faq .tarot-faq__header",
+    "body.tarot-topic-page .tarot-topic-faq.tarot-faq .tarot-faq__inner"
+  ].forEach((token) => {
+    if (educationCss.includes(token)) errors.push(`shared FAQ layout: obsolete width or alignment exception remains (${token})`);
+  });
+  [
+    "border-top: 1px solid var(--tarot-question-border)",
+    "border-bottom: 1px solid var(--tarot-question-border)",
+    "grid-template-columns: minmax(15rem, 32fr) minmax(0, 68fr)"
+  ].forEach((token) => {
+    if (educationCss.includes(token)) errors.push(`shared FAQ layout: obsolete line/split treatment remains (${token})`);
   });
 
   const majorMoonRule = extractRule(majorCss, "body.moon-mode.tarot-major-arcana-page .major-arcana-page");
@@ -306,8 +366,88 @@ function validateThemeArchitecture() {
   }
 }
 
+function validateRelatedTarotFaqSurfaces() {
+  const tarotHub = read("tarot.html");
+  if (!tarotHub.includes('<section class="tarot-faq tarot-faq--stacked"')) {
+    errors.push("Tarot hub: FAQ does not use the shared stacked layout");
+  }
+
+  const cardTemplate = read("templates/tarot-card-detail.html");
+  const cardGenerator = read("scripts/generate-card-pages.mjs");
+  const cardCss = read("css/tarot-card.css");
+  const cardFaqCss = cardCss.slice(cardCss.indexOf(".tarot-card-faq {"), cardCss.indexOf(".tarot-card-reflection {"));
+  const cardJs = read("js/tarot-card-page.js");
+  const generatedCard = read("tarot/the-fool/index.html");
+  [
+    '<p class="tarot-card-section-heading__eyebrow">Learning the Card</p>',
+    '<div class="tarot-card-faq__list" data-card-faq>'
+  ].forEach((token) => {
+    if (!cardTemplate.includes(token)) errors.push(`Tarot card FAQ template: missing ${token}`);
+  });
+  [
+    "border: 1px solid transparent",
+    "background: transparent",
+    "box-shadow: none",
+    "backdrop-filter: none",
+    "border-radius: 22px",
+    "gap: clamp(12px, 1.25vw, 18px)",
+    ".tarot-card-faq__item::after",
+    "var(--tarot-faq-rule-color)",
+    "var(--tarot-faq-rule-glow)"
+  ].forEach((token) => {
+    if (!cardFaqCss.includes(token)) errors.push(`Tarot card FAQ styles: missing ${token}`);
+  });
+  ["border-top: 1px solid var(--tarot-card-edge)", "border-bottom: 1px solid var(--tarot-card-edge)"].forEach((token) => {
+    if (cardFaqCss.includes(token)) errors.push(`Tarot card FAQ styles: obsolete divider treatment remains (${token})`);
+  });
+  if (!cardGenerator.includes('aria-hidden="true" hidden')) {
+    errors.push("Tarot card FAQ generator: collapsed answers do not expose their hidden state");
+  }
+  [
+    'panel.setAttribute("aria-hidden", String(!expand))',
+    'classList.toggle("is-open", expand)'
+  ].forEach((token) => {
+    if (!cardJs.includes(token)) errors.push(`Tarot card FAQ controller: missing ${token}`);
+  });
+  if (!generatedCard.includes('class="tarot-card-faq__answer"') || !generatedCard.includes('aria-hidden="true" hidden')) {
+    errors.push("Tarot card FAQ output: generated accessible card markup is stale");
+  }
+
+  const seoFaqPages = [
+    "daily-tarot-reading.html",
+    "free-daily-tarot-reading.html",
+    "free-tarot-reading.html",
+    "one-card-tarot-reading.html",
+    "online-tarot-reading.html"
+  ];
+  seoFaqPages.forEach((path) => {
+    const html = read(path);
+    if (!html.includes('<p class="seo-landing-kicker">Tarot Questions</p>')
+      || !html.includes('<div class="seo-landing-faq">')
+      || !html.includes("<details>")) {
+      errors.push(`${path}: Tarot landing FAQ is missing its stacked header/card contract`);
+    }
+  });
+  const globalCss = read("css/style.css");
+  const seoFaqRules = [...globalCss.matchAll(/\.seo-landing-faq\s*\{([^}]*)\}/g)]
+    .map((match) => match[1])
+    .join("\n");
+  if (!seoFaqRules.includes("grid-template-columns: minmax(0, 1fr)")
+    || !seoFaqRules.includes("width: min(100%, 980px)")) {
+    errors.push("Tarot landing FAQ styles: FAQ grid is not a centered single column");
+  }
+  const landingTransparencyStart = globalCss.indexOf("/* Tarot landing FAQs keep their accordion structure without a visible card shell. */");
+  const landingTransparencyRule = landingTransparencyStart >= 0
+    ? globalCss.slice(landingTransparencyStart, landingTransparencyStart + 1200)
+    : "";
+  ["border-color: transparent", "background: transparent", "box-shadow: none", "backdrop-filter: none", "details::after", "var(--theme-accent-primary)", "var(--theme-glow-primary)"].forEach((token) => {
+    if (!landingTransparencyRule.includes(token)) errors.push(`Tarot landing FAQ styles: transparent shell is missing ${token}`);
+  });
+}
+
 pageRecords.forEach(validateFaqPage);
 validateThemeArchitecture();
+validateRelatedTarotFaqSurfaces();
 
 if (errors.length) {
   console.error(`Tarot education theme/FAQ validation failed with ${errors.length} issue${errors.length === 1 ? "" : "s"}:`);

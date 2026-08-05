@@ -1313,11 +1313,10 @@ if (!existsSync(outputPath)) {
   });
   [
     "body.tarot-meanings-page .tarot-education-faq .tarot-faq__inner",
-    "grid-template-columns: minmax(15rem, 32fr) minmax(0, 68fr)",
-    "background: var(--tarot-question-surface)",
-    "border-radius: 0",
-    "box-shadow: none",
-    ".tarot-faq__trigger:focus-visible",
+    "grid-template-columns: minmax(0, 1fr)",
+    "width: min(calc(100% - 48px), 960px)",
+    ".tarot-faq__divider",
+    "display: none",
     "@media (max-width: 820px)",
     "@media (prefers-reduced-motion: reduce)"
   ].forEach((token) => {

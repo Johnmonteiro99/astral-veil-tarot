@@ -452,7 +452,7 @@ function renderFaq(page) {
 function renderClosing(page) {
   const section = page.closingCta;
   return `<section class="major-arcana-closing" aria-labelledby="major-arcana-closing-heading">
-        ${renderImage(section.image, { className: "major-arcana-closing__image", decorative: true })}
+        ${renderThemeImage(section.image, "major-arcana-closing__image")}
         <div class="major-arcana-closing__overlay"></div>
         <div class="major-arcana-closing__copy">
           <p class="major-arcana-eyebrow">The Journey Continues</p>

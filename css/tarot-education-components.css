@@ -272,164 +272,46 @@ body.tarot-meanings-page .tarot-education-page > .tarot-education-hero[data-educ
   transform: translateY(0);
 }
 
-/* Shared Tarot question ledger: paint is semantic; layout has split and stacked variants. */
+/* Shared Tarot FAQ layout; all paint comes from the theme tokens in tarot.css. */
 body.tarot-meanings-page .tarot-education-faq {
-  --faq-title: var(--tarot-question-text);
-  --faq-copy: var(--tarot-question-answer);
-  --faq-accent: var(--tarot-question-icon);
-  --faq-edge: var(--tarot-question-border);
-  --faq-focus: var(--tarot-question-focus);
   display: block;
   width: 100%;
   max-width: none;
   margin: 0;
-  padding: clamp(5rem, 8vw, 7.5rem) 0;
-  background: transparent;
+  padding-block: clamp(4rem, 6vw, 5.75rem);
 }
 
 body.tarot-meanings-page .tarot-education-faq .tarot-faq__inner {
   display: grid;
-  width: min(calc(100% - 56px), 1360px);
-  max-width: 1360px;
-  grid-template-columns: minmax(15rem, 32fr) minmax(0, 68fr);
-  align-items: start;
-  gap: clamp(3rem, 7vw, 7.5rem);
+  width: min(calc(100% - 48px), 960px);
+  max-width: 960px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.75rem, 3vw, 2.75rem);
   margin-inline: auto;
   padding: 0;
 }
 
 body.tarot-meanings-page .tarot-education-faq .tarot-faq__header {
   position: static;
-  display: block;
-  max-width: 27rem;
+  justify-self: start;
+  width: min(100%, 800px);
+  max-width: 800px;
   margin: 0;
   padding: 0;
   text-align: left;
 }
 
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__header h2 {
-  margin: 15px 0 0;
-  color: var(--faq-title);
-  font: 500 clamp(2.5rem, 4.25vw, 4.25rem)/1.03 var(--heading-font, "Cormorant Garamond", serif);
-}
-
 body.tarot-meanings-page .tarot-education-faq .tarot-faq__intro {
-  margin: 24px 0 0;
-  color: var(--faq-copy);
-  font: clamp(1rem, 1.25vw, 1.12rem)/1.58 var(--font-body-serif, Lora, serif);
+  max-width: 680px;
+  margin-inline: 0;
 }
 
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__list {
-  display: grid;
-  gap: 0;
-  border-top: 1px solid var(--tarot-question-border);
+body.tarot-meanings-page .tarot-education-faq .tarot-faq__header h2 {
+  color: var(--tarot-faq-heading);
 }
 
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__item {
-  overflow: clip;
-  border: 0;
-  border-bottom: 1px solid var(--tarot-question-border);
-  border-radius: 0;
-  background: var(--tarot-question-surface);
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  transform: none;
-  transition: background 300ms ease, border-color 300ms ease;
-}
-
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__item::before {
-  content: none;
-}
-
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__item::after {
-  content: none;
-}
-
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__item:is(:hover, :focus-within) {
-  border-color: var(--tarot-question-border-hover);
-  background: var(--tarot-question-surface-hover);
-  box-shadow: none;
-  transform: none;
-}
-
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__item.is-open,
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__item.is-open:is(:hover, :focus-within) {
-  border-color: var(--tarot-question-border-hover);
-  background: var(--tarot-question-surface-open);
-  box-shadow: none;
-}
-
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__trigger {
-  min-height: 72px;
-  padding: 17px 20px;
-  color: var(--tarot-question-text);
-  font-size: clamp(1.02rem, 1.25vw, 1.18rem);
-}
-
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__trigger:is(:hover, :focus-visible) {
-  color: color-mix(in srgb, var(--tarot-question-text) 80%, var(--tarot-question-icon));
-}
-
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__trigger:focus-visible {
-  outline: 2px solid var(--tarot-question-focus);
-  outline-offset: -4px;
-  border-radius: 2px;
-}
-
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__icon {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
-  place-items: center;
-  border: 1px solid var(--tarot-question-border-hover);
-  border-radius: 50%;
-  color: var(--tarot-question-icon);
-  background: transparent;
-  box-shadow: none;
-  text-shadow: none;
-  transform: none;
-  transition: color 300ms ease, border-color 300ms ease, background 300ms ease;
-}
-
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__item.is-open .tarot-faq__icon {
-  border-color: var(--tarot-question-border-hover);
-  color: color-mix(in srgb, var(--tarot-question-icon) 82%, white);
-  background: color-mix(in srgb, var(--tarot-question-icon) 7%, transparent);
-  box-shadow: none;
-  text-shadow: none;
-  transform: none;
-}
-
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__answer {
-  color: var(--tarot-question-answer);
-}
-
-body.tarot-meanings-page .tarot-education-faq .tarot-faq__answer p {
-  max-width: 56rem;
-  padding: 0 64px 24px 20px;
-  color: var(--tarot-question-answer);
-  font-size: .96rem;
-  line-height: 1.7;
-}
-
-body.tarot-meanings-page .tarot-education-faq.is-enhanced .tarot-faq__answer {
-  transition: grid-template-rows 300ms ease, opacity 250ms ease;
-}
-
-body.tarot-meanings-page .tarot-education-faq.tarot-faq--stacked {
-  padding-block: clamp(4.5rem, 7vw, 6.5rem);
-}
-
-body.tarot-meanings-page .tarot-education-faq.tarot-faq--stacked .tarot-faq__inner {
-  width: min(100%, 1180px);
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(2rem, 4vw, 3.5rem);
-}
-
-body.tarot-meanings-page .tarot-education-faq.tarot-faq--stacked .tarot-faq__header {
-  max-width: 650px;
+body.tarot-meanings-page .tarot-education-faq .tarot-faq__divider {
+  display: none;
 }
 
 body.tarot-topic-page .tarot-topic-faq.tarot-faq {
@@ -445,34 +327,14 @@ body.how-to-read-page .htr-faq.tarot-faq {
   padding: 20px 0 clamp(95px, 12vw, 160px);
 }
 
-body.how-to-read-page .htr-faq.tarot-faq .tarot-faq__inner {
-  width: min(920px, calc(100% - 48px));
-}
-
-body.how-to-read-page .htr-faq.tarot-faq .tarot-faq__header {
-  max-width: 720px;
-  margin-inline: auto;
-  text-align: center;
-}
-
-body.how-to-read-page .htr-faq.tarot-faq .tarot-faq__divider {
-  margin-inline: auto;
-}
-
 body.blue-moon-mode .tarot-education-page .tarot-education-hero[data-education-page] {
   --education-hero-surface: #041724;
 }
 
-body.blue-moon-mode .tarot-education-faq {
-  --tarot-question-surface: rgba(4, 18, 30, .38);
-  --tarot-question-surface-hover: rgba(8, 38, 58, .5);
-  --tarot-question-surface-open: rgba(5, 28, 45, .7);
-  --tarot-question-border: rgba(114, 215, 245, .2);
-  --tarot-question-border-hover: rgba(114, 215, 245, .38);
-  --tarot-question-text: #eefaff;
-  --tarot-question-answer: #c3dce8;
-  --tarot-question-icon: #72d7f5;
-  --tarot-question-focus: rgba(114, 215, 245, .38);
+@media (max-width: 1024px) and (min-width: 821px) {
+  body.tarot-meanings-page .tarot-education-faq .tarot-faq__inner {
+    width: min(calc(100vw - 64px), 960px);
+  }
 }
 
 @media (max-width: 1020px) and (min-width: 821px) {
@@ -637,9 +499,9 @@ body.blue-moon-mode .tarot-education-faq {
   }
 
   body.tarot-meanings-page .tarot-education-faq .tarot-faq__inner {
-    width: min(calc(100% - 36px), 42rem);
+    width: min(calc(100vw - 64px), 960px);
     grid-template-columns: minmax(0, 1fr);
-    gap: 2.5rem;
+    gap: 2rem;
   }
 
   body.tarot-meanings-page .tarot-education-faq .tarot-faq__header {
@@ -649,22 +511,24 @@ body.blue-moon-mode .tarot-education-faq {
   body.tarot-meanings-page .tarot-education-faq .tarot-faq__trigger {
     min-height: 60px;
     align-items: flex-start;
-    padding: 14px 12px;
+    padding: 12px 14px;
   }
 
   body.tarot-meanings-page .tarot-education-faq .tarot-faq__icon {
     width: 44px;
     height: 44px;
     flex-basis: 44px;
-    margin-top: -6px;
+    margin-top: -4px;
   }
 
   body.tarot-meanings-page .tarot-education-faq .tarot-faq__answer p {
-    padding: 0 56px 20px 12px;
+    padding: 0 58px 18px 14px;
   }
+}
 
-  body.tarot-topic-page .tarot-topic-faq.tarot-faq .tarot-faq__inner {
-    width: 100%;
+@media (max-width: 640px) {
+  body.tarot-meanings-page .tarot-education-faq .tarot-faq__inner {
+    width: min(calc(100vw - 36px), 960px);
   }
 }
 

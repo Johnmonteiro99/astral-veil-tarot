@@ -799,7 +799,7 @@
         const variant = levelVariant(lesson, safeLevel);
         const descriptor = button.querySelector(".lesson-star__descriptor");
         if (descriptor) descriptor.textContent = variant?.eyebrow || lesson.levels.beginner.eyebrow;
-        button.setAttribute("aria-label", `Open ${profile.label.toLowerCase()} lesson ${index + 1}: ${lesson.title}`);
+        updateStarAccessibility(button, index);
       });
       const practice = levelVariant(tarotLessons[8], safeLevel)?.guidedPractice || levelVariant(tarotLessons[8], "beginner")?.guidedPractice;
       configureGuidedPractice(practice);
@@ -866,7 +866,7 @@
   const spiralPathProgress = root.querySelector("[data-spiral-path-progress]");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const desktopSpiralViewport = window.matchMedia("(min-width: 980px)");
-  const mobileTravelViewport = window.matchMedia("(max-width: 820px)");
+  const mobileTravelViewport = window.matchMedia("(max-width: 979px)");
   const compactTravelViewport = window.matchMedia("(max-width: 400px)");
   const lessonTravelTiming = Object.freeze({
     desktop: Object.freeze({ awaken: 140, travel: 520, guideExit: 190, reveal: 210, scale: 2.18 }),
@@ -880,6 +880,17 @@
   const visitedLessonStorageKey = "astralVeilTarotVisitedLessons";
   const completedPathStorageKey = "astralVeilTarotPathComplete";
   const spiralViewBox = Object.freeze({ width: 940, height: 720 });
+  const lessonMapVisuals = Object.freeze([
+    Object.freeze({ energy: "Soul Star", colorVar: "--lesson-node-01", mobileX: 50, mobileY: 4, mobileSide: "left", shortTitle: "Prepare" }),
+    Object.freeze({ energy: "Crown", colorVar: "--lesson-node-02", mobileX: 50, mobileY: 13, mobileSide: "right", shortTitle: "Question" }),
+    Object.freeze({ energy: "Third Eye", colorVar: "--lesson-node-03", mobileX: 50, mobileY: 21, mobileSide: "left", shortTitle: "Imagery" }),
+    Object.freeze({ energy: "Throat", colorVar: "--lesson-node-04", mobileX: 50, mobileY: 29, mobileSide: "right", shortTitle: "Suit + Number" }),
+    Object.freeze({ energy: "Heart", colorVar: "--lesson-node-05", mobileX: 50, mobileY: 40, mobileSide: "left", shortTitle: "Position" }),
+    Object.freeze({ energy: "Solar Plexus", colorVar: "--lesson-node-06", mobileX: 50, mobileY: 50, mobileSide: "right", shortTitle: "Reversals" }),
+    Object.freeze({ energy: "Sacral", colorVar: "--lesson-node-07", mobileX: 50, mobileY: 60, mobileSide: "left", shortTitle: "Connect" }),
+    Object.freeze({ energy: "Root", colorVar: "--lesson-node-08", mobileX: 50, mobileY: 70, mobileSide: "right", shortTitle: "Integrate" }),
+    Object.freeze({ energy: "Integration / Earth Star", colorVar: "--lesson-node-09", mobileX: 50, mobileY: 95, mobileSide: "left", shortTitle: "Practice" })
+  ]);
   const spiralPathParameters = Object.freeze({
     centerX: 470,
     centerY: 360,
@@ -1351,14 +1362,19 @@
 
   function createStarButton(lesson, index) {
     const variant = levelVariant(lesson);
+    const visual = lessonMapVisuals[index];
     const item = document.createElement("li");
     item.className = "htr-constellation__node";
+    item.dataset.mobileSide = visual.mobileSide;
+    item.dataset.energyCenter = visual.energy;
+    item.style.setProperty("--lesson-node-color", `var(${visual.colorVar})`);
+    item.style.setProperty("--mobile-node-x", `${visual.mobileX}%`);
+    item.style.setProperty("--mobile-node-y", `${visual.mobileY}%`);
     const button = document.createElement("button");
     button.className = "lesson-star";
     button.type = "button";
     button.dataset.lessonStar = String(index);
     button.dataset.lessonId = lesson.id;
-    button.setAttribute("aria-label", `Open ${tarotCurriculum.levels[activeLevel].label.toLowerCase()} lesson ${index + 1}: ${lesson.title}`);
     button.setAttribute("aria-pressed", "false");
 
     const marker = document.createElement("span");
@@ -1376,12 +1392,17 @@
     const title = document.createElement("span");
     title.className = "lesson-star__title";
     title.textContent = lesson.title;
+    const mobileTitle = document.createElement("span");
+    mobileTitle.className = "lesson-star__mobile-title";
+    mobileTitle.setAttribute("aria-hidden", "true");
+    mobileTitle.textContent = visual.shortTitle;
     const descriptor = document.createElement("span");
     descriptor.className = "lesson-star__descriptor";
     descriptor.textContent = variant?.eyebrow || lesson.levels.beginner.eyebrow;
-    copy.append(number, title, descriptor);
+    copy.append(number, title, mobileTitle, descriptor);
     button.append(marker, copy);
     item.append(button);
+    updateStarAccessibility(button, index);
     return { item, button };
   }
 
@@ -1466,13 +1487,32 @@
     updateSpiralProgress();
   }
 
+  function updateStarAccessibility(button, index) {
+    const lesson = tarotLessons[index];
+    const visual = lessonMapVisuals[index];
+    if (!button || !lesson || !visual) return;
+    const profile = tarotCurriculum.levels[activeLevel] || tarotCurriculum.levels.beginner;
+    const current = index === selectedLessonIndex;
+    const visited = visitedLessonIndexes.has(index);
+    const completed = readSessionValue(completedPathStorageKey) === "true" && visited;
+    const state = completed ? "completed" : visited ? "explored" : "not explored";
+    button.setAttribute("aria-label", `Open ${profile.label.toLowerCase()} lesson ${lesson.number}: ${lesson.title}. ${visual.energy} energy. ${current ? "Current lesson, " : ""}${state}.`);
+    if (current) button.setAttribute("aria-current", "step");
+    else button.removeAttribute("aria-current");
+  }
+
   function refreshStarStates() {
+    const pathComplete = readSessionValue(completedPathStorageKey) === "true";
     starButtons.forEach((button, index) => {
       const selected = index === selectedLessonIndex;
+      const visited = visitedLessonIndexes.has(index);
+      const completed = pathComplete && visited;
       button.classList.toggle("is-selected", selected);
-      button.classList.toggle("is-visited", visitedLessonIndexes.has(index));
+      button.classList.toggle("is-visited", visited);
+      button.classList.toggle("is-completed", completed);
       button.classList.toggle("is-last-visited", index === lastVisitedIndex);
       button.setAttribute("aria-pressed", String(selected));
+      updateStarAccessibility(button, index);
     });
     updateMapProgressState();
   }
@@ -1481,6 +1521,8 @@
     if (isTraveling && !options.force) return;
     if (index < 0 || index >= tarotLessons.length) return;
     selectedLessonIndex = index;
+    const visual = lessonMapVisuals[index];
+    if (visual) constellationMap?.style.setProperty("--active-lesson-color", `var(${visual.colorVar})`);
     updateSelectedPreview();
     refreshStarStates();
   }

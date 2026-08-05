@@ -477,16 +477,24 @@ body.blood-moon-mode.tarot-card-meaning-page .tarot-card-page {
 .tarot-card-journey__next p:last-child { margin: 9px 0 0; color: var(--tarot-card-copy); font: italic 1.02rem/1.5 var(--font-body-serif, Georgia, serif); }
 .tarot-card-journey__summary { max-width: 880px; margin: 30px 0 0; color: var(--tarot-card-copy); font: clamp(1rem, 1.25vw, 1.1rem)/1.65 var(--font-body-serif, Georgia, serif); }
 
-.tarot-card-faq { width: min(100%, 980px); margin: 0 auto clamp(70px, 7vw, 98px); }
-.tarot-card-faq__list { margin-top: 28px; border-top: 1px solid var(--tarot-card-edge); }
-.tarot-card-faq__item { border-bottom: 1px solid var(--tarot-card-edge); }
+.tarot-card-faq { width: min(100%, 980px); margin: 0 auto clamp(70px, 7vw, 98px); background: transparent; }
+.tarot-card-faq__list { display: grid; gap: clamp(12px, 1.25vw, 18px); margin-top: clamp(28px, 4vw, 42px); }
+.tarot-card-faq__item { position: relative; isolation: isolate; overflow: hidden; border: 1px solid transparent; border-radius: 22px; background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; transition: color .28s ease; }
+.tarot-card-faq__item::before { content: none; }
+.tarot-card-faq__item::after { position: absolute; z-index: 2; right: 22px; bottom: 1px; left: 22px; height: 1px; background: linear-gradient(90deg, transparent, var(--tarot-faq-rule-color) 12%, var(--tarot-faq-rule-color) 88%, transparent); box-shadow: 0 0 9px var(--tarot-faq-rule-glow); content: ""; opacity: .8; pointer-events: none; transition: opacity .28s ease, box-shadow .28s ease; }
+.tarot-card-faq__item:is(:hover, .is-open) { border-color: transparent; background: transparent; box-shadow: none; transform: none; }
+.tarot-card-faq__item:is(:hover, .is-open)::after { box-shadow: 0 0 12px var(--tarot-faq-rule-glow); opacity: 1; }
+.tarot-card-faq__item:focus-within { border-color: transparent; background: transparent; box-shadow: none; transform: none; }
 .tarot-card-faq__item h3 { margin: 0; }
-.tarot-card-faq__question { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 22px; min-height: 64px; border: 0; padding: 13px 2px; color: var(--tarot-card-title); background: transparent; font: 500 clamp(1.05rem, 1.6vw, 1.28rem)/1.35 var(--heading-font, "Cormorant Garamond", serif); text-align: left; cursor: pointer; }
-.tarot-card-faq__question:hover { color: var(--tarot-card-accent); }
-.tarot-card-faq__icon { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; border: 1px solid var(--tarot-card-edge); border-radius: 50%; color: var(--tarot-card-accent); font: 400 1rem/1 var(--body-font, sans-serif); }
-.tarot-card-faq__answer { overflow: hidden; }
+.tarot-card-faq__question { position: relative; z-index: 1; display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 22px; min-height: 76px; border: 0; padding: 19px 22px; color: var(--tarot-faq-question); background: transparent; font: 500 clamp(1.05rem, 1.6vw, 1.28rem)/1.35 var(--heading-font, "Cormorant Garamond", serif); text-align: left; cursor: pointer; }
+.tarot-card-faq__question:hover { color: color-mix(in srgb, var(--tarot-faq-question) 84%, var(--tarot-faq-accent)); }
+.tarot-card-page .tarot-card-faq__question:focus-visible { outline: 0; }
+.tarot-card-faq__question:focus-visible .tarot-card-faq__icon { outline: 2px solid var(--tarot-faq-focus); outline-offset: 3px; }
+.tarot-card-faq__icon { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border: 1px solid var(--tarot-faq-icon-border); border-radius: 50%; color: var(--tarot-faq-icon-color); background: var(--tarot-faq-icon-bg); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06); font: 400 1.15rem/1 var(--body-font, sans-serif); transition: transform .32s ease, color .28s ease, background .28s ease, border-color .28s ease; }
+.tarot-card-faq__item.is-open .tarot-card-faq__icon { border-color: var(--tarot-faq-card-border-hover); color: color-mix(in srgb, var(--tarot-faq-icon-color) 82%, white); background: var(--tarot-faq-icon-open-bg); transform: rotate(180deg); }
+.tarot-card-faq__answer { position: relative; z-index: 1; overflow: hidden; color: var(--tarot-faq-answer); }
 .tarot-card-faq__answer[hidden] { display: none; }
-.tarot-card-faq__answer p { margin: 0; padding: 0 52px 22px 2px; color: var(--tarot-card-copy); font: .98rem/1.62 var(--font-body-serif, Georgia, serif); }
+.tarot-card-faq__answer p { max-width: 60rem; margin: 0; padding: 0 68px 25px 22px; color: var(--tarot-faq-answer); font: .98rem/1.68 var(--font-body-serif, Georgia, serif); }
 
 .tarot-card-reflection { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 30px; margin-top: 16px; padding: clamp(23px, 3vw, 34px); border: 1px solid var(--tarot-card-edge); border-radius: 16px; background: var(--card-page-panel-strong); background: linear-gradient(145deg, color-mix(in srgb, var(--card-page-gold) 6%, var(--card-page-panel-strong)), var(--card-page-panel)); box-shadow: var(--card-page-shadow); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .tarot-card-reflection__copy { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 16px; align-items: center; }
@@ -814,7 +822,11 @@ body.blood-moon-mode.tarot-card-meaning-page .tarot-card-action--reading:hover {
   .tarot-card-action,
   .tarot-life-current,
   .tarot-life-current__line,
-  .tarot-card-segmented button { transition: none; transform: none; }
+  .tarot-card-segmented button,
+  .tarot-card-faq__item,
+  .tarot-card-faq__item::before,
+  .tarot-card-faq__item::after,
+  .tarot-card-faq__icon { transition: none; transform: none; }
   .tarot-card-hero__shine { opacity: 0 !important; }
   .tarot-card-hero__tilt-hint { display: none; }
   .tarot-card-facts__viewport,

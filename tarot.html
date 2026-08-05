@@ -211,9 +211,17 @@
               <p>A card’s orientation can change how its energy is understood. Upright and reversed meanings are not simply “good” and “bad.” They can reflect expression, resistance, imbalance, delay, internalization, or transformation.</p>
             </header>
 
-            <div class="tarot-orientations">
+            <div class="tarot-orientations tarot-orientations--desktop">
               <article class="tarot-orientation tarot-orientation--upright">
-                <span class="tarot-orientation__icon tarot-orientation__icon--upright" aria-hidden="true"></span>
+                <figure class="tarot-orientation__visual">
+                  <button class="tarot-orientation-card" type="button" aria-label="Drag to tilt The High Priestess from the Astral Veil Tarot deck upright example" data-astral-card-tilt data-tarot-orientation-card data-orientation-example="upright">
+                    <span class="tarot-orientation-card__frame tarot-orientation-card__frame--upright">
+                      <img class="tarot-orientation-card__image" src="/assets/images/cards/astral-veil-tarot/major/02-the-high-priestess.png" alt="The High Priestess from the Astral Veil Tarot deck, used as an upright orientation example" width="1024" height="1536" loading="lazy" decoding="async" draggable="false" data-tarot-orientation-image data-standard-src="/assets/images/cards/astral-veil-tarot/major/02-the-high-priestess.png" data-blood-src="/assets/images/cards/astral-veil-crimson/major/02-the-high-priestess.png" data-standard-alt="The High Priestess from the Astral Veil Tarot deck, used as an upright orientation example" data-blood-alt="The High Priestess from the Crimson Tarot deck, used as an upright orientation example" />
+                      <span class="tarot-orientation-card__shine" aria-hidden="true"></span>
+                    </span>
+                  </button>
+                  <figcaption class="tarot-orientation-card__hint" data-astral-card-tilt-hint><span aria-hidden="true">↻</span> Drag to tilt</figcaption>
+                </figure>
                 <h4>Upright</h4>
                 <p>How the card’s energy is expressed, available, developing, or moving forward.</p>
                 <p class="tarot-orientation__veil-line"><span>Veilrise</span> what is becoming visible.</p>
@@ -222,11 +230,51 @@
               <span class="tarot-orientations__divider" aria-hidden="true"></span>
 
               <article class="tarot-orientation tarot-orientation--reversed">
-                <span class="tarot-orientation__icon tarot-orientation__icon--reversed" aria-hidden="true"></span>
+                <figure class="tarot-orientation__visual">
+                  <button class="tarot-orientation-card" type="button" aria-label="Drag to tilt The High Priestess from the Astral Veil Tarot deck reversed example" data-astral-card-tilt data-tarot-orientation-card data-orientation-example="reversed">
+                    <span class="tarot-orientation-card__frame tarot-orientation-card__frame--reversed">
+                      <img class="tarot-orientation-card__image" src="/assets/images/cards/astral-veil-tarot/major/02-the-high-priestess.png" alt="The High Priestess from the Astral Veil Tarot deck, used as a reversed orientation example" width="1024" height="1536" loading="lazy" decoding="async" draggable="false" data-tarot-orientation-image data-standard-src="/assets/images/cards/astral-veil-tarot/major/02-the-high-priestess.png" data-blood-src="/assets/images/cards/astral-veil-crimson/major/02-the-high-priestess.png" data-standard-alt="The High Priestess from the Astral Veil Tarot deck, used as a reversed orientation example" data-blood-alt="The High Priestess from the Crimson Tarot deck, used as a reversed orientation example" />
+                      <span class="tarot-orientation-card__shine" aria-hidden="true"></span>
+                    </span>
+                  </button>
+                  <figcaption class="tarot-orientation-card__hint" data-astral-card-tilt-hint><span aria-hidden="true">↻</span> Drag to tilt</figcaption>
+                </figure>
                 <h4>Reversed</h4>
                 <p>Where the card’s energy may be blocked, internalized, excessive, delayed, or asking to be understood differently.</p>
                 <p class="tarot-orientation__veil-line"><span>Veilfall</span> what pressure brings to the surface.</p>
               </article>
+            </div>
+
+            <div class="tarot-orientation-switcher" data-tarot-orientation-switcher data-orientation-state="upright">
+              <div class="tarot-orientation-switcher__toggle" role="group" aria-label="Choose card orientation">
+                <button class="tarot-orientation-switcher__option is-active" type="button" aria-pressed="true" aria-controls="tarot-orientation-mobile-module" data-orientation-option="upright">Upright</button>
+                <button class="tarot-orientation-switcher__option" type="button" aria-pressed="false" aria-controls="tarot-orientation-mobile-module" data-orientation-option="reversed">Reversed</button>
+              </div>
+
+              <div class="tarot-orientation-switcher__module" id="tarot-orientation-mobile-module">
+                <figure class="tarot-orientation__visual">
+                  <button class="tarot-orientation-card" type="button" aria-label="Drag to tilt The High Priestess from the Astral Veil Tarot deck upright example" data-astral-card-tilt data-tarot-orientation-card data-orientation-example="upright">
+                    <span class="tarot-orientation-card__frame tarot-orientation-card__frame--upright" data-orientation-mobile-frame>
+                      <img class="tarot-orientation-card__image" src="/assets/images/cards/astral-veil-tarot/major/02-the-high-priestess.png" alt="The High Priestess from the Astral Veil Tarot deck, used as an orientation example" width="1024" height="1536" loading="lazy" decoding="async" draggable="false" data-tarot-orientation-image data-standard-src="/assets/images/cards/astral-veil-tarot/major/02-the-high-priestess.png" data-blood-src="/assets/images/cards/astral-veil-crimson/major/02-the-high-priestess.png" data-standard-alt="The High Priestess from the Astral Veil Tarot deck, used as an orientation example" data-blood-alt="The High Priestess from the Crimson Tarot deck, used as an orientation example" />
+                      <span class="tarot-orientation-card__shine" aria-hidden="true"></span>
+                    </span>
+                  </button>
+                  <figcaption class="tarot-orientation-card__hint" data-astral-card-tilt-hint><span aria-hidden="true">↻</span> Drag to tilt</figcaption>
+                </figure>
+
+                <div class="tarot-orientation-switcher__content" aria-live="polite" aria-atomic="true">
+                  <article class="tarot-orientation" data-orientation-panel="upright">
+                    <h4>Upright</h4>
+                    <p>How the card’s energy is expressed, available, developing, or moving forward.</p>
+                    <p class="tarot-orientation__veil-line"><span>Veilrise</span> what is becoming visible.</p>
+                  </article>
+                  <article class="tarot-orientation" data-orientation-panel="reversed" hidden>
+                    <h4>Reversed</h4>
+                    <p>Where the card’s energy may be blocked, internalized, excessive, delayed, or asking to be understood differently.</p>
+                    <p class="tarot-orientation__veil-line"><span>Veilfall</span> what pressure brings to the surface.</p>
+                  </article>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -347,7 +395,7 @@
         </div>
       </section>
 
-      <section class="tarot-faq" aria-labelledby="tarot-faq-title" data-tarot-faq>
+      <section class="tarot-faq tarot-faq--stacked" aria-labelledby="tarot-faq-title" data-tarot-faq>
         <div class="tarot-shell tarot-faq__inner">
           <header class="tarot-faq__header">
             <p class="tarot-faq__eyebrow">Clearing the Veil</p>
@@ -479,6 +527,6 @@
       </section>
     </div>
 
-    <script src="data/events.js"></script><script src="data/cards.js"></script><script src="data/fullTarotCards.js"></script><script src="js/events.js"></script><script src="js/bloodmoon-access.js"></script><script src="js/app.js"></script><script src="js/tarot.js"></script><script type="module" src="src/public/public-auth-nav.js"></script>
+    <script src="data/events.js"></script><script src="data/cards.js"></script><script src="data/fullTarotCards.js"></script><script src="js/events.js"></script><script src="js/bloodmoon-access.js"></script><script src="js/app.js"></script><script src="js/tarot-card-tilt.js"></script><script src="js/tarot.js"></script><script type="module" src="src/public/public-auth-nav.js"></script>
   </body>
 </html>

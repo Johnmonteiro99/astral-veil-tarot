@@ -105,6 +105,18 @@ const hubScript = readFileSync(hubScriptPath, "utf8");
 const sitemap = readFileSync(sitemapPath, "utf8");
 const robots = existsSync(robotsPath) ? readFileSync(robotsPath, "utf8") : "";
 const canonical = `${SITE_ORIGIN}${tarotForBeginners.route}`;
+const expectedChapterCoverFiles = [
+  "01_what_is_tarot.png",
+  "02_what_do_you_need.png",
+  "03_choosing_a_deck.png",
+  "04_inside_the_deck.png",
+  "05_learning_meanings.png",
+  "06_tarot_myths.png",
+  "07_first_week.png",
+  "08_common_mistakes.png",
+  "09_tarot_glossary.png",
+  "10_next_path.png"
+];
 
 if (!html.includes(`<title>${escapeHtml(tarotForBeginners.seo.title)}</title>`)) {
   errors.push("SEO: exact title is missing");
@@ -168,6 +180,23 @@ if (!html.includes('data-education-page="tarot-for-beginners"')
 if (!html.includes(`<a class="tarot-beginners-button tarot-beginners-button--secondary" href="${escapeHtml(tarotForBeginners.hero.secondaryRoute)}">${escapeHtml(tarotForBeginners.hero.secondaryLabel)} <span aria-hidden="true">→</span></a>`)) {
   errors.push("buttons: the hero learning route must use the accessible secondary Moonstone treatment");
 }
+const bloodHeroSelector = 'body.tarot-beginners-page.blood-moon-mode .tarot-education-page > .tarot-beginners-hero[data-education-page="tarot-for-beginners"]';
+const bloodHeroRule = getCssRuleBody(css, bloodHeroSelector);
+[
+  "--education-hero-surface: rgba(16, 1, 4, .93)",
+  "--tarot-hero-blend-primary: rgba(9, 5, 8, .96)",
+  "--tarot-hero-blend-secondary: rgba(36, 8, 17, .68)",
+  "--tarot-hero-edge-shadow: rgba(8, 1, 4, .88)",
+  "--tarot-beginners-hero-overlay:",
+  "--tarot-beginners-hero-overlay-mobile:"
+].forEach((token) => {
+  if (!bloodHeroRule.includes(token)) errors.push(`hero: Blood Moon-specific crimson overlay token is missing (${token})`);
+});
+if (!css.includes(`${bloodHeroSelector} .tarot-beginners-hero__veil`)
+  || !css.includes("background: var(--tarot-beginners-hero-overlay)")
+  || !css.includes("background: var(--tarot-beginners-hero-overlay-mobile)")) {
+  errors.push("hero: Blood Moon desktop or mobile overlay is not scoped to the Beginners hero");
+}
 
 const regularWelcomeStrings = collectStrings(tarotForBeginners.welcome.regular);
 const bloodWelcomeStrings = collectStrings(tarotForBeginners.welcome.bloodMoon);
@@ -178,10 +207,100 @@ if (!html.includes('data-beginner-welcome-copy="regular" aria-hidden="false"')
   || !html.includes('data-beginner-welcome-copy="blood" aria-hidden="true" inert')) {
   errors.push("welcome: regular and Blood Moon layers lack safe initial accessibility states");
 }
+const regularWelcomeImage = tarotForBeginners.welcome.images.regular;
+const bloodMoonWelcomeImage = tarotForBeginners.welcome.images.bloodMoon;
+if (!html.includes("data-welcome-guide-art")
+  || !html.includes(`--beginner-welcome-guide-image-regular:url(${escapeHtml(regularWelcomeImage.src)})`)
+  || !html.includes(`--beginner-welcome-guide-image-blood:url(${escapeHtml(bloodMoonWelcomeImage.src)})`)) {
+  errors.push("welcome: full-section regular and Blood Moon guide artwork variables are missing");
+}
+if (html.includes("tarot-beginners-welcome__visual")
+  || html.includes("tarot-beginners-welcome__image")
+  || generator.includes("tarot-beginners-welcome__visual")
+  || generator.includes("tarot-beginners-welcome__image")) {
+  errors.push("welcome: guide artwork must not remain in a framed figure or standalone image");
+}
+if (countMatches(/class="tarot-beginners-welcome__truth-icon"/g, html) !== 6) {
+  errors.push("welcome: both theme copies must render three principle-card icons");
+}
+if (countMatches(/class="tarot-beginners-welcome__truth-number"/g, html) !== 6
+  || countMatches(/class="tarot-beginners-welcome__truth-meta"/g, html) !== 6) {
+  errors.push("welcome: both theme copies must render numbered principle-card headers");
+}
+if (countMatches(/class="tarot-beginners-welcome__greeting"/g, html) !== 2) {
+  errors.push("welcome: regular and Blood Moon guide greetings are missing");
+}
+if (countMatches(/class="tarot-beginners-welcome__header"/g, html) !== 2
+  || countMatches(/class="tarot-beginners-welcome__truths-hint"/g, html) !== 2
+  || countMatches(/class="tarot-beginners-welcome__truths" tabindex="0" aria-label="Beginner guidance principles"/g, html) !== 2) {
+  errors.push("welcome: mobile artwork headers or keyboard-scrollable principle carousels are missing");
+}
+if (countMatches(/class="tarot-beginners-welcome__guide-quote"/g, html) !== 1
+  || !html.includes("data-regular-quote=")
+  || !html.includes("data-blood-quote=")) {
+  errors.push("welcome: exactly one theme-aware guide quote bubble must be rendered");
+}
+const welcomeCssStart = css.indexOf("/* Welcome Threshold */");
+const welcomeCssEnd = css.indexOf("/* Chapter Library */", welcomeCssStart);
+const welcomeCss = welcomeCssStart >= 0 && welcomeCssEnd > welcomeCssStart
+  ? css.slice(welcomeCssStart, welcomeCssEnd)
+  : "";
+[
+  "background-image: var(--beginner-welcome-guide-image)",
+  "background-position: right center",
+  "background-size: cover",
+  "--beginner-welcome-guide-image: var(--beginner-welcome-guide-image-blood)",
+  "color-mix(in srgb, var(--beginner-bg)",
+  "grid-template-columns: repeat(3, minmax(0, 1fr))",
+  "--beginner-welcome-card-bg: var(--beginner-panel-bg)",
+  "backdrop-filter: blur(16px) saturate(116%)",
+  "min-height: clamp(42rem, 58vw, 52rem)",
+  ".tarot-beginners-welcome__guide-quote"
+].forEach((token) => {
+  if (!welcomeCss.includes(token)) errors.push(`welcome: cinematic background or principle-card styling is missing (${token})`);
+});
+const welcomeMobileCss = collectCssMediaBlocks(css, "max-width: 820px").join("\n");
+[
+  ".tarot-beginners-welcome::after",
+  "background-image: var(--beginner-welcome-guide-image)",
+  "background-image: none",
+  "padding-top: calc(var(--beginner-welcome-mobile-image-height) + 2.25rem)",
+  ".tarot-beginners-welcome__header",
+  "grid-auto-columns: min(84%, 21rem)",
+  "scroll-snap-type: x mandatory",
+  "scroll-snap-align: start",
+  ".tarot-beginners-welcome__truths-hint",
+  ".tarot-beginners-welcome__actions",
+  "flex-direction: column"
+].forEach((token) => {
+  if (!welcomeMobileCss.includes(token)) errors.push(`welcome: mobile image/content split or swipe treatment is missing (${token})`);
+});
+if (/\.tarot-beginners-welcome(?:\s|::before)*\{[^}]*(?:background-color|background):\s*#[0-9a-f]{3,8}/i.test(welcomeCss)) {
+  errors.push("welcome: a hard-coded section background color was introduced");
+}
+[regularWelcomeImage, bloodMoonWelcomeImage].forEach((image) => {
+  const assetPath = resolve(rootDir, decodeURIComponent(image.src).replace(/^\/+/, ""));
+  if (!existsSync(assetPath)) errors.push(`welcome: guide artwork asset is missing (${image.src})`);
+  if (image.width !== 1448 || image.height !== 1086) errors.push(`welcome: guide artwork dimensions are incorrect (${image.src})`);
+});
+[
+  [".tarot-beginners-page", "#071311"],
+  [".tarot-beginners-page.moon-mode", "#070411"],
+  [".tarot-beginners-page.blood-moon-mode", "#0d0104"],
+  [".tarot-beginners-page.blue-moon-mode", "#020a13"]
+].forEach(([selector, expectedBackground]) => {
+  if (!getCssRuleBody(css, selector).includes(`--beginner-bg: ${expectedBackground}`)) {
+    errors.push(`welcome: existing ${selector} background color must remain unchanged`);
+  }
+});
 if (html.includes("tarot-beginners-welcome__door")
   || generator.includes("tarot-beginners-welcome__door")
   || css.includes(".tarot-beginners-welcome__door")) {
   errors.push("welcome: the accidental vertical CSS door line must be completely removed");
+}
+if (!js.includes("guideQuoteText.textContent = isBloodMoon")
+  || !js.includes('label.textContent = "Continue with Chapter 01"')) {
+  errors.push("welcome: theme-aware quote copy or the initial Chapter 01 CTA state is missing");
 }
 
 if (tarotForBeginners.chapters.length !== 10 || beginnerChapterMetadata.length !== 10) {
@@ -191,123 +310,62 @@ if (new Set(beginnerChapterMetadata.map((chapter) => chapter.id)).size !== 10) {
   errors.push("data: chapter IDs must be unique");
 }
 
-const academyChapters = tarotForBeginners.chapters.filter((chapter) => chapter.academyLesson);
-const academyChapter = academyChapters[0];
-const academyLesson = academyChapter?.academyLesson;
-const expectedAcademyLesson = {
-  title: "What Is Tarot?",
-  introContinuation: "This lesson unfolds in three chambers. Step through each one with presence.",
-  headerVisual: {
-    slot: "chapter-01-header",
-    futureSrc: "/assets/images/tarot-for-beginners/chapter-01/header.webp",
-    alt: "Placeholder for the future Chapter 01 atmospheric header artwork",
-    ratio: "16 / 7"
-  },
-  chambers: [
-    {
-      id: "chamber-1",
-      numeral: "I",
-      label: "CHAMBER I",
-      title: "What You Are Looking At",
-      preview: "Step into the room of form. Here we explore the deck as an object, its structure, components, and the visible elements that make it what it is.",
-      topics: ["The Deck", "The Cards", "The System"],
-      visual: {
-        slot: "chapter-01-chamber-01",
-        futureSrc: "/assets/images/tarot-for-beginners/chapter-01/chamber-01.webp",
-        alt: "Placeholder for future artwork showing tarot as a structured deck",
-        ratio: "16 / 9"
-      },
-      learningVisual: {
-        type: "stats",
-        label: "Tarot deck structure",
-        items: ["78 Cards", "Major and Minor Arcana", "Four Suits", "Number and Court Cards"]
-      },
-      sections: [{
-        heading: "A Deck",
-        paragraphs: ["Tarot is a seventy-eight-card system containing recurring figures, numbers, suits, archetypes, colors, objects, and narrative patterns."]
-      }],
-      takeaway: "Tarot begins as a structured deck before it becomes an interpretive practice."
-    },
-    {
-      id: "chamber-2",
-      numeral: "II",
-      label: "CHAMBER II",
-      title: "What the Images Are Saying",
-      preview: "Step into the room of symbols. Here we discover what the images communicate through archetypes, emotions, themes, and the symbolic language of tarot.",
-      topics: ["Symbols", "Themes", "Archetypes"],
-      visual: {
-        slot: "chapter-01-chamber-02",
-        futureSrc: "/assets/images/tarot-for-beginners/chapter-01/chamber-02.webp",
-        alt: "Placeholder for future artwork exploring tarot imagery and symbols",
-        ratio: "16 / 9"
-      },
-      learningVisual: {
-        type: "examples",
-        label: "Future tarot symbol examples",
-        items: ["Example Symbol 01", "Example Symbol 02", "Example Symbol 03"]
-      },
-      sections: [{
-        heading: "A Symbolic Language",
-        paragraphs: ["Images communicate ideas about life, choices, emotions, relationships, conflict, movement, and transformation."]
-      }],
-      takeaway: "The image is not merely decoration. It carries the vocabulary of the reading."
-    },
-    {
-      id: "chamber-3",
-      numeral: "III",
-      label: "CHAMBER III",
-      title: "How Meaning Is Created",
-      preview: "Step into the room of synthesis. Here we learn how meaning emerges through connection, context, and the art of interpretation.",
-      topics: ["Context", "Association", "Reflection"],
-      visual: {
-        slot: "chapter-01-chamber-03",
-        futureSrc: "/assets/images/tarot-for-beginners/chapter-01/chamber-03.webp",
-        alt: "Placeholder for future artwork illustrating how tarot interpretation develops",
-        ratio: "16 / 9"
-      },
-      learningVisual: {
-        type: "equation",
-        label: "Interpretation model",
-        items: ["Card", "Question", "Context", "Reader"],
-        result: "Interpretation"
-      },
-      sections: [{
-        heading: "An Interpretive Tool",
-        paragraphs: [
-          "Meaning develops through the visible card, traditional associations, the question, context, and careful reflection.",
-          "Tarot does not guarantee certainty or remove personal responsibility. Within Astral Veil, the cards are treated as mirrors for patterns and possibilities rather than fixed verdicts."
-        ]
-      }],
-      takeaway: "Tarot offers perspective through symbols. It does not remove your ability to choose."
-    }
-  ],
-  takeaway: "Tarot offers perspective through symbols. It does not remove your ability to choose."
-};
+const guidedChapters = tarotForBeginners.chapters.filter((chapter) => chapter.academyLesson);
+const guidedChambers = guidedChapters.flatMap((chapter) => chapter.academyLesson.chambers);
+const allowedChamberVariants = new Set(["split", "map", "editorial", "reveal", "practice", "comparison"]);
+const expectedChamberTitles = [
+  ["What You Are Looking At", "What the Images Are Saying", "How Meaning Is Created"],
+  ["Your Essential Tools", "What Is Optional", "Building Your Practice"],
+  ["Readable Imagery", "Structure and Tradition", "Personal Connection"],
+  ["Major and Minor Arcana", "The Four Suits", "Numbers and Court Cards"],
+  ["Observe Before Defining", "Question and Context", "Synthesis and Interpretation"],
+  ["Tradition", "Repeated Myths", "A Grounded Practice"],
+  ["Meeting the Deck", "Building Familiarity", "Completing the First Week"],
+  ["Pressure and Memorization", "Projection and Certainty", "Sustainable Reading Habits"],
+  ["Deck and Structure", "Reading Language", "Practice and Interpretation"],
+  ["What You Have Learned", "Choose Your Direction", "Continue Through the Archive"]
+];
 
-if (academyChapters.length !== 1
-  || academyChapter?.id !== "what-is-tarot"
-  || academyChapter?.title !== "What Is Tarot, Really?"
-  || Object.hasOwn(academyChapter || {}, "visual")
-  || Object.hasOwn(academyChapter || {}, "blocks")) {
-  errors.push("academy lesson data: only Chapter 01 may use academyLesson, its metadata title must remain unchanged, and legacy visual/blocks must be removed");
+if (guidedChapters.length !== 10
+  || guidedChambers.length !== 30
+  || new Set(guidedChambers.map((chamber) => chamber.id)).size !== 30
+  || guidedChapters.some((chapter) => chapter.academyLesson.chambers.length !== 3)
+  || guidedChapters.some((chapter) => Object.hasOwn(chapter, "visual") || Object.hasOwn(chapter, "blocks"))) {
+  errors.push("guided lesson data: all ten chapters must use three unique Chambers with no legacy chapter visual/block model");
 }
-if (JSON.stringify(academyLesson) !== JSON.stringify(expectedAcademyLesson)) {
-  errors.push("academy lesson data: Chapter 01 does not match the approved Three Chambers configuration");
-}
-if (tarotForBeginners.chapters.slice(1).some((chapter) => (
-  chapter.academyLesson || !chapter.visual || !Array.isArray(chapter.blocks)
-))) {
-  errors.push("academy lesson data: Chapters 02–10 must retain their standard visual and block model");
+guidedChapters.forEach((chapter, index) => {
+  const lesson = chapter.academyLesson;
+  if (JSON.stringify(lesson.chambers.map((chamber) => chamber.title)) !== JSON.stringify(expectedChamberTitles[index])) {
+    errors.push(`guided lesson data: approved Chamber sequence is incorrect for ${chapter.id}`);
+  }
+  if (!Array.isArray(lesson.outcomes) || lesson.outcomes.length < 2
+    || !lesson.headerVisual?.slot || !lesson.headerVisual?.alt
+    || Object.hasOwn(lesson.headerVisual || {}, "futureSrc")) {
+    errors.push(`guided lesson data: entrance outcomes or neutral header placeholder are incomplete for ${chapter.id}`);
+  }
+  lesson.chambers.forEach((chamber) => {
+    if (!allowedChamberVariants.has(chamber.variant)
+      || !Array.isArray(chamber.blocks) || chamber.blocks.length < 1
+      || !chamber.visual?.slot || !chamber.visual?.alt
+      || Object.hasOwn(chamber.visual || {}, "futureSrc")) {
+      errors.push(`guided lesson data: reusable variant, content, or neutral visual slot is incomplete for ${chamber.id}`);
+    }
+  });
+});
+if (beginnerChapterMetadata.some((chapter) => chapter.chambers?.length !== 3)) {
+  errors.push("guided lesson metadata: every chapter must expose its three Chambers to the runtime");
 }
 if (countMatches(/data-beginner-chapter="/g, html) !== 10
-  || countMatches(/data-chapter-nav-location="rail"/g, html) !== 10
-  || countMatches(/data-chapter-nav-location="menu"/g, html) !== 10) {
-  errors.push("chapters: semantic article, rail, or mobile menu counts are incorrect");
+  || countMatches(/data-guided-lesson/g, html) !== 10
+  || countMatches(/data-chapter-nav-location="drawer"/g, html) !== 10
+  || countMatches(/data-chapter-nav-location="rail"/g, html) !== 0) {
+  errors.push("chapters: unified lesson article, All Chapters drawer, or removed sidebar counts are incorrect");
 }
 
 const indexPathHtml = html.match(/<aside class="tarot-beginners-index-path"[\s\S]*?<\/aside>/)?.[0] || "";
-const indexStripHtml = html.match(/<nav class="tarot-beginners-index-strip"[\s\S]*?<\/nav>/)?.[0] || "";
+const indexConstellationHtml = html.match(/<nav class="tarot-beginners-index-constellation"[\s\S]*?<\/nav>/)?.[0] || "";
 const indexDotsHtml = html.match(/<div class="tarot-beginners-index-dots"[\s\S]*?<\/div>/)?.[0] || "";
+const indexFooterHtml = html.match(/<footer class="tarot-beginners-index-footer">[\s\S]*?<\/footer>/)?.[0] || "";
 const indexPanelStart = html.indexOf('<section class="tarot-beginners-index"');
 const readerPanelStart = html.indexOf('<section class="tarot-beginners-reader"');
 const indexPanelHtml = indexPanelStart >= 0 && readerPanelStart > indexPanelStart
@@ -320,9 +378,9 @@ if (!html.includes('id="chapters" aria-labelledby="beginner-index-heading" data-
 }
 if (countMatches(/data-beginner-index-select="/g, html) !== 30
   || countMatches(/data-beginner-index-select="/g, indexPathHtml) !== 10
-  || countMatches(/data-beginner-index-select="/g, indexStripHtml) !== 10
+  || countMatches(/data-beginner-index-select="/g, indexConstellationHtml) !== 10
   || countMatches(/data-beginner-index-select="/g, indexDotsHtml) !== 10) {
-  errors.push("chapter index: expected ten timeline selectors, ten strip selectors, and ten mobile dots");
+  errors.push("chapter index: expected ten timeline selectors, ten constellation nodes, and ten mobile dots");
 }
 if (countMatches(/data-beginner-index-slide="/g, html) !== 10
   || countMatches(/data-beginner-complete-chapter="/g, indexPanelHtml) !== 10
@@ -330,11 +388,26 @@ if (countMatches(/data-beginner-index-slide="/g, html) !== 10
   || countMatches(/data-beginner-index-progress-percent(?:>|\s)/g, html) !== 10) {
   errors.push("chapter index: expected ten preview slides with completion controls and progress displays");
 }
-if (!html.includes('data-beginner-index-counter>Chapter 1 of 10')
-  || !html.includes('data-beginner-index-previous')
-  || !html.includes('data-beginner-index-next-control')
+if (countMatches(/data-beginner-index-counter>Chapter 1 of 10/g, indexPanelHtml) !== 2
+  || countMatches(/data-beginner-index-previous/g, indexPanelHtml) !== 2
+  || countMatches(/data-beginner-index-next-control/g, indexPanelHtml) !== 2
   || !html.includes('data-beginner-index-live')) {
-  errors.push("chapter index: mobile counter, previous/next controls, or live status is missing");
+  errors.push("chapter index: synchronized desktop/mobile counters, previous/next controls, or live status are missing");
+}
+if (!indexFooterHtml.includes('<nav class="tarot-beginners-index-constellation" aria-label="Chapter Constellation Rail">')
+  || countMatches(/class="tarot-beginners-index-constellation__node"/g, indexConstellationHtml) !== 10
+  || countMatches(/class="tarot-beginners-index-constellation__tooltip"/g, indexConstellationHtml) !== 10
+  || countMatches(/data-beginner-index-node-icon/g, indexConstellationHtml) !== 10
+  || countMatches(/data-beginner-index-active-title/g, indexConstellationHtml) !== 1
+  || !indexConstellationHtml.includes('aria-label="Previous chapter" data-beginner-index-previous><span aria-hidden="true">‹</span>')
+  || !indexConstellationHtml.includes('aria-label="Next chapter" data-beginner-index-next-control><span aria-hidden="true">›</span>')
+  || !generator.includes('              <footer class="tarot-beginners-index-footer">')
+  || !/<div class="tarot-beginners-index-preview">[\s\S]*?<footer class="tarot-beginners-index-footer">[\s\S]*?<\/footer>\s*<\/div>\s*<\/div>/.test(indexPanelHtml)) {
+  errors.push("chapter index: desktop constellation rail, standalone arrowheads, tooltips, or active title are missing");
+}
+if (indexPanelHtml.includes("tarot-beginners-index-strip")
+  || indexPanelHtml.includes("tarot-beginners-index-position")) {
+  errors.push("chapter index: obsolete bottom chapter table and position row must be removed");
 }
 if (html.includes("tarot-beginners-library-card")
   || html.includes("tarot-beginners-library__grid")
@@ -350,6 +423,14 @@ const chapterArticleHtmlById = new Map();
 let previousChapterIndex = -1;
 
 tarotForBeginners.chapters.forEach((chapter, chapterIndex) => {
+  const expectedCoverSrc = `/assets/images/tarot_for_beginners/${expectedChapterCoverFiles[chapterIndex]}`;
+  if (chapter.coverImage?.src !== expectedCoverSrc
+    || chapter.coverImage?.width !== 1122
+    || chapter.coverImage?.height !== 1402
+    || !chapter.coverImage?.alt?.trim()
+    || !existsSync(resolve(rootDir, expectedCoverSrc.replace(/^\/+/, "")))) {
+    errors.push(`chapter index: mapped cover image is missing or invalid for ${chapter.id}`);
+  }
   const articleStart = chapterArticleStarts[chapterIndex];
   if (articleStart < 0 || articleStart <= previousChapterIndex) {
     errors.push(`chapters: ${chapter.id} is missing or out of order`);
@@ -357,7 +438,7 @@ tarotForBeginners.chapters.forEach((chapter, chapterIndex) => {
   previousChapterIndex = articleStart;
 
   const articleEnd = chapterArticleStarts[chapterIndex + 1]
-    ?? html.indexOf('<nav class="tarot-beginners-reader-controls"', articleStart);
+    ?? html.indexOf('<dialog class="tarot-beginners-chapter-menu', articleStart);
   const articleHtml = articleStart >= 0 && articleEnd > articleStart
     ? html.slice(articleStart, articleEnd)
     : "";
@@ -371,35 +452,35 @@ tarotForBeginners.chapters.forEach((chapter, chapterIndex) => {
     errors.push(`chapters: hash navigation is missing for ${chapter.id}`);
   }
 
-  if (chapter.academyLesson) {
-    const expectedAcademyStrings = new Set([
-      chapter.eyebrow,
-      chapter.introduction,
-      ...collectStrings(chapter.academyLesson)
-    ]);
-    expectedAcademyStrings.forEach((text) => {
-      if (text && !articleHtml.includes(escapeHtml(text))) {
-        errors.push(`academy lesson: visible initial configuration is missing (${text})`);
-      }
-    });
-  } else {
-    const structuralValues = new Set(["features", "paragraphs", "list", "note", "links", "pairs", "timeline", "glossary", "pathways"]);
-    const expectedChapterCopy = [
-      chapter.eyebrow,
-      chapter.title,
-      chapter.introduction,
-      chapter.visual.caption,
-      chapter.visual.center,
-      ...chapter.visual.items,
-      ...collectStrings(chapter.blocks),
-      chapter.takeaway
-    ].filter((text) => text && !structuralValues.has(text) && !/^(?:\/|#)/.test(text));
-    expectedChapterCopy.forEach((text) => {
+  const lesson = chapter.academyLesson;
+  const expectedLessonCopy = new Set([
+    chapter.eyebrow,
+    chapter.introduction,
+    lesson.title,
+    lesson.introContinuation,
+    ...lesson.outcomes,
+    lesson.takeaway,
+    lesson.completionSummary,
+    ...lesson.chambers.flatMap((chamber) => [
+      chamber.label,
+      chamber.shortTitle,
+      chamber.title,
+      chamber.preview,
+      ...chamber.topics,
+      chamber.takeaway,
+      ...collectStrings(chamber.blocks),
+      ...collectStrings(chamber.practice),
+      ...collectStrings(chamber.checkpoint)
+    ])
+  ]);
+  const structuralValues = new Set(["features", "paragraphs", "list", "note", "links", "pairs", "timeline", "glossary", "pathways"]);
+  [...expectedLessonCopy]
+    .filter((text) => text && !structuralValues.has(text) && !/^(?:\/|#)/.test(text))
+    .forEach((text) => {
       if (!articleHtml.includes(escapeHtml(text))) {
-        errors.push(`chapters: visible initial copy is missing from ${chapter.id} (${text})`);
+        errors.push(`guided lesson: visible initial copy is missing from ${chapter.id} (${text})`);
       }
     });
-  }
 
   const indexCardStart = html.indexOf(
     `<article class="tarot-beginners-index-card" id="beginner-index-card-${chapter.id}"`
@@ -410,7 +491,7 @@ tarotForBeginners.chapters.forEach((chapter, chapterIndex) => {
     : "";
   if (!indexCardHtml.includes(`<h3>${escapeHtml(chapter.navLabel)}</h3>`)
     || !indexCardHtml.includes(escapeHtml(chapter.cardSummary))
-    || !indexCardHtml.includes(`src="${escapeHtml(chapter.image.src)}"`)
+    || !indexCardHtml.includes(`src="${escapeHtml(chapter.coverImage.src)}"`)
     || !indexCardHtml.includes(`data-beginner-complete-chapter="${chapter.id}"`)
     || !indexCardHtml.includes(`data-beginner-chapter-link="${chapter.id}"`)) {
     errors.push(`chapter index: preview copy, artwork, or actions are incomplete for ${chapter.id}`);
@@ -421,118 +502,71 @@ tarotForBeginners.chapters.forEach((chapter, chapterIndex) => {
   }
 });
 
-const academyArticleHtml = chapterArticleHtmlById.get("what-is-tarot") || "";
-if (countMatches(/data-academy-lesson="/g, html) !== 1
-  || !academyArticleHtml.includes('data-academy-lesson="what-is-tarot"')
-  || countMatches(/data-beginner-module="/g, html) !== 9
-  || countMatches(/data-beginner-module="/g, academyArticleHtml) !== 0) {
-  errors.push("academy lesson: expected exactly one Chapter 01 academy article and nine unchanged standard visual modules");
+if (countMatches(/data-academy-lesson="/g, html) !== 10
+  || countMatches(/data-lesson-chamber="/g, html) !== 30
+  || countMatches(/data-chamber-stage="/g, html) !== 30
+  || countMatches(/data-chamber-trigger="/g, html) !== 0
+  || countMatches(/data-chamber-panel="/g, html) !== 0
+  || countMatches(/data-beginner-module="/g, html) !== 0) {
+  errors.push("guided lessons: expected ten shared articles, thirty always-visible Chambers/stages, and no legacy modules or accordion panels");
 }
 
-if (countMatches(/data-lesson-chamber="/g, academyArticleHtml) !== 3
-  || countMatches(/data-chamber-stage="/g, academyArticleHtml) !== 3
-  || countMatches(/data-chamber-trigger="/g, academyArticleHtml) !== 3
-  || countMatches(/data-chamber-panel="/g, academyArticleHtml) !== 3) {
-  errors.push("academy lesson: expected exactly three chambers, stage controls, triggers, and panels");
-}
+guidedChapters.forEach((chapter) => {
+  const articleHtml = chapterArticleHtmlById.get(chapter.id) || "";
+  const lesson = chapter.academyLesson;
+  if (countMatches(/data-lesson-chamber="/g, articleHtml) !== 3
+    || countMatches(/data-chamber-stage="/g, articleHtml) !== 3
+    || !articleHtml.includes('class="tarot-beginners-chamber-progress"')
+    || !articleHtml.includes('class="tarot-beginners-lesson-takeaway"')
+    || !articleHtml.includes('class="tarot-beginners-lesson-ending"')) {
+    errors.push(`guided lesson: shared Chamber rail, reminder, or ending is incomplete for ${chapter.id}`);
+  }
 
-const chamberStarts = (academyLesson?.chambers || []).map((chamber) => {
-  const marker = academyArticleHtml.indexOf(`data-lesson-chamber="${chamber.id}"`);
-  return marker >= 0 ? academyArticleHtml.lastIndexOf("<section", marker) : -1;
-});
-(academyLesson?.chambers || []).forEach((chamber, chamberIndex) => {
-  const chamberStart = chamberStarts[chamberIndex];
-  const chamberEnd = chamberStarts[chamberIndex + 1]
-    ?? academyArticleHtml.indexOf('<aside class="tarot-beginners-lesson-takeaway"', chamberStart);
-  const chamberHtml = chamberStart >= 0 && chamberEnd > chamberStart
-    ? academyArticleHtml.slice(chamberStart, chamberEnd)
-    : "";
-  const sectionTag = chamberHtml.match(/^<section\b[^>]*>/)?.[0] || "";
-  const stageTag = academyArticleHtml.match(new RegExp(`<button[^>]*data-chamber-stage="${escapeRegExp(chamber.id)}"[^>]*>`))?.[0] || "";
-  const triggerTag = chamberHtml.match(new RegExp(`<button[^>]*data-chamber-trigger="${escapeRegExp(chamber.id)}"[^>]*>`))?.[0] || "";
-  const panelTag = chamberHtml.match(new RegExp(`<div[^>]*data-chamber-panel="${escapeRegExp(chamber.id)}"[^>]*>`))?.[0] || "";
-  const headingId = `${chamber.id}-heading`;
-  const previewId = `${chamber.id}-preview`;
-  const panelId = `${chamber.id}-panel`;
-
-  if (!sectionTag.includes(`id="${chamber.id}"`)
-    || !sectionTag.includes(`aria-labelledby="${headingId}"`)
-    || /\b(?:hidden|inert)\b/.test(sectionTag)
-    || !chamberHtml.includes(`<h3 id="${headingId}" data-chamber-title>${escapeHtml(chamber.title)}</h3>`)) {
-    errors.push(`academy lesson: ${chamber.id} lacks its semantic source-visible section or H3`);
-  }
-  if (!stageTag.includes(`aria-controls="${panelId}"`)
-    || !triggerTag.includes('type="button"')
-    || !triggerTag.includes('aria-expanded="true"')
-    || !triggerTag.includes(`aria-controls="${panelId}"`)
-    || !triggerTag.includes(`aria-labelledby="${headingId}"`)
-    || !triggerTag.includes(`aria-describedby="${previewId}"`)) {
-    errors.push(`academy lesson: ${chamber.id} stage or expansion trigger lacks matching accessible relationships`);
-  }
-  if (!panelTag.includes(`id="${panelId}"`)
-    || !panelTag.includes('role="region"')
-    || !panelTag.includes(`aria-labelledby="${headingId}"`)
-    || /\b(?:hidden|inert|aria-hidden)\b/.test(panelTag)) {
-    errors.push(`academy lesson: ${chamber.id} panel must be source-rendered, labelled, visible, and non-inert`);
-  }
-  const chamberStrings = new Set([
-    chamber.label,
-    chamber.title,
-    chamber.preview,
-    ...chamber.topics,
-    ...collectStrings(chamber.learningVisual),
-    ...collectStrings(chamber.sections),
-    chamber.takeaway
-  ]);
-  chamberStrings.forEach((text) => {
-    if (text && !chamberHtml.includes(escapeHtml(text))) {
-      errors.push(`academy lesson: ${chamber.id} is missing configured content (${text})`);
-    }
-  });
-  chamber.sections.forEach((section) => {
-    if (!chamberHtml.includes(`<h4>${escapeHtml(section.heading)}</h4>`)) {
-      errors.push(`academy lesson: ${chamber.id} is missing subsection H4 (${section.heading})`);
+  lesson.chambers.forEach((chamber) => {
+    const chamberStart = articleHtml.indexOf(`data-lesson-chamber="${chamber.id}"`);
+    const chamberTagStart = chamberStart >= 0 ? articleHtml.lastIndexOf("<section", chamberStart) : -1;
+    const chamberHtml = chamberTagStart >= 0
+      ? articleHtml.slice(chamberTagStart, articleHtml.indexOf("</section>", chamberTagStart) + 10)
+      : "";
+    const sectionTag = chamberHtml.match(/^<section\b[^>]*>/)?.[0] || "";
+    const stageTag = articleHtml.match(new RegExp(`<button[^>]*aria-controls="${escapeRegExp(chamber.id)}"[^>]*data-chamber-stage="${escapeRegExp(chamber.id)}"[^>]*>`))?.[0] || "";
+    const headingId = `${chamber.id}-heading`;
+    if (!sectionTag.includes(`id="${chamber.id}"`)
+      || !sectionTag.includes(`aria-labelledby="${headingId}"`)
+      || !sectionTag.includes(`data-chamber-variant="${chamber.variant}"`)
+      || /\b(?:hidden|inert|aria-hidden)\b/.test(sectionTag)
+      || !chamberHtml.includes(`<h3 id="${headingId}" data-chamber-title>${escapeHtml(chamber.title)}</h3>`)
+      || !stageTag.includes('type="button"')) {
+      errors.push(`guided lesson: ${chamber.id} lacks its visible semantic section, H3, variant, or matching rail control`);
     }
   });
 });
 
-const primaryAcademySentences = (academyLesson?.chambers || [])
-  .flatMap((chamber) => chamber.sections)
-  .flatMap((section) => section.paragraphs);
-primaryAcademySentences.forEach((sentence) => {
-  const occurrences = countMatches(new RegExp(escapeRegExp(escapeHtml(sentence)), "g"), html);
-  if (occurrences !== 1) {
-    errors.push(`academy lesson SEO: primary educational sentence must appear exactly once (found ${occurrences}: ${sentence})`);
-  }
-});
-
-const placeholderBlocks = [...academyArticleHtml.matchAll(/<figure class="[^"]*tarot-beginners-lesson-placeholder[^"]*"[^>]*>[\s\S]*?<\/figure>/g)]
+const placeholderBlocks = [...html.matchAll(/<figure class="[^"]*tarot-beginners-lesson-placeholder[^"]*"[^>]*>[\s\S]*?<\/figure>/g)]
   .map((match) => match[0]);
-const expectedPlaceholders = academyLesson
-  ? [academyLesson.headerVisual, ...academyLesson.chambers.map((chamber) => chamber.visual)]
-  : [];
-if (placeholderBlocks.length !== 4 || placeholderBlocks.some((block) => /<img\b/i.test(block))) {
-  errors.push("academy lesson placeholders: expected four CSS-only figures with no image elements");
+const expectedPlaceholders = guidedChapters.flatMap((chapter) => [
+  chapter.academyLesson.headerVisual,
+  ...chapter.academyLesson.chambers.map((chamber) => chamber.visual)
+]);
+if (placeholderBlocks.length !== 40
+  || placeholderBlocks.some((block) => /<img\b|data-future-src|Development visual/i.test(block))) {
+  errors.push("guided lesson placeholders: expected forty neutral CSS-only slots with no future image path or development label");
 }
 expectedPlaceholders.forEach((visual) => {
-  const placeholder = placeholderBlocks.find((block) => block.includes(`data-chapter-visual-placeholder="${escapeHtml(visual.slot)}"`)) || "";
-  const openingTag = placeholder.match(/^<figure\b[^>]*>/)?.[0] || "";
-  if (!openingTag.includes(`data-future-src="${escapeHtml(visual.futureSrc)}"`)
-    || !openingTag.includes(`--lesson-placeholder-ratio:${escapeHtml(visual.ratio)}`)
-    || !placeholder.includes(`role="img" aria-label="${escapeHtml(visual.alt)}"`)
-    || !placeholder.includes("Development visual")
-    || !placeholder.includes(`<strong>${escapeHtml(visual.slot)}</strong>`)) {
-    errors.push(`academy lesson placeholders: ${visual.slot} lacks future path, ratio, accessible description, or development label`);
+  const placeholder = placeholderBlocks.find((block) => block.includes(`data-chapter-visual-slot="${escapeHtml(visual.slot)}"`)) || "";
+  if (!placeholder.includes(`--lesson-placeholder-ratio:${escapeHtml(visual.ratio)}`)
+    || !placeholder.includes(`role="img" aria-label="${escapeHtml(visual.alt)}"`)) {
+    errors.push(`guided lesson placeholders: ${visual.slot} lacks its ratio or accessible description`);
   }
 });
 
-if (countMatches(/data-beginner-complete-chapter="/g, html) !== 11
-  || countMatches(/data-beginner-complete-chapter="what-is-tarot"/g, academyArticleHtml) !== 1
-  || !academyArticleHtml.includes('data-lesson-course-progress')
-  || !academyArticleHtml.includes('class="tarot-beginners-lesson-navigation"')
-  || !academyArticleHtml.includes('data-reader-continue')
-  || !academyArticleHtml.includes('href="?view=chapters" data-beginner-index-link')) {
-  errors.push("academy lesson completion/navigation: expected ten index controls, one lesson control, course progress, Continue, and chapter-library actions");
+if (countMatches(/data-beginner-complete-chapter="/g, html) !== 20
+  || countMatches(/data-lesson-course-progress(?:>|\s)/g, html) !== 10
+  || countMatches(/class="tarot-beginners-lesson-navigation"/g, html) !== 10
+  || countMatches(/data-open-chapter-menu/g, html) !== 11
+  || !html.includes('class="tarot-beginners-chapter-navigator"')
+  || !html.includes('class="tarot-beginners-chapter-menu tarot-beginners-chapter-drawer"')) {
+  errors.push("guided lesson completion/navigation: course progress, shared sticky navigator, endings, or All Chapters drawer are incomplete");
 }
 
 const articleOpeningTags = [...html.matchAll(/<article class="tarot-beginners-chapter"[^>]*>/g)].map((match) => match[0]);
@@ -588,10 +622,10 @@ if (countMatches(/data-education-faq-button/g, html) !== tarotForBeginners.faq.i
 
 [
   "body.tarot-meanings-page .tarot-education-faq .tarot-faq__inner",
-  "grid-template-columns: minmax(15rem, 32fr) minmax(0, 68fr)",
-  "background: var(--tarot-question-surface)",
-  "border-radius: 0",
-  "box-shadow: none"
+  "grid-template-columns: minmax(0, 1fr)",
+  "width: min(calc(100% - 48px), 960px)",
+  ".tarot-faq__divider",
+  "display: none"
 ].forEach((token) => {
   if (!educationCss.includes(token)) errors.push(`FAQ: shared question-ledger style is missing (${token})`);
 });
@@ -601,6 +635,17 @@ if (!css.includes("#24143f 0%, #321a50 50%, #3a205c 100%")
   || !css.includes("rgba(15, 11, 29, .68)")) {
   errors.push("themes: Moon mode is missing the approved Moonstone, ledger, or panel palette");
 }
+[
+  [".tarot-beginners-page", ["--guided-nav-bg: rgba(4, 17, 16, .94)", "--guided-path-line: rgba(213, 179, 110, .32)"]],
+  [".tarot-beginners-page.moon-mode", ["--guided-nav-bg: rgba(7, 4, 18, .95)", "--guided-path-line: rgba(179, 154, 233, .34)"]],
+  [".tarot-beginners-page.blood-moon-mode", ["--guided-nav-bg: rgba(18, 1, 6, .96)", "--guided-path-line: rgba(220, 90, 109, .36)"]],
+  [".tarot-beginners-page.blue-moon-mode", ["--guided-nav-bg: rgba(2, 10, 19, .96)", "--guided-path-line: rgba(112, 212, 246, .34)"]]
+].forEach(([selector, tokens]) => {
+  const ruleBody = getCssRuleBody(css, selector);
+  tokens.forEach((token) => {
+    if (!ruleBody.includes(token)) errors.push(`guided themes: ${selector} is missing its isolated ${token.split(":")[0]} token`);
+  });
+});
 if (!css.includes(".tarot-beginners-button--primary::before {\n    display: none;")
   || !css.includes("animation: none !important")) {
   errors.push("motion: reduced-motion mode must remove the traveling shimmer and component motion");
@@ -669,12 +714,13 @@ if (imageTags.some((tag) => !/\balt="[^"]*"/.test(tag))) {
 const heroImages = getTarotEducationHeroImages("tarot-for-beginners");
 const expectedContentImageDimensions = new Map([
   [heroImages.regular.src, [heroImages.regular.width, heroImages.regular.height]],
-  [tarotForBeginners.welcome.image.src, [tarotForBeginners.welcome.image.width, tarotForBeginners.welcome.image.height]],
-  ...tarotForBeginners.chapters.map((chapter) => [chapter.image.src, [chapter.image.width, chapter.image.height]])
+  ...tarotForBeginners.chapters.map((chapter) => (
+    [chapter.coverImage.src, [chapter.coverImage.width, chapter.coverImage.height]]
+  ))
 ]);
 const beginnerContentImageTags = imageTags.filter((tag) => (
   /\bdata-education-hero-image\b/.test(tag)
-  || /class="[^"]*tarot-beginners-(?:welcome__image|index-card__image|module__image)[^"]*"/.test(tag)
+  || /class="[^"]*tarot-beginners-index-card__image[^"]*"/.test(tag)
 ));
 beginnerContentImageTags.forEach((tag) => {
   const src = tag.match(/\bsrc="([^"]+)"/)?.[1] || "";
@@ -745,10 +791,9 @@ if (countMatches(/astralVeilTarotBeginnerProgress/g, js) !== 1
   "const academyContextByChapterId = new Map()",
   "const chamberRouteById = new Map()",
   "let academyContextsAreValid = true",
+  "let chamberObserver = null",
   "academyArticles.forEach((article) =>",
   'const chamberSections = Array.from(article.querySelectorAll("[data-lesson-chamber]"))',
-  'const chamberTriggers = Array.from(article.querySelectorAll("[data-chamber-trigger]"))',
-  'const chamberPanels = Array.from(article.querySelectorAll("[data-chamber-panel]"))',
   'const chamberStages = Array.from(article.querySelectorAll("[data-chamber-stage]"))',
   "chamberSections.length === 3",
   "chamberStages.length === chamberSections.length",
@@ -760,21 +805,22 @@ if (countMatches(/astralVeilTarotBeginnerProgress/g, js) !== 1
   "function chamberStateForContext(",
   "function updateChamberState(",
   "function setActiveChamber(",
+  "function observeActiveChapterChambers(",
+  "new IntersectionObserver(",
+  'rootMargin: "-120px 0px -24% 0px"',
   "function initializeAcademyLessons(",
   "const chamberRoute = chamberRouteById.get(hash)",
   "chapterId: chamberRoute.chapterId",
   "chamberId: hash",
   "requestedChamberId ? `#${requestedChamberId}`",
-  'chamber.section.classList.toggle("is-open", active)',
-  'chamber.trigger.setAttribute("aria-expanded", String(active))',
-  'chamber.panel.setAttribute("aria-hidden", String(!active))',
-  "chamber.panel.inert = !active",
-  'chamber.section.scrollIntoView({\n          block: "nearest"',
-  "chamber.trigger.focus({ preventScroll: true })",
-  'chamber.panel.removeAttribute("aria-hidden")',
-  "chamber.panel.inert = false"
+  'chamber.section.classList.toggle("is-active", active)',
+  'chamber.section.classList.toggle("is-completed", completed)',
+  'chamber.section.scrollIntoView({\n          block: "start"',
+  "chamber.stages[0]?.focus({ preventScroll: true })",
+  'const checkpointOption = target.closest("[data-checkpoint-option]")',
+  'feedback.textContent = checkpointOption.dataset.checkpointFeedback'
 ].forEach((token) => {
-  if (!js.includes(token)) errors.push(`academy lesson interaction: required chamber state, direct route, focus, or no-JS fallback hook is missing (${token})`);
+  if (!js.includes(token)) errors.push(`guided lesson interaction: required scroll-spy, direct route, focus, progress, or checkpoint hook is missing (${token})`);
 });
 if (js.includes('root.querySelector("[data-academy-lesson]")')
   || js.includes("const academyChapterId =")
@@ -866,16 +912,15 @@ if (!js.includes("transform: \"translateX(-12px)\"")
   ".tarot-beginners-index__layout",
   ".tarot-beginners-index-path__line",
   ".tarot-beginners-index-card",
-  ".tarot-beginners-index-strip",
+  ".tarot-beginners-index-constellation",
   ".tarot-beginners-index-mobile-nav",
   ".tarot-beginners-index-dots",
-  ".tarot-beginners-reader__layout",
-  ".tarot-beginners-rail__inner",
+  ".tarot-beginners-chapter-navigator",
+  ".tarot-beginners-reader__main.tarot-beginners-shell",
   "position: sticky",
-  ".tarot-beginners-mobile-header",
-  ".tarot-beginners-chapter-menu",
+  ".tarot-beginners-chapter-drawer",
   ".tarot-beginners-door",
-  ".tarot-beginners-module",
+  ".tarot-beginners-lesson-chamber__body",
   ".tarot-beginners-glossary details",
   ".tarot-beginners-pathway--dominant",
   "@media (max-width: 1100px) and (min-width: 821px)",
@@ -891,67 +936,123 @@ if (!js.includes("transform: \"translateX(-12px)\"")
 
 [
   ".tarot-beginners-academy-lesson",
-  ".tarot-beginners.is-academy-lesson-active",
   ".tarot-beginners-academy-introduction__layout",
+  ".tarot-beginners-academy-introduction__outcomes",
   ".tarot-beginners-lesson-placeholder",
   "aspect-ratio: var(--lesson-placeholder-ratio, 16 / 9)",
   ".tarot-beginners-chamber-progress",
-  ".tarot-beginners-lesson-chamber__header",
-  ".tarot-beginners-academy-lesson.is-chambers-ready .tarot-beginners-lesson-chamber__panel",
-  ".tarot-beginners-academy-lesson.is-chambers-ready .tarot-beginners-lesson-chamber.is-open .tarot-beginners-lesson-chamber__panel",
+  ".tarot-beginners-lesson-chamber__heading",
+  ".tarot-beginners-lesson-chamber__body",
+  ".tarot-beginners-lesson-chamber--map",
   ".tarot-beginners-lesson-visual-tool",
+  ".tarot-beginners-guided-practice",
+  ".tarot-beginners-checkpoint",
   ".tarot-beginners-lesson-takeaway",
-  ".tarot-beginners-lesson-completion",
+  ".tarot-beginners-lesson-ending",
   ".tarot-beginners-lesson-navigation"
 ].forEach((token) => {
-  if (!css.includes(token)) errors.push(`academy lesson styles: reusable scoped treatment is missing (${token})`);
+  if (!css.includes(token)) errors.push(`guided lesson styles: reusable scoped treatment is missing (${token})`);
 });
-if (!/\.tarot-beginners-academy-lesson\.is-chambers-ready \.tarot-beginners-lesson-chamber__panel\s*\{[^}]*grid-template-rows:\s*0fr[^}]*380ms/s.test(css)
-  || !/\.tarot-beginners-academy-lesson\.is-chambers-ready \.tarot-beginners-lesson-chamber\.is-open \.tarot-beginners-lesson-chamber__panel\s*\{[^}]*grid-template-rows:\s*1fr[^}]*380ms/s.test(css)) {
-  errors.push("academy lesson styles: the enhanced one-open disclosure must use the approved 380ms inline expansion");
-}
-
-const academyTabletCss = collectCssMediaBlocks(css, "max-width: 1100px");
+const academyTabletCss = collectCssMediaBlocks(css, "max-width: 1050px");
 const academyMobileCss = collectCssMediaBlocks(css, "max-width: 820px");
-const academySmallMobileCss = collectCssMediaBlocks(css, "max-width: 430px");
+const academySmallMobileCss = collectCssMediaBlocks(css, "max-width: 520px");
 const academyReducedMotionCss = collectCssMediaBlocks(css, "prefers-reduced-motion: reduce");
 if (!academyTabletCss.some((block) => block.includes(".tarot-beginners-academy-introduction__layout")
-  && block.includes(".tarot-beginners-lesson-chamber__header"))) {
-  errors.push("academy lesson responsive: tablet layout must adapt the introduction and horizontal chamber cards");
+  && block.includes(".tarot-beginners-lesson-chamber__body"))) {
+  errors.push("guided lesson responsive: tablet layout must adapt the entrance and Chamber content");
 }
 if (!academyMobileCss.some((block) => block.includes(".tarot-beginners-academy-lesson")
-  && block.includes(".tarot-beginners-lesson-chamber__header")
+  && block.includes(".tarot-beginners-lesson-chamber__body")
   && block.includes("grid-template-columns: minmax(0, 1fr)"))) {
-  errors.push("academy lesson responsive: mobile layout must stack the academy lesson and chamber headers at the project breakpoint");
+  errors.push("guided lesson responsive: mobile layout must stack the lesson and Chamber content at the project breakpoint");
 }
-if (!academySmallMobileCss.some((block) => block.includes(".tarot-beginners-chamber-progress")
-  && block.includes(".tarot-beginners-lesson-visual-tool__equation"))) {
-  errors.push("academy lesson responsive: small mobile must preserve compact chamber progress and interpretation tools");
+if (!academySmallMobileCss.some((block) => block.includes(".tarot-beginners-chapter-navigator")
+  && block.includes(".tarot-beginners-lesson-navigation"))) {
+  errors.push("guided lesson responsive: small mobile must preserve compact chapter and ending navigation");
 }
 if (!academyReducedMotionCss.some((block) => (
-  block.includes(".tarot-beginners-academy-lesson.is-chambers-ready .tarot-beginners-lesson-chamber__panel")
+  block.includes(".tarot-beginners-chapter-navigator > :is(a, button)")
   && block.includes("transition: none !important")
 ))) {
-  errors.push("academy lesson motion: reduced-motion mode must remove chamber disclosure animation");
+  errors.push("guided lesson motion: reduced-motion mode must remove navigator and path transitions");
 }
 
 [
   "grid-template-columns: minmax(350px, .72fr) minmax(560px, 1.28fr)",
-  "grid-template-columns: repeat(5, minmax(0, 1fr))",
-  ".tarot-beginners-index-path,\n  .tarot-beginners-index-strip {\n    display: none;",
+  "grid-template-columns: repeat(10, minmax(0, 1fr))",
+  ".tarot-beginners-index-path,\n  .tarot-beginners-index-footer {\n    display: none;",
+  ".tarot-beginners-index-constellation__position",
+  ".tarot-beginners-index-constellation__rail",
+  ".tarot-beginners-index-constellation__node",
+  ".tarot-beginners-index-constellation__tooltip",
+  ".tarot-beginners-index-constellation__title",
+  ".tarot-beginners-index-footer",
   "overflow-x: auto",
-  "grid-auto-flow: column",
-  "grid-auto-columns: minmax(0, calc(100% - 26px))",
+  "flex: 0 0 100%",
   "scroll-snap-type: x mandatory",
   "scroll-snap-align: start",
   "scroll-snap-stop: always",
   "-webkit-overflow-scrolling: touch"
 ].forEach((token) => {
-  if (!css.includes(token)) errors.push(`chapter index: desktop path/strip or native mobile swipe style is missing (${token})`);
+  if (!css.includes(token)) errors.push(`chapter index: desktop path/constellation or native mobile swipe style is missing (${token})`);
 });
 if (!css.includes("@media (max-width: 820px)")
   || !css.includes("@media (prefers-reduced-motion: reduce)")) {
   errors.push("chapter index: project mobile breakpoint or reduced-motion treatment is missing");
+}
+const chapterIndexPositionRule = getCssRuleBody(css, ".tarot-beginners-index-constellation__position");
+if (!chapterIndexPositionRule.includes("grid-template-columns: 48px minmax(0, 1fr) 48px;")
+  || !chapterIndexPositionRule.includes("justify-self: center;")) {
+  errors.push("chapter index: constellation previous/count/next row is not centered with accessible touch targets");
+}
+const chapterIndexFooterRule = getCssRuleBody(css, ".tarot-beginners-index-footer");
+if (!chapterIndexFooterRule.includes("width: 100%;")
+  || !chapterIndexFooterRule.includes("margin-top: clamp(18px, 2vw, 28px);")) {
+  errors.push("chapter index: slim constellation footer must sit directly beneath the selected-card column");
+}
+const chapterConstellationRule = getCssRuleBody(css, ".tarot-beginners-index-constellation");
+if (!chapterConstellationRule.includes("width: 100%;")
+  || !chapterConstellationRule.includes("justify-self: center;")) {
+  errors.push("chapter index: constellation rail must align beneath the selected chapter card");
+}
+const chapterConstellationArrowRule = getCssRuleBody(css, ".tarot-beginners-index-constellation__position button");
+if (!chapterConstellationArrowRule.includes("width: 48px;")
+  || !chapterConstellationArrowRule.includes("height: 44px;")
+  || !chapterConstellationArrowRule.includes("border: 0;")
+  || !chapterConstellationArrowRule.includes("background: transparent;")
+  || !chapterConstellationArrowRule.includes("text-shadow: 0 0 10px var(--chapter-active-glow), 0 0 20px var(--chapter-active-glow-soft);")
+  || chapterConstellationArrowRule.includes("border-radius")) {
+  errors.push("chapter index: previous/next controls must remain large, standalone, theme-glowing arrowheads without containers");
+}
+const chapterConstellationRailRule = getCssRuleBody(css, ".tarot-beginners-index-constellation__rail");
+const chapterConstellationNodeButtonRule = getCssRuleBody(css, ".tarot-beginners-index-constellation__rail button");
+const chapterConstellationActiveNodeRule = getCssRuleBody(css, ".tarot-beginners-index-constellation__rail button.is-active .tarot-beginners-index-constellation__node");
+if (!chapterConstellationRailRule.includes("grid-template-columns: repeat(10, minmax(0, 1fr));")
+  || !chapterConstellationNodeButtonRule.includes("min-height: 48px;")
+  || !chapterConstellationNodeButtonRule.includes("background: transparent;")
+  || !chapterConstellationActiveNodeRule.includes("background: var(--chapter-active-line);")
+  || !chapterConstellationActiveNodeRule.includes("box-shadow: 0 0 0 6px var(--chapter-active-glow-soft), 0 0 20px var(--chapter-active-glow);")) {
+  errors.push("chapter index: ten-node rail, accessible node targets, or theme-aware active glow is incomplete");
+}
+if (!css.includes(".tarot-beginners-index-constellation__rail button:is(:hover, :focus-visible) .tarot-beginners-index-constellation__tooltip")
+  || css.includes(".tarot-beginners-index-strip")
+  || css.includes(".tarot-beginners-index-position")) {
+  errors.push("chapter index: focus-revealed node tooltips are required and obsolete table selectors must be absent");
+}
+if (!js.includes('const indexCounters = Array.from(root.querySelectorAll("[data-beginner-index-counter]"))')
+  || !js.includes('const indexActiveTitles = Array.from(root.querySelectorAll("[data-beginner-index-active-title]"))')
+  || !js.includes("indexCounters.forEach((counter) =>")
+  || !js.includes("indexActiveTitles.forEach((title) =>")
+  || !js.includes("indexPreviousControls.forEach((control) =>")
+  || !js.includes("indexNextControls.forEach((control) =>")) {
+  errors.push("chapter index: constellation title plus desktop and mobile controls must share the selected chapter state");
+}
+const chapterIndexMobileLayoutCss = collectCssMediaBlocks(css, "max-width: 820px");
+if (!chapterIndexMobileLayoutCss.some((block) => (
+  /\.tarot-beginners-index-track\s*\{[^}]*display:\s*flex;[^}]*width:\s*100%;/s.test(block)
+  && /\.tarot-beginners-index-card\s*\{[^}]*flex:\s*0 0 100%;/s.test(block)
+))) {
+  errors.push("chapter index: mobile track must use definite, non-shrinking one-card flex slides");
 }
 
 const chapterIndexThemeVariables = [
@@ -1025,13 +1126,13 @@ const chapterIndexPreviewRule = getCssRuleBody(css, ".tarot-beginners-index-prev
 if (!chapterIndexPreviewRule.includes("width: 100%;")
   || !chapterIndexPreviewRule.includes("min-width: 0;")
   || !chapterIndexPreviewRule.includes("margin-inline: auto;")) {
-  errors.push("chapter index sizing: the shared preview-and-strip wrapper must remain fluid and centered");
+  errors.push("chapter index sizing: the selected chapter preview must remain fluid and centered");
 }
 const chapterIndexDesktopCss = collectCssMediaBlocks(css, "min-width: 1181px");
 if (!chapterIndexDesktopCss.some((block) => (
   /\.tarot-beginners-index-preview\s*\{[^}]*width:\s*90%;[^}]*max-width:\s*780px;[^}]*justify-self:\s*center;/s.test(block)
 ))) {
-  errors.push("chapter index sizing: large desktop must cap the centered preview-and-strip module at 90% and 780px");
+  errors.push("chapter index sizing: large desktop must align and cap the selected preview and its constellation rail at 90% and 780px");
 }
 
 const chapterOpenRule = getCssRuleBody(css, ".tarot-beginners-index .tarot-beginners-index-card__open");
@@ -1132,17 +1233,18 @@ if (!chapterIndexReducedMotionCss.some((block) => (
   "function renderChamberProgress(",
   "function renderChapterVisualPlaceholder(",
   "function renderLessonChamber(",
+  "function renderGuidedPractice(",
+  "function renderKnowledgeCheckpoint(",
   "function renderLessonTakeaway(",
-  "function renderLessonCompletion(",
-  "function renderLessonNavigation(",
+  "function renderChapterEnding(",
   "function renderAcademyChapter(",
-  "function renderStandardChapter(",
   '`${chapter.id}-lesson-takeaway-heading`',
-  '`${chapter.id}-lesson-completion-heading`',
-  "chapter.academyLesson ? renderAcademyChapter(chapter) : renderStandardChapter(chapter)",
-  "lesson.chambers.map(renderLessonChamber)"
+  '`${chapter.id}-lesson-ending-heading`',
+  "return renderAcademyChapter(chapter)",
+  "lesson.chambers.map(renderLessonChamber)",
+  'renderChapterLink(chapter, "drawer")'
 ].forEach((token) => {
-  if (!generator.includes(token)) errors.push(`academy lesson architecture: reusable generator seam is missing (${token})`);
+  if (!generator.includes(token)) errors.push(`guided lesson architecture: reusable generator seam is missing (${token})`);
 });
 
 if (!generator.includes("beginnerChapterMetadata")
@@ -1150,11 +1252,11 @@ if (!generator.includes("beginnerChapterMetadata")
   || !generator.includes("function renderChapterIndex(page)")
   || !generator.includes("function renderIndexTimelineItem(")
   || !generator.includes("function renderIndexPreview(")
-  || !generator.includes("function renderIndexStripItem(")
+  || !generator.includes("function renderIndexConstellationNode(")
   || !generator.includes("function renderIndexDot(")
   || !generator.includes("page.chapters.map(renderIndexTimelineItem)")
   || !generator.includes("renderIndexPreview(chapter, index, total)")
-  || !generator.includes("page.chapters.map(renderIndexStripItem)")
+  || !generator.includes("page.chapters.map(renderIndexConstellationNode)")
   || !generator.includes("page.chapters.map(renderIndexDot)")) {
   errors.push("architecture: generated views are not reusing the central chapter source");
 }
@@ -1182,4 +1284,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log("Validated Tarot for Beginners: Chapter 01 Three Chambers academy lesson, nine standard chapters, dedicated chapter index, completion, history, SEO, accessibility, themes, motion, and responsive hooks.");
+console.log("Validated Tarot for Beginners: ten unified Doors, thirty Chambers, drawer navigation, scroll-spy, completion, history, SEO, accessibility, themes, motion, and responsive hooks.");

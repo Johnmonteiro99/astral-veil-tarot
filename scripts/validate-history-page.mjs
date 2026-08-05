@@ -79,7 +79,7 @@ if (!existsSync(outputPath)) {
   const faqMarkup = html.match(/<section class="[^"]*tarot-education-faq[^"]*"[\s\S]*?<\/section>/)?.[0] || "";
   const archiveStart = html.indexOf('<div class="tarot-history-archive">');
   const archiveEnd = findElementEnd(archiveStart, "div");
-  const faqStart = html.indexOf('<section class="tarot-faq major-arcana-faq tarot-education-faq tarot-history-faq tarot-faq--split"');
+  const faqStart = html.indexOf('<section class="tarot-faq major-arcana-faq tarot-education-faq tarot-history-faq tarot-faq--stacked"');
   if (archiveStart < 0 || archiveEnd < 0 || faqStart < archiveEnd) {
     errors.push("faq: shared accordion must render outside the twelve-column History archive grid");
   }
@@ -92,7 +92,7 @@ if (!existsSync(outputPath)) {
     errors.push("faq: editorial introduction is missing");
   }
   if (!faqMarkup.includes("data-education-faq") || !faqMarkup.includes('class="tarot-shell tarot-faq__inner"')) {
-    errors.push("faq: shared two-column education shell is missing");
+    errors.push("faq: shared stacked education shell is missing");
   }
   tarotHistory.faq.forEach((item, index) => {
     const number = index + 1;
@@ -117,11 +117,10 @@ if (!existsSync(outputPath)) {
   });
   [
     "body.tarot-meanings-page .tarot-education-faq .tarot-faq__inner",
-    "grid-template-columns: minmax(15rem, 32fr) minmax(0, 68fr)",
-    "background: var(--tarot-question-surface)",
-    "border-radius: 0",
-    "box-shadow: none",
-    ".tarot-faq__trigger:focus-visible",
+    "grid-template-columns: minmax(0, 1fr)",
+    "width: min(calc(100% - 48px), 960px)",
+    ".tarot-faq__divider",
+    "display: none",
     "@media (max-width: 820px)",
     "@media (prefers-reduced-motion: reduce)"
   ].forEach((token) => {

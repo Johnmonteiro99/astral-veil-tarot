@@ -66,12 +66,12 @@ export function renderTarotFaqSection({
   items,
   idPrefix,
   className = "",
-  layout = "split",
+  layout = "stacked",
   includeMajorClass = false,
   innerClassName = "tarot-shell",
   renderQuestion = (item) => escapeHtml(item.question),
   renderAnswer = (item) => escapeHtml(item.answer),
-  showDivider = true
+  showDivider = false
 }) {
   if (layout !== "split" && layout !== "stacked") {
     throw new Error(`Unknown Tarot FAQ layout: ${layout}`);
@@ -129,7 +129,7 @@ export function renderTarotEducationFaq({ section, items, idPrefix, className = 
     items,
     idPrefix,
     className,
-    layout: "split",
+    layout: "stacked",
     includeMajorClass: true
   });
 }

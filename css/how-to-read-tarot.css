@@ -29,6 +29,22 @@
   --htr-spiral-path-glow: rgba(103, 216, 187, .28);
   --htr-spiral-panel-line: rgba(215, 184, 120, .24);
   --htr-spiral-panel-surface: rgba(3, 15, 16, .28);
+  --lesson-node-01: #e991ff;
+  --lesson-node-02: #a76cff;
+  --lesson-node-03: #6867ff;
+  --lesson-node-04: #45adff;
+  --lesson-node-05: #52d68d;
+  --lesson-node-06: #f2cc55;
+  --lesson-node-07: #ff963f;
+  --lesson-node-08: #ef4c5c;
+  --lesson-node-09: #f8f6ff;
+  --active-lesson-color: var(--lesson-node-01);
+  --htr-celestial-spine-line: rgba(241, 226, 196, .48);
+  --htr-celestial-spine-glow: rgba(215, 184, 120, .18);
+  --htr-celestial-spine-orbit: rgba(215, 184, 120, .27);
+  --htr-celestial-spine-geometry: rgba(103, 216, 187, .09);
+  --htr-celestial-spine-sigil: rgba(240, 212, 154, .42);
+  --htr-node-focus-ring: #f7e7c5;
   --major-max-width: 1240px;
   --major-section-space: clamp(90px, 11vw, 150px);
   color: var(--htr-text);
@@ -65,6 +81,12 @@
   --htr-spiral-path-glow: rgba(172, 145, 232, .3);
   --htr-spiral-panel-line: rgba(172, 145, 232, .24);
   --htr-spiral-panel-surface: rgba(8, 5, 23, .3);
+  --htr-celestial-spine-line: rgba(226, 218, 247, .48);
+  --htr-celestial-spine-glow: rgba(172, 145, 232, .22);
+  --htr-celestial-spine-orbit: rgba(188, 170, 226, .28);
+  --htr-celestial-spine-geometry: rgba(172, 145, 232, .1);
+  --htr-celestial-spine-sigil: rgba(215, 199, 255, .44);
+  --htr-node-focus-ring: #eee8ff;
 }
 
 .how-to-read-page.blood-moon-mode {
@@ -96,6 +118,12 @@
   --htr-spiral-path-glow: rgba(216, 63, 85, .28);
   --htr-spiral-panel-line: rgba(230, 94, 112, .24);
   --htr-spiral-panel-surface: rgba(24, 2, 6, .32);
+  --htr-celestial-spine-line: rgba(238, 215, 218, .34);
+  --htr-celestial-spine-glow: rgba(161, 42, 59, .18);
+  --htr-celestial-spine-orbit: rgba(207, 82, 99, .21);
+  --htr-celestial-spine-geometry: rgba(143, 22, 41, .1);
+  --htr-celestial-spine-sigil: rgba(232, 128, 143, .34);
+  --htr-node-focus-ring: #f9e8ea;
 }
 
 .how-to-read-page.blue-moon-mode {
@@ -119,6 +147,12 @@
   --htr-spiral-path-glow: rgba(97, 207, 255, .3);
   --htr-spiral-panel-line: rgba(91, 195, 244, .24);
   --htr-spiral-panel-surface: rgba(2, 9, 18, .32);
+  --htr-celestial-spine-line: rgba(213, 235, 248, .42);
+  --htr-celestial-spine-glow: rgba(97, 207, 255, .2);
+  --htr-celestial-spine-orbit: rgba(109, 166, 207, .26);
+  --htr-celestial-spine-geometry: rgba(77, 169, 224, .1);
+  --htr-celestial-spine-sigil: rgba(168, 224, 250, .4);
+  --htr-node-focus-ring: #e7f7ff;
 }
 
 .how-to-read { position: relative; z-index: 1; overflow: clip; }
@@ -239,7 +273,7 @@
 .htr-constellation__vignette > span { position: absolute; width: 220%; height: 220%; display: block; left: var(--travel-light-x, 50%); top: var(--travel-light-y, 50%); background: radial-gradient(circle at center, transparent 0 58px, rgba(var(--htr-travel-dark-rgb), .08) 112px, rgba(var(--htr-travel-dark-rgb), .7) 300px, rgba(var(--htr-travel-dark-rgb), .95) 540px); transform: translate(-50%, -50%) translate3d(0, 0, 0); }
 .htr-constellation.is-traveling .htr-constellation__vignette { opacity: 1; will-change: opacity; }
 .htr-constellation.is-traveling .htr-constellation__vignette > span { transform: translate(-50%, -50%) translate3d(var(--travel-x, 0), var(--travel-y, 0), 0); will-change: transform; }
-.htr-lesson-travel-light { position: absolute; z-index: 3; width: 16px; height: 16px; left: var(--travel-light-x, 50%); top: var(--travel-light-y, 50%); border-radius: 50%; color: var(--htr-travel-accent); background: radial-gradient(circle, var(--htr-travel-core) 0 16%, var(--htr-travel-accent) 34%, color-mix(in srgb, var(--htr-travel-undertone) 54%, transparent) 56%, transparent 74%); box-shadow: 0 0 14px currentColor, 0 0 42px color-mix(in srgb, currentColor 68%, transparent), 0 0 88px color-mix(in srgb, var(--htr-travel-undertone) 44%, transparent); opacity: 0; pointer-events: none; transform: translate(-50%, -50%) translate3d(0, 0, 0) scale(.3); }
+.htr-lesson-travel-light { position: absolute; z-index: 3; width: 16px; height: 16px; left: var(--travel-light-x, 50%); top: var(--travel-light-y, 50%); border-radius: 50%; color: var(--active-lesson-color, var(--htr-travel-accent)); background: radial-gradient(circle, var(--htr-travel-core) 0 16%, var(--active-lesson-color, var(--htr-travel-accent)) 34%, color-mix(in srgb, var(--active-lesson-color, var(--htr-travel-accent)) 54%, transparent) 56%, transparent 74%); box-shadow: 0 0 14px currentColor, 0 0 42px color-mix(in srgb, currentColor 68%, transparent), 0 0 88px color-mix(in srgb, var(--htr-travel-undertone) 44%, transparent); opacity: 0; pointer-events: none; transform: translate(-50%, -50%) translate3d(0, 0, 0) scale(.3); }
 .htr-constellation.is-awakening .htr-lesson-travel-light { opacity: .62; transform: translate(-50%, -50%) translate3d(0, 0, 0) scale(1.6); will-change: transform, opacity; }
 .htr-constellation.is-traveling .htr-lesson-travel-light { opacity: 1; transform: translate(-50%, -50%) translate3d(var(--travel-x, 0), var(--travel-y, 0), 0) scale(5); will-change: transform, opacity; }
 .htr-constellation__phase-labels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-inline: clamp(12px, 3vw, 38px); color: color-mix(in srgb, var(--htr-muted) 76%, transparent); font: 600 .56rem/1.4 "DM Sans", sans-serif; letter-spacing: .17em; text-transform: uppercase; }
@@ -250,6 +284,16 @@
 .htr-spiral-map__path-progress { display: none; }
 .htr-constellation__lines circle { fill: var(--htr-accent-strong); opacity: .56; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--htr-accent) 52%, transparent)); }
 .htr-constellation__mobile-path { display: none; }
+.htr-celestial-spine { overflow: visible; pointer-events: none; }
+.htr-celestial-spine :is(path, ellipse, circle) { fill: none; vector-effect: non-scaling-stroke; }
+.htr-celestial-spine__geometry :is(path, ellipse) { stroke: var(--htr-celestial-spine-geometry); stroke-width: .85; }
+.htr-celestial-spine__geometry ellipse:last-child { stroke-opacity: .72; }
+.htr-celestial-spine__orbits path { stroke: var(--htr-celestial-spine-orbit); stroke-width: .9; stroke-linecap: round; opacity: .72; filter: drop-shadow(0 0 6px var(--htr-celestial-spine-glow)); }
+.htr-celestial-spine__orbits path:nth-child(n + 3) { stroke-width: .7; opacity: .42; }
+.htr-celestial-spine__stations ellipse { stroke: var(--htr-celestial-spine-line); stroke-width: .75; opacity: .42; }
+.htr-celestial-spine__stations ellipse:last-child { stroke: #f8f6ff; stroke-width: 1; opacity: .64; filter: drop-shadow(0 0 8px rgba(248, 246, 255, .28)); }
+.htr-celestial-spine__channel { stroke: url(#htr-celestial-spine-gradient); stroke-width: 1.55; stroke-linecap: round; opacity: .68; filter: drop-shadow(0 0 8px var(--htr-celestial-spine-glow)); }
+.htr-celestial-spine__sigils :is(path, circle) { stroke: var(--htr-celestial-spine-sigil); stroke-width: .9; stroke-linecap: round; stroke-linejoin: round; opacity: .74; filter: drop-shadow(0 0 6px var(--htr-celestial-spine-glow)); }
 .htr-constellation:has(.lesson-star:hover) .htr-constellation__lines path,
 .htr-constellation:has(.lesson-star:focus-visible) .htr-constellation__lines path { stroke: color-mix(in srgb, var(--htr-accent) 65%, transparent); }
 .htr-constellation__nodes { position: relative; z-index: 1; display: grid; min-height: clamp(430px, 42vw, 520px); grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: repeat(5, minmax(68px, auto)); gap: 4px; padding: 18px clamp(4px, 1vw, 14px) 0; margin: 0; list-style: none; }
@@ -266,30 +310,34 @@
 .lesson-star { position: relative; width: 100%; min-width: 0; display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 9px; padding: 8px 2px; border: 0; color: var(--htr-muted); background: transparent; text-align: left; cursor: pointer; transition: color .24s ease, transform .24s ease; }
 .lesson-star:hover { color: var(--htr-text); transform: translateY(-2px); }
 .lesson-star:focus-visible { outline: 0; }
-.lesson-star__marker { position: relative; width: 24px; height: 24px; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--htr-accent) 42%, transparent); border-radius: 50%; transition: border-color .24s ease, box-shadow .24s ease, transform .24s ease; }
+.lesson-star__marker { position: relative; width: 24px; height: 24px; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--lesson-node-color) 62%, transparent); border-radius: 50%; box-shadow: 0 0 8px color-mix(in srgb, var(--lesson-node-color) 14%, transparent); transition: border-color .24s ease, box-shadow .24s ease, transform .24s ease; }
 .lesson-star__marker::before { position: absolute; inset: 4px; border: 1px solid transparent; border-radius: inherit; content: ""; transition: border-color .24s ease, transform .24s ease; }
-.lesson-star__marker::after { position: absolute; top: -3px; right: -3px; width: 5px; height: 5px; border-radius: 50%; background: transparent; content: ""; }
-.lesson-star__core { width: 6px; height: 6px; border-radius: 50%; background: color-mix(in srgb, var(--htr-accent-strong) 70%, var(--htr-muted)); box-shadow: 0 0 7px color-mix(in srgb, var(--htr-accent) 42%, transparent); transition: background .24s ease, box-shadow .24s ease, transform .24s ease; }
+.lesson-star__marker::after { position: absolute; top: -7px; right: -8px; width: 14px; height: 14px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 50%; color: var(--lesson-node-color); background: transparent; content: ""; font: 700 8px/1 "DM Sans", sans-serif; }
+.lesson-star__core { width: 6px; height: 6px; border-radius: 50%; background: color-mix(in srgb, var(--lesson-node-color) 82%, white); box-shadow: 0 0 7px color-mix(in srgb, var(--lesson-node-color) 56%, transparent); transition: background .24s ease, box-shadow .24s ease, transform .24s ease; }
 .lesson-star__copy { min-width: 0; display: block; }
-.lesson-star__number { display: block; margin-bottom: 3px; color: var(--htr-accent); font: 600 .54rem/1 Cinzel, serif; letter-spacing: .12em; }
+.lesson-star__number { display: block; margin-bottom: 3px; color: var(--lesson-node-color); font: 600 .54rem/1 Cinzel, serif; letter-spacing: .12em; }
 .lesson-star__title { display: block; color: inherit; font: 600 clamp(.62rem, .76vw, .72rem)/1.35 Cinzel, serif; letter-spacing: .045em; text-transform: uppercase; text-wrap: balance; }
+.lesson-star__mobile-title { display: none; color: inherit; font: 600 .56rem/1.35 Cinzel, serif; letter-spacing: .04em; text-transform: uppercase; text-wrap: balance; }
 .lesson-star__descriptor { display: block; margin-top: 3px; color: color-mix(in srgb, var(--htr-muted) 70%, transparent); font-size: clamp(.49rem, .56vw, .55rem); line-height: 1.3; }
-.lesson-star:is(:hover,:focus-visible) .lesson-star__marker { border-color: var(--htr-accent); box-shadow: 0 0 14px color-mix(in srgb, var(--htr-accent) 24%, transparent); }
-.lesson-star:focus-visible .lesson-star__marker { outline: 2px solid var(--htr-accent-strong); outline-offset: 4px; }
-.lesson-star:is(:hover,:focus-visible) .lesson-star__core { background: var(--htr-accent-strong); box-shadow: 0 0 6px var(--htr-accent), 0 0 16px color-mix(in srgb, var(--htr-accent) 44%, transparent); transform: scale(1.16); }
-.lesson-star.is-selected { color: var(--htr-accent-strong); }
-.lesson-star.is-selected .lesson-star__marker { border-color: var(--htr-accent); box-shadow: 0 0 18px color-mix(in srgb, var(--htr-accent) 26%, transparent); }
-.lesson-star.is-selected .lesson-star__marker::before { border-color: color-mix(in srgb, var(--htr-accent-strong) 50%, transparent); transform: rotate(28deg); }
-.lesson-star.is-selected .lesson-star__core { background: var(--htr-accent-strong); box-shadow: 0 0 7px var(--htr-accent), 0 0 18px color-mix(in srgb, var(--htr-accent) 40%, transparent); }
-.lesson-star.is-visited .lesson-star__marker::after { background: var(--htr-accent-strong); box-shadow: 0 0 7px var(--htr-accent); }
-.lesson-star.is-last-visited .lesson-star__title { text-shadow: 0 0 12px color-mix(in srgb, var(--htr-accent) 28%, transparent); }
-.lesson-star.is-travel-target { z-index: 4; color: var(--htr-travel-core); transition: none; }
+.lesson-star:is(:hover,:focus-visible) .lesson-star__marker { border-color: var(--lesson-node-color); box-shadow: 0 0 14px color-mix(in srgb, var(--lesson-node-color) 32%, transparent); }
+.lesson-star:focus-visible .lesson-star__marker { outline: 2px solid var(--htr-node-focus-ring); outline-offset: 4px; }
+.lesson-star:is(:hover,:focus-visible) .lesson-star__core { background: color-mix(in srgb, var(--lesson-node-color) 84%, white); box-shadow: 0 0 6px var(--lesson-node-color), 0 0 16px color-mix(in srgb, var(--lesson-node-color) 48%, transparent); transform: scale(1.16); }
+.lesson-star.is-selected { color: color-mix(in srgb, var(--lesson-node-color) 34%, var(--htr-heading)); }
+.lesson-star.is-selected .lesson-star__marker { border-color: var(--lesson-node-color); box-shadow: 0 0 18px color-mix(in srgb, var(--lesson-node-color) 36%, transparent); transform: scale(1.12); }
+.lesson-star.is-selected .lesson-star__marker::before { border-color: color-mix(in srgb, var(--lesson-node-color) 62%, transparent); transform: rotate(28deg) scale(1.35); }
+.lesson-star.is-selected .lesson-star__core { background: color-mix(in srgb, var(--lesson-node-color) 82%, white); box-shadow: 0 0 7px var(--lesson-node-color), 0 0 18px color-mix(in srgb, var(--lesson-node-color) 46%, transparent); }
+.lesson-star.is-visited .lesson-star__marker::after { border-color: color-mix(in srgb, var(--lesson-node-color) 44%, transparent); background: color-mix(in srgb, var(--htr-bg) 82%, transparent); content: "✦"; box-shadow: 0 0 7px color-mix(in srgb, var(--lesson-node-color) 36%, transparent); }
+.lesson-star.is-completed .lesson-star__marker::after { border-color: color-mix(in srgb, var(--lesson-node-color) 72%, transparent); background: color-mix(in srgb, var(--htr-bg) 76%, var(--lesson-node-color)); content: "✓"; }
+.lesson-star.is-last-visited .lesson-star__title { text-shadow: 0 0 12px color-mix(in srgb, var(--lesson-node-color) 34%, transparent); }
+.htr-constellation__node:nth-child(9) .lesson-star__marker { border-color: rgba(248, 246, 255, .84); background: radial-gradient(circle, rgba(255,255,255,.12), rgba(233,225,255,.035) 68%, transparent 72%); box-shadow: 0 0 10px rgba(248,246,255,.24), 0 0 22px rgba(167,108,255,.12); }
+.htr-constellation__node:nth-child(9) .lesson-star__core { background: #fff; box-shadow: 0 0 7px #f8f6ff, 0 0 16px rgba(233,145,255,.44), 0 0 26px rgba(69,173,255,.24); }
+.lesson-star.is-travel-target { z-index: 4; color: color-mix(in srgb, var(--lesson-node-color) 30%, var(--htr-travel-core)); transition: none; }
 .htr-constellation:is(.is-awakening, .is-traveling) .lesson-star.is-travel-target :is(.lesson-star__marker, .lesson-star__core) { transition: none; }
 .htr-constellation:is(.is-awakening, .is-traveling) .lesson-star.is-travel-target .lesson-star__marker::before { transition: none; }
-.htr-constellation.is-awakening .lesson-star.is-travel-target .lesson-star__marker { border-color: var(--htr-travel-accent); box-shadow: 0 0 18px color-mix(in srgb, var(--htr-travel-accent) 52%, transparent); transform: scale(1.12); }
+.htr-constellation.is-awakening .lesson-star.is-travel-target .lesson-star__marker { border-color: var(--lesson-node-color); box-shadow: 0 0 18px color-mix(in srgb, var(--lesson-node-color) 52%, transparent); transform: scale(1.12); }
 .htr-constellation.is-awakening .lesson-star.is-travel-target .lesson-star__marker::before { border-color: var(--htr-travel-core); }
-.htr-constellation.is-awakening .lesson-star.is-travel-target .lesson-star__core { background: var(--htr-travel-core); box-shadow: 0 0 8px var(--htr-travel-core), 0 0 22px var(--htr-travel-accent), 0 0 42px color-mix(in srgb, var(--htr-travel-undertone) 52%, transparent); transform: scale(1.5); }
-.htr-constellation.is-awakening .htr-constellation__lines path { stroke: color-mix(in srgb, var(--htr-travel-accent) 84%, transparent); transition: none; }
+.htr-constellation.is-awakening .lesson-star.is-travel-target .lesson-star__core { background: var(--htr-travel-core); box-shadow: 0 0 8px var(--htr-travel-core), 0 0 22px var(--lesson-node-color), 0 0 42px color-mix(in srgb, var(--lesson-node-color) 52%, transparent); transform: scale(1.5); }
+.htr-constellation.is-awakening .htr-constellation__lines path { stroke: color-mix(in srgb, var(--active-lesson-color) 84%, transparent); transition: none; }
 .htr-constellation.is-awakening .htr-constellation__mobile-path { opacity: 1; }
 .htr-constellation.is-traveling .lesson-star { transform: none; transition: none; }
 .htr-constellation.is-traveling .htr-constellation__phase-labels,
@@ -298,9 +346,9 @@
 .htr-constellation.is-traveling .htr-constellation__node:not(:has(.is-travel-target)) { opacity: .05; }
 .htr-constellation.is-traveling .htr-constellation__nodes::before { opacity: .08; }
 .htr-constellation.is-traveling .htr-constellation__mobile-path { opacity: .08; }
-.htr-constellation.is-traveling .lesson-star.is-travel-target .lesson-star__marker { border-color: var(--htr-travel-accent); box-shadow: 0 0 20px color-mix(in srgb, var(--htr-travel-accent) 62%, transparent); transform: scale(1.08); }
+.htr-constellation.is-traveling .lesson-star.is-travel-target .lesson-star__marker { border-color: var(--lesson-node-color); box-shadow: 0 0 20px color-mix(in srgb, var(--lesson-node-color) 62%, transparent); transform: scale(1.08); }
 .htr-constellation.is-traveling .lesson-star.is-travel-target .lesson-star__marker::before { border-color: var(--htr-travel-core); }
-.htr-constellation.is-traveling .lesson-star.is-travel-target .lesson-star__core { background: var(--htr-travel-core); box-shadow: 0 0 10px var(--htr-travel-core), 0 0 28px var(--htr-travel-accent), 0 0 56px color-mix(in srgb, var(--htr-travel-undertone) 58%, transparent); transform: scale(1.65); }
+.htr-constellation.is-traveling .lesson-star.is-travel-target .lesson-star__core { background: var(--htr-travel-core); box-shadow: 0 0 10px var(--htr-travel-core), 0 0 28px var(--lesson-node-color), 0 0 56px color-mix(in srgb, var(--lesson-node-color) 58%, transparent); transform: scale(1.65); }
 .htr-constellation.is-traveling .lesson-star.is-travel-target .lesson-star__copy { opacity: .12; }
 [data-learning-experience][data-lesson-traveling] { overflow-anchor: none; }
 .htr-lesson-preview { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: clamp(24px, 5vw, 72px); min-height: 150px; padding: clamp(26px, 4vw, 42px) clamp(4px, 2vw, 20px); border-bottom: 1px solid color-mix(in srgb, var(--htr-line) 78%, transparent); }
@@ -329,11 +377,11 @@
   .htr-constellation.is-spiral-ready .htr-constellation__phase-labels span:nth-child(2) { right: 8%; bottom: 4%; text-align: right; }
   .htr-constellation.is-spiral-ready .htr-constellation__phase-labels span:nth-child(3) { top: 48%; left: 3%; }
   .htr-constellation.is-spiral-ready .htr-constellation__nodes { position: absolute; z-index: 3; inset: 0; display: block; min-height: 0; padding: 0; }
-  .htr-constellation.is-spiral-ready .htr-constellation__node:nth-child(n) { position: absolute; width: 24px; height: 24px; grid-column: auto; grid-row: auto; align-self: auto; transform: translate(-50%, -50%); }
+  .htr-constellation.is-spiral-ready .htr-constellation__node:nth-child(n) { position: absolute; width: 44px; height: 44px; grid-column: auto; grid-row: auto; align-self: auto; transform: translate(-50%, -50%); }
   .htr-constellation.is-spiral-ready .htr-constellation__node:has(.lesson-star.is-selected) { z-index: 4; }
-  .htr-constellation.is-spiral-ready .htr-constellation__node:nth-child(9)::before { position: absolute; z-index: -1; inset: -24px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--htr-spiral-path-active) 18%, transparent), transparent 68%); content: ""; pointer-events: none; }
-  .htr-constellation.is-spiral-ready .lesson-star { width: 24px; height: 24px; display: block; padding: 0; overflow: visible; }
-  .htr-constellation.is-spiral-ready .lesson-star__marker { position: absolute; inset: 0; }
+  .htr-constellation.is-spiral-ready .htr-constellation__node:nth-child(9)::before { position: absolute; z-index: -1; inset: -26px; border-radius: 50%; background: radial-gradient(circle, rgba(248,246,255,.2) 0 8%, rgba(233,145,255,.1) 24%, rgba(69,173,255,.055) 44%, transparent 70%); content: ""; filter: blur(.2px); pointer-events: none; }
+  .htr-constellation.is-spiral-ready .lesson-star { width: 44px; height: 44px; display: block; padding: 0; overflow: visible; }
+  .htr-constellation.is-spiral-ready .lesson-star__marker { position: absolute; inset: 10px; }
   .htr-constellation.is-spiral-ready .lesson-star__copy { position: absolute; top: calc(50% + var(--spiral-label-y, 0px)); left: calc(50% + var(--spiral-label-x, 0px)); width: clamp(142px, 14vw, 176px); }
   .htr-constellation.is-spiral-ready .htr-constellation__node[data-spiral-align="left"] .lesson-star__copy { text-align: left; transform: translateY(-50%); }
   .htr-constellation.is-spiral-ready .htr-constellation__node[data-spiral-align="right"] .lesson-star__copy { text-align: right; transform: translate(-100%, -50%); }
@@ -374,7 +422,24 @@
 }
 
 @media (max-width: 979px) {
-  .htr-constellation__node:nth-child(n) { left: auto !important; top: auto !important; }
+  .htr-constellation__phase-labels, .htr-constellation__lines { display: none; }
+  .htr-constellation__travel-layer { width: min(100%, 760px); height: clamp(592px, calc((100vw - 24px) * 2), 720px); margin-inline: auto; padding: 0; }
+  .htr-constellation__mobile-path { position: absolute; z-index: 0; top: 50%; left: 50%; width: min(320px, 90%); height: auto; aspect-ratio: 1 / 2; display: block; opacity: .88; transform: translate(-50%, -50%); }
+  .htr-constellation__nodes { position: absolute; z-index: 1; inset: 0; min-height: 0; display: block; padding: 0; margin: 0; }
+  .htr-constellation__nodes::before { content: none; }
+  .htr-constellation__node:nth-child(n) { position: absolute; left: 0 !important; top: var(--mobile-node-y) !important; width: 100%; height: 48px; grid-column: auto; grid-row: auto; align-self: auto; transform: translateY(-50%); }
+  .htr-constellation__node:has(.lesson-star.is-selected) { z-index: 2; }
+  .lesson-star { position: relative; width: 100%; min-height: 48px; display: block; padding: 0; color: color-mix(in srgb, var(--htr-muted) 88%, transparent); transform: none; }
+  .lesson-star:hover { transform: translateY(-1px); }
+  .lesson-star__marker { position: absolute; top: 12px; left: calc(var(--mobile-node-x) - 12px); }
+  .lesson-star__copy { position: absolute; top: 50%; width: calc(50% - 44px); transform: translateY(-50%); }
+  .htr-constellation__node[data-mobile-side="left"] .lesson-star__copy { left: 0; text-align: right; }
+  .htr-constellation__node[data-mobile-side="right"] .lesson-star__copy { right: 0; text-align: left; }
+  .lesson-star__copy::after { position: absolute; top: 50%; width: 24px; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--lesson-node-color) 50%, transparent)); content: ""; opacity: .56; }
+  .htr-constellation__node[data-mobile-side="left"] .lesson-star__copy::after { right: -32px; }
+  .htr-constellation__node[data-mobile-side="right"] .lesson-star__copy::after { left: -32px; transform: rotate(180deg); }
+  .lesson-star__title { font-size: clamp(.58rem, 1.7vw, .68rem); }
+  .lesson-star__descriptor { display: none; }
 }
 
 .htr-learning-lesson-view { min-width: 0; }
@@ -738,19 +803,6 @@
 @media (max-width: 820px) {
   .htr-learning-guide__header { grid-template-columns: 1fr; align-items: start; }
   .htr-learning-guide__actions { width: min(100%, 320px); flex-direction: row; flex-wrap: wrap; }
-  .htr-constellation__phase-labels, .htr-constellation__lines { display: none; }
-  .htr-constellation__travel-layer { padding: 16px 0; }
-  .htr-constellation__mobile-path { position: absolute; z-index: 0; top: 50px; bottom: 50px; left: 50%; width: 1px; display: block; background: linear-gradient(var(--htr-line), var(--htr-accent), var(--htr-line)); opacity: .7; }
-  .htr-constellation__nodes { position: relative; min-height: 0; display: grid; grid-template-columns: 1fr; grid-template-rows: none; gap: 12px; padding: 10px 0; }
-  .htr-constellation__nodes::before { content: none; }
-  .htr-constellation__node:nth-child(n) { width: 48%; grid-column: 1; grid-row: auto; align-self: auto; }
-  .htr-constellation__node:nth-child(odd) { justify-self: start; }
-  .htr-constellation__node:nth-child(even) { justify-self: end; }
-  .lesson-star { grid-template-columns: 28px minmax(0, 1fr); min-height: 70px; padding: 8px; }
-  .htr-constellation__node:nth-child(odd) .lesson-star { grid-template-columns: minmax(0, 1fr) 28px; text-align: right; }
-  .htr-constellation__node:nth-child(odd) .lesson-star__marker { grid-column: 2; }
-  .htr-constellation__node:nth-child(odd) .lesson-star__copy { grid-column: 1; grid-row: 1; }
-  .lesson-star__descriptor { display: none; }
   .htr-lesson-preview { min-height: 0; }
   .htr-lesson-layout, .htr-lesson-layout--module { grid-template-columns: 1fr; }
   .htr-editorial-grid { gap: 30px; }
@@ -800,8 +852,7 @@
   .htr-learning-guide__header h2 { font-size: clamp(2.8rem, 13vw, 4.1rem); }
   .htr-learning-guide__actions { width: 100%; display: grid; grid-template-columns: 1fr; }
   .htr-learning-guide__actions .htr-button { width: 100%; }
-  .htr-constellation__node:nth-child(n) { width: 50%; }
-  .lesson-star__title { font-size: .59rem; letter-spacing: .025em; }
+  .lesson-star__title { letter-spacing: .025em; }
   .htr-lesson-preview { grid-template-columns: 1fr; gap: 20px; }
   .htr-lesson-preview .htr-button { width: 100%; }
   .htr-course-nav--top { top: 58px; padding-inline: 8px; }
@@ -861,14 +912,18 @@
   .htr-depth__tabs button { padding-inline: 4px; }
   .htr-depth__tabs span { font-size: .62rem; letter-spacing: .035em; }
   .htr-depth__tabs span::after { right: -7px; }
-  .htr-constellation__node:nth-child(n) { width: 52%; }
-  .lesson-star { gap: 6px; padding-inline: 3px; }
-  .lesson-star__title { font-size: .55rem; }
+  .lesson-star__copy { width: calc(50% - 40px); }
+  .lesson-star__number { font-size: .5rem; }
   .htr-course-nav button { font-size: .52rem; }
   .htr-course-nav--top > span { font-size: .51rem; }
   .htr-connection-spread { gap: 5px; padding-inline: 0; }
   .htr-learning-thread__item { grid-template-columns: 32px minmax(0,1fr); gap: 12px; }
   .htr-learning-thread__top { gap: 12px; }
+}
+
+@media (max-width: 379px) {
+  .lesson-star__title { display: none; }
+  .lesson-star__mobile-title { display: block; }
 }
 
 @media (prefers-reduced-motion: reduce) {

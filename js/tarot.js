@@ -14,7 +14,7 @@
     { key: "career", title: "Career & Purpose", description: "Gain clarity with tarot meanings for career: your work, direction, opportunities, ambition, and next steps.", route: "/tarot/topics/career-purpose/", available: true, ariaLabel: "Explore Career and Purpose Tarot", regularImage: "/assets/images/background%20_images/career_purpose.png", regularWidth: 1086, regularHeight: 1448, bloodMoonImage: "/assets/images/background%20_images/bloodmoon-career-purpose.png", bloodMoonWidth: 1122, bloodMoonHeight: 1402, alt: "Traveler overlooking illuminated paths beneath a guiding star", bloodMoonAlt: "Blood Moon artwork representing career, purpose, ambition, and direction" },
     { key: "feelings", title: "Feelings & Intentions", description: "Uncover hidden feelings, developing emotions, motives, and tarot cards as feelings and intentions behind them.", route: "/tarot/topics/feelings-intentions/", available: true, ariaLabel: "Explore Feelings and Intentions Tarot", regularImage: "/assets/images/background%20_images/feelings_intuition.png", regularWidth: 1086, regularHeight: 1448, bloodMoonImage: "/assets/images/background%20_images/bloodmoon-feelings-intuitions.png", bloodMoonWidth: 1122, bloodMoonHeight: 1402, alt: "Woman touching reflective water beneath the moon", bloodMoonAlt: "Blood Moon artwork representing hidden feelings, emotions, motives, and intentions" },
     { key: "advice", title: "Advice & Personal Growth", description: "Receive tarot advice to evolve, heal, overcome challenges, and step into your power.", route: "/tarot/topics/advice-personal-growth/", available: true, ariaLabel: "Explore Advice and Personal Growth Tarot", regularImage: "/assets/images/background%20_images/advice_personal_growth.png", regularWidth: 1086, regularHeight: 1448, bloodMoonImage: "/assets/images/background%20_images/bloodmoon-advice-personal-growth.png", bloodMoonWidth: 1122, bloodMoonHeight: 1402, alt: "Figure ascending a luminous garden stairway toward a celestial gateway", bloodMoonAlt: "Blood Moon artwork representing guidance, healing, growth, and personal power" },
-    { key: "spiritual", title: "Spiritual Guidance", description: "Explore meaning, intuition, practice, discernment, and grounded spiritual reflection through Tarot.", route: "/tarot/topics/spiritual-guidance/", available: true, ariaLabel: "Explore Spiritual Guidance Tarot", regularImage: "/assets/images/background%20_images/spiritual_guidance.png", regularWidth: 1086, regularHeight: 1448, bloodMoonImage: "/assets/images/background%20_images/spiritual_guidance.png", bloodMoonWidth: 1086, bloodMoonHeight: 1448, alt: "Mystic meditating with a glowing celestial orb among lotus flowers", bloodMoonAlt: "Mystic meditating with a glowing celestial orb among lotus flowers" }
+    { key: "spiritual", title: "Spiritual Guidance", description: "Explore meaning, intuition, practice, discernment, and grounded spiritual reflection through Tarot.", route: "/tarot/topics/spiritual-guidance/", available: true, ariaLabel: "Explore Spiritual Guidance Tarot", regularImage: "/assets/images/background%20_images/spiritual_guidance.png", regularWidth: 1086, regularHeight: 1448, bloodMoonImage: "/assets/images/background%20_images/bloodmoon-spiritual-guidance.png", bloodMoonWidth: 1448, bloodMoonHeight: 1086, alt: "Mystic meditating with a glowing celestial orb among lotus flowers", bloodMoonAlt: "Blood Moon mystic holding a glowing crimson orb beneath a red moon" }
   ];
   const tarotGuides = [
     { key: "history", eyebrow: "The Chronicle of the Cards", title: "The History of Tarot", description: "Trace tarot from its early life as a European card game through symbolism, divination, reflection, and modern practice.", route: "/tarot/history/", available: true, ctaLabel: "Explore Tarot History", image: "/assets/images/background%20_images/history-of-tarot.png", imageAlt: "A candlelit archive of antique tarot cards, books, and a tall stained-glass window", imageWidth: 1122, imageHeight: 1402, imageAspect: "portrait", imageFit: "cover", objectPosition: "58% center", layoutSize: "featured" },
@@ -130,6 +130,9 @@
   const tarotGuidesGrid = document.querySelector("[data-tarot-guides-grid]");
   const tarotFaq = document.querySelector("[data-tarot-faq]");
   const tarotFaqList = document.querySelector("[data-tarot-faq-list]");
+  const tarotOrientationSection = document.querySelector(".tarot-understanding__chapter--orientation");
+  const tarotOrientationSwitcher = document.querySelector("[data-tarot-orientation-switcher]");
+  const tarotOrientationImages = Array.from(document.querySelectorAll("[data-tarot-orientation-image]"));
   let lastCodexTrigger = null;
   let codexCloseTimer = 0;
   let scrollTimer = 0;
@@ -170,6 +173,74 @@
     questionPathThemeIsBloodMoon = isBloodMoon;
     configureQuestionPaths(isBloodMoon);
     updateQuestionPathCarouselControls();
+  }
+
+  function isBloodMoonTheme(event) {
+    return typeof event?.detail?.isActive === "boolean"
+      ? event.detail.isActive
+      : document.body.classList.contains("blood-moon-mode");
+  }
+
+  function updateTarotOrientationLabels(useBloodMoon = isBloodMoonTheme()) {
+    const deckName = useBloodMoon ? "Crimson Tarot deck" : "Astral Veil Tarot deck";
+    tarotOrientationSection?.querySelectorAll("[data-tarot-orientation-card]").forEach((card) => {
+      const orientation = card.dataset.orientationExample || "upright";
+      card.setAttribute("aria-label", `Drag to tilt The High Priestess from the ${deckName} ${orientation} example`);
+    });
+  }
+
+  function updateTarotOrientationTheme(event) {
+    const useBloodMoon = isBloodMoonTheme(event);
+    tarotOrientationImages.forEach((image) => {
+      const source = useBloodMoon ? image.dataset.bloodSrc : image.dataset.standardSrc;
+      const alt = useBloodMoon ? image.dataset.bloodAlt : image.dataset.standardAlt;
+      if (source && image.getAttribute("src") !== source) image.setAttribute("src", source);
+      if (alt) image.alt = alt;
+    });
+    updateTarotOrientationLabels(useBloodMoon);
+  }
+
+  function initializeTarotOrientation() {
+    if (!tarotOrientationSection) return;
+
+    const options = Array.from(tarotOrientationSwitcher?.querySelectorAll("[data-orientation-option]") || []);
+    const frame = tarotOrientationSwitcher?.querySelector("[data-orientation-mobile-frame]");
+    const card = tarotOrientationSwitcher?.querySelector("[data-tarot-orientation-card]");
+    const panels = Array.from(tarotOrientationSwitcher?.querySelectorAll("[data-orientation-panel]") || []);
+
+    function setOrientation(nextOrientation) {
+      if (!tarotOrientationSwitcher || !frame || !card || !["upright", "reversed"].includes(nextOrientation)) return;
+      const reversed = nextOrientation === "reversed";
+      tarotOrientationSwitcher.dataset.orientationState = nextOrientation;
+      frame.classList.toggle("tarot-orientation-card__frame--upright", !reversed);
+      frame.classList.toggle("tarot-orientation-card__frame--reversed", reversed);
+      card.dataset.orientationExample = nextOrientation;
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.orientationPanel !== nextOrientation;
+      });
+      options.forEach((option) => {
+        const active = option.dataset.orientationOption === nextOrientation;
+        option.classList.toggle("is-active", active);
+        option.setAttribute("aria-pressed", String(active));
+      });
+      updateTarotOrientationLabels();
+      window.AstralVeilCardTilt?.reset(card);
+    }
+
+    options.forEach((option, index) => {
+      option.addEventListener("click", () => setOrientation(option.dataset.orientationOption));
+      option.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        event.preventDefault();
+        const direction = event.key === "ArrowRight" ? 1 : -1;
+        const target = options[(index + direction + options.length) % options.length];
+        target.focus();
+        setOrientation(target.dataset.orientationOption);
+      });
+    });
+
+    setOrientation(tarotOrientationSwitcher?.dataset.orientationState || "upright");
+    window.AstralVeilCardTilt?.initialize(tarotOrientationSection);
   }
 
   function renderTarotGuides() {
@@ -720,6 +791,7 @@
   });
 
   window.addEventListener("astralVeilBloodMoonChange", updateTarotThemePresentation);
+  window.addEventListener("astralVeilBloodMoonChange", updateTarotOrientationTheme);
 
   if (questionPathCarousel?.dataset.initialized !== "true") {
     questionPathCarousel.dataset.initialized = "true";
@@ -748,6 +820,8 @@
   }
 
   updateQuestionPathThemeImages(true);
+  initializeTarotOrientation();
+  updateTarotOrientationTheme();
   renderTarotGuides();
   initializeTarotFaq();
   renderFilters();

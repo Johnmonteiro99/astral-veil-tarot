@@ -57,7 +57,7 @@ function renderDefinitionItems(items) {
 function renderFaqItems(card) {
   return card.commonQuestions.map(({ question, answer }, index) => {
     const number = index + 1;
-    return `<article class="tarot-card-faq__item"><h3><button class="tarot-card-faq__question" id="tarot-card-faq-question-${number}" type="button" aria-expanded="false" aria-controls="tarot-card-faq-answer-${number}" data-faq-button="${index}">${escapeHtml(question)}<span class="tarot-card-faq__icon" aria-hidden="true">+</span></button></h3><div class="tarot-card-faq__answer" id="tarot-card-faq-answer-${number}" data-faq-panel="${index}" role="region" aria-labelledby="tarot-card-faq-question-${number}" hidden><p>${escapeHtml(answer)}</p></div></article>`;
+    return `<article class="tarot-card-faq__item"><h3><button class="tarot-card-faq__question" id="tarot-card-faq-question-${number}" type="button" aria-expanded="false" aria-controls="tarot-card-faq-answer-${number}" data-faq-button="${index}">${escapeHtml(question)}<span class="tarot-card-faq__icon" aria-hidden="true">+</span></button></h3><div class="tarot-card-faq__answer" id="tarot-card-faq-answer-${number}" data-faq-panel="${index}" role="region" aria-labelledby="tarot-card-faq-question-${number}" aria-hidden="true" hidden><p>${escapeHtml(answer)}</p></div></article>`;
   }).join("");
 }
 

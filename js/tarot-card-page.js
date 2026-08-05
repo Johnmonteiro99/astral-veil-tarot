@@ -325,6 +325,7 @@
       answerPanel.dataset.faqPanel = String(index);
       answerPanel.setAttribute("role", "region");
       answerPanel.setAttribute("aria-labelledby", button.id);
+      answerPanel.setAttribute("aria-hidden", "true");
       answerPanel.hidden = true;
       answerCopy.textContent = answer;
       answerPanel.append(answerCopy);
@@ -609,6 +610,8 @@
 
       panel.getAnimations().forEach((animation) => animation.cancel());
       button.setAttribute("aria-expanded", String(expand));
+      panel.setAttribute("aria-hidden", String(!expand));
+      button.closest(".tarot-card-faq__item")?.classList.toggle("is-open", expand);
       if (icon) {
         icon.textContent = expand ? "−" : "+";
       }

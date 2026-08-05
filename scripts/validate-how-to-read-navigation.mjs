@@ -338,7 +338,8 @@ travelMarkupChecks.forEach(([pattern, expectedCount, label]) => {
 [
   "class=\"htr-constellation__vignette\" aria-hidden=\"true\"",
   "class=\"htr-lesson-travel-light\" aria-hidden=\"true\"",
-  "class=\"htr-constellation__mobile-path\" aria-hidden=\"true\""
+  "class=\"htr-constellation__mobile-path htr-celestial-spine\"",
+  "aria-hidden=\"true\" focusable=\"false\" data-mobile-celestial-spine"
 ].forEach((token) => {
   if (!pageSource.includes(token)) errors.push(`lesson travel: decorative layer is not hidden (${token})`);
 });
@@ -534,6 +535,7 @@ const spiralMarkupChecks = [
   [/data-spiral-map-svg(?=[\s>])/g, 1, "one decorative spiral SVG"],
   [/data-spiral-path-base(?=[\s>])/g, 1, "one spiral base path"],
   [/data-spiral-path-progress(?=[\s>])/g, 1, "one spiral progress path"],
+  [/data-mobile-celestial-spine(?=[\s>])/g, 1, "one decorative mobile celestial-spine SVG"],
   [/data-lesson-preview(?=[\s>])/g, 1, "one shared lesson preview"],
   [/data-open-preview(?=[\s>])/g, 1, "one shared Open Lesson control"],
   [/data-map-panel-begin(?=[\s>])/g, 1, "one desktop Begin control"],
@@ -556,6 +558,29 @@ if (!pageSource.includes('class="htr-constellation__lines htr-spiral-map__svg"')
   || /<(?:a|button|text)\b/.test(spiralSvgMarkup)) {
   errors.push("spiral map: the inline SVG must remain decorative and contain no text or controls");
 }
+const celestialSpineSvgMarkup = extractRequired(
+  /<svg class="htr-constellation__mobile-path htr-celestial-spine"[\s\S]*?data-mobile-celestial-spine>([\s\S]*?)<\/svg>/,
+  "Mobile celestial-spine SVG"
+);
+if (!pageSource.includes('viewBox="0 0 360 720"')
+  || !pageSource.includes('aria-hidden="true" focusable="false" data-mobile-celestial-spine')
+  || /<(?:a|button|text)\b/.test(celestialSpineSvgMarkup)
+  || !celestialSpineSvgMarkup.includes('class="htr-celestial-spine__geometry"')
+  || !celestialSpineSvgMarkup.includes('class="htr-celestial-spine__orbits"')
+  || !celestialSpineSvgMarkup.includes('class="htr-celestial-spine__stations"')
+  || !celestialSpineSvgMarkup.includes('class="htr-celestial-spine__channel"')
+  || !celestialSpineSvgMarkup.includes('class="htr-celestial-spine__sigils"')
+  || /htr-energy-body|__figure/.test(celestialSpineSvgMarkup)) {
+  errors.push("spiral map: the mobile celestial-spine SVG must remain abstract, decorative, and free of figures, controls, or text");
+}
+[
+  "#e991ff", "#a76cff", "#6867ff", "#45adff", "#52d68d",
+  "#f2cc55", "#ff963f", "#ef4c5c", "#f8f6ff"
+].forEach((color) => {
+  if (!celestialSpineSvgMarkup.includes(`stop-color="${color}"`)) {
+    errors.push(`spiral map: mobile celestial channel is missing ${color}`);
+  }
+});
 if (!/<aside class="htr-lesson-preview htr-learning-map-panel"[^>]*aria-labelledby="lesson-preview-title"/.test(pageSource)
   || !/class="htr-learning-map-panel__content" aria-live="polite" aria-atomic="true"/.test(pageSource)) {
   errors.push("spiral map: the reused lesson panel is missing its label or polite live region");
@@ -563,6 +588,7 @@ if (!/<aside class="htr-lesson-preview htr-learning-map-panel"[^>]*aria-labelled
 
 const spiralParametersExpression = pageScript.match(/const spiralPathParameters = ([\s\S]*?);\n  const spiralLessonLayout/);
 const spiralLayoutExpression = pageScript.match(/const spiralLessonLayout = ([\s\S]*?);\n  const fallbackConstellationPath/);
+const lessonMapVisualsExpression = pageScript.match(/const lessonMapVisuals = ([\s\S]*?);\n  const spiralPathParameters/);
 if (!spiralParametersExpression || !spiralLayoutExpression) {
   errors.push("spiral map: editable geometry configuration is missing");
 } else {
@@ -666,6 +692,37 @@ if (!spiralParametersExpression || !spiralLayoutExpression) {
   }
 }
 
+if (!lessonMapVisualsExpression) {
+  errors.push("spiral map: shared chakra color and mobile-position configuration is missing");
+} else {
+  try {
+    const visuals = Function(`"use strict"; return (${lessonMapVisualsExpression[1]});`)();
+    const expectedEnergy = ["Soul Star", "Crown", "Third Eye", "Throat", "Heart", "Solar Plexus", "Sacral", "Root", "Integration / Earth Star"];
+    if (visuals.length !== 9) errors.push(`spiral map: expected nine chakra-inspired visual configurations, found ${visuals.length}`);
+    visuals.forEach((visual, index) => {
+      if (visual.energy !== expectedEnergy[index]
+        || visual.colorVar !== `--lesson-node-${String(index + 1).padStart(2, "0")}`
+        || visual.mobileX !== 50
+        || !Number.isFinite(visual.mobileY)
+        || !["left", "right"].includes(visual.mobileSide)
+        || !visual.shortTitle) {
+        errors.push(`spiral map: Lesson ${index + 1} has an invalid energy, color, position, side, or short label`);
+      }
+      if (index > 0 && visual.mobileY <= visuals[index - 1].mobileY) {
+        errors.push(`spiral map: Lesson ${index + 1} must sit below the previous mobile energy node`);
+      }
+      if (index > 0 && visual.mobileSide === visuals[index - 1].mobileSide) {
+        errors.push(`spiral map: Lesson ${index + 1} must alternate label sides on mobile`);
+      }
+    });
+    if (visuals[0]?.mobileY > 5 || visuals[8]?.mobileY < 92) {
+      errors.push("spiral map: the mobile path must begin near the top and end near the bottom of the celestial spine");
+    }
+  } catch (error) {
+    errors.push(`spiral map: shared visual configuration is not evaluable (${error.message})`);
+  }
+}
+
 [
   "function createSpiralPath({ centerX, centerY, startRadius, endRadius, turns, startAngle, verticalScale, samples })",
   "spiralPathBase.getTotalLength()",
@@ -677,6 +734,7 @@ if (!spiralParametersExpression || !spiralLayoutExpression) {
   "spiralResizeObserver = new ResizeObserver(() => scheduleSpiralLayout());",
   "document.fonts?.ready?.then(() => scheduleSpiralLayout(true))",
   "const desktopSpiralViewport = window.matchMedia(\"(min-width: 980px)\")",
+  "const mobileTravelViewport = window.matchMedia(\"(max-width: 979px)\")",
   "const fallbackConstellationPath = spiralPathBase?.getAttribute(\"d\")",
   "function restoreLegacyConstellation()",
   "const markerRect = marker.getBoundingClientRect()",
@@ -685,7 +743,11 @@ if (!spiralParametersExpression || !spiralLayoutExpression) {
   "mapPanelContinueButton?.addEventListener(\"click\", () => travelToLesson(lastVisitedIndex >= 0 ? lastVisitedIndex : 0, mapPanelContinueButton))",
   "selectLesson(0);",
   "lessons explored",
-  "dot.setAttribute(\"aria-current\", \"step\")"
+  "dot.setAttribute(\"aria-current\", \"step\")",
+  "function updateStarAccessibility(button, index)",
+  "button.setAttribute(\"aria-current\", \"step\")",
+  "button.classList.toggle(\"is-completed\", completed)",
+  "--active-lesson-color"
 ].forEach((token) => {
   if (!pageScript.includes(token)) errors.push(`spiral map: required geometry, state, or navigation behavior is missing (${token})`);
 });
@@ -722,15 +784,38 @@ if (/\.htr-learning-map-panel[^{}]*\{[^}]*position:\s*fixed/.test(pageStyles)
 
 [
   ".htr-constellation__phase-labels, .htr-constellation__lines { display: none; }",
+  "@media (max-width: 979px)",
+  ".htr-constellation__travel-layer { width: min(100%, 760px); height: clamp(592px, calc((100vw - 24px) * 2), 720px);",
   ".htr-constellation__mobile-path { position: absolute;",
-  ".htr-constellation__nodes { position: relative; min-height: 0; display: grid; grid-template-columns: 1fr;",
-  ".htr-constellation__node:nth-child(odd) { justify-self: start; }",
-  ".htr-constellation__node:nth-child(even) { justify-self: end; }",
-  ".htr-constellation__node:nth-child(odd) .lesson-star { grid-template-columns: minmax(0, 1fr) 28px; text-align: right; }",
-  ".lesson-star__descriptor { display: none; }"
+  ".htr-celestial-spine__geometry :is(path, ellipse)",
+  ".htr-celestial-spine__orbits path",
+  ".htr-celestial-spine__stations ellipse",
+  ".htr-celestial-spine__channel",
+  ".htr-celestial-spine__sigils :is(path, circle)",
+  "top: var(--mobile-node-y) !important",
+  "[data-mobile-side=\"left\"]",
+  "[data-mobile-side=\"right\"]",
+  ".lesson-star__mobile-title { display: block; }",
+  ".lesson-star.is-completed .lesson-star__marker::after",
+  ".htr-constellation.is-spiral-ready .htr-constellation__node:nth-child(n) { position: absolute; width: 44px; height: 44px;",
+  ".htr-constellation.is-spiral-ready .htr-constellation__node:nth-child(9)::before",
+  "@media (prefers-reduced-motion: reduce)"
 ].forEach((token) => {
-  if (!pageStyles.includes(token)) errors.push(`spiral map: existing mobile constellation behavior changed (${token})`);
+  if (!pageStyles.includes(token)) errors.push(`spiral map: mobile celestial-spine, state, or target styling is missing (${token})`);
 });
+
+const expectedLessonNodeColors = ["#e991ff", "#a76cff", "#6867ff", "#45adff", "#52d68d", "#f2cc55", "#ff963f", "#ef4c5c", "#f8f6ff"];
+expectedLessonNodeColors.forEach((color, index) => {
+  const variable = `--lesson-node-${String(index + 1).padStart(2, "0")}: ${color};`;
+  if (!pageStyles.includes(variable)) errors.push(`spiral map: chakra palette is missing ${variable}`);
+});
+if ((pageStyles.match(/--htr-celestial-spine-line:/g) || []).length < 4
+  || (pageStyles.match(/--htr-celestial-spine-orbit:/g) || []).length < 4
+  || (pageStyles.match(/--htr-celestial-spine-geometry:/g) || []).length < 4
+  || /--htr-energy-body-|htr-energy-body-map/.test(pageStyles)
+  || /\.htr-constellation__mobile-path\s*\{[^}]*width:\s*1px/.test(pageStyles)) {
+  errors.push("spiral map: theme-aware celestial-spine variables are incomplete, a figure remains, or the old straight mobile line returned");
+}
 
 if (errors.length) {
   console.error(`How to Read Tarot navigation validation failed:\n- ${errors.join("\n- ")}`);

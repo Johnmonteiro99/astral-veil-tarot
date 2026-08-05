@@ -135,6 +135,13 @@ if (!existsSync(outputPath)) {
   if (!html.includes("major-arcana-hero__image") || !html.includes('loading="eager" decoding="async" fetchpriority="high"')) {
     errors.push("performance: hero image must load eagerly with priority");
   }
+  if (
+    !html.includes('class="major-arcana-closing__image"') ||
+    !html.includes(`data-standard-src="${majorArcanaPage.closingCta.image.src}"`) ||
+    !html.includes(`data-blood-src="${majorArcanaPage.closingCta.image.bloodMoonSrc}"`)
+  ) {
+    errors.push("closing banner: standard and Blood Moon image mappings are missing");
+  }
   const heroStageIndex = html.indexOf("major-arcana-hero__stage");
   const heroTitleIndex = html.indexOf('id="major-arcana-title"');
   const heroImageIndex = html.indexOf("major-arcana-hero__visual");

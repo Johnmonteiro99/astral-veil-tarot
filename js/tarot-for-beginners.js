@@ -46,16 +46,14 @@
   const door = root.querySelector("[data-beginner-door]");
   const reader = root.querySelector("[data-beginner-reader]");
   const liveRegion = root.querySelector("[data-beginner-live-region]");
-  const mobileCount = root.querySelector("[data-mobile-chapter-count]");
-  const mobileTitle = root.querySelector("[data-mobile-chapter-title]");
-  const mobileProgress = root.querySelector("[data-mobile-progress]");
-  const readerEnd = root.querySelector("[data-reader-end]");
+  const chapterNavigatorCount = root.querySelector("[data-chapter-navigator-count]");
+  const chapterNavigatorTitle = root.querySelector("[data-chapter-navigator-title]");
   const chapterMenu = root.querySelector("[data-chapter-menu]");
   const openMenuButton = root.querySelector("[data-open-chapter-menu]");
   const closeMenuButton = root.querySelector("[data-close-chapter-menu]");
   const navigationLinks = Array.from(root.querySelectorAll("[data-chapter-nav-location]"));
-  const previousControls = Array.from(root.querySelectorAll("[data-reader-previous]"));
-  const continueControls = Array.from(root.querySelectorAll("[data-reader-continue]"));
+  const previousControls = Array.from(root.querySelectorAll("[data-reader-dynamic-previous]"));
+  const continueControls = Array.from(root.querySelectorAll("[data-reader-dynamic-next]"));
   const indexSection = root.querySelector("[data-beginner-index]");
   const indexViewport = root.querySelector("[data-beginner-index-viewport]");
   const indexTrack = root.querySelector("[data-beginner-index-track]");
@@ -64,10 +62,11 @@
   const indexProgressBars = Array.from(root.querySelectorAll("[data-beginner-index-progress]"));
   const indexProgressPercentages = Array.from(root.querySelectorAll("[data-beginner-index-progress-percent]"));
   const completeControls = Array.from(root.querySelectorAll("[data-beginner-complete-chapter]"));
-  const indexCounter = root.querySelector("[data-beginner-index-counter]");
+  const indexCounters = Array.from(root.querySelectorAll("[data-beginner-index-counter]"));
+  const indexActiveTitles = Array.from(root.querySelectorAll("[data-beginner-index-active-title]"));
   const indexBack = root.querySelector("[data-beginner-index-back]");
-  const indexPrevious = root.querySelector("[data-beginner-index-previous]");
-  const indexNext = root.querySelector("[data-beginner-index-next-control]");
+  const indexPreviousControls = Array.from(root.querySelectorAll("[data-beginner-index-previous]"));
+  const indexNextControls = Array.from(root.querySelectorAll("[data-beginner-index-next-control]"));
   const indexLive = root.querySelector("[data-beginner-index-live]");
   const academyArticles = Array.from(root.querySelectorAll("[data-academy-lesson]"));
   const courseProgressBars = Array.from(root.querySelectorAll("[data-beginner-course-progress], [data-lesson-course-progress]"));
@@ -76,12 +75,11 @@
   const academyContextByChapterId = new Map();
   const chamberRouteById = new Map();
   let academyContextsAreValid = true;
+  let chamberObserver = null;
 
   academyArticles.forEach((article) => {
     const chapterId = article.dataset.academyLesson || "";
     const chamberSections = Array.from(article.querySelectorAll("[data-lesson-chamber]"));
-    const chamberTriggers = Array.from(article.querySelectorAll("[data-chamber-trigger]"));
-    const chamberPanels = Array.from(article.querySelectorAll("[data-chamber-panel]"));
     const chamberStages = Array.from(article.querySelectorAll("[data-chamber-stage]"));
     const chamberById = new Map();
 
@@ -95,8 +93,6 @@
         id,
         index,
         section,
-        trigger: chamberTriggers.find((trigger) => trigger.dataset.chamberTrigger === id),
-        panel: chamberPanels.find((panel) => panel.dataset.chamberPanel === id),
         stages: chamberStages.filter((stage) => stage.dataset.chamberStage === id),
         numeral: section.querySelector(".tarot-beginners-lesson-chamber__identity > span")?.textContent?.trim() || String(index + 1),
         title: section.querySelector("[data-chamber-title], .tarot-beginners-lesson-chamber__summary h3")?.textContent?.trim() || `Chamber ${index + 1}`
@@ -119,15 +115,9 @@
       && context.liveRegion
       && context.completionStatus
       && chamberSections.length === 3
-      && chamberTriggers.length === chamberSections.length
-      && chamberPanels.length === chamberSections.length
       && chamberStages.length === chamberSections.length
       && context.chamberIds.length === chamberSections.length
-      && [...chamberById.values()].every((chamber) => (
-        chamber.trigger
-        && chamber.panel
-        && chamber.stages.length === 1
-      ));
+      && [...chamberById.values()].every((chamber) => chamber.stages.length === 1);
     if (!contextIsValid) {
       academyContextsAreValid = false;
       return;
@@ -144,7 +134,7 @@
   const closing = root.querySelector(".tarot-beginners-closing");
   const footer = document.querySelector(".site-footer");
   const transitionControls = Array.from(root.querySelectorAll(
-    "[data-beginner-chapter-link], [data-reader-previous], [data-reader-continue], [data-beginner-view-link], [data-beginner-index-link], [data-beginner-index-select], [data-beginner-complete-chapter], [data-chamber-trigger], [data-chamber-stage], [data-open-chapter-menu]"
+    "[data-beginner-chapter-link], [data-reader-previous], [data-reader-continue], [data-beginner-view-link], [data-beginner-index-link], [data-beginner-index-select], [data-beginner-complete-chapter], [data-chamber-stage], [data-open-chapter-menu], [data-checkpoint-option]"
   ));
 
   if (
@@ -242,6 +232,10 @@
     root.classList.toggle("is-chapter-lesson-view", isChapterView);
     document.body.classList.toggle("tarot-beginners-index-mode", isIndexView);
     document.body.classList.toggle("tarot-beginners-lesson-mode", isChapterView);
+    if (!isChapterView) {
+      chamberObserver?.disconnect();
+      chamberObserver = null;
+    }
     return normalizedView;
   }
 
@@ -339,9 +333,25 @@
       label.textContent = `${progressPercent}%`;
     });
 
-    if (indexCounter) indexCounter.textContent = `Chapter ${selected.index + 1} of ${chapterData.length}`;
-    if (indexPrevious) indexPrevious.disabled = selected.index === 0;
-    if (indexNext) indexNext.disabled = selected.index === chapterData.length - 1;
+    indexCounters.forEach((counter) => {
+      counter.textContent = `Chapter ${selected.index + 1} of ${chapterData.length}`;
+    });
+    indexActiveTitles.forEach((title) => {
+      if (title.textContent === selected.navLabel) return;
+      title.textContent = selected.navLabel;
+      if (announceChange && !reducedMotionQuery.matches && typeof title.animate === "function") {
+        title.animate([
+          { opacity: .28, transform: "translateY(3px)" },
+          { opacity: 1, transform: "translateY(0)" }
+        ], { duration: 180, easing: "ease-out" });
+      }
+    });
+    indexPreviousControls.forEach((control) => {
+      control.disabled = selected.index === 0;
+    });
+    indexNextControls.forEach((control) => {
+      control.disabled = selected.index === chapterData.length - 1;
+    });
     updateIndexSlideAvailability();
     if (announceChange && indexLive) indexLive.textContent = `Chapter ${selected.index + 1} of ${chapterData.length}, ${selected.navLabel}.`;
   }
@@ -377,27 +387,14 @@
     context.chamberById.forEach((chamber) => {
       const active = chamber.id === chamberState.activeChamberId;
       const completed = chapterCompleted || chamberState.completedChambers.has(chamber.id);
-      chamber.section.classList.toggle("is-open", active);
       chamber.section.classList.toggle("is-active", active);
       chamber.section.classList.toggle("is-completed", completed);
-      chamber.trigger.setAttribute("aria-expanded", String(active));
-      chamber.panel.setAttribute("aria-hidden", String(!active));
-      chamber.panel.inert = !active;
-      const triggerLabel = chamber.trigger.querySelector("[data-chamber-trigger-label]");
-      if (triggerLabel) {
-        triggerLabel.textContent = active
-          ? `Chamber ${chamber.numeral} open`
-          : completed
-            ? `Review Chamber ${chamber.numeral}`
-            : `Enter Chamber ${chamber.numeral}`;
-      }
 
       chamber.stages.forEach((stage) => {
         stage.classList.toggle("is-active", active);
         stage.classList.toggle("is-completed", completed);
         stage.closest("li")?.classList.toggle("is-active", active);
         stage.closest("li")?.classList.toggle("is-completed", completed);
-        stage.setAttribute("aria-pressed", String(active));
         if (active) stage.setAttribute("aria-current", "step");
         else stage.removeAttribute("aria-current");
         const completionMark = stage.querySelector("[data-chamber-stage-mark]");
@@ -405,14 +402,9 @@
       });
     });
 
-    if (state.view === "chapter" && state.activeId === context.chapterId && mobileCount) {
-      const active = context.chamberById.get(chamberState.activeChamberId);
-      const chapter = chapterById.get(context.chapterId);
-      mobileCount.textContent = `Chapter ${chapter.number} · Chamber ${active.index + 1} of ${context.chamberIds.length}`;
-    }
     if (context.liveRegion) {
       const active = context.chamberById.get(chamberState.activeChamberId);
-      const nextStatus = `Chamber ${active.index + 1} of ${context.chamberIds.length}, ${active.title}, open.`;
+      const nextStatus = `Chamber ${active.index + 1} of ${context.chamberIds.length}, ${active.title}, current.`;
       if (announceChange || context.liveRegion.textContent !== nextStatus) context.liveRegion.textContent = nextStatus;
     }
   }
@@ -430,8 +422,9 @@
     const chamberState = chamberStateForContext(context);
     if (!context || !chamber || !chamberState) return;
     const previousId = chamberState.activeChamberId;
-    if (markPreviousComplete && previousId && previousId !== chamber.id) {
-      chamberState.completedChambers.add(previousId);
+    const previousChamber = context.chamberById.get(previousId);
+    if (markPreviousComplete && previousChamber && previousChamber.index < chamber.index) {
+      context.chamberIds.slice(0, chamber.index).forEach((chamberId) => chamberState.completedChambers.add(chamberId));
     }
     chamberState.activeChamberId = chamber.id;
     updateChamberState(context, { announceChange });
@@ -441,12 +434,41 @@
     if (scroll || focus) {
       window.requestAnimationFrame(() => {
         if (scroll) chamber.section.scrollIntoView({
-          block: "nearest",
+          block: "start",
           behavior: reducedMotionQuery.matches ? "auto" : "smooth"
         });
-        if (focus) chamber.trigger.focus({ preventScroll: true });
+        if (focus) chamber.stages[0]?.focus({ preventScroll: true });
       });
     }
+  }
+
+  function observeActiveChapterChambers() {
+    chamberObserver?.disconnect();
+    chamberObserver = null;
+    if (state.view !== "chapter" || !("IntersectionObserver" in window)) return;
+    const context = academyContextForChapter();
+    if (!context) return;
+
+    chamberObserver = new IntersectionObserver(() => {
+      if (state.view !== "chapter" || state.activeId !== context.chapterId || state.transitioning) return;
+      const targetY = window.innerWidth <= 820 ? 156 : 184;
+      const visible = [...context.chamberById.values()]
+        .map((chamber) => ({ chamber, rect: chamber.section.getBoundingClientRect() }))
+        .filter(({ rect }) => rect.bottom > targetY && rect.top < window.innerHeight * .72)
+        .sort((a, b) => Math.abs(a.rect.top - targetY) - Math.abs(b.rect.top - targetY));
+      const active = visible[0]?.chamber;
+      const currentState = chamberStateForContext(context);
+      if (!active || currentState?.activeChamberId === active.id) return;
+      setActiveChamber(active.id, {
+        markPreviousComplete: true,
+        updateUrl: true,
+        announceChange: false
+      });
+    }, {
+      rootMargin: "-120px 0px -24% 0px",
+      threshold: [0, .12, .36, .62]
+    });
+    context.chamberById.forEach((chamber) => chamberObserver.observe(chamber.section));
   }
 
   function initializeAcademyLessons() {
@@ -512,26 +534,22 @@
 
   function setControlLink(control, chapter, { isPrevious = false } = {}) {
     if (!control) return;
-    const isDesktop = Boolean(control.closest(".tarot-beginners-reader-controls"));
     const isAvailable = Boolean(chapter);
-    if (!isPrevious) control.hidden = !isAvailable;
+    control.hidden = false;
     control.setAttribute("aria-disabled", String(!isAvailable));
     control.tabIndex = isAvailable ? 0 : -1;
+    const title = control.querySelector("[data-chapter-nav-title]");
 
     if (!chapter) {
       control.href = "#chapters";
-      if (isDesktop) {
-        control.textContent = isPrevious ? "Previous Chapter" : "Return to Chapter Library";
-      }
+      delete control.dataset.beginnerChapterLink;
+      if (title) title.textContent = isPrevious ? "First Door" : "Journey Complete";
       return;
     }
 
     control.href = chapter.hash;
-    if (isDesktop) {
-      control.textContent = isPrevious
-        ? `← Previous: Chapter ${chapter.number}`
-        : `Continue to Chapter ${chapter.number} →`;
-    }
+    control.dataset.beginnerChapterLink = chapter.id;
+    if (title) title.textContent = chapter.navLabel;
   }
 
   function updateWelcomeResume() {
@@ -545,7 +563,7 @@
       link.dataset.beginnerChapterLink = activeChapter.id;
       if (!label) return;
       if (!hasProgress) {
-        label.textContent = isBlood ? "Enter Chapter One" : "Open Chapter One";
+        label.textContent = "Continue with Chapter 01";
       } else {
         label.textContent = isBlood
           ? "Return to the Lesson You Abandoned"
@@ -573,20 +591,15 @@
       else link.removeAttribute("aria-current");
       if (label) label.textContent = isCompleted
         ? isCurrent ? "Complete · Current" : "Complete"
-        : isCurrent ? "Current" : isVisited ? "Visited" : "Upcoming";
+        : isCurrent ? "Current" : isVisited ? "In Progress" : "";
       if (star) star.textContent = isCompleted ? "✓" : "✦";
     });
 
     previousControls.forEach((control) => setControlLink(control, previous, { isPrevious: true }));
     continueControls.forEach((control) => setControlLink(control, next));
 
-    if (mobileCount) mobileCount.textContent = `Chapter ${activeChapter.number} of 10`;
-    if (mobileTitle) mobileTitle.textContent = activeChapter.navLabel;
-    if (mobileProgress) {
-      mobileProgress.setAttribute("aria-valuenow", String(activeChapter.index + 1));
-      mobileProgress.style.setProperty("--beginner-progress", `${((activeChapter.index + 1) / chapterData.length) * 100}%`);
-    }
-    if (readerEnd) readerEnd.hidden = Boolean(next);
+    if (chapterNavigatorCount) chapterNavigatorCount.textContent = `Door ${activeChapter.number} of ${chapterData.length}`;
+    if (chapterNavigatorTitle) chapterNavigatorTitle.textContent = activeChapter.navLabel;
     updateWelcomeResume();
     updateIndexState();
     updateCourseProgress();
@@ -625,6 +638,7 @@
     }
     updateNavigationStates();
     saveProgress();
+    window.requestAnimationFrame(observeActiveChapterChambers);
     if (announceChange) {
       announce(`Chapter ${chapter.number} of 10, ${chapter.title}.`);
     }
@@ -1024,7 +1038,7 @@
       ? state.indexOpener
       : null;
     const fallbackOpener = state.view === "chapter"
-      ? reader.querySelector(".tarot-beginners-reader__toolbar [data-beginner-index-link]")
+      ? reader.querySelector("[data-open-chapter-menu]")
       : welcome.querySelector('[data-beginner-welcome-copy]:not([aria-hidden="true"]) [data-beginner-index-link]');
     state.indexOpener = null;
     restoreSavedScroll(scrollY, savedOpener || fallbackOpener);
@@ -1071,8 +1085,8 @@
       window.requestAnimationFrame(() => {
         const chamber = chamberRouteById.get(route.chamberId)?.chamber;
         if (chamber) {
-          chamber.section.scrollIntoView({ block: "nearest", behavior: "auto" });
-          chamber.trigger.focus({ preventScroll: true });
+          chamber.section.scrollIntoView({ block: "start", behavior: "auto" });
+          chamber.stages[0]?.focus({ preventScroll: true });
         } else {
           scrollToPanel(reader, "auto");
           focusChapterHeading(route.chapterId);
@@ -1081,8 +1095,8 @@
     } else if (route.chamberId) {
       window.requestAnimationFrame(() => {
         const chamber = chamberRouteById.get(route.chamberId)?.chamber;
-        chamber?.section.scrollIntoView({ block: "nearest", behavior: "auto" });
-        chamber?.trigger.focus({ preventScroll: true });
+        chamber?.section.scrollIntoView({ block: "start", behavior: "auto" });
+        chamber?.stages[0]?.focus({ preventScroll: true });
       });
     } else if (!initial) {
       window.requestAnimationFrame(() => focusChapterHeading(route.chapterId));
@@ -1125,6 +1139,13 @@
       ? event.detail.isActive
       : document.body.classList.contains("blood-moon-mode");
     const nextTheme = isBloodMoon ? "blood" : "regular";
+    const guideQuote = welcome.querySelector("[data-welcome-guide-quote]");
+    const guideQuoteText = guideQuote?.querySelector("[data-welcome-guide-quote-text]");
+    if (guideQuoteText) {
+      guideQuoteText.textContent = isBloodMoon
+        ? guideQuote.dataset.bloodQuote
+        : guideQuote.dataset.regularQuote;
+    }
     if (welcome.dataset.welcomeTheme === nextTheme) return;
 
     const outgoing = welcome.querySelector('[data-beginner-welcome-copy]:not([aria-hidden="true"])');
@@ -1235,16 +1256,30 @@
       return;
     }
 
-    const chamberControl = target.closest("[data-chamber-trigger], [data-chamber-stage]");
+    const chamberControl = target.closest("[data-chamber-stage]");
     if (chamberControl) {
       event.preventDefault();
-      const chamberId = chamberControl.dataset.chamberTrigger || chamberControl.dataset.chamberStage;
+      const chamberId = chamberControl.dataset.chamberStage;
       setActiveChamber(chamberId, {
         markPreviousComplete: true,
         updateUrl: true,
         scroll: true,
         announceChange: true
       });
+      return;
+    }
+
+    const checkpointOption = target.closest("[data-checkpoint-option]");
+    if (checkpointOption) {
+      event.preventDefault();
+      const checkpoint = checkpointOption.closest("[data-knowledge-checkpoint]");
+      checkpoint?.querySelectorAll("[data-checkpoint-option]").forEach((option) => {
+        const selected = option === checkpointOption;
+        option.classList.toggle("is-selected", selected);
+        option.setAttribute("aria-pressed", String(selected));
+      });
+      const feedback = checkpoint?.querySelector("[data-checkpoint-feedback-region]");
+      if (feedback) feedback.textContent = checkpointOption.dataset.checkpointFeedback || "Notice what drew you to that answer.";
       return;
     }
 
@@ -1321,12 +1356,11 @@
     academyContextByChapterId.forEach((context) => {
       context.article.classList.remove("is-chambers-ready");
       context.chamberById.forEach((chamber) => {
-        chamber.section.classList.add("is-open");
-        chamber.trigger.setAttribute("aria-expanded", "true");
-        chamber.panel.removeAttribute("aria-hidden");
-        chamber.panel.inert = false;
+        chamber.section.classList.remove("is-active", "is-completed");
       });
     });
+    chamberObserver?.disconnect();
+    chamberObserver = null;
     door.classList.remove("is-active");
   }
 

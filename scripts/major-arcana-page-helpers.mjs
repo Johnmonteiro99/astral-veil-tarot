@@ -82,6 +82,12 @@ export function validateMajorArcanaData(page, tarotCards, { rootDir, checkGenera
   }
   requireImage(errors, rootDir, "hero.image", page?.hero?.image);
   requireImage(errors, rootDir, "closingCta.image", page?.closingCta?.image, { decorative: true });
+  requireImage(errors, rootDir, "closingCta.image.bloodMoon", {
+    src: page?.closingCta?.image?.bloodMoonSrc,
+    width: page?.closingCta?.image?.width,
+    height: page?.closingCta?.image?.height,
+    alt: page?.closingCta?.image?.bloodMoonAlt
+  }, { decorative: true });
   requireImage(errors, rootDir, "readings.example.cardBack", page?.readings?.example?.cardBack, { decorative: true });
 
   const cards = buildMajorArcanaCards(page, tarotCards);

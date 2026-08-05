@@ -333,10 +333,12 @@ export const majorArcanaPage = {
     heading: "Begin Your Journey Through the Arcana",
     copy: "Explore the twenty-two archetypes, open a full card meaning, or bring the Major Arcana into a reading of your own.",
     image: {
-      src: "/assets/images/background%20_images/tarot-study.png",
-      width: 1672,
-      height: 941,
-      alt: ""
+      src: "/assets/images/background%20_images/%20%20major_arcana_journey_banner.png",
+      bloodMoonSrc: "/assets/images/background%20_images/%20major_arcana_journey_banner_blood_moon.png",
+      width: 1774,
+      height: 887,
+      alt: "",
+      bloodMoonAlt: ""
     },
     actions: [
       { label: "Explore All Major Arcana Cards", route: "/tarot" },
