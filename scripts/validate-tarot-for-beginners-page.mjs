@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import {
   beginnerChapterMetadata,
   beginnerFaqPlainText,
+  beginnerLessonImageAssignments,
   tarotForBeginners
 } from "../data/tarot-for-beginners.mjs";
 import { getTarotEducationHeroImages } from "../data/tarot-education-hero-images.js";
@@ -220,20 +221,28 @@ if (html.includes("tarot-beginners-welcome__visual")
   || generator.includes("tarot-beginners-welcome__image")) {
   errors.push("welcome: guide artwork must not remain in a framed figure or standalone image");
 }
-if (countMatches(/class="tarot-beginners-welcome__truth-icon"/g, html) !== 6) {
-  errors.push("welcome: both theme copies must render three principle-card icons");
+if (html.includes("tarot-beginners-welcome__truth-icon")
+  || html.includes("tarot-beginners-welcome__truth-meta")) {
+  errors.push("welcome: the former principle-card icons or metadata wrappers remain");
 }
-if (countMatches(/class="tarot-beginners-welcome__truth-number"/g, html) !== 6
-  || countMatches(/class="tarot-beginners-welcome__truth-meta"/g, html) !== 6) {
-  errors.push("welcome: both theme copies must render numbered principle-card headers");
+if (countMatches(/class="tarot-beginners-quiet-truths"/g, html) !== 2
+  || countMatches(/class="tarot-beginners-quiet-truths__statement(?: is-active)?"/g, html) !== 6
+  || countMatches(/class="tarot-beginners-quiet-truths__number"/g, html) !== 6
+  || countMatches(/data-quiet-truth-control="[0-2]"/g, html) !== 6) {
+  errors.push("welcome: both theme copies must render complete Three Quiet Truths components");
+}
+if (countMatches(/role="tablist" aria-label="Choose a quiet truth"/g, html) !== 2
+  || countMatches(/role="tab" aria-selected="true"/g, html) !== 2
+  || countMatches(/role="tabpanel"/g, html) !== 6
+  || countMatches(/aria-label="Show principle [1-3]:/g, html) !== 6) {
+  errors.push("welcome: Three Quiet Truths tab semantics or accessible labels are incomplete");
 }
 if (countMatches(/class="tarot-beginners-welcome__greeting"/g, html) !== 2) {
   errors.push("welcome: regular and Blood Moon guide greetings are missing");
 }
 if (countMatches(/class="tarot-beginners-welcome__header"/g, html) !== 2
-  || countMatches(/class="tarot-beginners-welcome__truths-hint"/g, html) !== 2
-  || countMatches(/class="tarot-beginners-welcome__truths" tabindex="0" aria-label="Beginner guidance principles"/g, html) !== 2) {
-  errors.push("welcome: mobile artwork headers or keyboard-scrollable principle carousels are missing");
+  || countMatches(/>Three Quiet Truths<\/h3>/g, html) !== 2) {
+  errors.push("welcome: mobile artwork headers or Three Quiet Truths labels are missing");
 }
 if (countMatches(/class="tarot-beginners-welcome__guide-quote"/g, html) !== 1
   || !html.includes("data-regular-quote=")
@@ -251,9 +260,14 @@ const welcomeCss = welcomeCssStart >= 0 && welcomeCssEnd > welcomeCssStart
   "background-size: cover",
   "--beginner-welcome-guide-image: var(--beginner-welcome-guide-image-blood)",
   "color-mix(in srgb, var(--beginner-bg)",
-  "grid-template-columns: repeat(3, minmax(0, 1fr))",
-  "--beginner-welcome-card-bg: var(--beginner-panel-bg)",
-  "backdrop-filter: blur(16px) saturate(116%)",
+  "--beginner-truth-accent: #69bcae",
+  ".tarot-beginners-page.moon-mode .tarot-beginners-welcome",
+  "--beginner-truth-accent: #b39ae9",
+  "--beginner-truth-accent: #dc5a6d",
+  ".tarot-beginners-quiet-truths__statement",
+  "grid-area: 1 / 1",
+  "transform: translateY(8px)",
+  ".tarot-beginners-quiet-truths__controls button[aria-selected=\"true\"]",
   "min-height: clamp(42rem, 58vw, 52rem)",
   ".tarot-beginners-welcome__guide-quote"
 ].forEach((token) => {
@@ -266,10 +280,10 @@ const welcomeMobileCss = collectCssMediaBlocks(css, "max-width: 820px").join("\n
   "background-image: none",
   "padding-top: calc(var(--beginner-welcome-mobile-image-height) + 2.25rem)",
   ".tarot-beginners-welcome__header",
-  "grid-auto-columns: min(84%, 21rem)",
-  "scroll-snap-type: x mandatory",
-  "scroll-snap-align: start",
-  ".tarot-beginners-welcome__truths-hint",
+  ".tarot-beginners-quiet-truths__statement",
+  "grid-template-columns: clamp(4.4rem, 21vw, 5.5rem) minmax(0, 1fr)",
+  ".tarot-beginners-quiet-truths__controls button",
+  "min-height: 3rem",
   ".tarot-beginners-welcome__actions",
   "flex-direction: column"
 ].forEach((token) => {
@@ -299,9 +313,60 @@ if (html.includes("tarot-beginners-welcome__door")
   errors.push("welcome: the accidental vertical CSS door line must be completely removed");
 }
 if (!js.includes("guideQuoteText.textContent = isBloodMoon")
-  || !js.includes('label.textContent = "Continue with Chapter 01"')) {
-  errors.push("welcome: theme-aware quote copy or the initial Chapter 01 CTA state is missing");
+  || !js.includes('label.textContent = "Continue with Chapter 02"')
+  || !js.includes("const initialChapter = chapterById.get(chapterIds[1])")) {
+  errors.push("welcome: theme-aware quote copy or the initial Chapter 02 CTA state is missing");
 }
+const welcomeActionMarkup = /<div class="tarot-beginners-actions tarot-beginners-welcome__actions">\s*<a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-welcome__action tarot-beginners-welcome__action--chapters" href="\?view=chapters" data-beginner-index-link><span>View All Chapters<\/span><span aria-hidden="true">→<\/span><\/a>\s*<a class="tarot-beginners-button tarot-beginners-button--secondary tarot-beginners-welcome__action tarot-beginners-welcome__action--continue" href="#what-you-need" data-beginner-chapter-link="what-you-need" data-welcome-primary><span data-welcome-primary-label>Continue with Chapter 02<\/span><span aria-hidden="true">→<\/span><\/a>/g;
+if (countMatches(welcomeActionMarkup, html) !== 2) {
+  errors.push("welcome actions: both theme copies must render View All Chapters first as primary and Chapter 02 second as secondary");
+}
+[
+  "--beginner-welcome-action-fill: linear-gradient(135deg, #164e48",
+  "--beginner-welcome-action-fill: linear-gradient(135deg, #24143f",
+  "--beginner-welcome-action-fill: linear-gradient(135deg, #430711",
+  ".tarot-beginners-welcome__action--chapters::before",
+  "animation: beginner-welcome-light-sweep 720ms ease-out 1",
+  "animation: beginner-welcome-border-trace 720ms ease-out 1",
+  "transform: translateY(-2px)",
+  "transform: translateX(5px)",
+  ".tarot-beginners-welcome__action--continue:is(:hover, :focus-visible)",
+  "transform: translateY(-1px)",
+  "white-space: nowrap"
+].forEach((token) => {
+  if (!welcomeCss.includes(token)) errors.push(`welcome actions: scoped hierarchy or hover treatment is missing (${token})`);
+});
+if (!welcomeMobileCss.includes("grid-template-columns: minmax(0, 1fr)")) {
+  errors.push("welcome actions: mobile controls must stack in source order before labels wrap");
+}
+const reducedMotionCss = collectCssMediaBlocks(css, "prefers-reduced-motion: reduce").join("\n");
+if (!reducedMotionCss.includes(".tarot-beginners-button--primary::before")
+  || !reducedMotionCss.includes("display: none")
+  || !reducedMotionCss.includes(".tarot-beginners-welcome__action--chapters:is(:hover, :focus-visible)")
+  || !reducedMotionCss.includes("transform: none")) {
+  errors.push("welcome actions: reduced-motion mode must remove the sweep and button translation");
+}
+[
+  "async function transitionToChapterIndex(",
+  "!reducedMotionQuery.matches",
+  "duration: 180",
+  'transform: "translateY(-7px)"',
+  "transitionToChapterIndex({ opener:"
+].forEach((token) => {
+  if (!js.includes(token)) errors.push(`welcome actions: restrained index transition is missing (${token})`);
+});
+[
+  "function initializeQuietTruths()",
+  'ArrowLeft:',
+  'ArrowRight:',
+  "touchstart",
+  "touchend",
+  "Math.abs(deltaX) < 48",
+  "panel.inert = !active",
+  'control.setAttribute("aria-selected", String(active))'
+].forEach((token) => {
+  if (!js.includes(token)) errors.push(`welcome: Three Quiet Truths interaction is missing (${token})`);
+});
 
 if (tarotForBeginners.chapters.length !== 10 || beginnerChapterMetadata.length !== 10) {
   errors.push("data: expected exactly ten chapters");
@@ -339,18 +404,32 @@ guidedChapters.forEach((chapter, index) => {
     errors.push(`guided lesson data: approved Chamber sequence is incorrect for ${chapter.id}`);
   }
   if (!Array.isArray(lesson.outcomes) || lesson.outcomes.length < 2
-    || !lesson.headerVisual?.slot || !lesson.headerVisual?.alt
+    || !lesson.headerVisual?.slot || !lesson.headerVisual?.src || !lesson.headerVisual?.alt
+    || !lesson.headerVisual?.width || !lesson.headerVisual?.height || !lesson.headerVisual?.position || !lesson.headerVisual?.fit
     || Object.hasOwn(lesson.headerVisual || {}, "futureSrc")) {
-    errors.push(`guided lesson data: entrance outcomes or neutral header placeholder are incomplete for ${chapter.id}`);
+    errors.push(`guided lesson data: entrance outcomes or assigned header image are incomplete for ${chapter.id}`);
   }
   lesson.chambers.forEach((chamber) => {
     if (!allowedChamberVariants.has(chamber.variant)
       || !Array.isArray(chamber.blocks) || chamber.blocks.length < 1
-      || !chamber.visual?.slot || !chamber.visual?.alt
+      || !chamber.visual?.slot || !chamber.visual?.src || !chamber.visual?.alt
+      || !chamber.visual?.width || !chamber.visual?.height || !chamber.visual?.position || !chamber.visual?.fit
       || Object.hasOwn(chamber.visual || {}, "futureSrc")) {
-      errors.push(`guided lesson data: reusable variant, content, or neutral visual slot is incomplete for ${chamber.id}`);
+      errors.push(`guided lesson data: reusable variant, content, or assigned image is incomplete for ${chamber.id}`);
     }
   });
+});
+const lessonImageAssignments = Object.entries(beginnerLessonImageAssignments);
+if (lessonImageAssignments.length !== 40
+  || new Set(lessonImageAssignments.map(([, image]) => image.src)).size !== 40
+  || lessonImageAssignments.some(([, image]) => !["keep-candidate", "replacement-recommended"].includes(image.reviewStatus))
+  || lessonImageAssignments.some(([, image]) => !["cover", "contain"].includes(image.fit))
+  || lessonImageAssignments.some(([, image]) => /blood.?moon/i.test(image.src))) {
+  errors.push("guided lesson images: expected forty unique, review-marked, non-Blood-Moon assignments");
+}
+lessonImageAssignments.forEach(([slot, image]) => {
+  const assetPath = resolve(rootDir, decodeURIComponent(image.src).replace(/^\//, ""));
+  if (!existsSync(assetPath)) errors.push(`guided lesson images: missing local asset for ${slot} (${image.src})`);
 });
 if (beginnerChapterMetadata.some((chapter) => chapter.chambers?.length !== 3)) {
   errors.push("guided lesson metadata: every chapter must expose its three Chambers to the runtime");
@@ -384,9 +463,39 @@ if (countMatches(/data-beginner-index-select="/g, html) !== 30
 }
 if (countMatches(/data-beginner-index-slide="/g, html) !== 10
   || countMatches(/data-beginner-complete-chapter="/g, indexPanelHtml) !== 10
+  || countMatches(/class="tarot-beginners-index-card__complete-icon" aria-hidden="true"/g, indexPanelHtml) !== 10
+  || countMatches(/aria-label="Mark this chapter as complete\."/g, indexPanelHtml) !== 10
   || countMatches(/data-beginner-index-progress(?:>|\s)/g, html) !== 10
   || countMatches(/data-beginner-index-progress-percent(?:>|\s)/g, html) !== 10) {
-  errors.push("chapter index: expected ten preview slides with completion controls and progress displays");
+  errors.push("chapter index: expected ten preview slides with accessible icon completion controls and progress displays");
+}
+if (!existsSync(resolve(rootDir, "assets/icons/symbols/check-circle.svg"))) {
+  errors.push("chapter index completion: shared check-circle icon asset is missing");
+}
+[
+  "--chapter-complete-bg: linear-gradient(135deg, rgba(15, 58, 53, .97)",
+  "--chapter-complete-bg: linear-gradient(135deg, rgba(28, 17, 53, .97)",
+  "--chapter-complete-bg: linear-gradient(135deg, rgba(57, 7, 18, .97)",
+  ".tarot-beginners-index-card__complete {",
+  "min-height: 44px",
+  "background: var(--chapter-complete-bg)",
+  "border: 1px solid var(--chapter-complete-border)",
+  "inset 0 1px rgba(255, 255, 255, .14)",
+  "backdrop-filter: blur(8px) saturate(108%)",
+  ".tarot-beginners-index-card__complete-icon::before",
+  'mask: url("/assets/icons/symbols/check-circle.svg")',
+  ".tarot-beginners-index-card__complete.is-completed",
+  "background: var(--chapter-complete-bg-completed)",
+  "min-width: 11.4rem",
+  "white-space: nowrap"
+].forEach((token) => {
+  if (!css.includes(token)) errors.push(`chapter index completion: scoped button styling is missing (${token})`);
+});
+const mobileIndexCss = collectCssMediaBlocks(css, "max-width: 820px").join("\n");
+if (!mobileIndexCss.includes(".tarot-beginners-index-card__complete")
+  || !mobileIndexCss.includes("width: 100%")
+  || !mobileIndexCss.includes("min-height: 44px")) {
+  errors.push("chapter index completion: mobile control must use a full-width 44px action row");
 }
 if (countMatches(/data-beginner-index-counter>Chapter 1 of 10/g, indexPanelHtml) !== 2
   || countMatches(/data-beginner-index-previous/g, indexPanelHtml) !== 2
@@ -505,10 +614,14 @@ tarotForBeginners.chapters.forEach((chapter, chapterIndex) => {
 if (countMatches(/data-academy-lesson="/g, html) !== 10
   || countMatches(/data-lesson-chamber="/g, html) !== 30
   || countMatches(/data-chamber-stage="/g, html) !== 30
+  || countMatches(/class="tarot-beginners-chamber-threshold"/g, html) !== 30
+  || countMatches(/class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"/g, html) !== 30
+  || countMatches(/class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"/g, html) !== 30
+  || countMatches(/<aside class="tarot-beginners-lesson-chamber__takeaway"/g, html) !== 0
   || countMatches(/data-chamber-trigger="/g, html) !== 0
   || countMatches(/data-chamber-panel="/g, html) !== 0
   || countMatches(/data-beginner-module="/g, html) !== 0) {
-  errors.push("guided lessons: expected ten shared articles, thirty always-visible Chambers/stages, and no legacy modules or accordion panels");
+  errors.push("guided lessons: expected ten shared articles, thirty always-visible Chambers and reusable thresholds, and no legacy takeaway or accordion markup");
 }
 
 guidedChapters.forEach((chapter) => {
@@ -539,6 +652,9 @@ guidedChapters.forEach((chapter) => {
       || !stageTag.includes('type="button"')) {
       errors.push(`guided lesson: ${chamber.id} lacks its visible semantic section, H3, variant, or matching rail control`);
     }
+    if (!articleHtml.includes(`<blockquote><p>${escapeHtml(chamber.takeaway)}</p></blockquote>`)) {
+      errors.push(`guided lesson: ${chamber.id} is missing its unchanged Chamber Threshold statement`);
+    }
   });
 });
 
@@ -549,17 +665,24 @@ const expectedPlaceholders = guidedChapters.flatMap((chapter) => [
   ...chapter.academyLesson.chambers.map((chamber) => chamber.visual)
 ]);
 if (placeholderBlocks.length !== 40
-  || placeholderBlocks.some((block) => /<img\b|data-future-src|Development visual/i.test(block))) {
-  errors.push("guided lesson placeholders: expected forty neutral CSS-only slots with no future image path or development label");
+  || countMatches(/class="tarot-beginners-lesson-placeholder__image"/g, html) !== 40
+  || placeholderBlocks.some((block) => /data-future-src|Development visual/i.test(block))) {
+  errors.push("guided lesson images: expected forty populated review slots with no future path or visible development label");
 }
 expectedPlaceholders.forEach((visual) => {
   const placeholder = placeholderBlocks.find((block) => block.includes(`data-chapter-visual-slot="${escapeHtml(visual.slot)}"`)) || "";
   if (!placeholder.includes(`--lesson-placeholder-ratio:${escapeHtml(visual.ratio)}`)
-    || !placeholder.includes(`role="img" aria-label="${escapeHtml(visual.alt)}"`)) {
-    errors.push(`guided lesson placeholders: ${visual.slot} lacks its ratio or accessible description`);
+    || !placeholder.includes(`--lesson-image-position:${escapeHtml(visual.position)}`)
+    || !placeholder.includes(`--lesson-image-fit:${escapeHtml(visual.fit)}`)
+    || !placeholder.includes(`data-image-source="${escapeHtml(visual.src)}"`)
+    || !placeholder.includes(`data-image-review="${escapeHtml(visual.reviewStatus)}"`)
+    || !placeholder.includes(`src="${escapeHtml(visual.src)}" alt="${escapeHtml(visual.alt)}"`)
+    || !placeholder.includes(`width="${visual.width}" height="${visual.height}" loading="lazy" decoding="async"`)) {
+    errors.push(`guided lesson images: ${visual.slot} lacks its assignment, dimensions, focal point, review marker, or accessible description`);
   }
 });
 
+const chapterNavigatorHtml = html.match(/<nav class="tarot-beginners-chapter-navigator"[\s\S]*?<\/nav>/)?.[0] || "";
 if (countMatches(/data-beginner-complete-chapter="/g, html) !== 20
   || countMatches(/data-lesson-course-progress(?:>|\s)/g, html) !== 10
   || countMatches(/class="tarot-beginners-lesson-navigation"/g, html) !== 10
@@ -567,6 +690,40 @@ if (countMatches(/data-beginner-complete-chapter="/g, html) !== 20
   || !html.includes('class="tarot-beginners-chapter-navigator"')
   || !html.includes('class="tarot-beginners-chapter-menu tarot-beginners-chapter-drawer"')) {
   errors.push("guided lesson completion/navigation: course progress, shared sticky navigator, endings, or All Chapters drawer are incomplete");
+}
+if (!chapterNavigatorHtml.includes('<a class="tarot-beginners-chapter-navigator__welcome" href="#welcome" aria-label="Return to Tarot for Beginners welcome" data-beginner-view-link="welcome">')
+  || !chapterNavigatorHtml.includes('class="tarot-beginners-chapter-navigator__destination-label">Welcome</span>')
+  || !chapterNavigatorHtml.includes('class="tarot-beginners-chapter-navigator__chapters" type="button" aria-label="Open all Tarot for Beginners chapters"')
+  || !chapterNavigatorHtml.includes('aria-controls="beginner-chapter-menu" aria-expanded="false" data-open-chapter-menu')
+  || !chapterNavigatorHtml.includes('class="tarot-beginners-chapter-navigator__all-prefix">All </span>Chapters')
+  || chapterNavigatorHtml.includes("tarot-beginners-chapter-navigator__welcome-icon")
+  || chapterNavigatorHtml.includes('<span aria-hidden="true">✦</span> All Chapters')
+  || chapterNavigatorHtml.indexOf('</p>') > chapterNavigatorHtml.indexOf('data-beginner-view-link="welcome"')
+  || chapterNavigatorHtml.indexOf('data-beginner-view-link="welcome"') > chapterNavigatorHtml.indexOf('data-open-chapter-menu')) {
+  errors.push("guided lesson navigation: icon-free Welcome and All Chapters controls must remain accessible and correctly ordered");
+}
+[
+  "grid-template-columns: minmax(8.4rem, 1.05fr) minmax(9.5rem, 1.15fr) minmax(6.8rem, .72fr) minmax(8.6rem, .9fr) minmax(8.4rem, 1.05fr)",
+  "--guided-nav-glass:",
+  "backdrop-filter: blur(22px) saturate(125%)",
+  ".tarot-beginners-chapter-navigator__destination-label::after",
+  "@keyframes beginner-nav-light-sweep",
+  '.tarot-beginners-chapter-navigator__chapters[aria-expanded="true"]',
+  ".tarot-beginners-chapter-navigator > :is(a, button):focus-visible",
+  "outline: 2px solid var(--beginner-accent-strong)",
+  "transform: translateX(-2px)",
+  "transform: translateX(2px)",
+  ".tarot-beginners-chapter-navigator__chapters"
+].forEach((token) => {
+  if (!css.includes(token)) errors.push(`guided lesson navigation: floating glass rail styling is missing (${token})`);
+});
+if (!js.includes('const viewLink = target.closest("[data-beginner-view-link]")')
+  || !js.includes('showView("welcome", { focus: true })')
+  || !js.includes('writeHistory(normalizedView, state.activeId, historyMode)')
+  || !js.includes('openMenuButton?.setAttribute("aria-expanded", "true")')
+  || !js.includes('openMenuButton?.setAttribute("aria-expanded", "false")')
+  || !js.includes('chapterWelcomeLink?.setAttribute("aria-current", "page")')) {
+  errors.push("guided lesson navigation: Welcome must reuse the existing welcome view and history transition");
 }
 
 const articleOpeningTags = [...html.matchAll(/<article class="tarot-beginners-chapter"[^>]*>/g)].map((match) => match[0]);
@@ -795,6 +952,7 @@ if (countMatches(/astralVeilTarotBeginnerProgress/g, js) !== 1
   "academyArticles.forEach((article) =>",
   'const chamberSections = Array.from(article.querySelectorAll("[data-lesson-chamber]"))',
   'const chamberStages = Array.from(article.querySelectorAll("[data-chamber-stage]"))',
+  'progress: article.querySelector("[data-chamber-progress]")',
   "chamberSections.length === 3",
   "chamberStages.length === chamberSections.length",
   'chapterIdSet.has(id) || id === "welcome" || id === "chapters"',
@@ -806,6 +964,11 @@ if (countMatches(/astralVeilTarotBeginnerProgress/g, js) !== 1
   "function updateChamberState(",
   "function setActiveChamber(",
   "function observeActiveChapterChambers(",
+  "function updateChamberRailStickyState(",
+  "function scheduleChamberRailStickyState(",
+  'window.addEventListener("scroll", scheduleChamberRailStickyState, { passive: true })',
+  "const railsAreStacked = progressRect && progressRect.top <= stickyTop + 1",
+  "Math.ceil(progressRect.bottom + 12)",
   "new IntersectionObserver(",
   'rootMargin: "-120px 0px -24% 0px"',
   "function initializeAcademyLessons(",
@@ -865,6 +1028,24 @@ if (!js.includes("completedCount / chapterData.length")
   || !js.includes('progress.setAttribute("aria-valuenow", String(completedCount))')
   || !js.includes('`${completedCount} of ${chapterData.length} chapters complete`')) {
   errors.push("chapter index: progress must be derived from completed chapters out of ten and exposed accessibly");
+}
+[
+  'completed ? "Completed" : "Mark as Complete"',
+  'completed ? "Mark this chapter as incomplete." : "Mark this chapter as complete."',
+  'control.classList.contains("tarot-beginners-index-card__complete")',
+  'control.querySelector(".tarot-beginners-index-card__complete-icon")',
+  "!completed && !reducedMotionQuery.matches",
+  "duration: 420",
+  'transform: "scale(1.08)"',
+  'transform: "translateY(3px)"'
+].forEach((token) => {
+  if (!js.includes(token)) errors.push(`chapter index completion: state or confirmation feedback is missing (${token})`);
+});
+const completionReducedMotionCss = collectCssMediaBlocks(css, "prefers-reduced-motion: reduce").join("\n");
+if (!completionReducedMotionCss.includes(".tarot-beginners-index-card__complete:is(:hover, :focus-visible, :active)")
+  || !completionReducedMotionCss.includes(".tarot-beginners-index-card__complete-icon")
+  || !completionReducedMotionCss.includes("transform: none !important")) {
+  errors.push("chapter index completion: reduced motion must remove button and icon movement");
 }
 if (!js.includes("window.requestAnimationFrame(() => {")
   || countMatches(/window\.requestAnimationFrame\(\(\) =>/g, js) < 2
@@ -940,6 +1121,10 @@ if (!js.includes("transform: \"translateX(-12px)\"")
   ".tarot-beginners-academy-introduction__outcomes",
   ".tarot-beginners-lesson-placeholder",
   "aspect-ratio: var(--lesson-placeholder-ratio, 16 / 9)",
+  ".tarot-beginners-lesson-placeholder__image",
+  "object-fit: var(--lesson-image-fit, cover)",
+  "object-position: var(--lesson-image-position, center)",
+  ".tarot-beginners-lesson-placeholder::after",
   ".tarot-beginners-chamber-progress",
   ".tarot-beginners-lesson-chamber__heading",
   ".tarot-beginners-lesson-chamber__body",
@@ -947,12 +1132,52 @@ if (!js.includes("transform: \"translateX(-12px)\"")
   ".tarot-beginners-lesson-visual-tool",
   ".tarot-beginners-guided-practice",
   ".tarot-beginners-checkpoint",
+  ".tarot-beginners-chamber-threshold",
+  ".tarot-beginners-chamber-threshold__sigil",
+  ".tarot-beginners-chamber-threshold__thread",
   ".tarot-beginners-lesson-takeaway",
   ".tarot-beginners-lesson-ending",
   ".tarot-beginners-lesson-navigation"
 ].forEach((token) => {
   if (!css.includes(token)) errors.push(`guided lesson styles: reusable scoped treatment is missing (${token})`);
 });
+const chamberThresholdCss = [
+  getCssRuleBody(css, ".tarot-beginners-chamber-threshold"),
+  getCssRuleBody(css, ".tarot-beginners-chamber-threshold::before"),
+  getCssRuleBody(css, ".tarot-beginners-chamber-threshold__sigil"),
+  getCssRuleBody(css, ".tarot-beginners-chamber-threshold blockquote"),
+  getCssRuleBody(css, ".tarot-beginners-chamber-threshold p"),
+  getCssRuleBody(css, ".tarot-beginners-chamber-threshold__thread")
+].join("\n");
+if (!chamberThresholdCss.includes("radial-gradient(ellipse at center")
+  || !chamberThresholdCss.includes("transform: rotate(45deg)")
+  || !chamberThresholdCss.includes("height: clamp(2rem, 3.4vw, 2.85rem)")
+  || /(?:animation|transition)\s*:/.test(chamberThresholdCss)
+  || css.includes(".tarot-beginners-lesson-chamber__takeaway")) {
+  errors.push("guided lesson threshold: the borderless sigil, atmospheric quote, static thread, or removal of the ruled takeaway is incomplete");
+}
+[
+  "--guided-chamber-rail-top: calc(var(--guided-chapter-rail-top) + var(--guided-chapter-rail-height) + var(--guided-rail-stack-gap))",
+  "--guided-chamber-scroll-offset: calc(var(--guided-chamber-rail-top) + var(--guided-chamber-rail-height) + 12px)",
+  "--guided-chamber-active-color: #ffd978",
+  "--guided-chamber-active-color: #d8b9ff",
+  "--guided-chamber-active-color: #ff7186",
+  "--guided-chamber-active-color: #9ce9ff",
+  "top: var(--guided-chamber-rail-top)",
+  "width: min(calc(100% - 48px), 840px)",
+  ".tarot-beginners-chamber-progress.is-stuck",
+  "backdrop-filter: blur(20px) saturate(122%)",
+  '.tarot-beginners-chamber-progress button[aria-current="step"]',
+  "0 0 24px color-mix(in srgb, var(--guided-chamber-active-glow) 72%, transparent)",
+  "0 0 14px var(--guided-chamber-active-glow)",
+  "scroll-margin-top: var(--guided-chamber-scroll-offset)"
+].forEach((token) => {
+  if (!css.includes(token)) errors.push(`guided lesson chamber rail: premium glass stacking or active glow is missing (${token})`);
+});
+if (countMatches(/--guided-chamber-active-color:/g, css) !== 4
+  || countMatches(/--guided-chamber-active-glow:/g, css) !== 4) {
+  errors.push("guided lesson chamber rail: Sun, Moon, Blood Moon, and Blue Moon require independent active glow tokens");
+}
 const academyTabletCss = collectCssMediaBlocks(css, "max-width: 1050px");
 const academyMobileCss = collectCssMediaBlocks(css, "max-width: 820px");
 const academySmallMobileCss = collectCssMediaBlocks(css, "max-width: 520px");
@@ -961,10 +1186,47 @@ if (!academyTabletCss.some((block) => block.includes(".tarot-beginners-academy-i
   && block.includes(".tarot-beginners-lesson-chamber__body"))) {
   errors.push("guided lesson responsive: tablet layout must adapt the entrance and Chamber content");
 }
+if (!academyTabletCss.some((block) => block.includes(".tarot-beginners-chamber-threshold")
+  && block.includes("margin-top: 2.2rem")
+  && block.includes("height: 2.25rem"))) {
+  errors.push("guided lesson threshold: tablet spacing and thread length must remain compact");
+}
+if (!academyTabletCss.some((block) => block.includes(".tarot-beginners-chamber-progress")
+  && block.includes("width: min(calc(100% - 36px), 800px)")
+  && block.includes("padding-inline: .55rem"))) {
+  errors.push("guided lesson chamber rail: tablet must retain a compact centered child rail");
+}
 if (!academyMobileCss.some((block) => block.includes(".tarot-beginners-academy-lesson")
   && block.includes(".tarot-beginners-lesson-chamber__body")
   && block.includes("grid-template-columns: minmax(0, 1fr)"))) {
   errors.push("guided lesson responsive: mobile layout must stack the lesson and Chamber content at the project breakpoint");
+}
+if (!academyMobileCss.some((block) => block.includes(".tarot-beginners-chamber-threshold")
+  && block.includes("margin-top: 1.75rem")
+  && block.includes("height: 1.7rem")
+  && block.includes("font-size: 1rem"))) {
+  errors.push("guided lesson threshold: mobile must preserve the quote while shortening its spacing and thread");
+}
+if (!academyMobileCss.some((block) => block.includes("--guided-chapter-rail-height: 107px")
+  && block.includes("--guided-chamber-rail-height: 76px")
+  && block.includes(".tarot-beginners-chamber-progress")
+  && block.includes("grid-template-columns: repeat(3, minmax(0, 1fr))")
+  && block.includes("min-height: 66px")
+  && block.includes("overflow: visible"))) {
+  errors.push("guided lesson chamber rail: mobile must use stacked offsets and three fitted 44px-plus destinations without horizontal scrolling");
+}
+if (!academyTabletCss.some((block) => block.includes(".tarot-beginners-chapter-navigator")
+  && block.includes("minmax(6.5rem, 1fr)")
+  && block.includes("font-size: .56rem"))) {
+  errors.push("guided lesson navigation: tablet must retain five compact, non-wrapping destinations");
+}
+if (!academyMobileCss.some((block) => block.includes("grid-template-columns: repeat(4, minmax(44px, 1fr))")
+  && block.includes("grid-template-rows: 48px 48px")
+  && block.includes(".tarot-beginners-chapter-navigator__welcome")
+  && block.includes("grid-column: 2")
+  && block.includes(".tarot-beginners-chapter-navigator__chapters")
+  && block.includes("grid-column: 3"))) {
+  errors.push("guided lesson navigation: mobile must keep Previous, Welcome, All Chapters, and Next in a 44px action row");
 }
 if (!academySmallMobileCss.some((block) => block.includes(".tarot-beginners-chapter-navigator")
   && block.includes(".tarot-beginners-lesson-navigation"))) {
@@ -972,7 +1234,11 @@ if (!academySmallMobileCss.some((block) => block.includes(".tarot-beginners-chap
 }
 if (!academyReducedMotionCss.some((block) => (
   block.includes(".tarot-beginners-chapter-navigator > :is(a, button)")
+  && block.includes(".tarot-beginners-chapter-navigator__destination-label")
+  && block.includes(".tarot-beginners-chamber-progress button::after")
   && block.includes("transition: none !important")
+  && block.includes("animation: none !important")
+  && block.includes("transform: none !important")
 ))) {
   errors.push("guided lesson motion: reduced-motion mode must remove navigator and path transitions");
 }
@@ -1235,6 +1501,7 @@ if (!chapterIndexReducedMotionCss.some((block) => (
   "function renderLessonChamber(",
   "function renderGuidedPractice(",
   "function renderKnowledgeCheckpoint(",
+  "function renderChamberThreshold(",
   "function renderLessonTakeaway(",
   "function renderChapterEnding(",
   "function renderAcademyChapter(",

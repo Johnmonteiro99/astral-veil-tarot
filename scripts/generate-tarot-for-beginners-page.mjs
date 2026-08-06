@@ -135,15 +135,30 @@ function renderHero(page) {
       </section>`;
 }
 
-function renderTruths(truths) {
-  const icons = ["✦", "☾", "◉"];
-  return truths.map((truth, index) => `<li>
-                <span class="tarot-beginners-welcome__truth-meta" aria-hidden="true">
-                  <span class="tarot-beginners-welcome__truth-icon">${icons[index] || "✦"}</span>
-                  <span class="tarot-beginners-welcome__truth-number">${String(index + 1).padStart(2, "0")}</span>
-                </span>
-                <span class="tarot-beginners-welcome__truth-copy"><strong>${escapeHtml(truth.label)}</strong><span>${escapeHtml(truth.text)}</span></span>
-              </li>`).join("");
+function renderQuietTruths(truths, theme) {
+  const headingId = `${theme}-quiet-truths-heading`;
+  const statements = truths.map((truth, index) => {
+    const number = String(index + 1).padStart(2, "0");
+    const panelId = `${theme}-quiet-truth-${number}`;
+    const tabId = `${theme}-quiet-truth-tab-${number}`;
+    return `<article class="tarot-beginners-quiet-truths__statement${index === 0 ? " is-active" : ""}" id="${panelId}" role="tabpanel" aria-labelledby="${tabId}" aria-hidden="${index === 0 ? "false" : "true"}"${index === 0 ? "" : " inert"} data-quiet-truth-panel="${index}">
+                  <span class="tarot-beginners-quiet-truths__number" aria-hidden="true">${number}</span>
+                  <span class="tarot-beginners-quiet-truths__copy">
+                    <strong>${escapeHtml(truth.label)}</strong>
+                    <span>${escapeHtml(truth.text)}</span>
+                  </span>
+                </article>`;
+  }).join("");
+  const controls = truths.map((truth, index) => {
+    const number = String(index + 1).padStart(2, "0");
+    return `<button id="${theme}-quiet-truth-tab-${number}" type="button" role="tab" aria-selected="${index === 0 ? "true" : "false"}" aria-controls="${theme}-quiet-truth-${number}" aria-label="Show principle ${index + 1}: ${escapeHtml(truth.label)}" tabindex="${index === 0 ? "0" : "-1"}" data-quiet-truth-control="${index}"><span>${number}</span><span class="tarot-beginners-quiet-truths__indicator" aria-hidden="true"></span></button>`;
+  }).join("");
+
+  return `<section class="tarot-beginners-quiet-truths" aria-labelledby="${headingId}" data-quiet-truths data-active-index="0">
+              <h3 id="${headingId}">Three Quiet Truths</h3>
+              <div class="tarot-beginners-quiet-truths__statements" data-quiet-truth-swipe-surface>${statements}</div>
+              <div class="tarot-beginners-quiet-truths__controls" role="tablist" aria-label="Choose a quiet truth">${controls}</div>
+            </section>`;
 }
 
 function renderWelcomeCopy(copy, theme) {
@@ -158,11 +173,10 @@ function renderWelcomeCopy(copy, theme) {
             <p>${escapeHtml(copy.greeting[1])}</p>
           </div>
           <div class="tarot-beginners-welcome__prose">${copy.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>
-          <ol class="tarot-beginners-welcome__truths" tabindex="0" aria-label="Beginner guidance principles">${renderTruths(copy.truths)}</ol>
-          <p class="tarot-beginners-welcome__truths-hint" aria-hidden="true">Swipe to explore <span>→</span></p>
+          ${renderQuietTruths(copy.truths, theme)}
           <div class="tarot-beginners-actions tarot-beginners-welcome__actions">
-            <a class="tarot-beginners-button tarot-beginners-button--primary" href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot" data-welcome-primary><span data-welcome-primary-label>${escapeHtml(copy.primaryLabel)}</span> <span aria-hidden="true">→</span></a>
-            <a class="tarot-beginners-button tarot-beginners-button--secondary" href="?view=chapters" data-beginner-index-link>${escapeHtml(copy.secondaryLabel)}</a>
+            <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-welcome__action tarot-beginners-welcome__action--chapters" href="?view=chapters" data-beginner-index-link><span>${escapeHtml(copy.secondaryLabel)}</span><span aria-hidden="true">→</span></a>
+            <a class="tarot-beginners-button tarot-beginners-button--secondary tarot-beginners-welcome__action tarot-beginners-welcome__action--continue" href="#what-you-need" data-beginner-chapter-link="what-you-need" data-welcome-primary><span data-welcome-primary-label>${escapeHtml(copy.primaryLabel)}</span><span aria-hidden="true">→</span></a>
           </div>
           <p class="tarot-beginners-welcome__whisper" data-welcome-whisper>${escapeHtml(copy.whisper)}</p>
         </div>`;
@@ -227,7 +241,7 @@ function renderIndexPreview(chapter, index, total) {
                     <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
                   </div>
                   <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#${escapeHtml(chapter.id)}" data-beginner-chapter-link="${escapeHtml(chapter.id)}"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
-                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="${escapeHtml(chapter.id)}"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" aria-label="Mark this chapter as complete." data-beginner-complete-chapter="${escapeHtml(chapter.id)}"><span class="tarot-beginners-index-card__complete-icon" aria-hidden="true"></span><span data-beginner-complete-label>Mark as Complete</span></button>
                 </div>
               </div>
             </article>`;
@@ -339,12 +353,8 @@ function renderBlock(block) {
 }
 
 function renderChapterVisualPlaceholder(visual, variant = "chamber") {
-  return `<figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--${escapeHtml(variant)}" style="--lesson-placeholder-ratio:${escapeHtml(visual.ratio)}" data-chapter-visual-slot="${escapeHtml(visual.slot)}">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="${escapeHtml(visual.alt)}">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
+  return `<figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--${escapeHtml(variant)}" style="--lesson-placeholder-ratio:${escapeHtml(visual.ratio)};--lesson-image-position:${escapeHtml(visual.position)};--lesson-image-fit:${escapeHtml(visual.fit)}" data-chapter-visual-slot="${escapeHtml(visual.slot)}" data-image-source="${escapeHtml(visual.src)}" data-image-review="${escapeHtml(visual.reviewStatus)}">
+          <img class="tarot-beginners-lesson-placeholder__image" src="${escapeHtml(visual.src)}" alt="${escapeHtml(visual.alt)}" width="${escapeHtml(visual.width)}" height="${escapeHtml(visual.height)}" loading="lazy" decoding="async" />
           <figcaption class="tarot-beginners-index__sr-only">${escapeHtml(visual.alt)}</figcaption>
         </figure>`;
 }
@@ -427,6 +437,14 @@ function renderKnowledgeCheckpoint(checkpoint, chamberId) {
         </section>`;
 }
 
+function renderChamberThreshold(takeaway) {
+  return `<aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>${escapeHtml(takeaway)}</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>`;
+}
+
 function renderLessonChamber(chamber, index) {
   const headingId = `${chamber.id}-heading`;
   const blocks = chamber.blocks.map(renderBlock).join("");
@@ -447,7 +465,7 @@ function renderLessonChamber(chamber, index) {
               ${renderKnowledgeCheckpoint(chamber.checkpoint, chamber.id)}
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>${escapeHtml(chamber.takeaway)}</p></aside>
+          ${renderChamberThreshold(chamber.takeaway)}
         </section>`;
 }
 
@@ -515,10 +533,11 @@ function renderReader(page) {
 
   return `<section class="tarot-beginners-reader" aria-label="Guided Tarot for Beginners chapters" data-beginner-panel="reader" data-beginner-reader>
         <nav class="tarot-beginners-chapter-navigator" aria-label="Current chapter navigation" data-chapter-navigator>
-          <a href="#chapters" aria-disabled="true" tabindex="-1" data-reader-previous data-reader-dynamic-previous><span aria-hidden="true">←</span><span><small>Previous Door</small><strong data-chapter-nav-title>First Door</strong></span></a>
-          <p aria-live="polite" aria-atomic="true"><small data-chapter-navigator-count>Door ${first.number} of ${page.chapters.length}</small><strong data-chapter-navigator-title>${escapeHtml(first.navLabel)}</strong></p>
-          <button type="button" aria-haspopup="dialog" aria-controls="beginner-chapter-menu" data-open-chapter-menu><span aria-hidden="true">✦</span> All Chapters</button>
-          <a href="#${escapeHtml(page.chapters[1].id)}" data-beginner-chapter-link="${escapeHtml(page.chapters[1].id)}" data-reader-continue data-reader-dynamic-next><span><small>Next Door</small><strong data-chapter-nav-title>${escapeHtml(page.chapters[1].navLabel)}</strong></span><span aria-hidden="true">→</span></a>
+          <a class="tarot-beginners-chapter-navigator__previous" href="#chapters" aria-disabled="true" tabindex="-1" data-reader-previous data-reader-dynamic-previous><span class="tarot-beginners-chapter-navigator__arrow" aria-hidden="true">←</span><span><small>Previous Door</small><strong data-chapter-nav-title>First Door</strong></span></a>
+          <p class="tarot-beginners-chapter-navigator__current" aria-live="polite" aria-atomic="true"><small data-chapter-navigator-count>Door ${first.number} of ${page.chapters.length}</small><strong data-chapter-navigator-title>${escapeHtml(first.navLabel)}</strong></p>
+          <a class="tarot-beginners-chapter-navigator__welcome" href="#welcome" aria-label="Return to Tarot for Beginners welcome" data-beginner-view-link="welcome"><span class="tarot-beginners-chapter-navigator__destination-label">Welcome</span></a>
+          <button class="tarot-beginners-chapter-navigator__chapters" type="button" aria-label="Open all Tarot for Beginners chapters" aria-haspopup="dialog" aria-controls="beginner-chapter-menu" aria-expanded="false" data-open-chapter-menu><span class="tarot-beginners-chapter-navigator__destination-label"><span class="tarot-beginners-chapter-navigator__all-prefix">All </span>Chapters</span></button>
+          <a class="tarot-beginners-chapter-navigator__next" href="#${escapeHtml(page.chapters[1].id)}" data-beginner-chapter-link="${escapeHtml(page.chapters[1].id)}" data-reader-continue data-reader-dynamic-next><span><small>Next Door</small><strong data-chapter-nav-title>${escapeHtml(page.chapters[1].navLabel)}</strong></span><span class="tarot-beginners-chapter-navigator__arrow" aria-hidden="true">→</span></a>
         </nav>
         <div class="tarot-beginners-shell tarot-beginners-reader__main">
             <p class="tarot-beginners-index__sr-only" aria-live="polite" aria-atomic="true" data-beginner-live-region>Guided chapters ready.</p>

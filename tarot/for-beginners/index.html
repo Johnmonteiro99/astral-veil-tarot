@@ -94,29 +94,32 @@
             <p>Come in. We will take this one card at a time.</p>
           </div>
           <div class="tarot-beginners-welcome__prose"><p>Learning tarot is not about becoming perfect at predicting what comes next. It is about learning to notice symbols, patterns, emotions, and possibilities with greater care.</p><p>You do not need psychic abilities, a gifted deck, or all seventy-eight meanings memorized. Bring your curiosity. The rest can be learned one chapter at a time.</p></div>
-          <ol class="tarot-beginners-welcome__truths" tabindex="0" aria-label="Beginner guidance principles"><li>
-                <span class="tarot-beginners-welcome__truth-meta" aria-hidden="true">
-                  <span class="tarot-beginners-welcome__truth-icon">✦</span>
-                  <span class="tarot-beginners-welcome__truth-number">01</span>
-                </span>
-                <span class="tarot-beginners-welcome__truth-copy"><strong>There Is No Test</strong><span>You are here to explore, not prove yourself.</span></span>
-              </li><li>
-                <span class="tarot-beginners-welcome__truth-meta" aria-hidden="true">
-                  <span class="tarot-beginners-welcome__truth-icon">☾</span>
-                  <span class="tarot-beginners-welcome__truth-number">02</span>
-                </span>
-                <span class="tarot-beginners-welcome__truth-copy"><strong>You May Move Slowly</strong><span>Understanding grows through familiarity, not speed.</span></span>
-              </li><li>
-                <span class="tarot-beginners-welcome__truth-meta" aria-hidden="true">
-                  <span class="tarot-beginners-welcome__truth-icon">◉</span>
-                  <span class="tarot-beginners-welcome__truth-number">03</span>
-                </span>
-                <span class="tarot-beginners-welcome__truth-copy"><strong>Your Perspective Matters</strong><span>Tradition offers a foundation, but your attention helps the cards become meaningful.</span></span>
-              </li></ol>
-          <p class="tarot-beginners-welcome__truths-hint" aria-hidden="true">Swipe to explore <span>→</span></p>
+          <section class="tarot-beginners-quiet-truths" aria-labelledby="regular-quiet-truths-heading" data-quiet-truths data-active-index="0">
+              <h3 id="regular-quiet-truths-heading">Three Quiet Truths</h3>
+              <div class="tarot-beginners-quiet-truths__statements" data-quiet-truth-swipe-surface><article class="tarot-beginners-quiet-truths__statement is-active" id="regular-quiet-truth-01" role="tabpanel" aria-labelledby="regular-quiet-truth-tab-01" aria-hidden="false" data-quiet-truth-panel="0">
+                  <span class="tarot-beginners-quiet-truths__number" aria-hidden="true">01</span>
+                  <span class="tarot-beginners-quiet-truths__copy">
+                    <strong>There Is No Test</strong>
+                    <span>You are here to explore, not prove yourself.</span>
+                  </span>
+                </article><article class="tarot-beginners-quiet-truths__statement" id="regular-quiet-truth-02" role="tabpanel" aria-labelledby="regular-quiet-truth-tab-02" aria-hidden="true" inert data-quiet-truth-panel="1">
+                  <span class="tarot-beginners-quiet-truths__number" aria-hidden="true">02</span>
+                  <span class="tarot-beginners-quiet-truths__copy">
+                    <strong>You May Move Slowly</strong>
+                    <span>Understanding grows through familiarity, not speed.</span>
+                  </span>
+                </article><article class="tarot-beginners-quiet-truths__statement" id="regular-quiet-truth-03" role="tabpanel" aria-labelledby="regular-quiet-truth-tab-03" aria-hidden="true" inert data-quiet-truth-panel="2">
+                  <span class="tarot-beginners-quiet-truths__number" aria-hidden="true">03</span>
+                  <span class="tarot-beginners-quiet-truths__copy">
+                    <strong>Your Perspective Matters</strong>
+                    <span>Tradition offers a foundation, but your attention helps the cards become meaningful.</span>
+                  </span>
+                </article></div>
+              <div class="tarot-beginners-quiet-truths__controls" role="tablist" aria-label="Choose a quiet truth"><button id="regular-quiet-truth-tab-01" type="button" role="tab" aria-selected="true" aria-controls="regular-quiet-truth-01" aria-label="Show principle 1: There Is No Test" tabindex="0" data-quiet-truth-control="0"><span>01</span><span class="tarot-beginners-quiet-truths__indicator" aria-hidden="true"></span></button><button id="regular-quiet-truth-tab-02" type="button" role="tab" aria-selected="false" aria-controls="regular-quiet-truth-02" aria-label="Show principle 2: You May Move Slowly" tabindex="-1" data-quiet-truth-control="1"><span>02</span><span class="tarot-beginners-quiet-truths__indicator" aria-hidden="true"></span></button><button id="regular-quiet-truth-tab-03" type="button" role="tab" aria-selected="false" aria-controls="regular-quiet-truth-03" aria-label="Show principle 3: Your Perspective Matters" tabindex="-1" data-quiet-truth-control="2"><span>03</span><span class="tarot-beginners-quiet-truths__indicator" aria-hidden="true"></span></button></div>
+            </section>
           <div class="tarot-beginners-actions tarot-beginners-welcome__actions">
-            <a class="tarot-beginners-button tarot-beginners-button--primary" href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot" data-welcome-primary><span data-welcome-primary-label>Continue with Chapter 01</span> <span aria-hidden="true">→</span></a>
-            <a class="tarot-beginners-button tarot-beginners-button--secondary" href="?view=chapters" data-beginner-index-link>View All Chapters</a>
+            <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-welcome__action tarot-beginners-welcome__action--chapters" href="?view=chapters" data-beginner-index-link><span>View All Chapters</span><span aria-hidden="true">→</span></a>
+            <a class="tarot-beginners-button tarot-beginners-button--secondary tarot-beginners-welcome__action tarot-beginners-welcome__action--continue" href="#what-you-need" data-beginner-chapter-link="what-you-need" data-welcome-primary><span data-welcome-primary-label>Continue with Chapter 02</span><span aria-hidden="true">→</span></a>
           </div>
           <p class="tarot-beginners-welcome__whisper" data-welcome-whisper>Every reader once stood where you are now.</p>
         </div>
@@ -130,29 +133,32 @@
             <p>Fine. Sit down. We can begin.</p>
           </div>
           <div class="tarot-beginners-welcome__prose"><p>So, you want to learn tarot. Perhaps you expected instant intuition, secret knowledge, and a dramatic revelation before the candles finished melting. Unfortunate. You will have to pay attention instead.</p><p>The cards will not flatter you, think for you, or rescue you from uncertainty. They may, however, show you the pattern you keep pretending not to see. That is usually more useful.</p></div>
-          <ol class="tarot-beginners-welcome__truths" tabindex="0" aria-label="Beginner guidance principles"><li>
-                <span class="tarot-beginners-welcome__truth-meta" aria-hidden="true">
-                  <span class="tarot-beginners-welcome__truth-icon">✦</span>
-                  <span class="tarot-beginners-welcome__truth-number">01</span>
-                </span>
-                <span class="tarot-beginners-welcome__truth-copy"><strong>There Is No Test</strong><span>You will misunderstand cards. Excellent. Correcting yourself is how discernment develops.</span></span>
-              </li><li>
-                <span class="tarot-beginners-welcome__truth-meta" aria-hidden="true">
-                  <span class="tarot-beginners-welcome__truth-icon">☾</span>
-                  <span class="tarot-beginners-welcome__truth-number">02</span>
-                </span>
-                <span class="tarot-beginners-welcome__truth-copy"><strong>You May Move Slowly</strong><span>Take your time. The cards are under no obligation to make sense on command.</span></span>
-              </li><li>
-                <span class="tarot-beginners-welcome__truth-meta" aria-hidden="true">
-                  <span class="tarot-beginners-welcome__truth-icon">◉</span>
-                  <span class="tarot-beginners-welcome__truth-number">03</span>
-                </span>
-                <span class="tarot-beginners-welcome__truth-copy"><strong>Your Perspective Matters</strong><span>Tradition offers the bones. Your attention decides what refuses to stay buried.</span></span>
-              </li></ol>
-          <p class="tarot-beginners-welcome__truths-hint" aria-hidden="true">Swipe to explore <span>→</span></p>
+          <section class="tarot-beginners-quiet-truths" aria-labelledby="blood-quiet-truths-heading" data-quiet-truths data-active-index="0">
+              <h3 id="blood-quiet-truths-heading">Three Quiet Truths</h3>
+              <div class="tarot-beginners-quiet-truths__statements" data-quiet-truth-swipe-surface><article class="tarot-beginners-quiet-truths__statement is-active" id="blood-quiet-truth-01" role="tabpanel" aria-labelledby="blood-quiet-truth-tab-01" aria-hidden="false" data-quiet-truth-panel="0">
+                  <span class="tarot-beginners-quiet-truths__number" aria-hidden="true">01</span>
+                  <span class="tarot-beginners-quiet-truths__copy">
+                    <strong>There Is No Test</strong>
+                    <span>You will misunderstand cards. Excellent. Correcting yourself is how discernment develops.</span>
+                  </span>
+                </article><article class="tarot-beginners-quiet-truths__statement" id="blood-quiet-truth-02" role="tabpanel" aria-labelledby="blood-quiet-truth-tab-02" aria-hidden="true" inert data-quiet-truth-panel="1">
+                  <span class="tarot-beginners-quiet-truths__number" aria-hidden="true">02</span>
+                  <span class="tarot-beginners-quiet-truths__copy">
+                    <strong>You May Move Slowly</strong>
+                    <span>Take your time. The cards are under no obligation to make sense on command.</span>
+                  </span>
+                </article><article class="tarot-beginners-quiet-truths__statement" id="blood-quiet-truth-03" role="tabpanel" aria-labelledby="blood-quiet-truth-tab-03" aria-hidden="true" inert data-quiet-truth-panel="2">
+                  <span class="tarot-beginners-quiet-truths__number" aria-hidden="true">03</span>
+                  <span class="tarot-beginners-quiet-truths__copy">
+                    <strong>Your Perspective Matters</strong>
+                    <span>Tradition offers the bones. Your attention decides what refuses to stay buried.</span>
+                  </span>
+                </article></div>
+              <div class="tarot-beginners-quiet-truths__controls" role="tablist" aria-label="Choose a quiet truth"><button id="blood-quiet-truth-tab-01" type="button" role="tab" aria-selected="true" aria-controls="blood-quiet-truth-01" aria-label="Show principle 1: There Is No Test" tabindex="0" data-quiet-truth-control="0"><span>01</span><span class="tarot-beginners-quiet-truths__indicator" aria-hidden="true"></span></button><button id="blood-quiet-truth-tab-02" type="button" role="tab" aria-selected="false" aria-controls="blood-quiet-truth-02" aria-label="Show principle 2: You May Move Slowly" tabindex="-1" data-quiet-truth-control="1"><span>02</span><span class="tarot-beginners-quiet-truths__indicator" aria-hidden="true"></span></button><button id="blood-quiet-truth-tab-03" type="button" role="tab" aria-selected="false" aria-controls="blood-quiet-truth-03" aria-label="Show principle 3: Your Perspective Matters" tabindex="-1" data-quiet-truth-control="2"><span>03</span><span class="tarot-beginners-quiet-truths__indicator" aria-hidden="true"></span></button></div>
+            </section>
           <div class="tarot-beginners-actions tarot-beginners-welcome__actions">
-            <a class="tarot-beginners-button tarot-beginners-button--primary" href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot" data-welcome-primary><span data-welcome-primary-label>Continue with Chapter 01</span> <span aria-hidden="true">→</span></a>
-            <a class="tarot-beginners-button tarot-beginners-button--secondary" href="?view=chapters" data-beginner-index-link>View All Chapters</a>
+            <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-welcome__action tarot-beginners-welcome__action--chapters" href="?view=chapters" data-beginner-index-link><span>View All Chapters</span><span aria-hidden="true">→</span></a>
+            <a class="tarot-beginners-button tarot-beginners-button--secondary tarot-beginners-welcome__action tarot-beginners-welcome__action--continue" href="#what-you-need" data-beginner-chapter-link="what-you-need" data-welcome-primary><span data-welcome-primary-label>Continue with Chapter 02</span><span aria-hidden="true">→</span></a>
           </div>
           <p class="tarot-beginners-welcome__whisper" data-welcome-whisper>Come closer. You have avoided the lesson long enough.</p>
         </div>
@@ -272,7 +278,7 @@
                     <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
                   </div>
                   <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#what-is-tarot" data-beginner-chapter-link="what-is-tarot"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
-                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="what-is-tarot"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" aria-label="Mark this chapter as complete." data-beginner-complete-chapter="what-is-tarot"><span class="tarot-beginners-index-card__complete-icon" aria-hidden="true"></span><span data-beginner-complete-label>Mark as Complete</span></button>
                 </div>
               </div>
             </article><article class="tarot-beginners-index-card" id="beginner-index-card-what-you-need" role="group" aria-roledescription="slide" aria-label="Chapter 2 of 10: What Do You Need?" data-beginner-index-slide="what-you-need">
@@ -290,7 +296,7 @@
                     <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
                   </div>
                   <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#what-you-need" data-beginner-chapter-link="what-you-need"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
-                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="what-you-need"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" aria-label="Mark this chapter as complete." data-beginner-complete-chapter="what-you-need"><span class="tarot-beginners-index-card__complete-icon" aria-hidden="true"></span><span data-beginner-complete-label>Mark as Complete</span></button>
                 </div>
               </div>
             </article><article class="tarot-beginners-index-card" id="beginner-index-card-choosing-your-first-deck" role="group" aria-roledescription="slide" aria-label="Chapter 3 of 10: Choosing a Deck" data-beginner-index-slide="choosing-your-first-deck">
@@ -308,7 +314,7 @@
                     <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
                   </div>
                   <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#choosing-your-first-deck" data-beginner-chapter-link="choosing-your-first-deck"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
-                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="choosing-your-first-deck"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" aria-label="Mark this chapter as complete." data-beginner-complete-chapter="choosing-your-first-deck"><span class="tarot-beginners-index-card__complete-icon" aria-hidden="true"></span><span data-beginner-complete-label>Mark as Complete</span></button>
                 </div>
               </div>
             </article><article class="tarot-beginners-index-card" id="beginner-index-card-inside-the-deck" role="group" aria-roledescription="slide" aria-label="Chapter 4 of 10: Inside the Deck" data-beginner-index-slide="inside-the-deck">
@@ -326,7 +332,7 @@
                     <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
                   </div>
                   <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#inside-the-deck" data-beginner-chapter-link="inside-the-deck"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
-                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="inside-the-deck"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" aria-label="Mark this chapter as complete." data-beginner-complete-chapter="inside-the-deck"><span class="tarot-beginners-index-card__complete-icon" aria-hidden="true"></span><span data-beginner-complete-label>Mark as Complete</span></button>
                 </div>
               </div>
             </article><article class="tarot-beginners-index-card" id="beginner-index-card-learning-card-meanings" role="group" aria-roledescription="slide" aria-label="Chapter 5 of 10: Learning Meanings" data-beginner-index-slide="learning-card-meanings">
@@ -344,7 +350,7 @@
                     <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
                   </div>
                   <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#learning-card-meanings" data-beginner-chapter-link="learning-card-meanings"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
-                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="learning-card-meanings"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" aria-label="Mark this chapter as complete." data-beginner-complete-chapter="learning-card-meanings"><span class="tarot-beginners-index-card__complete-icon" aria-hidden="true"></span><span data-beginner-complete-label>Mark as Complete</span></button>
                 </div>
               </div>
             </article><article class="tarot-beginners-index-card" id="beginner-index-card-tarot-myths" role="group" aria-roledescription="slide" aria-label="Chapter 6 of 10: Tarot Myths" data-beginner-index-slide="tarot-myths">
@@ -362,7 +368,7 @@
                     <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
                   </div>
                   <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#tarot-myths" data-beginner-chapter-link="tarot-myths"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
-                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="tarot-myths"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" aria-label="Mark this chapter as complete." data-beginner-complete-chapter="tarot-myths"><span class="tarot-beginners-index-card__complete-icon" aria-hidden="true"></span><span data-beginner-complete-label>Mark as Complete</span></button>
                 </div>
               </div>
             </article><article class="tarot-beginners-index-card" id="beginner-index-card-first-week-with-tarot" role="group" aria-roledescription="slide" aria-label="Chapter 7 of 10: First Week" data-beginner-index-slide="first-week-with-tarot">
@@ -380,7 +386,7 @@
                     <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
                   </div>
                   <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#first-week-with-tarot" data-beginner-chapter-link="first-week-with-tarot"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
-                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="first-week-with-tarot"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" aria-label="Mark this chapter as complete." data-beginner-complete-chapter="first-week-with-tarot"><span class="tarot-beginners-index-card__complete-icon" aria-hidden="true"></span><span data-beginner-complete-label>Mark as Complete</span></button>
                 </div>
               </div>
             </article><article class="tarot-beginners-index-card" id="beginner-index-card-beginner-mistakes" role="group" aria-roledescription="slide" aria-label="Chapter 8 of 10: Common Mistakes" data-beginner-index-slide="beginner-mistakes">
@@ -398,7 +404,7 @@
                     <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
                   </div>
                   <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#beginner-mistakes" data-beginner-chapter-link="beginner-mistakes"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
-                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="beginner-mistakes"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" aria-label="Mark this chapter as complete." data-beginner-complete-chapter="beginner-mistakes"><span class="tarot-beginners-index-card__complete-icon" aria-hidden="true"></span><span data-beginner-complete-label>Mark as Complete</span></button>
                 </div>
               </div>
             </article><article class="tarot-beginners-index-card" id="beginner-index-card-tarot-glossary" role="group" aria-roledescription="slide" aria-label="Chapter 9 of 10: Glossary" data-beginner-index-slide="tarot-glossary">
@@ -416,7 +422,7 @@
                     <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
                   </div>
                   <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#tarot-glossary" data-beginner-chapter-link="tarot-glossary"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
-                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="tarot-glossary"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" aria-label="Mark this chapter as complete." data-beginner-complete-chapter="tarot-glossary"><span class="tarot-beginners-index-card__complete-icon" aria-hidden="true"></span><span data-beginner-complete-label>Mark as Complete</span></button>
                 </div>
               </div>
             </article><article class="tarot-beginners-index-card" id="beginner-index-card-choose-your-next-path" role="group" aria-roledescription="slide" aria-label="Chapter 10 of 10: Next Path" data-beginner-index-slide="choose-your-next-path">
@@ -434,7 +440,7 @@
                     <div class="tarot-beginners-index-progress__bar" role="progressbar" aria-label="Beginner guide completion" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 chapters complete" data-beginner-index-progress><span></span></div>
                   </div>
                   <a class="tarot-beginners-button tarot-beginners-button--primary tarot-beginners-index-card__open" href="#choose-your-next-path" data-beginner-chapter-link="choose-your-next-path"><span>Open Chapter</span><span aria-hidden="true">→</span></a>
-                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" data-beginner-complete-chapter="choose-your-next-path"><span aria-hidden="true">✧</span><span data-beginner-complete-label>Mark as Complete</span></button>
+                  <button class="tarot-beginners-index-card__complete" type="button" aria-pressed="false" aria-label="Mark this chapter as complete." data-beginner-complete-chapter="choose-your-next-path"><span class="tarot-beginners-index-card__complete-icon" aria-hidden="true"></span><span data-beginner-complete-label>Mark as Complete</span></button>
                 </div>
               </div>
             </article></div>
@@ -502,10 +508,11 @@
       </section>
         <section class="tarot-beginners-reader" aria-label="Guided Tarot for Beginners chapters" data-beginner-panel="reader" data-beginner-reader>
         <nav class="tarot-beginners-chapter-navigator" aria-label="Current chapter navigation" data-chapter-navigator>
-          <a href="#chapters" aria-disabled="true" tabindex="-1" data-reader-previous data-reader-dynamic-previous><span aria-hidden="true">←</span><span><small>Previous Door</small><strong data-chapter-nav-title>First Door</strong></span></a>
-          <p aria-live="polite" aria-atomic="true"><small data-chapter-navigator-count>Door 01 of 10</small><strong data-chapter-navigator-title>What Is Tarot?</strong></p>
-          <button type="button" aria-haspopup="dialog" aria-controls="beginner-chapter-menu" data-open-chapter-menu><span aria-hidden="true">✦</span> All Chapters</button>
-          <a href="#what-you-need" data-beginner-chapter-link="what-you-need" data-reader-continue data-reader-dynamic-next><span><small>Next Door</small><strong data-chapter-nav-title>What Do You Need?</strong></span><span aria-hidden="true">→</span></a>
+          <a class="tarot-beginners-chapter-navigator__previous" href="#chapters" aria-disabled="true" tabindex="-1" data-reader-previous data-reader-dynamic-previous><span class="tarot-beginners-chapter-navigator__arrow" aria-hidden="true">←</span><span><small>Previous Door</small><strong data-chapter-nav-title>First Door</strong></span></a>
+          <p class="tarot-beginners-chapter-navigator__current" aria-live="polite" aria-atomic="true"><small data-chapter-navigator-count>Door 01 of 10</small><strong data-chapter-navigator-title>What Is Tarot?</strong></p>
+          <a class="tarot-beginners-chapter-navigator__welcome" href="#welcome" aria-label="Return to Tarot for Beginners welcome" data-beginner-view-link="welcome"><span class="tarot-beginners-chapter-navigator__destination-label">Welcome</span></a>
+          <button class="tarot-beginners-chapter-navigator__chapters" type="button" aria-label="Open all Tarot for Beginners chapters" aria-haspopup="dialog" aria-controls="beginner-chapter-menu" aria-expanded="false" data-open-chapter-menu><span class="tarot-beginners-chapter-navigator__destination-label"><span class="tarot-beginners-chapter-navigator__all-prefix">All </span>Chapters</span></button>
+          <a class="tarot-beginners-chapter-navigator__next" href="#what-you-need" data-beginner-chapter-link="what-you-need" data-reader-continue data-reader-dynamic-next><span><small>Next Door</small><strong data-chapter-nav-title>What Do You Need?</strong></span><span class="tarot-beginners-chapter-navigator__arrow" aria-hidden="true">→</span></a>
         </nav>
         <div class="tarot-beginners-shell tarot-beginners-reader__main">
             <p class="tarot-beginners-index__sr-only" aria-live="polite" aria-atomic="true" data-beginner-live-region>Guided chapters ready.</p>
@@ -524,13 +531,9 @@
               </section>
               <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
             </div>
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7" data-chapter-visual-slot="what-is-tarot-entrance">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial threshold for What Is Tarot?">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial threshold for What Is Tarot?</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="what-is-tarot-entrance" data-image-source="/assets/images/background%20_images/tarot_for_beginners_header.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/tarot_for_beginners_header.png" alt="Hands arranging tarot cards beside open guidebooks in a celestial study" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Hands arranging tarot cards beside open guidebooks in a celestial study</figcaption>
         </figure>
           </div>
         </header>
@@ -563,13 +566,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER I"><li>The Deck</li><li>The Cards</li><li>The System</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="what-is-tarot-chamber-1">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for What You Are Looking At">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for What You Are Looking At</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="what-is-tarot-chamber-1" data-image-source="/assets/images/background%20_images/history-modern-illustrated-tarot.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/history-modern-illustrated-tarot.webp" alt="A complete illustrated tarot deck arranged beside an artist&#39;s tools and reference sketches" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A complete illustrated tarot deck arranged beside an artist&#39;s tools and reference sketches</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--stats" data-lesson-visual-tool="stats">
@@ -582,7 +581,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Tarot begins as a structured deck before it becomes an interpretive practice.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Tarot begins as a structured deck before it becomes an interpretive practice.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--map is-visual-last" id="what-is-tarot-chamber-2" aria-labelledby="what-is-tarot-chamber-2-heading" data-lesson-chamber="what-is-tarot-chamber-2" data-chamber-variant="map">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">II</span><p>CHAMBER II</p></div>
@@ -590,13 +593,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER II"><li>Symbols</li><li>Themes</li><li>Archetypes</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="what-is-tarot-chamber-2">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for What the Images Are Saying">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for What the Images Are Saying</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="what-is-tarot-chamber-2" data-image-source="/assets/images/background%20_images/history-symbolic-correspondences.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/history-symbolic-correspondences.webp" alt="Tarot cards surrounded by celestial instruments, books, and symbolic correspondences" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Tarot cards surrounded by celestial instruments, books, and symbolic correspondences</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--examples" data-lesson-visual-tool="examples">
@@ -609,7 +608,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>The image is not merely decoration. It carries the vocabulary of the reading.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>The image is not merely decoration. It carries the vocabulary of the reading.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--editorial is-visual-first" id="what-is-tarot-chamber-3" aria-labelledby="what-is-tarot-chamber-3-heading" data-lesson-chamber="what-is-tarot-chamber-3" data-chamber-variant="editorial">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">III</span><p>CHAMBER III</p></div>
@@ -617,13 +620,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER III"><li>Context</li><li>Association</li><li>Reflection</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="what-is-tarot-chamber-3">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for How Meaning Is Created">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for How Meaning Is Created</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="what-is-tarot-chamber-3" data-image-source="/assets/images/background%20_images/how-to-read-tarot.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/how-to-read-tarot.png" alt="A reader&#39;s hands connecting several cards within a candlelit tarot spread" width="1448" height="1086" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A reader&#39;s hands connecting several cards within a candlelit tarot spread</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--equation" data-lesson-visual-tool="equation">
@@ -636,7 +635,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Tarot offers perspective through symbols. It does not remove your ability to choose.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Tarot offers perspective through symbols. It does not remove your ability to choose.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section></div>
         <aside class="tarot-beginners-lesson-takeaway" aria-labelledby="what-is-tarot-lesson-takeaway-heading">
           <span aria-hidden="true">✦</span>
@@ -673,13 +676,9 @@
               </section>
               <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
             </div>
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7" data-chapter-visual-slot="what-you-need-entrance">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial threshold for What Do You Need?">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial threshold for What Do You Need?</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="what-you-need-entrance" data-image-source="/assets/images/background%20_images/tarot-study.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/tarot-study.png" alt="A small study circle learning with tarot cards, books, and candlelight" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A small study circle learning with tarot cards, books, and candlelight</figcaption>
         </figure>
           </div>
         </header>
@@ -712,13 +711,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER I"><li>Tarot Deck</li><li>Reference</li><li>Journal</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="what-you-need-chamber-1">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Your Essential Tools">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Your Essential Tools</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="what-you-need-chamber-1" data-image-source="/assets/images/background%20_images/tarot-for-beginners.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/tarot-for-beginners.png" alt="A tarot deck, open journal, guidebook, and candle arranged for beginner study" width="1448" height="1086" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A tarot deck, open journal, guidebook, and candle arranged for beginner study</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--orbit" data-lesson-visual-tool="orbit">
@@ -734,7 +729,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>A readable deck, a reliable reference, and a place to record what you notice are enough to begin.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>A readable deck, a reliable reference, and a place to record what you notice are enough to begin.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--comparison is-visual-last" id="what-you-need-chamber-2" aria-labelledby="what-you-need-chamber-2-heading" data-lesson-chamber="what-you-need-chamber-2" data-chamber-variant="comparison">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">II</span><p>CHAMBER II</p></div>
@@ -742,13 +741,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER II"><li>Ability</li><li>Ritual</li><li>Perfection</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="what-you-need-chamber-2">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for What Is Optional">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for What Is Optional</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="what-you-need-chamber-2" data-image-source="/assets/images/about-tarotcards-section.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/about-tarotcards-section.webp" alt="A tarot deck beside crystals, candles, and ritual objects that are optional for practice" width="1600" height="900" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A tarot deck beside crystals, candles, and ritual objects that are optional for practice</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -757,7 +752,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>You do not need special permission, perfect intuition, or ritual perfection to study tarot.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>You do not need special permission, perfect intuition, or ritual perfection to study tarot.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--editorial is-visual-first" id="what-you-need-chamber-3" aria-labelledby="what-you-need-chamber-3-heading" data-lesson-chamber="what-you-need-chamber-3" data-chamber-variant="editorial">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">III</span><p>CHAMBER III</p></div>
@@ -765,13 +764,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER III"><li>Time</li><li>Attention</li><li>Patience</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="what-you-need-chamber-3">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Building Your Practice">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Building Your Practice</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="what-you-need-chamber-3" data-image-source="/assets/images/background%20_images/tarot_beginners_welcome_guide_default.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/tarot_beginners_welcome_guide_default.png" alt="A calm tarot guide building a reflective practice at a library table" width="1448" height="1086" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A calm tarot guide building a reflective practice at a library table</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -783,7 +778,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Curiosity and attention matter more than ritual perfection.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Curiosity and attention matter more than ritual perfection.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section></div>
         <aside class="tarot-beginners-lesson-takeaway" aria-labelledby="what-you-need-lesson-takeaway-heading">
           <span aria-hidden="true">✦</span>
@@ -820,13 +819,9 @@
               </section>
               <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
             </div>
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7" data-chapter-visual-slot="choosing-your-first-deck-entrance">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial threshold for Choosing a Deck">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial threshold for Choosing a Deck</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="choosing-your-first-deck-entrance" data-image-source="/assets/images/concepts/deck-page-card.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/concepts/deck-page-card.webp" alt="A reader comparing several distinct tarot decks in a moonlit study" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A reader comparing several distinct tarot decks in a moonlit study</figcaption>
         </figure>
           </div>
         </header>
@@ -859,13 +854,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER I"><li>Clarity</li><li>Artwork</li><li>Guidebook</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="choosing-your-first-deck-chamber-1">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Readable Imagery">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Readable Imagery</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:22% center;--lesson-image-fit:cover" data-chapter-visual-slot="choosing-your-first-deck-chamber-1" data-image-source="/assets/images/background%20_images/tarot-vs-oracle-cards.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/tarot-vs-oracle-cards.png" alt="Two groups of richly illustrated cards showing different visual languages" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Two groups of richly illustrated cards showing different visual languages</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--orbit" data-lesson-visual-tool="orbit">
@@ -881,7 +872,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Readable imagery gives your attention somewhere concrete to begin.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Readable imagery gives your attention somewhere concrete to begin.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--map is-visual-last" id="choosing-your-first-deck-chamber-2" aria-labelledby="choosing-your-first-deck-chamber-2-heading" data-lesson-chamber="choosing-your-first-deck-chamber-2" data-chamber-variant="map">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">II</span><p>CHAMBER II</p></div>
@@ -889,13 +884,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER II"><li>System</li><li>Symbols</li><li>Consistency</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="choosing-your-first-deck-chamber-2">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Structure and Tradition">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Structure and Tradition</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="choosing-your-first-deck-chamber-2" data-image-source="/assets/images/background%20_images/history-occult-revival-symbolism.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/history-occult-revival-symbolism.webp" alt="A traditional tarot deck arranged with books and a consistent celestial symbol system" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A traditional tarot deck arranged with books and a consistent celestial symbol system</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -907,7 +898,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Structure is a learning aid, not a rule about which art you are allowed to love.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Structure is a learning aid, not a rule about which art you are allowed to love.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--editorial is-visual-first" id="choosing-your-first-deck-chamber-3" aria-labelledby="choosing-your-first-deck-chamber-3-heading" data-lesson-chamber="choosing-your-first-deck-chamber-3" data-chamber-variant="editorial">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">III</span><p>CHAMBER III</p></div>
@@ -915,13 +910,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER III"><li>Card Size</li><li>Interest</li><li>Choice</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="choosing-your-first-deck-chamber-3">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Personal Connection">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Personal Connection</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="choosing-your-first-deck-chamber-3" data-image-source="/assets/images/background%20_images/free-reading-bg.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/free-reading-bg.png" alt="A single tarot deck presented at a luminous doorway for personal selection" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A single tarot deck presented at a luminous doorway for personal selection</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -933,7 +924,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Choose a deck you can study, not merely one you can admire.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Choose a deck you can study, not merely one you can admire.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section></div>
         <aside class="tarot-beginners-lesson-takeaway" aria-labelledby="choosing-your-first-deck-lesson-takeaway-heading">
           <span aria-hidden="true">✦</span>
@@ -970,13 +965,9 @@
               </section>
               <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
             </div>
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7" data-chapter-visual-slot="inside-the-deck-entrance">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial threshold for Inside the Deck">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial threshold for Inside the Deck</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="inside-the-deck-entrance" data-image-source="/assets/images/background%20_images/tarot-compare-header-sun.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/tarot-compare-header-sun.webp" alt="Several tarot decks and card families arranged across a wide celestial table" width="1916" height="821" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Several tarot decks and card families arranged across a wide celestial table</figcaption>
         </figure>
           </div>
         </header>
@@ -1009,13 +1000,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER I"><li>78 Cards</li><li>22 Major</li><li>56 Minor</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="inside-the-deck-chamber-1">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Major and Minor Arcana">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Major and Minor Arcana</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="inside-the-deck-chamber-1" data-image-source="/assets/images/background%20_images/major-arcana-explained.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/major-arcana-explained.png" alt="A traveler approaching a luminous doorway representing the Major Arcana journey" width="1448" height="1086" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A traveler approaching a luminous doorway representing the Major Arcana journey</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--orbit" data-lesson-visual-tool="orbit">
@@ -1037,7 +1024,11 @@
         </section>
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>The Major Arcana holds larger movements; the Minor Arcana brings them into everyday life.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>The Major Arcana holds larger movements; the Minor Arcana brings them into everyday life.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--map is-visual-last" id="inside-the-deck-chamber-2" aria-labelledby="inside-the-deck-chamber-2-heading" data-lesson-chamber="inside-the-deck-chamber-2" data-chamber-variant="map">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">II</span><p>CHAMBER II</p></div>
@@ -1045,13 +1036,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER II"><li>Wands</li><li>Cups</li><li>Swords</li><li>Pentacles</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="inside-the-deck-chamber-2">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for The Four Suits">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for The Four Suits</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="inside-the-deck-chamber-2" data-image-source="/assets/images/background%20_images/minor_arcana_header.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/minor_arcana_header.png" alt="Cards and elemental objects representing Cups, Wands, Swords, and Pentacles" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Cards and elemental objects representing Cups, Wands, Swords, and Pentacles</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1063,7 +1050,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Each suit offers a consistent lens for one area of lived experience.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Each suit offers a consistent lens for one area of lived experience.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--editorial is-visual-first" id="inside-the-deck-chamber-3" aria-labelledby="inside-the-deck-chamber-3-heading" data-lesson-chamber="inside-the-deck-chamber-3" data-chamber-variant="editorial">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">III</span><p>CHAMBER III</p></div>
@@ -1071,13 +1062,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER III"><li>Numbers</li><li>Pages</li><li>Knights</li><li>Queens + Kings</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="inside-the-deck-chamber-3">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Numbers and Court Cards">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Numbers and Court Cards</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="inside-the-deck-chamber-3" data-image-source="/assets/images/background%20_images/minor-arcana-explained.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/minor-arcana-explained.png" alt="Numbered and court-style tarot cards arranged to show repeating Minor Arcana patterns" width="1448" height="1086" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Numbered and court-style tarot cards arranged to show repeating Minor Arcana patterns</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1086,7 +1073,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>The Major Arcana describes larger movements. The Minor Arcana describes how life moves through them.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>The Major Arcana describes larger movements. The Minor Arcana describes how life moves through them.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section></div>
         <aside class="tarot-beginners-lesson-takeaway" aria-labelledby="inside-the-deck-lesson-takeaway-heading">
           <span aria-hidden="true">✦</span>
@@ -1123,13 +1114,9 @@
               </section>
               <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
             </div>
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7" data-chapter-visual-slot="learning-card-meanings-entrance">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial threshold for Learning Meanings">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial threshold for Learning Meanings</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="learning-card-meanings-entrance" data-image-source="/assets/images/how_to_read_tarot/regular/browse_meanings.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/how_to_read_tarot/regular/browse_meanings.png" alt="A reader comparing tarot imagery with meanings in an open reference book" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A reader comparing tarot imagery with meanings in an open reference book</figcaption>
         </figure>
           </div>
         </header>
@@ -1162,13 +1149,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER I"><li>Image</li><li>Emotion</li><li>Attention</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="learning-card-meanings-chamber-1">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Observe Before Defining">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Observe Before Defining</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="learning-card-meanings-chamber-1" data-image-source="/assets/images/background%20_images/history-tarot-practice.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/history-tarot-practice.webp" alt="A reader pausing to observe the visible imagery across a tarot spread" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A reader pausing to observe the visible imagery across a tarot spread</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--orbit" data-lesson-visual-tool="orbit">
@@ -1189,7 +1172,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Observation gives interpretation evidence to stand on.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Observation gives interpretation evidence to stand on.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--editorial is-visual-last" id="learning-card-meanings-chamber-2" aria-labelledby="learning-card-meanings-chamber-2-heading" data-lesson-chamber="learning-card-meanings-chamber-2" data-chamber-variant="editorial">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">II</span><p>CHAMBER II</p></div>
@@ -1197,13 +1184,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER II"><li>Question</li><li>Position</li><li>Relationships</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="learning-card-meanings-chamber-2">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Question and Context">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Question and Context</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center 54%;--lesson-image-fit:cover" data-chapter-visual-slot="learning-card-meanings-chamber-2" data-image-source="/assets/images/how_to_read_tarot/regular/interpret_positions.png" data-image-review="replacement-recommended">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/how_to_read_tarot/regular/interpret_positions.png" alt="A tarot spread with one central card emphasized by its reading position" width="1122" height="1402" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A tarot spread with one central card emphasized by its reading position</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1215,7 +1198,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>A meaning becomes useful when it answers the question actually being asked.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>A meaning becomes useful when it answers the question actually being asked.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--map is-visual-first" id="learning-card-meanings-chamber-3" aria-labelledby="learning-card-meanings-chamber-3-heading" data-lesson-chamber="learning-card-meanings-chamber-3" data-chamber-variant="map">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">III</span><p>CHAMBER III</p></div>
@@ -1223,13 +1210,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER III"><li>Tradition</li><li>Patterns</li><li>Reflection</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="learning-card-meanings-chamber-3">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Synthesis and Interpretation">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Synthesis and Interpretation</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="learning-card-meanings-chamber-3" data-image-source="/assets/images/how_to_read_tarot/regular/connect_the_cards.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/how_to_read_tarot/regular/connect_the_cards.png" alt="Three tarot cards linked by luminous lines to illustrate synthesis and interpretation" width="1448" height="1086" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Three tarot cards linked by luminous lines to illustrate synthesis and interpretation</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1241,7 +1224,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Learn the language of tarot, not seventy-eight rigid definitions.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Learn the language of tarot, not seventy-eight rigid definitions.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section></div>
         <aside class="tarot-beginners-lesson-takeaway" aria-labelledby="learning-card-meanings-lesson-takeaway-heading">
           <span aria-hidden="true">✦</span>
@@ -1278,13 +1265,9 @@
               </section>
               <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
             </div>
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7" data-chapter-visual-slot="tarot-myths-entrance">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial threshold for Tarot Myths">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial threshold for Tarot Myths</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="tarot-myths-entrance" data-image-source="/assets/images/background%20_images/history-early-tarot-facts.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/history-early-tarot-facts.webp" alt="Historic tarot cards, records, and tools arranged for evidence-based study" width="1536" height="1024" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Historic tarot cards, records, and tools arranged for evidence-based study</figcaption>
         </figure>
           </div>
         </header>
@@ -1317,13 +1300,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER I"><li>Custom</li><li>Permission</li><li>Practice</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="tarot-myths-chamber-1">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Tradition">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Tradition</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="tarot-myths-chamber-1" data-image-source="/assets/images/background%20_images/history-deck-thoth-tradition.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/history-deck-thoth-tradition.webp" alt="A documented tarot tradition represented by a deck, books, and study materials" width="1536" height="1024" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A documented tarot tradition represented by a deck, books, and study materials</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--orbit" data-lesson-visual-tool="orbit">
@@ -1344,7 +1323,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>A custom may guide your practice without deciding whether you are allowed to begin.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>A custom may guide your practice without deciding whether you are allowed to begin.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--reveal is-visual-last" id="tarot-myths-chamber-2" aria-labelledby="tarot-myths-chamber-2-heading" data-lesson-chamber="tarot-myths-chamber-2" data-chamber-variant="reveal">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">II</span><p>CHAMBER II</p></div>
@@ -1352,13 +1335,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER II"><li>Memorization</li><li>Reversals</li><li>Prediction</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="tarot-myths-chamber-2">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Repeated Myths">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Repeated Myths</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:contain" data-chapter-visual-slot="tarot-myths-chamber-2" data-image-source="/assets/images/background%20_images/upright-reverse.png" data-image-review="replacement-recommended">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/upright-reverse.png" alt="A mirrored tarot figure showing upright and reversed perspectives" width="1024" height="1536" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A mirrored tarot figure showing upright and reversed perspectives</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1379,7 +1358,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Repeated language does not become a requirement merely because it sounds traditional.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Repeated language does not become a requirement merely because it sounds traditional.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--comparison is-visual-first" id="tarot-myths-chamber-3" aria-labelledby="tarot-myths-chamber-3-heading" data-lesson-chamber="tarot-myths-chamber-3" data-chamber-variant="comparison">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">III</span><p>CHAMBER III</p></div>
@@ -1387,13 +1370,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER III"><li>Challenge</li><li>Bias</li><li>Choice</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="tarot-myths-chamber-3">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for A Grounded Practice">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for A Grounded Practice</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="tarot-myths-chamber-3" data-image-source="/assets/images/lumen_archive_rooms/rooted_grove.png" data-image-review="replacement-recommended">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/lumen_archive_rooms/rooted_grove.png" alt="A quiet rooted grove representing a grounded and steady tarot practice" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A quiet rooted grove representing a grounded and steady tarot practice</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1410,7 +1389,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>A tradition can guide you without becoming a cage.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>A tradition can guide you without becoming a cage.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section></div>
         <aside class="tarot-beginners-lesson-takeaway" aria-labelledby="tarot-myths-lesson-takeaway-heading">
           <span aria-hidden="true">✦</span>
@@ -1447,13 +1430,9 @@
               </section>
               <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
             </div>
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7" data-chapter-visual-slot="first-week-with-tarot-entrance">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial threshold for First Week">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial threshold for First Week</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="first-week-with-tarot-entrance" data-image-source="/assets/images/how_to_read_tarot/regular/begin_reading.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/how_to_read_tarot/regular/begin_reading.png" alt="A complete tarot deck laid out for the beginning of a first reading practice" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A complete tarot deck laid out for the beginning of a first reading practice</figcaption>
         </figure>
           </div>
         </header>
@@ -1486,13 +1465,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER I"><li>Day 01</li><li>Day 02</li><li>Major Arcana</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="first-week-with-tarot-chamber-1">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Meeting the Deck">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Meeting the Deck</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="first-week-with-tarot-chamber-1" data-image-source="/assets/images/background%20_images/tarot_vs_oracle_header.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/tarot_vs_oracle_header.png" alt="A complete deck opened into several clear card groups for first study" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A complete deck opened into several clear card groups for first study</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--orbit" data-lesson-visual-tool="orbit">
@@ -1505,7 +1480,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>The first encounter is for noticing, not mastering.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>The first encounter is for noticing, not mastering.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--map is-visual-last" id="first-week-with-tarot-chamber-2" aria-labelledby="first-week-with-tarot-chamber-2-heading" data-lesson-chamber="first-week-with-tarot-chamber-2" data-chamber-variant="map">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">II</span><p>CHAMBER II</p></div>
@@ -1513,13 +1492,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER II"><li>Day 03</li><li>Day 04</li><li>Day 05</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="first-week-with-tarot-chamber-2">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Building Familiarity">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Building Familiarity</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="first-week-with-tarot-chamber-2" data-image-source="/assets/images/background%20_images/tarot-spreads.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/tarot-spreads.png" alt="Multiple card groups arranged for comparing suits, numbers, and recurring patterns" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Multiple card groups arranged for comparing suits, numbers, and recurring patterns</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1528,7 +1503,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Comparison makes a large deck feel like a connected language.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Comparison makes a large deck feel like a connected language.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--practice is-visual-first" id="first-week-with-tarot-chamber-3" aria-labelledby="first-week-with-tarot-chamber-3-heading" data-lesson-chamber="first-week-with-tarot-chamber-3" data-chamber-variant="practice">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">III</span><p>CHAMBER III</p></div>
@@ -1536,13 +1515,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER III"><li>Day 06</li><li>Day 07</li><li>Continue</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="first-week-with-tarot-chamber-3">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Completing the First Week">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Completing the First Week</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="first-week-with-tarot-chamber-3" data-image-source="/assets/images/how_to_read_tarot/regular/record_reflection.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/how_to_read_tarot/regular/record_reflection.png" alt="A reader journaling observations beside tarot cards after a week of practice" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A reader journaling observations beside tarot cards after a week of practice</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1551,7 +1526,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Familiarity grows through repeated attention, not rushed interpretation.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Familiarity grows through repeated attention, not rushed interpretation.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section></div>
         <aside class="tarot-beginners-lesson-takeaway" aria-labelledby="first-week-with-tarot-lesson-takeaway-heading">
           <span aria-hidden="true">✦</span>
@@ -1588,13 +1567,9 @@
               </section>
               <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
             </div>
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7" data-chapter-visual-slot="beginner-mistakes-entrance">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial threshold for Common Mistakes">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial threshold for Common Mistakes</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="beginner-mistakes-entrance" data-image-source="/assets/images/background%20_images/history-tarot-today-reflection.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/history-tarot-today-reflection.webp" alt="A reader holding one card above a spread while pausing to reflect" width="1536" height="1024" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A reader holding one card above a spread while pausing to reflect</figcaption>
         </figure>
           </div>
         </header>
@@ -1627,13 +1602,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER I"><li>Memorization</li><li>Keywords</li><li>Comparison</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="beginner-mistakes-chamber-1">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Pressure and Memorization">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Pressure and Memorization</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="beginner-mistakes-chamber-1" data-image-source="/assets/images/background%20_images/tarot-vs-lenormand.png" data-image-review="replacement-recommended">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/tarot-vs-lenormand.png" alt="Two card systems placed side by side, suggesting the pressure of comparing methods too early" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Two card systems placed side by side, suggesting the pressure of comparing methods too early</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--orbit" data-lesson-visual-tool="orbit">
@@ -1649,7 +1620,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Confidence develops through use, correction, and familiarity.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Confidence develops through use, correction, and familiarity.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--comparison is-visual-last" id="beginner-mistakes-chamber-2" aria-labelledby="beginner-mistakes-chamber-2-heading" data-lesson-chamber="beginner-mistakes-chamber-2" data-chamber-variant="comparison">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">II</span><p>CHAMBER II</p></div>
@@ -1657,13 +1632,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER II"><li>Clarifiers</li><li>Repeated Questions</li><li>Context</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="beginner-mistakes-chamber-2">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Projection and Certainty">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Projection and Certainty</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="beginner-mistakes-chamber-2" data-image-source="/assets/images/lumen_archive_rooms/Hall_of_mirros.png" data-image-review="replacement-recommended">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/lumen_archive_rooms/Hall_of_mirros.png" alt="A hall of mirrored doorways representing projection and competing interpretations" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A hall of mirrored doorways representing projection and competing interpretations</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1675,7 +1646,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>More cards and stronger certainty do not always create a clearer reading.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>More cards and stronger certainty do not always create a clearer reading.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--editorial is-visual-first" id="beginner-mistakes-chamber-3" aria-labelledby="beginner-mistakes-chamber-3-heading" data-lesson-chamber="beginner-mistakes-chamber-3" data-chamber-variant="editorial">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">III</span><p>CHAMBER III</p></div>
@@ -1683,13 +1658,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER III"><li>Pause</li><li>Simplify</li><li>Reflect</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="beginner-mistakes-chamber-3">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Sustainable Reading Habits">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Sustainable Reading Habits</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="beginner-mistakes-chamber-3" data-image-source="/assets/images/lumen_archive_rooms/garden_of_renewal.png" data-image-review="replacement-recommended">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/lumen_archive_rooms/garden_of_renewal.png" alt="A sunlit garden path representing patient and sustainable reading habits" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A sunlit garden path representing patient and sustainable reading habits</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1701,7 +1672,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Confusion is not proof that you cannot learn. It is evidence that you are still learning.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Confusion is not proof that you cannot learn. It is evidence that you are still learning.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section></div>
         <aside class="tarot-beginners-lesson-takeaway" aria-labelledby="beginner-mistakes-lesson-takeaway-heading">
           <span aria-hidden="true">✦</span>
@@ -1738,13 +1713,9 @@
               </section>
               <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
             </div>
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7" data-chapter-visual-slot="tarot-glossary-entrance">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial threshold for Glossary">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial threshold for Glossary</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="tarot-glossary-entrance" data-image-source="/assets/images/background%20_images/tarot_history_header.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/tarot_history_header.png" alt="An open illustrated reference book surrounded by tarot cards and study notes" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">An open illustrated reference book surrounded by tarot cards and study notes</figcaption>
         </figure>
           </div>
         </header>
@@ -1777,13 +1748,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER I"><li>Arcana</li><li>Suit</li><li>Court Card</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="tarot-glossary-chamber-1">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Deck and Structure">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Deck and Structure</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="tarot-glossary-chamber-1" data-image-source="/assets/images/background%20_images/history-deck-rider-waite-smith.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/history-deck-rider-waite-smith.webp" alt="A complete named tarot tradition arranged to study deck structure and Arcana" width="1536" height="1024" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A complete named tarot tradition arranged to study deck structure and Arcana</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--orbit" data-lesson-visual-tool="orbit">
@@ -1796,7 +1763,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Structure gives you a map for locating any card in the larger deck.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Structure gives you a map for locating any card in the larger deck.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--reveal is-visual-last" id="tarot-glossary-chamber-2" aria-labelledby="tarot-glossary-chamber-2-heading" data-lesson-chamber="tarot-glossary-chamber-2" data-chamber-variant="reveal">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">II</span><p>CHAMBER II</p></div>
@@ -1804,13 +1775,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER II"><li>Spread</li><li>Position</li><li>Querent</li><li>Clarifier</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="tarot-glossary-chamber-2">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Reading Language">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Reading Language</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="tarot-glossary-chamber-2" data-image-source="/assets/images/how_to_read_tarot/regular/explore_spreads.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/how_to_read_tarot/regular/explore_spreads.png" alt="Several tarot spreads demonstrating positions, layouts, and supporting cards" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Several tarot spreads demonstrating positions, layouts, and supporting cards</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1819,7 +1786,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Reading vocabulary helps you describe what each card is doing in context.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Reading vocabulary helps you describe what each card is doing in context.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--map is-visual-first" id="tarot-glossary-chamber-3" aria-labelledby="tarot-glossary-chamber-3-heading" data-lesson-chamber="tarot-glossary-chamber-3" data-chamber-variant="map">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">III</span><p>CHAMBER III</p></div>
@@ -1827,13 +1798,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER III"><li>Archetype</li><li>Interpretation</li><li>Intuition</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="tarot-glossary-chamber-3">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Practice and Interpretation">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Practice and Interpretation</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="tarot-glossary-chamber-3" data-image-source="/assets/images/lumen_archive_rooms/RP.png" data-image-review="replacement-recommended">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/lumen_archive_rooms/RP.png" alt="A moonlit reflection pool representing intuition and reflective interpretation" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A moonlit reflection pool representing intuition and reflective interpretation</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1842,7 +1809,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Terminology is a map, not the destination.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Terminology is a map, not the destination.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section></div>
         <aside class="tarot-beginners-lesson-takeaway" aria-labelledby="tarot-glossary-lesson-takeaway-heading">
           <span aria-hidden="true">✦</span>
@@ -1879,13 +1850,9 @@
               </section>
               <p class="tarot-beginners-academy-introduction__status" aria-live="polite" data-lesson-completion-status>Chapter in progress</p>
             </div>
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7" data-chapter-visual-slot="choose-your-next-path-entrance">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial threshold for Next Path">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial threshold for Next Path</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--header" style="--lesson-placeholder-ratio:16 / 7;--lesson-image-position:72% center;--lesson-image-fit:cover" data-chapter-visual-slot="choose-your-next-path-entrance" data-image-source="/assets/images/background%20_images/history-continue-journey-banner.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/history-continue-journey-banner.webp" alt="Tarot cards, books, and a luminous path leading toward continued study" width="1916" height="821" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">Tarot cards, books, and a luminous path leading toward continued study</figcaption>
         </figure>
           </div>
         </header>
@@ -1918,13 +1885,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER I"><li>Structure</li><li>Symbols</li><li>Practice</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="choose-your-next-path-chamber-1">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for What You Have Learned">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for What You Have Learned</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="choose-your-next-path-chamber-1" data-image-source="/assets/images/background%20_images/history-faq-celestial-emblem.webp" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/history-faq-celestial-emblem.webp" alt="An open study book, tarot deck, and celestial emblem summarizing a learned foundation" width="1254" height="1254" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">An open study book, tarot deck, and celestial emblem summarizing a learned foundation</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
               <figure class="tarot-beginners-lesson-visual-tool tarot-beginners-lesson-visual-tool--orbit" data-lesson-visual-tool="orbit">
@@ -1937,7 +1900,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>The foundation is not mastery. It is enough understanding to choose your next useful step.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>The foundation is not mastery. It is enough understanding to choose your next useful step.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--comparison is-visual-last" id="choose-your-next-path-chamber-2" aria-labelledby="choose-your-next-path-chamber-2-heading" data-lesson-chamber="choose-your-next-path-chamber-2" data-chamber-variant="comparison">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">II</span><p>CHAMBER II</p></div>
@@ -1945,13 +1912,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER II"><li>Read</li><li>Practice</li><li>Study</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="choose-your-next-path-chamber-2">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Choose Your Direction">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Choose Your Direction</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="choose-your-next-path-chamber-2" data-image-source="/assets/images/background%20_images/%20%20major_arcana_journey_banner.png" data-image-review="keep-candidate">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/background%20_images/%20%20major_arcana_journey_banner.png" alt="A traveler choosing a luminous path through a celestial tarot landscape" width="1774" height="887" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A traveler choosing a luminous path through a celestial tarot landscape</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1960,7 +1923,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>Choose the direction that answers your present curiosity.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>Choose the direction that answers your present curiosity.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section><section class="tarot-beginners-lesson-chamber tarot-beginners-lesson-chamber--map is-visual-first" id="choose-your-next-path-chamber-3" aria-labelledby="choose-your-next-path-chamber-3-heading" data-lesson-chamber="choose-your-next-path-chamber-3" data-chamber-variant="map">
           <header class="tarot-beginners-lesson-chamber__heading">
             <div class="tarot-beginners-lesson-chamber__identity"><span aria-hidden="true">III</span><p>CHAMBER III</p></div>
@@ -1968,13 +1935,9 @@
             <ul class="tarot-beginners-lesson-chamber__topics" aria-label="Topics in CHAMBER III"><li>Arcana</li><li>Spreads</li><li>History</li><li>Decks</li></ul>
           </header>
           <div class="tarot-beginners-lesson-chamber__body">
-            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9" data-chapter-visual-slot="choose-your-next-path-chamber-3">
-          <div class="tarot-beginners-lesson-placeholder__canvas" role="img" aria-label="Celestial study diagram for Continue Through the Archive">
-            <span class="tarot-beginners-lesson-placeholder__orbit" aria-hidden="true"></span>
-            <span class="tarot-beginners-lesson-placeholder__star" aria-hidden="true">✦</span>
-            <span class="tarot-beginners-lesson-placeholder__lines" aria-hidden="true"><i></i><i></i><i></i></span>
-          </div>
-          <figcaption class="tarot-beginners-index__sr-only">Celestial study diagram for Continue Through the Archive</figcaption>
+            <figure class="tarot-beginners-lesson-placeholder tarot-beginners-lesson-placeholder--chamber" style="--lesson-placeholder-ratio:16 / 9;--lesson-image-position:center;--lesson-image-fit:cover" data-chapter-visual-slot="choose-your-next-path-chamber-3" data-image-source="/assets/images/lumen_archive_rooms/dawn_atium.png" data-image-review="replacement-recommended">
+          <img class="tarot-beginners-lesson-placeholder__image" src="/assets/images/lumen_archive_rooms/dawn_atium.png" alt="A luminous archive doorway opening toward the next area of study" width="1672" height="941" loading="lazy" decoding="async" />
+          <figcaption class="tarot-beginners-index__sr-only">A luminous archive doorway opening toward the next area of study</figcaption>
         </figure>
             <div class="tarot-beginners-lesson-chamber__content">
 
@@ -1983,7 +1946,11 @@
 
             </div>
           </div>
-          <aside class="tarot-beginners-lesson-chamber__takeaway" aria-label="Chamber takeaway"><span aria-hidden="true">✦</span><p>You do not need to learn everything at once. You only need to choose the next useful step.</p></aside>
+          <aside class="tarot-beginners-chamber-threshold" aria-label="Chamber threshold">
+          <span class="tarot-beginners-chamber-threshold__sigil" aria-hidden="true"></span>
+          <blockquote><p>You do not need to learn everything at once. You only need to choose the next useful step.</p></blockquote>
+          <span class="tarot-beginners-chamber-threshold__thread" aria-hidden="true"></span>
+        </aside>
         </section></div>
         <aside class="tarot-beginners-lesson-takeaway" aria-labelledby="choose-your-next-path-lesson-takeaway-heading">
           <span aria-hidden="true">✦</span>

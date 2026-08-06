@@ -50,7 +50,7 @@ export const tarotForBeginners = {
         { label: "You May Move Slowly", text: "Understanding grows through familiarity, not speed." },
         { label: "Your Perspective Matters", text: "Tradition offers a foundation, but your attention helps the cards become meaningful." }
       ],
-      primaryLabel: "Continue with Chapter 01",
+      primaryLabel: "Continue with Chapter 02",
       secondaryLabel: "View All Chapters",
       whisper: "Every reader once stood where you are now.",
       quote: "You are allowed to begin slowly."
@@ -71,7 +71,7 @@ export const tarotForBeginners = {
         { label: "You May Move Slowly", text: "Take your time. The cards are under no obligation to make sense on command." },
         { label: "Your Perspective Matters", text: "Tradition offers the bones. Your attention decides what refuses to stay buried." }
       ],
-      primaryLabel: "Continue with Chapter 01",
+      primaryLabel: "Continue with Chapter 02",
       secondaryLabel: "View All Chapters",
       whisper: "Come closer. You have avoided the lesson long enough.",
       quote: "Begin slowly. The cards are not going anywhere."
@@ -648,17 +648,201 @@ export const tarotForBeginners = {
 
 const chamberNumerals = ["I", "II", "III"];
 
+const lessonReviewImage = (src, width, height, alt, position = "center", replacementRecommended = false, fit = "cover") => ({
+  src,
+  width,
+  height,
+  alt,
+  position,
+  fit,
+  reviewStatus: replacementRecommended ? "replacement-recommended" : "keep-candidate"
+});
+
+export const beginnerLessonImageAssignments = Object.freeze({
+  "what-is-tarot-entrance": lessonReviewImage(
+    "/assets/images/background%20_images/tarot_for_beginners_header.png", 1672, 941,
+    "Hands arranging tarot cards beside open guidebooks in a celestial study"
+  ),
+  "what-is-tarot-chamber-1": lessonReviewImage(
+    "/assets/images/background%20_images/history-modern-illustrated-tarot.webp", 1672, 941,
+    "A complete illustrated tarot deck arranged beside an artist's tools and reference sketches"
+  ),
+  "what-is-tarot-chamber-2": lessonReviewImage(
+    "/assets/images/background%20_images/history-symbolic-correspondences.webp", 1672, 941,
+    "Tarot cards surrounded by celestial instruments, books, and symbolic correspondences"
+  ),
+  "what-is-tarot-chamber-3": lessonReviewImage(
+    "/assets/images/background%20_images/how-to-read-tarot.png", 1448, 1086,
+    "A reader's hands connecting several cards within a candlelit tarot spread"
+  ),
+
+  "what-you-need-entrance": lessonReviewImage(
+    "/assets/images/background%20_images/tarot-study.png", 1672, 941,
+    "A small study circle learning with tarot cards, books, and candlelight"
+  ),
+  "what-you-need-chamber-1": lessonReviewImage(
+    "/assets/images/background%20_images/tarot-for-beginners.png", 1448, 1086,
+    "A tarot deck, open journal, guidebook, and candle arranged for beginner study"
+  ),
+  "what-you-need-chamber-2": lessonReviewImage(
+    "/assets/images/about-tarotcards-section.webp", 1600, 900,
+    "A tarot deck beside crystals, candles, and ritual objects that are optional for practice"
+  ),
+  "what-you-need-chamber-3": lessonReviewImage(
+    "/assets/images/background%20_images/tarot_beginners_welcome_guide_default.png", 1448, 1086,
+    "A calm tarot guide building a reflective practice at a library table"
+  ),
+
+  "choosing-your-first-deck-entrance": lessonReviewImage(
+    "/assets/images/concepts/deck-page-card.webp", 1672, 941,
+    "A reader comparing several distinct tarot decks in a moonlit study"
+  ),
+  "choosing-your-first-deck-chamber-1": lessonReviewImage(
+    "/assets/images/background%20_images/tarot-vs-oracle-cards.png", 1672, 941,
+    "Two groups of richly illustrated cards showing different visual languages", "22% center"
+  ),
+  "choosing-your-first-deck-chamber-2": lessonReviewImage(
+    "/assets/images/background%20_images/history-occult-revival-symbolism.webp", 1672, 941,
+    "A traditional tarot deck arranged with books and a consistent celestial symbol system"
+  ),
+  "choosing-your-first-deck-chamber-3": lessonReviewImage(
+    "/assets/images/background%20_images/free-reading-bg.png", 1672, 941,
+    "A single tarot deck presented at a luminous doorway for personal selection"
+  ),
+
+  "inside-the-deck-entrance": lessonReviewImage(
+    "/assets/images/background%20_images/tarot-compare-header-sun.webp", 1916, 821,
+    "Several tarot decks and card families arranged across a wide celestial table"
+  ),
+  "inside-the-deck-chamber-1": lessonReviewImage(
+    "/assets/images/background%20_images/major-arcana-explained.png", 1448, 1086,
+    "A traveler approaching a luminous doorway representing the Major Arcana journey"
+  ),
+  "inside-the-deck-chamber-2": lessonReviewImage(
+    "/assets/images/background%20_images/minor_arcana_header.png", 1672, 941,
+    "Cards and elemental objects representing Cups, Wands, Swords, and Pentacles"
+  ),
+  "inside-the-deck-chamber-3": lessonReviewImage(
+    "/assets/images/background%20_images/minor-arcana-explained.png", 1448, 1086,
+    "Numbered and court-style tarot cards arranged to show repeating Minor Arcana patterns"
+  ),
+
+  "learning-card-meanings-entrance": lessonReviewImage(
+    "/assets/images/how_to_read_tarot/regular/browse_meanings.png", 1672, 941,
+    "A reader comparing tarot imagery with meanings in an open reference book"
+  ),
+  "learning-card-meanings-chamber-1": lessonReviewImage(
+    "/assets/images/background%20_images/history-tarot-practice.webp", 1672, 941,
+    "A reader pausing to observe the visible imagery across a tarot spread"
+  ),
+  "learning-card-meanings-chamber-2": lessonReviewImage(
+    "/assets/images/how_to_read_tarot/regular/interpret_positions.png", 1122, 1402,
+    "A tarot spread with one central card emphasized by its reading position", "center 54%", true
+  ),
+  "learning-card-meanings-chamber-3": lessonReviewImage(
+    "/assets/images/how_to_read_tarot/regular/connect_the_cards.png", 1448, 1086,
+    "Three tarot cards linked by luminous lines to illustrate synthesis and interpretation"
+  ),
+
+  "tarot-myths-entrance": lessonReviewImage(
+    "/assets/images/background%20_images/history-early-tarot-facts.webp", 1536, 1024,
+    "Historic tarot cards, records, and tools arranged for evidence-based study"
+  ),
+  "tarot-myths-chamber-1": lessonReviewImage(
+    "/assets/images/background%20_images/history-deck-thoth-tradition.webp", 1536, 1024,
+    "A documented tarot tradition represented by a deck, books, and study materials"
+  ),
+  "tarot-myths-chamber-2": lessonReviewImage(
+    "/assets/images/background%20_images/upright-reverse.png", 1024, 1536,
+    "A mirrored tarot figure showing upright and reversed perspectives", "center", true, "contain"
+  ),
+  "tarot-myths-chamber-3": lessonReviewImage(
+    "/assets/images/lumen_archive_rooms/rooted_grove.png", 1672, 941,
+    "A quiet rooted grove representing a grounded and steady tarot practice", "center", true
+  ),
+
+  "first-week-with-tarot-entrance": lessonReviewImage(
+    "/assets/images/how_to_read_tarot/regular/begin_reading.png", 1672, 941,
+    "A complete tarot deck laid out for the beginning of a first reading practice"
+  ),
+  "first-week-with-tarot-chamber-1": lessonReviewImage(
+    "/assets/images/background%20_images/tarot_vs_oracle_header.png", 1672, 941,
+    "A complete deck opened into several clear card groups for first study"
+  ),
+  "first-week-with-tarot-chamber-2": lessonReviewImage(
+    "/assets/images/background%20_images/tarot-spreads.png", 1672, 941,
+    "Multiple card groups arranged for comparing suits, numbers, and recurring patterns"
+  ),
+  "first-week-with-tarot-chamber-3": lessonReviewImage(
+    "/assets/images/how_to_read_tarot/regular/record_reflection.png", 1672, 941,
+    "A reader journaling observations beside tarot cards after a week of practice"
+  ),
+
+  "beginner-mistakes-entrance": lessonReviewImage(
+    "/assets/images/background%20_images/history-tarot-today-reflection.webp", 1536, 1024,
+    "A reader holding one card above a spread while pausing to reflect"
+  ),
+  "beginner-mistakes-chamber-1": lessonReviewImage(
+    "/assets/images/background%20_images/tarot-vs-lenormand.png", 1672, 941,
+    "Two card systems placed side by side, suggesting the pressure of comparing methods too early", "center", true
+  ),
+  "beginner-mistakes-chamber-2": lessonReviewImage(
+    "/assets/images/lumen_archive_rooms/Hall_of_mirros.png", 1672, 941,
+    "A hall of mirrored doorways representing projection and competing interpretations", "center", true
+  ),
+  "beginner-mistakes-chamber-3": lessonReviewImage(
+    "/assets/images/lumen_archive_rooms/garden_of_renewal.png", 1672, 941,
+    "A sunlit garden path representing patient and sustainable reading habits", "center", true
+  ),
+
+  "tarot-glossary-entrance": lessonReviewImage(
+    "/assets/images/background%20_images/tarot_history_header.png", 1672, 941,
+    "An open illustrated reference book surrounded by tarot cards and study notes"
+  ),
+  "tarot-glossary-chamber-1": lessonReviewImage(
+    "/assets/images/background%20_images/history-deck-rider-waite-smith.webp", 1536, 1024,
+    "A complete named tarot tradition arranged to study deck structure and Arcana"
+  ),
+  "tarot-glossary-chamber-2": lessonReviewImage(
+    "/assets/images/how_to_read_tarot/regular/explore_spreads.png", 1672, 941,
+    "Several tarot spreads demonstrating positions, layouts, and supporting cards"
+  ),
+  "tarot-glossary-chamber-3": lessonReviewImage(
+    "/assets/images/lumen_archive_rooms/RP.png", 1672, 941,
+    "A moonlit reflection pool representing intuition and reflective interpretation", "center", true
+  ),
+
+  "choose-your-next-path-entrance": lessonReviewImage(
+    "/assets/images/background%20_images/history-continue-journey-banner.webp", 1916, 821,
+    "Tarot cards, books, and a luminous path leading toward continued study", "72% center"
+  ),
+  "choose-your-next-path-chamber-1": lessonReviewImage(
+    "/assets/images/background%20_images/history-faq-celestial-emblem.webp", 1254, 1254,
+    "An open study book, tarot deck, and celestial emblem summarizing a learned foundation"
+  ),
+  "choose-your-next-path-chamber-2": lessonReviewImage(
+    "/assets/images/background%20_images/%20%20major_arcana_journey_banner.png", 1774, 887,
+    "A traveler choosing a luminous path through a celestial tarot landscape"
+  ),
+  "choose-your-next-path-chamber-3": lessonReviewImage(
+    "/assets/images/lumen_archive_rooms/dawn_atium.png", 1672, 941,
+    "A luminous archive doorway opening toward the next area of study", "center", true
+  )
+});
+
 function selectBlockItems(block, indexes) {
   if (!block || !Array.isArray(block.items)) return { type: "empty", items: [] };
   return { ...block, items: indexes.map((index) => block.items[index]).filter(Boolean) };
 }
 
+function createAssignedVisual(slot, ratio) {
+  const assignment = beginnerLessonImageAssignments[slot];
+  if (!assignment) throw new Error(`Missing temporary lesson image assignment: ${slot}`);
+  return { slot, ratio, ...assignment };
+}
+
 function createVisualSlot(chapter, chamberIndex, title, ratio = "16 / 9") {
-  return {
-    slot: `${chapter.id}-chamber-${chamberIndex + 1}`,
-    alt: `Celestial study diagram for ${title}`,
-    ratio
-  };
+  return createAssignedVisual(`${chapter.id}-chamber-${chamberIndex + 1}`, ratio);
 }
 
 function createGuidedLesson(chapter, configuration) {
@@ -666,11 +850,7 @@ function createGuidedLesson(chapter, configuration) {
     title: configuration.title || chapter.title,
     introContinuation: configuration.introContinuation,
     outcomes: configuration.outcomes,
-    headerVisual: {
-      slot: `${chapter.id}-entrance`,
-      alt: `Celestial threshold for ${chapter.navLabel}`,
-      ratio: "16 / 7"
-    },
+    headerVisual: createAssignedVisual(`${chapter.id}-entrance`, "16 / 7"),
     chambers: configuration.chambers.map((chamber, index) => ({
       id: `${chapter.id}-chamber-${index + 1}`,
       numeral: chamberNumerals[index],

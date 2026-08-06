@@ -43,11 +43,13 @@
     reader: root.querySelector('[data-beginner-panel="reader"]')
   };
   const welcome = root.querySelector("[data-beginner-welcome]");
+  const quietTruthComponents = Array.from(root.querySelectorAll("[data-quiet-truths]"));
   const door = root.querySelector("[data-beginner-door]");
   const reader = root.querySelector("[data-beginner-reader]");
   const liveRegion = root.querySelector("[data-beginner-live-region]");
   const chapterNavigatorCount = root.querySelector("[data-chapter-navigator-count]");
   const chapterNavigatorTitle = root.querySelector("[data-chapter-navigator-title]");
+  const chapterWelcomeLink = root.querySelector('.tarot-beginners-chapter-navigator [data-beginner-view-link="welcome"]');
   const chapterMenu = root.querySelector("[data-chapter-menu]");
   const openMenuButton = root.querySelector("[data-open-chapter-menu]");
   const closeMenuButton = root.querySelector("[data-close-chapter-menu]");
@@ -105,6 +107,7 @@
       chapterId,
       chamberById,
       chamberIds: [...chamberById.keys()],
+      progress: article.querySelector("[data-chamber-progress]"),
       liveRegion: article.querySelector("[data-chamber-progress-status]"),
       completionStatus: article.querySelector("[data-lesson-completion-status]")
     };
@@ -112,6 +115,7 @@
       && article.dataset.beginnerChapter === chapterId
       && articleById.get(chapterId) === article
       && !academyContextByChapterId.has(chapterId)
+      && context.progress
       && context.liveRegion
       && context.completionStatus
       && chamberSections.length === 3
@@ -164,6 +168,7 @@
     locationFrame: 0,
     indexScrollFrame: 0,
     indexLayoutFrame: 0,
+    chamberRailFrame: 0,
     indexReturn: null,
     indexOpener: null,
     chamberStateByChapterId: new Map([...academyContextByChapterId].map(([chapterId, context]) => [chapterId, {
@@ -172,6 +177,92 @@
     }])),
     menuOpener: null
   };
+
+  function initializeQuietTruths() {
+    if (!quietTruthComponents.length) return;
+
+    let activeIndex = 0;
+
+    function setActiveTruth(index, { focusWithin = null } = {}) {
+      const componentLength = quietTruthComponents[0]?.querySelectorAll("[data-quiet-truth-panel]").length || 0;
+      if (!Number.isInteger(index) || index < 0 || index >= componentLength) return;
+      activeIndex = index;
+
+      quietTruthComponents.forEach((component) => {
+        component.dataset.activeIndex = String(activeIndex);
+        component.querySelectorAll("[data-quiet-truth-panel]").forEach((panel, panelIndex) => {
+          const active = panelIndex === activeIndex;
+          panel.classList.toggle("is-active", active);
+          panel.setAttribute("aria-hidden", String(!active));
+          panel.inert = !active;
+        });
+        component.querySelectorAll("[data-quiet-truth-control]").forEach((control, controlIndex) => {
+          const active = controlIndex === activeIndex;
+          control.setAttribute("aria-selected", String(active));
+          control.tabIndex = active ? 0 : -1;
+        });
+      });
+
+      focusWithin?.querySelector(`[data-quiet-truth-control="${activeIndex}"]`)?.focus({ preventScroll: true });
+    }
+
+    quietTruthComponents.forEach((component) => {
+      const controls = Array.from(component.querySelectorAll("[data-quiet-truth-control]"));
+      const swipeSurface = component.querySelector("[data-quiet-truth-swipe-surface]");
+      let touchStart = null;
+
+      component.addEventListener("click", (event) => {
+        const control = event.target instanceof Element
+          ? event.target.closest("[data-quiet-truth-control]")
+          : null;
+        if (!control || !component.contains(control)) return;
+        setActiveTruth(Number(control.dataset.quietTruthControl));
+      });
+
+      component.addEventListener("keydown", (event) => {
+        const control = event.target instanceof Element
+          ? event.target.closest("[data-quiet-truth-control]")
+          : null;
+        if (!control || !component.contains(control)) return;
+        const currentIndex = Number(control.dataset.quietTruthControl);
+        const keyTargets = {
+          ArrowLeft: (currentIndex - 1 + controls.length) % controls.length,
+          ArrowRight: (currentIndex + 1) % controls.length,
+          Home: 0,
+          End: controls.length - 1
+        };
+        if (!(event.key in keyTargets)) return;
+        event.preventDefault();
+        setActiveTruth(keyTargets[event.key], { focusWithin: component });
+      });
+
+      swipeSurface?.addEventListener("touchstart", (event) => {
+        if (event.touches.length !== 1) {
+          touchStart = null;
+          return;
+        }
+        touchStart = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+      }, { passive: true });
+
+      swipeSurface?.addEventListener("touchend", (event) => {
+        if (!touchStart || event.changedTouches.length !== 1) return;
+        const deltaX = event.changedTouches[0].clientX - touchStart.x;
+        const deltaY = event.changedTouches[0].clientY - touchStart.y;
+        touchStart = null;
+        if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.2) return;
+        const nextIndex = deltaX < 0
+          ? Math.min(activeIndex + 1, controls.length - 1)
+          : Math.max(activeIndex - 1, 0);
+        setActiveTruth(nextIndex);
+      }, { passive: true });
+
+      swipeSurface?.addEventListener("touchcancel", () => {
+        touchStart = null;
+      }, { passive: true });
+    });
+
+    setActiveTruth(0);
+  }
 
   function sanitizeProgress(value) {
     const source = value && typeof value === "object" ? value : {};
@@ -232,6 +323,8 @@
     root.classList.toggle("is-chapter-lesson-view", isChapterView);
     document.body.classList.toggle("tarot-beginners-index-mode", isIndexView);
     document.body.classList.toggle("tarot-beginners-lesson-mode", isChapterView);
+    if (isLandingView) chapterWelcomeLink?.setAttribute("aria-current", "page");
+    else chapterWelcomeLink?.removeAttribute("aria-current");
     if (!isChapterView) {
       chamberObserver?.disconnect();
       chamberObserver = null;
@@ -247,6 +340,25 @@
     return context ? state.chamberStateByChapterId.get(context.chapterId) || null : null;
   }
 
+  function updateChamberRailStickyState() {
+    state.chamberRailFrame = 0;
+    const activeContext = state.view === "chapter" ? academyContextForChapter() : null;
+    academyContextByChapterId.forEach((context) => {
+      const rail = context.progress;
+      if (!rail) return;
+      const stickyTop = Number.parseFloat(window.getComputedStyle(rail).top) || 0;
+      const isStuck = context === activeContext
+        && !context.article.hidden
+        && rail.getBoundingClientRect().top <= stickyTop + 1;
+      rail.classList.toggle("is-stuck", isStuck);
+    });
+  }
+
+  function scheduleChamberRailStickyState() {
+    if (state.chamberRailFrame) return;
+    state.chamberRailFrame = window.requestAnimationFrame(updateChamberRailStickyState);
+  }
+
   function setChapterVisibility(view = state.view) {
     articleById.forEach((article, id) => {
       const isAvailable = view === "chapter" && id === state.activeId;
@@ -256,6 +368,7 @@
     });
     const academyActive = view === "chapter" && academyContextByChapterId.has(state.activeId);
     root.classList.toggle("is-academy-lesson-active", academyActive);
+    scheduleChamberRailStickyState();
   }
 
   function recommendedChapterId() {
@@ -318,10 +431,15 @@
       const label = control.querySelector("[data-beginner-complete-label]");
       const icon = control.querySelector('[aria-hidden="true"]');
       const isLessonControl = Boolean(control.closest("[data-academy-lesson]"));
+      const isIndexControl = control.classList.contains("tarot-beginners-index-card__complete");
       if (label) label.textContent = isLessonControl
         ? completed ? "Mark Chapter Incomplete" : "Mark Chapter Complete"
-        : completed ? "Mark as Incomplete" : "Mark as Complete";
-      if (icon) icon.textContent = completed ? "✓" : "✧";
+        : completed ? "Completed" : "Mark as Complete";
+      if (isIndexControl) {
+        control.setAttribute("aria-label", completed ? "Mark this chapter as incomplete." : "Mark this chapter as complete.");
+      } else if (icon) {
+        icon.textContent = completed ? "✓" : "✧";
+      }
     });
 
     indexProgressBars.forEach((progress) => {
@@ -451,7 +569,10 @@
 
     chamberObserver = new IntersectionObserver(() => {
       if (state.view !== "chapter" || state.activeId !== context.chapterId || state.transitioning) return;
-      const targetY = window.innerWidth <= 820 ? 156 : 184;
+      const progressRect = context.progress?.getBoundingClientRect();
+      const stickyTop = context.progress ? Number.parseFloat(window.getComputedStyle(context.progress).top) || 0 : 0;
+      const railsAreStacked = progressRect && progressRect.top <= stickyTop + 1;
+      const targetY = railsAreStacked ? Math.ceil(progressRect.bottom + 12) : window.innerWidth <= 820 ? 156 : 184;
       const visible = [...context.chamberById.values()]
         .map((chamber) => ({ chamber, rect: chamber.section.getBoundingClientRect() }))
         .filter(({ rect }) => rect.bottom > targetY && rect.top < window.innerHeight * .72)
@@ -528,6 +649,31 @@
     }
     saveProgress();
     updateNavigationStates();
+    if (!completed && !reducedMotionQuery.matches) {
+      completeControls
+        .filter((control) => control.dataset.beginnerCompleteChapter === id && control.classList.contains("tarot-beginners-index-card__complete"))
+        .forEach((control) => {
+          const icon = control.querySelector(".tarot-beginners-index-card__complete-icon");
+          const label = control.querySelector("[data-beginner-complete-label]");
+          const style = window.getComputedStyle(control);
+          const baseShadow = style.boxShadow;
+          const glow = style.getPropertyValue("--chapter-complete-confirm-glow").trim();
+          control.animate([
+            { boxShadow: baseShadow },
+            { boxShadow: `0 0 0 3px ${glow}, ${baseShadow}`, offset: .48 },
+            { boxShadow: baseShadow }
+          ], { duration: 420, easing: "ease-out" });
+          icon?.animate([
+            { opacity: .55, transform: "scale(.82)" },
+            { opacity: 1, transform: "scale(1.08)", offset: .58 },
+            { opacity: 1, transform: "scale(1)" }
+          ], { duration: 340, easing: "cubic-bezier(.2,.75,.3,1)" });
+          label?.animate([
+            { opacity: 0, transform: "translateY(3px)" },
+            { opacity: 1, transform: "translateY(0)" }
+          ], { duration: 240, easing: "ease-out" });
+        });
+    }
     announce(`${chapterById.get(id).navLabel} ${completed ? "marked incomplete" : "marked complete"}.`);
     if (indexLive) indexLive.textContent = `${chapterById.get(id).navLabel} ${completed ? "marked incomplete" : "marked complete"}.`;
   }
@@ -554,7 +700,10 @@
 
   function updateWelcomeResume() {
     const hasProgress = state.visited.size > 0;
-    const activeChapter = chapterById.get(state.activeId) || chapterById.get(chapterIds[0]);
+    const initialChapter = chapterById.get(chapterIds[1]) || chapterById.get(chapterIds[0]);
+    const activeChapter = hasProgress
+      ? chapterById.get(state.activeId) || initialChapter
+      : initialChapter;
 
     root.querySelectorAll("[data-welcome-primary]").forEach((link) => {
       const label = link.querySelector("[data-welcome-primary-label]");
@@ -563,7 +712,7 @@
       link.dataset.beginnerChapterLink = activeChapter.id;
       if (!label) return;
       if (!hasProgress) {
-        label.textContent = "Continue with Chapter 01";
+        label.textContent = "Continue with Chapter 02";
       } else {
         label.textContent = isBlood
           ? "Return to the Lesson You Abandoned"
@@ -958,6 +1107,36 @@
     announce(`Chapter index opened at Chapter ${chapterById.get(selectedId).number}, ${chapterById.get(selectedId).navLabel}.`);
   }
 
+  async function transitionToChapterIndex({ opener = null } = {}) {
+    if (state.transitioning) return;
+    const visibleCopy = welcome.querySelector('[data-beginner-welcome-copy]:not([aria-hidden="true"])');
+    const canAnimate = !reducedMotionQuery.matches && typeof visibleCopy?.animate === "function";
+    if (!canAnimate) {
+      enterChapterIndex({ opener });
+      return;
+    }
+
+    setTransitionBusy(true);
+    const animation = visibleCopy.animate([
+      { opacity: 1, transform: "translateY(0)" },
+      { opacity: .18, transform: "translateY(-7px)" }
+    ], {
+      duration: 180,
+      easing: "ease-out",
+      fill: "forwards"
+    });
+
+    await animation.finished.catch(() => undefined);
+    const locationChanged = state.pendingLocationSync;
+    setTransitionBusy(false);
+    if (!locationChanged) enterChapterIndex({ opener });
+    animation.cancel();
+    if (locationChanged) {
+      state.pendingLocationSync = false;
+      scheduleLocationSync();
+    }
+  }
+
   function exitChapterIndex() {
     const entry = window.history.state?.tarotBeginner;
     if (entry?.view === "index" && entry.enteredFromPage) {
@@ -1123,6 +1302,7 @@
     if (!chapterMenu) return;
     if (typeof chapterMenu.close === "function" && chapterMenu.open) chapterMenu.close();
     else chapterMenu.removeAttribute("open");
+    openMenuButton?.setAttribute("aria-expanded", "false");
     if (restoreFocus) state.menuOpener?.focus({ preventScroll: true });
   }
 
@@ -1131,6 +1311,7 @@
     state.menuOpener = document.activeElement instanceof HTMLElement ? document.activeElement : openMenuButton;
     if (typeof chapterMenu.showModal === "function") chapterMenu.showModal();
     else chapterMenu.setAttribute("open", "");
+    openMenuButton?.setAttribute("aria-expanded", "true");
     closeMenuButton?.focus({ preventScroll: true });
   }
 
@@ -1153,6 +1334,9 @@
     const focusedAction = outgoing?.contains(document.activeElement)
       ? document.activeElement.closest("[data-welcome-primary], [data-beginner-index-link]")
       : null;
+    const focusedTruth = outgoing?.contains(document.activeElement)
+      ? document.activeElement.closest("[data-quiet-truth-control]")
+      : null;
     const focusSelector = focusedAction?.hasAttribute("data-welcome-primary")
       ? "[data-welcome-primary]"
       : focusedAction?.hasAttribute("data-beginner-index-link")
@@ -1167,7 +1351,10 @@
       copy.inert = !active;
     });
 
-    if (focusSelector) {
+    if (focusedTruth) {
+      const truthIndex = focusedTruth.dataset.quietTruthControl;
+      window.requestAnimationFrame(() => incoming?.querySelector(`[data-quiet-truth-control="${truthIndex}"]`)?.focus({ preventScroll: true }));
+    } else if (focusSelector) {
       window.requestAnimationFrame(() => incoming?.querySelector(focusSelector)?.focus({ preventScroll: true }));
     }
   }
@@ -1239,7 +1426,7 @@
 
     if (target.closest("[data-beginner-index-link]")) {
       event.preventDefault();
-      enterChapterIndex({ opener: target.closest("[data-beginner-index-link]") });
+      transitionToChapterIndex({ opener: target.closest("[data-beginner-index-link]") });
       return;
     }
 
@@ -1354,6 +1541,7 @@
     });
     [educationNavigation, hero, faq, closing, footer].forEach((element) => setElementAvailability(element, true));
     academyContextByChapterId.forEach((context) => {
+      context.progress?.classList.remove("is-stuck");
       context.article.classList.remove("is-chambers-ready");
       context.chamberById.forEach((chamber) => {
         chamber.section.classList.remove("is-active", "is-completed");
@@ -1361,6 +1549,8 @@
     });
     chamberObserver?.disconnect();
     chamberObserver = null;
+    window.cancelAnimationFrame(state.chamberRailFrame);
+    state.chamberRailFrame = 0;
     door.classList.remove("is-active");
   }
 
@@ -1372,6 +1562,7 @@
     state.indexSelectedId = recommendedChapterId();
     state.preferredView = progress.viewMode;
     initializeAcademyLessons();
+    initializeQuietTruths();
 
     document.documentElement.classList.add("js-enabled");
     experience.classList.add("is-enhanced");
@@ -1379,6 +1570,8 @@
     indexViewport.addEventListener("scroll", syncIndexFromScroll, { passive: true });
     mobileIndexQuery.addEventListener?.("change", syncIndexLayout);
     window.addEventListener("resize", syncIndexLayout, { passive: true });
+    window.addEventListener("resize", scheduleChamberRailStickyState, { passive: true });
+    window.addEventListener("scroll", scheduleChamberRailStickyState, { passive: true });
     window.addEventListener("popstate", scheduleLocationSync);
     window.addEventListener("hashchange", scheduleLocationSync);
     window.addEventListener("astralVeilBloodMoonChange", syncWelcomeTheme);
@@ -1390,6 +1583,9 @@
 
     chapterMenu?.addEventListener("cancel", () => {
       state.menuOpener?.focus({ preventScroll: true });
+    });
+    chapterMenu?.addEventListener("close", () => {
+      openMenuButton?.setAttribute("aria-expanded", "false");
     });
     chapterMenu?.addEventListener("click", (event) => {
       if (event.target === chapterMenu) closeChapterMenu();

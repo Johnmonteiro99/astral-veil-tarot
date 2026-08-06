@@ -40,6 +40,23 @@
   --beginner-index-card-edge: rgba(213, 179, 110, .38);
   --guided-nav-bg: rgba(4, 17, 16, .94);
   --guided-nav-border: rgba(213, 179, 110, .25);
+  --guided-nav-glass: rgba(3, 15, 15, .84);
+  --guided-nav-highlight: rgba(249, 224, 175, .13);
+  --guided-nav-separator: rgba(213, 179, 110, .2);
+  --guided-nav-sweep: rgba(240, 212, 154, .2);
+  --guided-nav-bloom: rgba(213, 179, 110, .09);
+  --guided-nav-shadow: 0 18px 42px rgba(0, 6, 8, .42);
+  --guided-chapter-rail-top: 12px;
+  --guided-chapter-rail-height: 72px;
+  --guided-rail-stack-gap: 8px;
+  --guided-chamber-rail-height: 60px;
+  --guided-chamber-rail-top: calc(var(--guided-chapter-rail-top) + var(--guided-chapter-rail-height) + var(--guided-rail-stack-gap));
+  --guided-chamber-scroll-offset: calc(var(--guided-chamber-rail-top) + var(--guided-chamber-rail-height) + 12px);
+  --guided-chamber-rail-glass: rgba(4, 18, 17, .86);
+  --guided-chamber-active-color: #ffd978;
+  --guided-chamber-active-tint: rgba(201, 143, 34, .16);
+  --guided-chamber-active-glow: rgba(244, 187, 62, .44);
+  --guided-chamber-hover-tint: rgba(213, 179, 110, .075);
   --guided-path-line: rgba(213, 179, 110, .32);
   --guided-chamber-active: rgba(213, 179, 110, .13);
   --guided-chamber-complete: rgba(213, 179, 110, .08);
@@ -92,6 +109,17 @@
   --beginner-index-card-edge: rgba(188, 157, 255, .38);
   --guided-nav-bg: rgba(7, 4, 18, .95);
   --guided-nav-border: rgba(179, 154, 233, .28);
+  --guided-nav-glass: rgba(7, 4, 19, .86);
+  --guided-nav-highlight: rgba(218, 204, 255, .12);
+  --guided-nav-separator: rgba(179, 154, 233, .2);
+  --guided-nav-sweep: rgba(202, 181, 255, .2);
+  --guided-nav-bloom: rgba(137, 104, 207, .11);
+  --guided-nav-shadow: 0 18px 42px rgba(2, 0, 12, .48);
+  --guided-chamber-rail-glass: rgba(8, 5, 22, .88);
+  --guided-chamber-active-color: #d8b9ff;
+  --guided-chamber-active-tint: rgba(123, 69, 208, .2);
+  --guided-chamber-active-glow: rgba(159, 96, 255, .5);
+  --guided-chamber-hover-tint: rgba(179, 154, 233, .08);
   --guided-path-line: rgba(179, 154, 233, .34);
   --guided-chamber-active: rgba(137, 104, 207, .14);
   --guided-chamber-complete: rgba(137, 104, 207, .08);
@@ -128,6 +156,17 @@
   --beginner-index-card-edge: rgba(255, 145, 162, .38);
   --guided-nav-bg: rgba(18, 1, 6, .96);
   --guided-nav-border: rgba(220, 90, 109, .3);
+  --guided-nav-glass: rgba(19, 1, 6, .88);
+  --guided-nav-highlight: rgba(255, 178, 188, .1);
+  --guided-nav-separator: rgba(220, 90, 109, .21);
+  --guided-nav-sweep: rgba(235, 104, 123, .18);
+  --guided-nav-bloom: rgba(179, 37, 61, .11);
+  --guided-nav-shadow: 0 18px 42px rgba(12, 0, 3, .54);
+  --guided-chamber-rail-glass: rgba(21, 1, 7, .9);
+  --guided-chamber-active-color: #ff7186;
+  --guided-chamber-active-tint: rgba(161, 23, 48, .21);
+  --guided-chamber-active-glow: rgba(232, 48, 78, .48);
+  --guided-chamber-hover-tint: rgba(220, 90, 109, .08);
   --guided-path-line: rgba(220, 90, 109, .36);
   --guided-chamber-active: rgba(179, 37, 61, .14);
   --guided-chamber-complete: rgba(179, 37, 61, .08);
@@ -164,6 +203,17 @@
   --beginner-index-card-edge: rgba(155, 229, 255, .38);
   --guided-nav-bg: rgba(2, 10, 19, .96);
   --guided-nav-border: rgba(112, 212, 246, .28);
+  --guided-nav-glass: rgba(2, 10, 20, .88);
+  --guided-nav-highlight: rgba(190, 238, 255, .11);
+  --guided-nav-separator: rgba(112, 212, 246, .2);
+  --guided-nav-sweep: rgba(133, 220, 250, .19);
+  --guided-nav-bloom: rgba(57, 155, 218, .11);
+  --guided-nav-shadow: 0 18px 42px rgba(0, 5, 13, .52);
+  --guided-chamber-rail-glass: rgba(2, 12, 23, .9);
+  --guided-chamber-active-color: #9ce9ff;
+  --guided-chamber-active-tint: rgba(42, 139, 196, .19);
+  --guided-chamber-active-glow: rgba(74, 194, 244, .48);
+  --guided-chamber-hover-tint: rgba(112, 212, 246, .08);
   --guided-path-line: rgba(112, 212, 246, .34);
   --guided-chamber-active: rgba(57, 155, 218, .14);
   --guided-chamber-complete: rgba(57, 155, 218, .08);
@@ -489,6 +539,16 @@ body.tarot-beginners-index-mode .tarot-background {
   --chapter-active-glow: rgba(215, 184, 102, .56);
   --chapter-active-glow-soft: rgba(111, 156, 118, .22);
   --chapter-active-wash: rgba(164, 137, 73, .11);
+  --chapter-complete-bg: linear-gradient(135deg, rgba(15, 58, 53, .97), rgba(21, 82, 73, .97));
+  --chapter-complete-bg-hover: linear-gradient(135deg, rgba(18, 69, 62, .98), rgba(27, 96, 86, .98));
+  --chapter-complete-bg-completed: linear-gradient(135deg, rgba(20, 74, 66, .98), rgba(31, 101, 90, .98));
+  --chapter-complete-border: rgba(105, 188, 174, .7);
+  --chapter-complete-border-hover: rgba(154, 219, 207, .94);
+  --chapter-complete-text: #effcf8;
+  --chapter-complete-shadow: rgba(2, 25, 23, .62);
+  --chapter-complete-icon-fill: #91d8cc;
+  --chapter-complete-icon-ink: #0b3b35;
+  --chapter-complete-confirm-glow: rgba(105, 188, 174, .34);
   min-height: 100svh;
   padding: clamp(88px, 8vw, 112px) 0 clamp(28px, 4vw, 52px);
 }
@@ -503,6 +563,16 @@ body.tarot-beginners-index-mode .tarot-background {
   --chapter-active-glow: rgba(177, 135, 255, .62);
   --chapter-active-glow-soft: rgba(147, 102, 226, .28);
   --chapter-active-wash: rgba(120, 82, 184, .13);
+  --chapter-complete-bg: linear-gradient(135deg, rgba(28, 17, 53, .97), rgba(46, 27, 77, .97));
+  --chapter-complete-bg-hover: linear-gradient(135deg, rgba(36, 22, 66, .98), rgba(58, 34, 94, .98));
+  --chapter-complete-bg-completed: linear-gradient(135deg, rgba(42, 26, 72, .98), rgba(65, 41, 101, .98));
+  --chapter-complete-border: rgba(179, 154, 233, .72);
+  --chapter-complete-border-hover: rgba(220, 205, 255, .94);
+  --chapter-complete-text: #f7f2ff;
+  --chapter-complete-shadow: rgba(5, 1, 17, .66);
+  --chapter-complete-icon-fill: #cbb6f7;
+  --chapter-complete-icon-ink: #281640;
+  --chapter-complete-confirm-glow: rgba(163, 126, 236, .36);
 }
 
 .tarot-beginners-page.blood-moon-mode .tarot-beginners-index {
@@ -515,6 +585,16 @@ body.tarot-beginners-index-mode .tarot-background {
   --chapter-active-glow: rgba(214, 54, 70, .62);
   --chapter-active-glow-soft: rgba(142, 22, 39, .3);
   --chapter-active-wash: rgba(138, 24, 42, .14);
+  --chapter-complete-bg: linear-gradient(135deg, rgba(57, 7, 18, .97), rgba(82, 12, 28, .97));
+  --chapter-complete-bg-hover: linear-gradient(135deg, rgba(70, 10, 23, .98), rgba(100, 17, 36, .98));
+  --chapter-complete-bg-completed: linear-gradient(135deg, rgba(76, 13, 27, .98), rgba(108, 24, 43, .98));
+  --chapter-complete-border: rgba(220, 90, 109, .72);
+  --chapter-complete-border-hover: rgba(255, 154, 170, .92);
+  --chapter-complete-text: #fff2f4;
+  --chapter-complete-shadow: rgba(20, 0, 5, .7);
+  --chapter-complete-icon-fill: #ed8294;
+  --chapter-complete-icon-ink: #4a0c18;
+  --chapter-complete-confirm-glow: rgba(211, 48, 76, .36);
 }
 
 .tarot-beginners-page.blue-moon-mode .tarot-beginners-index {
@@ -527,6 +607,16 @@ body.tarot-beginners-index-mode .tarot-background {
   --chapter-active-glow: rgba(78, 162, 222, .58);
   --chapter-active-glow-soft: rgba(47, 105, 166, .28);
   --chapter-active-wash: rgba(58, 111, 170, .13);
+  --chapter-complete-bg: linear-gradient(135deg, rgba(4, 43, 65, .97), rgba(7, 67, 94, .97));
+  --chapter-complete-bg-hover: linear-gradient(135deg, rgba(5, 53, 78, .98), rgba(10, 82, 113, .98));
+  --chapter-complete-bg-completed: linear-gradient(135deg, rgba(8, 61, 87, .98), rgba(15, 91, 122, .98));
+  --chapter-complete-border: rgba(112, 212, 246, .72);
+  --chapter-complete-border-hover: rgba(168, 231, 255, .94);
+  --chapter-complete-text: #effbff;
+  --chapter-complete-shadow: rgba(0, 12, 24, .7);
+  --chapter-complete-icon-fill: #9ee5fb;
+  --chapter-complete-icon-ink: #073348;
+  --chapter-complete-confirm-glow: rgba(57, 155, 218, .36);
 }
 
 .tarot-beginners-index__shell {
@@ -962,27 +1052,101 @@ body.tarot-beginners-index-mode .tarot-background {
 }
 
 .tarot-beginners-index-card__complete {
+  position: relative;
+  z-index: 2;
   display: inline-flex;
-  min-height: 38px;
+  width: min(100%, 15.5rem);
+  min-height: 44px;
   align-items: center;
   justify-content: center;
-  gap: .65rem;
+  gap: .7rem;
   justify-self: center;
-  border: 0;
-  padding: .4rem .7rem;
-  color: var(--beginner-muted);
-  background: transparent;
+  overflow: hidden;
+  border: 1px solid var(--chapter-complete-border);
+  border-radius: 999px;
+  padding: .7rem 1.15rem;
+  color: var(--chapter-complete-text);
+  background: var(--chapter-complete-bg);
+  box-shadow:
+    0 9px 22px var(--chapter-complete-shadow),
+    inset 0 1px rgba(255, 255, 255, .14),
+    inset 0 0 0 1px color-mix(in srgb, var(--chapter-complete-border) 18%, transparent);
+  backdrop-filter: blur(8px) saturate(108%);
+  -webkit-backdrop-filter: blur(8px) saturate(108%);
   cursor: pointer;
-  font: 500 .82rem/1.3 var(--body-font, "DM Sans", sans-serif);
+  font: 700 .62rem/1.2 var(--logo-font, Cinzel, serif);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 200ms ease, border-color 200ms ease, background 200ms ease, box-shadow 220ms ease, transform 180ms ease;
 }
 
-.tarot-beginners-index-card__complete:is(:hover, :focus-visible),
+.tarot-beginners-index-card__complete:is(:hover, :focus-visible) {
+  border-color: var(--chapter-complete-border-hover);
+  color: var(--chapter-complete-text);
+  background: var(--chapter-complete-bg-hover);
+  box-shadow:
+    0 12px 27px var(--chapter-complete-shadow),
+    0 0 19px color-mix(in srgb, var(--chapter-complete-confirm-glow) 72%, transparent),
+    inset 0 1px rgba(255, 255, 255, .18);
+  transform: translateY(-2px);
+}
+
+.tarot-beginners-index-card__complete:focus-visible {
+  border-radius: 999px;
+  outline: 2px solid var(--chapter-complete-border-hover);
+  outline-offset: 3px;
+}
+
+.tarot-beginners-index-card__complete:active {
+  box-shadow: 0 5px 14px var(--chapter-complete-shadow), inset 0 1px rgba(255, 255, 255, .1);
+  transform: translateY(0);
+}
+
 .tarot-beginners-index-card__complete.is-completed {
-  color: var(--beginner-accent-strong);
+  border-color: var(--chapter-complete-border-hover);
+  color: var(--chapter-complete-text);
+  background: var(--chapter-complete-bg-completed);
+  box-shadow:
+    0 8px 19px color-mix(in srgb, var(--chapter-complete-shadow) 86%, transparent),
+    inset 0 1px rgba(255, 255, 255, .16);
 }
 
-.tarot-beginners-index-card__complete > span:first-child {
-  font-size: 1rem;
+.tarot-beginners-index-card__complete-icon {
+  position: relative;
+  display: block;
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: currentColor;
+  transition: color 200ms ease, background 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.tarot-beginners-index-card__complete-icon::before {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  content: "";
+  -webkit-mask: url("/assets/icons/symbols/check-circle.svg") center / contain no-repeat;
+  mask: url("/assets/icons/symbols/check-circle.svg") center / contain no-repeat;
+}
+
+.tarot-beginners-index-card__complete:not(.is-completed):is(:hover, :focus-visible) .tarot-beginners-index-card__complete-icon {
+  background: color-mix(in srgb, var(--chapter-complete-icon-fill) 22%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--chapter-complete-confirm-glow) 72%, transparent);
+}
+
+.tarot-beginners-index-card__complete.is-completed .tarot-beginners-index-card__complete-icon {
+  color: var(--chapter-complete-icon-ink);
+  background: var(--chapter-complete-icon-fill);
+  box-shadow: 0 0 11px color-mix(in srgb, var(--chapter-complete-confirm-glow) 82%, transparent), inset 0 1px rgba(255, 255, 255, .22);
+}
+
+.tarot-beginners-index-card__complete [data-beginner-complete-label] {
+  display: inline-block;
+  min-width: 11.4rem;
+  text-align: center;
 }
 
 .tarot-beginners-index-footer {
@@ -1204,11 +1368,16 @@ body.tarot-beginners-index-mode .tarot-background {
 /* Welcome Threshold */
 .tarot-beginners-welcome {
   --beginner-welcome-guide-image: var(--beginner-welcome-guide-image-regular);
-  --beginner-welcome-card-bg: var(--beginner-panel-bg);
-  --beginner-welcome-card-border: var(--beginner-panel-border);
-  --beginner-welcome-card-border-hover: var(--beginner-panel-border-hover);
-  --beginner-welcome-card-highlight: var(--beginner-panel-highlight);
-  --beginner-welcome-card-shadow: color-mix(in srgb, var(--beginner-shadow) 78%, transparent);
+  --beginner-truth-accent: #69bcae;
+  --beginner-truth-accent-strong: #9adbcf;
+  --beginner-truth-glow: rgba(72, 174, 158, .2);
+  --beginner-welcome-action-fill: linear-gradient(135deg, #164e48 0%, #23756b 52%, #2e8b7e 100%);
+  --beginner-welcome-action-fill-hover: linear-gradient(135deg, #1a5b53 0%, #298278 52%, #35998b 100%);
+  --beginner-welcome-action-border: rgba(135, 222, 207, .68);
+  --beginner-welcome-action-border-hover: rgba(180, 242, 231, .92);
+  --beginner-welcome-action-text: #f5fffc;
+  --beginner-welcome-action-glow: rgba(57, 173, 156, .25);
+  --beginner-welcome-action-sweep: #b8f4e9;
   --beginner-welcome-mobile-image-height: clamp(24rem, 108vw, 28rem);
   position: relative;
   display: grid;
@@ -1224,6 +1393,42 @@ body.tarot-beginners-index-mode .tarot-background {
 
 .tarot-beginners-page.blood-moon-mode .tarot-beginners-welcome {
   --beginner-welcome-guide-image: var(--beginner-welcome-guide-image-blood);
+  --beginner-truth-accent: #dc5a6d;
+  --beginner-truth-accent-strong: #ff9aaa;
+  --beginner-truth-glow: rgba(211, 48, 76, .22);
+  --beginner-welcome-action-fill: linear-gradient(135deg, #430711 0%, #681020 52%, #861b31 100%);
+  --beginner-welcome-action-fill-hover: linear-gradient(135deg, #510916 0%, #781529 52%, #982039 100%);
+  --beginner-welcome-action-border: rgba(240, 100, 124, .72);
+  --beginner-welcome-action-border-hover: rgba(255, 153, 171, .94);
+  --beginner-welcome-action-text: #fff4f6;
+  --beginner-welcome-action-glow: rgba(211, 48, 76, .28);
+  --beginner-welcome-action-sweep: #ffacb9;
+}
+
+.tarot-beginners-page.moon-mode .tarot-beginners-welcome {
+  --beginner-truth-accent: #b39ae9;
+  --beginner-truth-accent-strong: #dccdff;
+  --beginner-truth-glow: rgba(163, 126, 236, .2);
+  --beginner-welcome-action-fill: linear-gradient(135deg, #24143f 0%, #321a50 52%, #432667 100%);
+  --beginner-welcome-action-fill-hover: linear-gradient(135deg, #2c194a 0%, #3b205d 52%, #4d2c75 100%);
+  --beginner-welcome-action-border: rgba(188, 157, 255, .62);
+  --beginner-welcome-action-border-hover: rgba(220, 204, 255, .9);
+  --beginner-welcome-action-text: #fbf8ff;
+  --beginner-welcome-action-glow: rgba(148, 105, 224, .28);
+  --beginner-welcome-action-sweep: #ddceff;
+}
+
+.tarot-beginners-page.blue-moon-mode .tarot-beginners-welcome {
+  --beginner-truth-accent: #70d4f6;
+  --beginner-truth-accent-strong: #a8e7ff;
+  --beginner-truth-glow: rgba(57, 155, 218, .2);
+  --beginner-welcome-action-fill: linear-gradient(135deg, #07304a 0%, #0b4d6c 52%, #126989 100%);
+  --beginner-welcome-action-fill-hover: linear-gradient(135deg, #093a58 0%, #0e5b7d 52%, #18799b 100%);
+  --beginner-welcome-action-border: rgba(112, 212, 246, .66);
+  --beginner-welcome-action-border-hover: rgba(168, 231, 255, .92);
+  --beginner-welcome-action-text: #f1fbff;
+  --beginner-welcome-action-glow: rgba(57, 155, 218, .26);
+  --beginner-welcome-action-sweep: #bceeff;
 }
 
 .tarot-beginners-welcome::before {
@@ -1339,132 +1544,241 @@ body.tarot-beginners-index-mode .tarot-background {
   text-wrap: pretty;
 }
 
-.tarot-beginners-welcome__truths {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(.65rem, 1vw, .85rem);
-  margin: clamp(1.2rem, 2vw, 1.55rem) 0;
-  padding: 0;
-  list-style: none;
+.tarot-beginners-quiet-truths {
+  width: min(100%, 39rem);
+  margin: clamp(1.2rem, 2vw, 1.55rem) 0 clamp(1.25rem, 2vw, 1.6rem);
 }
 
-.tarot-beginners-welcome__truths li {
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  min-height: 8.65rem;
-  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
-  align-items: center;
-  gap: .75rem;
-  border: 1px solid var(--beginner-welcome-card-border);
-  border-radius: 14px;
-  padding: clamp(.85rem, 1.1vw, 1rem) clamp(.8rem, 1vw, .95rem);
-  background:
-    radial-gradient(circle at 0 0, color-mix(in srgb, var(--beginner-welcome-card-highlight) 92%, transparent), transparent 48%),
-    linear-gradient(145deg, rgba(255, 255, 255, .052), transparent 44%),
-    var(--beginner-welcome-card-bg);
-  box-shadow: 0 12px 28px var(--beginner-welcome-card-shadow), inset 0 1px rgba(255, 255, 255, .08), inset 0 -14px 28px color-mix(in srgb, var(--beginner-welcome-card-highlight) 46%, transparent);
-  backdrop-filter: blur(16px) saturate(116%);
-  -webkit-backdrop-filter: blur(16px) saturate(116%);
-  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
-}
-
-.tarot-beginners-welcome__truths li::before {
-  position: absolute;
-  top: 0;
-  right: 12%;
-  left: 12%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--beginner-accent-strong) 54%, transparent), transparent);
-  box-shadow: 0 0 12px var(--beginner-glow);
-  content: "";
-  opacity: .72;
-}
-
-.tarot-beginners-welcome__truth-meta {
-  display: contents;
-}
-
-.tarot-beginners-welcome__truth-icon {
-  display: grid;
-  width: 2.75rem;
-  height: 2.75rem;
-  grid-column: 1;
-  grid-row: 1;
-  place-items: center;
-  border: 1px solid color-mix(in srgb, var(--beginner-welcome-card-border-hover) 74%, transparent);
-  border-radius: 50%;
-  color: var(--beginner-accent-strong);
-  background: radial-gradient(circle, color-mix(in srgb, var(--beginner-welcome-card-highlight) 92%, transparent), color-mix(in srgb, var(--beginner-surface-strong) 70%, transparent));
-  box-shadow: 0 0 16px color-mix(in srgb, var(--beginner-glow) 66%, transparent), inset 0 0 10px var(--beginner-welcome-card-highlight), inset 0 1px rgba(255, 255, 255, .08);
-  font: 500 1.2rem/1 var(--heading-font, "Cormorant Garamond", serif);
-}
-
-.tarot-beginners-welcome__truth-number {
-  align-self: start;
-  grid-column: 3;
-  grid-row: 1;
-  margin-top: .15rem;
-  color: var(--beginner-accent);
-  font: 600 .58rem/1 var(--logo-font, Cinzel, serif);
+.tarot-beginners-quiet-truths > h3 {
+  margin: 0 0 .55rem;
+  color: var(--beginner-truth-accent);
+  font: 700 .62rem/1.35 var(--logo-font, Cinzel, serif);
   letter-spacing: .2em;
-  opacity: .56;
-}
-
-.tarot-beginners-welcome__truths strong,
-.tarot-beginners-welcome__truth-copy > span {
-  display: block;
-}
-
-.tarot-beginners-welcome__truths strong {
-  color: var(--beginner-heading);
-  font: 700 .66rem/1.4 var(--logo-font, Cinzel, serif);
-  letter-spacing: .085em;
   text-transform: uppercase;
 }
 
-.tarot-beginners-welcome__truth-copy {
+.tarot-beginners-quiet-truths__statements {
+  display: grid;
+  overflow: hidden;
   min-width: 0;
-  grid-column: 2;
-  grid-row: 1;
+  touch-action: pan-y;
 }
 
-.tarot-beginners-welcome__truth-copy > span {
-  margin-top: .32rem;
-  color: var(--beginner-muted);
-  font: .84rem/1.5 var(--body-font, "DM Sans", sans-serif);
+.tarot-beginners-quiet-truths__statement {
+  position: relative;
+  display: grid;
+  min-height: 9.2rem;
+  grid-area: 1 / 1;
+  grid-template-columns: clamp(6.2rem, 11vw, 8.2rem) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(.75rem, 1.7vw, 1.4rem);
+  padding: .35rem 0 .6rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 340ms ease, transform 340ms ease, visibility 0s linear 340ms;
+}
+
+.tarot-beginners-quiet-truths__statement::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--beginner-truth-accent) 58%, transparent), color-mix(in srgb, var(--beginner-truth-accent) 12%, transparent) 66%, transparent);
+  content: "";
+}
+
+.tarot-beginners-quiet-truths__statement.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 40ms, 40ms, 0s;
+}
+
+.tarot-beginners-quiet-truths__number {
+  color: var(--beginner-truth-accent-strong);
+  font: 400 clamp(5.5rem, 10vw, 7.5rem)/.78 var(--heading-font, "Cormorant Garamond", serif);
+  letter-spacing: -.07em;
+  opacity: .13;
+  text-shadow: 0 0 26px var(--beginner-truth-glow);
+  user-select: none;
+}
+
+.tarot-beginners-quiet-truths__copy,
+.tarot-beginners-quiet-truths__copy > span,
+.tarot-beginners-quiet-truths__copy > strong {
+  display: block;
+}
+
+.tarot-beginners-quiet-truths__copy {
+  min-width: 0;
+}
+
+.tarot-beginners-quiet-truths__copy > strong {
+  color: var(--beginner-heading);
+  font: 700 .7rem/1.45 var(--logo-font, Cinzel, serif);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.tarot-beginners-quiet-truths__copy > span {
+  max-width: 37ch;
+  margin-top: .55rem;
+  color: var(--beginner-text);
+  font: clamp(.94rem, 1.1vw, 1.04rem)/1.58 var(--font-body-serif, Lora, serif);
   text-wrap: pretty;
 }
 
-.tarot-beginners-welcome__truths-hint {
-  display: none;
+.tarot-beginners-quiet-truths__controls {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  margin-top: .55rem;
+}
+
+.tarot-beginners-quiet-truths__controls button {
+  display: grid;
+  min-width: 2.8rem;
+  min-height: 2.8rem;
+  place-items: center;
+  gap: .25rem;
+  border: 0;
+  border-radius: 0;
+  padding: .3rem .4rem .2rem;
+  color: var(--beginner-muted);
+  background: transparent;
+  cursor: pointer;
+  font: 700 .62rem/1 var(--logo-font, Cinzel, serif);
+  letter-spacing: .14em;
+  transition: color 220ms ease;
+}
+
+.tarot-beginners-quiet-truths__controls button:focus-visible {
+  outline-color: var(--beginner-truth-accent-strong);
+}
+
+.tarot-beginners-quiet-truths__controls button[aria-selected="true"] {
+  color: var(--beginner-truth-accent-strong);
+}
+
+.tarot-beginners-quiet-truths__indicator {
+  display: block;
+  width: .25rem;
+  height: .25rem;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 10px var(--beginner-truth-glow);
+  opacity: .42;
+  transition: width 260ms ease, border-radius 260ms ease, opacity 220ms ease;
+}
+
+.tarot-beginners-quiet-truths__controls button[aria-selected="true"] .tarot-beginners-quiet-truths__indicator {
+  width: 1.7rem;
+  height: 1px;
+  border-radius: 0;
+  opacity: 1;
 }
 
 @media (hover: hover) {
-  .tarot-beginners-welcome__truths li:hover {
-    border-color: var(--beginner-welcome-card-border-hover);
-    box-shadow: 0 16px 34px var(--beginner-welcome-card-shadow), 0 0 18px var(--beginner-glow), inset 0 1px rgba(255, 255, 255, .1);
-    transform: translateY(-3px);
+  .tarot-beginners-quiet-truths__controls button:hover {
+    color: var(--beginner-truth-accent-strong);
   }
 }
 
 .tarot-beginners-welcome__actions {
+  display: grid;
   max-width: 41rem;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr);
   gap: .65rem;
 }
 
-.tarot-beginners-welcome__actions .tarot-beginners-button {
-  flex: 1 1 15rem;
+.tarot-beginners-welcome__action {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding-inline: clamp(1rem, 1.8vw, 1.35rem);
+  white-space: nowrap;
 }
 
-.tarot-beginners-welcome__actions .tarot-beginners-button--primary {
-  box-shadow: var(--beginner-primary-shadow), 0 0 20px color-mix(in srgb, var(--beginner-glow) 76%, transparent);
+.tarot-beginners-welcome__action--chapters,
+.tarot-beginners-page.blood-moon-mode .tarot-beginners-welcome__action--chapters {
+  border-color: var(--beginner-welcome-action-border);
+  color: var(--beginner-welcome-action-text);
+  background: var(--beginner-welcome-action-fill);
+  box-shadow:
+    0 9px 25px color-mix(in srgb, var(--beginner-welcome-action-glow) 72%, transparent),
+    inset 0 1px rgba(255, 255, 255, .16),
+    inset 0 0 0 1px color-mix(in srgb, var(--beginner-welcome-action-border) 22%, transparent);
+  filter: none;
+  transition: color 220ms ease, letter-spacing 260ms ease, border-color 220ms ease, background 220ms ease, box-shadow 260ms ease, transform 220ms ease;
 }
 
-.tarot-beginners-welcome__actions .tarot-beginners-button--secondary {
-  background: color-mix(in srgb, var(--beginner-secondary-bg) 78%, transparent);
+.tarot-beginners-welcome__action--chapters::before {
+  top: -28%;
+  bottom: -28%;
+  left: -82%;
+  width: 72%;
+  background: linear-gradient(110deg,
+    transparent 14%,
+    color-mix(in srgb, var(--beginner-welcome-action-sweep) 8%, transparent) 34%,
+    color-mix(in srgb, var(--beginner-welcome-action-sweep) 52%, transparent) 50%,
+    color-mix(in srgb, var(--beginner-welcome-action-sweep) 10%, transparent) 66%,
+    transparent 86%);
+}
+
+.tarot-beginners-welcome__action--chapters:is(:hover, :focus-visible),
+.tarot-beginners-page.blood-moon-mode .tarot-beginners-welcome__action--chapters:is(:hover, :focus-visible) {
+  border-color: var(--beginner-welcome-action-border-hover);
+  color: var(--beginner-welcome-action-text);
+  background: var(--beginner-welcome-action-fill-hover);
+  box-shadow:
+    0 12px 31px var(--beginner-welcome-action-glow),
+    inset 0 1px rgba(255, 255, 255, .2),
+    inset 0 0 0 1px color-mix(in srgb, var(--beginner-welcome-action-border-hover) 34%, transparent);
+  filter: none;
+  letter-spacing: .105em;
+  transform: translateY(-2px);
+  animation: beginner-welcome-border-trace 720ms ease-out 1;
+}
+
+.tarot-beginners-welcome__action--chapters:is(:hover, :focus-visible)::before {
+  animation: beginner-welcome-light-sweep 720ms ease-out 1;
+}
+
+.tarot-beginners-welcome__action--chapters:is(:hover, :focus-visible) > span[aria-hidden="true"]:last-child {
+  transform: translateX(5px);
+}
+
+.tarot-beginners-welcome__action--continue {
+  border-color: color-mix(in srgb, var(--beginner-truth-accent) 46%, transparent);
+  color: color-mix(in srgb, var(--beginner-text) 82%, var(--beginner-truth-accent));
+  background: color-mix(in srgb, var(--beginner-surface-strong) 40%, transparent);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .035);
   backdrop-filter: blur(12px) saturate(116%);
   -webkit-backdrop-filter: blur(12px) saturate(116%);
+}
+
+.tarot-beginners-welcome__action--continue:is(:hover, :focus-visible) {
+  border-color: color-mix(in srgb, var(--beginner-truth-accent-strong) 68%, transparent);
+  color: var(--beginner-heading);
+  background: color-mix(in srgb, var(--beginner-truth-accent) 9%, var(--beginner-surface-strong));
+  box-shadow: inset 0 1px rgba(255, 255, 255, .055), 0 7px 20px color-mix(in srgb, var(--beginner-truth-glow) 42%, transparent);
+  transform: translateY(-1px);
+}
+
+.tarot-beginners-welcome__action--continue:is(:hover, :focus-visible) > span[aria-hidden="true"]:last-child {
+  transform: translateX(3px);
+}
+
+@keyframes beginner-welcome-light-sweep {
+  from { transform: translateX(0) skewX(-18deg); }
+  to { transform: translateX(280%) skewX(-18deg); }
+}
+
+@keyframes beginner-welcome-border-trace {
+  0%, 100% { border-color: var(--beginner-welcome-action-border-hover); }
+  48% { border-color: color-mix(in srgb, var(--beginner-welcome-action-sweep) 88%, white); }
 }
 
 .tarot-beginners-welcome__guide-quote {
@@ -2424,8 +2738,8 @@ body.tarot-beginners-index-mode .tarot-background {
   text-transform: uppercase;
 }
 
-/* Replaceable CSS-only artwork slots. The aspect ratio and future source live
-   in lesson data, so final art can be inserted without changing this layout. */
+/* Replaceable lesson artwork slots. Temporary review assignments live in the
+   chapter data, so final art can be swapped without changing this layout. */
 .tarot-beginners-lesson-placeholder {
   position: relative;
   isolation: isolate;
@@ -2442,9 +2756,26 @@ body.tarot-beginners-index-mode .tarot-background {
   box-shadow: inset 0 1px rgba(255, 255, 255, .04);
 }
 
+.tarot-beginners-lesson-placeholder::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 58%, rgba(2, 7, 9, .22));
+  content: "";
+  pointer-events: none;
+}
+
 .tarot-beginners-lesson-placeholder--header {
   aspect-ratio: 16 / 7;
   min-height: 0;
+}
+
+.tarot-beginners-lesson-placeholder__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: var(--lesson-image-fit, cover);
+  object-position: var(--lesson-image-position, center);
 }
 
 .tarot-beginners-lesson-placeholder__canvas {
@@ -3042,28 +3373,6 @@ body.tarot-beginners-index-mode .tarot-background {
   margin: .72rem 0 0;
   color: var(--beginner-text);
   font: 1rem/1.72 var(--font-body-serif, Lora, serif);
-}
-
-.tarot-beginners-lesson-chamber__takeaway {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: .8rem;
-  margin: 0 clamp(1.25rem, 3vw, 2rem) clamp(1.25rem, 3vw, 2rem);
-  border-top: 1px solid var(--beginner-line-strong);
-  padding: 1rem .2rem 0;
-}
-
-.tarot-beginners-lesson-chamber__takeaway > span {
-  color: var(--beginner-accent);
-}
-
-.tarot-beginners-lesson-chamber__takeaway p {
-  max-width: 68ch;
-  margin: 0;
-  color: var(--beginner-heading);
-  font: 500 1rem/1.55 var(--font-body-serif, Lora, serif);
 }
 
 /* Reusable lesson close: takeaway, course completion, and chapter routing. */
@@ -3873,61 +4182,35 @@ body.tarot-beginners-index-mode .tarot-background {
     max-width: 42rem;
   }
 
-  .tarot-beginners-welcome__truths {
-    display: grid;
-    width: calc(100% + 18px);
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: min(84%, 21rem);
-    justify-content: start;
-    gap: 12px;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    margin-right: -18px;
-    padding: 3px 18px 12px 0;
-    scroll-padding-inline: 0 18px;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
+  .tarot-beginners-quiet-truths {
+    width: 100%;
+    margin-block: 1.15rem 1.35rem;
   }
 
-  .tarot-beginners-welcome__truths::-webkit-scrollbar {
-    display: none;
+  .tarot-beginners-quiet-truths__statement {
+    min-height: 8.6rem;
+    grid-template-columns: clamp(4.4rem, 21vw, 5.5rem) minmax(0, 1fr);
+    gap: clamp(.65rem, 3vw, 1rem);
   }
 
-  .tarot-beginners-welcome__truths:focus-visible {
-    outline: 2px solid var(--beginner-accent-strong);
-    outline-offset: 4px;
+  .tarot-beginners-quiet-truths__number {
+    font-size: clamp(4.2rem, 20vw, 5.25rem);
   }
 
-  .tarot-beginners-welcome__truths li {
-    min-height: 8.5rem;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+  .tarot-beginners-quiet-truths__controls {
+    gap: .45rem;
   }
 
-  .tarot-beginners-welcome__truths-hint {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: .55rem;
-    margin: -.25rem 0 1.35rem;
-    color: var(--beginner-muted);
-    font: 600 .58rem/1.4 var(--logo-font, Cinzel, serif);
-    letter-spacing: .12em;
-    text-transform: uppercase;
-  }
-
-  .tarot-beginners-welcome__truths-hint span {
-    color: var(--beginner-accent-strong);
-    font-size: .85rem;
+  .tarot-beginners-quiet-truths__controls button {
+    min-width: 3rem;
+    min-height: 3rem;
   }
 
   .tarot-beginners-welcome__actions {
     width: 100%;
     max-width: none;
+    grid-template-columns: minmax(0, 1fr);
     align-items: stretch;
-    flex-direction: column;
   }
 
   .tarot-beginners-welcome__actions .tarot-beginners-button {
@@ -4230,7 +4513,8 @@ body.tarot-beginners-index-mode .tarot-background {
   }
 
   .tarot-beginners-index-card__complete {
-    min-height: 42px;
+    width: 100%;
+    min-height: 44px;
     font-size: .76rem;
   }
 
@@ -4661,10 +4945,6 @@ body.tarot-beginners-index-mode .tarot-background {
     line-height: 1.68;
   }
 
-  .tarot-beginners-lesson-chamber__takeaway {
-    margin: 0 1rem 1.15rem;
-  }
-
   .tarot-beginners-lesson-takeaway {
     align-items: start;
     gap: .9rem;
@@ -4775,7 +5055,9 @@ body.tarot-beginners-index-mode .tarot-background {
   .tarot-beginners-welcome__copy,
   .tarot-beginners-welcome__whisper,
   .tarot-beginners-welcome__guide-quote,
-  .tarot-beginners-welcome__truths li,
+  .tarot-beginners-quiet-truths__statement,
+  .tarot-beginners-quiet-truths__controls button,
+  .tarot-beginners-quiet-truths__indicator,
   .tarot-beginners-library-card,
   .tarot-beginners-library-card__image,
   .tarot-beginners-pathway,
@@ -4815,6 +5097,20 @@ body.tarot-beginners-index-mode .tarot-background {
     display: none;
   }
 
+  .tarot-beginners-index-card__complete,
+  .tarot-beginners-index-card__complete:is(:hover, :focus-visible, :active),
+  .tarot-beginners-index-card__complete-icon {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .tarot-beginners-welcome__action--chapters,
+  .tarot-beginners-welcome__action--chapters:is(:hover, :focus-visible),
+  .tarot-beginners-welcome__action--continue:is(:hover, :focus-visible) {
+    letter-spacing: .09em;
+    transform: none;
+  }
+
   .tarot-beginners-button:is(:hover, :focus-visible),
   .tarot-beginners-closing__door:is(:hover, :focus-visible) {
     transform: none;
@@ -4851,97 +5147,233 @@ body.tarot-beginners-lesson-mode {
 .tarot-beginners-chapter-navigator {
   position: sticky;
   z-index: 42;
-  top: 0;
+  top: var(--guided-chapter-rail-top);
   display: grid;
-  min-height: 68px;
-  grid-template-columns: minmax(10rem, 1fr) auto auto minmax(10rem, 1fr);
+  width: min(calc(100% - 32px), 1280px);
+  min-height: var(--guided-chapter-rail-height);
+  grid-template-columns: minmax(8.4rem, 1.05fr) minmax(9.5rem, 1.15fr) minmax(6.8rem, .72fr) minmax(8.6rem, .9fr) minmax(8.4rem, 1.05fr);
   align-items: stretch;
-  gap: clamp(.45rem, 1.5vw, 1.2rem);
-  border-block: 1px solid var(--guided-nav-border);
-  padding-inline: max(18px, calc((100vw - 1280px) / 2));
+  gap: 0;
+  isolation: isolate;
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid var(--guided-nav-border);
+  border-radius: 18px;
+  padding: .36rem;
   color: var(--beginner-text);
-  background: var(--guided-nav-bg);
-  box-shadow: 0 12px 34px color-mix(in srgb, var(--beginner-shadow) 48%, transparent);
-  backdrop-filter: blur(18px) saturate(120%);
-  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  background:
+    linear-gradient(180deg, var(--guided-nav-highlight), transparent 1px),
+    linear-gradient(110deg, color-mix(in srgb, var(--guided-nav-bloom) 52%, transparent), transparent 28% 72%, color-mix(in srgb, var(--guided-nav-bloom) 34%, transparent)),
+    var(--guided-nav-glass);
+  box-shadow: var(--guided-nav-shadow), inset 0 1px 0 var(--guided-nav-highlight);
+  backdrop-filter: blur(22px) saturate(125%);
+  -webkit-backdrop-filter: blur(22px) saturate(125%);
 }
 
 .tarot-beginners-chapter-navigator > :is(a, button) {
+  position: relative;
   display: flex;
   min-width: 0;
-  min-height: 52px;
+  min-height: 58px;
   align-items: center;
   gap: .72rem;
   align-self: center;
   border: 0;
-  border-radius: 8px;
-  padding: .45rem .65rem;
+  border-radius: 12px;
+  padding: .5rem clamp(.7rem, 1.3vw, 1.15rem);
   color: var(--beginner-text);
   background: transparent;
   cursor: pointer;
   font: inherit;
   text-decoration: none;
-  transition: color 180ms ease, background 180ms ease;
+  transition: color 190ms ease, background 190ms ease, box-shadow 190ms ease;
 }
 
-.tarot-beginners-chapter-navigator > a:last-child {
+.tarot-beginners-chapter-navigator > :not(:first-child) {
+  --guided-nav-separator-local: var(--guided-nav-separator);
+  border-left: 1px solid transparent;
+  border-image: linear-gradient(180deg, transparent 12%, var(--guided-nav-separator-local) 50%, transparent 88%) 1;
+  transition: border-color 190ms ease, color 190ms ease, background 190ms ease, box-shadow 190ms ease;
+}
+
+.tarot-beginners-chapter-navigator > :not(:first-child):is(:hover, :focus-visible),
+.tarot-beginners-chapter-navigator > :is(a, button):is(:hover, :focus-visible) + * {
+  --guided-nav-separator-local: color-mix(in srgb, var(--beginner-accent) 38%, transparent);
+}
+
+.tarot-beginners-chapter-navigator > .tarot-beginners-chapter-navigator__next {
   justify-content: flex-end;
   text-align: right;
 }
 
-.tarot-beginners-chapter-navigator > :is(a, button):is(:hover, :focus-visible) {
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__previous, .tarot-beginners-chapter-navigator__next):not([aria-disabled="true"]):is(:hover, :focus-visible) {
   color: var(--beginner-accent-strong);
-  background: var(--guided-chamber-active);
+  background: radial-gradient(circle at 50% 110%, var(--guided-nav-bloom), transparent 72%);
+}
+
+.tarot-beginners-chapter-navigator > :is(a, button):focus-visible {
+  outline: 2px solid var(--beginner-accent-strong);
+  outline-offset: -4px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--beginner-accent) 18%, transparent), 0 0 14px color-mix(in srgb, var(--beginner-accent) 18%, transparent);
 }
 
 .tarot-beginners-chapter-navigator > a[aria-disabled="true"] {
   cursor: default;
-  opacity: .42;
+  opacity: .4;
 }
 
-.tarot-beginners-chapter-navigator > a > span:not([aria-hidden="true"]) {
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__previous, .tarot-beginners-chapter-navigator__next) > span:not([aria-hidden="true"]) {
   display: grid;
   min-width: 0;
   gap: .12rem;
 }
 
+.tarot-beginners-chapter-navigator__arrow {
+  flex: 0 0 auto;
+  color: color-mix(in srgb, currentColor 82%, transparent);
+  transition: color 190ms ease, transform 190ms ease;
+}
+
+.tarot-beginners-chapter-navigator__previous:not([aria-disabled="true"]):is(:hover, :focus-visible) .tarot-beginners-chapter-navigator__arrow {
+  transform: translateX(-2px);
+}
+
+.tarot-beginners-chapter-navigator__next:not([aria-disabled="true"]):is(:hover, :focus-visible) .tarot-beginners-chapter-navigator__arrow {
+  transform: translateX(2px);
+}
+
 .tarot-beginners-chapter-navigator small,
-.tarot-beginners-chapter-navigator > p small {
+.tarot-beginners-chapter-navigator__current small {
   color: var(--beginner-muted);
-  font: 700 .52rem/1.2 var(--logo-font, Cinzel, serif);
-  letter-spacing: .1em;
+  font: 650 .51rem/1.2 var(--logo-font, Cinzel, serif);
+  letter-spacing: .11em;
   text-transform: uppercase;
 }
 
 .tarot-beginners-chapter-navigator strong {
   overflow: hidden;
   color: inherit;
-  font: 600 .86rem/1.2 var(--heading-font, "Cormorant Garamond", serif);
+  font: 650 .9rem/1.2 var(--heading-font, "Cormorant Garamond", serif);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.tarot-beginners-chapter-navigator > p {
+.tarot-beginners-chapter-navigator__current {
   display: grid;
   min-width: 9rem;
+  min-height: 58px;
   place-content: center;
   margin: 0;
+  padding-inline: clamp(.65rem, 1.2vw, 1.1rem);
   text-align: center;
 }
 
-.tarot-beginners-chapter-navigator > p strong {
+.tarot-beginners-chapter-navigator__current strong {
   color: var(--beginner-heading);
 }
 
-.tarot-beginners-chapter-navigator > button {
-  min-width: 9.5rem;
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters) {
+  min-width: 0;
   justify-content: center;
-  border-inline: 1px solid var(--guided-nav-border);
   border-radius: 0;
-  color: var(--beginner-accent-strong);
+  overflow: hidden;
+  color: color-mix(in srgb, var(--beginner-accent-strong) 76%, transparent);
   font: 700 .6rem/1.2 var(--logo-font, Cinzel, serif);
-  letter-spacing: .09em;
+  letter-spacing: .1em;
   text-transform: uppercase;
+}
+
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters)::before,
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters)::after {
+  position: absolute;
+  pointer-events: none;
+  content: "";
+}
+
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters)::before {
+  inset: .28rem;
+  border-radius: 10px;
+  background: radial-gradient(circle at 50% 115%, var(--guided-nav-bloom), transparent 72%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--guided-nav-highlight) 45%, transparent);
+  opacity: 0;
+  transition: opacity 190ms ease;
+}
+
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters)::after {
+  top: .3rem;
+  bottom: .3rem;
+  left: -72%;
+  width: 54%;
+  background: linear-gradient(105deg, transparent, var(--guided-nav-sweep), transparent);
+  opacity: 0;
+  transform: skewX(-14deg);
+}
+
+.tarot-beginners-chapter-navigator__destination-label {
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+  transition: color 190ms ease, filter 190ms ease, transform 190ms ease;
+}
+
+.tarot-beginners-chapter-navigator__destination-label::after {
+  position: absolute;
+  right: 8%;
+  bottom: -.42rem;
+  left: 8%;
+  height: 1px;
+  background: color-mix(in srgb, var(--beginner-accent-strong) 82%, transparent);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--beginner-accent) 34%, transparent);
+  content: "";
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: opacity 190ms ease, transform 190ms ease;
+}
+
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters):is(:hover, :focus-visible),
+.tarot-beginners-chapter-navigator > .tarot-beginners-chapter-navigator__welcome[aria-current="page"],
+.tarot-beginners-chapter-navigator > .tarot-beginners-chapter-navigator__chapters[aria-expanded="true"] {
+  color: var(--beginner-accent-strong);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--beginner-accent) 28%, transparent);
+}
+
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters):is(:hover, :focus-visible)::before,
+.tarot-beginners-chapter-navigator > .tarot-beginners-chapter-navigator__welcome[aria-current="page"]::before,
+.tarot-beginners-chapter-navigator > .tarot-beginners-chapter-navigator__chapters[aria-expanded="true"]::before {
+  opacity: 1;
+}
+
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters):is(:hover, :focus-visible)::after {
+  animation: beginner-nav-light-sweep 620ms cubic-bezier(.2, .68, .28, 1) both;
+}
+
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters):is(:hover, :focus-visible) .tarot-beginners-chapter-navigator__destination-label {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters):is(:hover, :focus-visible) .tarot-beginners-chapter-navigator__destination-label::after,
+.tarot-beginners-chapter-navigator > .tarot-beginners-chapter-navigator__welcome[aria-current="page"] .tarot-beginners-chapter-navigator__destination-label::after,
+.tarot-beginners-chapter-navigator > .tarot-beginners-chapter-navigator__chapters[aria-expanded="true"] .tarot-beginners-chapter-navigator__destination-label::after {
+  opacity: .74;
+  transform: scaleX(1);
+}
+
+@keyframes beginner-nav-light-sweep {
+  0% {
+    left: -72%;
+    opacity: 0;
+  }
+
+  18% {
+    opacity: .66;
+  }
+
+  100% {
+    left: 122%;
+    opacity: 0;
+  }
 }
 
 .tarot-beginners-reader__main.tarot-beginners-shell {
@@ -5036,40 +5468,145 @@ body.tarot-beginners-lesson-mode {
 
 .tarot-beginners-chamber-progress {
   position: sticky;
-  z-index: 34;
-  top: 68px;
-  width: min(100%, 880px);
+  z-index: 40;
+  top: var(--guided-chamber-rail-top);
+  width: min(calc(100% - 48px), 840px);
   max-width: none;
+  min-height: var(--guided-chamber-rail-height);
+  isolation: isolate;
   margin: 0 auto clamp(3.5rem, 7vw, 6.5rem);
-  border-block: 1px solid var(--guided-nav-border);
-  padding: .55rem;
-  background: color-mix(in srgb, var(--guided-nav-bg) 94%, transparent);
-  box-shadow: 0 12px 28px color-mix(in srgb, var(--beginner-shadow) 34%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  overflow: visible;
+  border: 1px solid color-mix(in srgb, var(--guided-nav-border) 84%, transparent);
+  border-radius: 15px;
+  padding: .32rem;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--guided-nav-highlight) 78%, transparent), transparent 1px),
+    linear-gradient(110deg, color-mix(in srgb, var(--guided-nav-bloom) 42%, transparent), transparent 32% 68%, color-mix(in srgb, var(--guided-nav-bloom) 28%, transparent)),
+    var(--guided-chamber-rail-glass);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--beginner-shadow) 42%, transparent), inset 0 1px 0 color-mix(in srgb, var(--guided-nav-highlight) 76%, transparent);
+  backdrop-filter: blur(20px) saturate(122%);
+  -webkit-backdrop-filter: blur(20px) saturate(122%);
+  transition: border-color 200ms ease, background 200ms ease, box-shadow 200ms ease;
+}
+
+.tarot-beginners-chamber-progress.is-stuck {
+  border-color: color-mix(in srgb, var(--guided-nav-border) 96%, transparent);
+  background:
+    linear-gradient(180deg, var(--guided-nav-highlight), transparent 1px),
+    linear-gradient(110deg, color-mix(in srgb, var(--guided-nav-bloom) 54%, transparent), transparent 32% 68%, color-mix(in srgb, var(--guided-nav-bloom) 38%, transparent)),
+    color-mix(in srgb, var(--guided-chamber-rail-glass) 94%, #000 6%);
+  box-shadow: 0 16px 38px color-mix(in srgb, var(--beginner-shadow) 58%, transparent), inset 0 1px 0 var(--guided-nav-highlight);
 }
 
 .tarot-beginners-chamber-progress ol {
+  display: grid;
+  width: 100%;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: .4rem;
+  gap: 0;
 }
 
 .tarot-beginners-chamber-progress li {
+  position: relative;
   display: block;
+  min-width: 0;
+}
+
+.tarot-beginners-chamber-progress li + li::before {
+  position: absolute;
+  z-index: 2;
+  top: 14%;
+  bottom: 14%;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--guided-nav-separator), transparent);
+  content: "";
+  pointer-events: none;
+  transition: background 190ms ease, filter 190ms ease;
+}
+
+.tarot-beginners-chamber-progress li:is(:hover, :focus-within) + li::before,
+.tarot-beginners-chamber-progress li + li:is(:hover, :focus-within)::before {
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--guided-chamber-active-color) 46%, transparent), transparent);
+  filter: drop-shadow(0 0 3px var(--guided-chamber-active-glow));
 }
 
 .tarot-beginners-chamber-progress button {
+  position: relative;
   display: grid;
   width: 100%;
   min-width: 0;
-  min-height: 46px;
+  min-height: 50px;
   grid-template-columns: auto minmax(0, 1fr);
   place-items: center start;
   gap: .62rem;
-  border: 0;
-  border-radius: 7px;
-  padding: .5rem .7rem;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  padding: .48rem .72rem;
+  color: color-mix(in srgb, var(--beginner-muted) 84%, transparent);
+  background: transparent;
+  cursor: pointer;
   text-align: left;
+  opacity: .76;
+  transition: opacity 190ms ease, color 190ms ease, border-color 190ms ease, background 190ms ease, box-shadow 210ms ease;
+}
+
+.tarot-beginners-chamber-progress button::before,
+.tarot-beginners-chamber-progress button::after {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
+  opacity: 0;
+  transition: opacity 190ms ease;
+}
+
+.tarot-beginners-chamber-progress button::before {
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 115%, var(--guided-chamber-hover-tint), transparent 72%);
+}
+
+.tarot-beginners-chamber-progress button::after {
+  right: 12%;
+  bottom: -1px;
+  left: 12%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--guided-chamber-active-color), transparent);
+  box-shadow: 0 0 10px var(--guided-chamber-active-glow);
+}
+
+.tarot-beginners-chamber-progress button:is(:hover, :focus-visible) {
+  border-color: color-mix(in srgb, var(--guided-chamber-active-color) 28%, transparent);
+  color: color-mix(in srgb, var(--guided-chamber-active-color) 82%, var(--beginner-heading));
+  background: var(--guided-chamber-hover-tint);
+  opacity: 1;
+}
+
+.tarot-beginners-chamber-progress button:is(:hover, :focus-visible)::before,
+.tarot-beginners-chamber-progress button:is(:hover, :focus-visible)::after {
+  opacity: .58;
+}
+
+.tarot-beginners-chamber-progress button:focus-visible {
+  outline: 2px solid var(--guided-chamber-active-color);
+  outline-offset: -3px;
+}
+
+.tarot-beginners-chamber-progress button.is-active,
+.tarot-beginners-chamber-progress button[aria-current="step"] {
+  border-color: color-mix(in srgb, var(--guided-chamber-active-color) 58%, transparent);
+  color: var(--guided-chamber-active-color);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--guided-chamber-active-tint) 88%, transparent), color-mix(in srgb, var(--guided-chamber-active-tint) 48%, transparent));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--guided-chamber-active-color) 18%, transparent), 0 0 24px color-mix(in srgb, var(--guided-chamber-active-glow) 72%, transparent);
+  opacity: 1;
+}
+
+.tarot-beginners-chamber-progress button.is-active::before,
+.tarot-beginners-chamber-progress button.is-active::after,
+.tarot-beginners-chamber-progress button[aria-current="step"]::before,
+.tarot-beginners-chamber-progress button[aria-current="step"]::after {
+  opacity: 1;
 }
 
 .tarot-beginners-chamber-progress button > span {
@@ -5077,10 +5614,42 @@ body.tarot-beginners-lesson-mode {
   width: 1.7rem;
   height: 1.7rem;
   place-items: center;
-  border: 1px solid var(--beginner-line-strong);
+  border: 1px solid color-mix(in srgb, var(--guided-nav-border) 94%, transparent);
   border-radius: 50%;
-  color: var(--beginner-accent-strong);
+  color: color-mix(in srgb, var(--beginner-muted) 88%, transparent);
+  background: color-mix(in srgb, var(--guided-chamber-rail-glass) 78%, transparent);
   font-size: .7rem;
+  transition: color 190ms ease, border-color 190ms ease, background 190ms ease, box-shadow 210ms ease;
+}
+
+.tarot-beginners-chamber-progress button:is(:hover, :focus-visible) > span {
+  border-color: color-mix(in srgb, var(--guided-chamber-active-color) 42%, transparent);
+  color: var(--guided-chamber-active-color);
+}
+
+.tarot-beginners-chamber-progress button:is(.is-active, [aria-current="step"]) > span {
+  border-color: color-mix(in srgb, var(--guided-chamber-active-color) 78%, transparent);
+  color: var(--guided-chamber-active-color);
+  background: color-mix(in srgb, var(--guided-chamber-active-tint) 76%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--guided-chamber-active-color) 9%, transparent), 0 0 14px var(--guided-chamber-active-glow);
+}
+
+.tarot-beginners-chamber-progress button.is-completed:not(.is-active) {
+  color: color-mix(in srgb, var(--beginner-accent) 82%, var(--beginner-muted));
+  opacity: .9;
+}
+
+.tarot-beginners-chamber-progress button.is-completed:not(.is-active):is(:hover, :focus-visible) {
+  color: color-mix(in srgb, var(--guided-chamber-active-color) 82%, var(--beginner-heading));
+  opacity: 1;
+}
+
+.tarot-beginners-chamber-progress button i {
+  top: .18rem;
+  right: .22rem;
+  border-color: color-mix(in srgb, var(--guided-chamber-active-color) 54%, transparent);
+  color: var(--guided-chamber-active-color);
+  background: var(--guided-chamber-rail-glass);
 }
 
 .tarot-beginners-chamber-progress button strong {
@@ -5088,13 +5657,14 @@ body.tarot-beginners-lesson-mode {
   font: 700 .58rem/1.25 var(--logo-font, Cinzel, serif);
   letter-spacing: .08em;
   text-transform: uppercase;
+  text-wrap: balance;
 }
 
 .tarot-beginners-lesson-chambers {
   position: relative;
   display: grid;
   width: min(100%, 1180px);
-  gap: clamp(5.5rem, 10vw, 10rem);
+  gap: clamp(3.25rem, 6vw, 5.75rem);
   margin-inline: auto;
 }
 
@@ -5116,7 +5686,7 @@ body.tarot-beginners-lesson-mode {
   padding-left: clamp(4.5rem, 8vw, 7.75rem);
   background: transparent;
   box-shadow: none;
-  scroll-margin-top: 154px;
+  scroll-margin-top: var(--guided-chamber-scroll-offset);
 }
 
 .tarot-beginners-lesson-chamber::before {
@@ -5305,10 +5875,57 @@ body.tarot-beginners-lesson-mode {
 .tarot-beginners-lesson-visual-tool__orbit-map span:nth-of-type(3) { bottom: 7%; left: 50%; transform: translateX(-50%); }
 .tarot-beginners-lesson-visual-tool__orbit-map span:nth-of-type(4) { top: 50%; left: 2%; transform: translateY(-50%); }
 
-.tarot-beginners-lesson-chamber__takeaway {
-  margin: clamp(2rem, 4vw, 3rem) 0 0;
-  border-block: 1px solid var(--guided-path-line);
-  padding: 1rem 0;
+.tarot-beginners-chamber-threshold {
+  position: relative;
+  display: grid;
+  width: min(100%, 52rem);
+  justify-items: center;
+  isolation: isolate;
+  margin: clamp(2.4rem, 4.5vw, 3.75rem) auto 0;
+  padding: clamp(1.1rem, 2vw, 1.65rem) clamp(1rem, 4vw, 2.5rem) 0;
+  text-align: center;
+}
+
+.tarot-beginners-chamber-threshold::before {
+  position: absolute;
+  z-index: -1;
+  inset: -18% 2% 4%;
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--beginner-accent) 9%, transparent), transparent 68%);
+  content: "";
+  pointer-events: none;
+}
+
+.tarot-beginners-chamber-threshold__sigil {
+  display: block;
+  width: .72rem;
+  height: .72rem;
+  margin-bottom: clamp(.9rem, 1.8vw, 1.2rem);
+  border: 1px solid color-mix(in srgb, var(--beginner-accent-strong) 68%, transparent);
+  background: color-mix(in srgb, var(--beginner-surface-strong) 72%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--beginner-glow) 62%, transparent);
+  transform: rotate(45deg);
+}
+
+.tarot-beginners-chamber-threshold blockquote {
+  max-width: 48rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.tarot-beginners-chamber-threshold p {
+  margin: 0;
+  color: color-mix(in srgb, var(--beginner-heading) 92%, var(--beginner-muted));
+  font: italic 500 clamp(1.02rem, 1.7vw, 1.18rem)/1.62 var(--font-body-serif, Lora, serif);
+  text-wrap: balance;
+}
+
+.tarot-beginners-chamber-threshold__thread {
+  display: block;
+  width: 1px;
+  height: clamp(2rem, 3.4vw, 2.85rem);
+  margin-top: clamp(1rem, 2vw, 1.35rem);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--beginner-accent) 42%, transparent), transparent);
 }
 
 .tarot-beginners-guided-practice,
@@ -5526,6 +6143,31 @@ body.tarot-beginners-lesson-mode {
 }
 
 @media (max-width: 1050px) {
+  .tarot-beginners-chapter-navigator {
+    width: calc(100% - 20px);
+    grid-template-columns: minmax(6.5rem, 1fr) minmax(7.5rem, 1.08fr) minmax(5.8rem, .7fr) minmax(7.1rem, .84fr) minmax(6.5rem, 1fr);
+    padding: .3rem;
+  }
+
+  .tarot-beginners-chapter-navigator > :is(a, button) {
+    gap: .48rem;
+    padding-inline: .52rem;
+  }
+
+  .tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters) {
+    font-size: .56rem;
+    letter-spacing: .075em;
+  }
+
+  .tarot-beginners-chamber-progress {
+    width: min(calc(100% - 36px), 800px);
+  }
+
+  .tarot-beginners-chamber-progress button {
+    gap: .5rem;
+    padding-inline: .55rem;
+  }
+
   .tarot-beginners-academy-introduction__layout {
     grid-template-columns: minmax(0, 1fr) minmax(16rem, .72fr);
     gap: 2.5rem;
@@ -5540,6 +6182,15 @@ body.tarot-beginners-lesson-mode {
     justify-content: flex-start;
   }
 
+  .tarot-beginners-chamber-threshold {
+    margin-top: 2.2rem;
+    padding-top: 1rem;
+  }
+
+  .tarot-beginners-chamber-threshold__thread {
+    height: 2.25rem;
+  }
+
   .tarot-beginners-lesson-chamber__body,
   .tarot-beginners-lesson-chamber--editorial .tarot-beginners-lesson-chamber__body,
   .tarot-beginners-lesson-chamber--reveal .tarot-beginners-lesson-chamber__body,
@@ -5551,43 +6202,82 @@ body.tarot-beginners-lesson-mode {
 }
 
 @media (max-width: 820px) {
+  .tarot-beginners-page {
+    --guided-chapter-rail-top: 8px;
+    --guided-chapter-rail-height: 107px;
+    --guided-rail-stack-gap: 6px;
+    --guided-chamber-rail-height: 76px;
+  }
+
   .tarot-beginners[data-beginner-view="chapter"] .tarot-beginners-reader {
     padding-top: 68px;
   }
 
   .tarot-beginners-chapter-navigator {
-    min-height: 60px;
-    grid-template-columns: 44px minmax(0, 1fr) auto 44px;
-    gap: .2rem;
-    padding-inline: 10px;
+    top: var(--guided-chapter-rail-top);
+    width: calc(100% - 16px);
+    min-height: var(--guided-chapter-rail-height);
+    grid-template-columns: repeat(4, minmax(44px, 1fr));
+    grid-template-rows: 48px 48px;
+    gap: 0;
+    border-radius: 15px;
+    padding: .28rem;
   }
 
   .tarot-beginners-chapter-navigator > :is(a, button) {
     min-width: 44px;
-    min-height: 44px;
+    min-height: 48px;
     justify-content: center;
     padding: .35rem;
   }
 
-  .tarot-beginners-chapter-navigator > a > span:not([aria-hidden="true"]),
-  .tarot-beginners-chapter-navigator > button > span,
-  .tarot-beginners-chapter-navigator > button {
-    font-size: 0;
+  .tarot-beginners-chapter-navigator > .tarot-beginners-chapter-navigator__previous {
+    grid-row: 2;
+    grid-column: 1;
   }
 
-  .tarot-beginners-chapter-navigator > a > span:not([aria-hidden="true"]) {
+  .tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__previous, .tarot-beginners-chapter-navigator__next) > span:not([aria-hidden="true"]) {
     display: none;
   }
 
-  .tarot-beginners-chapter-navigator > button::after {
-    content: "All";
-    font: 700 .56rem/1.2 var(--logo-font, Cinzel, serif);
-    letter-spacing: .08em;
-    text-transform: uppercase;
+  .tarot-beginners-chapter-navigator > .tarot-beginners-chapter-navigator__welcome {
+    grid-row: 2;
+    grid-column: 2;
+    min-width: 44px;
+    border-radius: 9px;
+    padding-inline: .4rem;
+    font-size: .52rem;
+    letter-spacing: .065em;
   }
 
-  .tarot-beginners-chapter-navigator > p {
+  .tarot-beginners-chapter-navigator > .tarot-beginners-chapter-navigator__chapters {
+    grid-row: 2;
+    grid-column: 3;
+    min-width: 44px;
+    border-radius: 9px;
+    padding-inline: .4rem;
+    font-size: .52rem;
+    letter-spacing: .065em;
+  }
+
+  .tarot-beginners-chapter-navigator__current {
+    grid-row: 1;
+    grid-column: 1 / -1;
     min-width: 0;
+    min-height: 48px;
+    border-left: 0;
+    border-bottom: 1px solid transparent;
+    border-image: linear-gradient(90deg, transparent 8%, var(--guided-nav-separator) 50%, transparent 92%) 1;
+    padding-inline: .5rem;
+  }
+
+  .tarot-beginners-chapter-navigator > .tarot-beginners-chapter-navigator__next {
+    grid-row: 2;
+    grid-column: 4;
+  }
+
+  .tarot-beginners-chapter-navigator__arrow {
+    font-size: .92rem;
   }
 
   .tarot-beginners-reader__main.tarot-beginners-shell {
@@ -5614,26 +6304,46 @@ body.tarot-beginners-lesson-mode {
   }
 
   .tarot-beginners-chamber-progress {
-    top: 60px;
-    width: calc(100% + 28px);
-    margin-left: -14px;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scrollbar-width: none;
-  }
-
-  .tarot-beginners-chamber-progress::-webkit-scrollbar {
-    display: none;
+    top: var(--guided-chamber-rail-top);
+    width: 100%;
+    min-height: var(--guided-chamber-rail-height);
+    margin-left: 0;
+    border-radius: 14px;
+    padding: .28rem;
+    overflow: visible;
   }
 
   .tarot-beginners-chamber-progress ol {
-    width: max-content;
+    width: 100%;
     min-width: 100%;
-    grid-template-columns: repeat(3, minmax(9.5rem, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .tarot-beginners-chamber-progress button {
+    min-height: 66px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    place-items: center;
+    gap: .25rem;
+    padding: .38rem .22rem;
+    text-align: center;
+  }
+
+  .tarot-beginners-chamber-progress button > span {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: .62rem;
+  }
+
+  .tarot-beginners-chamber-progress button strong {
+    max-width: 100%;
+    font-size: .5rem;
+    line-height: 1.15;
+    letter-spacing: .055em;
   }
 
   .tarot-beginners-lesson-chambers {
-    gap: 6.5rem;
+    gap: 3.25rem;
   }
 
   .tarot-beginners-lesson-chambers::before {
@@ -5642,7 +6352,7 @@ body.tarot-beginners-lesson-mode {
 
   .tarot-beginners-lesson-chamber {
     padding-left: 2.25rem;
-    scroll-margin-top: 142px;
+    scroll-margin-top: var(--guided-chamber-scroll-offset);
   }
 
   .tarot-beginners-lesson-chamber::before {
@@ -5660,6 +6370,26 @@ body.tarot-beginners-lesson-mode {
 
   .tarot-beginners-lesson-chamber__heading h3 {
     font-size: clamp(2.6rem, 12vw, 4rem);
+  }
+
+  .tarot-beginners-chamber-threshold {
+    width: calc(100% - .5rem);
+    margin-top: 1.75rem;
+    padding: .85rem .5rem 0;
+  }
+
+  .tarot-beginners-chamber-threshold__sigil {
+    margin-bottom: .8rem;
+  }
+
+  .tarot-beginners-chamber-threshold p {
+    font-size: 1rem;
+    line-height: 1.58;
+  }
+
+  .tarot-beginners-chamber-threshold__thread {
+    height: 1.7rem;
+    margin-top: .8rem;
   }
 
   .tarot-beginners-lesson-chamber__body,
@@ -5708,14 +6438,18 @@ body.tarot-beginners-lesson-mode {
 }
 
 @media (max-width: 520px) {
-  .tarot-beginners-chapter-navigator > p small {
+  .tarot-beginners-chapter-navigator__current small {
     font-size: .46rem;
   }
 
-  .tarot-beginners-chapter-navigator > p strong {
-    max-width: 15ch;
+  .tarot-beginners-chapter-navigator__current strong {
+    max-width: min(24ch, calc(100vw - 3rem));
     margin-inline: auto;
     font-size: .76rem;
+  }
+
+  .tarot-beginners-chapter-navigator__all-prefix {
+    display: none;
   }
 
   .tarot-beginners-lesson-chamber {
@@ -5748,8 +6482,27 @@ body.tarot-beginners-lesson-mode {
 
 @media (prefers-reduced-motion: reduce) {
   .tarot-beginners-chapter-navigator > :is(a, button),
+  .tarot-beginners-chapter-navigator__arrow,
+  .tarot-beginners-chapter-navigator__destination-label,
+  .tarot-beginners-chapter-navigator__destination-label::after,
+  .tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters)::before,
+  .tarot-beginners-chamber-progress,
+  .tarot-beginners-chamber-progress li::before,
+  .tarot-beginners-chamber-progress button,
+  .tarot-beginners-chamber-progress button::before,
+  .tarot-beginners-chamber-progress button::after,
+  .tarot-beginners-chamber-progress button > span,
   .tarot-beginners-lesson-chamber::before,
   .tarot-beginners-lesson-ending__completion [role="progressbar"] > span {
     transition: none !important;
+  }
+
+  .tarot-beginners-chapter-navigator > :is(.tarot-beginners-chapter-navigator__welcome, .tarot-beginners-chapter-navigator__chapters):is(:hover, :focus-visible)::after {
+    animation: none !important;
+    opacity: 0;
+  }
+
+  .tarot-beginners-chapter-navigator > :is(a, button):is(:hover, :focus-visible) :is(.tarot-beginners-chapter-navigator__arrow, .tarot-beginners-chapter-navigator__destination-label) {
+    transform: none !important;
   }
 }
